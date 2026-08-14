@@ -2,7 +2,7 @@
 	import '../app.css';
 	import { page } from '$app/state';
 	import { goto } from '$app/navigation';
-	import { ListChecks, Store, CreditCard, User, ShieldCheck, Users } from '@lucide/svelte';
+	import { ListChecks, Store, CreditCard, User, ShieldCheck, Users, ZoomIn } from '@lucide/svelte';
 	import { i18n, t } from '$lib/i18n/index.svelte';
 	import { data } from '$stores/data.svelte';
 	import { session } from '$stores/session.svelte';
@@ -43,13 +43,18 @@
 		if (session.isApproved) data.load();
 	});
 
+	// La loupe se sert de l'appareil photo arrière, devant une étiquette de produit : c'est un geste
+	// de téléphone. Sur un écran d'ordinateur elle n'aurait rien à montrer, on ne la propose pas.
 	const nav = $derived([
-		{ href: '/', key: 'nav.lists', icon: ListChecks },
-		{ href: '/shops', key: 'nav.shops', icon: Store },
-		{ href: '/cards', key: 'nav.cards', icon: CreditCard },
-		{ href: '/household', key: 'nav.household', icon: Users },
-		{ href: '/profile', key: 'nav.profile', icon: User },
-		...(session.isAdmin ? [{ href: '/admin', key: 'nav.admin', icon: ShieldCheck }] : [])
+		{ href: '/', key: 'nav.lists', icon: ListChecks, handheld: false },
+		{ href: '/shops', key: 'nav.shops', icon: Store, handheld: false },
+		{ href: '/magnifier', key: 'nav.magnifier', icon: ZoomIn, handheld: true },
+		{ href: '/cards', key: 'nav.cards', icon: CreditCard, handheld: false },
+		{ href: '/household', key: 'nav.household', icon: Users, handheld: false },
+		{ href: '/profile', key: 'nav.profile', icon: User, handheld: false },
+		...(session.isAdmin
+			? [{ href: '/admin', key: 'nav.admin', icon: ShieldCheck, handheld: false }]
+			: [])
 	]);
 
 	const isActive = (href: string) =>
@@ -73,9 +78,9 @@
 			<p class="text-h2 hidden px-6 py-6 font-semibold md:block">{t('app.name')}</p>
 
 			<ul class="flex md:flex-col md:gap-1 md:px-3">
-				{#each nav as { href, key, icon: Icon } (href)}
+				{#each nav as { href, key, icon: Icon, handheld } (href)}
 					{@const active = isActive(href)}
-					<li class="flex-1">
+					<li class="flex-1" class:md:hidden={handheld}>
 						<a
 							{href}
 							data-test="nav-{href}"

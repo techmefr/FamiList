@@ -10,7 +10,8 @@
 		"main": "Hauptnavigation",
 		"shops": "Geschäfte",
 		"admin": "Konten",
-		"household": "Haushalt"
+		"household": "Haushalt",
+		"magnifier": "Lupe"
 	},
 	"lists": {
 		"title": "Meine Listen",
@@ -233,5 +234,19 @@
 			"owner": "Verantwortlich",
 			"member": "Mitglied"
 		}
+	},
+	"magnifier": {
+		"title": "Lupe",
+		"starting": "Kamera wird gestartet…",
+		"denied": "Kamerazugriff verweigert. Erlauben Sie ihn in den Einstellungen, um ein Etikett groß zu lesen.",
+		"unsupported": "Die Kamera ist hier nicht verfügbar. Die Lupe funktioniert auf Ihrem Telefon.",
+		"frozen": "Standbild",
+		"zoom": "Vergrößerung",
+		"zoomIn": "Vergrößern",
+		"zoomOut": "Verkleinern",
+		"light": "Licht",
+		"softLight": "aufgehellt",
+		"freeze": "Bild einfrieren",
+		"resume": "Fortsetzen"
 	}
 }

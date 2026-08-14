@@ -10,7 +10,8 @@
 		"main": "Main navigation",
 		"shops": "Shops",
 		"admin": "Accounts",
-		"household": "Household"
+		"household": "Household",
+		"magnifier": "Magnifier"
 	},
 	"lists": {
 		"title": "My lists",
@@ -233,5 +234,19 @@
 			"owner": "Owner",
 			"member": "Member"
 		}
+	},
+	"magnifier": {
+		"title": "Magnifier",
+		"starting": "Starting the camera…",
+		"denied": "Camera access denied. Allow it in your settings to read a label up close.",
+		"unsupported": "The camera is not available here. The magnifier works on your phone.",
+		"frozen": "Frozen",
+		"zoom": "Magnification",
+		"zoomIn": "Zoom in",
+		"zoomOut": "Zoom out",
+		"light": "Light",
+		"softLight": "brightened",
+		"freeze": "Freeze the picture",
+		"resume": "Resume"
 	}
 }

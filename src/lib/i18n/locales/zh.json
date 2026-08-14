@@ -10,7 +10,8 @@
 		"main": "主导航",
 		"shops": "门店",
 		"admin": "账号",
-		"household": "家庭"
+		"household": "家庭",
+		"magnifier": "放大镜"
 	},
 	"lists": {
 		"title": "我的清单",
@@ -230,5 +231,19 @@
 			"owner": "负责人",
 			"member": "成员"
 		}
+	},
+	"magnifier": {
+		"title": "放大镜",
+		"starting": "正在启动相机…",
+		"denied": "相机权限被拒绝。请在设置中允许，以便放大查看标签。",
+		"unsupported": "此处无法使用相机。放大镜可在手机上使用。",
+		"frozen": "已定格",
+		"zoom": "放大倍数",
+		"zoomIn": "放大",
+		"zoomOut": "缩小",
+		"light": "补光",
+		"softLight": "软件补光",
+		"freeze": "定格画面",
+		"resume": "继续"
 	}
 }

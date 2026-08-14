@@ -10,7 +10,8 @@
 		"main": "Navigazione principale",
 		"shops": "Negozi",
 		"admin": "Account",
-		"household": "Casa"
+		"household": "Casa",
+		"magnifier": "Lente"
 	},
 	"lists": {
 		"title": "Le mie liste",
@@ -233,5 +234,19 @@
 			"owner": "Responsabile",
 			"member": "Membro"
 		}
+	},
+	"magnifier": {
+		"title": "Lente",
+		"starting": "Attivazione della fotocamera…",
+		"denied": "Accesso alla fotocamera negato. Consentilo nelle impostazioni per leggere un’etichetta da vicino.",
+		"unsupported": "La fotocamera non è disponibile qui. La lente funziona sul tuo telefono.",
+		"frozen": "Immagine fissa",
+		"zoom": "Ingrandimento",
+		"zoomIn": "Ingrandisci",
+		"zoomOut": "Riduci",
+		"light": "Illumina",
+		"softLight": "schiarita",
+		"freeze": "Fissa l’immagine",
+		"resume": "Riprendi"
 	}
 }

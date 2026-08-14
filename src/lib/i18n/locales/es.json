@@ -10,7 +10,8 @@
 		"main": "Navegación principal",
 		"shops": "Tiendas",
 		"admin": "Cuentas",
-		"household": "Hogar"
+		"household": "Hogar",
+		"magnifier": "Lupa"
 	},
 	"lists": {
 		"title": "Mis listas",
@@ -233,5 +234,19 @@
 			"owner": "Responsable",
 			"member": "Miembro"
 		}
+	},
+	"magnifier": {
+		"title": "Lupa",
+		"starting": "Activando la cámara…",
+		"denied": "Acceso a la cámara denegado. Permítelo en los ajustes para leer una etiqueta de cerca.",
+		"unsupported": "La cámara no está disponible aquí. La lupa funciona en tu teléfono.",
+		"frozen": "Imagen congelada",
+		"zoom": "Aumento",
+		"zoomIn": "Ampliar",
+		"zoomOut": "Reducir",
+		"light": "Iluminar",
+		"softLight": "aclarada",
+		"freeze": "Congelar la imagen",
+		"resume": "Reanudar"
 	}
 }

@@ -10,7 +10,8 @@
 		"main": "Fitetezana fototra",
 		"shops": "Fivarotana",
 		"admin": "Kaonty",
-		"household": "Ankohonana"
+		"household": "Ankohonana",
+		"magnifier": "Fitarafana"
 	},
 	"lists": {
 		"title": "Ny lisitro",
@@ -230,5 +231,19 @@
 			"owner": "Tompon’andraikitra",
 			"member": "Mpikambana"
 		}
+	},
+	"magnifier": {
+		"title": "Fitarafana",
+		"starting": "Manomboka ny fakan-tsary…",
+		"denied": "Tsy navela hampiasa ny fakan-tsary. Avelao ao amin’ny kirakira mba hamaky soratra kely.",
+		"unsupported": "Tsy misy fakan-tsary eto. Miasa amin’ny findainao ny fitarafana.",
+		"frozen": "Sary voafatotra",
+		"zoom": "Fanalehibiazana",
+		"zoomIn": "Hanalehibe",
+		"zoomOut": "Hanakely",
+		"light": "Jiro",
+		"softLight": "jiro rindrambaiko",
+		"freeze": "Hamatotra ny sary",
+		"resume": "Hanohy"
 	}
 }

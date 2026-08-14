@@ -10,7 +10,8 @@
 		"main": "Navigation principale",
 		"shops": "Magasins",
 		"admin": "Comptes",
-		"household": "Foyer"
+		"household": "Foyer",
+		"magnifier": "Loupe"
 	},
 	"lists": {
 		"title": "Mes listes",
@@ -233,5 +234,19 @@
 			"owner": "Responsable",
 			"member": "Membre"
 		}
+	},
+	"magnifier": {
+		"title": "Loupe",
+		"starting": "Activation de la caméra…",
+		"denied": "Accès à la caméra refusé. Autorisez-la dans les réglages pour lire une étiquette en gros.",
+		"unsupported": "La caméra n’est pas disponible ici. La loupe fonctionne sur votre téléphone.",
+		"frozen": "Image figée",
+		"zoom": "Grossissement",
+		"zoomIn": "Agrandir",
+		"zoomOut": "Réduire",
+		"light": "Éclairer",
+		"softLight": "éclaircie",
+		"freeze": "Figer l’image",
+		"resume": "Reprendre"
 	}
 }

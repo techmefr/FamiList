@@ -10,7 +10,8 @@
 		"main": "Navegação principal",
 		"shops": "Lojas",
 		"admin": "Contas",
-		"household": "Casa"
+		"household": "Casa",
+		"magnifier": "Lupa"
 	},
 	"lists": {
 		"title": "As minhas listas",
@@ -233,5 +234,19 @@
 			"owner": "Responsável",
 			"member": "Membro"
 		}
+	},
+	"magnifier": {
+		"title": "Lupa",
+		"starting": "A ativar a câmara…",
+		"denied": "Acesso à câmara recusado. Autorize nas definições para ler um rótulo de perto.",
+		"unsupported": "A câmara não está disponível aqui. A lupa funciona no seu telemóvel.",
+		"frozen": "Imagem fixa",
+		"zoom": "Ampliação",
+		"zoomIn": "Ampliar",
+		"zoomOut": "Reduzir",
+		"light": "Iluminar",
+		"softLight": "clareada",
+		"freeze": "Fixar a imagem",
+		"resume": "Retomar"
 	}
 }
