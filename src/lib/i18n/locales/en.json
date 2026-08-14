@@ -65,13 +65,38 @@
 		"empty": "No cards saved.",
 		"points": "loyalty points",
 		"delete": "Delete card {name}",
-		"secretNotice": "Loyalty account passwords are never stored here."
+		"secretNotice": "Loyalty account passwords are never stored here.",
+		"wallet": "Wallet",
+		"loyalty": "LOYALTY",
+		"tapHint": "Tap a card to show it full screen at the till.",
+		"add": "Add a card",
+		"name": "Shop name",
+		"code": "Card code",
+		"format": "Code format",
+		"formatAuto": "Detect automatically ({format})",
+		"eanInvalid": "This code is not a valid EAN-13.",
+		"save": "Save card",
+		"showAtCheckout": "SHOW AT THE TILL",
+		"brightnessHint": "Turn the screen brightness up so it scans easily.",
+		"notes": "Notes",
+		"notesPlaceholder": "Free note (perks, opening hours, remarks…)",
+		"noNotes": "No note on this card.",
+		"invalidCode": "Unreadable code: it cannot be reproduced faithfully.",
+		"qrLabel": "Card QR code",
+		"barcodeLabel": "Card barcode",
+		"type": {
+			"code_39": "Code 39",
+			"ean_13": "EAN-13",
+			"qr_code": "QR code"
+		}
 	},
 	"common": {
 		"comingSoon": "Coming soon.",
 		"save": "Save",
 		"cancel": "Cancel",
-		"loading": "Loading…"
+		"loading": "Loading…",
+		"close": "Close",
+		"edit": "Edit"
 	},
 	"list": {
 		"shop": "Shop",

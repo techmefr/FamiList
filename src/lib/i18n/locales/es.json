@@ -65,13 +65,38 @@
 		"empty": "No hay tarjetas guardadas.",
 		"points": "puntos de fidelidad",
 		"delete": "Eliminar la tarjeta {name}",
-		"secretNotice": "Las contraseñas de las cuentas de fidelidad nunca se guardan aquí."
+		"secretNotice": "Las contraseñas de las cuentas de fidelidad nunca se guardan aquí.",
+		"wallet": "Cartera",
+		"loyalty": "FIDELIDAD",
+		"tapHint": "Toca una tarjeta para mostrarla en grande en la caja.",
+		"add": "Añadir una tarjeta",
+		"name": "Nombre de la tienda",
+		"code": "Código de la tarjeta",
+		"format": "Formato del código",
+		"formatAuto": "Detección automática ({format})",
+		"eanInvalid": "Este código no forma un EAN-13 válido.",
+		"save": "Guardar la tarjeta",
+		"showAtCheckout": "MUESTRA EN CAJA",
+		"brightnessHint": "Sube el brillo de la pantalla para facilitar la lectura.",
+		"notes": "Notas",
+		"notesPlaceholder": "Nota libre (ventajas, horarios, observaciones…)",
+		"noNotes": "Sin nota en esta tarjeta.",
+		"invalidCode": "Código ilegible: no se puede reproducir fielmente.",
+		"qrLabel": "Código QR de la tarjeta",
+		"barcodeLabel": "Código de barras de la tarjeta",
+		"type": {
+			"code_39": "Code 39",
+			"ean_13": "EAN-13",
+			"qr_code": "Código QR"
+		}
 	},
 	"common": {
 		"comingSoon": "Próximamente.",
 		"save": "Guardar",
 		"cancel": "Cancelar",
-		"loading": "Cargando…"
+		"loading": "Cargando…",
+		"close": "Cerrar",
+		"edit": "Editar"
 	},
 	"list": {
 		"shop": "Tienda",

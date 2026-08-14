@@ -65,13 +65,38 @@
 		"empty": "Keine Karten gespeichert.",
 		"points": "Treuepunkte",
 		"delete": "Karte {name} löschen",
-		"secretNotice": "Passwörter von Treuekonten werden hier nie gespeichert."
+		"secretNotice": "Passwörter von Treuekonten werden hier nie gespeichert.",
+		"wallet": "Brieftasche",
+		"loyalty": "TREUE",
+		"tapHint": "Tippen Sie auf eine Karte, um sie an der Kasse groß anzuzeigen.",
+		"add": "Karte hinzufügen",
+		"name": "Name des Geschäfts",
+		"code": "Kartencode",
+		"format": "Codeformat",
+		"formatAuto": "Automatisch erkennen ({format})",
+		"eanInvalid": "Dieser Code ergibt keinen gültigen EAN-13.",
+		"save": "Karte speichern",
+		"showAtCheckout": "AN DER KASSE VORZEIGEN",
+		"brightnessHint": "Erhöhen Sie die Bildschirmhelligkeit, damit der Code gut gelesen wird.",
+		"notes": "Notizen",
+		"notesPlaceholder": "Freie Notiz (Vorteile, Öffnungszeiten, Hinweise…)",
+		"noNotes": "Keine Notiz zu dieser Karte.",
+		"invalidCode": "Unlesbarer Code: Er kann nicht originalgetreu wiedergegeben werden.",
+		"qrLabel": "QR-Code der Karte",
+		"barcodeLabel": "Strichcode der Karte",
+		"type": {
+			"code_39": "Code 39",
+			"ean_13": "EAN-13",
+			"qr_code": "QR-Code"
+		}
 	},
 	"common": {
 		"comingSoon": "Demnächst.",
 		"save": "Speichern",
 		"cancel": "Abbrechen",
-		"loading": "Wird geladen…"
+		"loading": "Wird geladen…",
+		"close": "Schließen",
+		"edit": "Bearbeiten"
 	},
 	"list": {
 		"shop": "Geschäft",

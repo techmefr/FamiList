@@ -65,13 +65,38 @@
 		"empty": "Aucune carte enregistrée.",
 		"points": "points de fidélité",
 		"delete": "Supprimer la carte {name}",
-		"secretNotice": "Les mots de passe de comptes fidélité ne sont jamais enregistrés ici."
+		"secretNotice": "Les mots de passe de comptes fidélité ne sont jamais enregistrés ici.",
+		"wallet": "Portefeuille",
+		"loyalty": "FIDÉLITÉ",
+		"tapHint": "Touchez une carte pour l’afficher en grand à la caisse.",
+		"add": "Ajouter une carte",
+		"name": "Nom de l’enseigne",
+		"code": "Code de la carte",
+		"format": "Format du code",
+		"formatAuto": "Détection automatique ({format})",
+		"eanInvalid": "Ce code ne forme pas un EAN-13 valide.",
+		"save": "Enregistrer la carte",
+		"showAtCheckout": "PRÉSENTEZ EN CAISSE",
+		"brightnessHint": "Augmentez la luminosité de l’écran pour faciliter la lecture.",
+		"notes": "Notes",
+		"notesPlaceholder": "Note libre (avantages, horaires, remarques…)",
+		"noNotes": "Aucune note pour cette carte.",
+		"invalidCode": "Code illisible : impossible de le reproduire fidèlement.",
+		"qrLabel": "Code QR de la carte",
+		"barcodeLabel": "Code-barres de la carte",
+		"type": {
+			"code_39": "Code 39",
+			"ean_13": "EAN-13",
+			"qr_code": "Code QR"
+		}
 	},
 	"common": {
 		"comingSoon": "À venir.",
 		"save": "Enregistrer",
 		"cancel": "Annuler",
-		"loading": "Chargement…"
+		"loading": "Chargement…",
+		"close": "Fermer",
+		"edit": "Modifier"
 	},
 	"list": {
 		"shop": "Magasin",

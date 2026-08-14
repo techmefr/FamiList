@@ -285,6 +285,17 @@ class DataStore {
 		return card;
 	}
 
+	updateCard(id: string, patch: Partial<Omit<LoyaltyCard, 'id'>>) {
+		const card = this.cards.find((c) => c.id === id);
+		if (!card) return;
+
+		Object.assign(card, patch);
+
+		const snapshot = $state.snapshot(card) as LoyaltyCard;
+		db.cards.put(snapshot);
+		this.push('loyalty_cards', snapshot, fromCard);
+	}
+
 	removeCard(id: string) {
 		this.cards = this.cards.filter((c) => c.id !== id);
 		db.cards.delete(id);

@@ -65,13 +65,38 @@
 		"empty": "Nessuna carta salvata.",
 		"points": "punti fedeltà",
 		"delete": "Elimina la carta {name}",
-		"secretNotice": "Le password degli account fedeltà non sono mai salvate qui."
+		"secretNotice": "Le password degli account fedeltà non sono mai salvate qui.",
+		"wallet": "Portafoglio",
+		"loyalty": "FEDELTÀ",
+		"tapHint": "Tocca una carta per mostrarla in grande alla cassa.",
+		"add": "Aggiungi una carta",
+		"name": "Nome del negozio",
+		"code": "Codice della carta",
+		"format": "Formato del codice",
+		"formatAuto": "Rilevamento automatico ({format})",
+		"eanInvalid": "Questo codice non forma un EAN-13 valido.",
+		"save": "Salva la carta",
+		"showAtCheckout": "MOSTRA ALLA CASSA",
+		"brightnessHint": "Aumenta la luminosità dello schermo per agevolare la lettura.",
+		"notes": "Note",
+		"notesPlaceholder": "Nota libera (vantaggi, orari, osservazioni…)",
+		"noNotes": "Nessuna nota su questa carta.",
+		"invalidCode": "Codice illeggibile: non può essere riprodotto fedelmente.",
+		"qrLabel": "Codice QR della carta",
+		"barcodeLabel": "Codice a barre della carta",
+		"type": {
+			"code_39": "Code 39",
+			"ean_13": "EAN-13",
+			"qr_code": "Codice QR"
+		}
 	},
 	"common": {
 		"comingSoon": "Prossimamente.",
 		"save": "Salva",
 		"cancel": "Annulla",
-		"loading": "Caricamento…"
+		"loading": "Caricamento…",
+		"close": "Chiudi",
+		"edit": "Modifica"
 	},
 	"list": {
 		"shop": "Negozio",
