@@ -6,8 +6,10 @@
 		type Theme
 	} from '$stores/settings.svelte';
 	import { i18n, t, LOCALES, type Locale } from '$lib/i18n/index.svelte';
+	import { session } from '$stores/session.svelte';
 	import * as Card from '$lib/components/ui/card';
 	import { Label } from '$lib/components/ui/label';
+	import { Button } from '$lib/components/ui/button';
 	import { Check } from '@lucide/svelte';
 
 	const themes: Theme[] = ['light', 'dark', 'system'];
@@ -22,6 +24,20 @@
 </svelte:head>
 
 <h1 class="text-h1 font-semibold">{t('profile.title')}</h1>
+
+<Card.Root class="mt-6">
+	<Card.Header>
+		<Card.Title class="text-h2">{t('profile.account')}</Card.Title>
+	</Card.Header>
+	<Card.Content class="flex flex-wrap items-center justify-between gap-4">
+		<p class="text-muted-foreground text-label">
+			{t('profile.signedInAs', { email: session.user?.email ?? '' })}
+		</p>
+		<Button variant="outline" onclick={() => session.signOut()} data-test="sign-out">
+			{t('auth.signOut')}
+		</Button>
+	</Card.Content>
+</Card.Root>
 
 <Card.Root class="mt-6">
 	<Card.Header>

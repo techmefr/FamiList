@@ -8,7 +8,8 @@
 		"cards": "Karatra",
 		"profile": "Mombamomba",
 		"main": "Fitetezana fototra",
-		"shops": "Fivarotana"
+		"shops": "Fivarotana",
+		"admin": "Kaonty"
 	},
 	"lists": {
 		"title": "Ny lisitro",
@@ -31,7 +32,9 @@
 		"accent": "Loko lehibe",
 		"language": "Fiteny",
 		"previewItem": "Voatabia sampahony — 500 g",
-		"previewNote": "Topi-maso amin'ny haben'ny entana marina ao anaty lisitra."
+		"previewNote": "Topi-maso amin'ny haben'ny entana marina ao anaty lisitra.",
+		"account": "Kaonty",
+		"signedInAs": "Tafiditra amin'ny anarana {email}"
 	},
 	"theme": {
 		"light": "Mazava",
@@ -110,5 +113,34 @@
 		"name": "Anaran'ny faritra",
 		"emoji": "Emoji",
 		"hint": "Ny faritra vaovao dia apetraka amin'ny faran'ny lalana rehetra — afindrao ao amin'ny lisitra."
+	},
+	"auth": {
+		"title": "Hiditra",
+		"signIn": "Hiditra",
+		"signUp": "Hamorona kaonty",
+		"signOut": "Hivoaka",
+		"email": "Adiresy mailaka",
+		"password": "Teny miafina",
+		"displayName": "Anarana",
+		"approvalNotice": "Tsy maintsy ekena aloha ny kaontinao vao afaka mampiasa ny rindranasa ianao.",
+		"signedUpTitle": "Voaforona ny kaonty",
+		"signedUpBody": "Jereo ny mailakao raha misy fanamafisana angatahina, dia midira. Hisokatra ny fidirana rehefa voaeka ny kaonty.",
+		"pendingTitle": "Miandry fankatoavana",
+		"pendingBody": "Voarakitra ny fangatahanao. Hisokatra ny fidirana rehefa voaeka ny kaontinao.",
+		"rejectedTitle": "Lavina ny fidirana",
+		"rejectedBody": "Tsy nekena ny fangatahanao."
+	},
+	"admin": {
+		"title": "Fankatoavana kaonty",
+		"denied": "Ho an'ny mpitantana ihany.",
+		"empty": "Tsy misy fangatahana.",
+		"approve": "Ekena",
+		"reject": "Lavina",
+		"requestedAt": "Fangatahana tamin'ny {date}",
+		"status": {
+			"pending": "Miandry",
+			"approved": "Nekena",
+			"rejected": "Nolavina"
+		}
 	}
 }

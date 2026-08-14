@@ -1,0 +1,112 @@
+<script lang="ts">
+	import { goto } from '$app/navigation';
+	import { session } from '$stores/session.svelte';
+	import { t } from '$lib/i18n/index.svelte';
+	import { Button } from '$lib/components/ui/button';
+	import { Input } from '$lib/components/ui/input';
+	import { Label } from '$lib/components/ui/label';
+	import * as Card from '$lib/components/ui/card';
+
+	let mode = $state<'signin' | 'signup'>('signin');
+	let email = $state('');
+	let password = $state('');
+	let displayName = $state('');
+	let busy = $state(false);
+	let signedUp = $state(false);
+
+	async function submit(event: SubmitEvent) {
+		event.preventDefault();
+		busy = true;
+
+		const ok =
+			mode === 'signin'
+				? await session.signIn(email, password)
+				: await session.signUp(email, password, displayName);
+
+		busy = false;
+		if (!ok) return;
+
+		if (mode === 'signup') signedUp = true;
+		else goto('/');
+	}
+</script>
+
+<svelte:head>
+	<title>{t('auth.title')} — {t('app.name')}</title>
+</svelte:head>
+
+<h1 class="text-h1 font-semibold">{t('auth.title')}</h1>
+
+{#if signedUp}
+	<Card.Root class="mt-6">
+		<Card.Content class="space-y-3">
+			<p class="text-product font-medium">{t('auth.signedUpTitle')}</p>
+			<p class="text-muted-foreground">{t('auth.signedUpBody')}</p>
+		</Card.Content>
+	</Card.Root>
+{:else}
+	<div class="mt-6 flex gap-2">
+		<Button
+			variant={mode === 'signin' ? 'default' : 'outline'}
+			onclick={() => (mode = 'signin')}
+			data-test="mode-signin"
+		>
+			{t('auth.signIn')}
+		</Button>
+		<Button
+			variant={mode === 'signup' ? 'default' : 'outline'}
+			onclick={() => (mode = 'signup')}
+			data-test="mode-signup"
+		>
+			{t('auth.signUp')}
+		</Button>
+	</div>
+
+	<form onsubmit={submit} class="bg-card mt-4 space-y-4 rounded-md border p-4" data-test="auth-form">
+		{#if mode === 'signup'}
+			<div>
+				<Label for="auth-name">{t('auth.displayName')}</Label>
+				<Input id="auth-name" bind:value={displayName} data-test="auth-name" required />
+			</div>
+		{/if}
+
+		<div>
+			<Label for="auth-email">{t('auth.email')}</Label>
+			<Input
+				id="auth-email"
+				type="email"
+				bind:value={email}
+				data-test="auth-email"
+				autocomplete="email"
+				required
+			/>
+		</div>
+
+		<div>
+			<Label for="auth-password">{t('auth.password')}</Label>
+			<Input
+				id="auth-password"
+				type="password"
+				bind:value={password}
+				data-test="auth-password"
+				autocomplete={mode === 'signin' ? 'current-password' : 'new-password'}
+				minlength={8}
+				required
+			/>
+		</div>
+
+		{#if session.error}
+			<p class="text-destructive text-label" role="alert" data-test="auth-error">
+				{session.error}
+			</p>
+		{/if}
+
+		<Button type="submit" disabled={busy} data-test="auth-submit" class="w-full">
+			{busy ? t('common.loading') : mode === 'signin' ? t('auth.signIn') : t('auth.signUp')}
+		</Button>
+
+		{#if mode === 'signup'}
+			<p class="text-muted-foreground text-caption">{t('auth.approvalNotice')}</p>
+		{/if}
+	</form>
+{/if}

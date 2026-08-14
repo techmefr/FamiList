@@ -8,7 +8,8 @@
 		"cards": "Cards",
 		"profile": "Profile",
 		"main": "Main navigation",
-		"shops": "Shops"
+		"shops": "Shops",
+		"admin": "Accounts"
 	},
 	"lists": {
 		"title": "My lists",
@@ -32,7 +33,9 @@
 		"accent": "Main colour",
 		"language": "Language",
 		"previewItem": "Vine tomatoes — 500 g",
-		"previewNote": "Preview at the real size of an item in a list."
+		"previewNote": "Preview at the real size of an item in a list.",
+		"account": "Account",
+		"signedInAs": "Signed in as {email}"
 	},
 	"theme": {
 		"light": "Light",
@@ -111,5 +114,34 @@
 		"name": "Aisle name",
 		"emoji": "Emoji",
 		"hint": "A new aisle is appended to every route — move it into place from the list."
+	},
+	"auth": {
+		"title": "Sign in",
+		"signIn": "Sign in",
+		"signUp": "Create an account",
+		"signOut": "Sign out",
+		"email": "Email address",
+		"password": "Password",
+		"displayName": "Name",
+		"approvalNotice": "Your account will need to be approved before you can use the app.",
+		"signedUpTitle": "Account created",
+		"signedUpBody": "Check your inbox if a confirmation is requested, then sign in. Access opens once your account is approved.",
+		"pendingTitle": "Waiting for approval",
+		"pendingBody": "Your request has been recorded. Access opens once your account is approved.",
+		"rejectedTitle": "Access refused",
+		"rejectedBody": "Your request was not accepted."
+	},
+	"admin": {
+		"title": "Account approval",
+		"denied": "Administrators only.",
+		"empty": "No requests.",
+		"approve": "Approve",
+		"reject": "Refuse",
+		"requestedAt": "Requested on {date}",
+		"status": {
+			"pending": "Pending",
+			"approved": "Approved",
+			"rejected": "Refused"
+		}
 	}
 }

@@ -8,7 +8,8 @@
 		"cards": "Cartes",
 		"profile": "Profil",
 		"main": "Navigation principale",
-		"shops": "Magasins"
+		"shops": "Magasins",
+		"admin": "Comptes"
 	},
 	"lists": {
 		"title": "Mes listes",
@@ -32,7 +33,9 @@
 		"accent": "Couleur principale",
 		"language": "Langue",
 		"previewItem": "Tomates grappe — 500 g",
-		"previewNote": "Aperçu à la taille réelle d'un article dans une liste."
+		"previewNote": "Aperçu à la taille réelle d'un article dans une liste.",
+		"account": "Compte",
+		"signedInAs": "Connecté en tant que {email}"
 	},
 	"theme": {
 		"light": "Clair",
@@ -111,5 +114,34 @@
 		"name": "Nom du rayon",
 		"emoji": "Emoji",
 		"hint": "Un nouveau rayon est ajouté à la fin de chaque parcours, à vous de le déplacer dans la liste."
+	},
+	"auth": {
+		"title": "Connexion",
+		"signIn": "Se connecter",
+		"signUp": "Créer un compte",
+		"signOut": "Se déconnecter",
+		"email": "Adresse e-mail",
+		"password": "Mot de passe",
+		"displayName": "Nom",
+		"approvalNotice": "Votre compte devra être validé avant de pouvoir utiliser l'application.",
+		"signedUpTitle": "Compte créé",
+		"signedUpBody": "Vérifiez votre boîte mail si une confirmation vous est demandée, puis connectez-vous. L'accès sera ouvert après validation.",
+		"pendingTitle": "En attente de validation",
+		"pendingBody": "Votre demande a bien été enregistrée. L'accès sera ouvert une fois votre compte validé.",
+		"rejectedTitle": "Accès refusé",
+		"rejectedBody": "Votre demande n'a pas été retenue."
+	},
+	"admin": {
+		"title": "Validation des comptes",
+		"denied": "Réservé aux administrateurs.",
+		"empty": "Aucune demande.",
+		"approve": "Valider",
+		"reject": "Refuser",
+		"requestedAt": "Demande du {date}",
+		"status": {
+			"pending": "En attente",
+			"approved": "Validé",
+			"rejected": "Refusé"
+		}
 	}
 }

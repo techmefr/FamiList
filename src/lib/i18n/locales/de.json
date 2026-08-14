@@ -8,7 +8,8 @@
 		"cards": "Karten",
 		"profile": "Profil",
 		"main": "Hauptnavigation",
-		"shops": "Geschäfte"
+		"shops": "Geschäfte",
+		"admin": "Konten"
 	},
 	"lists": {
 		"title": "Meine Listen",
@@ -32,7 +33,9 @@
 		"accent": "Hauptfarbe",
 		"language": "Sprache",
 		"previewItem": "Strauchtomaten — 500 g",
-		"previewNote": "Vorschau in der echten Größe eines Artikels in einer Liste."
+		"previewNote": "Vorschau in der echten Größe eines Artikels in einer Liste.",
+		"account": "Konto",
+		"signedInAs": "Angemeldet als {email}"
 	},
 	"theme": {
 		"light": "Hell",
@@ -111,5 +114,34 @@
 		"name": "Name der Abteilung",
 		"emoji": "Emoji",
 		"hint": "Eine neue Abteilung wird an jeden Weg angehängt — verschieben Sie sie in der Liste."
+	},
+	"auth": {
+		"title": "Anmelden",
+		"signIn": "Anmelden",
+		"signUp": "Konto erstellen",
+		"signOut": "Abmelden",
+		"email": "E-Mail-Adresse",
+		"password": "Passwort",
+		"displayName": "Name",
+		"approvalNotice": "Ihr Konto muss freigegeben werden, bevor Sie die App nutzen können.",
+		"signedUpTitle": "Konto erstellt",
+		"signedUpBody": "Prüfen Sie Ihr Postfach, falls eine Bestätigung verlangt wird, und melden Sie sich dann an. Der Zugang wird nach der Freigabe geöffnet.",
+		"pendingTitle": "Warten auf Freigabe",
+		"pendingBody": "Ihre Anfrage wurde gespeichert. Der Zugang wird nach der Freigabe Ihres Kontos geöffnet.",
+		"rejectedTitle": "Zugang verweigert",
+		"rejectedBody": "Ihre Anfrage wurde nicht angenommen."
+	},
+	"admin": {
+		"title": "Kontofreigabe",
+		"denied": "Nur für Administratoren.",
+		"empty": "Keine Anfragen.",
+		"approve": "Freigeben",
+		"reject": "Ablehnen",
+		"requestedAt": "Angefragt am {date}",
+		"status": {
+			"pending": "Ausstehend",
+			"approved": "Freigegeben",
+			"rejected": "Abgelehnt"
+		}
 	}
 }

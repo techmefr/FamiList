@@ -8,7 +8,8 @@
 		"cards": "Tarjetas",
 		"profile": "Perfil",
 		"main": "Navegación principal",
-		"shops": "Tiendas"
+		"shops": "Tiendas",
+		"admin": "Cuentas"
 	},
 	"lists": {
 		"title": "Mis listas",
@@ -32,7 +33,9 @@
 		"accent": "Color principal",
 		"language": "Idioma",
 		"previewItem": "Tomates en rama — 500 g",
-		"previewNote": "Vista previa al tamaño real de un artículo en una lista."
+		"previewNote": "Vista previa al tamaño real de un artículo en una lista.",
+		"account": "Cuenta",
+		"signedInAs": "Conectado como {email}"
 	},
 	"theme": {
 		"light": "Claro",
@@ -111,5 +114,34 @@
 		"name": "Nombre de la sección",
 		"emoji": "Emoji",
 		"hint": "Una sección nueva se añade al final de cada recorrido; muévela desde la lista."
+	},
+	"auth": {
+		"title": "Iniciar sesión",
+		"signIn": "Iniciar sesión",
+		"signUp": "Crear una cuenta",
+		"signOut": "Cerrar sesión",
+		"email": "Correo electrónico",
+		"password": "Contraseña",
+		"displayName": "Nombre",
+		"approvalNotice": "Tu cuenta deberá ser validada antes de poder usar la aplicación.",
+		"signedUpTitle": "Cuenta creada",
+		"signedUpBody": "Revisa tu correo si se solicita una confirmación y luego inicia sesión. El acceso se abrirá tras la validación.",
+		"pendingTitle": "Pendiente de validación",
+		"pendingBody": "Tu solicitud ha quedado registrada. El acceso se abrirá cuando tu cuenta sea validada.",
+		"rejectedTitle": "Acceso denegado",
+		"rejectedBody": "Tu solicitud no ha sido aceptada."
+	},
+	"admin": {
+		"title": "Validación de cuentas",
+		"denied": "Solo administradores.",
+		"empty": "No hay solicitudes.",
+		"approve": "Validar",
+		"reject": "Rechazar",
+		"requestedAt": "Solicitud del {date}",
+		"status": {
+			"pending": "Pendiente",
+			"approved": "Validada",
+			"rejected": "Rechazada"
+		}
 	}
 }

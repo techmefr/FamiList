@@ -8,7 +8,8 @@
 		"cards": "Carte",
 		"profile": "Profilo",
 		"main": "Navigazione principale",
-		"shops": "Negozi"
+		"shops": "Negozi",
+		"admin": "Account"
 	},
 	"lists": {
 		"title": "Le mie liste",
@@ -32,7 +33,9 @@
 		"accent": "Colore principale",
 		"language": "Lingua",
 		"previewItem": "Pomodori a grappolo — 500 g",
-		"previewNote": "Anteprima alla dimensione reale di un articolo in una lista."
+		"previewNote": "Anteprima alla dimensione reale di un articolo in una lista.",
+		"account": "Account",
+		"signedInAs": "Connesso come {email}"
 	},
 	"theme": {
 		"light": "Chiaro",
@@ -111,5 +114,34 @@
 		"name": "Nome del reparto",
 		"emoji": "Emoji",
 		"hint": "Un nuovo reparto viene aggiunto in fondo a ogni percorso: spostalo dalla lista."
+	},
+	"auth": {
+		"title": "Accedi",
+		"signIn": "Accedi",
+		"signUp": "Crea un account",
+		"signOut": "Esci",
+		"email": "Indirizzo e-mail",
+		"password": "Password",
+		"displayName": "Nome",
+		"approvalNotice": "Il tuo account dovrà essere approvato prima di poter usare l'app.",
+		"signedUpTitle": "Account creato",
+		"signedUpBody": "Controlla la posta se ti viene chiesta una conferma, poi accedi. L'accesso si apre dopo l'approvazione.",
+		"pendingTitle": "In attesa di approvazione",
+		"pendingBody": "La tua richiesta è stata registrata. L'accesso si aprirà una volta approvato l'account.",
+		"rejectedTitle": "Accesso rifiutato",
+		"rejectedBody": "La tua richiesta non è stata accettata."
+	},
+	"admin": {
+		"title": "Approvazione degli account",
+		"denied": "Riservato agli amministratori.",
+		"empty": "Nessuna richiesta.",
+		"approve": "Approva",
+		"reject": "Rifiuta",
+		"requestedAt": "Richiesta del {date}",
+		"status": {
+			"pending": "In attesa",
+			"approved": "Approvato",
+			"rejected": "Rifiutato"
+		}
 	}
 }
