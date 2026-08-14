@@ -16,7 +16,12 @@
 		"remaining": {
 			"one": "{count} left",
 			"other": "{count} left"
-		}
+		},
+		"new": "New",
+		"name": "Name",
+		"emoji": "Emoji",
+		"empty": "No lists yet.",
+		"delete": "Delete list {name}"
 	},
 	"profile": {
 		"title": "Profile",
@@ -52,9 +57,41 @@
 		"title": "Scan"
 	},
 	"cards": {
-		"title": "Cards"
+		"title": "Cards",
+		"empty": "No cards saved.",
+		"points": "loyalty points",
+		"delete": "Delete card {name}",
+		"secretNotice": "Loyalty account passwords are never stored here."
 	},
 	"common": {
-		"comingSoon": "Coming soon."
+		"comingSoon": "Coming soon.",
+		"save": "Save",
+		"cancel": "Cancel",
+		"loading": "Loading…"
+	},
+	"list": {
+		"shop": "Shop",
+		"learnedShop": "Learned route",
+		"back": "Back to lists",
+		"notFound": "List not found.",
+		"empty": "Nothing to show with these filters.",
+		"priorityOnly": "Priorities only",
+		"hideChecked": "Hide picked items",
+		"clearChecked": "Remove the {count} picked",
+		"moveUp": "Move {name} up",
+		"moveDown": "Move {name} down",
+		"aisleUp": "Move aisle {name} up",
+		"aisleDown": "Move aisle {name} down",
+		"priority": "Mark {name} as priority",
+		"remove": "Delete {name}"
+	},
+	"add": {
+		"name": "Item",
+		"qty": "Quantity",
+		"unit": "Unit",
+		"aisle": "Aisle",
+		"submit": "Add",
+		"aisleAuto": "Automatic detection",
+		"aisleGuessed": "Detected: {name}"
 	}
 }

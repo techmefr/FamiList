@@ -83,6 +83,110 @@
 }
 
 /**
+ * Couleur principale au choix. Terracotta est la valeur par défaut, déjà posée par :root et .dark
+ * ci-dessus. Chaque autre teinte est en OKLCH à clarté fixée par thème, ce qui garde
+ * --primary-foreground lisible sans calcul à l'exécution.
+ *
+ * Ces valeurs ne vivent qu'ici : le script anti-flash et le store se contentent de poser
+ * data-accent sur <html>.
+ */
+[data-accent='forest'] {
+	--primary: oklch(0.45 0.11 155);
+	--ring: oklch(0.45 0.11 155);
+	--fl-primary-tint: oklch(0.45 0.11 155 / 0.1);
+}
+.dark[data-accent='forest'] {
+	--primary: oklch(0.75 0.11 155);
+	--ring: oklch(0.75 0.11 155);
+	--fl-primary-tint: oklch(0.75 0.11 155 / 0.14);
+}
+
+[data-accent='blue'] {
+	--primary: oklch(0.5 0.15 250);
+	--ring: oklch(0.5 0.15 250);
+	--fl-primary-tint: oklch(0.5 0.15 250 / 0.1);
+}
+.dark[data-accent='blue'] {
+	--primary: oklch(0.75 0.13 250);
+	--ring: oklch(0.75 0.13 250);
+	--fl-primary-tint: oklch(0.75 0.13 250 / 0.14);
+}
+
+[data-accent='plum'] {
+	--primary: oklch(0.48 0.16 330);
+	--ring: oklch(0.48 0.16 330);
+	--fl-primary-tint: oklch(0.48 0.16 330 / 0.1);
+}
+.dark[data-accent='plum'] {
+	--primary: oklch(0.75 0.14 330);
+	--ring: oklch(0.75 0.14 330);
+	--fl-primary-tint: oklch(0.75 0.14 330 / 0.14);
+}
+
+[data-accent='teal'] {
+	--primary: oklch(0.48 0.1 195);
+	--ring: oklch(0.48 0.1 195);
+	--fl-primary-tint: oklch(0.48 0.1 195 / 0.1);
+}
+.dark[data-accent='teal'] {
+	--primary: oklch(0.76 0.1 195);
+	--ring: oklch(0.76 0.1 195);
+	--fl-primary-tint: oklch(0.76 0.1 195 / 0.14);
+}
+
+[data-accent='ink'] {
+	--primary: oklch(0.35 0.03 60);
+	--ring: oklch(0.35 0.03 60);
+	--fl-primary-tint: oklch(0.35 0.03 60 / 0.1);
+}
+.dark[data-accent='ink'] {
+	--primary: oklch(0.82 0.02 60);
+	--ring: oklch(0.82 0.02 60);
+	--fl-primary-tint: oklch(0.82 0.02 60 / 0.14);
+}
+
+/** Pastille de choix : montre la teinte du preset, y compris quand il n'est pas actif. */
+.fl-swatch {
+	background: var(--primary);
+}
+.fl-swatch-forest {
+	background: oklch(0.45 0.11 155);
+}
+.dark .fl-swatch-forest {
+	background: oklch(0.75 0.11 155);
+}
+.fl-swatch-blue {
+	background: oklch(0.5 0.15 250);
+}
+.dark .fl-swatch-blue {
+	background: oklch(0.75 0.13 250);
+}
+.fl-swatch-plum {
+	background: oklch(0.48 0.16 330);
+}
+.dark .fl-swatch-plum {
+	background: oklch(0.75 0.14 330);
+}
+.fl-swatch-teal {
+	background: oklch(0.48 0.1 195);
+}
+.dark .fl-swatch-teal {
+	background: oklch(0.76 0.1 195);
+}
+.fl-swatch-ink {
+	background: oklch(0.35 0.03 60);
+}
+.dark .fl-swatch-ink {
+	background: oklch(0.82 0.02 60);
+}
+.fl-swatch-terracotta {
+	background: #c8532a;
+}
+.dark .fl-swatch-terracotta {
+	background: #e8885e;
+}
+
+/**
  * Échelle typographique du prototype, exprimée en rem. Les cinq crans de taille agissent sur
  * --fl-font-scale, donc sur le font-size racine : tout grandit ensemble, proportions préservées.
  */
@@ -96,6 +200,22 @@
 	--fl-label: 0.875rem;
 	--fl-caption: 0.75rem;
 	--fl-product: 1.25rem;
+}
+
+[data-scale='xs'] {
+	--fl-font-scale: 0.9;
+}
+[data-scale='sm'] {
+	--fl-font-scale: 1;
+}
+[data-scale='md'] {
+	--fl-font-scale: 1.15;
+}
+[data-scale='lg'] {
+	--fl-font-scale: 1.35;
+}
+[data-scale='xl'] {
+	--fl-font-scale: 1.6;
 }
 
 @theme inline {

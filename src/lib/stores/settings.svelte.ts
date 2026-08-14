@@ -17,10 +17,6 @@ class Settings {
 	#prefersDark = $state(false);
 
 	isDark = $derived(this.theme === 'dark' || (this.theme === 'system' && this.#prefersDark));
-	accent = $derived(ACCENT_PRESETS.find((a) => a.id === this.accentId) ?? ACCENT_PRESETS[0]);
-	fontScale = $derived(
-		FONT_SCALE_PRESETS.find((f) => f.id === this.fontScaleId) ?? FONT_SCALE_PRESETS[1]
-	);
 
 	constructor() {
 		if (!browser) return;
@@ -43,14 +39,10 @@ class Settings {
 		$effect.root(() => {
 			$effect(() => {
 				const root = document.documentElement;
-				const dark = this.isDark;
-				const accent = this.accent;
 
-				root.classList.toggle('dark', dark);
-				root.style.setProperty('--primary', dark ? accent.dark : accent.light);
-				root.style.setProperty('--ring', dark ? accent.dark : accent.light);
-				root.style.setProperty('--fl-primary-tint', dark ? accent.tintDark : accent.tint);
-				root.style.setProperty('--fl-font-scale', String(this.fontScale.scale));
+				root.classList.toggle('dark', this.isDark);
+				root.dataset.accent = this.accentId;
+				root.dataset.scale = this.fontScaleId;
 
 				localStorage.setItem(
 					STORAGE_KEY,

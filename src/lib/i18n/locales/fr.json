@@ -16,7 +16,12 @@
 		"remaining": {
 			"one": "{count} restant",
 			"other": "{count} restants"
-		}
+		},
+		"new": "Nouvelle",
+		"name": "Nom",
+		"emoji": "Emoji",
+		"empty": "Aucune liste pour l'instant.",
+		"delete": "Supprimer la liste {name}"
 	},
 	"profile": {
 		"title": "Profil",
@@ -52,9 +57,41 @@
 		"title": "Scanner"
 	},
 	"cards": {
-		"title": "Cartes"
+		"title": "Cartes",
+		"empty": "Aucune carte enregistrée.",
+		"points": "points de fidélité",
+		"delete": "Supprimer la carte {name}",
+		"secretNotice": "Les mots de passe de comptes fidélité ne sont jamais enregistrés ici."
 	},
 	"common": {
-		"comingSoon": "À venir."
+		"comingSoon": "À venir.",
+		"save": "Enregistrer",
+		"cancel": "Annuler",
+		"loading": "Chargement…"
+	},
+	"list": {
+		"shop": "Magasin",
+		"learnedShop": "Parcours appris",
+		"back": "Retour aux listes",
+		"notFound": "Liste introuvable.",
+		"empty": "Rien à afficher avec ces filtres.",
+		"priorityOnly": "Priorités seulement",
+		"hideChecked": "Masquer les articles pris",
+		"clearChecked": "Retirer les {count} pris",
+		"moveUp": "Monter {name}",
+		"moveDown": "Descendre {name}",
+		"aisleUp": "Monter le rayon {name}",
+		"aisleDown": "Descendre le rayon {name}",
+		"priority": "Marquer {name} comme prioritaire",
+		"remove": "Supprimer {name}"
+	},
+	"add": {
+		"name": "Article",
+		"qty": "Quantité",
+		"unit": "Unité",
+		"aisle": "Rayon",
+		"submit": "Ajouter",
+		"aisleAuto": "Détection automatique",
+		"aisleGuessed": "Détecté : {name}"
 	}
 }

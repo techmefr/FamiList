@@ -16,7 +16,12 @@
 		"remaining": {
 			"one": "{count} rimasto",
 			"other": "{count} rimasti"
-		}
+		},
+		"new": "Nuova",
+		"name": "Nome",
+		"emoji": "Emoji",
+		"empty": "Nessuna lista per ora.",
+		"delete": "Elimina la lista {name}"
 	},
 	"profile": {
 		"title": "Profilo",
@@ -52,9 +57,41 @@
 		"title": "Scansiona"
 	},
 	"cards": {
-		"title": "Carte"
+		"title": "Carte",
+		"empty": "Nessuna carta salvata.",
+		"points": "punti fedeltà",
+		"delete": "Elimina la carta {name}",
+		"secretNotice": "Le password degli account fedeltà non sono mai salvate qui."
 	},
 	"common": {
-		"comingSoon": "Prossimamente."
+		"comingSoon": "Prossimamente.",
+		"save": "Salva",
+		"cancel": "Annulla",
+		"loading": "Caricamento…"
+	},
+	"list": {
+		"shop": "Negozio",
+		"learnedShop": "Percorso appreso",
+		"back": "Torna alle liste",
+		"notFound": "Lista non trovata.",
+		"empty": "Niente da mostrare con questi filtri.",
+		"priorityOnly": "Solo priorità",
+		"hideChecked": "Nascondi i presi",
+		"clearChecked": "Rimuovi i {count} presi",
+		"moveUp": "Sposta su {name}",
+		"moveDown": "Sposta giù {name}",
+		"aisleUp": "Sposta su il reparto {name}",
+		"aisleDown": "Sposta giù il reparto {name}",
+		"priority": "Segna {name} come prioritario",
+		"remove": "Elimina {name}"
+	},
+	"add": {
+		"name": "Articolo",
+		"qty": "Quantità",
+		"unit": "Unità",
+		"aisle": "Reparto",
+		"submit": "Aggiungi",
+		"aisleAuto": "Rilevamento automatico",
+		"aisleGuessed": "Rilevato: {name}"
 	}
 }

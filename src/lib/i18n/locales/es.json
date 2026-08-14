@@ -16,7 +16,12 @@
 		"remaining": {
 			"one": "queda {count}",
 			"other": "quedan {count}"
-		}
+		},
+		"new": "Nueva",
+		"name": "Nombre",
+		"emoji": "Emoji",
+		"empty": "Todavía no hay listas.",
+		"delete": "Eliminar la lista {name}"
 	},
 	"profile": {
 		"title": "Perfil",
@@ -52,9 +57,41 @@
 		"title": "Escanear"
 	},
 	"cards": {
-		"title": "Tarjetas"
+		"title": "Tarjetas",
+		"empty": "No hay tarjetas guardadas.",
+		"points": "puntos de fidelidad",
+		"delete": "Eliminar la tarjeta {name}",
+		"secretNotice": "Las contraseñas de las cuentas de fidelidad nunca se guardan aquí."
 	},
 	"common": {
-		"comingSoon": "Próximamente."
+		"comingSoon": "Próximamente.",
+		"save": "Guardar",
+		"cancel": "Cancelar",
+		"loading": "Cargando…"
+	},
+	"list": {
+		"shop": "Tienda",
+		"learnedShop": "Recorrido aprendido",
+		"back": "Volver a las listas",
+		"notFound": "Lista no encontrada.",
+		"empty": "Nada que mostrar con estos filtros.",
+		"priorityOnly": "Solo prioridades",
+		"hideChecked": "Ocultar los cogidos",
+		"clearChecked": "Quitar los {count} cogidos",
+		"moveUp": "Subir {name}",
+		"moveDown": "Bajar {name}",
+		"aisleUp": "Subir la sección {name}",
+		"aisleDown": "Bajar la sección {name}",
+		"priority": "Marcar {name} como prioritario",
+		"remove": "Eliminar {name}"
+	},
+	"add": {
+		"name": "Artículo",
+		"qty": "Cantidad",
+		"unit": "Unidad",
+		"aisle": "Sección",
+		"submit": "Añadir",
+		"aisleAuto": "Detección automática",
+		"aisleGuessed": "Detectado: {name}"
 	}
 }

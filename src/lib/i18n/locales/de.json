@@ -16,7 +16,12 @@
 		"remaining": {
 			"one": "noch {count}",
 			"other": "noch {count}"
-		}
+		},
+		"new": "Neu",
+		"name": "Name",
+		"emoji": "Emoji",
+		"empty": "Noch keine Listen.",
+		"delete": "Liste {name} löschen"
 	},
 	"profile": {
 		"title": "Profil",
@@ -52,9 +57,41 @@
 		"title": "Scannen"
 	},
 	"cards": {
-		"title": "Karten"
+		"title": "Karten",
+		"empty": "Keine Karten gespeichert.",
+		"points": "Treuepunkte",
+		"delete": "Karte {name} löschen",
+		"secretNotice": "Passwörter von Treuekonten werden hier nie gespeichert."
 	},
 	"common": {
-		"comingSoon": "Demnächst."
+		"comingSoon": "Demnächst.",
+		"save": "Speichern",
+		"cancel": "Abbrechen",
+		"loading": "Wird geladen…"
+	},
+	"list": {
+		"shop": "Geschäft",
+		"learnedShop": "Gelernter Weg",
+		"back": "Zurück zu den Listen",
+		"notFound": "Liste nicht gefunden.",
+		"empty": "Mit diesen Filtern gibt es nichts zu zeigen.",
+		"priorityOnly": "Nur Prioritäten",
+		"hideChecked": "Erledigte ausblenden",
+		"clearChecked": "Die {count} erledigten entfernen",
+		"moveUp": "{name} nach oben",
+		"moveDown": "{name} nach unten",
+		"aisleUp": "Abteilung {name} nach oben",
+		"aisleDown": "Abteilung {name} nach unten",
+		"priority": "{name} als wichtig markieren",
+		"remove": "{name} löschen"
+	},
+	"add": {
+		"name": "Artikel",
+		"qty": "Menge",
+		"unit": "Einheit",
+		"aisle": "Abteilung",
+		"submit": "Hinzufügen",
+		"aisleAuto": "Automatische Erkennung",
+		"aisleGuessed": "Erkannt: {name}"
 	}
 }

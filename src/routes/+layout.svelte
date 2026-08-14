@@ -3,10 +3,12 @@
 	import { page } from '$app/state';
 	import { ListChecks, ScanBarcode, CreditCard, User } from '@lucide/svelte';
 	import { i18n, t } from '$lib/i18n/index.svelte';
+	import { data } from '$stores/data.svelte';
 
 	let { children } = $props();
 
 	i18n.init();
+	data.load();
 
 	const nav = [
 		{ href: '/', key: 'nav.lists', icon: ListChecks },

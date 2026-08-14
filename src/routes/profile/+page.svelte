@@ -64,8 +64,7 @@
 							class="sr-only"
 						/>
 						<span
-							class="grid size-6 place-items-center rounded-full"
-							style="background: {settings.isDark ? accent.dark : accent.light}"
+							class="fl-swatch-{accent.id} grid size-6 place-items-center rounded-full"
 							aria-hidden="true"
 						>
 							{#if active}

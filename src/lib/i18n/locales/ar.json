@@ -20,7 +20,12 @@
 			"few": "بقي {count} منتجات",
 			"many": "بقي {count} منتجًا",
 			"other": "بقي {count} منتج"
-		}
+		},
+		"new": "جديدة",
+		"name": "الاسم",
+		"emoji": "رمز تعبيري",
+		"empty": "لا توجد قوائم بعد.",
+		"delete": "حذف القائمة {name}"
 	},
 	"profile": {
 		"title": "الملف الشخصي",
@@ -56,9 +61,41 @@
 		"title": "المسح"
 	},
 	"cards": {
-		"title": "البطاقات"
+		"title": "البطاقات",
+		"empty": "لا توجد بطاقات محفوظة.",
+		"points": "نقاط الولاء",
+		"delete": "حذف البطاقة {name}",
+		"secretNotice": "لا تُحفظ كلمات مرور حسابات الولاء هنا أبدًا."
 	},
 	"common": {
-		"comingSoon": "قريبًا."
+		"comingSoon": "قريبًا.",
+		"save": "حفظ",
+		"cancel": "إلغاء",
+		"loading": "جارٍ التحميل…"
+	},
+	"list": {
+		"shop": "المتجر",
+		"learnedShop": "مسار محفوظ",
+		"back": "العودة إلى القوائم",
+		"notFound": "القائمة غير موجودة.",
+		"empty": "لا شيء لعرضه بهذه المرشحات.",
+		"priorityOnly": "الأولويات فقط",
+		"hideChecked": "إخفاء ما تم أخذه",
+		"clearChecked": "إزالة {count} مما تم أخذه",
+		"moveUp": "تحريك {name} للأعلى",
+		"moveDown": "تحريك {name} للأسفل",
+		"aisleUp": "تحريك القسم {name} للأعلى",
+		"aisleDown": "تحريك القسم {name} للأسفل",
+		"priority": "تحديد {name} كأولوية",
+		"remove": "حذف {name}"
+	},
+	"add": {
+		"name": "المنتج",
+		"qty": "الكمية",
+		"unit": "الوحدة",
+		"aisle": "القسم",
+		"submit": "إضافة",
+		"aisleAuto": "كشف تلقائي",
+		"aisleGuessed": "تم الكشف: {name}"
 	}
 }

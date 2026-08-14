@@ -15,7 +15,12 @@
 		"progress": "已取 {done} / {total} 件商品",
 		"remaining": {
 			"other": "还剩 {count} 件"
-		}
+		},
+		"new": "新建",
+		"name": "名称",
+		"emoji": "表情",
+		"empty": "还没有清单。",
+		"delete": "删除清单 {name}"
 	},
 	"profile": {
 		"title": "我的",
@@ -51,9 +56,41 @@
 		"title": "扫码"
 	},
 	"cards": {
-		"title": "会员卡"
+		"title": "会员卡",
+		"empty": "未保存会员卡。",
+		"points": "积分",
+		"delete": "删除会员卡 {name}",
+		"secretNotice": "会员账户密码永远不会保存在这里。"
 	},
 	"common": {
-		"comingSoon": "敬请期待。"
+		"comingSoon": "敬请期待。",
+		"save": "保存",
+		"cancel": "取消",
+		"loading": "加载中…"
+	},
+	"list": {
+		"shop": "门店",
+		"learnedShop": "已学路线",
+		"back": "返回清单",
+		"notFound": "找不到清单。",
+		"empty": "当前筛选没有内容。",
+		"priorityOnly": "仅看重点",
+		"hideChecked": "隐藏已取",
+		"clearChecked": "移除已取的 {count} 件",
+		"moveUp": "上移 {name}",
+		"moveDown": "下移 {name}",
+		"aisleUp": "上移货区 {name}",
+		"aisleDown": "下移货区 {name}",
+		"priority": "将 {name} 标为重点",
+		"remove": "删除 {name}"
+	},
+	"add": {
+		"name": "商品",
+		"qty": "数量",
+		"unit": "单位",
+		"aisle": "货区",
+		"submit": "添加",
+		"aisleAuto": "自动识别",
+		"aisleGuessed": "已识别：{name}"
 	}
 }

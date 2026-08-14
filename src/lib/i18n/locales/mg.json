@@ -15,7 +15,12 @@
 		"progress": "{done} amin'ny {total} entana efa nalaina",
 		"remaining": {
 			"other": "sisa {count}"
-		}
+		},
+		"new": "Vaovao",
+		"name": "Anarana",
+		"emoji": "Emoji",
+		"empty": "Mbola tsy misy lisitra.",
+		"delete": "Fafao ny lisitra {name}"
 	},
 	"profile": {
 		"title": "Mombamomba",
@@ -51,9 +56,41 @@
 		"title": "Skana"
 	},
 	"cards": {
-		"title": "Karatra"
+		"title": "Karatra",
+		"empty": "Tsy misy karatra voatahiry.",
+		"points": "isa fahatokisana",
+		"delete": "Fafao ny karatra {name}",
+		"secretNotice": "Tsy voatahiry eto mihitsy ny tenimiafina momba ny kaonty fahatokisana."
 	},
 	"common": {
-		"comingSoon": "Ho avy tsy ho ela."
+		"comingSoon": "Ho avy tsy ho ela.",
+		"save": "Tehirizo",
+		"cancel": "Aoka ihany",
+		"loading": "Eo am-pakana…"
+	},
+	"list": {
+		"shop": "Fivarotana",
+		"learnedShop": "Lalana voatadidy",
+		"back": "Miverina amin'ny lisitra",
+		"notFound": "Tsy hita ny lisitra.",
+		"empty": "Tsy misy asehohatra amin'ireo sivana ireo.",
+		"priorityOnly": "Ny laharam-pahamehana ihany",
+		"hideChecked": "Afeno izay efa nalaina",
+		"clearChecked": "Esory ny {count} efa nalaina",
+		"moveUp": "Akaro {name}",
+		"moveDown": "Ampidino {name}",
+		"aisleUp": "Akaro ny faritra {name}",
+		"aisleDown": "Ampidino ny faritra {name}",
+		"priority": "Mariho ho maika {name}",
+		"remove": "Fafao {name}"
+	},
+	"add": {
+		"name": "Entana",
+		"qty": "Isa",
+		"unit": "Refy",
+		"aisle": "Faritra",
+		"submit": "Ampio",
+		"aisleAuto": "Famantarana ho azy",
+		"aisleGuessed": "Voafantatra : {name}"
 	}
 }

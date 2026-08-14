@@ -10,43 +10,9 @@
 		<link rel="icon" href="%sveltekit.assets%/favicon.svg" />
 		<script>
 			// Applique les préférences avant le premier rendu : sans ça, un rechargement en thème
-			// sombre ou en grande police provoque un flash dans les réglages par défaut.
+			// sombre, en grande police ou en arabe provoque un flash dans les réglages par défaut.
+			// Aucune valeur de style ici : les couleurs et les crans vivent dans app.css.
 			(() => {
-				const ACCENTS = {
-					terracotta: ['#c8532a', '#e8885e', 'rgb(200 83 42 / 0.10)', 'rgb(232 136 94 / 0.14)'],
-					forest: [
-						'oklch(0.45 0.11 155)',
-						'oklch(0.75 0.11 155)',
-						'oklch(0.45 0.11 155 / 0.10)',
-						'oklch(0.75 0.11 155 / 0.14)'
-					],
-					blue: [
-						'oklch(0.5 0.15 250)',
-						'oklch(0.75 0.13 250)',
-						'oklch(0.5 0.15 250 / 0.10)',
-						'oklch(0.75 0.13 250 / 0.14)'
-					],
-					plum: [
-						'oklch(0.48 0.16 330)',
-						'oklch(0.75 0.14 330)',
-						'oklch(0.48 0.16 330 / 0.10)',
-						'oklch(0.75 0.14 330 / 0.14)'
-					],
-					teal: [
-						'oklch(0.48 0.1 195)',
-						'oklch(0.76 0.1 195)',
-						'oklch(0.48 0.1 195 / 0.10)',
-						'oklch(0.76 0.1 195 / 0.14)'
-					],
-					ink: [
-						'oklch(0.35 0.03 60)',
-						'oklch(0.82 0.02 60)',
-						'oklch(0.35 0.03 60 / 0.10)',
-						'oklch(0.82 0.02 60 / 0.14)'
-					]
-				};
-				const SCALES = { xs: 0.9, sm: 1, md: 1.15, lg: 1.35, xl: 1.6 };
-				const RTL = ['ar'];
 				const root = document.documentElement;
 
 				try {
@@ -55,20 +21,17 @@
 						saved.theme === 'dark' ||
 						((saved.theme ?? 'system') === 'system' &&
 							matchMedia('(prefers-color-scheme: dark)').matches);
-					if (dark) root.classList.add('dark');
 
-					const accent = ACCENTS[saved.accentId] ?? ACCENTS.terracotta;
-					root.style.setProperty('--primary', dark ? accent[1] : accent[0]);
-					root.style.setProperty('--ring', dark ? accent[1] : accent[0]);
-					root.style.setProperty('--fl-primary-tint', dark ? accent[3] : accent[2]);
-					root.style.setProperty('--fl-font-scale', String(SCALES[saved.fontScaleId] ?? 1));
+					if (dark) root.classList.add('dark');
+					root.dataset.accent = saved.accentId ?? 'terracotta';
+					root.dataset.scale = saved.fontScaleId ?? 'sm';
 				} catch {}
 
 				try {
 					const locale = localStorage.getItem('familist:locale');
 					if (locale) {
 						root.lang = locale;
-						root.dir = RTL.includes(locale) ? 'rtl' : 'ltr';
+						root.dir = locale === 'ar' ? 'rtl' : 'ltr';
 					}
 				} catch {}
 			})();
