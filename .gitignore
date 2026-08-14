@@ -1,0 +1,15 @@
+node_modules/
+.svelte-kit/
+build/
+dist/
+.output/
+
+.env
+.env.*
+!.env.example
+
+android/
+ios/
+
+.DS_Store
+*.log
