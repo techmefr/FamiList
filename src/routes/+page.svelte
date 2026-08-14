@@ -1,6 +1,7 @@
 <script lang="ts">
 	import * as Card from '$lib/components/ui/card';
 	import { Badge } from '$lib/components/ui/badge';
+	import { t } from '$lib/i18n/index.svelte';
 
 	const lists = [
 		{ id: 'l1', name: 'Courses de la semaine', emoji: '🛒', count: 12, done: 3 },
@@ -10,11 +11,11 @@
 </script>
 
 <svelte:head>
-	<title>Mes listes — FamiList</title>
+	<title>{t('lists.title')} — {t('app.name')}</title>
 </svelte:head>
 
-<h1 class="text-h1 font-semibold">Mes listes</h1>
-<p class="text-muted-foreground mt-1 text-label">Données de démonstration, pas encore branchées.</p>
+<h1 class="text-h1 font-semibold">{t('lists.title')}</h1>
+<p class="text-muted-foreground text-label mt-1">{t('lists.demoNotice')}</p>
 
 <ul class="mt-6 space-y-3">
 	{#each lists as list (list.id)}
@@ -25,10 +26,12 @@
 					<div class="min-w-0 flex-1">
 						<p class="text-product truncate font-medium">{list.name}</p>
 						<p class="text-muted-foreground text-label">
-							{list.done} sur {list.count} articles pris
+							{t('lists.progress', { done: list.done, total: list.count })}
 						</p>
 					</div>
-					<Badge variant="secondary">{list.count - list.done}</Badge>
+					<Badge variant="secondary">
+						{t('lists.remaining', { count: list.count - list.done })}
+					</Badge>
 				</Card.Content>
 			</Card.Root>
 		</li>

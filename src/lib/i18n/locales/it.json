@@ -1,0 +1,60 @@
+{
+	"app": {
+		"name": "FamiList"
+	},
+	"nav": {
+		"lists": "Liste",
+		"scan": "Scansiona",
+		"cards": "Carte",
+		"profile": "Profilo",
+		"main": "Navigazione principale"
+	},
+	"lists": {
+		"title": "Le mie liste",
+		"demoNotice": "Dati dimostrativi, non ancora collegati.",
+		"progress": "{done} di {total} articoli presi",
+		"remaining": {
+			"one": "{count} rimasto",
+			"other": "{count} rimasti"
+		}
+	},
+	"profile": {
+		"title": "Profilo",
+		"appearance": "Aspetto",
+		"theme": "Tema",
+		"textSize": "Dimensione del testo",
+		"accent": "Colore principale",
+		"language": "Lingua",
+		"previewItem": "Pomodori a grappolo — 500 g",
+		"previewNote": "Anteprima alla dimensione reale di un articolo in una lista."
+	},
+	"theme": {
+		"light": "Chiaro",
+		"dark": "Scuro",
+		"system": "Sistema"
+	},
+	"scale": {
+		"xs": "Molto piccolo",
+		"sm": "Normale",
+		"md": "Grande",
+		"lg": "Molto grande",
+		"xl": "Massimo"
+	},
+	"accent": {
+		"terracotta": "Terracotta",
+		"forest": "Foresta",
+		"blue": "Blu",
+		"plum": "Prugna",
+		"teal": "Foglia di tè",
+		"ink": "Inchiostro"
+	},
+	"scan": {
+		"title": "Scansiona"
+	},
+	"cards": {
+		"title": "Carte"
+	},
+	"common": {
+		"comingSoon": "Prossimamente."
+	}
+}

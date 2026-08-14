@@ -1,0 +1,60 @@
+{
+	"app": {
+		"name": "FamiList"
+	},
+	"nav": {
+		"lists": "Listas",
+		"scan": "Escanear",
+		"cards": "Tarjetas",
+		"profile": "Perfil",
+		"main": "Navegación principal"
+	},
+	"lists": {
+		"title": "Mis listas",
+		"demoNotice": "Datos de demostración, aún no conectados.",
+		"progress": "{done} de {total} artículos cogidos",
+		"remaining": {
+			"one": "queda {count}",
+			"other": "quedan {count}"
+		}
+	},
+	"profile": {
+		"title": "Perfil",
+		"appearance": "Apariencia",
+		"theme": "Tema",
+		"textSize": "Tamaño del texto",
+		"accent": "Color principal",
+		"language": "Idioma",
+		"previewItem": "Tomates en rama — 500 g",
+		"previewNote": "Vista previa al tamaño real de un artículo en una lista."
+	},
+	"theme": {
+		"light": "Claro",
+		"dark": "Oscuro",
+		"system": "Sistema"
+	},
+	"scale": {
+		"xs": "Muy pequeño",
+		"sm": "Normal",
+		"md": "Grande",
+		"lg": "Muy grande",
+		"xl": "Máximo"
+	},
+	"accent": {
+		"terracotta": "Terracota",
+		"forest": "Bosque",
+		"blue": "Azul",
+		"plum": "Ciruela",
+		"teal": "Verde azulado",
+		"ink": "Tinta"
+	},
+	"scan": {
+		"title": "Escanear"
+	},
+	"cards": {
+		"title": "Tarjetas"
+	},
+	"common": {
+		"comingSoon": "Próximamente."
+	}
+}

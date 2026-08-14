@@ -1,6 +1,10 @@
+<script lang="ts">
+	import { t } from '$lib/i18n/index.svelte';
+</script>
+
 <svelte:head>
-	<title>Scanner — FamiList</title>
+	<title>{t('scan.title')} — {t('app.name')}</title>
 </svelte:head>
 
-<h1 class="text-h1 font-semibold">Scanner</h1>
-<p class="text-muted-foreground mt-2 text-label">À venir.</p>
+<h1 class="text-h1 font-semibold">{t('scan.title')}</h1>
+<p class="text-muted-foreground text-label mt-2">{t('common.comingSoon')}</p>

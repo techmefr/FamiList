@@ -1,0 +1,60 @@
+{
+	"app": {
+		"name": "FamiList"
+	},
+	"nav": {
+		"lists": "Listen",
+		"scan": "Scannen",
+		"cards": "Karten",
+		"profile": "Profil",
+		"main": "Hauptnavigation"
+	},
+	"lists": {
+		"title": "Meine Listen",
+		"demoNotice": "Demodaten, noch nicht angebunden.",
+		"progress": "{done} von {total} Artikeln erledigt",
+		"remaining": {
+			"one": "noch {count}",
+			"other": "noch {count}"
+		}
+	},
+	"profile": {
+		"title": "Profil",
+		"appearance": "Darstellung",
+		"theme": "Design",
+		"textSize": "Schriftgröße",
+		"accent": "Hauptfarbe",
+		"language": "Sprache",
+		"previewItem": "Strauchtomaten — 500 g",
+		"previewNote": "Vorschau in der echten Größe eines Artikels in einer Liste."
+	},
+	"theme": {
+		"light": "Hell",
+		"dark": "Dunkel",
+		"system": "System"
+	},
+	"scale": {
+		"xs": "Sehr klein",
+		"sm": "Normal",
+		"md": "Groß",
+		"lg": "Sehr groß",
+		"xl": "Maximal"
+	},
+	"accent": {
+		"terracotta": "Terrakotta",
+		"forest": "Wald",
+		"blue": "Blau",
+		"plum": "Pflaume",
+		"teal": "Petrol",
+		"ink": "Tinte"
+	},
+	"scan": {
+		"title": "Scannen"
+	},
+	"cards": {
+		"title": "Karten"
+	},
+	"common": {
+		"comingSoon": "Demnächst."
+	}
+}

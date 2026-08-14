@@ -82,8 +82,13 @@
 	--fl-shadow-4: 0 28px 60px rgb(0 0 0 / 0.7), 0 8px 18px rgb(0 0 0 / 0.4);
 }
 
-:root,
-[data-type-scale='normal'] {
+/**
+ * Échelle typographique du prototype, exprimée en rem. Les cinq crans de taille agissent sur
+ * --fl-font-scale, donc sur le font-size racine : tout grandit ensemble, proportions préservées.
+ */
+:root {
+	--fl-font-scale: 1;
+
 	--fl-display: 2.5rem;
 	--fl-h1: 1.875rem;
 	--fl-h2: 1.375rem;
@@ -91,26 +96,6 @@
 	--fl-label: 0.875rem;
 	--fl-caption: 0.75rem;
 	--fl-product: 1.25rem;
-}
-
-[data-type-scale='compact'] {
-	--fl-display: 2rem;
-	--fl-h1: 1.5rem;
-	--fl-h2: 1.125rem;
-	--fl-body: 0.9375rem;
-	--fl-label: 0.8125rem;
-	--fl-caption: 0.6875rem;
-	--fl-product: 1.0625rem;
-}
-
-[data-type-scale='large'] {
-	--fl-display: 3.25rem;
-	--fl-h1: 2.375rem;
-	--fl-h2: 1.75rem;
-	--fl-body: 1.3125rem;
-	--fl-label: 1.0625rem;
-	--fl-caption: 0.875rem;
-	--fl-product: 1.625rem;
 }
 
 @theme inline {
@@ -161,6 +146,7 @@
 	html {
 		background-color: var(--background);
 		color-scheme: light;
+		font-size: calc(16px * var(--fl-font-scale));
 	}
 
 	html.dark {
@@ -178,7 +164,7 @@
 	[role='button'],
 	input:not([type='checkbox']):not([type='radio']),
 	select {
-		min-height: 44px;
+		min-height: 2.75rem;
 	}
 
 	input[type='checkbox'],

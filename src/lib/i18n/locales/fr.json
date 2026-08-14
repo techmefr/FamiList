@@ -1,0 +1,60 @@
+{
+	"app": {
+		"name": "FamiList"
+	},
+	"nav": {
+		"lists": "Listes",
+		"scan": "Scanner",
+		"cards": "Cartes",
+		"profile": "Profil",
+		"main": "Navigation principale"
+	},
+	"lists": {
+		"title": "Mes listes",
+		"demoNotice": "Données de démonstration, pas encore branchées.",
+		"progress": "{done} sur {total} articles pris",
+		"remaining": {
+			"one": "{count} restant",
+			"other": "{count} restants"
+		}
+	},
+	"profile": {
+		"title": "Profil",
+		"appearance": "Apparence",
+		"theme": "Thème",
+		"textSize": "Taille du texte",
+		"accent": "Couleur principale",
+		"language": "Langue",
+		"previewItem": "Tomates grappe — 500 g",
+		"previewNote": "Aperçu à la taille réelle d'un article dans une liste."
+	},
+	"theme": {
+		"light": "Clair",
+		"dark": "Sombre",
+		"system": "Système"
+	},
+	"scale": {
+		"xs": "Très petit",
+		"sm": "Normal",
+		"md": "Grand",
+		"lg": "Très grand",
+		"xl": "Maximum"
+	},
+	"accent": {
+		"terracotta": "Terracotta",
+		"forest": "Forêt",
+		"blue": "Bleu",
+		"plum": "Prune",
+		"teal": "Sarcelle",
+		"ink": "Encre"
+	},
+	"scan": {
+		"title": "Scanner"
+	},
+	"cards": {
+		"title": "Cartes"
+	},
+	"common": {
+		"comingSoon": "À venir."
+	}
+}

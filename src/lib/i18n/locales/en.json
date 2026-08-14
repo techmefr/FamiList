@@ -1,0 +1,60 @@
+{
+	"app": {
+		"name": "FamiList"
+	},
+	"nav": {
+		"lists": "Lists",
+		"scan": "Scan",
+		"cards": "Cards",
+		"profile": "Profile",
+		"main": "Main navigation"
+	},
+	"lists": {
+		"title": "My lists",
+		"demoNotice": "Demo data, not connected yet.",
+		"progress": "{done} of {total} items picked",
+		"remaining": {
+			"one": "{count} left",
+			"other": "{count} left"
+		}
+	},
+	"profile": {
+		"title": "Profile",
+		"appearance": "Appearance",
+		"theme": "Theme",
+		"textSize": "Text size",
+		"accent": "Main colour",
+		"language": "Language",
+		"previewItem": "Vine tomatoes — 500 g",
+		"previewNote": "Preview at the real size of an item in a list."
+	},
+	"theme": {
+		"light": "Light",
+		"dark": "Dark",
+		"system": "System"
+	},
+	"scale": {
+		"xs": "Very small",
+		"sm": "Normal",
+		"md": "Large",
+		"lg": "Very large",
+		"xl": "Maximum"
+	},
+	"accent": {
+		"terracotta": "Terracotta",
+		"forest": "Forest",
+		"blue": "Blue",
+		"plum": "Plum",
+		"teal": "Teal",
+		"ink": "Ink"
+	},
+	"scan": {
+		"title": "Scan"
+	},
+	"cards": {
+		"title": "Cards"
+	},
+	"common": {
+		"comingSoon": "Coming soon."
+	}
+}

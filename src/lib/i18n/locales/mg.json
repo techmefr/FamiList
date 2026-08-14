@@ -1,0 +1,59 @@
+{
+	"app": {
+		"name": "FamiList"
+	},
+	"nav": {
+		"lists": "Lisitra",
+		"scan": "Skana",
+		"cards": "Karatra",
+		"profile": "Mombamomba",
+		"main": "Fitetezana fototra"
+	},
+	"lists": {
+		"title": "Ny lisitro",
+		"demoNotice": "Angona fanandramana, mbola tsy mifandray.",
+		"progress": "{done} amin'ny {total} entana efa nalaina",
+		"remaining": {
+			"other": "sisa {count}"
+		}
+	},
+	"profile": {
+		"title": "Mombamomba",
+		"appearance": "Endrika",
+		"theme": "Loko fototra",
+		"textSize": "Haben'ny soratra",
+		"accent": "Loko lehibe",
+		"language": "Fiteny",
+		"previewItem": "Voatabia sampahony — 500 g",
+		"previewNote": "Topi-maso amin'ny haben'ny entana marina ao anaty lisitra."
+	},
+	"theme": {
+		"light": "Mazava",
+		"dark": "Maizina",
+		"system": "Rafitra"
+	},
+	"scale": {
+		"xs": "Kely dia kely",
+		"sm": "Antonony",
+		"md": "Lehibe",
+		"lg": "Lehibe dia lehibe",
+		"xl": "Fara-tampony"
+	},
+	"accent": {
+		"terracotta": "Tanimanga",
+		"forest": "Ala",
+		"blue": "Manga",
+		"plum": "Paisom-boaloboka",
+		"teal": "Manga maitso",
+		"ink": "Ranomainty"
+	},
+	"scan": {
+		"title": "Skana"
+	},
+	"cards": {
+		"title": "Karatra"
+	},
+	"common": {
+		"comingSoon": "Ho avy tsy ho ela."
+	}
+}

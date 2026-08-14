@@ -1,0 +1,59 @@
+{
+	"app": {
+		"name": "FamiList"
+	},
+	"nav": {
+		"lists": "清单",
+		"scan": "扫码",
+		"cards": "会员卡",
+		"profile": "我的",
+		"main": "主导航"
+	},
+	"lists": {
+		"title": "我的清单",
+		"demoNotice": "演示数据，尚未接入。",
+		"progress": "已取 {done} / {total} 件商品",
+		"remaining": {
+			"other": "还剩 {count} 件"
+		}
+	},
+	"profile": {
+		"title": "我的",
+		"appearance": "外观",
+		"theme": "主题",
+		"textSize": "文字大小",
+		"accent": "主色",
+		"language": "语言",
+		"previewItem": "串收番茄 — 500 克",
+		"previewNote": "按清单中商品的实际大小预览。"
+	},
+	"theme": {
+		"light": "浅色",
+		"dark": "深色",
+		"system": "跟随系统"
+	},
+	"scale": {
+		"xs": "很小",
+		"sm": "标准",
+		"md": "大",
+		"lg": "很大",
+		"xl": "最大"
+	},
+	"accent": {
+		"terracotta": "陶土色",
+		"forest": "森林绿",
+		"blue": "蓝色",
+		"plum": "梅子色",
+		"teal": "青色",
+		"ink": "墨色"
+	},
+	"scan": {
+		"title": "扫码"
+	},
+	"cards": {
+		"title": "会员卡"
+	},
+	"common": {
+		"comingSoon": "敬请期待。"
+	}
+}
