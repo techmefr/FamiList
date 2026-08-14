@@ -9,7 +9,8 @@
 		"profile": "Mombamomba",
 		"main": "Fitetezana fototra",
 		"shops": "Fivarotana",
-		"admin": "Kaonty"
+		"admin": "Kaonty",
+		"household": "Ankohonana"
 	},
 	"lists": {
 		"title": "Ny lisitro",
@@ -200,6 +201,26 @@
 		},
 		"pushed": {
 			"other": "Nampiana zavatra {count} ny lisitra"
+		}
+	},
+	"household": {
+		"title": "Ny ankohonako",
+		"members": "Mpikambana",
+		"leave": "Hiala amin’ity ankohonana ity",
+		"inviteTitle": "Hanasa olona",
+		"inviteHint": "Mamorona kaody ary omeo azy. Hosoratany ao amin’ny fampiharana azy izany.",
+		"createInvite": "Hamorona kaody",
+		"copy": "Adikao",
+		"copied": "Voadika",
+		"inviteExpires": "Manan-kery hatramin’ny {date}.",
+		"joinTitle": "Hiditra amin’ny ankohonana",
+		"joinHint": "Soraty ny kaody nomena anao. Hosoloina ny lisitrao ankehitriny ny an’io ankohonana io.",
+		"code": "Kaody fanasana",
+		"join": "Hiditra",
+		"role": {
+			"self": "Ianao",
+			"owner": "Tompon’andraikitra",
+			"member": "Mpikambana"
 		}
 	}
 }

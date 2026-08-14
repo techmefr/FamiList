@@ -2,7 +2,7 @@
 	import '../app.css';
 	import { page } from '$app/state';
 	import { goto } from '$app/navigation';
-	import { ListChecks, Store, CreditCard, User, ShieldCheck } from '@lucide/svelte';
+	import { ListChecks, Store, CreditCard, User, ShieldCheck, Users } from '@lucide/svelte';
 	import { i18n, t } from '$lib/i18n/index.svelte';
 	import { data } from '$stores/data.svelte';
 	import { session } from '$stores/session.svelte';
@@ -47,6 +47,7 @@
 		{ href: '/', key: 'nav.lists', icon: ListChecks },
 		{ href: '/shops', key: 'nav.shops', icon: Store },
 		{ href: '/cards', key: 'nav.cards', icon: CreditCard },
+		{ href: '/household', key: 'nav.household', icon: Users },
 		{ href: '/profile', key: 'nav.profile', icon: User },
 		...(session.isAdmin ? [{ href: '/admin', key: 'nav.admin', icon: ShieldCheck }] : [])
 	]);

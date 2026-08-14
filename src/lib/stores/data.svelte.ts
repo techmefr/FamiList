@@ -591,6 +591,33 @@ class DataStore {
 		});
 	}
 
+	/**
+	 * Le compte a changé de foyer : le cache décrit l'ancien, il ne doit rien en rester. On repart
+	 * du serveur plutôt que de trier, une liste de l'ancien foyer affichée dans le nouveau serait
+	 * incompréhensible.
+	 */
+	async reload() {
+		sync.stop();
+		await Promise.all([
+			db.shops.clear(),
+			db.aisles.clear(),
+			db.lists.clear(),
+			db.items.clear(),
+			db.cards.clear(),
+			db.members.clear(),
+			db.shopLayouts.clear(),
+			db.shopItemOrders.clear(),
+			db.messages.clear(),
+			db.polls.clear(),
+			db.pollOptions.clear(),
+			db.pollVotes.clear()
+		]);
+
+		localStorage.removeItem(ACTIVE_SHOP_KEY);
+		await this.hydrate();
+		await sync.start(() => void this.hydrate());
+	}
+
 	async reset() {
 		sync.stop();
 		await db.delete();

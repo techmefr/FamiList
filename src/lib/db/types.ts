@@ -72,6 +72,44 @@ export type Database = {
           },
         ]
       }
+      household_invites: {
+        Row: {
+          code: string
+          created_at: string
+          created_by: string
+          expires_at: string
+          household_id: string
+          used_at: string | null
+          used_by: string | null
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          created_by: string
+          expires_at: string
+          household_id: string
+          used_at?: string | null
+          used_by?: string | null
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          created_by?: string
+          expires_at?: string
+          household_id?: string
+          used_at?: string | null
+          used_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "household_invites_household_id_fkey"
+            columns: ["household_id"]
+            isOneToOne: false
+            referencedRelation: "households"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       household_members: {
         Row: {
           household_id: string
@@ -601,10 +639,20 @@ export type Database = {
     Functions: {
       can_access_list: { Args: { target: string }; Returns: boolean }
       can_access_shop: { Args: { target: string }; Returns: boolean }
+      create_invite: { Args: never; Returns: string }
       ensure_household: { Args: { household_name?: string }; Returns: string }
+      household_profiles: {
+        Args: never
+        Returns: {
+          display_name: string
+          id: string
+          initial: string
+        }[]
+      }
       is_admin: { Args: never; Returns: boolean }
       is_approved: { Args: never; Returns: boolean }
       is_household_member: { Args: { target: string }; Returns: boolean }
+      leave_household: { Args: { target: string }; Returns: undefined }
       pending_accounts: {
         Args: never
         Returns: {
@@ -615,6 +663,7 @@ export type Database = {
           status: string
         }[]
       }
+      redeem_invite: { Args: { invite_code: string }; Returns: string }
       review_account: {
         Args: { decision: string; target: string }
         Returns: undefined

@@ -9,7 +9,8 @@
 		"profile": "我的",
 		"main": "主导航",
 		"shops": "门店",
-		"admin": "账号"
+		"admin": "账号",
+		"household": "家庭"
 	},
 	"lists": {
 		"title": "我的清单",
@@ -200,6 +201,26 @@
 		},
 		"pushed": {
 			"other": "已向清单添加 {count} 件物品"
+		}
+	},
+	"household": {
+		"title": "我的家庭",
+		"members": "成员",
+		"leave": "离开这个家庭",
+		"inviteTitle": "邀请他人",
+		"inviteHint": "创建一个代码交给对方，对方在自己的应用中输入即可。",
+		"createInvite": "创建代码",
+		"copy": "复制",
+		"copied": "已复制",
+		"inviteExpires": "有效期至 {date}。",
+		"joinTitle": "加入家庭",
+		"joinHint": "输入别人给你的代码。你当前的清单将被该家庭的清单取代。",
+		"code": "邀请码",
+		"join": "加入",
+		"role": {
+			"self": "你",
+			"owner": "负责人",
+			"member": "成员"
 		}
 	}
 }

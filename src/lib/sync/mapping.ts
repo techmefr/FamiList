@@ -142,10 +142,12 @@ export const toMember = (row: Row, profile: Row | undefined, currentUserId: stri
 	const id = text(row.user_id);
 	const name = text(profile?.display_name) || text(profile?.email) || '—';
 
+	// Le rôle est stocké tel quel et traduit à l'affichage : la base ne parle pas la langue de
+	// l'utilisateur, et un foyer peut mêler plusieurs langues.
 	return {
 		id,
 		name,
-		role: id === currentUserId ? 'Vous' : text(row.role, 'member'),
+		role: id === currentUserId ? 'self' : text(row.role, 'member'),
 		initial: text(profile?.initial) || name.slice(0, 1).toUpperCase(),
 		tint: text(row.tint, '#C8532A')
 	};

@@ -9,7 +9,8 @@
 		"profile": "Profil",
 		"main": "Navigation principale",
 		"shops": "Magasins",
-		"admin": "Comptes"
+		"admin": "Comptes",
+		"household": "Foyer"
 	},
 	"lists": {
 		"title": "Mes listes",
@@ -203,6 +204,26 @@
 		"pushed": {
 			"one": "{count} article ajouté à la liste",
 			"other": "{count} articles ajoutés à la liste"
+		}
+	},
+	"household": {
+		"title": "Mon foyer",
+		"members": "Membres",
+		"leave": "Quitter ce foyer",
+		"inviteTitle": "Inviter quelqu’un",
+		"inviteHint": "Créez un code et donnez-le à la personne. Elle le saisira dans son application.",
+		"createInvite": "Créer un code",
+		"copy": "Copier",
+		"copied": "Copié",
+		"inviteExpires": "Valable jusqu’au {date}.",
+		"joinTitle": "Rejoindre un foyer",
+		"joinHint": "Saisissez le code qu’on vous a donné. Vos listes actuelles seront remplacées par celles du foyer rejoint.",
+		"code": "Code d’invitation",
+		"join": "Rejoindre",
+		"role": {
+			"self": "Vous",
+			"owner": "Responsable",
+			"member": "Membre"
 		}
 	}
 }

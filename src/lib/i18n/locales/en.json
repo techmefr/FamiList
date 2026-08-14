@@ -9,7 +9,8 @@
 		"profile": "Profile",
 		"main": "Main navigation",
 		"shops": "Shops",
-		"admin": "Accounts"
+		"admin": "Accounts",
+		"household": "Household"
 	},
 	"lists": {
 		"title": "My lists",
@@ -203,6 +204,26 @@
 		"pushed": {
 			"one": "{count} item added to the list",
 			"other": "{count} items added to the list"
+		}
+	},
+	"household": {
+		"title": "My household",
+		"members": "Members",
+		"leave": "Leave this household",
+		"inviteTitle": "Invite someone",
+		"inviteHint": "Create a code and give it to them. They type it into their own app.",
+		"createInvite": "Create a code",
+		"copy": "Copy",
+		"copied": "Copied",
+		"inviteExpires": "Valid until {date}.",
+		"joinTitle": "Join a household",
+		"joinHint": "Enter the code you were given. Your current lists will be replaced by the ones in that household.",
+		"code": "Invitation code",
+		"join": "Join",
+		"role": {
+			"self": "You",
+			"owner": "Owner",
+			"member": "Member"
 		}
 	}
 }

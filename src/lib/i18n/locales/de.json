@@ -9,7 +9,8 @@
 		"profile": "Profil",
 		"main": "Hauptnavigation",
 		"shops": "Geschäfte",
-		"admin": "Konten"
+		"admin": "Konten",
+		"household": "Haushalt"
 	},
 	"lists": {
 		"title": "Meine Listen",
@@ -203,6 +204,26 @@
 		"pushed": {
 			"one": "{count} Artikel zur Liste hinzugefügt",
 			"other": "{count} Artikel zur Liste hinzugefügt"
+		}
+	},
+	"household": {
+		"title": "Mein Haushalt",
+		"members": "Mitglieder",
+		"leave": "Diesen Haushalt verlassen",
+		"inviteTitle": "Jemanden einladen",
+		"inviteHint": "Erstellen Sie einen Code und geben Sie ihn weiter. Die Person gibt ihn in ihrer App ein.",
+		"createInvite": "Code erstellen",
+		"copy": "Kopieren",
+		"copied": "Kopiert",
+		"inviteExpires": "Gültig bis {date}.",
+		"joinTitle": "Einem Haushalt beitreten",
+		"joinHint": "Geben Sie den erhaltenen Code ein. Ihre bisherigen Listen werden durch die des Haushalts ersetzt.",
+		"code": "Einladungscode",
+		"join": "Beitreten",
+		"role": {
+			"self": "Sie",
+			"owner": "Verantwortlich",
+			"member": "Mitglied"
 		}
 	}
 }

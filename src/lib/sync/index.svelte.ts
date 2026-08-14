@@ -177,14 +177,10 @@ class SyncStore {
 		const { data: session } = await supabase.auth.getUser();
 		const currentUserId = session.user?.id ?? '';
 
-		const profiles = await supabase
-			.from('profiles')
-			.select('id, display_name, initial')
-			.in('id', (members.data ?? []).map((row) => row.user_id as string));
+		// Les profils passent par une fonction : la policy de la table limite la lecture au sien,
+		// et un foyer où personne n'a de nom ne se lit pas.
+		const profiles = await supabase.rpc('household_profiles');
 
-		// Un membre du foyer autre que soi n'est pas lisible dans profiles (la policy limite la
-		// lecture à son propre profil et aux admins). On affiche alors ce que porte le
-		// rattachement, plutôt que de faire disparaître la personne de la liste.
 		const profileById = new Map(
 			(profiles.data ?? []).map((row) => [row.id as string, row as Record<string, unknown>])
 		);

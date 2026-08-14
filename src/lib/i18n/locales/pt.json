@@ -9,7 +9,8 @@
 		"profile": "Perfil",
 		"main": "Navegação principal",
 		"shops": "Lojas",
-		"admin": "Contas"
+		"admin": "Contas",
+		"household": "Casa"
 	},
 	"lists": {
 		"title": "As minhas listas",
@@ -203,6 +204,26 @@
 		"pushed": {
 			"one": "{count} artigo adicionado à lista",
 			"other": "{count} artigos adicionados à lista"
+		}
+	},
+	"household": {
+		"title": "A minha casa",
+		"members": "Membros",
+		"leave": "Sair desta casa",
+		"inviteTitle": "Convidar alguém",
+		"inviteHint": "Crie um código e dê-o à pessoa. Ela escreve-o na aplicação dela.",
+		"createInvite": "Criar um código",
+		"copy": "Copiar",
+		"copied": "Copiado",
+		"inviteExpires": "Válido até {date}.",
+		"joinTitle": "Juntar-se a uma casa",
+		"joinHint": "Introduza o código que lhe deram. As suas listas atuais serão substituídas pelas dessa casa.",
+		"code": "Código de convite",
+		"join": "Juntar-se",
+		"role": {
+			"self": "Você",
+			"owner": "Responsável",
+			"member": "Membro"
 		}
 	}
 }
