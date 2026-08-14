@@ -170,7 +170,13 @@
 			"pending": "Miandry",
 			"approved": "Nekena",
 			"rejected": "Nolavina"
-		}
+		},
+		"demo": "Fanandramana",
+		"setDemo": "Mariho ho fanandramana",
+		"unsetDemo": "Esory ny fanandramana",
+		"resetDemo": "Averina ny fanandramana",
+		"demoReset": "Niverina tamin’ny toetrany voalohany ny ankohonana fanandramana.",
+		"demoHint": "Misokatra ho an’ny rehetra ny kaonty fanandramana. Avereno rehefa be ny nampiasa azy."
 	},
 	"sync": {
 		"offline": "Tsy misy fifandraisana — halefa rehefa miverina ny aterineto ny fanovana",

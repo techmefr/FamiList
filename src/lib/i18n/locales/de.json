@@ -171,7 +171,13 @@
 			"pending": "Ausstehend",
 			"approved": "Freigegeben",
 			"rejected": "Abgelehnt"
-		}
+		},
+		"demo": "Demo",
+		"setDemo": "Als Demo markieren",
+		"unsetDemo": "Demo entfernen",
+		"resetDemo": "Demo zurücksetzen",
+		"demoReset": "Der Demo-Haushalt ist wieder im Ausgangszustand.",
+		"demoHint": "Das Demokonto steht allen offen. Setzen Sie es zurück, wenn es viel benutzt wurde."
 	},
 	"sync": {
 		"offline": "Offline — Ihre Änderungen werden übertragen, sobald das Netz zurück ist",

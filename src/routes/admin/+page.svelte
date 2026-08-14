@@ -12,6 +12,7 @@
 		email: string;
 		requested_at: string;
 		status: string;
+		is_demo: boolean;
 	}
 
 	let accounts = $state<PendingAccount[]>([]);
@@ -38,6 +39,20 @@
 		await load();
 	}
 
+	async function setDemo(id: string, demo: boolean) {
+		const { error: rpcError } = await supabase.rpc('set_demo', { target: id, demo });
+		error = rpcError?.message ?? null;
+		await load();
+	}
+
+	async function resetDemo() {
+		const { error: rpcError } = await supabase.rpc('reset_demo');
+		error = rpcError?.message ?? null;
+		notice = rpcError ? null : t('admin.demoReset');
+	}
+
+	let notice = $state<string | null>(null);
+
 	$effect(() => {
 		if (session.isAdmin) load();
 	});
@@ -63,6 +78,19 @@
 		<p class="text-destructive mt-6" role="alert">{error}</p>
 	{/if}
 
+	{#if notice}
+		<p class="text-primary mt-6" role="status" data-test="admin-notice">{notice}</p>
+	{/if}
+
+	{#if accounts.some((account) => account.is_demo)}
+		<div class="bg-card mt-6 rounded-md border p-4">
+			<p class="text-label">{t('admin.demoHint')}</p>
+			<Button variant="outline" onclick={resetDemo} data-test="reset-demo" class="mt-3">
+				{t('admin.resetDemo')}
+			</Button>
+		</div>
+	{/if}
+
 	{#if accounts.length === 0}
 		<p class="text-muted-foreground mt-6" data-test="admin-empty">{t('admin.empty')}</p>
 	{:else}
@@ -84,6 +112,10 @@
 								{t(`admin.status.${account.status}`)}
 							</Badge>
 
+							{#if account.is_demo}
+								<Badge variant="secondary" data-test="demo-badge">{t('admin.demo')}</Badge>
+							{/if}
+
 							{#if !self && account.status !== 'approved'}
 								<Button onclick={() => review(account.id, 'approved')} data-test="approve">
 									{t('admin.approve')}
@@ -96,6 +128,16 @@
 									data-test="reject"
 								>
 									{t('admin.reject')}
+								</Button>
+							{/if}
+
+							{#if !self}
+								<Button
+									variant="outline"
+									onclick={() => setDemo(account.id, !account.is_demo)}
+									data-test="toggle-demo"
+								>
+									{account.is_demo ? t('admin.unsetDemo') : t('admin.setDemo')}
 								</Button>
 							{/if}
 						</Card.Content>

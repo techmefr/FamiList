@@ -170,7 +170,13 @@
 			"pending": "待审核",
 			"approved": "已通过",
 			"rejected": "已拒绝"
-		}
+		},
+		"demo": "演示",
+		"setDemo": "标记为演示账号",
+		"unsetDemo": "取消演示标记",
+		"resetDemo": "重置演示",
+		"demoReset": "演示家庭已恢复到初始状态。",
+		"demoHint": "演示账号对所有人开放。使用较多后请重置。"
 	},
 	"sync": {
 		"offline": "离线 — 网络恢复后将同步你的更改",

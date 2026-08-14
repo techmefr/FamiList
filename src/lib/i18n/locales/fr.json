@@ -171,7 +171,13 @@
 			"pending": "En attente",
 			"approved": "Validé",
 			"rejected": "Refusé"
-		}
+		},
+		"demo": "Démo",
+		"setDemo": "Marquer comme démo",
+		"unsetDemo": "Retirer la démo",
+		"resetDemo": "Réinitialiser la démo",
+		"demoReset": "Le foyer de démonstration est revenu à son état de départ.",
+		"demoHint": "Le compte de démonstration est ouvert à tous. Remettez-le à zéro quand il a trop servi."
 	},
 	"sync": {
 		"offline": "Hors connexion — vos modifications partiront au retour du réseau",

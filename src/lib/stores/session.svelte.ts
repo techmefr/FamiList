@@ -78,6 +78,11 @@ class SessionStore {
 		await supabase.auth.signOut();
 		this.user = null;
 		this.profile = null;
+
+		// Le cache local survit à la déconnexion s'il n'est pas vidé : sur un appareil partagé, la
+		// personne suivante ouvrirait les listes de la précédente.
+		const { data } = await import('$stores/data.svelte');
+		await data.forget();
 	}
 }
 

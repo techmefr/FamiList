@@ -659,15 +659,18 @@ export type Database = {
           display_name: string
           email: string
           id: string
+          is_demo: boolean
           requested_at: string
           status: string
         }[]
       }
       redeem_invite: { Args: { invite_code: string }; Returns: string }
+      reset_demo: { Args: never; Returns: undefined }
       review_account: {
         Args: { decision: string; target: string }
         Returns: undefined
       }
+      set_demo: { Args: { demo: boolean; target: string }; Returns: undefined }
       slugify: { Args: { value: string }; Returns: string }
     }
     Enums: {

@@ -65,15 +65,28 @@ class DataStore {
 	private userId = '';
 
 	async load() {
-		if (!browser || this.ready) return;
+		if (!browser) return;
+
+		const { data } = await supabase.auth.getUser();
+		const user = data.user?.id ?? '';
+
+		// Changer de compte sur le même appareil doit tout reprendre à zéro. Sans cette
+		// comparaison, le cache du compte précédent resterait à l'écran : les listes d'une
+		// personne s'afficheraient à une autre.
+		if (this.ready) {
+			if (user !== this.userId) {
+				this.userId = user;
+				await this.reload();
+			}
+			return;
+		}
+
+		this.userId = user;
 
 		// Le cache s'affiche d'abord, la synchronisation le remplace ensuite. Hors réseau, ou le
 		// temps que le serveur réponde, l'application reste utilisable.
 		await this.hydrate();
 		this.ready = true;
-
-		const { data } = await supabase.auth.getUser();
-		this.userId = data.user?.id ?? '';
 
 		await sync.start(() => void this.hydrate());
 	}
@@ -592,12 +605,27 @@ class DataStore {
 	}
 
 	/**
-	 * Le compte a changé de foyer : le cache décrit l'ancien, il ne doit rien en rester. On repart
-	 * du serveur plutôt que de trier, une liste de l'ancien foyer affichée dans le nouveau serait
-	 * incompréhensible.
+	 * Le compte ou le foyer a changé : le cache décrit le précédent, il ne doit rien en rester. On
+	 * repart du serveur plutôt que de trier — les listes de quelqu'un d'autre affichées ici
+	 * seraient au mieux incompréhensibles, au pire indiscrètes.
 	 */
 	async reload() {
 		sync.stop();
+		await this.clearCache();
+		await this.hydrate();
+		await sync.start(() => void this.hydrate());
+	}
+
+	/** À la déconnexion il n'y a plus de compte : on vide sans rien redemander au serveur. */
+	async forget() {
+		sync.stop();
+		this.ready = false;
+		this.userId = '';
+		await this.clearCache();
+		await this.hydrate();
+	}
+
+	private async clearCache() {
 		await Promise.all([
 			db.shops.clear(),
 			db.aisles.clear(),
@@ -614,8 +642,6 @@ class DataStore {
 		]);
 
 		localStorage.removeItem(ACTIVE_SHOP_KEY);
-		await this.hydrate();
-		await sync.start(() => void this.hydrate());
 	}
 
 	async reset() {

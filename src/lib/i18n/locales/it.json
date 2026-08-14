@@ -171,7 +171,13 @@
 			"pending": "In attesa",
 			"approved": "Approvato",
 			"rejected": "Rifiutato"
-		}
+		},
+		"demo": "Demo",
+		"setDemo": "Segna come demo",
+		"unsetDemo": "Togli la demo",
+		"resetDemo": "Reimposta la demo",
+		"demoReset": "La casa dimostrativa è tornata allo stato iniziale.",
+		"demoHint": "L’account dimostrativo è aperto a tutti. Reimpostalo quando è stato usato molto."
 	},
 	"sync": {
 		"offline": "Non in linea — le modifiche partiranno al ritorno della rete",

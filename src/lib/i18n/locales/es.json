@@ -171,7 +171,13 @@
 			"pending": "Pendiente",
 			"approved": "Validada",
 			"rejected": "Rechazada"
-		}
+		},
+		"demo": "Demo",
+		"setDemo": "Marcar como demo",
+		"unsetDemo": "Quitar la demo",
+		"resetDemo": "Reiniciar la demo",
+		"demoReset": "El hogar de demostración ha vuelto a su estado inicial.",
+		"demoHint": "La cuenta de demostración está abierta a todos. Reiníciala cuando se haya usado mucho."
 	},
 	"sync": {
 		"offline": "Sin conexión — tus cambios se enviarán al volver la red",

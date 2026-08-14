@@ -171,7 +171,13 @@
 			"pending": "Pending",
 			"approved": "Approved",
 			"rejected": "Refused"
-		}
+		},
+		"demo": "Demo",
+		"setDemo": "Mark as demo",
+		"unsetDemo": "Remove demo flag",
+		"resetDemo": "Reset the demo",
+		"demoReset": "The demo household is back to its starting state.",
+		"demoHint": "The demo account is open to everyone. Reset it once it has been used a lot."
 	},
 	"sync": {
 		"offline": "Offline — your changes will sync when the network is back",
