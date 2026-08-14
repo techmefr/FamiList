@@ -59,7 +59,9 @@
 		"ink": "Encre"
 	},
 	"scan": {
-		"title": "Scanner"
+		"start": "Scanner le code",
+		"stop": "Arrêter",
+		"failed": "Lecture impossible : autorisez la caméra, ou saisissez le code à la main."
 	},
 	"cards": {
 		"title": "Cartes",

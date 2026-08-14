@@ -70,7 +70,11 @@ class SyncStore {
 	}
 
 	stop() {
-		this.channel?.unsubscribe();
+		// `removeChannel` et non `unsubscribe` : le client garde ses canaux indexés par sujet, et un
+		// simple désabonnement laisserait celui-ci en place. Rejoindre un foyer puis revenir au
+		// précédent réutiliserait alors un canal déjà abonné, que la bibliothèque refuse de
+		// reconfigurer — le temps réel s'arrêterait sans rien dire.
+		if (this.channel) supabase.removeChannel(this.channel);
 		this.channel = null;
 		this.householdId = null;
 		this.state = 'idle';

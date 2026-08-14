@@ -59,7 +59,9 @@
 		"ink": "Inchiostro"
 	},
 	"scan": {
-		"title": "Scansiona"
+		"start": "Scansiona il codice",
+		"stop": "Ferma",
+		"failed": "Scansione impossibile: consenti la fotocamera o digita il codice a mano."
 	},
 	"cards": {
 		"title": "Carte",

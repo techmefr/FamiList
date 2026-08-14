@@ -59,7 +59,9 @@
 		"ink": "Tinte"
 	},
 	"scan": {
-		"title": "Scannen"
+		"start": "Code scannen",
+		"stop": "Anhalten",
+		"failed": "Scannen nicht möglich: Kamera erlauben oder den Code von Hand eingeben."
 	},
 	"cards": {
 		"title": "Karten",

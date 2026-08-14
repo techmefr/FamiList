@@ -59,7 +59,9 @@
 		"ink": "Tinta"
 	},
 	"scan": {
-		"title": "Escanear"
+		"start": "Escanear el código",
+		"stop": "Detener",
+		"failed": "No se puede escanear: permite la cámara o escribe el código a mano."
 	},
 	"cards": {
 		"title": "Tarjetas",

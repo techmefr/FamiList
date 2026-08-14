@@ -59,7 +59,9 @@
 		"ink": "Tinta"
 	},
 	"scan": {
-		"title": "Digitalizar"
+		"start": "Ler o código",
+		"stop": "Parar",
+		"failed": "Leitura impossível: permita a câmara ou escreva o código à mão."
 	},
 	"cards": {
 		"title": "Cartões",

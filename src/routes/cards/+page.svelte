@@ -5,6 +5,7 @@
 	import { normalizeEan13 } from '$domain/barcode';
 	import LoyaltyCardFace from '$components/app/LoyaltyCardFace.svelte';
 	import CardFullscreen from '$components/app/CardFullscreen.svelte';
+	import ScanButton from '$components/app/ScanButton.svelte';
 	import { Button } from '$lib/components/ui/button';
 	import { Input } from '$lib/components/ui/input';
 	import { Label } from '$lib/components/ui/label';
@@ -111,6 +112,12 @@
 			<div>
 				<Label for="card-code">{t('cards.code')}</Label>
 				<Input id="card-code" bind:value={code} data-test="card-code" required />
+				<ScanButton
+					onScanned={(result) => {
+						code = result.value;
+						if (result.codeType) codeType = result.codeType;
+					}}
+				/>
 				{#if invalidEan}
 					<p class="text-destructive text-caption mt-1" role="alert" data-test="card-code-error">
 						{t('cards.eanInvalid')}

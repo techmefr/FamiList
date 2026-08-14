@@ -59,7 +59,9 @@
 		"ink": "Ink"
 	},
 	"scan": {
-		"title": "Scan"
+		"start": "Scan the code",
+		"stop": "Stop",
+		"failed": "Cannot scan: allow the camera, or type the code in by hand."
 	},
 	"cards": {
 		"title": "Cards",

@@ -58,7 +58,9 @@
 		"ink": "Ranomainty"
 	},
 	"scan": {
-		"title": "Skana"
+		"start": "Sikana ny kaody",
+		"stop": "Ajanony",
+		"failed": "Tsy afaka misikana: avelao hiasa ny fakan-tsary, na soraty an-tanana ny kaody."
 	},
 	"cards": {
 		"title": "Karatra",
