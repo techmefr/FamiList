@@ -8,7 +8,13 @@
 	import AddItemForm from '$components/app/AddItemForm.svelte';
 	import { createDrag, move } from '$components/app/drag.svelte';
 	import { Button } from '$lib/components/ui/button';
-	import { ChevronUp, ChevronDown, ArrowLeft, GripVertical } from '@lucide/svelte';
+	import {
+		ChevronUp,
+		ChevronDown,
+		ArrowLeft,
+		GripVertical,
+		MessagesSquare
+	} from '@lucide/svelte';
 
 	const listId = $derived(page.params.id!);
 	const list = $derived(data.list(listId));
@@ -73,6 +79,15 @@
 		{list.name}
 	</h1>
 	<p class="text-muted-foreground text-label mt-1">{t('lists.progress', { done, total })}</p>
+
+	<a
+		href="/l/{listId}/chat"
+		data-test="open-chat"
+		class="text-primary text-label mt-3 inline-flex items-center gap-2 underline"
+	>
+		<MessagesSquare size={16} aria-hidden="true" />
+		{t('chat.open')}
+	</a>
 
 	<div class="mt-6">
 		<ShopSwitcher />

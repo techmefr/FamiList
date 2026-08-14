@@ -2,11 +2,17 @@ import { browser } from '$app/environment';
 import {
 	db,
 	itemOrderKey,
+	pollVoteKey,
 	type Aisle,
 	type Item,
 	type List,
 	type LoyaltyCard,
 	type Member,
+	type Message,
+	type Poll,
+	type PollKind,
+	type PollOption,
+	type PollVote,
 	type Shop,
 	type ShopItemOrder,
 	type ShopLayout
@@ -22,8 +28,12 @@ import {
 	fromItemOrder,
 	fromLayout,
 	fromList,
+	fromMessage,
+	fromPoll,
+	fromPollOption,
 	fromShop
 } from '$lib/sync/mapping';
+import { slugify } from '$domain/slug';
 
 const ACTIVE_SHOP_KEY = 'familist:active-shop';
 
@@ -41,6 +51,10 @@ class DataStore {
 	members = $state<Member[]>([]);
 	layouts = $state<ShopLayout[]>([]);
 	itemOrders = $state<ShopItemOrder[]>([]);
+	messages = $state<Message[]>([]);
+	polls = $state<Poll[]>([]);
+	pollOptions = $state<PollOption[]>([]);
+	pollVotes = $state<PollVote[]>([]);
 
 	activeShopId = $state<string>('');
 	ready = $state(false);
@@ -65,7 +79,20 @@ class DataStore {
 	}
 
 	private async hydrate() {
-		const [shops, aisles, lists, items, cards, members, layouts, itemOrders] = await Promise.all([
+		const [
+			shops,
+			aisles,
+			lists,
+			items,
+			cards,
+			members,
+			layouts,
+			itemOrders,
+			messages,
+			polls,
+			pollOptions,
+			pollVotes
+		] = await Promise.all([
 			db.shops.toArray(),
 			db.aisles.orderBy('position').toArray(),
 			db.lists.toArray(),
@@ -73,7 +100,11 @@ class DataStore {
 			db.cards.toArray(),
 			db.members.toArray(),
 			db.shopLayouts.toArray(),
-			db.shopItemOrders.toArray()
+			db.shopItemOrders.toArray(),
+			db.messages.toArray(),
+			db.polls.toArray(),
+			db.pollOptions.toArray(),
+			db.pollVotes.toArray()
 		]);
 
 		this.shops = shops;
@@ -84,6 +115,10 @@ class DataStore {
 		this.members = members;
 		this.layouts = layouts;
 		this.itemOrders = itemOrders;
+		this.messages = messages;
+		this.polls = polls;
+		this.pollOptions = pollOptions;
+		this.pollVotes = pollVotes;
 
 		const saved = localStorage.getItem(ACTIVE_SHOP_KEY);
 		const known = saved && shops.some((s) => s.id === saved) ? saved : (shops[0]?.id ?? '');
@@ -336,6 +371,197 @@ class DataStore {
 			match: { shop_id: entry.shopId, user_id: this.userId, aisle_id: entry.aisleId },
 			payload: fromItemOrder(entry, this.userId)
 		});
+	}
+
+	messagesOf(listId: string) {
+		return this.messages
+			.filter((m) => m.listId === listId)
+			.sort((a, b) => a.createdAt - b.createdAt);
+	}
+
+	pollOf(messageId: string) {
+		return this.polls.find((p) => p.messageId === messageId);
+	}
+
+	optionsOf(pollId: string) {
+		return this.pollOptions
+			.filter((o) => o.pollId === pollId)
+			.sort((a, b) => a.position - b.position);
+	}
+
+	votersOf(optionId: string) {
+		return this.pollVotes.filter((v) => v.optionId === optionId).map((v) => v.userId);
+	}
+
+	member(id: string) {
+		return this.members.find((m) => m.id === id);
+	}
+
+	get me() {
+		return this.userId;
+	}
+
+	sendMessage(listId: string, body: string) {
+		const message: Message = {
+			id: crypto.randomUUID(),
+			listId,
+			userId: this.userId,
+			body: body.trim(),
+			isSystem: false,
+			createdAt: Date.now()
+		};
+
+		this.messages = [...this.messages, message];
+		db.messages.add(message);
+		this.push('messages', message, fromMessage);
+		return message;
+	}
+
+	/**
+	 * Un sondage est porté par un message : il apparaît dans le fil à sa place, et disparaît avec
+	 * lui. Message, sondage et options partent dans cet ordre — la file les rejouerait tels quels
+	 * après une coupure, et une option sans sondage serait refusée.
+	 */
+	createPoll(
+		listId: string,
+		kind: PollKind,
+		question: string,
+		labels: { label: string; emoji?: string }[]
+	) {
+		const message = this.sendMessage(listId, '');
+		const poll: Poll = {
+			id: crypto.randomUUID(),
+			messageId: message.id,
+			kind,
+			question: question.trim(),
+			closed: false
+		};
+
+		this.polls = [...this.polls, poll];
+		db.polls.add(poll);
+		this.push('polls', poll, fromPoll);
+
+		const options: PollOption[] = labels
+			.filter((entry) => entry.label.trim())
+			.map((entry, position) => ({
+				id: crypto.randomUUID(),
+				pollId: poll.id,
+				label: entry.label.trim(),
+				emoji: entry.emoji,
+				ingredients: [],
+				position
+			}));
+
+		this.pollOptions = [...this.pollOptions, ...options];
+		options.forEach((option) => {
+			db.pollOptions.add(option);
+			this.push('poll_options', option, fromPollOption);
+		});
+
+		return poll;
+	}
+
+	/** Un vote par sondage : voter ailleurs retire le vote précédent. */
+	toggleVote(pollId: string, optionId: string) {
+		if (!this.userId) return;
+
+		const mine = this.optionsOf(pollId)
+			.map((option) => pollVoteKey(option.id, this.userId))
+			.filter((key) => this.pollVotes.some((vote) => vote.key === key));
+
+		const target = pollVoteKey(optionId, this.userId);
+		const removing = mine.includes(target);
+
+		for (const key of mine) {
+			const vote = this.pollVotes.find((v) => v.key === key);
+			if (!vote) continue;
+
+			db.pollVotes.delete(key);
+			sync.enqueue({
+				table: 'poll_votes',
+				op: 'delete',
+				match: { option_id: vote.optionId, user_id: this.userId }
+			});
+		}
+
+		this.pollVotes = this.pollVotes.filter((v) => !mine.includes(v.key));
+
+		if (removing) return;
+
+		const vote: PollVote = { key: target, optionId, userId: this.userId };
+		this.pollVotes = [...this.pollVotes, vote];
+		db.pollVotes.put(vote);
+		sync.enqueue({
+			table: 'poll_votes',
+			op: 'upsert',
+			match: { option_id: optionId, user_id: this.userId },
+			payload: { option_id: optionId, user_id: this.userId }
+		});
+	}
+
+	/** « Qui ramène quoi » : on prend une part, ou on la relâche si on l'avait prise. */
+	toggleClaim(optionId: string) {
+		const option = this.pollOptions.find((o) => o.id === optionId);
+		if (!option || !this.userId) return;
+
+		// Une part déjà prise par quelqu'un d'autre ne se vole pas : il faut qu'il la relâche.
+		if (option.claimedBy && option.claimedBy !== this.userId) return;
+
+		option.claimedBy = option.claimedBy === this.userId ? undefined : this.userId;
+
+		const snapshot = $state.snapshot(option) as PollOption;
+		db.pollOptions.put(snapshot);
+		this.push('poll_options', snapshot, fromPollOption);
+	}
+
+	setIngredients(optionId: string, ingredients: string[]) {
+		const option = this.pollOptions.find((o) => o.id === optionId);
+		if (!option) return;
+
+		option.ingredients = ingredients.map((line) => line.trim()).filter(Boolean);
+
+		const snapshot = $state.snapshot(option) as PollOption;
+		db.pollOptions.put(snapshot);
+		this.push('poll_options', snapshot, fromPollOption);
+	}
+
+	/**
+	 * Verse dans la liste ce qu'une personne s'est engagée à apporter. Les articles déjà présents
+	 * ne sont pas ajoutés une seconde fois : on pousse souvent la même part après l'avoir complétée.
+	 */
+	pushIngredients(listId: string, optionId: string) {
+		const option = this.pollOptions.find((o) => o.id === optionId);
+		if (!option) return 0;
+
+		const existing = new Set(this.itemsOf(listId).map((item) => slugify(item.name)));
+		const fresh = option.ingredients.filter((name) => !existing.has(slugify(name)));
+
+		for (const name of fresh) {
+			const item = this.addItem(listId, { name, qty: '1', unit: 'pièce' });
+			if (option.claimedBy) this.assignItem(item.id, option.claimedBy);
+		}
+
+		return fresh.length;
+	}
+
+	assignItem(id: string, userId: string) {
+		const item = this.items.find((i) => i.id === id);
+		if (!item) return;
+
+		item.assignedTo = userId;
+		this.push('items', $state.snapshot(item), fromItem);
+		db.items.update(id, { assignedTo: userId });
+	}
+
+	setEventDate(listId: string, eventDate: string) {
+		const list = this.lists.find((l) => l.id === listId);
+		if (!list) return;
+
+		list.eventDate = eventDate;
+
+		const snapshot = $state.snapshot(list) as List;
+		db.lists.put(snapshot);
+		this.push('lists', snapshot, fromList);
 	}
 
 	/**

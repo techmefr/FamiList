@@ -172,5 +172,34 @@
 	"sync": {
 		"offline": "Tsy misy fifandraisana — halefa rehefa miverina ny aterineto ny fanovana",
 		"error": "Tsy afaka mampifanaraka izao"
+	},
+	"chat": {
+		"title": "Resaka",
+		"open": "Sokafy ny resaka",
+		"backToList": "Hiverina amin’ny lisitra",
+		"empty": "Mbola tsy misy hafatra.",
+		"placeholder": "Ny hafatrao…",
+		"send": "Alefa",
+		"unknownAuthor": "Olona iray",
+		"newDatePoll": "Hanolotra daty",
+		"newApportPoll": "Iza no mitondra inona?",
+		"dateQuestion": "Hariva inona no mety aminao indrindra?",
+		"apportQuestion": "Iza no mitondra inona?",
+		"question": "Fanontaniana",
+		"choices": "Safidy (iray isaky ny andalana)",
+		"choicesPlaceholder": "Zoma 22 May — 20 ora\nSabotsy 23 May — 19 ora sy sasany",
+		"createPoll": "Hamorona fanadihadiana",
+		"claim": "Izaho no misahana",
+		"release": "Miala aho",
+		"ingredients": "Izay ho entiko",
+		"ingredientsPlaceholder": "Zavatra iray isaky ny andalana",
+		"pushToList": "Ampio amin’ny lisitra",
+		"setEventDate": "Raiketo « {date} »",
+		"votes": {
+			"other": "vato {count}"
+		},
+		"pushed": {
+			"other": "Nampiana zavatra {count} ny lisitra"
+		}
 	}
 }

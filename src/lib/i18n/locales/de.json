@@ -173,5 +173,36 @@
 	"sync": {
 		"offline": "Offline — Ihre Änderungen werden übertragen, sobald das Netz zurück ist",
 		"error": "Synchronisierung derzeit nicht möglich"
+	},
+	"chat": {
+		"title": "Unterhaltung",
+		"open": "Unterhaltung öffnen",
+		"backToList": "Zurück zur Liste",
+		"empty": "Noch keine Nachrichten.",
+		"placeholder": "Ihre Nachricht…",
+		"send": "Senden",
+		"unknownAuthor": "Jemand",
+		"newDatePoll": "Einen Termin vorschlagen",
+		"newApportPoll": "Wer bringt was mit?",
+		"dateQuestion": "Welcher Abend passt Ihnen am besten?",
+		"apportQuestion": "Wer bringt was mit?",
+		"question": "Frage",
+		"choices": "Auswahl (eine pro Zeile)",
+		"choicesPlaceholder": "Freitag, 22. Mai — 20 Uhr\nSamstag, 23. Mai — 19:30 Uhr",
+		"createPoll": "Umfrage erstellen",
+		"claim": "Ich übernehme das",
+		"release": "Doch nicht",
+		"ingredients": "Was ich mitbringe",
+		"ingredientsPlaceholder": "Ein Artikel pro Zeile",
+		"pushToList": "Zur Liste hinzufügen",
+		"setEventDate": "„{date}“ festhalten",
+		"votes": {
+			"one": "{count} Stimme",
+			"other": "{count} Stimmen"
+		},
+		"pushed": {
+			"one": "{count} Artikel zur Liste hinzugefügt",
+			"other": "{count} Artikel zur Liste hinzugefügt"
+		}
 	}
 }

@@ -84,6 +84,44 @@ export interface ShopItemOrder {
 	productSlugs: string[];
 }
 
+export interface Message {
+	id: string;
+	listId: string;
+	userId: string;
+	body: string;
+	isSystem: boolean;
+	createdAt: number;
+}
+
+export type PollKind = 'date' | 'apport';
+
+export interface Poll {
+	id: string;
+	messageId: string;
+	kind: PollKind;
+	question: string;
+	closed: boolean;
+}
+
+export interface PollOption {
+	id: string;
+	pollId: string;
+	label: string;
+	emoji?: string;
+	claimedBy?: string;
+	/** Ce que la personne apporte : ces lignes deviennent des articles de la liste. */
+	ingredients: string[];
+	position: number;
+}
+
+export interface PollVote {
+	key: string;
+	optionId: string;
+	userId: string;
+}
+
+export const pollVoteKey = (optionId: string, userId: string) => `${optionId}::${userId}`;
+
 /**
  * Écriture locale pas encore confirmée par le serveur. C'est ce qui permet de cocher un article
  * dans un magasin sans réseau : la modification part de la file dès que la connexion revient.
@@ -119,6 +157,10 @@ class FamiListDatabase extends Dexie {
 	shopLayouts!: EntityTable<ShopLayout, 'shopId'>;
 	shopItemOrders!: EntityTable<ShopItemOrder, 'key'>;
 	outbox!: EntityTable<OutboxEntry, 'seq'>;
+	messages!: EntityTable<Message, 'id'>;
+	polls!: EntityTable<Poll, 'id'>;
+	pollOptions!: EntityTable<PollOption, 'id'>;
+	pollVotes!: EntityTable<PollVote, 'key'>;
 
 	constructor() {
 		super('familist');
@@ -146,6 +188,13 @@ class FamiListDatabase extends Dexie {
 			);
 
 		this.version(3).stores({ outbox: '++seq' });
+
+		this.version(4).stores({
+			messages: 'id, listId, createdAt',
+			polls: 'id, messageId',
+			pollOptions: 'id, pollId',
+			pollVotes: 'key, optionId'
+		});
 	}
 }
 

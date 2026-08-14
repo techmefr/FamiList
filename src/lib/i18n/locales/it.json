@@ -173,5 +173,36 @@
 	"sync": {
 		"offline": "Non in linea — le modifiche partiranno al ritorno della rete",
 		"error": "Sincronizzazione non possibile al momento"
+	},
+	"chat": {
+		"title": "Conversazione",
+		"open": "Apri la conversazione",
+		"backToList": "Torna alla lista",
+		"empty": "Ancora nessun messaggio.",
+		"placeholder": "Il tuo messaggio…",
+		"send": "Invia",
+		"unknownAuthor": "Qualcuno",
+		"newDatePoll": "Proporre una data",
+		"newApportPoll": "Chi porta cosa?",
+		"dateQuestion": "Quale sera ti va meglio?",
+		"apportQuestion": "Chi porta cosa?",
+		"question": "Domanda",
+		"choices": "Scelte (una per riga)",
+		"choicesPlaceholder": "Venerdì 22 maggio — 20:00\nSabato 23 maggio — 19:30",
+		"createPoll": "Crea il sondaggio",
+		"claim": "Ci penso io",
+		"release": "Mi tiro indietro",
+		"ingredients": "Cosa porto",
+		"ingredientsPlaceholder": "Un articolo per riga",
+		"pushToList": "Aggiungi alla lista",
+		"setEventDate": "Fissare «{date}»",
+		"votes": {
+			"one": "{count} voto",
+			"other": "{count} voti"
+		},
+		"pushed": {
+			"one": "{count} articolo aggiunto alla lista",
+			"other": "{count} articoli aggiunti alla lista"
+		}
 	}
 }

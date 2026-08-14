@@ -9,6 +9,10 @@ import {
 	toLayout,
 	toList,
 	toMember,
+	toMessage,
+	toPoll,
+	toPollOption,
+	toPollVote,
 	toShop
 } from './mapping';
 
@@ -116,20 +120,51 @@ class SyncStore {
 
 		this.state = 'syncing';
 
-		const [shops, aisles, lists, listMembers, items, cards, members, layouts, itemOrders] =
-			await Promise.all([
-				supabase.from('shops').select('*').eq('household_id', household),
-				supabase.from('aisles').select('*').eq('household_id', household),
-				supabase.from('lists').select('*').eq('household_id', household),
-				supabase.from('list_members').select('*'),
-				supabase.from('items').select('*'),
-				supabase.from('loyalty_cards').select('*').eq('household_id', household),
-				supabase.from('household_members').select('*').eq('household_id', household),
-				supabase.from('shop_layouts').select('*'),
-				supabase.from('shop_item_orders').select('*')
-			]);
+		const [
+			shops,
+			aisles,
+			lists,
+			listMembers,
+			items,
+			cards,
+			members,
+			layouts,
+			itemOrders,
+			messages,
+			polls,
+			pollOptions,
+			pollVotes
+		] = await Promise.all([
+			supabase.from('shops').select('*').eq('household_id', household),
+			supabase.from('aisles').select('*').eq('household_id', household),
+			supabase.from('lists').select('*').eq('household_id', household),
+			supabase.from('list_members').select('*'),
+			supabase.from('items').select('*'),
+			supabase.from('loyalty_cards').select('*').eq('household_id', household),
+			supabase.from('household_members').select('*').eq('household_id', household),
+			supabase.from('shop_layouts').select('*'),
+			supabase.from('shop_item_orders').select('*'),
+			supabase.from('messages').select('*'),
+			supabase.from('polls').select('*'),
+			supabase.from('poll_options').select('*'),
+			supabase.from('poll_votes').select('*')
+		]);
 
-		const failed = [shops, aisles, lists, listMembers, items, cards, members, layouts, itemOrders]
+		const failed = [
+			shops,
+			aisles,
+			lists,
+			listMembers,
+			items,
+			cards,
+			members,
+			layouts,
+			itemOrders,
+			messages,
+			polls,
+			pollOptions,
+			pollVotes
+		]
 			.map((result) => result.error)
 			.find(Boolean);
 
@@ -162,7 +197,20 @@ class SyncStore {
 
 		await db.transaction(
 			'rw',
-			[db.shops, db.aisles, db.lists, db.items, db.cards, db.members, db.shopLayouts, db.shopItemOrders],
+			[
+				db.shops,
+				db.aisles,
+				db.lists,
+				db.items,
+				db.cards,
+				db.members,
+				db.shopLayouts,
+				db.shopItemOrders,
+				db.messages,
+				db.polls,
+				db.pollOptions,
+				db.pollVotes
+			],
 			async () => {
 				await Promise.all([
 					db.shops.clear(),
@@ -172,7 +220,11 @@ class SyncStore {
 					db.cards.clear(),
 					db.members.clear(),
 					db.shopLayouts.clear(),
-					db.shopItemOrders.clear()
+					db.shopItemOrders.clear(),
+					db.messages.clear(),
+					db.polls.clear(),
+					db.pollOptions.clear(),
+					db.pollVotes.clear()
 				]);
 
 				await Promise.all([
@@ -189,7 +241,11 @@ class SyncStore {
 						)
 					),
 					db.shopLayouts.bulkAdd((layouts.data ?? []).map(toLayout)),
-					db.shopItemOrders.bulkAdd((itemOrders.data ?? []).map(toItemOrder))
+					db.shopItemOrders.bulkAdd((itemOrders.data ?? []).map(toItemOrder)),
+					db.messages.bulkAdd((messages.data ?? []).map(toMessage)),
+					db.polls.bulkAdd((polls.data ?? []).map(toPoll)),
+					db.pollOptions.bulkAdd((pollOptions.data ?? []).map(toPollOption)),
+					db.pollVotes.bulkAdd((pollVotes.data ?? []).map(toPollVote))
 				]);
 			}
 		);

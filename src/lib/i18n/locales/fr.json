@@ -173,5 +173,36 @@
 	"sync": {
 		"offline": "Hors connexion — vos modifications partiront au retour du réseau",
 		"error": "Synchronisation impossible pour le moment"
+	},
+	"chat": {
+		"title": "Discussion",
+		"open": "Ouvrir la discussion",
+		"backToList": "Retour à la liste",
+		"empty": "Aucun message pour le moment.",
+		"placeholder": "Votre message…",
+		"send": "Envoyer",
+		"unknownAuthor": "Quelqu’un",
+		"newDatePoll": "Proposer une date",
+		"newApportPoll": "Qui ramène quoi ?",
+		"dateQuestion": "Quel soir vous arrange le mieux ?",
+		"apportQuestion": "Qui ramène quoi ?",
+		"question": "Question",
+		"choices": "Choix (un par ligne)",
+		"choicesPlaceholder": "Vendredi 22 mai — 20h\nSamedi 23 mai — 19h30",
+		"createPoll": "Créer le sondage",
+		"claim": "Je m’en occupe",
+		"release": "Je me retire",
+		"ingredients": "Ce que j’apporte",
+		"ingredientsPlaceholder": "Un article par ligne",
+		"pushToList": "Ajouter à la liste",
+		"setEventDate": "Retenir « {date} »",
+		"votes": {
+			"one": "{count} voix",
+			"other": "{count} voix"
+		},
+		"pushed": {
+			"one": "{count} article ajouté à la liste",
+			"other": "{count} articles ajoutés à la liste"
+		}
 	}
 }

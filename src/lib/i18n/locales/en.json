@@ -173,5 +173,36 @@
 	"sync": {
 		"offline": "Offline — your changes will sync when the network is back",
 		"error": "Cannot sync right now"
+	},
+	"chat": {
+		"title": "Chat",
+		"open": "Open the chat",
+		"backToList": "Back to the list",
+		"empty": "No messages yet.",
+		"placeholder": "Your message…",
+		"send": "Send",
+		"unknownAuthor": "Someone",
+		"newDatePoll": "Suggest a date",
+		"newApportPoll": "Who brings what?",
+		"dateQuestion": "Which evening suits you best?",
+		"apportQuestion": "Who brings what?",
+		"question": "Question",
+		"choices": "Choices (one per line)",
+		"choicesPlaceholder": "Friday 22 May — 8pm\nSaturday 23 May — 7.30pm",
+		"createPoll": "Create the poll",
+		"claim": "I’ll take it",
+		"release": "Step back",
+		"ingredients": "What I’m bringing",
+		"ingredientsPlaceholder": "One item per line",
+		"pushToList": "Add to the list",
+		"setEventDate": "Settle on “{date}”",
+		"votes": {
+			"one": "{count} vote",
+			"other": "{count} votes"
+		},
+		"pushed": {
+			"one": "{count} item added to the list",
+			"other": "{count} items added to the list"
+		}
 	}
 }

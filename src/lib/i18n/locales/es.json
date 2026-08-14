@@ -173,5 +173,36 @@
 	"sync": {
 		"offline": "Sin conexión — tus cambios se enviarán al volver la red",
 		"error": "No se puede sincronizar ahora mismo"
+	},
+	"chat": {
+		"title": "Conversación",
+		"open": "Abrir la conversación",
+		"backToList": "Volver a la lista",
+		"empty": "Todavía no hay mensajes.",
+		"placeholder": "Tu mensaje…",
+		"send": "Enviar",
+		"unknownAuthor": "Alguien",
+		"newDatePoll": "Proponer una fecha",
+		"newApportPoll": "¿Quién trae qué?",
+		"dateQuestion": "¿Qué noche te viene mejor?",
+		"apportQuestion": "¿Quién trae qué?",
+		"question": "Pregunta",
+		"choices": "Opciones (una por línea)",
+		"choicesPlaceholder": "Viernes 22 de mayo — 20h\nSábado 23 de mayo — 19:30",
+		"createPoll": "Crear la encuesta",
+		"claim": "Yo me encargo",
+		"release": "Me retiro",
+		"ingredients": "Lo que llevo",
+		"ingredientsPlaceholder": "Un artículo por línea",
+		"pushToList": "Añadir a la lista",
+		"setEventDate": "Fijar «{date}»",
+		"votes": {
+			"one": "{count} voto",
+			"other": "{count} votos"
+		},
+		"pushed": {
+			"one": "{count} artículo añadido a la lista",
+			"other": "{count} artículos añadidos a la lista"
+		}
 	}
 }

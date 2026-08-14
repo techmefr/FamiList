@@ -173,5 +173,36 @@
 	"sync": {
 		"offline": "Sem ligação — as alterações serão enviadas quando a rede voltar",
 		"error": "Não é possível sincronizar de momento"
+	},
+	"chat": {
+		"title": "Conversa",
+		"open": "Abrir a conversa",
+		"backToList": "Voltar à lista",
+		"empty": "Ainda não há mensagens.",
+		"placeholder": "A sua mensagem…",
+		"send": "Enviar",
+		"unknownAuthor": "Alguém",
+		"newDatePoll": "Propor uma data",
+		"newApportPoll": "Quem traz o quê?",
+		"dateQuestion": "Que noite lhe dá mais jeito?",
+		"apportQuestion": "Quem traz o quê?",
+		"question": "Pergunta",
+		"choices": "Opções (uma por linha)",
+		"choicesPlaceholder": "Sexta 22 de maio — 20h\nSábado 23 de maio — 19h30",
+		"createPoll": "Criar a sondagem",
+		"claim": "Eu trato disso",
+		"release": "Retiro-me",
+		"ingredients": "O que vou levar",
+		"ingredientsPlaceholder": "Um artigo por linha",
+		"pushToList": "Adicionar à lista",
+		"setEventDate": "Fixar «{date}»",
+		"votes": {
+			"one": "{count} voto",
+			"other": "{count} votos"
+		},
+		"pushed": {
+			"one": "{count} artigo adicionado à lista",
+			"other": "{count} artigos adicionados à lista"
+		}
 	}
 }

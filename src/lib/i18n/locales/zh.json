@@ -172,5 +172,34 @@
 	"sync": {
 		"offline": "离线 — 网络恢复后将同步你的更改",
 		"error": "目前无法同步"
+	},
+	"chat": {
+		"title": "讨论",
+		"open": "打开讨论",
+		"backToList": "返回清单",
+		"empty": "还没有消息。",
+		"placeholder": "你的消息…",
+		"send": "发送",
+		"unknownAuthor": "某人",
+		"newDatePoll": "提议日期",
+		"newApportPoll": "谁带什么？",
+		"dateQuestion": "哪个晚上你最方便？",
+		"apportQuestion": "谁带什么？",
+		"question": "问题",
+		"choices": "选项（每行一个）",
+		"choicesPlaceholder": "5月22日周五 — 20:00\n5月23日周六 — 19:30",
+		"createPoll": "创建投票",
+		"claim": "我来负责",
+		"release": "我退出",
+		"ingredients": "我要带的东西",
+		"ingredientsPlaceholder": "每行一件物品",
+		"pushToList": "加入清单",
+		"setEventDate": "定为「{date}」",
+		"votes": {
+			"other": "{count} 票"
+		},
+		"pushed": {
+			"other": "已向清单添加 {count} 件物品"
+		}
 	}
 }

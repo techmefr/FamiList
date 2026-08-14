@@ -4,11 +4,15 @@ import type {
 	List,
 	LoyaltyCard,
 	Member,
+	Message,
+	Poll,
+	PollOption,
+	PollVote,
 	Shop,
 	ShopItemOrder,
 	ShopLayout
 } from '$db/schema';
-import { itemOrderKey } from '$db/schema';
+import { itemOrderKey, pollVoteKey } from '$db/schema';
 
 /**
  * Traduction entre le modèle local, écrit pour l'écran, et les colonnes Postgres. Tout passe par
@@ -170,6 +174,66 @@ export const toItemOrder = (row: Row): ShopItemOrder => {
 		aisleId,
 		productSlugs: Array.isArray(row.product_slugs) ? (row.product_slugs as string[]) : []
 	};
+};
+
+export const toMessage = (row: Row): Message => ({
+	id: text(row.id),
+	listId: text(row.list_id),
+	userId: text(row.user_id),
+	body: text(row.body),
+	isSystem: flag(row.is_system),
+	createdAt: Date.parse(text(row.created_at)) || 0
+});
+
+export const fromMessage = (message: Message) => ({
+	id: message.id,
+	list_id: message.listId,
+	user_id: message.userId || null,
+	body: message.body,
+	is_system: message.isSystem
+});
+
+export const toPoll = (row: Row): Poll => ({
+	id: text(row.id),
+	messageId: text(row.message_id),
+	kind: text(row.kind, 'date') as Poll['kind'],
+	question: text(row.question),
+	closed: flag(row.closed)
+});
+
+export const fromPoll = (poll: Poll) => ({
+	id: poll.id,
+	message_id: poll.messageId,
+	kind: poll.kind,
+	question: poll.question,
+	closed: poll.closed
+});
+
+export const toPollOption = (row: Row): PollOption => ({
+	id: text(row.id),
+	pollId: text(row.poll_id),
+	label: text(row.label),
+	emoji: typeof row.emoji === 'string' ? row.emoji : undefined,
+	claimedBy: typeof row.claimed_by === 'string' ? row.claimed_by : undefined,
+	ingredients: Array.isArray(row.ingredients) ? (row.ingredients as string[]) : [],
+	position: typeof row.position === 'number' ? row.position : 0
+});
+
+export const fromPollOption = (option: PollOption) => ({
+	id: option.id,
+	poll_id: option.pollId,
+	label: option.label,
+	emoji: option.emoji ?? null,
+	claimed_by: option.claimedBy ?? null,
+	ingredients: option.ingredients,
+	position: option.position
+});
+
+export const toPollVote = (row: Row): PollVote => {
+	const optionId = text(row.option_id);
+	const userId = text(row.user_id);
+
+	return { key: pollVoteKey(optionId, userId), optionId, userId };
 };
 
 export const fromItemOrder = (order: ShopItemOrder, userId: string) => ({
