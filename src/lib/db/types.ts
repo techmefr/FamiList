@@ -448,6 +448,12 @@ export type Database = {
           display_name: string
           id: string
           initial: string
+          is_demo: boolean
+          requested_at: string
+          reviewed_at: string | null
+          reviewed_by: string | null
+          role: string
+          status: string
           theme: string
           tint: string
           type_scale: string
@@ -457,6 +463,12 @@ export type Database = {
           display_name?: string
           id: string
           initial?: string
+          is_demo?: boolean
+          requested_at?: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          role?: string
+          status?: string
           theme?: string
           tint?: string
           type_scale?: string
@@ -466,6 +478,12 @@ export type Database = {
           display_name?: string
           id?: string
           initial?: string
+          is_demo?: boolean
+          requested_at?: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          role?: string
+          status?: string
           theme?: string
           tint?: string
           type_scale?: string
@@ -585,7 +603,23 @@ export type Database = {
     Functions: {
       can_access_list: { Args: { target: string }; Returns: boolean }
       can_access_shop: { Args: { target: string }; Returns: boolean }
+      is_admin: { Args: never; Returns: boolean }
+      is_approved: { Args: never; Returns: boolean }
       is_household_member: { Args: { target: string }; Returns: boolean }
+      pending_accounts: {
+        Args: never
+        Returns: {
+          display_name: string
+          email: string
+          id: string
+          requested_at: string
+          status: string
+        }[]
+      }
+      review_account: {
+        Args: { decision: string; target: string }
+        Returns: undefined
+      }
       slugify: { Args: { value: string }; Returns: string }
     }
     Enums: {

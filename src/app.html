@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="fr" data-type-scale="normal">
+	<head>
+		<meta charset="utf-8" />
+		<meta
+			name="viewport"
+			content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=5"
+		/>
+		<meta name="theme-color" content="#F1EDE5" />
+		<link rel="icon" href="%sveltekit.assets%/favicon.svg" />
+		<script>
+			try {
+				const saved = JSON.parse(localStorage.getItem('familist:appearance') ?? '{}');
+				const dark =
+					saved.theme === 'dark' ||
+					((saved.theme ?? 'system') === 'system' &&
+						matchMedia('(prefers-color-scheme: dark)').matches);
+				if (dark) document.documentElement.classList.add('dark');
+				document.documentElement.dataset.typeScale = saved.typeScale ?? 'normal';
+			} catch {}
+		</script>
+		%sveltekit.head%
+	</head>
+	<body data-sveltekit-preload-data="hover">
+		<div style="display: contents">%sveltekit.body%</div>
+	</body>
+</html>
