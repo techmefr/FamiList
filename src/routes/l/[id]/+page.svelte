@@ -36,7 +36,7 @@
 	 * réordonner ferait disparaître le parcours appris des rayons momentanément vides.
 	 */
 	function commitAisleOrder(visibleOrder: string[]) {
-		const previous = data.activeLayout?.aisleOrder ?? [];
+		const previous = data.activeLayout?.aisleOrder ?? data.aisles.map((a) => a.id);
 		const hidden = previous.filter((id) => !visibleOrder.includes(id));
 		data.reorderAisles([...visibleOrder, ...hidden]);
 	}

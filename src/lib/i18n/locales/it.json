@@ -87,7 +87,8 @@
 		"aisleUp": "Sposta su il reparto {name}",
 		"aisleDown": "Sposta giù il reparto {name}",
 		"priority": "Segna {name} come prioritario",
-		"remove": "Elimina {name}"
+		"remove": "Elimina {name}",
+		"noShop": "Aggiungi un negozio"
 	},
 	"add": {
 		"name": "Articolo",
@@ -143,5 +144,9 @@
 			"approved": "Approvato",
 			"rejected": "Rifiutato"
 		}
+	},
+	"sync": {
+		"offline": "Non in linea — le modifiche partiranno al ritorno della rete",
+		"error": "Sincronizzazione non possibile al momento"
 	}
 }

@@ -87,7 +87,8 @@
 		"aisleUp": "Move aisle {name} up",
 		"aisleDown": "Move aisle {name} down",
 		"priority": "Mark {name} as priority",
-		"remove": "Delete {name}"
+		"remove": "Delete {name}",
+		"noShop": "Add a shop"
 	},
 	"add": {
 		"name": "Item",
@@ -143,5 +144,9 @@
 			"approved": "Approved",
 			"rejected": "Refused"
 		}
+	},
+	"sync": {
+		"offline": "Offline — your changes will sync when the network is back",
+		"error": "Cannot sync right now"
 	}
 }

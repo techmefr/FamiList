@@ -87,7 +87,8 @@
 		"aisleUp": "Subir la sección {name}",
 		"aisleDown": "Bajar la sección {name}",
 		"priority": "Marcar {name} como prioritario",
-		"remove": "Eliminar {name}"
+		"remove": "Eliminar {name}",
+		"noShop": "Añadir una tienda"
 	},
 	"add": {
 		"name": "Artículo",
@@ -143,5 +144,9 @@
 			"approved": "Validada",
 			"rejected": "Rechazada"
 		}
+	},
+	"sync": {
+		"offline": "Sin conexión — tus cambios se enviarán al volver la red",
+		"error": "No se puede sincronizar ahora mismo"
 	}
 }

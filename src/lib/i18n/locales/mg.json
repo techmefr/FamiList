@@ -86,7 +86,8 @@
 		"aisleUp": "Akaro ny faritra {name}",
 		"aisleDown": "Ampidino ny faritra {name}",
 		"priority": "Mariho ho maika {name}",
-		"remove": "Fafao {name}"
+		"remove": "Fafao {name}",
+		"noShop": "Hanampy fivarotana"
 	},
 	"add": {
 		"name": "Entana",
@@ -142,5 +143,9 @@
 			"approved": "Nekena",
 			"rejected": "Nolavina"
 		}
+	},
+	"sync": {
+		"offline": "Tsy misy fifandraisana — halefa rehefa miverina ny aterineto ny fanovana",
+		"error": "Tsy afaka mampifanaraka izao"
 	}
 }

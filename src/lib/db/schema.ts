@@ -12,6 +12,17 @@ export interface Aisle {
 	id: string;
 	name: string;
 	emoji: string;
+	/**
+	 * Ordre de référence des rayons, celui d'un magasin qu'on ne connaît pas encore. Sans lui,
+	 * Dexie rend les rayons triés par identifiant, donc dans un ordre alphabétique qui ne
+	 * correspond à aucun magasin réel.
+	 */
+	position: number;
+	/**
+	 * Catégorie de référence (fruits, boulangerie, …), cible de la détection automatique. Absente
+	 * sur un rayon créé par l'utilisateur, qui n'entre pas dans la détection.
+	 */
+	kind?: string;
 }
 
 export interface List {
@@ -73,7 +84,30 @@ export interface ShopItemOrder {
 	productSlugs: string[];
 }
 
+/**
+ * Écriture locale pas encore confirmée par le serveur. C'est ce qui permet de cocher un article
+ * dans un magasin sans réseau : la modification part de la file dès que la connexion revient.
+ */
+export interface OutboxEntry {
+	seq?: number;
+	table: string;
+	op: 'upsert' | 'delete';
+	/** Clé primaire côté serveur, un objet car certaines tables ont une clé composée. */
+	match: Record<string, string>;
+	payload?: Record<string, unknown>;
+}
+
 export const itemOrderKey = (shopId: string, aisleId: string) => `${shopId}::${aisleId}`;
+
+/** Rayons livrés avec l'application, dans l'ordre d'une grande surface classique. */
+export const REFERENCE_AISLE_ORDER = [
+	'fruits',
+	'boulangerie',
+	'laitier',
+	'viande',
+	'epicerie',
+	'maison'
+];
 
 class FamiListDatabase extends Dexie {
 	shops!: EntityTable<Shop, 'id'>;
@@ -84,6 +118,7 @@ class FamiListDatabase extends Dexie {
 	members!: EntityTable<Member, 'id'>;
 	shopLayouts!: EntityTable<ShopLayout, 'shopId'>;
 	shopItemOrders!: EntityTable<ShopItemOrder, 'key'>;
+	outbox!: EntityTable<OutboxEntry, 'seq'>;
 
 	constructor() {
 		super('familist');
@@ -97,6 +132,20 @@ class FamiListDatabase extends Dexie {
 			shopLayouts: 'shopId',
 			shopItemOrders: 'key, shopId'
 		});
+
+		this.version(2)
+			.stores({ aisles: 'id, position' })
+			.upgrade((tx) =>
+				tx
+					.table<Aisle>('aisles')
+					.toCollection()
+					.modify((aisle, ref) => {
+						const known = REFERENCE_AISLE_ORDER.indexOf(aisle.id);
+						ref.value.position = known === -1 ? REFERENCE_AISLE_ORDER.length : known;
+					})
+			);
+
+		this.version(3).stores({ outbox: '++seq' });
 	}
 }
 

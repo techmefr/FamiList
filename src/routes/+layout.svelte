@@ -6,6 +6,7 @@
 	import { i18n, t } from '$lib/i18n/index.svelte';
 	import { data } from '$stores/data.svelte';
 	import { session } from '$stores/session.svelte';
+	import SyncStatus from '$components/app/SyncStatus.svelte';
 
 	let { children } = $props();
 
@@ -89,8 +90,11 @@
 			</ul>
 		</nav>
 
-		<main class="mx-auto w-full max-w-3xl px-4 pt-6 pb-28 md:pb-10">
-			{@render children()}
-		</main>
+		<div>
+			<SyncStatus />
+			<main class="mx-auto w-full max-w-3xl px-4 pt-6 pb-28 md:pb-10">
+				{@render children()}
+			</main>
+		</div>
 	</div>
 {/if}

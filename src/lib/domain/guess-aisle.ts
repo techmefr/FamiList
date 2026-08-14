@@ -24,10 +24,10 @@ const RULES: [RegExp, string][] = [
 	]
 ];
 
-export const FALLBACK_AISLE = 'epicerie';
+export const FALLBACK_AISLE_KIND = 'epicerie';
 
-export function guessAisle(name: string): string {
+export function guessAisleKind(name: string): string {
 	const normalized = String(name).toLowerCase();
 	const match = RULES.find(([pattern]) => pattern.test(normalized));
-	return match ? match[1] : FALLBACK_AISLE;
+	return match ? match[1] : FALLBACK_AISLE_KIND;
 }

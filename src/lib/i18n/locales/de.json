@@ -87,7 +87,8 @@
 		"aisleUp": "Abteilung {name} nach oben",
 		"aisleDown": "Abteilung {name} nach unten",
 		"priority": "{name} als wichtig markieren",
-		"remove": "{name} löschen"
+		"remove": "{name} löschen",
+		"noShop": "Ein Geschäft hinzufügen"
 	},
 	"add": {
 		"name": "Artikel",
@@ -143,5 +144,9 @@
 			"approved": "Freigegeben",
 			"rejected": "Abgelehnt"
 		}
+	},
+	"sync": {
+		"offline": "Offline — Ihre Änderungen werden übertragen, sobald das Netz zurück ist",
+		"error": "Synchronisierung derzeit nicht möglich"
 	}
 }

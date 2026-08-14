@@ -7,6 +7,12 @@
 <fieldset>
 	<legend class="text-label text-muted-foreground mb-2">{t('list.shop')}</legend>
 
+	{#if data.shops.length === 0}
+		<p class="text-muted-foreground text-label">
+			<a href="/shops" class="text-primary underline">{t('list.noShop')}</a>
+		</p>
+	{/if}
+
 	<div class="flex gap-2 overflow-x-auto pb-1">
 		{#each data.shops as shop (shop.id)}
 			{@const active = data.activeShopId === shop.id}

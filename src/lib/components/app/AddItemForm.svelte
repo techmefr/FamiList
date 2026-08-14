@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { data } from '$stores/data.svelte';
-	import { guessAisle } from '$domain/guess-aisle';
 	import { t } from '$lib/i18n/index.svelte';
 	import { Button } from '$lib/components/ui/button';
 	import { Input } from '$lib/components/ui/input';
@@ -15,7 +14,7 @@
 	let aisleId = $state('');
 
 	/** Le rayon deviné suit la saisie tant que l'utilisateur n'en a pas choisi un lui-même. */
-	const suggested = $derived(name.trim() ? guessAisle(name) : '');
+	const suggested = $derived(name.trim() ? data.suggestAisleId(name) : '');
 	const effectiveAisle = $derived(aisleId || suggested);
 
 	function submit(event: SubmitEvent) {

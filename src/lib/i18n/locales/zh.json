@@ -86,7 +86,8 @@
 		"aisleUp": "上移货区 {name}",
 		"aisleDown": "下移货区 {name}",
 		"priority": "将 {name} 标为重点",
-		"remove": "删除 {name}"
+		"remove": "删除 {name}",
+		"noShop": "添加商店"
 	},
 	"add": {
 		"name": "商品",
@@ -142,5 +143,9 @@
 			"approved": "已通过",
 			"rejected": "已拒绝"
 		}
+	},
+	"sync": {
+		"offline": "离线 — 网络恢复后将同步你的更改",
+		"error": "目前无法同步"
 	}
 }

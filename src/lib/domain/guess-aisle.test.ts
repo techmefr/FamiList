@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import { guessAisle, FALLBACK_AISLE } from './guess-aisle';
+import { guessAisleKind, FALLBACK_AISLE_KIND } from './guess-aisle';
 
-describe('guessAisle', () => {
+describe('guessAisleKind', () => {
 	it.each([
 		['Tomates grappe', 'fruits'],
 		['Salade batavia', 'fruits'],
@@ -17,21 +17,21 @@ describe('guessAisle', () => {
 		['Liquide vaisselle', 'maison'],
 		['Dentifrice', 'maison']
 	])('classe %j dans %j', (name, aisle) => {
-		expect(guessAisle(name)).toBe(aisle);
+		expect(guessAisleKind(name)).toBe(aisle);
 	});
 
 	it.each(['Bœuf haché', 'boeuf bourguignon', 'Steak de bœuf'])(
 		'ne classe pas %j dans les produits laitiers à cause de « œuf »',
 		(name) => {
-			expect(guessAisle(name)).toBe('viande');
+			expect(guessAisleKind(name)).toBe('viande');
 		}
 	);
 
 	it('retombe sur l’épicerie quand rien ne correspond', () => {
-		expect(guessAisle('Bougie parfumée')).toBe(FALLBACK_AISLE);
+		expect(guessAisleKind('Bougie parfumée')).toBe(FALLBACK_AISLE_KIND);
 	});
 
 	it('ignore la casse', () => {
-		expect(guessAisle('TOMATES')).toBe(guessAisle('tomates'));
+		expect(guessAisleKind('TOMATES')).toBe(guessAisleKind('tomates'));
 	});
 });

@@ -87,7 +87,8 @@
 		"aisleUp": "Monter le rayon {name}",
 		"aisleDown": "Descendre le rayon {name}",
 		"priority": "Marquer {name} comme prioritaire",
-		"remove": "Supprimer {name}"
+		"remove": "Supprimer {name}",
+		"noShop": "Ajouter un magasin"
 	},
 	"add": {
 		"name": "Article",
@@ -143,5 +144,9 @@
 			"approved": "Validé",
 			"rejected": "Refusé"
 		}
+	},
+	"sync": {
+		"offline": "Hors connexion — vos modifications partiront au retour du réseau",
+		"error": "Synchronisation impossible pour le moment"
 	}
 }
