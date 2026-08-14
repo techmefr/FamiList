@@ -1,7 +1,7 @@
 <script lang="ts">
 	import '../app.css';
 	import { page } from '$app/state';
-	import { ListChecks, ScanBarcode, CreditCard, User } from '@lucide/svelte';
+	import { ListChecks, Store, CreditCard, User } from '@lucide/svelte';
 	import { i18n, t } from '$lib/i18n/index.svelte';
 	import { data } from '$stores/data.svelte';
 
@@ -12,7 +12,7 @@
 
 	const nav = [
 		{ href: '/', key: 'nav.lists', icon: ListChecks },
-		{ href: '/scan', key: 'nav.scan', icon: ScanBarcode },
+		{ href: '/shops', key: 'nav.shops', icon: Store },
 		{ href: '/cards', key: 'nav.cards', icon: CreditCard },
 		{ href: '/profile', key: 'nav.profile', icon: User }
 	];

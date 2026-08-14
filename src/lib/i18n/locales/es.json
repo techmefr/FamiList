@@ -7,7 +7,8 @@
 		"scan": "Escanear",
 		"cards": "Tarjetas",
 		"profile": "Perfil",
-		"main": "Navegación principal"
+		"main": "Navegación principal",
+		"shops": "Tiendas"
 	},
 	"lists": {
 		"title": "Mis listas",
@@ -93,5 +94,22 @@
 		"submit": "Añadir",
 		"aisleAuto": "Detección automática",
 		"aisleGuessed": "Detectado: {name}"
+	},
+	"shops": {
+		"title": "Tiendas y secciones",
+		"new": "Añadir una tienda",
+		"name": "Nombre de la tienda",
+		"short": "Iniciales",
+		"empty": "No hay tiendas.",
+		"learned": "Recorrido aprendido",
+		"notLearned": "Recorrido por defecto",
+		"delete": "Eliminar la tienda {name}"
+	},
+	"aisles": {
+		"title": "Secciones",
+		"new": "Añadir una sección",
+		"name": "Nombre de la sección",
+		"emoji": "Emoji",
+		"hint": "Una sección nueva se añade al final de cada recorrido; muévela desde la lista."
 	}
 }

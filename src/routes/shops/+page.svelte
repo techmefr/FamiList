@@ -1,0 +1,123 @@
+<script lang="ts">
+	import { data } from '$stores/data.svelte';
+	import { t } from '$lib/i18n/index.svelte';
+	import { Button } from '$lib/components/ui/button';
+	import { Input } from '$lib/components/ui/input';
+	import { Label } from '$lib/components/ui/label';
+	import * as Card from '$lib/components/ui/card';
+	import { Badge } from '$lib/components/ui/badge';
+	import { Plus } from '@lucide/svelte';
+
+	let shopName = $state('');
+	let shopShort = $state('');
+	let aisleName = $state('');
+	let aisleEmoji = $state('🛒');
+
+	const TINTS = ['#5A4A2F', '#8B3A62', '#4A6B3A', '#C67A3E', '#2563EB', '#1F5C3A'];
+
+	function addShop(event: SubmitEvent) {
+		event.preventDefault();
+		if (!shopName.trim()) return;
+
+		data.addShop({
+			name: shopName,
+			short: shopShort,
+			tint: TINTS[data.shops.length % TINTS.length]
+		});
+		shopName = '';
+		shopShort = '';
+	}
+
+	function addAisle(event: SubmitEvent) {
+		event.preventDefault();
+		if (!aisleName.trim()) return;
+
+		data.addAisle({ name: aisleName, emoji: aisleEmoji });
+		aisleName = '';
+		aisleEmoji = '🛒';
+	}
+</script>
+
+<svelte:head>
+	<title>{t('shops.title')} — {t('app.name')}</title>
+</svelte:head>
+
+<h1 class="text-h1 font-semibold">{t('shops.title')}</h1>
+
+<form onsubmit={addShop} class="bg-card mt-6 space-y-3 rounded-md border p-4" data-test="add-shop">
+	<div class="grid gap-3 sm:grid-cols-[1fr_auto]">
+		<div>
+			<Label for="shop-name">{t('shops.name')}</Label>
+			<Input id="shop-name" bind:value={shopName} data-test="shop-name" required />
+		</div>
+		<div class="w-24">
+			<Label for="shop-short">{t('shops.short')}</Label>
+			<Input id="shop-short" bind:value={shopShort} data-test="shop-short" maxlength={3} />
+		</div>
+	</div>
+	<Button type="submit" data-test="shop-create">
+		<Plus size={18} aria-hidden="true" />
+		{t('shops.new')}
+	</Button>
+</form>
+
+{#if data.shops.length === 0}
+	<p class="text-muted-foreground mt-6">{t('shops.empty')}</p>
+{:else}
+	<ul class="mt-6 space-y-3">
+		{#each data.shops as shop (shop.id)}
+			{@const learned = data.layouts.find((l) => l.shopId === shop.id)?.learned}
+			<li>
+				<Card.Root data-test="shop-card">
+					<Card.Content class="flex items-center gap-4">
+						<span
+							class="grid size-11 shrink-0 place-items-center rounded-full text-label font-semibold text-white"
+							style="background: {shop.tint}"
+							aria-hidden="true"
+						>
+							{shop.short}
+						</span>
+						<div class="min-w-0 flex-1">
+							<p class="text-product truncate font-medium">{shop.name}</p>
+							{#if shop.dist}
+								<p class="text-muted-foreground text-caption">{shop.dist}</p>
+							{/if}
+						</div>
+						<Badge variant={learned ? 'default' : 'secondary'}>
+							{learned ? t('shops.learned') : t('shops.notLearned')}
+						</Badge>
+					</Card.Content>
+				</Card.Root>
+			</li>
+		{/each}
+	</ul>
+{/if}
+
+<h2 class="text-h2 mt-10 font-semibold">{t('aisles.title')}</h2>
+<p class="text-muted-foreground text-label mt-1">{t('aisles.hint')}</p>
+
+<form onsubmit={addAisle} class="bg-card mt-4 space-y-3 rounded-md border p-4" data-test="add-aisle">
+	<div class="grid gap-3 sm:grid-cols-[auto_1fr]">
+		<div class="w-20">
+			<Label for="aisle-emoji">{t('aisles.emoji')}</Label>
+			<Input id="aisle-emoji" bind:value={aisleEmoji} data-test="aisle-emoji" maxlength={2} />
+		</div>
+		<div>
+			<Label for="aisle-name">{t('aisles.name')}</Label>
+			<Input id="aisle-name" bind:value={aisleName} data-test="aisle-name" required />
+		</div>
+	</div>
+	<Button type="submit" data-test="aisle-create">
+		<Plus size={18} aria-hidden="true" />
+		{t('aisles.new')}
+	</Button>
+</form>
+
+<ul class="mt-4 flex flex-wrap gap-2">
+	{#each data.aisles as aisle (aisle.id)}
+		<li class="border-input rounded-full border px-4 py-2" data-test="aisle-chip">
+			<span aria-hidden="true">{aisle.emoji}</span>
+			<span class="text-label">{aisle.name}</span>
+		</li>
+	{/each}
+</ul>

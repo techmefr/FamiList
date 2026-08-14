@@ -7,7 +7,8 @@
 		"scan": "Digitalizar",
 		"cards": "Cartões",
 		"profile": "Perfil",
-		"main": "Navegação principal"
+		"main": "Navegação principal",
+		"shops": "Lojas"
 	},
 	"lists": {
 		"title": "As minhas listas",
@@ -93,5 +94,22 @@
 		"submit": "Adicionar",
 		"aisleAuto": "Deteção automática",
 		"aisleGuessed": "Detetado: {name}"
+	},
+	"shops": {
+		"title": "Lojas e secções",
+		"new": "Adicionar uma loja",
+		"name": "Nome da loja",
+		"short": "Iniciais",
+		"empty": "Sem lojas.",
+		"learned": "Percurso aprendido",
+		"notLearned": "Percurso predefinido",
+		"delete": "Eliminar a loja {name}"
+	},
+	"aisles": {
+		"title": "Secções",
+		"new": "Adicionar uma secção",
+		"name": "Nome da secção",
+		"emoji": "Emoji",
+		"hint": "Uma nova secção é acrescentada ao fim de cada percurso — mova-a a partir da lista."
 	}
 }

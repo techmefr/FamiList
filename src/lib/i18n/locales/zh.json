@@ -7,7 +7,8 @@
 		"scan": "扫码",
 		"cards": "会员卡",
 		"profile": "我的",
-		"main": "主导航"
+		"main": "主导航",
+		"shops": "门店"
 	},
 	"lists": {
 		"title": "我的清单",
@@ -92,5 +93,22 @@
 		"submit": "添加",
 		"aisleAuto": "自动识别",
 		"aisleGuessed": "已识别：{name}"
+	},
+	"shops": {
+		"title": "门店与货区",
+		"new": "添加门店",
+		"name": "门店名称",
+		"short": "缩写",
+		"empty": "暂无门店。",
+		"learned": "已学路线",
+		"notLearned": "默认路线",
+		"delete": "删除门店 {name}"
+	},
+	"aisles": {
+		"title": "货区",
+		"new": "添加货区",
+		"name": "货区名称",
+		"emoji": "表情",
+		"hint": "新货区会加到每条路线末尾，请在清单里调整位置。"
 	}
 }

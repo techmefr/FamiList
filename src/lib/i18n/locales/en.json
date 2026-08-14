@@ -7,7 +7,8 @@
 		"scan": "Scan",
 		"cards": "Cards",
 		"profile": "Profile",
-		"main": "Main navigation"
+		"main": "Main navigation",
+		"shops": "Shops"
 	},
 	"lists": {
 		"title": "My lists",
@@ -93,5 +94,22 @@
 		"submit": "Add",
 		"aisleAuto": "Automatic detection",
 		"aisleGuessed": "Detected: {name}"
+	},
+	"shops": {
+		"title": "Shops and aisles",
+		"new": "Add a shop",
+		"name": "Shop name",
+		"short": "Initials",
+		"empty": "No shops.",
+		"learned": "Learned route",
+		"notLearned": "Default route",
+		"delete": "Delete shop {name}"
+	},
+	"aisles": {
+		"title": "Aisles",
+		"new": "Add an aisle",
+		"name": "Aisle name",
+		"emoji": "Emoji",
+		"hint": "A new aisle is appended to every route — move it into place from the list."
 	}
 }

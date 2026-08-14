@@ -7,7 +7,8 @@
 		"scan": "Scanner",
 		"cards": "Cartes",
 		"profile": "Profil",
-		"main": "Navigation principale"
+		"main": "Navigation principale",
+		"shops": "Magasins"
 	},
 	"lists": {
 		"title": "Mes listes",
@@ -93,5 +94,22 @@
 		"submit": "Ajouter",
 		"aisleAuto": "Détection automatique",
 		"aisleGuessed": "Détecté : {name}"
+	},
+	"shops": {
+		"title": "Magasins et rayons",
+		"new": "Ajouter un magasin",
+		"name": "Nom du magasin",
+		"short": "Initiales",
+		"empty": "Aucun magasin.",
+		"learned": "Parcours appris",
+		"notLearned": "Parcours par défaut",
+		"delete": "Supprimer le magasin {name}"
+	},
+	"aisles": {
+		"title": "Rayons",
+		"new": "Ajouter un rayon",
+		"name": "Nom du rayon",
+		"emoji": "Emoji",
+		"hint": "Un nouveau rayon est ajouté à la fin de chaque parcours, à vous de le déplacer dans la liste."
 	}
 }

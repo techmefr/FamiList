@@ -7,7 +7,8 @@
 		"scan": "Scannen",
 		"cards": "Karten",
 		"profile": "Profil",
-		"main": "Hauptnavigation"
+		"main": "Hauptnavigation",
+		"shops": "Geschäfte"
 	},
 	"lists": {
 		"title": "Meine Listen",
@@ -93,5 +94,22 @@
 		"submit": "Hinzufügen",
 		"aisleAuto": "Automatische Erkennung",
 		"aisleGuessed": "Erkannt: {name}"
+	},
+	"shops": {
+		"title": "Geschäfte und Abteilungen",
+		"new": "Geschäft hinzufügen",
+		"name": "Name des Geschäfts",
+		"short": "Initialen",
+		"empty": "Keine Geschäfte.",
+		"learned": "Gelernter Weg",
+		"notLearned": "Standardweg",
+		"delete": "Geschäft {name} löschen"
+	},
+	"aisles": {
+		"title": "Abteilungen",
+		"new": "Abteilung hinzufügen",
+		"name": "Name der Abteilung",
+		"emoji": "Emoji",
+		"hint": "Eine neue Abteilung wird an jeden Weg angehängt — verschieben Sie sie in der Liste."
 	}
 }

@@ -7,7 +7,8 @@
 		"scan": "Scansiona",
 		"cards": "Carte",
 		"profile": "Profilo",
-		"main": "Navigazione principale"
+		"main": "Navigazione principale",
+		"shops": "Negozi"
 	},
 	"lists": {
 		"title": "Le mie liste",
@@ -93,5 +94,22 @@
 		"submit": "Aggiungi",
 		"aisleAuto": "Rilevamento automatico",
 		"aisleGuessed": "Rilevato: {name}"
+	},
+	"shops": {
+		"title": "Negozi e reparti",
+		"new": "Aggiungi un negozio",
+		"name": "Nome del negozio",
+		"short": "Iniziali",
+		"empty": "Nessun negozio.",
+		"learned": "Percorso appreso",
+		"notLearned": "Percorso predefinito",
+		"delete": "Elimina il negozio {name}"
+	},
+	"aisles": {
+		"title": "Reparti",
+		"new": "Aggiungi un reparto",
+		"name": "Nome del reparto",
+		"emoji": "Emoji",
+		"hint": "Un nuovo reparto viene aggiunto in fondo a ogni percorso: spostalo dalla lista."
 	}
 }

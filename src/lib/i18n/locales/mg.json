@@ -7,7 +7,8 @@
 		"scan": "Skana",
 		"cards": "Karatra",
 		"profile": "Mombamomba",
-		"main": "Fitetezana fototra"
+		"main": "Fitetezana fototra",
+		"shops": "Fivarotana"
 	},
 	"lists": {
 		"title": "Ny lisitro",
@@ -92,5 +93,22 @@
 		"submit": "Ampio",
 		"aisleAuto": "Famantarana ho azy",
 		"aisleGuessed": "Voafantatra : {name}"
+	},
+	"shops": {
+		"title": "Fivarotana sy faritra",
+		"new": "Hanampy fivarotana",
+		"name": "Anaran'ny fivarotana",
+		"short": "Litera voalohany",
+		"empty": "Tsy misy fivarotana.",
+		"learned": "Lalana voatadidy",
+		"notLearned": "Lalana mahazatra",
+		"delete": "Fafao ny fivarotana {name}"
+	},
+	"aisles": {
+		"title": "Faritra",
+		"new": "Hanampy faritra",
+		"name": "Anaran'ny faritra",
+		"emoji": "Emoji",
+		"hint": "Ny faritra vaovao dia apetraka amin'ny faran'ny lalana rehetra — afindrao ao amin'ny lisitra."
 	}
 }
