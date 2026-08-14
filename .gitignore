@@ -8,7 +8,18 @@ dist/
 .env.*
 !.env.example
 
-android/
+# Le projet Android est versionné : il porte la permission caméra et la configuration native,
+# qu'un « cap add » sur une machine neuve ne saurait pas retrouver. Seuls ses produits de
+# compilation sont exclus.
+android/build/
+android/app/build/
+android/.gradle/
+android/local.properties
+android/app/src/main/assets/public/
+android/app/src/main/res/xml/config.xml
+android/capacitor-cordova-android-plugins/
+
+# iOS n'est pas généré : il demande un Mac. « npx cap add ios » le crée le moment venu.
 ios/
 
 .DS_Store

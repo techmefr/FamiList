@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">FamiList</string>
+    <string name="title_activity_main">FamiList</string>
+    <string name="package_name">fr.techmefr.familist</string>
+    <string name="custom_url_scheme">fr.techmefr.familist</string>
+</resources>
