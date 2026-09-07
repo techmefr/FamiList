@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { data } from '$stores/data.svelte';
+	import { feedback } from '$stores/feedback.svelte';
 	import { t } from '$lib/i18n/index.svelte';
 	import { Button } from '$lib/components/ui/button';
 	import { Input } from '$lib/components/ui/input';
@@ -21,6 +22,7 @@
 		event.preventDefault();
 		if (!name.trim()) return;
 
+		feedback.play('add');
 		data.addItem(listId, { name, qty, unit, aisleId: effectiveAisle });
 		name = '';
 		qty = '1';
@@ -64,7 +66,7 @@
 		</select>
 	</div>
 
-	<Button type="submit" data-test="add-submit" class="w-full sm:w-auto">
+	<Button type="submit" data-test="add-submit" class="fl-press w-full sm:w-auto">
 		<Plus size={18} aria-hidden="true" />
 		{t('add.submit')}
 	</Button>

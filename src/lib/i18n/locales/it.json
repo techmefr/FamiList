@@ -37,19 +37,35 @@
 		"previewItem": "Pomodori a grappolo — 500 g",
 		"previewNote": "Anteprima alla dimensione reale di un articolo in una lista.",
 		"account": "Account",
-		"signedInAs": "Connesso come {email}"
+		"signedInAs": "Connesso come {email}",
+		"feedbackTitle": "Movimento e ritorni",
+		"motion": "Animazioni",
+		"motionHint": "«Sistema» segue l'impostazione di riduzione del movimento del dispositivo.",
+		"motionPreview": "Animazioni attive.",
+		"sound": "Suono",
+		"soundHint": "Un bip breve quando spunti, aggiungi o scansioni un articolo.",
+		"haptics": "Vibrazione",
+		"hapticsHint": "Ritorno tattile sul telefono, quando il dispositivo lo consente.",
+		"testFeedback": "Ascolta"
 	},
 	"theme": {
 		"light": "Chiaro",
 		"dark": "Scuro",
 		"system": "Sistema"
 	},
+	"motion": {
+		"system": "Sistema",
+		"full": "Complete",
+		"none": "Nessuna"
+	},
 	"scale": {
 		"xs": "Molto piccolo",
 		"sm": "Normale",
 		"md": "Grande",
 		"lg": "Molto grande",
-		"xl": "Massimo"
+		"xl": "Enorme",
+		"xxl": "Gigante",
+		"comfort": "Comfort"
 	},
 	"accent": {
 		"terracotta": "Terracotta",

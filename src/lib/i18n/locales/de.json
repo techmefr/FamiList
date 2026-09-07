@@ -37,19 +37,35 @@
 		"previewItem": "Strauchtomaten — 500 g",
 		"previewNote": "Vorschau in der echten Größe eines Artikels in einer Liste.",
 		"account": "Konto",
-		"signedInAs": "Angemeldet als {email}"
+		"signedInAs": "Angemeldet als {email}",
+		"feedbackTitle": "Bewegung und Rückmeldung",
+		"motion": "Animationen",
+		"motionHint": "„System“ folgt der Einstellung „Bewegung reduzieren“ des Geräts.",
+		"motionPreview": "Animationen aktiv.",
+		"sound": "Ton",
+		"soundHint": "Ein kurzer Ton beim Abhaken, Hinzufügen oder Scannen.",
+		"haptics": "Vibration",
+		"hapticsHint": "Haptische Rückmeldung am Telefon, sofern das Gerät sie erlaubt.",
+		"testFeedback": "Anhören"
 	},
 	"theme": {
 		"light": "Hell",
 		"dark": "Dunkel",
 		"system": "System"
 	},
+	"motion": {
+		"system": "System",
+		"full": "Vollständig",
+		"none": "Keine"
+	},
 	"scale": {
 		"xs": "Sehr klein",
 		"sm": "Normal",
 		"md": "Groß",
 		"lg": "Sehr groß",
-		"xl": "Maximal"
+		"xl": "Riesig",
+		"xxl": "Gigantisch",
+		"comfort": "Komfort"
 	},
 	"accent": {
 		"terracotta": "Terrakotta",

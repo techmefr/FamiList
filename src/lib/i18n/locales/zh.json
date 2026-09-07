@@ -36,19 +36,35 @@
 		"previewItem": "串收番茄 — 500 克",
 		"previewNote": "按清单中商品的实际大小预览。",
 		"account": "账号",
-		"signedInAs": "已登录：{email}"
+		"signedInAs": "已登录：{email}",
+		"feedbackTitle": "动效与反馈",
+		"motion": "动画",
+		"motionHint": "“跟随系统”会采用设备的减弱动态效果设置。",
+		"motionPreview": "动画已开启。",
+		"sound": "声音",
+		"soundHint": "勾选、添加或扫描商品时发出短提示音。",
+		"haptics": "振动",
+		"hapticsHint": "手机上的触感反馈，需设备支持。",
+		"testFeedback": "试听"
 	},
 	"theme": {
 		"light": "浅色",
 		"dark": "深色",
 		"system": "跟随系统"
 	},
+	"motion": {
+		"system": "跟随系统",
+		"full": "完整",
+		"none": "关闭"
+	},
 	"scale": {
 		"xs": "很小",
 		"sm": "标准",
 		"md": "大",
 		"lg": "很大",
-		"xl": "最大"
+		"xl": "特大",
+		"xxl": "超大",
+		"comfort": "舒适"
 	},
 	"accent": {
 		"terracotta": "陶土色",

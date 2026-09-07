@@ -69,7 +69,7 @@
 			{@const learned = data.layouts.find((l) => l.shopId === shop.id)?.learned}
 			<li>
 				<Card.Root data-test="shop-card">
-					<Card.Content class="flex items-center gap-4">
+					<Card.Content class="flex flex-wrap items-center gap-x-4 gap-y-3">
 						<span
 							class="grid size-11 shrink-0 place-items-center rounded-full text-label font-semibold text-white"
 							style="background: {shop.tint}"
@@ -77,8 +77,8 @@
 						>
 							{shop.short}
 						</span>
-						<div class="min-w-0 flex-1">
-							<p class="text-product truncate font-medium">{shop.name}</p>
+						<div class="min-w-0 flex-1 basis-[10rem]">
+							<p class="text-product font-medium break-words">{shop.name}</p>
 							{#if shop.dist}
 								<p class="text-muted-foreground text-caption">{shop.dist}</p>
 							{/if}

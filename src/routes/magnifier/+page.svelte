@@ -182,20 +182,22 @@
 	></canvas>
 
 	{#if status !== 'live'}
-		<div class="absolute inset-0 grid place-items-center px-6 text-center">
-			{#if status === 'loading'}
-				<p class="text-product text-white/70">{t('magnifier.starting')}</p>
-			{:else}
-				<div
-					class="max-w-sm rounded-lg border border-white/15 bg-white/5 p-6"
-					data-test="magnifier-unavailable"
-				>
-					<Camera size={32} class="mx-auto text-[var(--primary)]" aria-hidden="true" />
-					<p class="text-product mt-4 text-white">
-						{status === 'denied' ? t('magnifier.denied') : t('magnifier.unsupported')}
-					</p>
-				</div>
-			{/if}
+		<div class="absolute inset-0 overflow-y-auto px-6 py-6 text-center">
+			<div class="flex min-h-full items-center justify-center">
+				{#if status === 'loading'}
+					<p class="text-product text-white/70">{t('magnifier.starting')}</p>
+				{:else}
+					<div
+						class="max-w-sm min-w-0 rounded-lg border border-white/15 bg-white/5 p-6"
+						data-test="magnifier-unavailable"
+					>
+						<Camera size={32} class="mx-auto text-[var(--primary)]" aria-hidden="true" />
+						<p class="text-product mt-4 text-white">
+							{status === 'denied' ? t('magnifier.denied') : t('magnifier.unsupported')}
+						</p>
+					</div>
+				{/if}
+			</div>
 		</div>
 	{/if}
 
@@ -213,20 +215,20 @@
 		</p>
 	</div>
 
-	<div class="absolute inset-x-0 bottom-28 px-5 md:bottom-10">
-		<div class="mb-4 rounded-[18px] border border-white/15 bg-black/55 px-4 py-3 backdrop-blur-lg">
+	<div class="absolute inset-x-0 bottom-28 px-[20px] md:bottom-10">
+		<div class="mb-4 rounded-[18px] border border-white/15 bg-black/55 px-[16px] py-[12px] backdrop-blur-lg">
 			<div class="text-caption mb-2 flex justify-between font-semibold text-white/70">
 				<label for="magnifier-zoom">{t('magnifier.zoom')}</label>
 				<span class="tabular-nums text-white" data-test="magnifier-level">{zoom.toFixed(1)}×</span>
 			</div>
 
-			<div class="flex items-center gap-3">
+			<div class="flex items-center gap-[12px]">
 				<button
 					type="button"
 					onclick={() => nudge(-ZOOM_STEP)}
 					aria-label={t('magnifier.zoomOut')}
 					data-test="magnifier-out"
-					class="grid size-11 shrink-0 place-items-center rounded-full border border-white/20 bg-white/10 text-white"
+					class="grid size-11 min-w-[44px] place-items-center rounded-full border border-white/20 bg-white/10 text-white"
 				>
 					<Minus size={20} aria-hidden="true" />
 				</button>
@@ -239,7 +241,7 @@
 					step="0.1"
 					bind:value={zoom}
 					data-test="magnifier-slider"
-					class="h-1 flex-1 accent-[var(--primary)]"
+					class="h-1 min-w-[80px] flex-1 accent-[var(--primary)]"
 				/>
 
 				<button
@@ -247,7 +249,7 @@
 					onclick={() => nudge(ZOOM_STEP)}
 					aria-label={t('magnifier.zoomIn')}
 					data-test="magnifier-in"
-					class="grid size-11 shrink-0 place-items-center rounded-full border border-white/20 bg-white/10 text-white"
+					class="grid size-11 min-w-[44px] place-items-center rounded-full border border-white/20 bg-white/10 text-white"
 				>
 					<Plus size={20} aria-hidden="true" />
 				</button>

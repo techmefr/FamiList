@@ -1,6 +1,11 @@
 <script lang="ts">
 	import { page } from '$app/state';
+	import { flip } from 'svelte/animate';
+	import { fly, slide } from 'svelte/transition';
+	import { cubicOut } from 'svelte/easing';
 	import { data } from '$stores/data.svelte';
+	import { feedback } from '$stores/feedback.svelte';
+	import { motionMs } from '$stores/settings.svelte';
 	import { t } from '$lib/i18n/index.svelte';
 	import type { Item } from '$db/schema';
 	import ShopSwitcher from '$components/app/ShopSwitcher.svelte';
@@ -74,11 +79,20 @@
 		{t('list.back')}
 	</a>
 
-	<h1 class="text-h1 mt-2 flex items-center gap-3 font-semibold">
+	<h1 class="text-h1 mt-2 flex flex-wrap items-center gap-3 font-semibold">
 		<span aria-hidden="true">{list.emoji}</span>
-		{list.name}
+		<span class="min-w-0 break-words">{list.name}</span>
 	</h1>
 	<p class="text-muted-foreground text-label mt-1">{t('lists.progress', { done, total })}</p>
+
+	<!-- Le texte au-dessus dit déjà l'avancement : la barre n'est là que pour le montrer bouger. -->
+	<div class="bg-muted mt-2 h-1.5 overflow-hidden rounded-full" aria-hidden="true">
+		<div
+			class="fl-grow bg-secondary h-full rounded-full"
+			style="width: {total ? Math.round((done / total) * 100) : 0}%"
+			data-test="list-progress"
+		></div>
+	</div>
 
 	<a
 		href="/l/{listId}/chat"
@@ -103,7 +117,14 @@
 			<span class="text-label">{t('list.hideChecked')}</span>
 		</label>
 		{#if done > 0}
-			<Button variant="outline" onclick={() => data.clearChecked(listId)} data-test="clear-checked">
+			<Button
+				variant="outline"
+				onclick={() => {
+					feedback.play('success');
+					data.clearChecked(listId);
+				}}
+				data-test="clear-checked"
+			>
 				{t('list.clearChecked', { count: done })}
 			</Button>
 		{/if}
@@ -118,11 +139,18 @@
 			{#each visible as group, aisleIndex (group.aisleId)}
 				{@const aisle = data.aisle(group.aisleId)}
 				{@const itemDrag = createDrag((from, to) => moveItem(group.aisleId, group.items, from, to))}
+				<!--
+					Le glissement des rayons est ce qui rend visible l'ordre adaptatif : changer de magasin
+					ne recompose pas la page d'un coup, les rayons se déplacent vers leur nouvelle place.
+				-->
 				<section
 					data-test="aisle-group"
 					data-aisle={group.aisleId}
 					{...aisleDrag.handlers(aisleIndex)}
-					class={aisleDrag.overIndex === aisleIndex ? 'outline-primary rounded-md outline-2' : ''}
+					animate:flip={{ duration: motionMs(380), easing: cubicOut }}
+					class="transition-[outline-color] {aisleDrag.overIndex === aisleIndex
+						? 'outline-primary rounded-md outline-2'
+						: ''}"
 				>
 					<div class="mb-2 flex items-center gap-2">
 						<GripVertical
@@ -160,6 +188,9 @@
 						{#each group.items as item, index (item.id)}
 							<div
 								{...itemDrag.handlers(index)}
+								animate:flip={{ duration: motionMs(280), easing: cubicOut }}
+								in:fly={{ y: 10, duration: motionMs(220), easing: cubicOut }}
+								out:slide={{ duration: motionMs(180), easing: cubicOut }}
 								class={itemDrag.overIndex === index ? 'outline-primary rounded-md outline-2' : ''}
 							>
 								<ItemRow

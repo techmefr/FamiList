@@ -100,7 +100,7 @@
 	<Card.Content>
 		<ul class="space-y-2">
 			{#each data.members as member (member.id)}
-				<li class="flex items-center gap-3" data-test="household-member">
+				<li class="flex flex-wrap items-center gap-3" data-test="household-member">
 					<span
 						class="text-caption grid size-9 shrink-0 place-items-center rounded-full font-semibold text-white"
 						style="background: {member.tint}"
@@ -108,7 +108,7 @@
 					>
 						{member.initial}
 					</span>
-					<span class="text-product flex-1">{member.name}</span>
+					<span class="text-product min-w-0 flex-1 basis-[8rem]">{member.name}</span>
 					<span class="text-muted-foreground text-caption">{t(`household.role.${member.role}`)}</span>
 				</li>
 			{/each}

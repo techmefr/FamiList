@@ -1,6 +1,8 @@
 <script lang="ts">
+	import { fade } from 'svelte/transition';
 	import type { LoyaltyCard } from '$db/schema';
 	import { data } from '$stores/data.svelte';
+	import { motionMs } from '$stores/settings.svelte';
 	import { t } from '$lib/i18n/index.svelte';
 	import CodeImage from './CodeImage.svelte';
 	import { Button } from '$lib/components/ui/button';
@@ -31,7 +33,13 @@
 	}}
 />
 
+<!--
+	Le fond noir se fond, le code monte : c'est le geste d'une carte qu'on sort du portefeuille. Une
+	mise à l'échelle de tout l'écran serait ici sans risque — rien ne se superpose à ce calque — mais
+	le code-barres, lui, doit être net tout de suite.
+-->
 <div
+	transition:fade={{ duration: motionMs(180) }}
 	class="fixed inset-0 z-50 flex flex-col overflow-y-auto bg-black"
 	role="dialog"
 	aria-modal="true"
@@ -48,12 +56,12 @@
 		>
 			<X size={20} aria-hidden="true" />
 		</button>
-		<p class="text-product flex-1 truncate text-center font-semibold">{card.name}</p>
+		<p class="text-product flex-1 text-center font-semibold break-words">{card.name}</p>
 		<span class="size-11 shrink-0" aria-hidden="true"></span>
 	</div>
 
 	<div class="px-5 pb-10">
-		<div class="rounded-lg bg-white p-5 shadow-[0_24px_60px_rgba(0,0,0,0.4)]">
+		<div class="fl-rise rounded-lg bg-white p-5 shadow-[0_24px_60px_rgba(0,0,0,0.4)]">
 			<p class="text-caption text-center font-bold tracking-widest text-neutral-900">
 				{t('cards.showAtCheckout')}
 			</p>

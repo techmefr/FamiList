@@ -36,19 +36,35 @@
 		"previewItem": "Voatabia sampahony — 500 g",
 		"previewNote": "Topi-maso amin'ny haben'ny entana marina ao anaty lisitra.",
 		"account": "Kaonty",
-		"signedInAs": "Tafiditra amin'ny anarana {email}"
+		"signedInAs": "Tafiditra amin'ny anarana {email}",
+		"feedbackTitle": "Hetsika sy valiny",
+		"motion": "Hetsika",
+		"motionHint": "Ny « Rafitra » dia manaraka ny safidy fampihenana hetsika ao amin'ny finday.",
+		"motionPreview": "Mandeha ny hetsika.",
+		"sound": "Feo",
+		"soundHint": "Feo fohy rehefa manamarika, manampy na mitsirika entana ianao.",
+		"haptics": "Fihovitrovitra",
+		"hapticsHint": "Valiny azo tsapain-tanana amin'ny finday, raha manaiky ilay fitaovana.",
+		"testFeedback": "Henoy"
 	},
 	"theme": {
 		"light": "Mazava",
 		"dark": "Maizina",
 		"system": "Rafitra"
 	},
+	"motion": {
+		"system": "Rafitra",
+		"full": "Feno",
+		"none": "Tsy misy"
+	},
 	"scale": {
 		"xs": "Kely dia kely",
 		"sm": "Antonony",
 		"md": "Lehibe",
 		"lg": "Lehibe dia lehibe",
-		"xl": "Fara-tampony"
+		"xl": "Goavana",
+		"xxl": "Goavana be",
+		"comfort": "Mora vakiana"
 	},
 	"accent": {
 		"terracotta": "Tanimanga",

@@ -217,6 +217,12 @@
 [data-scale='xl'] {
 	--fl-font-scale: 1.6;
 }
+[data-scale='xxl'] {
+	--fl-font-scale: 1.9;
+}
+[data-scale='comfort'] {
+	--fl-font-scale: 2.3;
+}
 
 @theme inline {
 	--color-background: var(--background);
@@ -278,6 +284,21 @@
 		color: var(--foreground);
 		font-size: var(--fl-body);
 		-webkit-font-smoothing: antialiased;
+
+		/*
+		 * Au cran Confort l'intérieur d'une carte fait 227 px, et un mot comme « Mouvement » en
+		 * mesure 250 : sans autorisation de coupure il sort de la carte, qui masque son
+		 * débordement — le mot est donc coupé net, à l'image près.
+		 *
+		 * `anywhere` et non `break-word` : les deux coupent un mot trop long de la même façon, mais
+		 * seul `anywhere` compte ces coupures dans la largeur minimale de l'élément. Sans lui, un
+		 * bloc de texte dans une rangée flex réclame la largeur de son mot le plus long et déborde
+		 * quand même, ce qui était exactement le cas de l'adresse e-mail du profil.
+		 *
+		 * Un mot qui tient sur sa ligne n'est jamais coupé : la règle ne se voit qu'aux crans où
+		 * l'alternative serait du texte tronqué.
+		 */
+		overflow-wrap: anywhere;
 	}
 
 	button,
@@ -293,8 +314,306 @@
 		height: 1.5rem;
 	}
 
+	/*
+	 * Le navigateur donne à `fieldset` une largeur minimale égale à celle de son contenu : un
+	 * groupe qui contient un défilement horizontal refuse alors de se réduire, et c'est la page
+	 * entière qui s'élargit au lieu du contenu qui glisse. Le sélecteur de magasin de l'écran
+	 * d'une liste poussait ainsi la page à 786 px au cran Confort.
+	 */
+	fieldset {
+		min-inline-size: 0;
+	}
+
 	:focus-visible {
 		outline: 2px solid var(--ring);
 		outline-offset: 2px;
 	}
+}
+
+/**
+ * Un libellé de bouton se lit en entier. Le composant shadcn arrive avec `whitespace-nowrap`,
+ * ce qui suffit tant que le texte est petit ; au cran Confort, « Ajouter un magasin » mesure
+ * plus large que l'écran et sort de la page, en emmenant la barre de navigation avec lui.
+ *
+ * La hauteur suit : `h-8` est figée, donc un libellé sur trois lignes déborderait du fond arrondi.
+ * Elle devient automatique, avec la hauteur de cible tactile de la règle de base en plancher —
+ * aux crans courants c'est ce plancher qui décide, et rien ne change.
+ *
+ * Règle hors `@layer` volontairement : c'est le seul moyen de passer devant une utilitaire
+ * Tailwind sans toucher au composant, qui est régénérable.
+ */
+[data-slot='button'] {
+	height: auto;
+	min-height: 2.75rem;
+	padding-block: 0.25rem;
+	white-space: normal;
+	text-align: center;
+	/*
+	 * shadcn interdit au bouton de se réduire, pour qu'il ne soit pas écrasé dans une rangée
+	 * chargée. À grande taille de texte, c'est ce qui le fait sortir de la carte. On lui rend le
+	 * droit de se réduire, sans plancher à zéro : `min-width` reste sur `auto`, donc il ne
+	 * descend jamais sous la largeur de son mot le plus long.
+	 */
+	flex-shrink: 1;
+}
+
+/**
+ * Même raison pour la pastille, avec une nuance : sa hauteur est figée à 1,25 rem et son
+ * débordement est masqué, donc un libellé sur deux lignes serait coupé net. On garde la hauteur
+ * en plancher — la pastille reste ronde quand le texte est court — et on laisse la boîte grandir.
+ */
+[data-slot='badge'] {
+	height: auto;
+	min-height: 1.25rem;
+	white-space: normal;
+	text-align: center;
+}
+
+/**
+ * Mouvement.
+ *
+ * Le vocabulaire vient du prototype — même courbe partout, entrées `fl-rise` élément par élément,
+ * `fl-pop-in` pour ce qui vient d'être validé, glissement directionnel entre deux écrans. Le
+ * prototype avait aussi laissé un avertissement dans `app.jsx` : animer un conteneur plein écran
+ * crée un contexte d'empilement qui piège les calques par-dessus (loupe, carte plein écran). D'où
+ * le choix de l'API View Transitions, qui anime des captures et ne laisse aucune transformation
+ * derrière elle, plutôt qu'un enrobage animé autour de la page.
+ *
+ * Deux garde-fous, qui doivent dire la même chose :
+ * - ici, sur `data-motion`, posé par le store et par le script anti-flash ;
+ * - en JavaScript, via `settings.animates`, pour les transitions Svelte et les View Transitions.
+ */
+:root {
+	--fl-ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+	--fl-dur-tap: 180ms;
+	--fl-dur-in: 340ms;
+	--fl-dur-page: 320ms;
+	--fl-dur-rise: 440ms;
+}
+
+@keyframes fl-rise {
+	from {
+		opacity: 0;
+		transform: translateY(14px);
+	}
+	to {
+		opacity: 1;
+		transform: none;
+	}
+}
+
+@keyframes fl-pop {
+	0% {
+		opacity: 0;
+		transform: scale(0.4);
+	}
+	60% {
+		transform: scale(1.14);
+	}
+	100% {
+		opacity: 1;
+		transform: scale(1);
+	}
+}
+
+@keyframes fl-in-right {
+	from {
+		opacity: 0;
+		transform: translateX(26px);
+	}
+	to {
+		opacity: 1;
+		transform: none;
+	}
+}
+
+@keyframes fl-in-left {
+	from {
+		opacity: 0;
+		transform: translateX(-26px);
+	}
+	to {
+		opacity: 1;
+		transform: none;
+	}
+}
+
+@keyframes fl-out-left {
+	from {
+		opacity: 1;
+		transform: none;
+	}
+	to {
+		opacity: 0;
+		transform: translateX(-26px);
+	}
+}
+
+@keyframes fl-out-right {
+	from {
+		opacity: 1;
+		transform: none;
+	}
+	to {
+		opacity: 0;
+		transform: translateX(26px);
+	}
+}
+
+@keyframes fl-fade {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
+}
+
+.fl-rise {
+	animation: fl-rise var(--fl-dur-rise) var(--fl-ease) both;
+}
+
+.fl-pop-in {
+	animation: fl-pop var(--fl-dur-in) var(--fl-ease) both;
+}
+
+/**
+ * Enfoncement. Sur un écran tactile c'est le seul retour visuel du toucher, et il tient dans une
+ * transformation : pas de repeinte, pas de calcul de mise en page.
+ */
+.fl-press {
+	transition:
+		transform var(--fl-dur-tap) var(--fl-ease),
+		background-color var(--fl-dur-tap) var(--fl-ease),
+		color var(--fl-dur-tap) var(--fl-ease);
+}
+
+.fl-press:active {
+	transform: scale(0.94);
+}
+
+.fl-press:disabled:active {
+	transform: none;
+}
+
+/** Barres d'avancement et pastille d'onglet : la valeur bouge, l'élément reste en place. */
+.fl-grow {
+	transition: width var(--fl-dur-rise) var(--fl-ease);
+}
+
+/**
+ * Transition de page. C'est la capture racine qui glisse : elle contient tout l'écran, sauf ce qui
+ * porte son propre nom de transition. La barre de navigation en porte un, elle est donc
+ * photographiée à part et ne bouge pas ; la pastille de l'onglet actif aussi, elle glisse d'un
+ * onglet à l'autre.
+ *
+ * Rien n'est nommé sur `<main>` : un nom de transition fait de l'élément un contexte d'empilement,
+ * et la carte plein écran comme la loupe, rendues depuis une page, se retrouveraient sous la barre
+ * de navigation. C'est le piège relevé dans le `app.jsx` du prototype — il se referme aussi bien
+ * sur un nom de transition que sur une transformation.
+ */
+::view-transition-old(nav),
+::view-transition-new(nav) {
+	animation: none;
+}
+
+html[data-nav='forward']::view-transition-old(root) {
+	animation: fl-out-left var(--fl-dur-page) var(--fl-ease) both;
+}
+
+html[data-nav='forward']::view-transition-new(root) {
+	animation: fl-in-right var(--fl-dur-page) var(--fl-ease) both;
+}
+
+html[data-nav='back']::view-transition-old(root) {
+	animation: fl-out-right var(--fl-dur-page) var(--fl-ease) both;
+}
+
+html[data-nav='back']::view-transition-new(root) {
+	animation: fl-in-left var(--fl-dur-page) var(--fl-ease) both;
+}
+
+html[data-nav='none']::view-transition-old(root) {
+	animation: fl-fade var(--fl-dur-page) var(--fl-ease) reverse both;
+}
+
+html[data-nav='none']::view-transition-new(root) {
+	animation: fl-fade var(--fl-dur-page) var(--fl-ease) both;
+}
+
+/**
+ * Refus du mouvement : on ne retire pas les animations, on leur donne une durée nulle. Une entrée
+ * `both` supprimée laisserait l'élément à son image de départ, donc invisible.
+ */
+html[data-motion='none'] *,
+html[data-motion='none'] *::before,
+html[data-motion='none'] *::after {
+	animation-duration: 1ms !important;
+	animation-delay: 0ms !important;
+	animation-iteration-count: 1 !important;
+	transition-duration: 1ms !important;
+	transition-delay: 0ms !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	html:not([data-motion='full']) *,
+	html:not([data-motion='full']) *::before,
+	html:not([data-motion='full']) *::after {
+		animation-duration: 1ms !important;
+		animation-delay: 0ms !important;
+		animation-iteration-count: 1 !important;
+		transition-duration: 1ms !important;
+		transition-delay: 0ms !important;
+	}
+}
+
+/**
+ * Interrupteur. Piste et bouton sont pilotés par `data-state`, l'attribut que pose réellement
+ * bits-ui. Le déplacement est donné en pixels par taille : la piste et le bouton ont des tailles
+ * fixes, une valeur calculée n'apporterait qu'une indirection.
+ *
+ * `min-height` est neutralisé pour garder la pastille ronde — la règle de base l'imposerait à
+ * 2,75 rem comme tout bouton. La zone tactile, elle, reste large : le pseudo-élément de la piste
+ * déborde de 8 px en haut et en bas, et de 12 px sur les côtés.
+ */
+button[data-slot='switch'] {
+	min-height: 0;
+	background-color: var(--input);
+	transition: background-color var(--fl-dur-tap) var(--fl-ease);
+}
+
+button[data-slot='switch'][data-state='checked'] {
+	background-color: var(--primary);
+}
+
+[data-slot='switch'][data-size='sm'] {
+	--fl-switch-inset: 1px;
+	--fl-switch-travel: 11px;
+}
+
+[data-slot='switch'][data-size='default'] {
+	--fl-switch-inset: 2px;
+	--fl-switch-travel: 14px;
+}
+
+[data-slot='switch'][data-size='lg'] {
+	--fl-switch-inset: 3px;
+	--fl-switch-travel: 24px;
+}
+
+[data-slot='switch-thumb'] {
+	transform: translateX(var(--fl-switch-inset));
+	transition: transform var(--fl-dur-tap) var(--fl-ease);
+}
+
+[data-state='checked'] > [data-slot='switch-thumb'] {
+	transform: translateX(var(--fl-switch-travel));
+}
+
+[dir='rtl'] [data-slot='switch-thumb'] {
+	transform: translateX(calc(-1 * var(--fl-switch-inset)));
+}
+
+[dir='rtl'] [data-state='checked'] > [data-slot='switch-thumb'] {
+	transform: translateX(calc(-1 * var(--fl-switch-travel)));
 }

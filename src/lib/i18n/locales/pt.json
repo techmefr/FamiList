@@ -37,19 +37,35 @@
 		"previewItem": "Tomates em rama — 500 g",
 		"previewNote": "Pré-visualização no tamanho real de um artigo numa lista.",
 		"account": "Conta",
-		"signedInAs": "Sessão iniciada como {email}"
+		"signedInAs": "Sessão iniciada como {email}",
+		"feedbackTitle": "Movimento e retorno",
+		"motion": "Animações",
+		"motionHint": "«Sistema» segue a definição de redução de movimento do aparelho.",
+		"motionPreview": "Animações ativas.",
+		"sound": "Som",
+		"soundHint": "Um bip curto ao marcar, adicionar ou digitalizar um artigo.",
+		"haptics": "Vibração",
+		"hapticsHint": "Retorno tátil no telemóvel, quando o aparelho permite.",
+		"testFeedback": "Ouvir"
 	},
 	"theme": {
 		"light": "Claro",
 		"dark": "Escuro",
 		"system": "Sistema"
 	},
+	"motion": {
+		"system": "Sistema",
+		"full": "Completas",
+		"none": "Nenhuma"
+	},
 	"scale": {
 		"xs": "Muito pequeno",
 		"sm": "Normal",
 		"md": "Grande",
 		"lg": "Muito grande",
-		"xl": "Máximo"
+		"xl": "Enorme",
+		"xxl": "Gigante",
+		"comfort": "Conforto"
 	},
 	"accent": {
 		"terracotta": "Terracota",

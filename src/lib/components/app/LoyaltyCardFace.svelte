@@ -24,7 +24,7 @@
 	<div class="flex items-start justify-between gap-3">
 		<div class="min-w-0">
 			<p class="text-caption font-medium tracking-wide opacity-75">{t('cards.loyalty')}</p>
-			<h2 class="text-product mt-1 font-semibold">{card.name}</h2>
+			<h2 class="text-product mt-1 font-semibold break-words">{card.name}</h2>
 		</div>
 
 		<div class="flex shrink-0 items-center gap-2">
@@ -43,8 +43,8 @@
 		</div>
 	</div>
 
-	<div class="mt-5 flex items-end justify-between gap-3">
-		<p class="text-label font-mono tracking-widest opacity-85">{card.num}</p>
+	<div class="mt-5 flex flex-wrap items-end justify-between gap-3">
+		<p class="text-label font-mono tracking-widest break-all opacity-85">{card.num}</p>
 		<div class="text-end">
 			<p class="text-caption font-medium opacity-70">{t('cards.points')}</p>
 			<p class="text-h2 leading-none font-semibold">{i18n.number(card.points)}</p>

@@ -37,19 +37,35 @@
 		"previewItem": "Vine tomatoes — 500 g",
 		"previewNote": "Preview at the real size of an item in a list.",
 		"account": "Account",
-		"signedInAs": "Signed in as {email}"
+		"signedInAs": "Signed in as {email}",
+		"feedbackTitle": "Motion and feedback",
+		"motion": "Animations",
+		"motionHint": "“System” follows your device's reduce-motion setting.",
+		"motionPreview": "Animations on.",
+		"sound": "Sound",
+		"soundHint": "A short beep when you tick, add or scan an item.",
+		"haptics": "Vibration",
+		"hapticsHint": "Haptic feedback on phones, when the device allows it.",
+		"testFeedback": "Play"
 	},
 	"theme": {
 		"light": "Light",
 		"dark": "Dark",
 		"system": "System"
 	},
+	"motion": {
+		"system": "System",
+		"full": "Full",
+		"none": "None"
+	},
 	"scale": {
 		"xs": "Very small",
 		"sm": "Normal",
 		"md": "Large",
 		"lg": "Very large",
-		"xl": "Maximum"
+		"xl": "Huge",
+		"xxl": "Giant",
+		"comfort": "Comfort"
 	},
 	"accent": {
 		"terracotta": "Terracotta",

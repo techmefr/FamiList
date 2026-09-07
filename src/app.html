@@ -6,8 +6,8 @@
 			name="viewport"
 			content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=5"
 		/>
-		<meta name="theme-color" content="#F1EDE5" />
-		<link rel="icon" href="%sveltekit.assets%/favicon.svg" />
+		<meta name="theme-color" content="#f1ede5" />
+		<link rel="icon" type="image/svg+xml" href="%sveltekit.assets%/favicon.svg" />
 		<script>
 			// Applique les préférences avant le premier rendu : sans ça, un rechargement en thème
 			// sombre, en grande police ou en arabe provoque un flash dans les réglages par défaut.
@@ -25,6 +25,15 @@
 					if (dark) root.classList.add('dark');
 					root.dataset.accent = saved.accentId ?? 'terracotta';
 					root.dataset.scale = saved.fontScaleId ?? 'sm';
+					// Le mouvement est refusé avant la première image, sinon les entrées de la
+					// première page jouent quand même.
+					root.dataset.motion = saved.motion ?? 'system';
+
+					if (dark) {
+						document
+							.querySelector('meta[name="theme-color"]')
+							.setAttribute('content', '#0a0907');
+					}
 				} catch {}
 
 				try {

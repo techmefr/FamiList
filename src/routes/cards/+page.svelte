@@ -1,5 +1,10 @@
 <script lang="ts">
+	import { flip } from 'svelte/animate';
+	import { slide } from 'svelte/transition';
+	import { cubicOut } from 'svelte/easing';
 	import { data } from '$stores/data.svelte';
+	import { feedback } from '$stores/feedback.svelte';
+	import { motionMs } from '$stores/settings.svelte';
 	import { t } from '$lib/i18n/index.svelte';
 	import { CODE_TYPES, guessCodeType, type CodeType } from '$domain/code-format';
 	import { normalizeEan13 } from '$domain/barcode';
@@ -42,6 +47,7 @@
 
 		const tint = shopTint(name.trim());
 
+		feedback.play('add');
 		data.addCard({
 			shopId: data.shops.find((s) => s.name === name.trim())?.id ?? '',
 			name: name.trim(),
@@ -78,22 +84,33 @@
 		<p class="text-muted-foreground mt-6" data-test="cards-empty">{t('cards.empty')}</p>
 	{:else}
 		<ul class="mt-6 space-y-4">
-			{#each data.cards as card (card.id)}
-				<li class="relative">
+			{#each data.cards as card, index (card.id)}
+				<li
+					class="fl-rise relative"
+					style="animation-delay: {Math.min(index, 6) * 45}ms"
+					animate:flip={{ duration: motionMs(280), easing: cubicOut }}
+					out:slide={{ duration: motionMs(180), easing: cubicOut }}
+				>
 					<button
 						type="button"
-						onclick={() => (openCardId = card.id)}
-						class="block w-full text-start"
+						onclick={() => {
+							feedback.play('tap');
+							openCardId = card.id;
+						}}
+						class="fl-press block w-full text-start"
 						data-test="card-open"
 					>
 						<LoyaltyCardFace {card} />
 					</button>
 					<button
 						type="button"
-						onclick={() => data.removeCard(card.id)}
+						onclick={() => {
+							feedback.play('remove');
+							data.removeCard(card.id);
+						}}
 						aria-label={t('cards.delete', { name: card.name })}
 						data-test="card-delete"
-						class="absolute end-2 bottom-2 grid size-11 place-items-center text-white/70"
+						class="fl-press absolute end-2 bottom-2 grid size-11 place-items-center text-white/70"
 					>
 						<Trash2 size={18} aria-hidden="true" />
 					</button>
@@ -103,7 +120,12 @@
 	{/if}
 
 	{#if adding}
-		<form onsubmit={submit} class="bg-card mt-6 space-y-4 rounded-md border p-4" data-test="card-form">
+		<form
+			onsubmit={submit}
+			transition:slide={{ duration: motionMs(220), easing: cubicOut }}
+			class="bg-card mt-6 space-y-4 rounded-md border p-4"
+			data-test="card-form"
+		>
 			<div>
 				<Label for="card-name">{t('cards.name')}</Label>
 				<Input id="card-name" bind:value={name} data-test="card-name" required />
@@ -146,16 +168,19 @@
 			</div>
 
 			<div class="flex flex-wrap gap-2">
-				<Button type="submit" data-test="card-submit">{t('cards.save')}</Button>
+				<Button type="submit" data-test="card-submit" class="fl-press">{t('cards.save')}</Button>
 				<Button type="button" variant="outline" onclick={reset}>{t('common.cancel')}</Button>
 			</div>
 		</form>
 	{:else}
 		<Button
 			variant="outline"
-			onclick={() => (adding = true)}
+			onclick={() => {
+				feedback.play('tap');
+				adding = true;
+			}}
 			data-test="card-add"
-			class="mt-6 w-full border-dashed py-6"
+			class="fl-press mt-6 w-full border-dashed py-6"
 		>
 			<Plus size={20} aria-hidden="true" />
 			{t('cards.add')}

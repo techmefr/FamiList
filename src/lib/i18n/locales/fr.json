@@ -37,19 +37,35 @@
 		"previewItem": "Tomates grappe — 500 g",
 		"previewNote": "Aperçu à la taille réelle d'un article dans une liste.",
 		"account": "Compte",
-		"signedInAs": "Connecté en tant que {email}"
+		"signedInAs": "Connecté en tant que {email}",
+		"feedbackTitle": "Mouvement et retours",
+		"motion": "Animations",
+		"motionHint": "« Système » suit le réglage de réduction du mouvement de votre appareil.",
+		"motionPreview": "Animations actives.",
+		"sound": "Son",
+		"soundHint": "Un bip court quand vous cochez, ajoutez ou scannez un article.",
+		"haptics": "Vibration",
+		"hapticsHint": "Un retour tactile sur téléphone, quand l'appareil le permet.",
+		"testFeedback": "Écouter"
 	},
 	"theme": {
 		"light": "Clair",
 		"dark": "Sombre",
 		"system": "Système"
 	},
+	"motion": {
+		"system": "Système",
+		"full": "Complètes",
+		"none": "Aucune"
+	},
 	"scale": {
 		"xs": "Très petit",
 		"sm": "Normal",
 		"md": "Grand",
 		"lg": "Très grand",
-		"xl": "Maximum"
+		"xl": "Énorme",
+		"xxl": "Géant",
+		"comfort": "Confort"
 	},
 	"accent": {
 		"terracotta": "Terracotta",

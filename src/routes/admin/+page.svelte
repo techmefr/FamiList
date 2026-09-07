@@ -100,9 +100,9 @@
 				<li>
 					<Card.Root data-test="pending-account">
 						<Card.Content class="flex flex-wrap items-center gap-4">
-							<div class="min-w-0 flex-1">
-								<p class="text-product truncate font-medium">{account.display_name}</p>
-								<p class="text-muted-foreground text-label truncate">{account.email}</p>
+							<div class="min-w-0 flex-1 basis-[12rem]">
+								<p class="text-product font-medium break-words">{account.display_name}</p>
+								<p class="text-muted-foreground text-label break-all">{account.email}</p>
 								<p class="text-muted-foreground text-caption">
 									{t('admin.requestedAt', { date: formatDate(account.requested_at) })}
 								</p>
