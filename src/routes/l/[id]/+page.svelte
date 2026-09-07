@@ -74,7 +74,7 @@
 	<p class="text-muted-foreground">{t('list.notFound')}</p>
 	<a href="/" class="text-primary mt-4 inline-block underline">{t('list.back')}</a>
 {:else}
-	<a href="/" class="text-muted-foreground text-label inline-flex items-center gap-2">
+	<a href="/" class="text-muted-foreground text-label inline-flex min-h-[max(2.75rem,44px)] items-center gap-2">
 		<ArrowLeft size={16} aria-hidden="true" />
 		{t('list.back')}
 	</a>
@@ -97,7 +97,7 @@
 	<a
 		href="/l/{listId}/chat"
 		data-test="open-chat"
-		class="text-primary text-label mt-3 inline-flex items-center gap-2 underline"
+		class="text-primary text-label mt-3 inline-flex min-h-[max(2.75rem,44px)] items-center gap-2 underline"
 	>
 		<MessagesSquare size={16} aria-hidden="true" />
 		{t('chat.open')}
@@ -108,11 +108,15 @@
 	</div>
 
 	<div class="mt-4 flex flex-wrap items-center gap-2">
-		<label class="border-input flex cursor-pointer items-center gap-2 rounded-full border px-4 py-2">
+		<label
+			class="border-input flex min-h-[max(2.75rem,44px)] cursor-pointer items-center gap-2 rounded-full border px-4 py-2"
+		>
 			<input type="checkbox" bind:checked={priorityOnly} data-test="filter-priority" />
 			<span class="text-label">{t('list.priorityOnly')}</span>
 		</label>
-		<label class="border-input flex cursor-pointer items-center gap-2 rounded-full border px-4 py-2">
+		<label
+			class="border-input flex min-h-[max(2.75rem,44px)] cursor-pointer items-center gap-2 rounded-full border px-4 py-2"
+		>
 			<input type="checkbox" bind:checked={hideChecked} data-test="filter-hide-checked" />
 			<span class="text-label">{t('list.hideChecked')}</span>
 		</label>
@@ -168,7 +172,7 @@
 							disabled={aisleIndex === 0}
 							aria-label={t('list.aisleUp', { name: aisle?.name ?? group.aisleId })}
 							data-test="aisle-up"
-							class="text-muted-foreground grid size-11 place-items-center disabled:opacity-30"
+							class="text-muted-foreground grid size-11 min-w-[44px] place-items-center disabled:opacity-30"
 						>
 							<ChevronUp size={18} aria-hidden="true" />
 						</button>
@@ -178,7 +182,7 @@
 							disabled={aisleIndex === visible.length - 1}
 							aria-label={t('list.aisleDown', { name: aisle?.name ?? group.aisleId })}
 							data-test="aisle-down"
-							class="text-muted-foreground grid size-11 place-items-center disabled:opacity-30"
+							class="text-muted-foreground grid size-11 min-w-[44px] place-items-center disabled:opacity-30"
 						>
 							<ChevronDown size={18} aria-hidden="true" />
 						</button>

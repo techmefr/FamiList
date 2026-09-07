@@ -34,6 +34,7 @@ import {
 	fromShop
 } from '$lib/sync/mapping';
 import { slugify } from '$domain/slug';
+import { DEFAULT_UNIT } from '$domain/units';
 
 const ACTIVE_SHOP_KEY = 'familist:active-shop';
 
@@ -200,7 +201,7 @@ class DataStore {
 			aisleId: input.aisleId || this.suggestAisleId(input.name),
 			name: input.name.trim(),
 			qty: input.qty || '1',
-			unit: input.unit || 'pièce',
+			unit: input.unit || DEFAULT_UNIT,
 			checked: false,
 			priority: false,
 			createdAt: Date.now()
@@ -550,7 +551,7 @@ class DataStore {
 		const fresh = option.ingredients.filter((name) => !existing.has(slugify(name)));
 
 		for (const name of fresh) {
-			const item = this.addItem(listId, { name, qty: '1', unit: 'pièce' });
+			const item = this.addItem(listId, { name, qty: '1', unit: DEFAULT_UNIT });
 			if (option.claimedBy) this.assignItem(item.id, option.claimedBy);
 		}
 

@@ -135,6 +135,23 @@
 		"remove": "Supprimer {name}",
 		"noShop": "Ajouter un magasin"
 	},
+	"units": {
+		"piece": "pièce",
+		"g": "g",
+		"kg": "kg",
+		"ml": "ml",
+		"l": "L",
+		"pack": "paquet",
+		"box": "boîte",
+		"bottle": "bouteille",
+		"jar": "pot",
+		"bag": "sachet",
+		"bunch": "botte",
+		"slice": "tranche",
+		"tray": "barquette",
+		"roll": "rouleau",
+		"brick": "brique"
+	},
 	"add": {
 		"name": "Article",
 		"qty": "Quantité",
@@ -207,6 +224,7 @@
 		"open": "Ouvrir la discussion",
 		"backToList": "Retour à la liste",
 		"empty": "Aucun message pour le moment.",
+		"messageLabel": "Votre message",
 		"placeholder": "Votre message…",
 		"send": "Envoyer",
 		"unknownAuthor": "Quelqu’un",
@@ -260,10 +278,7 @@
 		"unsupported": "La caméra n’est pas disponible ici. La loupe fonctionne sur votre téléphone.",
 		"frozen": "Image figée",
 		"zoom": "Grossissement",
-		"zoomIn": "Agrandir",
-		"zoomOut": "Réduire",
 		"light": "Éclairer",
-		"softLight": "éclaircie",
 		"freeze": "Figer l’image",
 		"resume": "Reprendre"
 	}

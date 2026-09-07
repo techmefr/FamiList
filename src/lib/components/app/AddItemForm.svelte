@@ -2,6 +2,7 @@
 	import { data } from '$stores/data.svelte';
 	import { feedback } from '$stores/feedback.svelte';
 	import { t } from '$lib/i18n/index.svelte';
+	import { DEFAULT_UNIT, UNITS } from '$domain/units';
 	import { Button } from '$lib/components/ui/button';
 	import { Input } from '$lib/components/ui/input';
 	import { Label } from '$lib/components/ui/label';
@@ -11,7 +12,7 @@
 
 	let name = $state('');
 	let qty = $state('1');
-	let unit = $state('pièce');
+	let unit = $state<string>(DEFAULT_UNIT);
 	let aisleId = $state('');
 
 	/** Le rayon deviné suit la saisie tant que l'utilisateur n'en a pas choisi un lui-même. */
@@ -26,24 +27,38 @@
 		data.addItem(listId, { name, qty, unit, aisleId: effectiveAisle });
 		name = '';
 		qty = '1';
-		unit = 'pièce';
+		unit = DEFAULT_UNIT;
 		aisleId = '';
 	}
 </script>
 
 <form onsubmit={submit} class="bg-card mt-6 space-y-3 rounded-md border p-4" data-test="add-item">
+	<!--
+		Les largeurs ne s'appliquent qu'à partir de sm : en dessous, chaque champ prend la ligne
+		entière. Une largeur en rem se multiplie par le cran de texte, et un w-32 devient 294 px au
+		cran Confort — de quoi déborder un téléphone.
+	-->
 	<div class="grid gap-3 sm:grid-cols-[2fr_auto_auto]">
-		<div>
+		<div class="min-w-0">
 			<Label for="item-name">{t('add.name')}</Label>
 			<Input id="item-name" bind:value={name} data-test="add-name" required />
 		</div>
-		<div class="w-24">
+		<div class="sm:w-24">
 			<Label for="item-qty">{t('add.qty')}</Label>
 			<Input id="item-qty" bind:value={qty} data-test="add-qty" inputmode="decimal" />
 		</div>
-		<div class="w-32">
+		<div class="min-w-0">
 			<Label for="item-unit">{t('add.unit')}</Label>
-			<Input id="item-unit" bind:value={unit} data-test="add-unit" />
+			<select
+				id="item-unit"
+				bind:value={unit}
+				data-test="add-unit"
+				class="border-input bg-background min-h-[max(2.75rem,44px)] w-full rounded-md border px-3 py-1"
+			>
+				{#each UNITS as id (id)}
+					<option value={id}>{t(`units.${id}`)}</option>
+				{/each}
+			</select>
 		</div>
 	</div>
 
@@ -53,7 +68,7 @@
 			id="item-aisle"
 			bind:value={aisleId}
 			data-test="add-aisle"
-			class="border-input bg-background w-full rounded-md border px-3"
+			class="border-input bg-background min-h-[max(2.75rem,44px)] w-full rounded-md border px-3 py-1"
 		>
 			<option value="">
 				{suggested

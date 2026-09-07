@@ -135,6 +135,23 @@
 		"remove": "{name} löschen",
 		"noShop": "Ein Geschäft hinzufügen"
 	},
+	"units": {
+		"piece": "Stück",
+		"g": "g",
+		"kg": "kg",
+		"ml": "ml",
+		"l": "L",
+		"pack": "Packung",
+		"box": "Schachtel",
+		"bottle": "Flasche",
+		"jar": "Glas",
+		"bag": "Beutel",
+		"bunch": "Bund",
+		"slice": "Scheibe",
+		"tray": "Schale",
+		"roll": "Rolle",
+		"brick": "Karton"
+	},
 	"add": {
 		"name": "Artikel",
 		"qty": "Menge",
@@ -207,6 +224,7 @@
 		"open": "Unterhaltung öffnen",
 		"backToList": "Zurück zur Liste",
 		"empty": "Noch keine Nachrichten.",
+		"messageLabel": "Ihre Nachricht",
 		"placeholder": "Ihre Nachricht…",
 		"send": "Senden",
 		"unknownAuthor": "Jemand",
@@ -260,10 +278,7 @@
 		"unsupported": "Die Kamera ist hier nicht verfügbar. Die Lupe funktioniert auf Ihrem Telefon.",
 		"frozen": "Standbild",
 		"zoom": "Vergrößerung",
-		"zoomIn": "Vergrößern",
-		"zoomOut": "Verkleinern",
 		"light": "Licht",
-		"softLight": "aufgehellt",
 		"freeze": "Bild einfrieren",
 		"resume": "Fortsetzen"
 	}

@@ -52,7 +52,7 @@
 			onclick={onClose}
 			aria-label={t('common.close')}
 			data-test="card-close"
-			class="grid size-11 shrink-0 place-items-center rounded-full border border-white/20 bg-white/10"
+			class="grid size-11 min-w-[44px] shrink-0 place-items-center rounded-full border border-white/20 bg-white/10"
 		>
 			<X size={20} aria-hidden="true" />
 		</button>

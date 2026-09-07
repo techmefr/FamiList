@@ -121,7 +121,7 @@
 							}}
 							aria-label={t('lists.delete', { name: list.name })}
 							data-test="list-delete"
-							class="fl-press text-muted-foreground grid size-11 shrink-0 place-items-center"
+							class="fl-press text-muted-foreground grid size-11 min-w-[44px] shrink-0 place-items-center"
 						>
 							<Trash2 size={18} aria-hidden="true" />
 						</button>

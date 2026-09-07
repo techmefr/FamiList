@@ -72,7 +72,10 @@
 	<p class="text-muted-foreground">{t('list.notFound')}</p>
 	<a href="/" class="text-primary mt-4 inline-block underline">{t('list.back')}</a>
 {:else}
-	<a href="/l/{listId}" class="text-muted-foreground text-label inline-flex items-center gap-2">
+	<a
+		href="/l/{listId}"
+		class="text-muted-foreground text-label inline-flex min-h-[max(2.75rem,44px)] items-center gap-2"
+	>
 		<ArrowLeft size={16} aria-hidden="true" />
 		{t('chat.backToList')}
 	</a>
@@ -164,9 +167,20 @@
 		</div>
 	{/if}
 
+	<!--
+		aria-label et pas seulement le placeholder : celui-ci n'est pas un nom accessible, et il
+		disparaît dès la première lettre tapée. min-w-[44px] sur le bouton parce qu'il ne porte qu'une
+		icône — il tombait à 43 px de large, un pixel sous la cible tactile.
+	-->
 	<form onsubmit={send} class="mt-4 flex gap-2" data-test="chat-form">
-		<Input bind:value={body} placeholder={t('chat.placeholder')} data-test="chat-input" required />
-		<Button type="submit" data-test="chat-send" aria-label={t('chat.send')}>
+		<Input
+			bind:value={body}
+			aria-label={t('chat.messageLabel')}
+			placeholder={t('chat.placeholder')}
+			data-test="chat-input"
+			required
+		/>
+		<Button type="submit" class="min-w-[44px]" data-test="chat-send" aria-label={t('chat.send')}>
 			<Send size={18} aria-hidden="true" />
 		</Button>
 	</form>

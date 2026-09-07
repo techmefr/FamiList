@@ -13,6 +13,7 @@ import type {
 	ShopLayout
 } from '$db/schema';
 import { itemOrderKey, pollVoteKey } from '$db/schema';
+import { DEFAULT_UNIT } from '$domain/units';
 
 /**
  * Traduction entre le modèle local, écrit pour l'écran, et les colonnes Postgres. Tout passe par
@@ -89,7 +90,7 @@ export const toItem = (row: Row): Item => ({
 	aisleId: text(row.aisle_id),
 	name: text(row.name),
 	qty: row.qty === null || row.qty === undefined ? '' : String(row.qty),
-	unit: text(row.unit, 'pièce'),
+	unit: text(row.unit, DEFAULT_UNIT),
 	checked: flag(row.checked),
 	priority: flag(row.priority),
 	note: typeof row.note === 'string' ? row.note : undefined,
@@ -149,7 +150,7 @@ export const toMember = (row: Row, profile: Row | undefined, currentUserId: stri
 		name,
 		role: id === currentUserId ? 'self' : text(row.role, 'member'),
 		initial: text(profile?.initial) || name.slice(0, 1).toUpperCase(),
-		tint: text(row.tint, '#C8532A')
+		tint: text(row.tint, '#A94008')
 	};
 };
 

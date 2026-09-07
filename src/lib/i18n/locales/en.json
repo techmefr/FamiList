@@ -135,6 +135,23 @@
 		"remove": "Delete {name}",
 		"noShop": "Add a shop"
 	},
+	"units": {
+		"piece": "item",
+		"g": "g",
+		"kg": "kg",
+		"ml": "ml",
+		"l": "L",
+		"pack": "pack",
+		"box": "box",
+		"bottle": "bottle",
+		"jar": "jar",
+		"bag": "bag",
+		"bunch": "bunch",
+		"slice": "slice",
+		"tray": "tray",
+		"roll": "roll",
+		"brick": "carton"
+	},
 	"add": {
 		"name": "Item",
 		"qty": "Quantity",
@@ -207,6 +224,7 @@
 		"open": "Open the chat",
 		"backToList": "Back to the list",
 		"empty": "No messages yet.",
+		"messageLabel": "Your message",
 		"placeholder": "Your message…",
 		"send": "Send",
 		"unknownAuthor": "Someone",
@@ -260,10 +278,7 @@
 		"unsupported": "The camera is not available here. The magnifier works on your phone.",
 		"frozen": "Frozen",
 		"zoom": "Magnification",
-		"zoomIn": "Zoom in",
-		"zoomOut": "Zoom out",
 		"light": "Light",
-		"softLight": "brightened",
 		"freeze": "Freeze the picture",
 		"resume": "Resume"
 	}

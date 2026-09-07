@@ -9,7 +9,19 @@
 	--card-foreground: #1c1917;
 	--popover: #ffffff;
 	--popover-foreground: #1c1917;
-	--primary: #c8532a;
+	/*
+	 * Terracotta assombrie pour le RGAA. La teinte d'origine, #c8532a, ne donnait que 3,81:1 sur
+	 * ce fond : tous les liens d'accent et le texte blanc des boutons principaux passaient sous
+	 * les 4,5:1 exigés, et c'est l'accent par défaut, donc le cas le plus courant.
+	 *
+	 * Seule la clarté a bougé, de 0,565 à 0,51 en oklch — la teinte et la saturation sont
+	 * inchangées. Le cran est dicté par le cas le plus dur, l'accent posé sur son propre fond
+	 * teinté à 10 % (les pastilles, les bulles de discussion) : 4,56:1. Sur le fond simple on est
+	 * à 5,25:1, sur une carte à 6,13:1, et le blanc dessus à 6,13:1.
+	 *
+	 * Les cinq autres accents et tout le thème sombre passaient déjà, avec de la marge.
+	 */
+	--primary: #a94008;
 	--primary-foreground: #ffffff;
 	--secondary: #1f5c3a;
 	--secondary-foreground: #ffffff;
@@ -21,11 +33,11 @@
 	--destructive-foreground: #ffffff;
 	--border: rgb(28 25 23 / 0.08);
 	--input: rgb(28 25 23 / 0.14);
-	--ring: #c8532a;
+	--ring: #a94008;
 
-	--fl-primary-hover: #a8431f;
-	--fl-primary-pressed: #8b3719;
-	--fl-primary-tint: rgb(200 83 42 / 0.1);
+	--fl-primary-hover: #9c3300;
+	--fl-primary-pressed: #8e2600;
+	--fl-primary-tint: rgb(169 64 8 / 0.1);
 	--fl-secondary-tint: rgb(31 92 58 / 0.1);
 	--fl-border-strong: rgb(28 25 23 / 0.14);
 	--fl-text-tertiary: #8b8680;
@@ -180,7 +192,7 @@
 	background: oklch(0.82 0.02 60);
 }
 .fl-swatch-terracotta {
-	background: #c8532a;
+	background: #a94008;
 }
 .dark .fl-swatch-terracotta {
 	background: #e8885e;
@@ -301,11 +313,18 @@
 		overflow-wrap: anywhere;
 	}
 
+	/*
+	 * 44 px est une taille de doigt, pas une taille de texte : le plancher ne doit jamais
+	 * rétrécir. Écrit seul, 2,75rem tombe à 39,6 px au cran xs, où la racine vaut 14,4 px — toutes
+	 * les commandes de l'app passaient alors sous la cible d'un coup. Le max garde les deux
+	 * comportements : jamais moins que le doigt, et toujours plus grand quand quelqu'un agrandit
+	 * le texte. Même raisonnement pour une largeur imposée : min-w-[44px], jamais min-w-11.
+	 */
 	button,
 	[role='button'],
 	input:not([type='checkbox']):not([type='radio']),
 	select {
-		min-height: 2.75rem;
+		min-height: max(2.75rem, 44px);
 	}
 
 	input[type='checkbox'],
@@ -344,7 +363,7 @@
  */
 [data-slot='button'] {
 	height: auto;
-	min-height: 2.75rem;
+	min-height: max(2.75rem, 44px);
 	padding-block: 0.25rem;
 	white-space: normal;
 	text-align: center;

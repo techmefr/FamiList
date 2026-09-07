@@ -134,6 +134,23 @@
 		"remove": "删除 {name}",
 		"noShop": "添加商店"
 	},
+	"units": {
+		"piece": "个",
+		"g": "克",
+		"kg": "千克",
+		"ml": "毫升",
+		"l": "升",
+		"pack": "包",
+		"box": "盒",
+		"bottle": "瓶",
+		"jar": "罐",
+		"bag": "袋",
+		"bunch": "把",
+		"slice": "片",
+		"tray": "盘",
+		"roll": "卷",
+		"brick": "利乐包"
+	},
 	"add": {
 		"name": "商品",
 		"qty": "数量",
@@ -206,6 +223,7 @@
 		"open": "打开讨论",
 		"backToList": "返回清单",
 		"empty": "还没有消息。",
+		"messageLabel": "你的消息",
 		"placeholder": "你的消息…",
 		"send": "发送",
 		"unknownAuthor": "某人",
@@ -257,10 +275,7 @@
 		"unsupported": "此处无法使用相机。放大镜可在手机上使用。",
 		"frozen": "已定格",
 		"zoom": "放大倍数",
-		"zoomIn": "放大",
-		"zoomOut": "缩小",
 		"light": "补光",
-		"softLight": "软件补光",
 		"freeze": "定格画面",
 		"resume": "继续"
 	}

@@ -135,6 +135,23 @@
 		"remove": "Eliminar {name}",
 		"noShop": "Adicionar uma loja"
 	},
+	"units": {
+		"piece": "unidade",
+		"g": "g",
+		"kg": "kg",
+		"ml": "ml",
+		"l": "L",
+		"pack": "pacote",
+		"box": "caixa",
+		"bottle": "garrafa",
+		"jar": "boião",
+		"bag": "saco",
+		"bunch": "molho",
+		"slice": "fatia",
+		"tray": "bandeja",
+		"roll": "rolo",
+		"brick": "pacote"
+	},
 	"add": {
 		"name": "Artigo",
 		"qty": "Quantidade",
@@ -207,6 +224,7 @@
 		"open": "Abrir a conversa",
 		"backToList": "Voltar à lista",
 		"empty": "Ainda não há mensagens.",
+		"messageLabel": "A sua mensagem",
 		"placeholder": "A sua mensagem…",
 		"send": "Enviar",
 		"unknownAuthor": "Alguém",
@@ -260,10 +278,7 @@
 		"unsupported": "A câmara não está disponível aqui. A lupa funciona no seu telemóvel.",
 		"frozen": "Imagem fixa",
 		"zoom": "Ampliação",
-		"zoomIn": "Ampliar",
-		"zoomOut": "Reduzir",
 		"light": "Iluminar",
-		"softLight": "clareada",
 		"freeze": "Fixar a imagem",
 		"resume": "Retomar"
 	}

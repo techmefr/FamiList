@@ -135,6 +135,23 @@
 		"remove": "Elimina {name}",
 		"noShop": "Aggiungi un negozio"
 	},
+	"units": {
+		"piece": "pezzo",
+		"g": "g",
+		"kg": "kg",
+		"ml": "ml",
+		"l": "L",
+		"pack": "pacco",
+		"box": "scatola",
+		"bottle": "bottiglia",
+		"jar": "vasetto",
+		"bag": "busta",
+		"bunch": "mazzo",
+		"slice": "fetta",
+		"tray": "vaschetta",
+		"roll": "rotolo",
+		"brick": "brick"
+	},
 	"add": {
 		"name": "Articolo",
 		"qty": "Quantità",
@@ -207,6 +224,7 @@
 		"open": "Apri la conversazione",
 		"backToList": "Torna alla lista",
 		"empty": "Ancora nessun messaggio.",
+		"messageLabel": "Il tuo messaggio",
 		"placeholder": "Il tuo messaggio…",
 		"send": "Invia",
 		"unknownAuthor": "Qualcuno",
@@ -260,10 +278,7 @@
 		"unsupported": "La fotocamera non è disponibile qui. La lente funziona sul tuo telefono.",
 		"frozen": "Immagine fissa",
 		"zoom": "Ingrandimento",
-		"zoomIn": "Ingrandisci",
-		"zoomOut": "Riduci",
 		"light": "Illumina",
-		"softLight": "schiarita",
 		"freeze": "Fissa l’immagine",
 		"resume": "Riprendi"
 	}

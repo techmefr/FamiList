@@ -110,7 +110,7 @@
 						}}
 						aria-label={t('cards.delete', { name: card.name })}
 						data-test="card-delete"
-						class="fl-press absolute end-2 bottom-2 grid size-11 place-items-center text-white/70"
+						class="fl-press absolute end-2 bottom-2 grid size-11 min-w-[44px] place-items-center text-white/70"
 					>
 						<Trash2 size={18} aria-hidden="true" />
 					</button>

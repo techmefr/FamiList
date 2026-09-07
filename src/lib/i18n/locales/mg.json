@@ -134,6 +134,23 @@
 		"remove": "Fafao {name}",
 		"noShop": "Hanampy fivarotana"
 	},
+	"units": {
+		"piece": "singany",
+		"g": "g",
+		"kg": "kg",
+		"ml": "ml",
+		"l": "L",
+		"pack": "fonosana",
+		"box": "boaty",
+		"bottle": "tavoahangy",
+		"jar": "vilany",
+		"bag": "kitapo",
+		"bunch": "fehezana",
+		"slice": "sombiny",
+		"tray": "lovia",
+		"roll": "horonana",
+		"brick": "karatona"
+	},
 	"add": {
 		"name": "Entana",
 		"qty": "Isa",
@@ -206,6 +223,7 @@
 		"open": "Sokafy ny resaka",
 		"backToList": "Hiverina amin’ny lisitra",
 		"empty": "Mbola tsy misy hafatra.",
+		"messageLabel": "Ny hafatrao",
 		"placeholder": "Ny hafatrao…",
 		"send": "Alefa",
 		"unknownAuthor": "Olona iray",
@@ -257,10 +275,7 @@
 		"unsupported": "Tsy misy fakan-tsary eto. Miasa amin’ny findainao ny fitarafana.",
 		"frozen": "Sary voafatotra",
 		"zoom": "Fanalehibiazana",
-		"zoomIn": "Hanalehibe",
-		"zoomOut": "Hanakely",
 		"light": "Jiro",
-		"softLight": "jiro rindrambaiko",
 		"freeze": "Hamatotra ny sary",
 		"resume": "Hanohy"
 	}

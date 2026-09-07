@@ -28,9 +28,11 @@
 		feedback.play('success');
 	}
 
+	/** Le plancher de cible tactile va sur la pastille : c'est elle qu'on touche, la case est en sr-only. */
 	const optionClass =
 		'border-input has-checked:border-primary has-checked:bg-[var(--fl-primary-tint)] ' +
-		'has-checked:text-primary flex cursor-pointer items-center gap-2 rounded-md border px-4 py-2';
+		'has-checked:text-primary flex min-h-[max(2.75rem,44px)] cursor-pointer items-center gap-2 rounded-md ' +
+		'border px-4 py-2';
 </script>
 
 <svelte:head>

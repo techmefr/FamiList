@@ -90,8 +90,14 @@
 		{/each}
 	</svg>
 {:else}
-	<!-- Un code invalide n'est pas dessiné : un tracé approximatif scannerait une autre donnée. -->
-	<p class="text-destructive text-label px-4 py-6 text-center" data-test="code-invalid">
+	<!--
+		Un code invalide n'est pas dessiné : un tracé approximatif scannerait une autre donnée.
+
+		Rouge fixe, pas `text-destructive` : ce message s'affiche sur le cartouche blanc de la carte,
+		blanc en toutes circonstances pour rester scannable. Le jeton de thème, lui, s'éclaircit en thème
+		sombre — le message tombait alors à 2,4:1 sur ce blanc.
+	-->
+	<p class="text-label px-4 py-6 text-center text-red-700" data-test="code-invalid">
 		{t('cards.invalidCode')}
 	</p>
 {/if}

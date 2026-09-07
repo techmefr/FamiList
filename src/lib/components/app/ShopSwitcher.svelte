@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { data } from '$stores/data.svelte';
 	import { t } from '$lib/i18n/index.svelte';
+	import { tintForWhiteText } from '$domain/tint';
 	import { Check } from '@lucide/svelte';
 </script>
 
@@ -9,7 +10,12 @@
 
 	{#if data.shops.length === 0}
 		<p class="text-muted-foreground text-label">
-			<a href="/shops" class="text-primary underline">{t('list.noShop')}</a>
+			<a
+				href="/shops"
+				class="text-primary inline-flex min-h-[max(2.75rem,44px)] items-center underline"
+			>
+				{t('list.noShop')}
+			</a>
 		</p>
 	{/if}
 
@@ -32,7 +38,7 @@
 				/>
 				<span
 					class="grid size-6 shrink-0 place-items-center rounded-full text-[0.625rem] font-semibold text-white"
-					style="background: {shop.tint}"
+					style="background: {tintForWhiteText(shop.tint)}"
 					aria-hidden="true"
 				>
 					{shop.short}

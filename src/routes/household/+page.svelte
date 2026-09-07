@@ -3,6 +3,7 @@
 	import { data } from '$stores/data.svelte';
 	import { sync } from '$lib/sync/index.svelte';
 	import { t, i18n } from '$lib/i18n/index.svelte';
+	import { tintForWhiteText } from '$domain/tint';
 	import * as Card from '$lib/components/ui/card';
 	import { Button } from '$lib/components/ui/button';
 	import { Input } from '$lib/components/ui/input';
@@ -103,7 +104,7 @@
 				<li class="flex flex-wrap items-center gap-3" data-test="household-member">
 					<span
 						class="text-caption grid size-9 shrink-0 place-items-center rounded-full font-semibold text-white"
-						style="background: {member.tint}"
+						style="background: {tintForWhiteText(member.tint)}"
 						aria-hidden="true"
 					>
 						{member.initial}

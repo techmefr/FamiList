@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { data } from '$stores/data.svelte';
 	import { t } from '$lib/i18n/index.svelte';
+	import { tintForWhiteText } from '$domain/tint';
 	import { Button } from '$lib/components/ui/button';
 	import { Input } from '$lib/components/ui/input';
 	import { Label } from '$lib/components/ui/label';
@@ -72,7 +73,7 @@
 					<Card.Content class="flex flex-wrap items-center gap-x-4 gap-y-3">
 						<span
 							class="grid size-11 shrink-0 place-items-center rounded-full text-label font-semibold text-white"
-							style="background: {shop.tint}"
+							style="background: {tintForWhiteText(shop.tint)}"
 							aria-hidden="true"
 						>
 							{shop.short}
