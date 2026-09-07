@@ -26,3 +26,5 @@ ios/
 *.log
 
 .claude/
+.vercel
+.env*
