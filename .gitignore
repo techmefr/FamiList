@@ -25,6 +25,35 @@ ios/
 .DS_Store
 *.log
 
-.claude/
 .vercel
-.env*
+
+# Assistants de code. Ce dépôt est public : ces dossiers portent des transcripts de session, des
+# règles maison, parfois des extraits d'autres projets, et n'ont rien à y faire. La liste couvre
+# les outils courants plutôt que le seul que j'utilise, pour qu'une contribution extérieure n'en
+# laisse pas passer par mégarde. La documentation de conception vit dans le dépôt privé.
+.claude/
+CLAUDE.md
+.cursor/
+.cursorrules
+.cursorignore
+.windsurf/
+.windsurfrules
+.aider*
+.continue/
+.codeium/
+.github/copilot-instructions.md
+.gemini/
+GEMINI.md
+AGENTS.md
+.cline/
+.clinerules
+.roo/
+.junie/
+.kiro/
+.augment/
+.amazonq/
+.opencode/
+.specstory/
+.tabnine/
+graphify-out/
+repomix-output.*
