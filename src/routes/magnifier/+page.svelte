@@ -3,16 +3,8 @@
 	import { browser } from '$app/environment';
 	import { t } from '$lib/i18n/index.svelte';
 	import { session } from '$stores/session.svelte';
-	import {
-		clampZoom,
-		digitalZoom,
-		opticalZoom,
-		ZOOM_MAX,
-		ZOOM_MIN,
-		ZOOM_STEP,
-		type ZoomRange
-	} from '$domain/magnifier';
-	import { Minus, Plus, Zap, ZoomIn, Camera } from '@lucide/svelte';
+	import { digitalZoom, opticalZoom, ZOOM_MAX, ZOOM_MIN, type ZoomRange } from '$domain/magnifier';
+	import { Zap, ZoomIn, Camera, Snowflake, Play } from '@lucide/svelte';
 
 	type Status = 'loading' | 'live' | 'denied' | 'unsupported';
 
@@ -110,6 +102,11 @@
 	/**
 	 * Figer l'image, c'est pouvoir reposer le bras et lire tranquillement — le geste qui manque le
 	 * plus quand on tient un bocal d'une main et le téléphone de l'autre.
+	 *
+	 * On capture la trame entière, sans grossissement. C'est ce qui permet de continuer à zoomer
+	 * dans l'image figée : le grossissement est appliqué à l'affichage, pas gravé dans la capture.
+	 * L'inverse — capturer déjà zoomé — rendait le curseur inerte une fois l'image posée, et
+	 * obligeait à dégeler pour regarder un détail de plus près.
 	 */
 	function toggleFreeze() {
 		if (frozen) {
@@ -129,16 +126,9 @@
 		const context = canvas.getContext('2d');
 		if (!context) return;
 
-		// La capture reprend le grossissement affiché : l'image figée doit être celle qu'on regardait.
-		context.translate(width / 2, height / 2);
-		context.scale(scale, scale);
-		context.translate(-width / 2, -height / 2);
 		context.drawImage(video, 0, 0, width, height);
-
 		frozen = true;
 	}
-
-	const nudge = (delta: number) => (zoom = clampZoom(zoom + delta));
 
 	// La session n'est pas toujours connue au montage : on attend qu'elle le soit, une seule fois.
 	let started = false;
@@ -177,8 +167,11 @@
 	<canvas
 		bind:this={canvas}
 		data-test="magnifier-frozen"
-		class="absolute inset-0 size-full object-cover"
+		class="absolute inset-0 size-full object-cover transition-transform duration-200"
 		class:hidden={!frozen}
+		style="transform: scale({scale}); filter: {brighten
+			? 'brightness(1.35) contrast(1.05)'
+			: 'none'}"
 	></canvas>
 
 	{#if status !== 'live'}
@@ -206,87 +199,87 @@
 		aria-hidden="true"
 	></div>
 
-	<div class="pointer-events-none absolute inset-x-0 top-3 flex justify-center">
-		<p
-			class="text-caption flex items-center gap-2 rounded-full bg-black/45 px-4 py-2 font-semibold text-white backdrop-blur-md"
-		>
-			<ZoomIn size={15} aria-hidden="true" />
-			{frozen ? t('magnifier.frozen') : t('magnifier.title')}
-		</p>
+	<!-- Le bandeau ne sert plus qu'à signaler l'image figée : le reste du temps il répétait le titre. -->
+	{#if frozen}
+		<div class="pointer-events-none absolute inset-x-0 top-3 flex justify-center">
+			<p
+				class="text-caption flex items-center gap-2 rounded-full bg-black/60 px-4 py-2 font-semibold text-white backdrop-blur-md"
+				data-test="magnifier-frozen-badge"
+			>
+				<Snowflake size={15} aria-hidden="true" />
+				{t('magnifier.frozen')}
+			</p>
+		</div>
+	{/if}
+
+	<!--
+		Trois commandes, pas une de plus : éclairer, figer, grossir. Les boutons plus et moins ont
+		disparu — le curseur fait déjà les deux, et deux cibles de 44 px en moins, c'est autant
+		d'image rendue à ce qu'on essaie de lire.
+
+		Le curseur est vertical et collé au bord : à l'horizontale il occupait toute la largeur
+		au-dessus des boutons, soit une bande de l'écran perdue là où l'étiquette se trouve. Vertical,
+		il ne prend qu'une colonne, et le geste — monter pour grossir — dit ce qu'il fait.
+
+		`end` et pas `right` : en arabe, l'interface est en miroir et le curseur passe à gauche.
+	-->
+	<div
+		class="absolute end-[16px] top-1/2 flex -translate-y-1/2 flex-col items-center gap-3
+			rounded-full border border-white/15 bg-black/55 px-[10px] py-[16px] backdrop-blur-lg"
+	>
+		<ZoomIn size={18} class="text-white/70" aria-hidden="true" />
+
+		<input
+			id="magnifier-zoom"
+			type="range"
+			min={ZOOM_MIN}
+			max={ZOOM_MAX}
+			step="0.1"
+			bind:value={zoom}
+			aria-label={t('magnifier.zoom')}
+			data-test="magnifier-slider"
+			class="fl-range-vertical accent-[var(--primary)]"
+		/>
+
+		<span class="text-caption tabular-nums text-white" data-test="magnifier-level">
+			{zoom.toFixed(1)}×
+		</span>
 	</div>
 
-	<div class="absolute inset-x-0 bottom-28 px-[20px] md:bottom-10">
-		<div class="mb-4 rounded-[18px] border border-white/15 bg-black/55 px-[16px] py-[12px] backdrop-blur-lg">
-			<div class="text-caption mb-2 flex justify-between font-semibold text-white/70">
-				<label for="magnifier-zoom">{t('magnifier.zoom')}</label>
-				<span class="tabular-nums text-white" data-test="magnifier-level">{zoom.toFixed(1)}×</span>
-			</div>
+	<!--
+		Tailles en pixels, pas en rem : ces deux boutons ne portent qu'une icône, rien à y lire, et le
+		cran de texte n'a donc rien à y changer. En `size-16`, ils atteignaient 140 px au cran Confort
+		et la barre tenait dans 375 px au pixel près — une icône de plus et elle débordait.
+	-->
+	<div
+		class="absolute inset-x-0 bottom-28 flex items-center justify-center gap-[24px] px-[20px] md:bottom-10"
+	>
+		<button
+			type="button"
+			onclick={toggleTorch}
+			aria-pressed={torch}
+			aria-label={t('magnifier.light')}
+			data-test="magnifier-light"
+			class="grid size-[64px] min-h-[64px] place-items-center rounded-full border border-white/20 backdrop-blur-lg
+				{torch ? 'bg-white text-neutral-900' : 'bg-white/15 text-white'}"
+		>
+			<Zap size={26} aria-hidden="true" />
+		</button>
 
-			<div class="flex items-center gap-[12px]">
-				<button
-					type="button"
-					onclick={() => nudge(-ZOOM_STEP)}
-					aria-label={t('magnifier.zoomOut')}
-					data-test="magnifier-out"
-					class="grid size-11 min-w-[44px] place-items-center rounded-full border border-white/20 bg-white/10 text-white"
-				>
-					<Minus size={20} aria-hidden="true" />
-				</button>
-
-				<input
-					id="magnifier-zoom"
-					type="range"
-					min={ZOOM_MIN}
-					max={ZOOM_MAX}
-					step="0.1"
-					bind:value={zoom}
-					data-test="magnifier-slider"
-					class="h-1 min-w-[80px] flex-1 accent-[var(--primary)]"
-				/>
-
-				<button
-					type="button"
-					onclick={() => nudge(ZOOM_STEP)}
-					aria-label={t('magnifier.zoomIn')}
-					data-test="magnifier-in"
-					class="grid size-11 min-w-[44px] place-items-center rounded-full border border-white/20 bg-white/10 text-white"
-				>
-					<Plus size={20} aria-hidden="true" />
-				</button>
-			</div>
-		</div>
-
-		<div class="flex items-center justify-between px-2">
-			<button
-				type="button"
-				onclick={toggleTorch}
-				aria-pressed={torch}
-				aria-label={t('magnifier.light')}
-				data-test="magnifier-light"
-				class="grid size-14 place-items-center rounded-full border border-white/20 backdrop-blur-lg
-					{torch ? 'bg-white text-neutral-900' : 'bg-white/15 text-white'}"
-			>
-				<Zap size={24} aria-hidden="true" />
-			</button>
-
-			<button
-				type="button"
-				onclick={toggleFreeze}
-				aria-pressed={frozen}
-				aria-label={frozen ? t('magnifier.resume') : t('magnifier.freeze')}
-				data-test="magnifier-freeze"
-				class="grid size-20 place-items-center rounded-full border-4 border-white/40 bg-white"
-			>
-				<span
-					class="block transition-all duration-200 {frozen
-						? 'size-8 rounded-md bg-[var(--primary)]'
-						: 'size-full rounded-full bg-white'}"
-				></span>
-			</button>
-
-			<span class="text-caption w-14 text-center leading-tight text-white/45">
-				{#if status === 'live' && !hasTorch}{t('magnifier.softLight')}{/if}
-			</span>
-		</div>
+		<button
+			type="button"
+			onclick={toggleFreeze}
+			aria-pressed={frozen}
+			aria-label={frozen ? t('magnifier.resume') : t('magnifier.freeze')}
+			data-test="magnifier-freeze"
+			class="grid size-[64px] min-h-[64px] place-items-center rounded-full border border-white/20 backdrop-blur-lg
+				{frozen ? 'bg-white text-neutral-900' : 'bg-white/15 text-white'}"
+		>
+			{#if frozen}
+				<Play size={26} aria-hidden="true" />
+			{:else}
+				<Snowflake size={26} aria-hidden="true" />
+			{/if}
+		</button>
 	</div>
 </div>

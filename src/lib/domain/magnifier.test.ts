@@ -1,23 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { clampZoom, digitalZoom, opticalZoom, ZOOM_MAX, ZOOM_MIN } from './magnifier';
-
-describe('clampZoom', () => {
-	it('reste dans les bornes', () => {
-		expect(clampZoom(0.2)).toBe(ZOOM_MIN);
-		expect(clampZoom(12)).toBe(ZOOM_MAX);
-		expect(clampZoom(2.5)).toBe(2.5);
-	});
-
-	it('arrondit au dixième', () => {
-		expect(clampZoom(2.34)).toBe(2.3);
-		expect(clampZoom(2.36)).toBe(2.4);
-	});
-
-	it('retombe au minimum sur une valeur inexploitable', () => {
-		expect(clampZoom(Number.NaN)).toBe(ZOOM_MIN);
-		expect(clampZoom(Number.POSITIVE_INFINITY)).toBe(ZOOM_MIN);
-	});
-});
+import { digitalZoom, opticalZoom } from './magnifier';
 
 describe('opticalZoom', () => {
 	it('vaut 1 quand l objectif ne zoome pas', () => {

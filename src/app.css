@@ -369,6 +369,25 @@
 	text-align: center;
 }
 
+/*
+ * Curseur vertical, pour la loupe. `writing-mode` et pas `appearance: slider-vertical` : cette
+ * dernière est retirée des navigateurs, la première est la façon standard depuis.
+ *
+ * `direction: rtl` remet le maximum en haut. Sans elle, monter le curseur réduit le
+ * grossissement, ce que personne n'attend d'une loupe.
+ *
+ * La largeur est la cible tactile, donc 44 px fixes : en rem, elle tomberait à 39,6 px au plus
+ * petit cran de texte. La hauteur est bornée pour ne pas dépasser sur un écran court.
+ */
+.fl-range-vertical {
+	writing-mode: vertical-lr;
+	direction: rtl;
+	width: 44px;
+	height: 40vh;
+	max-height: 320px;
+	min-height: 140px;
+}
+
 /**
  * Mouvement.
  *

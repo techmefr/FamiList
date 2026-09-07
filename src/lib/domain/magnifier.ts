@@ -7,14 +7,17 @@
  */
 export const ZOOM_MIN = 1;
 export const ZOOM_MAX = 5;
-export const ZOOM_STEP = 0.5;
 
 export interface ZoomRange {
 	min: number;
 	max: number;
 }
 
-export function clampZoom(value: number): number {
+/**
+ * Garde-fou commun aux deux calculs. Interne : le curseur borne déjà la valeur par ses attributs
+ * min et max, plus rien à l'extérieur n'a de raison de reborner.
+ */
+function clampZoom(value: number): number {
 	if (!Number.isFinite(value)) return ZOOM_MIN;
 
 	return Math.min(ZOOM_MAX, Math.max(ZOOM_MIN, Math.round(value * 10) / 10));
