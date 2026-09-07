@@ -169,6 +169,8 @@
 		"email": "Correo electrónico",
 		"password": "Contraseña",
 		"displayName": "Nombre",
+		"continueWith": "Continuar con {provider}",
+		"orEmail": "o con correo electrónico",
 		"approvalNotice": "Tu cuenta deberá ser validada antes de poder usar la aplicación.",
 		"signedUpTitle": "Cuenta creada",
 		"signedUpBody": "Revisa tu correo si se solicita una confirmación y luego inicia sesión. El acceso se abrirá tras la validación.",

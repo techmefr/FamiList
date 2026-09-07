@@ -169,6 +169,8 @@
 		"email": "Indirizzo e-mail",
 		"password": "Password",
 		"displayName": "Nome",
+		"continueWith": "Continua con {provider}",
+		"orEmail": "oppure via e-mail",
 		"approvalNotice": "Il tuo account dovrà essere approvato prima di poter usare l'app.",
 		"signedUpTitle": "Account creato",
 		"signedUpBody": "Controlla la posta se ti viene chiesta una conferma, poi accedi. L'accesso si apre dopo l'approvazione.",

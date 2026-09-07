@@ -1,5 +1,6 @@
 import { browser } from '$app/environment';
 import { supabase } from '$db/supabase';
+import { OAUTH_PROVIDERS, type ProviderId } from '$domain/oauth';
 import type { Session, User } from '@supabase/supabase-js';
 
 export type AccountStatus = 'pending' | 'approved' | 'rejected';
@@ -69,6 +70,28 @@ class SessionStore {
 	async signIn(email: string, password: string) {
 		this.error = null;
 		const { error } = await supabase.auth.signInWithPassword({ email, password });
+
+		if (error) this.error = error.message;
+		return !error;
+	}
+
+	/**
+	 * Part chez le fournisseur puis revient sur la racine. On ne redirige pas vers une page dediee :
+	 * le client Supabase est cree avec detectSessionInUrl, il echange le code contre une session
+	 * au premier chargement, quelle que soit la page. Et la racine sait deja renvoyer vers l'ecran
+	 * d'attente si le compte n'est pas encore valide.
+	 */
+	async signInWithProvider(id: ProviderId) {
+		this.error = null;
+
+		const provider = OAUTH_PROVIDERS.find((candidate) => candidate.id === id);
+		const { error } = await supabase.auth.signInWithOAuth({
+			provider: id,
+			options: {
+				redirectTo: `${location.origin}/`,
+				scopes: provider?.scopes
+			}
+		});
 
 		if (error) this.error = error.message;
 		return !error;

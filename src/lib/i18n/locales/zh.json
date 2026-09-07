@@ -168,6 +168,8 @@
 		"email": "电子邮箱",
 		"password": "密码",
 		"displayName": "姓名",
+		"continueWith": "使用 {provider} 继续",
+		"orEmail": "或使用邮箱",
 		"approvalNotice": "账号需要通过审核后才能使用本应用。",
 		"signedUpTitle": "账号已创建",
 		"signedUpBody": "如需确认请查收邮件，然后登录。审核通过后即可访问。",

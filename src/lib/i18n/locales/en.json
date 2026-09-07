@@ -169,6 +169,8 @@
 		"email": "Email address",
 		"password": "Password",
 		"displayName": "Name",
+		"continueWith": "Continue with {provider}",
+		"orEmail": "or with email",
 		"approvalNotice": "Your account will need to be approved before you can use the app.",
 		"signedUpTitle": "Account created",
 		"signedUpBody": "Check your inbox if a confirmation is requested, then sign in. Access opens once your account is approved.",

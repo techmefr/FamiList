@@ -168,6 +168,8 @@
 		"email": "Adiresy mailaka",
 		"password": "Teny miafina",
 		"displayName": "Anarana",
+		"continueWith": "Hitohy amin'ny {provider}",
+		"orEmail": "na amin'ny mailaka",
 		"approvalNotice": "Tsy maintsy ekena aloha ny kaontinao vao afaka mampiasa ny rindranasa ianao.",
 		"signedUpTitle": "Voaforona ny kaonty",
 		"signedUpBody": "Jereo ny mailakao raha misy fanamafisana angatahina, dia midira. Hisokatra ny fidirana rehefa voaeka ny kaonty.",

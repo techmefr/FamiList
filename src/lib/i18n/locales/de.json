@@ -169,6 +169,8 @@
 		"email": "E-Mail-Adresse",
 		"password": "Passwort",
 		"displayName": "Name",
+		"continueWith": "Weiter mit {provider}",
+		"orEmail": "oder per E-Mail",
 		"approvalNotice": "Ihr Konto muss freigegeben werden, bevor Sie die App nutzen können.",
 		"signedUpTitle": "Konto erstellt",
 		"signedUpBody": "Prüfen Sie Ihr Postfach, falls eine Bestätigung verlangt wird, und melden Sie sich dann an. Der Zugang wird nach der Freigabe geöffnet.",

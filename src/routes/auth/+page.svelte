@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { session } from '$stores/session.svelte';
+	import { enabledProviders, type ProviderId } from '$domain/oauth';
 	import { t } from '$lib/i18n/index.svelte';
 	import { Button } from '$lib/components/ui/button';
 	import { Input } from '$lib/components/ui/input';
@@ -13,6 +14,8 @@
 	let displayName = $state('');
 	let busy = $state(false);
 	let signedUp = $state(false);
+
+	const providers = enabledProviders();
 
 	async function submit(event: SubmitEvent) {
 		event.preventDefault();
@@ -28,6 +31,15 @@
 
 		if (mode === 'signup') signedUp = true;
 		else goto('/');
+	}
+
+	// Pas de goto derriere : signInWithProvider quitte le site pour le fournisseur, et c'est lui qui
+	// nous ramene. On garde busy a true pendant la redirection pour ne pas rendre les boutons
+	// cliquables une seconde fois.
+	async function continueWith(id: ProviderId) {
+		busy = true;
+		const ok = await session.signInWithProvider(id);
+		if (!ok) busy = false;
 	}
 </script>
 
@@ -45,7 +57,29 @@
 		</Card.Content>
 	</Card.Root>
 {:else}
-	<div class="mt-6 flex gap-2">
+	{#if providers.length > 0}
+		<div class="mt-6 flex flex-wrap gap-2" data-test="auth-providers">
+			{#each providers as provider (provider.id)}
+				<Button
+					variant="outline"
+					class="flex-auto basis-[10rem]"
+					disabled={busy}
+					onclick={() => continueWith(provider.id)}
+					data-test="auth-provider-{provider.id}"
+				>
+					{t('auth.continueWith', { provider: provider.label })}
+				</Button>
+			{/each}
+		</div>
+
+		<div class="text-muted-foreground text-caption mt-4 flex items-center gap-3">
+			<span class="bg-border h-px flex-1"></span>
+			{t('auth.orEmail')}
+			<span class="bg-border h-px flex-1"></span>
+		</div>
+	{/if}
+
+	<div class="flex gap-2 {providers.length > 0 ? 'mt-4' : 'mt-6'}">
 		<Button
 			variant={mode === 'signin' ? 'default' : 'outline'}
 			onclick={() => (mode = 'signin')}
