@@ -42,11 +42,6 @@
 		goto('/');
 	}
 
-	/** Le plancher de cible tactile va sur la pastille : c'est elle qu'on touche, la case est en sr-only. */
-	const optionClass =
-		'border-input has-checked:border-primary has-checked:bg-[var(--fl-primary-tint)] ' +
-		'has-checked:text-primary flex min-h-[max(2.75rem,44px)] cursor-pointer items-center gap-2 rounded-md ' +
-		'border px-4 py-2';
 </script>
 
 <svelte:head>
@@ -127,7 +122,7 @@
 			<legend class="text-label mb-2 font-medium">{t('profile.theme')}</legend>
 			<div class="flex flex-wrap gap-2">
 				{#each themes as value (value)}
-					<Label class={optionClass}>
+					<Label class="fl-choice">
 						<input
 							type="radio"
 							name="theme"
@@ -148,7 +143,7 @@
 			<div class="flex flex-wrap gap-2">
 				{#each ACCENT_PRESETS as accent (accent.id)}
 					{@const active = settings.accentId === accent.id}
-					<Label class={optionClass}>
+					<Label class="fl-choice">
 						<input
 							type="radio"
 							name="accent"
@@ -176,7 +171,7 @@
 			<legend class="text-label mb-2 font-medium">{t('profile.textSize')}</legend>
 			<div class="flex flex-wrap gap-2">
 				{#each FONT_SCALE_PRESETS as preset (preset.id)}
-					<Label class={optionClass}>
+					<Label class="fl-choice">
 						<input
 							type="radio"
 							name="font-scale"
@@ -203,7 +198,7 @@
 			<legend class="text-label mb-2 font-medium">{t('profile.font')}</legend>
 			<div class="flex flex-wrap gap-2">
 				{#each FONT_PRESETS as preset (preset.id)}
-					<Label class={optionClass} style="font-family: var(--fl-font-{preset.id})">
+					<Label class="fl-choice" style="font-family: var(--fl-font-{preset.id})">
 						<input
 							type="radio"
 							name="font"
@@ -225,7 +220,7 @@
 			<legend class="text-label mb-2 font-medium">{t('profile.language')}</legend>
 			<div class="flex flex-wrap gap-2">
 				{#each LOCALES as locale (locale.code)}
-					<Label class={optionClass}>
+					<Label class="fl-choice">
 						<input
 							type="radio"
 							name="locale"
@@ -252,7 +247,7 @@
 			<legend class="text-label mb-2 font-medium">{t('profile.motion')}</legend>
 			<div class="flex flex-wrap gap-2">
 				{#each MOTION_PREFERENCES as value (value)}
-					<Label class={optionClass}>
+					<Label class="fl-choice">
 						<input
 							type="radio"
 							name="motion"

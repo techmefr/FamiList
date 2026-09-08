@@ -189,11 +189,18 @@
 		"roll": "Rolle",
 		"brick": "Karton"
 	},
+	"unitGroup": {
+		"count": "Stück",
+		"weight": "Gewicht",
+		"volume": "Flüssigkeit",
+		"pack": "Verpackung"
+	},
 	"add": {
 		"name": "Artikel",
 		"namePlaceholder": "Strauchtomaten",
 		"qty": "Menge",
 		"qtyPlaceholder": "500",
+		"unitKind": "Art der Einheit",
 		"unit": "Einheit",
 		"aisle": "Abteilung",
 		"submit": "Hinzufügen",

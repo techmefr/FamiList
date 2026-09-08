@@ -4,13 +4,14 @@
 	import { fly, slide } from 'svelte/transition';
 	import { cubicOut } from 'svelte/easing';
 	import { data } from '$stores/data.svelte';
+	import { createIntent } from '$stores/create.svelte';
 	import { feedback } from '$stores/feedback.svelte';
 	import { motionMs } from '$stores/settings.svelte';
 	import { i18n, t } from '$lib/i18n/index.svelte';
 	import type { Item } from '$db/schema';
 	import ShopSwitcher from '$components/app/ShopSwitcher.svelte';
 	import ItemRow from '$components/app/ItemRow.svelte';
-	import AddItemForm from '$components/app/AddItemForm.svelte';
+	import AddItemSheet from '$components/app/AddItemSheet.svelte';
 	import ShareSheet from '$components/app/ShareSheet.svelte';
 	import { createDrag, move } from '$components/app/drag.svelte';
 	import { Button } from '$lib/components/ui/button';
@@ -28,6 +29,16 @@
 	const groups = $derived(data.groupedItems(listId));
 
 	let share = $state<ShareSheet | null>(null);
+	let add = $state<AddItemSheet | null>(null);
+
+	/**
+	 * Le bouton de création amène ici, puis demande la feuille : c'est le même aller-retour que pour
+	 * une carte ou un magasin. La feuille n'existe pas encore quand la navigation se termine, d'où
+	 * l'effet plutôt qu'un appel direct.
+	 */
+	$effect(() => {
+		if (add && createIntent.take('item')) void add.show();
+	});
 
 	/**
 	 * Les prénoms plutôt qu'un décompte : « Avec Hélène et Marc » se lit d'un coup d'œil, « 2
@@ -177,8 +188,6 @@
 		{/if}
 	</div>
 
-	<AddItemForm {listId} />
-
 	{#if visible.length === 0}
 		<p class="text-muted-foreground mt-8">{t('list.empty')}</p>
 	{:else}
@@ -255,3 +264,5 @@
 		</div>
 	{/if}
 {/if}
+
+<AddItemSheet bind:this={add} {listId} />

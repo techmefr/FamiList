@@ -189,11 +189,18 @@
 		"roll": "rollo",
 		"brick": "brik"
 	},
+	"unitGroup": {
+		"count": "Piezas",
+		"weight": "Peso",
+		"volume": "Líquido",
+		"pack": "Envase"
+	},
 	"add": {
 		"name": "Artículo",
 		"namePlaceholder": "Tomates en rama",
 		"qty": "Cantidad",
 		"qtyPlaceholder": "500",
+		"unitKind": "Tipo de unidad",
 		"unit": "Unidad",
 		"aisle": "Sección",
 		"submit": "Añadir",

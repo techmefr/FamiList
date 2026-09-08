@@ -189,11 +189,18 @@
 		"roll": "rotolo",
 		"brick": "brick"
 	},
+	"unitGroup": {
+		"count": "Pezzi",
+		"weight": "Peso",
+		"volume": "Liquido",
+		"pack": "Confezione"
+	},
 	"add": {
 		"name": "Articolo",
 		"namePlaceholder": "Pomodori a grappolo",
 		"qty": "Quantità",
 		"qtyPlaceholder": "500",
+		"unitKind": "Tipo di unità",
 		"unit": "Unità",
 		"aisle": "Reparto",
 		"submit": "Aggiungi",

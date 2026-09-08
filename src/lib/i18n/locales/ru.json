@@ -191,11 +191,18 @@
 		"roll": "рулон",
 		"brick": "тетрапак"
 	},
+	"unitGroup": {
+		"count": "Штуки",
+		"weight": "Вес",
+		"volume": "Жидкость",
+		"pack": "Упаковка"
+	},
 	"add": {
 		"name": "Товар",
 		"namePlaceholder": "Помидоры на ветке",
 		"qty": "Количество",
 		"qtyPlaceholder": "500",
+		"unitKind": "Тип единицы",
 		"unit": "Единица",
 		"aisle": "Отдел",
 		"submit": "Добавить",

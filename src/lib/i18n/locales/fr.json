@@ -189,11 +189,18 @@
 		"roll": "rouleau",
 		"brick": "brique"
 	},
+	"unitGroup": {
+		"count": "Pièces",
+		"weight": "Poids",
+		"volume": "Liquide",
+		"pack": "Emballage"
+	},
 	"add": {
 		"name": "Article",
 		"namePlaceholder": "Tomates grappe",
 		"qty": "Quantité",
 		"qtyPlaceholder": "500",
+		"unitKind": "Type d’unité",
 		"unit": "Unité",
 		"aisle": "Rayon",
 		"submit": "Ajouter",

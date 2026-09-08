@@ -188,11 +188,18 @@
 		"roll": "horonana",
 		"brick": "karatona"
 	},
+	"unitGroup": {
+		"count": "Isa tsirairay",
+		"weight": "Lanja",
+		"volume": "Ranoka",
+		"pack": "Fonosana"
+	},
 	"add": {
 		"name": "Entana",
 		"namePlaceholder": "Voatabia",
 		"qty": "Isa",
 		"qtyPlaceholder": "500",
+		"unitKind": "Karazana refy",
 		"unit": "Refy",
 		"aisle": "Faritra",
 		"submit": "Ampio",

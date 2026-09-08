@@ -193,11 +193,18 @@
 		"roll": "لفة",
 		"brick": "كرتون"
 	},
+	"unitGroup": {
+		"count": "قطع",
+		"weight": "الوزن",
+		"volume": "سائل",
+		"pack": "تعبئة"
+	},
 	"add": {
 		"name": "المنتج",
 		"namePlaceholder": "طماطم عنقودية",
 		"qty": "الكمية",
 		"qtyPlaceholder": "500",
+		"unitKind": "نوع الوحدة",
 		"unit": "الوحدة",
 		"aisle": "القسم",
 		"submit": "إضافة",

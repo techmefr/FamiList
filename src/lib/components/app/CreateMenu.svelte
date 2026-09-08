@@ -43,12 +43,12 @@
 	}
 
 	const ACTIONS = [
-		{ kind: 'item', icon: ShoppingBasket, target: itemTarget, field: '[data-test-id="add-name"]' },
+		{ kind: 'item', icon: ShoppingBasket, target: itemTarget, field: null },
 		{ kind: 'list', icon: ListPlus, target: () => '/', field: '[data-test-id="list-name"]' },
 		{ kind: 'aisle', icon: LayoutList, target: () => '/shops', field: '[data-test-id="aisle-name"]' },
 		{ kind: 'shop', icon: Store, target: () => '/shops', field: '[data-test-id="shop-name"]' },
 		{ kind: 'card', icon: CreditCard, target: () => '/cards', field: '[data-test-id="card-name"]' }
-	] satisfies { kind: CreateKind; icon: unknown; target: () => string | null; field: string }[];
+	] satisfies { kind: CreateKind; icon: unknown; target: () => string | null; field: string | null }[];
 
 	const available = $derived(ACTIONS.filter((action) => action.target() !== null));
 
@@ -83,7 +83,10 @@
 
 		await goto(href);
 		await tick();
-		focusField(action.field);
+
+		// L'article ouvre une feuille, qui place elle-même son focus. Les autres déplient un
+		// formulaire déjà dans la page : là, il faut aller y poser le curseur.
+		if (action.field) focusField(action.field);
 	}
 </script>
 

@@ -560,6 +560,54 @@ textarea {
 	margin-block-start: 0.5rem;
 }
 
+/**
+ * Un choix parmi plusieurs, sous forme de pastille.
+ *
+ * C'est un bouton radio déguisé, pas un bouton : le clavier circule dans le groupe aux flèches,
+ * et le lecteur d'écran annonce « 2 sur 4 » au lieu de lire quatre boutons sans lien entre eux.
+ * La case elle-même est en `sr-only` ; c'est la pastille qui porte la cible tactile, d'où le
+ * plancher de 44 px.
+ *
+ * Le motif servait déjà aux réglages, écrit en toutes lettres dans une chaîne de classes recopiée.
+ * Il sert maintenant aussi au choix d'unité : une seule écriture, un seul endroit à corriger.
+ *
+ * L'état retenu ne tient pas qu'à la couleur — la bordure change avec elle, et la case cochée
+ * reste la vérité pour qui n'en voit aucune.
+ */
+.fl-choice {
+	display: flex;
+	min-block-size: max(2.75rem, 44px);
+	cursor: pointer;
+	align-items: center;
+	justify-content: center;
+	gap: 0.5rem;
+	border: 1px solid var(--input);
+	border-radius: var(--radius-md);
+	padding-inline: 1rem;
+	padding-block: 0.5rem;
+	text-align: center;
+	/* Un mot long — « Conditionnement », « Verpackung » au cran Confort — se coupait en plein
+	   milieu, sans trait d'union. Il passe à la ligne entre les mots, et se césure proprement
+	   quand il n'y a pas d'autre choix. */
+	text-wrap: balance;
+	hyphens: auto;
+	overflow-wrap: break-word;
+}
+
+.fl-choice:has(:checked) {
+	border-color: var(--primary);
+	background: var(--fl-primary-tint);
+	color: var(--primary);
+}
+
+.fl-choice:hover {
+	background: var(--muted);
+}
+
+.fl-choice:has(:checked):hover {
+	background: var(--fl-primary-tint);
+}
+
 /*
  * Commandes de la loupe : un disque, et son nom écrit dessous.
  *

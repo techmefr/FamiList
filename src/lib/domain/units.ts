@@ -95,3 +95,49 @@ export function unitKey(raw: string | null | undefined): string | null {
 	const id = resolveUnit(raw);
 	return id ? `units.${id}` : null;
 }
+
+/**
+ * Les mêmes unités, rangées par famille, pour être choisies en deux temps.
+ *
+ * Quinze entrées dans une liste déroulante, c'est quinze mots à lire pour en garder un — et sur un
+ * téléphone, la liste s'ouvre par-dessus le reste du formulaire. On demande donc d'abord de quoi
+ * on parle (des pièces, un poids, un liquide, un conditionnement), et seulement ensuite laquelle :
+ * jamais plus de dix choix à la fois, et deux la plupart du temps.
+ *
+ * Une famille qui ne contient qu'une unité n'en demande pas une deuxième : choisir « Pièces » puis
+ * « pièce » serait un pas pour rien.
+ *
+ * L'ordre à l'intérieur d'une famille va du plus petit au plus grand — g puis kg, ml puis L — et
+ * non par fréquence : c'est celui qu'on lit sur un emballage, et il se retient.
+ */
+export const UNIT_GROUPS = [
+	{ id: 'count', units: ['piece'] },
+	{ id: 'weight', units: ['g', 'kg'] },
+	{ id: 'volume', units: ['ml', 'l'] },
+	{ id: 'pack', units: ['pack', 'box', 'bottle', 'jar', 'bag', 'bunch', 'slice', 'tray', 'roll', 'brick'] }
+] as const satisfies readonly { id: string; units: readonly UnitId[] }[];
+
+export type UnitGroupId = (typeof UNIT_GROUPS)[number]['id'];
+
+export const DEFAULT_UNIT_GROUP: UnitGroupId = 'count';
+
+/**
+ * La famille d'une unité déjà enregistrée, pour rouvrir le choix là où on l'avait laissé.
+ *
+ * Ce qui n'est pas reconnu retombe sur les pièces, pas sur une erreur : un article importé avec
+ * une unité fantaisiste doit rester modifiable, et « pièce » est le cas de loin le plus courant.
+ */
+export function unitGroupOf(raw: string | null | undefined): UnitGroupId {
+	const id = resolveUnit(raw);
+	if (!id) return DEFAULT_UNIT_GROUP;
+
+	const group = UNIT_GROUPS.find((candidate) => (candidate.units as readonly string[]).includes(id));
+	return group ? group.id : DEFAULT_UNIT_GROUP;
+}
+
+/** Les unités d'une famille. Une famille inconnue rend la première : l'écran affiche toujours
+ * quelque chose plutôt qu'une rangée vide. */
+export function unitsOf(group: UnitGroupId): readonly UnitId[] {
+	const found = UNIT_GROUPS.find((candidate) => candidate.id === group);
+	return found ? found.units : UNIT_GROUPS[0].units;
+}

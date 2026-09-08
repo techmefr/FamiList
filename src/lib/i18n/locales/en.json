@@ -189,11 +189,18 @@
 		"roll": "roll",
 		"brick": "carton"
 	},
+	"unitGroup": {
+		"count": "Pieces",
+		"weight": "Weight",
+		"volume": "Liquid",
+		"pack": "Packaging"
+	},
 	"add": {
 		"name": "Item",
 		"namePlaceholder": "Vine tomatoes",
 		"qty": "Quantity",
 		"qtyPlaceholder": "500",
+		"unitKind": "Unit type",
 		"unit": "Unit",
 		"aisle": "Aisle",
 		"submit": "Add",

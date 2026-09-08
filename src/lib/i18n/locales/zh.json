@@ -188,11 +188,18 @@
 		"roll": "卷",
 		"brick": "利乐包"
 	},
+	"unitGroup": {
+		"count": "个数",
+		"weight": "重量",
+		"volume": "液体",
+		"pack": "包装"
+	},
 	"add": {
 		"name": "商品",
 		"namePlaceholder": "串番茄",
 		"qty": "数量",
 		"qtyPlaceholder": "500",
+		"unitKind": "单位类型",
 		"unit": "单位",
 		"aisle": "货区",
 		"submit": "添加",
