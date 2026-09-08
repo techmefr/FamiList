@@ -200,7 +200,7 @@
 {:else}
 	<div class="min-h-dvh md:grid md:grid-cols-[16rem_1fr]">
 		<nav
-			class="bg-card fixed inset-x-0 bottom-0 z-10 border-t md:sticky md:top-0 md:h-dvh md:border-t-0 md:border-e"
+			class="fl-navbar bg-card fixed inset-x-0 bottom-0 z-10 border-t md:sticky md:top-0 md:h-dvh md:border-t-0 md:border-e"
 			style="view-transition-name: nav"
 			aria-label={t('nav.main')}
 		>
@@ -250,23 +250,30 @@
 							{href}
 							data-test-id="nav-{href}"
 							aria-current={active ? 'page' : undefined}
-							class="fl-press text-caption md:text-label relative flex flex-col items-center gap-1 px-2 py-3 md:flex-row md:gap-3 md:rounded-md md:px-3
+							class="fl-press text-caption md:text-label relative flex flex-col items-center gap-1 px-2 py-2 md:flex-row md:gap-3 md:rounded-md md:px-3 md:py-3
 								{active ? 'text-primary' : 'text-muted-foreground'}"
 						>
 							<!--
 								La pastille de l'onglet actif est un élément à part, nommé pour la transition :
 								elle glisse d'un onglet à l'autre pendant le changement de page. Nommer le lien
 								entier ferait glisser son texte, qui se fondrait dans celui de l'onglet suivant.
+
+								Sa forme est dans app.css : capsule derrière l'icône sur téléphone, ligne pleine
+								dans la colonne. C'est l'enveloppe qui décide, en cessant d'être son bloc
+								conteneur au-delà de 48rem.
 							-->
-							{#if active}
-								<span
-									class="bg-[var(--fl-primary-tint)] absolute inset-0 md:rounded-md"
-									style="view-transition-name: nav-active"
-									aria-hidden="true"
-								></span>
-							{/if}
-							<Icon size={22} class="relative" aria-hidden="true" />
-							<span class="relative">{t(key)}</span>
+							<span class="fl-nav-icon">
+								{#if active}
+									<span
+										class="fl-nav-pill"
+										style="view-transition-name: nav-active"
+										aria-hidden="true"
+									></span>
+								{/if}
+								<Icon size={22} class="relative" aria-hidden="true" />
+							</span>
+							<!-- La graisse redit l'onglet actif : la couleur ne doit pas le dire toute seule. -->
+							<span class="relative {active ? 'font-medium' : ''}">{t(key)}</span>
 						</a>
 					</li>
 				{/each}

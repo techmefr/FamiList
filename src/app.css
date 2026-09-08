@@ -613,6 +613,76 @@ textarea {
 }
 
 /*
+ * La barre de navigation du bas, sur téléphone.
+ *
+ * `env(safe-area-inset-bottom)` d'abord, et c'est le point qui n'est pas cosmétique : la page
+ * déclare `viewport-fit=cover`, donc sur un téléphone à encoche la barre descend jusqu'au bord
+ * physique et les libellés passaient sous la barre d'accueil. Personne ne le voit au bureau.
+ *
+ * Le fond est translucide et flouté : posée à plat, la barre avait la même valeur que la carte
+ * juste au-dessus et l'écran finissait en un seul aplat. Ce qui la détache maintenant, c'est ce
+ * qui défile derrière elle, plus une ombre montante — le trait de séparation seul ne suffisait pas.
+ *
+ * L'ombre est vers le haut, à l'inverse des jetons d'élévation : la barre est au bas de l'écran,
+ * la lumière ne peut venir que de l'autre côté. En thème sombre une ombre ne se voit pas, c'est
+ * la bordure qui reprend le travail.
+ */
+@media (width < 48rem) {
+	.fl-navbar {
+		padding-block-end: env(safe-area-inset-bottom);
+		background: color-mix(in srgb, var(--card) 85%, transparent);
+		box-shadow: 0 -8px 24px rgb(28 25 23 / 0.06);
+	}
+
+	@supports (backdrop-filter: blur(1px)) {
+		.fl-navbar {
+			backdrop-filter: blur(16px) saturate(1.6);
+		}
+	}
+}
+
+/*
+ * La pastille de l'onglet actif.
+ *
+ * Sur téléphone c'est une capsule derrière la seule icône, pas un rectangle qui prend toute la
+ * hauteur de la barre : c'est ce que font les barres d'aujourd'hui, et surtout un rectangle à
+ * bords vifs collé aux voisins ne se lisait pas comme un état mais comme un défaut de rendu.
+ *
+ * Elle vit dans l'enveloppe de l'icône, et cette enveloppe redevient `static` sur grand écran :
+ * la pastille reprend alors le lien entier pour bloc conteneur, et la colonne garde sa ligne
+ * sélectionnée pleine largeur. Un seul élément, deux formes, aucune duplication à tenir à jour.
+ *
+ * Le fond est plus soutenu que `--fl-primary-tint` : à surface égale une petite capsule paraît
+ * plus pâle qu'un grand panneau, et à 10 % elle disparaissait. Elle reste décorative — c'est
+ * `aria-current`, la couleur du texte et sa graisse qui portent l'information.
+ */
+.fl-nav-icon {
+	position: relative;
+	display: grid;
+	place-items: center;
+	padding-block: 0.25rem;
+	padding-inline: 1.125rem;
+}
+
+.fl-nav-pill {
+	position: absolute;
+	inset: 0;
+	border-radius: 9999px;
+	background: color-mix(in srgb, var(--primary) 15%, transparent);
+}
+
+@media (width >= 48rem) {
+	.fl-nav-icon {
+		position: static;
+		padding: 0;
+	}
+
+	.fl-nav-pill {
+		border-radius: var(--radius-md);
+	}
+}
+
+/*
  * Commandes de la loupe : un disque, et son nom écrit dessous.
  *
  * Le disque est en pixels — c'est une cible tactile, pas du texte, et le cran de réglage n'a rien

@@ -144,19 +144,26 @@
 								</span>
 							</span>
 						</a>
-						<Badge variant="secondary">{t('lists.remaining', { count: total - done })}</Badge>
-						<button
-							type="button"
-							onclick={() => {
-								feedback.play('remove');
-								data.removeList(list.id);
-							}}
-							aria-label={t('lists.delete', { name: list.name })}
-							data-test-class="list-delete"
-							class="fl-press text-muted-foreground grid size-11 min-w-[44px] shrink-0 place-items-center"
-						>
-							<Trash2 size={18} aria-hidden="true" />
-						</button>
+						<!--
+							Le décompte et la corbeille voyagent ensemble. Séparés, ils se disputaient la fin
+							de la première ligne et la corbeille retombait seule à la ligne suivante, à
+							gauche : l'action la plus destructive se retrouvait à la place la plus en vue.
+						-->
+						<div class="ms-auto flex shrink-0 items-center gap-2">
+							<Badge variant="secondary">{t('lists.remaining', { count: total - done })}</Badge>
+							<button
+								type="button"
+								onclick={() => {
+									feedback.play('remove');
+									data.removeList(list.id);
+								}}
+								aria-label={t('lists.delete', { name: list.name })}
+								data-test-class="list-delete"
+								class="fl-press text-muted-foreground hover:text-destructive grid size-11 min-w-[44px] place-items-center rounded-md transition-colors"
+							>
+								<Trash2 size={18} aria-hidden="true" />
+							</button>
+						</div>
 					</Card.Content>
 				</Card.Root>
 			</li>
