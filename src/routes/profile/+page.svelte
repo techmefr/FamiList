@@ -3,12 +3,14 @@
 		settings,
 		motionMs,
 		ACCENT_PRESETS,
+		FONT_PRESETS,
 		FONT_SCALE_PRESETS,
 		MOTION_PREFERENCES,
 		type MotionPreference,
 		type Theme
 	} from '$stores/settings.svelte';
 	import { feedback } from '$stores/feedback.svelte';
+	import { goto } from '$app/navigation';
 	import { fade } from 'svelte/transition';
 	import { i18n, t, LOCALES, type Locale } from '$lib/i18n/index.svelte';
 	import { session } from '$stores/session.svelte';
@@ -26,6 +28,16 @@
 	 */
 	function preview() {
 		feedback.play('success');
+	}
+
+	/**
+	 * Relancer le tour, c'est effacer le témoin et repasser par l'accueil : le gabarit s'occupe du
+	 * reste. Le déclencher d'ici demanderait de dupliquer la même condition à deux endroits, avec
+	 * le risque qu'ils cessent un jour de dire la même chose.
+	 */
+	function replayTour() {
+		settings.setTourSeen(false);
+		goto('/');
 	}
 
 	/** Le plancher de cible tactile va sur la pastille : c'est elle qu'on touche, la case est en sr-only. */
@@ -137,6 +149,32 @@
 			<p class="text-muted-foreground text-caption">{t('profile.previewNote')}</p>
 		</fieldset>
 
+		<!--
+			Chaque option s'affiche dans sa propre police : un choix de typographie qu'on ne voit pas
+			ne se choisit pas, il se devine.
+		-->
+		<fieldset>
+			<legend class="text-label mb-2 font-medium">{t('profile.font')}</legend>
+			<div class="flex flex-wrap gap-2">
+				{#each FONT_PRESETS as preset (preset.id)}
+					<Label class={optionClass} style="font-family: var(--fl-font-{preset.id})">
+						<input
+							type="radio"
+							name="font"
+							value={preset.id}
+							checked={settings.fontId === preset.id}
+							onchange={() => settings.setFont(preset.id)}
+							data-test="font-{preset.id}"
+							class="sr-only"
+						/>
+						{t(preset.label)}
+					</Label>
+				{/each}
+			</div>
+
+			<p class="text-muted-foreground text-caption mt-2">{t('profile.fontNote')}</p>
+		</fieldset>
+
 		<fieldset>
 			<legend class="text-label mb-2 font-medium">{t('profile.language')}</legend>
 			<div class="flex flex-wrap gap-2">
@@ -228,5 +266,17 @@
 				data-test="haptics-toggle"
 			/>
 		</div>
+	</Card.Content>
+</Card.Root>
+
+<Card.Root class="mt-6">
+	<Card.Header>
+		<Card.Title class="text-h2">{t('profile.help')}</Card.Title>
+	</Card.Header>
+	<Card.Content class="flex flex-wrap items-center justify-between gap-4">
+		<p class="text-muted-foreground text-label">{t('profile.tourHint')}</p>
+		<Button variant="outline" onclick={replayTour} data-test="replay-tour" class="fl-press">
+			{t('profile.replayTour')}
+		</Button>
 	</Card.Content>
 </Card.Root>

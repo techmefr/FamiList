@@ -32,6 +32,8 @@
 		"appearance": "Appearance",
 		"theme": "Theme",
 		"textSize": "Text size",
+		"font": "Font",
+		"fontNote": "“System” uses the font set on your device.",
 		"accent": "Main colour",
 		"language": "Language",
 		"previewItem": "Vine tomatoes — 500 g",
@@ -46,7 +48,10 @@
 		"soundHint": "A short beep when you tick, add or scan an item.",
 		"haptics": "Vibration",
 		"hapticsHint": "Haptic feedback on phones, when the device allows it.",
-		"testFeedback": "Play"
+		"testFeedback": "Play",
+		"help": "Help",
+		"tourHint": "Replay the guided tour of the main screens.",
+		"replayTour": "Replay the tour"
 	},
 	"theme": {
 		"light": "Light",
@@ -74,6 +79,11 @@
 		"plum": "Plum",
 		"teal": "Teal",
 		"ink": "Ink"
+	},
+	"font": {
+		"system": "System",
+		"atkinson": "High legibility",
+		"grotesk": "Modern"
 	},
 	"scan": {
 		"start": "Scan the code",
@@ -195,6 +205,39 @@
 		"pendingBody": "Your request has been recorded. Access opens once your account is approved.",
 		"rejectedTitle": "Access refused",
 		"rejectedBody": "Your request was not accepted."
+	},
+	"welcome": {
+		"title": "Welcome",
+		"step": "Step {current} of {total}",
+		"sizeTitle": "What text size suits you?",
+		"sizeBody": "Nothing is final — you can change this any time in your profile.",
+		"sizeHint": "Slide right to make it bigger.",
+		"lookTitle": "Pick your colours",
+		"lookBody": "The screen changes right away. Keep whatever reads best.",
+		"accountTitle": "Create your account",
+		"accountBody": "Your settings will follow you to your other devices.",
+		"next": "Continue",
+		"back": "Back",
+		"skip": "Later",
+		"haveAccount": "I already have an account"
+	},
+	"tour": {
+		"newListTitle": "Create a list",
+		"newListBody": "One list per trip, or one per shop — up to you.",
+		"shopsTitle": "Your shops",
+		"shopsBody": "Order the aisles the way you actually walk them.",
+		"magnifierTitle": "The magnifier",
+		"magnifierBody": "Read a label that is too small, using the camera.",
+		"cardsTitle": "Your cards",
+		"cardsBody": "Loyalty cards, ready to show at the till.",
+		"householdTitle": "Your household",
+		"householdBody": "Invite your family — the list updates for everyone.",
+		"profileTitle": "Your settings",
+		"profileBody": "Text size, colours, language: change any of it, any time.",
+		"next": "Next",
+		"back": "Previous",
+		"done": "Done",
+		"progress": "{{current}} of {{total}}"
 	},
 	"admin": {
 		"title": "Account approval",

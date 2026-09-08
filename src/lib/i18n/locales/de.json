@@ -32,6 +32,8 @@
 		"appearance": "Darstellung",
 		"theme": "Design",
 		"textSize": "Schriftgröße",
+		"font": "Schriftart",
+		"fontNote": "„System“ übernimmt die auf Ihrem Gerät eingestellte Schrift.",
 		"accent": "Hauptfarbe",
 		"language": "Sprache",
 		"previewItem": "Strauchtomaten — 500 g",
@@ -46,7 +48,10 @@
 		"soundHint": "Ein kurzer Ton beim Abhaken, Hinzufügen oder Scannen.",
 		"haptics": "Vibration",
 		"hapticsHint": "Haptische Rückmeldung am Telefon, sofern das Gerät sie erlaubt.",
-		"testFeedback": "Anhören"
+		"testFeedback": "Anhören",
+		"help": "Hilfe",
+		"tourHint": "Die Führung durch die wichtigsten Bildschirme erneut ansehen.",
+		"replayTour": "Führung ansehen"
 	},
 	"theme": {
 		"light": "Hell",
@@ -74,6 +79,11 @@
 		"plum": "Pflaume",
 		"teal": "Petrol",
 		"ink": "Tinte"
+	},
+	"font": {
+		"system": "System",
+		"atkinson": "Bessere Lesbarkeit",
+		"grotesk": "Modern"
 	},
 	"scan": {
 		"start": "Code scannen",
@@ -195,6 +205,39 @@
 		"pendingBody": "Ihre Anfrage wurde gespeichert. Der Zugang wird nach der Freigabe Ihres Kontos geöffnet.",
 		"rejectedTitle": "Zugang verweigert",
 		"rejectedBody": "Ihre Anfrage wurde nicht angenommen."
+	},
+	"welcome": {
+		"title": "Willkommen",
+		"step": "Schritt {current} von {total}",
+		"sizeTitle": "Welche Textgröße passt Ihnen?",
+		"sizeBody": "Nichts ist endgültig – Sie können das jederzeit im Profil ändern.",
+		"sizeHint": "Nach rechts schieben, um zu vergrößern.",
+		"lookTitle": "Wählen Sie Ihre Farben",
+		"lookBody": "Der Bildschirm ändert sich sofort. Behalten Sie, was sich am besten liest.",
+		"accountTitle": "Konto erstellen",
+		"accountBody": "Ihre Einstellungen begleiten Sie auf Ihre anderen Geräte.",
+		"next": "Weiter",
+		"back": "Zurück",
+		"skip": "Später",
+		"haveAccount": "Ich habe schon ein Konto"
+	},
+	"tour": {
+		"newListTitle": "Liste anlegen",
+		"newListBody": "Eine Liste pro Einkauf oder eine pro Geschäft – wie Sie mögen.",
+		"shopsTitle": "Ihre Geschäfte",
+		"shopsBody": "Ordnen Sie die Gänge so, wie Sie sie wirklich ablaufen.",
+		"magnifierTitle": "Die Lupe",
+		"magnifierBody": "Ein zu kleines Etikett mit der Kamera lesen.",
+		"cardsTitle": "Ihre Karten",
+		"cardsBody": "Kundenkarten, bereit zum Vorzeigen an der Kasse.",
+		"householdTitle": "Ihr Haushalt",
+		"householdBody": "Laden Sie Ihre Angehörigen ein – die Liste aktualisiert sich für alle.",
+		"profileTitle": "Ihre Einstellungen",
+		"profileBody": "Textgröße, Farben, Sprache: alles jederzeit änderbar.",
+		"next": "Weiter",
+		"back": "Zurück",
+		"done": "Fertig",
+		"progress": "{{current}} von {{total}}"
 	},
 	"admin": {
 		"title": "Kontofreigabe",

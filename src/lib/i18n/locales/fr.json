@@ -32,6 +32,8 @@
 		"appearance": "Apparence",
 		"theme": "Thème",
 		"textSize": "Taille du texte",
+		"font": "Police",
+		"fontNote": "« Système » reprend la police réglée sur votre appareil.",
 		"accent": "Couleur principale",
 		"language": "Langue",
 		"previewItem": "Tomates grappe — 500 g",
@@ -46,7 +48,10 @@
 		"soundHint": "Un bip court quand vous cochez, ajoutez ou scannez un article.",
 		"haptics": "Vibration",
 		"hapticsHint": "Un retour tactile sur téléphone, quand l'appareil le permet.",
-		"testFeedback": "Écouter"
+		"testFeedback": "Écouter",
+		"help": "Aide",
+		"tourHint": "Revoir la visite guidée des écrans principaux.",
+		"replayTour": "Revoir la visite"
 	},
 	"theme": {
 		"light": "Clair",
@@ -74,6 +79,11 @@
 		"plum": "Prune",
 		"teal": "Sarcelle",
 		"ink": "Encre"
+	},
+	"font": {
+		"system": "Système",
+		"atkinson": "Lisibilité renforcée",
+		"grotesk": "Moderne"
 	},
 	"scan": {
 		"start": "Scanner le code",
@@ -195,6 +205,39 @@
 		"pendingBody": "Votre demande a bien été enregistrée. L'accès sera ouvert une fois votre compte validé.",
 		"rejectedTitle": "Accès refusé",
 		"rejectedBody": "Votre demande n'a pas été retenue."
+	},
+	"welcome": {
+		"title": "Bienvenue",
+		"step": "Étape {current} sur {total}",
+		"sizeTitle": "Quelle taille de texte vous convient ?",
+		"sizeBody": "Rien n'est définitif : vous pourrez changer à tout moment dans votre profil.",
+		"sizeHint": "Glissez vers la droite pour agrandir.",
+		"lookTitle": "Choisissez vos couleurs",
+		"lookBody": "L'écran change immédiatement, gardez ce qui se lit le mieux.",
+		"accountTitle": "Créez votre compte",
+		"accountBody": "Vos réglages vous suivront sur vos autres appareils.",
+		"next": "Continuer",
+		"back": "Retour",
+		"skip": "Plus tard",
+		"haveAccount": "J'ai déjà un compte"
+	},
+	"tour": {
+		"newListTitle": "Créez une liste",
+		"newListBody": "Une liste par sortie, ou une par magasin : c'est vous qui voyez.",
+		"shopsTitle": "Vos magasins",
+		"shopsBody": "Rangez les rayons dans l'ordre où vous les traversez.",
+		"magnifierTitle": "La loupe",
+		"magnifierBody": "Pour lire une étiquette trop petite, avec l'appareil photo.",
+		"cardsTitle": "Vos cartes",
+		"cardsBody": "Les cartes de fidélité, prêtes à présenter en caisse.",
+		"householdTitle": "Votre foyer",
+		"householdBody": "Invitez vos proches : la liste se met à jour chez tout le monde.",
+		"profileTitle": "Vos réglages",
+		"profileBody": "Taille du texte, couleurs, langue : tout se change ici, quand vous voulez.",
+		"next": "Suivant",
+		"back": "Précédent",
+		"done": "Terminer",
+		"progress": "{{current}} sur {{total}}"
 	},
 	"admin": {
 		"title": "Validation des comptes",

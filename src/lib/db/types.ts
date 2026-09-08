@@ -480,45 +480,63 @@ export type Database = {
       }
       profiles: {
         Row: {
+          accent_id: string
           created_at: string
           display_name: string
+          font_id: string
+          haptics: boolean
+          has_seen_tour: boolean
           id: string
           initial: string
           is_demo: boolean
+          motion: string
           requested_at: string
           reviewed_at: string | null
           reviewed_by: string | null
           role: string
+          sound: boolean
           status: string
           theme: string
           tint: string
           type_scale: string
         }
         Insert: {
+          accent_id?: string
           created_at?: string
           display_name?: string
+          font_id?: string
+          haptics?: boolean
+          has_seen_tour?: boolean
           id: string
           initial?: string
           is_demo?: boolean
+          motion?: string
           requested_at?: string
           reviewed_at?: string | null
           reviewed_by?: string | null
           role?: string
+          sound?: boolean
           status?: string
           theme?: string
           tint?: string
           type_scale?: string
         }
         Update: {
+          accent_id?: string
           created_at?: string
           display_name?: string
+          font_id?: string
+          haptics?: boolean
+          has_seen_tour?: boolean
           id?: string
           initial?: string
           is_demo?: boolean
+          motion?: string
           requested_at?: string
           reviewed_at?: string | null
           reviewed_by?: string | null
           role?: string
+          sound?: boolean
           status?: string
           theme?: string
           tint?: string

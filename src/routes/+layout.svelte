@@ -8,6 +8,7 @@
 	import { session } from '$stores/session.svelte';
 	import { settings } from '$stores/settings.svelte';
 	import { navDirection } from '$domain/motion';
+	import { pushAppearance, syncAppearance } from '$lib/sync/appearance';
 	import SyncStatus from '$components/app/SyncStatus.svelte';
 
 	let { children } = $props();
@@ -18,8 +19,15 @@
 	// Comparaison exacte : /auth/pending parle d'un compte, il suppose donc une session.
 	// Un startsWith('/auth') le rendrait public et laisserait l'écran d'attente affiché
 	// après une déconnexion.
-	const PUBLIC_ROUTES = ['/auth'];
+	const PUBLIC_ROUTES = ['/auth', '/welcome'];
 	const isPublic = $derived(PUBLIC_ROUTES.includes(page.url.pathname));
+
+	/**
+	 * Première ouverture : on passe par le parcours d'accueil, qui laisse régler la taille du texte
+	 * avant de demander quoi que ce soit. C'est l'ordre qui compte — quelqu'un qui ne lit pas le
+	 * formulaire de connexion ne peut pas non plus lire le lien vers les réglages.
+	 */
+	const signedOutHome = $derived(settings.hasSeenWelcome ? '/auth' : '/welcome');
 
 	/**
 	 * Le verrou d'accès est en base : un compte non approuvé ne lit rien, même en appelant l'API
@@ -29,7 +37,7 @@
 		if (session.loading) return;
 
 		if (!session.isSignedIn) {
-			if (!isPublic) goto('/auth');
+			if (!isPublic) goto(signedOutHome);
 			return;
 		}
 
@@ -38,11 +46,67 @@
 			return;
 		}
 
-		if (page.url.pathname.startsWith('/auth')) goto('/');
+		if (isPublic || page.url.pathname.startsWith('/auth')) goto('/');
 	});
 
 	$effect(() => {
 		if (session.isApproved) data.load();
+	});
+
+	/**
+	 * Le tour se joue une fois, sur l'accueil, une fois le compte validé.
+	 *
+	 * driver.js et sa feuille de style sont chargés à la demande : ils ne servent qu'une fois dans
+	 * la vie d'un compte, les faire descendre à chaque ouverture serait payé par tout le monde pour
+	 * personne. Le délai laisse la liste se peindre — une bulle qui désigne un bouton pas encore
+	 * rendu se pose dans le vide.
+	 *
+	 * Être montré vaut vu, abandon compris : le reproposer à chaque démarrage ferait d'une aide un
+	 * obstacle. Il se relance depuis le profil.
+	 */
+	$effect(() => {
+		if (!session.isApproved || settings.hasSeenTour) return;
+		if (page.url.pathname !== '/') return;
+
+		let cancelled = false;
+		const timer = setTimeout(async () => {
+			const { startTour } = await import('$lib/tour');
+			if (cancelled) return;
+
+			startTour(() => settings.setTourSeen(true));
+		}, 700);
+
+		return () => {
+			cancelled = true;
+			clearTimeout(timer);
+		};
+	});
+
+	/**
+	 * Premier contact de ce compte avec cet appareil : on décide une fois pour toutes qui, de
+	 * l'appareil ou de la base, porte les préférences les plus récentes.
+	 *
+	 * Cet effet ne dépend que de l'identifiant, jamais des réglages eux-mêmes : le relire à chaque
+	 * changement de couleur relancerait un arbitrage au milieu d'une modification.
+	 */
+	$effect(() => {
+		const id = session.user?.id;
+		if (id) void syncAppearance(id);
+	});
+
+	/**
+	 * Ensuite, chaque réglage modifié repart vers la base. Le délai regroupe les rafales — glisser
+	 * le curseur de taille traverse six crans, ce qui ferait six écritures pour un seul geste.
+	 */
+	$effect(() => {
+		// Lecture explicite : c'est elle qui abonne l'effet à l'ensemble des réglages.
+		settings.snapshot();
+
+		const id = session.user?.id;
+		if (!id) return;
+
+		const timer = setTimeout(() => void pushAppearance(id), 600);
+		return () => clearTimeout(timer);
 	});
 
 	// La loupe se sert de l'appareil photo arrière, devant une étiquette de produit : c'est un geste

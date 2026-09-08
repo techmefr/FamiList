@@ -25,6 +25,7 @@
 					if (dark) root.classList.add('dark');
 					root.dataset.accent = saved.accentId ?? 'terracotta';
 					root.dataset.scale = saved.fontScaleId ?? 'sm';
+					root.dataset.font = saved.fontId ?? 'system';
 					// Le mouvement est refusé avant la première image, sinon les entrées de la
 					// première page jouent quand même.
 					root.dataset.motion = saved.motion ?? 'system';

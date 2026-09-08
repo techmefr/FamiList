@@ -31,6 +31,8 @@
 		"appearance": "Endrika",
 		"theme": "Loko fototra",
 		"textSize": "Haben'ny soratra",
+		"font": "Endri-tsoratra",
+		"fontNote": "Ny \"Rafitra\" dia mampiasa ny endri-tsoratra voafaritra amin'ny fitaovanao.",
 		"accent": "Loko lehibe",
 		"language": "Fiteny",
 		"previewItem": "Voatabia sampahony — 500 g",
@@ -45,7 +47,10 @@
 		"soundHint": "Feo fohy rehefa manamarika, manampy na mitsirika entana ianao.",
 		"haptics": "Fihovitrovitra",
 		"hapticsHint": "Valiny azo tsapain-tanana amin'ny finday, raha manaiky ilay fitaovana.",
-		"testFeedback": "Henoy"
+		"testFeedback": "Henoy",
+		"help": "Fanampiana",
+		"tourHint": "Hijery indray ny fitarihana amin'ny efijery lehibe.",
+		"replayTour": "Hijery ny fitarihana"
 	},
 	"theme": {
 		"light": "Mazava",
@@ -73,6 +78,11 @@
 		"plum": "Paisom-boaloboka",
 		"teal": "Manga maitso",
 		"ink": "Ranomainty"
+	},
+	"font": {
+		"system": "Rafitra",
+		"atkinson": "Mora vakiana kokoa",
+		"grotesk": "Maoderina"
 	},
 	"scan": {
 		"start": "Sikana ny kaody",
@@ -194,6 +204,39 @@
 		"pendingBody": "Voarakitra ny fangatahanao. Hisokatra ny fidirana rehefa voaeka ny kaontinao.",
 		"rejectedTitle": "Lavina ny fidirana",
 		"rejectedBody": "Tsy nekena ny fangatahanao."
+	},
+	"welcome": {
+		"title": "Tongasoa",
+		"step": "Dingana {current} amin'ny {total}",
+		"sizeTitle": "Haben-tsoratra manao ahoana no mety aminao?",
+		"sizeBody": "Tsy raikitra izany: azonao ovaina amin'ny mombamomba anao na oviana na oviana.",
+		"sizeHint": "Sintomy mankany ankavanana raha hanalehibe.",
+		"lookTitle": "Safidio ny lokonao",
+		"lookBody": "Miova avy hatrany ny efijery. Tazony izay mora vakiana indrindra.",
+		"accountTitle": "Mamorona kaonty",
+		"accountBody": "Hanaraka anao amin'ny fitaovana hafa ny safidinao.",
+		"next": "Tohizana",
+		"back": "Hiverina",
+		"skip": "Any aoriana",
+		"haveAccount": "Manana kaonty aho sahady"
+	},
+	"tour": {
+		"newListTitle": "Mamorona lisitra",
+		"newListBody": "Lisitra iray isaky ny fivoahana, na iray isaky ny fivarotana: anjaranao.",
+		"shopsTitle": "Ny fivarotanao",
+		"shopsBody": "Alaharo araka ny fandehananao azy ireo ny faritra.",
+		"magnifierTitle": "Ny fitarafana",
+		"magnifierBody": "Hamakiana marika kely loatra, amin'ny fakan-tsary.",
+		"cardsTitle": "Ny karatrao",
+		"cardsBody": "Ny karatra fahatokiana, vonona haseho eo am-pandoavam-bola.",
+		"householdTitle": "Ny ankohonanao",
+		"householdBody": "Asao ny havanao: mihavao ho an'ny rehetra ny lisitra.",
+		"profileTitle": "Ny safidinao",
+		"profileBody": "Haben-tsoratra, loko, fiteny: azo ovaina eto daholo.",
+		"next": "Manaraka",
+		"back": "Mialoha",
+		"done": "Vita",
+		"progress": "{{current}} amin'ny {{total}}"
 	},
 	"admin": {
 		"title": "Fankatoavana kaonty",

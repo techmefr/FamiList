@@ -32,6 +32,8 @@
 		"appearance": "Aspetto",
 		"theme": "Tema",
 		"textSize": "Dimensione del testo",
+		"font": "Carattere",
+		"fontNote": "«Sistema» usa il carattere impostato sul dispositivo.",
 		"accent": "Colore principale",
 		"language": "Lingua",
 		"previewItem": "Pomodori a grappolo — 500 g",
@@ -46,7 +48,10 @@
 		"soundHint": "Un bip breve quando spunti, aggiungi o scansioni un articolo.",
 		"haptics": "Vibrazione",
 		"hapticsHint": "Ritorno tattile sul telefono, quando il dispositivo lo consente.",
-		"testFeedback": "Ascolta"
+		"testFeedback": "Ascolta",
+		"help": "Aiuto",
+		"tourHint": "Rivedere la visita guidata delle schermate principali.",
+		"replayTour": "Rivedere la visita"
 	},
 	"theme": {
 		"light": "Chiaro",
@@ -74,6 +79,11 @@
 		"plum": "Prugna",
 		"teal": "Foglia di tè",
 		"ink": "Inchiostro"
+	},
+	"font": {
+		"system": "Sistema",
+		"atkinson": "Alta leggibilità",
+		"grotesk": "Moderno"
 	},
 	"scan": {
 		"start": "Scansiona il codice",
@@ -195,6 +205,39 @@
 		"pendingBody": "La tua richiesta è stata registrata. L'accesso si aprirà una volta approvato l'account.",
 		"rejectedTitle": "Accesso rifiutato",
 		"rejectedBody": "La tua richiesta non è stata accettata."
+	},
+	"welcome": {
+		"title": "Benvenuto",
+		"step": "Passo {current} di {total}",
+		"sizeTitle": "Quale dimensione del testo le va bene?",
+		"sizeBody": "Niente è definitivo: può cambiarla quando vuole nel suo profilo.",
+		"sizeHint": "Scorra a destra per ingrandire.",
+		"lookTitle": "Scelga i suoi colori",
+		"lookBody": "Lo schermo cambia subito. Tenga ciò che si legge meglio.",
+		"accountTitle": "Crei il suo account",
+		"accountBody": "Le sue impostazioni la seguiranno sugli altri dispositivi.",
+		"next": "Continua",
+		"back": "Indietro",
+		"skip": "Più tardi",
+		"haveAccount": "Ho già un account"
+	},
+	"tour": {
+		"newListTitle": "Crei una lista",
+		"newListBody": "Una lista per uscita, o una per negozio: decide lei.",
+		"shopsTitle": "I suoi negozi",
+		"shopsBody": "Ordini i reparti come li percorre davvero.",
+		"magnifierTitle": "La lente",
+		"magnifierBody": "Per leggere un'etichetta troppo piccola, con la fotocamera.",
+		"cardsTitle": "Le sue carte",
+		"cardsBody": "Le carte fedeltà, pronte da mostrare alla cassa.",
+		"householdTitle": "La sua famiglia",
+		"householdBody": "Inviti i suoi cari: la lista si aggiorna per tutti.",
+		"profileTitle": "Le sue impostazioni",
+		"profileBody": "Dimensione del testo, colori, lingua: tutto si cambia qui.",
+		"next": "Avanti",
+		"back": "Indietro",
+		"done": "Fine",
+		"progress": "{{current}} di {{total}}"
 	},
 	"admin": {
 		"title": "Approvazione degli account",

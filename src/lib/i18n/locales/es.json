@@ -32,6 +32,8 @@
 		"appearance": "Apariencia",
 		"theme": "Tema",
 		"textSize": "Tamaño del texto",
+		"font": "Fuente",
+		"fontNote": "«Sistema» usa la fuente configurada en su dispositivo.",
 		"accent": "Color principal",
 		"language": "Idioma",
 		"previewItem": "Tomates en rama — 500 g",
@@ -46,7 +48,10 @@
 		"soundHint": "Un pitido corto al marcar, añadir o escanear un artículo.",
 		"haptics": "Vibración",
 		"hapticsHint": "Respuesta táctil en el móvil, cuando el dispositivo lo permite.",
-		"testFeedback": "Escuchar"
+		"testFeedback": "Escuchar",
+		"help": "Ayuda",
+		"tourHint": "Volver a ver la visita guiada de las pantallas principales.",
+		"replayTour": "Ver la visita"
 	},
 	"theme": {
 		"light": "Claro",
@@ -74,6 +79,11 @@
 		"plum": "Ciruela",
 		"teal": "Verde azulado",
 		"ink": "Tinta"
+	},
+	"font": {
+		"system": "Sistema",
+		"atkinson": "Legibilidad alta",
+		"grotesk": "Moderna"
 	},
 	"scan": {
 		"start": "Escanear el código",
@@ -195,6 +205,39 @@
 		"pendingBody": "Tu solicitud ha quedado registrada. El acceso se abrirá cuando tu cuenta sea validada.",
 		"rejectedTitle": "Acceso denegado",
 		"rejectedBody": "Tu solicitud no ha sido aceptada."
+	},
+	"welcome": {
+		"title": "Bienvenido",
+		"step": "Paso {current} de {total}",
+		"sizeTitle": "¿Qué tamaño de texto le conviene?",
+		"sizeBody": "Nada es definitivo: puede cambiarlo cuando quiera en su perfil.",
+		"sizeHint": "Deslice a la derecha para agrandar.",
+		"lookTitle": "Elija sus colores",
+		"lookBody": "La pantalla cambia al instante. Quédese con lo que mejor se lea.",
+		"accountTitle": "Cree su cuenta",
+		"accountBody": "Sus ajustes le seguirán en sus otros dispositivos.",
+		"next": "Continuar",
+		"back": "Atrás",
+		"skip": "Más tarde",
+		"haveAccount": "Ya tengo una cuenta"
+	},
+	"tour": {
+		"newListTitle": "Cree una lista",
+		"newListBody": "Una lista por salida, o una por tienda: usted decide.",
+		"shopsTitle": "Sus tiendas",
+		"shopsBody": "Ordene los pasillos como los recorre de verdad.",
+		"magnifierTitle": "La lupa",
+		"magnifierBody": "Para leer una etiqueta demasiado pequeña, con la cámara.",
+		"cardsTitle": "Sus tarjetas",
+		"cardsBody": "Las tarjetas de fidelidad, listas para la caja.",
+		"householdTitle": "Su hogar",
+		"householdBody": "Invite a los suyos: la lista se actualiza para todos.",
+		"profileTitle": "Sus ajustes",
+		"profileBody": "Tamaño del texto, colores, idioma: todo se cambia aquí.",
+		"next": "Siguiente",
+		"back": "Anterior",
+		"done": "Terminar",
+		"progress": "{{current}} de {{total}}"
 	},
 	"admin": {
 		"title": "Validación de cuentas",

@@ -42,8 +42,31 @@ export const FONT_SCALE_PRESETS: FontScalePreset[] = [
 	{ id: 'comfort', label: 'scale.comfort' }
 ];
 
+export interface FontPreset {
+	id: string;
+	label: string;
+}
+
+/**
+ * « Système » d'abord, et par défaut : la pile du système reprend la police que la personne a
+ * choisie sur son appareil. Quelqu'un qui a installé une police adaptée à sa dyslexie la retrouve
+ * ici sans rien régler, et c'est toujours mieux que la meilleure des polices qu'on lui imposerait.
+ *
+ * Les deux autres sont là pour qui n'a rien réglé : Atkinson Hyperlegible a été dessinée pour la
+ * basse vision, elle écarte les formes qui se confondent (I, l, 1 — O, 0). Le duo de la maquette
+ * reste disponible pour retrouver l'allure d'origine.
+ *
+ * Comme pour les accents, les valeurs vivent dans src/app.css, sous [data-font='<id>'].
+ */
+export const FONT_PRESETS: FontPreset[] = [
+	{ id: 'system', label: 'font.system' },
+	{ id: 'atkinson', label: 'font.atkinson' },
+	{ id: 'grotesk', label: 'font.grotesk' }
+];
+
 export const DEFAULT_ACCENT = 'terracotta';
 export const DEFAULT_FONT_SCALE = 'sm';
+export const DEFAULT_FONT = 'system';
 export const DEFAULT_MOTION: MotionPreference = 'system';
 
 /**

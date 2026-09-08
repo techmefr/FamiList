@@ -32,6 +32,8 @@
 		"appearance": "Aparência",
 		"theme": "Tema",
 		"textSize": "Tamanho do texto",
+		"font": "Tipo de letra",
+		"fontNote": "“Sistema” usa a fonte definida no seu aparelho.",
 		"accent": "Cor principal",
 		"language": "Idioma",
 		"previewItem": "Tomates em rama — 500 g",
@@ -46,7 +48,10 @@
 		"soundHint": "Um bip curto ao marcar, adicionar ou digitalizar um artigo.",
 		"haptics": "Vibração",
 		"hapticsHint": "Retorno tátil no telemóvel, quando o aparelho permite.",
-		"testFeedback": "Ouvir"
+		"testFeedback": "Ouvir",
+		"help": "Ajuda",
+		"tourHint": "Rever a visita guiada aos ecrãs principais.",
+		"replayTour": "Rever a visita"
 	},
 	"theme": {
 		"light": "Claro",
@@ -74,6 +79,11 @@
 		"plum": "Ameixa",
 		"teal": "Azul-petróleo",
 		"ink": "Tinta"
+	},
+	"font": {
+		"system": "Sistema",
+		"atkinson": "Alta legibilidade",
+		"grotesk": "Moderna"
 	},
 	"scan": {
 		"start": "Ler o código",
@@ -195,6 +205,39 @@
 		"pendingBody": "O seu pedido foi registado. O acesso abre assim que a conta for validada.",
 		"rejectedTitle": "Acesso recusado",
 		"rejectedBody": "O seu pedido não foi aceite."
+	},
+	"welcome": {
+		"title": "Bem-vindo",
+		"step": "Passo {current} de {total}",
+		"sizeTitle": "Que tamanho de texto lhe convém?",
+		"sizeBody": "Nada é definitivo: pode mudar quando quiser no seu perfil.",
+		"sizeHint": "Deslize para a direita para aumentar.",
+		"lookTitle": "Escolha as suas cores",
+		"lookBody": "O ecrã muda de imediato. Fique com o que se lê melhor.",
+		"accountTitle": "Crie a sua conta",
+		"accountBody": "As suas definições vão segui-lo nos outros aparelhos.",
+		"next": "Continuar",
+		"back": "Voltar",
+		"skip": "Mais tarde",
+		"haveAccount": "Já tenho uma conta"
+	},
+	"tour": {
+		"newListTitle": "Crie uma lista",
+		"newListBody": "Uma lista por ida às compras, ou uma por loja: como preferir.",
+		"shopsTitle": "As suas lojas",
+		"shopsBody": "Ordene os corredores pela ordem por que passa.",
+		"magnifierTitle": "A lupa",
+		"magnifierBody": "Para ler um rótulo pequeno demais, com a câmara.",
+		"cardsTitle": "Os seus cartões",
+		"cardsBody": "Os cartões de fidelidade, prontos para mostrar na caixa.",
+		"householdTitle": "A sua casa",
+		"householdBody": "Convide os seus: a lista atualiza-se para toda a gente.",
+		"profileTitle": "As suas definições",
+		"profileBody": "Tamanho do texto, cores, idioma: muda-se tudo aqui.",
+		"next": "Seguinte",
+		"back": "Anterior",
+		"done": "Concluir",
+		"progress": "{{current}} de {{total}}"
 	},
 	"admin": {
 		"title": "Validação de contas",

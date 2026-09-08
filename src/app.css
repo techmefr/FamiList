@@ -1,5 +1,21 @@
 @import 'tailwindcss';
 
+/*
+ * Polices auto-hébergées : l'application tourne sous Capacitor et doit s'ouvrir sans réseau, donc
+ * rien ne peut venir d'un CDN. Chaque fichier déclare ses plages Unicode, le navigateur ne
+ * télécharge que la fonte réellement affichée — déclarer les deux familles ne coûte rien tant que
+ * la personne reste sur « Système ».
+ *
+ * Ni l'une ni l'autre ne couvre le cyrillique ou l'arabe : le russe et l'arabe retombent sur la
+ * pile système, d'où l'importance de la garder complète dans --fl-font-system.
+ */
+@import '@fontsource/atkinson-hyperlegible/400.css';
+@import '@fontsource/atkinson-hyperlegible/700.css';
+@import '@fontsource/schibsted-grotesk/400.css';
+@import '@fontsource/schibsted-grotesk/500.css';
+@import '@fontsource/schibsted-grotesk/600.css';
+@import '@fontsource/schibsted-grotesk/700.css';
+
 @custom-variant dark (&:where(.dark, .dark *));
 
 :root {
@@ -214,6 +230,34 @@
 	--fl-product: 1.25rem;
 }
 
+/**
+ * Trois choix de police, « Système » par défaut.
+ *
+ * La pile système reprend la police de l'appareil : quelqu'un qui a installé une police adaptée à
+ * sa dyslexie la retrouve sans rien régler ici. Les deux autres existent pour qui n'a rien
+ * configuré — Atkinson Hyperlegible est dessinée pour la basse vision, elle distingue les formes
+ * qui se confondent (I l 1, O 0).
+ *
+ * Les deux préréglages gardent la pile système en repli : c'est elle qui rend l'arabe et le russe.
+ */
+:root {
+	--fl-font-system:
+		system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif,
+		'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji';
+	--fl-font-atkinson: 'Atkinson Hyperlegible', var(--fl-font-system);
+	--fl-font-grotesk: 'Schibsted Grotesk', var(--fl-font-system);
+
+	--fl-font: var(--fl-font-system);
+}
+
+[data-font='atkinson'] {
+	--fl-font: var(--fl-font-atkinson);
+}
+
+[data-font='grotesk'] {
+	--fl-font: var(--fl-font-grotesk);
+}
+
 [data-scale='xs'] {
 	--fl-font-scale: 0.9;
 }
@@ -284,7 +328,13 @@
 	html {
 		background-color: var(--background);
 		color-scheme: light;
-		font-size: calc(16px * var(--fl-font-scale));
+		/*
+		 * 100 % et non 16px : sur l'élément racine, un pourcentage part de la taille de police
+		 * choisie dans le navigateur ou le système. Quelqu'un qui a déjà agrandi le texte au
+		 * niveau de son appareil garde son réglage, et les sept crans deviennent un
+		 * multiplicateur par-dessus. Avec 16px en dur, ce réglage était purement ignoré.
+		 */
+		font-size: calc(100% * var(--fl-font-scale));
 	}
 
 	html.dark {
@@ -294,6 +344,7 @@
 	body {
 		background-color: var(--background);
 		color: var(--foreground);
+		font-family: var(--fl-font);
 		font-size: var(--fl-body);
 		-webkit-font-smoothing: antialiased;
 
@@ -507,8 +558,33 @@
 	}
 }
 
+@keyframes fl-nudge {
+	0%,
+	100% {
+		transform: translateX(0);
+	}
+	50% {
+		transform: translateX(7px);
+	}
+}
+
 .fl-rise {
 	animation: fl-rise var(--fl-dur-rise) var(--fl-ease) both;
+}
+
+/**
+ * Invitation à pousser le curseur plus loin.
+ *
+ * Le premier écran demande une taille de texte, et le réflexe est de valider ce qui s'affiche.
+ * Cette flèche part vers les grandes tailles jusqu'au premier geste : elle ne dit pas quoi choisir,
+ * elle dit qu'il y a quelque chose à choisir. Elle disparaît dès que le curseur bouge, elle n'a
+ * plus rien à apprendre à personne ensuite.
+ *
+ * Le refus du mouvement est déjà couvert plus bas, qui ramène toute animation à 1 ms : la flèche
+ * reste alors immobile et lisible, ce qui suffit.
+ */
+.fl-nudge {
+	animation: fl-nudge 1.4s var(--fl-ease) infinite;
 }
 
 .fl-pop-in {
@@ -577,6 +653,132 @@ html[data-nav='none']::view-transition-old(root) {
 
 html[data-nav='none']::view-transition-new(root) {
 	animation: fl-fade var(--fl-dur-page) var(--fl-ease) both;
+}
+
+/**
+ * Tour guidé.
+ *
+ * driver.js arrive avec sa propre feuille : fond blanc, encre grise, et surtout des tailles en
+ * pixels — titre à 19, texte à 14, boutons à 12 dans 3 px de rembourrage. Rien de tout cela ne
+ * suivait le thème ni le cran de texte, et ces boutons faisaient une vingtaine de pixels de haut,
+ * loin des 44 exigés. Tout est donc repris ici, sur les mêmes variables que le reste.
+ *
+ * `all: unset` sur la bulle et ses boutons coupe l'héritage des règles de base : chaque propriété
+ * doit être redonnée, y compris celles qu'un bouton de l'application tient déjà.
+ */
+.driver-popover.fl-tour {
+	--driver-popover-font-family: var(--fl-font);
+
+	max-width: min(22rem, calc(100vw - 2rem));
+	padding: 1rem;
+	color: var(--popover-foreground);
+	background-color: var(--popover);
+	border: 1px solid var(--border);
+	border-radius: var(--radius);
+	box-shadow: var(--fl-shadow-3);
+}
+
+.fl-tour .driver-popover-title {
+	font-size: var(--fl-h2);
+}
+
+.fl-tour .driver-popover-description {
+	margin-top: 0.5rem;
+	font-size: var(--fl-body);
+}
+
+.fl-tour .driver-popover-progress-text {
+	font-size: var(--fl-caption);
+	color: var(--muted-foreground);
+}
+
+.fl-tour .driver-popover-footer {
+	gap: 0.75rem;
+	margin-top: 1rem;
+}
+
+.fl-tour .driver-popover-navigation-btns {
+	gap: 0.5rem;
+}
+
+.fl-tour .driver-popover-navigation-btns button + button {
+	margin-left: 0;
+}
+
+.fl-tour .driver-popover-footer-btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-height: max(2.75rem, 44px);
+	min-width: 44px;
+	padding-inline: 1rem;
+	font-size: var(--fl-label);
+	font-weight: 500;
+	color: var(--foreground);
+	background-color: var(--card);
+	border: 1px solid var(--border);
+	border-radius: var(--radius);
+}
+
+/* Le dernier bouton de la paire est « Suivant » puis « Terminer » : c'est l'action attendue. */
+.fl-tour .driver-popover-navigation-btns button + button {
+	color: var(--primary-foreground);
+	background-color: var(--primary);
+	border-color: var(--primary);
+}
+
+.fl-tour .driver-popover-close-btn {
+	width: max(2.75rem, 44px);
+	height: max(2.75rem, 44px);
+	font-size: var(--fl-body);
+	color: var(--muted-foreground);
+}
+
+.fl-tour .driver-popover-close-btn:hover,
+.fl-tour .driver-popover-close-btn:focus {
+	color: var(--foreground);
+}
+
+/*
+ * Pendant la visite, seule la bulle répond.
+ *
+ * driver.js pose `driver-active-element` sur chaque cible et ne la retire jamais de la
+ * précédente : au sixième écran, les six la portent. Or c'est cette classe qui rétablit
+ * `pointer-events` à travers le voile — tous les onglets déjà présentés restaient cliquables, et
+ * un doigt qui dérape quittait la page en laissant la visite ouverte sur un écran qui n'est plus
+ * le sien.
+ *
+ * Son crochet `onHighlighted` ne sert à rien ici : la version 1.8 ne l'appelle jamais. On règle
+ * donc la chose où elle se produit. Ces étapes se lisent, elles ne se manipulent pas : rien ne
+ * justifie que l'élément désigné reste actionnable, et le rendre inerte supprime le problème sans
+ * dépendre d'un état interne de la bibliothèque.
+ *
+ * `body` en tête ne fait qu'ajouter le poids nécessaire pour passer devant la règle d'origine.
+ */
+body.driver-active .driver-active-element,
+body.driver-active .driver-active-element * {
+	pointer-events: none;
+}
+
+/*
+ * La flèche est un carré de bordures dont trois côtés sont transparents. On ne peut donc pas
+ * repeindre `border-color` d'un bloc : cela rendrait les quatre côtés et donnerait un losange.
+ * Chaque orientation reçoit son seul côté visible.
+ */
+.fl-tour .driver-popover-arrow-side-left {
+	border-left-color: var(--popover);
+}
+
+.fl-tour .driver-popover-arrow-side-right {
+	border-right-color: var(--popover);
+}
+
+.fl-tour .driver-popover-arrow-side-top {
+	border-top-color: var(--popover);
+}
+
+.fl-tour .driver-popover-arrow-side-bottom {
+	border-bottom-color: var(--popover);
 }
 
 /**
