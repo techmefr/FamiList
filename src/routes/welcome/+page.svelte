@@ -87,7 +87,7 @@
 {#if step === 1}
 	<p class="text-muted-foreground mt-2">{t('welcome.sizeBody')}</p>
 
-	<div class="bg-card mt-6 rounded-md border p-4">
+	<div class="bg-card mt-6 rounded-xl border p-4">
 		{#key settings.fontScaleId}
 			<p class="text-product fl-pop-in font-medium" data-test-id="welcome-preview">
 				{t('profile.previewItem')}

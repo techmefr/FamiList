@@ -61,7 +61,7 @@
 
 <h1 class="text-h1 font-semibold">{t('shops.title')}</h1>
 
-<form onsubmit={addShop} class="bg-card mt-6 space-y-3 rounded-md border p-4" data-test-id="add-shop">
+<form onsubmit={addShop} class="bg-card mt-6 space-y-3 rounded-xl border p-4" data-test-id="add-shop">
 	<div class="grid gap-3 sm:grid-cols-[1fr_auto]">
 		<div>
 			<Label for="shop-name">{t('shops.name')}</Label>
@@ -147,7 +147,7 @@
 <h2 class="text-h2 mt-10 font-semibold">{t('aisles.title')}</h2>
 <p class="text-muted-foreground text-label mt-1">{t('aisles.hint')}</p>
 
-<form onsubmit={addAisle} class="bg-card mt-4 space-y-3 rounded-md border p-4" data-test-id="add-aisle">
+<form onsubmit={addAisle} class="bg-card mt-6 space-y-3 rounded-xl border p-4" data-test-id="add-aisle">
 	<div class="grid gap-3 sm:grid-cols-[auto_1fr]">
 		<div class="w-20">
 			<Label for="aisle-emoji">{t('aisles.emoji')}</Label>
@@ -187,7 +187,7 @@
 	</Button>
 </form>
 
-<ul class="mt-4 flex flex-wrap gap-2">
+<ul class="mt-6 flex flex-wrap gap-2">
 	{#each data.aisles as aisle (aisle.id)}
 		<li class="border-input rounded-full border px-4 py-2" data-test-class="aisle-chip">
 			<span aria-hidden="true">{aisle.emoji}</span>

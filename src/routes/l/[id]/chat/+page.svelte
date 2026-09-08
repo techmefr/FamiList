@@ -137,7 +137,7 @@
 	{/if}
 
 	{#if composing}
-		<form onsubmit={createPoll} class="bg-card mt-6 space-y-4 rounded-md border p-4" data-test-id="poll-form">
+		<form onsubmit={createPoll} class="bg-card mt-6 space-y-4 rounded-xl border p-4" data-test-id="poll-form">
 			<div>
 				<Label for="poll-question">{t('chat.question')}</Label>
 				<IconField icon={MessageCircleQuestionMark}>

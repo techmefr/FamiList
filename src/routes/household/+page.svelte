@@ -89,7 +89,7 @@
 <h1 class="text-h1 font-semibold">{t('household.title')}</h1>
 
 {#if error}
-	<p class="text-destructive mt-4" role="alert" data-test-id="household-error">{error}</p>
+	<p class="text-destructive mt-6" role="alert" data-test-id="household-error">{error}</p>
 {/if}
 
 <Card.Root class="mt-6">

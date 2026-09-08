@@ -78,7 +78,6 @@
 	<title>{t('cards.title')} — {t('app.name')}</title>
 </svelte:head>
 
-<p class="text-label text-muted-foreground">{t('cards.wallet')}</p>
 <h1 class="text-h1 font-semibold">{t('cards.title')}</h1>
 
 {#if !data.ready}
@@ -134,7 +133,7 @@
 		<form
 			onsubmit={submit}
 			transition:slide={{ duration: motionMs(220), easing: cubicOut }}
-			class="bg-card mt-6 space-y-4 rounded-md border p-4"
+			class="bg-card mt-6 space-y-4 rounded-xl border p-4"
 			data-test-id="card-form"
 		>
 			<div>

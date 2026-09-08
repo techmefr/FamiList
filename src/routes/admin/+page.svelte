@@ -83,7 +83,7 @@
 	{/if}
 
 	{#if accounts.some((account) => account.is_demo)}
-		<div class="bg-card mt-6 rounded-md border p-4">
+		<div class="bg-card mt-6 rounded-xl border p-4">
 			<p class="text-label">{t('admin.demoHint')}</p>
 			<Button variant="outline" onclick={resetDemo} data-test-id="reset-demo" class="mt-3">
 				{t('admin.resetDemo')}

@@ -109,7 +109,6 @@
 		"pointsPlaceholder": "120",
 		"delete": "删除会员卡 {name}",
 		"secretNotice": "会员账户密码永远不会保存在这里。",
-		"wallet": "卡包",
 		"loyalty": "会员",
 		"tapHint": "点按卡片可在收银台放大显示。",
 		"add": "添加卡片",

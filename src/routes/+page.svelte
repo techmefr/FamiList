@@ -78,7 +78,7 @@
 	<form
 		onsubmit={create}
 		transition:slide={{ duration: motionMs(220), easing: cubicOut }}
-		class="bg-card mt-4 space-y-3 rounded-md border p-4"
+		class="bg-card mt-6 space-y-3 rounded-xl border p-4"
 	>
 		<div class="grid gap-3 sm:grid-cols-[auto_1fr]">
 			<div class="w-20">

@@ -110,7 +110,6 @@
 		"pointsPlaceholder": "120",
 		"delete": "Delete card {name}",
 		"secretNotice": "Loyalty account passwords are never stored here.",
-		"wallet": "Wallet",
 		"loyalty": "LOYALTY",
 		"tapHint": "Tap a card to show it full screen at the till.",
 		"add": "Add a card",
