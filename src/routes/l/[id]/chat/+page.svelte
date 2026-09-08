@@ -143,7 +143,7 @@
 					rows="4"
 					placeholder={t('chat.choicesPlaceholder')}
 					data-test-id="poll-choices"
-					class="border-input bg-background mt-1 w-full rounded-md border p-2"
+					class="border-input bg-background w-full rounded-md border p-2"
 				></textarea>
 			</div>
 

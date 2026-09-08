@@ -398,6 +398,18 @@
 		outline: 2px solid var(--ring);
 		outline-offset: 2px;
 	}
+
+	/*
+	 * Un bouton radio masqué par `sr-only` garde le focus, mais son contour tombe sur un carré d'un
+	 * pixel : au clavier, plus rien n'indique où l'on est. Les choix d'apparence de l'accueil et du
+	 * profil étaient dans ce cas, et le sélecteur connexion / création aussi. Le contour passe donc
+	 * sur le libellé, qui est la surface qu'on voit et qu'on clique. Enfant direct seulement : une
+	 * commande visible dans un libellé garde le sien, sans en recevoir un second autour du texte.
+	 */
+	label:has(> .sr-only:focus-visible) {
+		outline: 2px solid var(--ring);
+		outline-offset: 2px;
+	}
 }
 
 /**
@@ -437,6 +449,24 @@
 	min-height: 1.25rem;
 	white-space: normal;
 	text-align: center;
+}
+
+/**
+ * Un libellé ne touche pas sa commande. Les composants shadcn n'apportent aucun écart entre les
+ * deux : partout dans l'application, « Adresse e-mail » était posé à même le bord du champ, et
+ * l'ensemble se lisait comme un seul bloc au lieu d'une question suivie de sa réponse.
+ *
+ * La règle est ici plutôt qu'aux quinze endroits qui composent un champ : c'est une propriété du
+ * couple, pas de chaque formulaire, et un champ écrit demain l'obtient sans qu'on y pense. Elle
+ * vise le frère immédiat, donc rien ne bouge quand un texte d'aide s'intercale — là, l'écart est
+ * une décision de mise en page qui s'écrit sur place.
+ *
+ * En rem : l'écart grandit avec la taille de texte choisie, comme le reste.
+ */
+[data-slot='label'] + input,
+[data-slot='label'] + select,
+[data-slot='label'] + textarea {
+	margin-block-start: 0.5rem;
 }
 
 /*

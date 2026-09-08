@@ -163,7 +163,7 @@
 					id="card-type"
 					bind:value={codeType}
 					data-test-id="card-type"
-					class="border-input bg-background mt-1 w-full rounded-md border px-3 py-2"
+					class="border-input bg-background w-full rounded-md border px-3 py-2"
 				>
 					<option value="">{t('cards.formatAuto', { format: t(`cards.type.${effectiveType}`) })}</option>
 					{#each CODE_TYPES as type (type)}
