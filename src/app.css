@@ -465,7 +465,8 @@
  */
 [data-slot='label'] + input,
 [data-slot='label'] + select,
-[data-slot='label'] + textarea {
+[data-slot='label'] + textarea,
+[data-slot='label'] + button {
 	margin-block-start: 0.5rem;
 }
 

@@ -8,12 +8,14 @@
 	import { Label } from '$lib/components/ui/label';
 	import * as Card from '$lib/components/ui/card';
 	import { Badge } from '$lib/components/ui/badge';
+	import EmojiPicker from '$components/app/EmojiPicker.svelte';
 	import { Plus } from '@lucide/svelte';
 
 	let shopName = $state('');
 	let shopShort = $state('');
 	let aisleName = $state('');
 	let aisleEmoji = $state('🛒');
+	let picker = $state<EmojiPicker | null>(null);
 
 	const pris = $derived(data.shops.map((shop) => shop.short));
 
@@ -140,7 +142,22 @@
 	<div class="grid gap-3 sm:grid-cols-[auto_1fr]">
 		<div class="w-20">
 			<Label for="aisle-emoji">{t('aisles.emoji')}</Label>
-			<Input id="aisle-emoji" bind:value={aisleEmoji} data-test-id="aisle-emoji" maxlength={2} />
+<!--
+				Un champ texte pour un emoji suppose un clavier qui en propose : au bureau il n'y en a
+				pas, et il fallait aller en chercher un ailleurs pour le coller ici. Le bouton montre
+				celui qui est choisi et ouvre la palette.
+			-->
+			<button
+				type="button"
+				id="aisle-emoji"
+				onclick={() => picker?.show()}
+				aria-haspopup="dialog"
+				data-test-id="aisle-emoji"
+				class="border-input bg-background fl-press grid min-h-[max(2.75rem,44px)] w-full place-items-center rounded-lg border text-2xl"
+			>
+				<span aria-hidden="true">{aisleEmoji}</span>
+				<span class="sr-only">{t('emojiPicker.current', { emoji: aisleEmoji })}</span>
+			</button>
 		</div>
 		<div>
 			<Label for="aisle-name">{t('aisles.name')}</Label>
@@ -161,3 +178,5 @@
 		</li>
 	{/each}
 </ul>
+
+<EmojiPicker bind:this={picker} value={aisleEmoji} onpick={(choix) => (aisleEmoji = choix)} />

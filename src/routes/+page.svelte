@@ -13,11 +13,13 @@
 	import { Button } from '$lib/components/ui/button';
 	import { Input } from '$lib/components/ui/input';
 	import { Label } from '$lib/components/ui/label';
+	import EmojiPicker from '$components/app/EmojiPicker.svelte';
 	import { Plus, Trash2 } from '@lucide/svelte';
 
 	let creating = $state(false);
 	let name = $state('');
 	let emoji = $state('🛒');
+	let picker = $state<EmojiPicker | null>(null);
 
 	/**
 	 * Le bouton central annonce ce qu'il vient chercher. Ici, c'est le formulaire replié qu'il
@@ -80,7 +82,18 @@
 		<div class="grid gap-3 sm:grid-cols-[auto_1fr]">
 			<div class="w-20">
 				<Label for="list-emoji">{t('lists.emoji')}</Label>
-				<Input id="list-emoji" bind:value={emoji} data-test-id="list-emoji" maxlength={2} />
+	<!-- Même palette que pour les rayons : un emoji ne se tape pas au clavier d'un ordinateur. -->
+			<button
+				type="button"
+				id="list-emoji"
+				onclick={() => picker?.show()}
+				aria-haspopup="dialog"
+				data-test-id="list-emoji"
+				class="border-input bg-background fl-press grid min-h-[max(2.75rem,44px)] w-full place-items-center rounded-lg border text-2xl"
+			>
+				<span aria-hidden="true">{emoji}</span>
+				<span class="sr-only">{t('emojiPicker.current', { emoji: emoji })}</span>
+			</button>
 			</div>
 			<div>
 				<Label for="list-name">{t('lists.name')}</Label>
@@ -141,3 +154,5 @@
 		{/each}
 	</ul>
 {/if}
+
+<EmojiPicker bind:this={picker} value={emoji} onpick={(choix) => (emoji = choix)} />
