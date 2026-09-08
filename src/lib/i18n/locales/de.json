@@ -150,6 +150,7 @@
 	},
 	"list": {
 		"shop": "Geschäft",
+		"chooseShop": "Geschäft auswählen",
 		"learnedShop": "Gelernter Weg",
 		"back": "Zurück zu den Listen",
 		"notFound": "Liste nicht gefunden.",

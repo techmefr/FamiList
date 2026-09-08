@@ -150,6 +150,7 @@
 	},
 	"list": {
 		"shop": "Shop",
+		"chooseShop": "Choose a shop",
 		"learnedShop": "Learned route",
 		"back": "Back to lists",
 		"notFound": "List not found.",

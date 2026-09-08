@@ -150,6 +150,7 @@
 	},
 	"list": {
 		"shop": "Magasin",
+		"chooseShop": "Choisir un magasin",
 		"learnedShop": "Parcours appris",
 		"back": "Retour aux listes",
 		"notFound": "Liste introuvable.",
