@@ -14,7 +14,8 @@
 	import { Input } from '$lib/components/ui/input';
 	import { Label } from '$lib/components/ui/label';
 	import EmojiPicker from '$components/app/EmojiPicker.svelte';
-	import { Plus, Trash2 } from '@lucide/svelte';
+	import { Plus, Trash2, ListChecks } from '@lucide/svelte';
+	import IconField from '$components/app/IconField.svelte';
 
 	let creating = $state(false);
 	let name = $state('');
@@ -97,7 +98,15 @@
 			</div>
 			<div>
 				<Label for="list-name">{t('lists.name')}</Label>
-				<Input id="list-name" bind:value={name} data-test-id="list-name" required />
+				<IconField icon={ListChecks}>
+					<Input
+						id="list-name"
+						bind:value={name}
+						data-test-id="list-name"
+						required
+						placeholder={t('lists.namePlaceholder')}
+					/>
+				</IconField>
 			</div>
 		</div>
 		<Button type="submit" data-test-id="list-create" class="fl-press">{t('common.save')}</Button>

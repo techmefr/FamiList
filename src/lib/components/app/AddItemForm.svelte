@@ -6,7 +6,8 @@
 	import { Button } from '$lib/components/ui/button';
 	import { Input } from '$lib/components/ui/input';
 	import { Label } from '$lib/components/ui/label';
-	import { Plus } from '@lucide/svelte';
+	import { Plus, ShoppingBasket, Hash, Ruler, LayoutList } from '@lucide/svelte';
+	import IconField from '$components/app/IconField.svelte';
 
 	let { listId }: { listId: string } = $props();
 
@@ -41,44 +42,64 @@
 	<div class="grid gap-3 sm:grid-cols-[2fr_auto_auto]">
 		<div class="min-w-0">
 			<Label for="item-name">{t('add.name')}</Label>
-			<Input id="item-name" bind:value={name} data-test-id="add-name" required />
+			<IconField icon={ShoppingBasket}>
+				<Input
+					id="item-name"
+					bind:value={name}
+					data-test-id="add-name"
+					required
+					placeholder={t('add.namePlaceholder')}
+				/>
+			</IconField>
 		</div>
 		<div class="sm:w-24">
 			<Label for="item-qty">{t('add.qty')}</Label>
-			<Input id="item-qty" bind:value={qty} data-test-id="add-qty" inputmode="decimal" />
+			<IconField icon={Hash}>
+				<Input
+					id="item-qty"
+					bind:value={qty}
+					data-test-id="add-qty"
+					inputmode="decimal"
+					placeholder={t('add.qtyPlaceholder')}
+				/>
+			</IconField>
 		</div>
 		<div class="min-w-0">
 			<Label for="item-unit">{t('add.unit')}</Label>
-			<select
-				id="item-unit"
-				bind:value={unit}
-				data-test-id="add-unit"
-				class="border-input bg-background min-h-[max(2.75rem,44px)] w-full rounded-md border px-3 py-1"
-			>
-				{#each UNITS as id (id)}
-					<option value={id}>{t(`units.${id}`)}</option>
-				{/each}
-			</select>
+			<IconField icon={Ruler}>
+				<select
+					id="item-unit"
+					bind:value={unit}
+					data-test-id="add-unit"
+					class="border-input bg-background min-h-[max(2.75rem,44px)] w-full rounded-md border px-3 py-1"
+				>
+					{#each UNITS as id (id)}
+						<option value={id}>{t(`units.${id}`)}</option>
+					{/each}
+				</select>
+			</IconField>
 		</div>
 	</div>
 
 	<div>
 		<Label for="item-aisle">{t('add.aisle')}</Label>
-		<select
-			id="item-aisle"
-			bind:value={aisleId}
-			data-test-id="add-aisle"
-			class="border-input bg-background min-h-[max(2.75rem,44px)] w-full rounded-md border px-3 py-1"
-		>
-			<option value="">
-				{suggested
-					? t('add.aisleGuessed', { name: data.aisle(suggested)?.name ?? suggested })
-					: t('add.aisleAuto')}
-			</option>
-			{#each data.aisles as aisle (aisle.id)}
-				<option value={aisle.id}>{aisle.emoji} {aisle.name}</option>
-			{/each}
-		</select>
+		<IconField icon={LayoutList}>
+			<select
+				id="item-aisle"
+				bind:value={aisleId}
+				data-test-id="add-aisle"
+				class="border-input bg-background min-h-[max(2.75rem,44px)] w-full rounded-md border px-3 py-1"
+			>
+				<option value="">
+					{suggested
+						? t('add.aisleGuessed', { name: data.aisle(suggested)?.name ?? suggested })
+						: t('add.aisleAuto')}
+				</option>
+				{#each data.aisles as aisle (aisle.id)}
+					<option value={aisle.id}>{aisle.emoji} {aisle.name}</option>
+				{/each}
+			</select>
+		</IconField>
 	</div>
 
 	<Button type="submit" data-test-id="add-submit" class="fl-press w-full sm:w-auto">

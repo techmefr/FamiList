@@ -16,7 +16,8 @@
 	import { Button } from '$lib/components/ui/button';
 	import { Input } from '$lib/components/ui/input';
 	import { Label } from '$lib/components/ui/label';
-	import { Plus, Trash2, ScanLine } from '@lucide/svelte';
+	import { Plus, Trash2, ScanLine, CreditCard, Barcode, Star } from '@lucide/svelte';
+	import IconField from '$components/app/IconField.svelte';
 
 	let openCardId = $state<string | null>(null);
 	let adding = $state(false);
@@ -138,12 +139,28 @@
 		>
 			<div>
 				<Label for="card-name">{t('cards.name')}</Label>
-				<Input id="card-name" bind:value={name} data-test-id="card-name" required />
+				<IconField icon={CreditCard}>
+					<Input
+						id="card-name"
+						bind:value={name}
+						data-test-id="card-name"
+						required
+						placeholder={t('cards.namePlaceholder')}
+					/>
+				</IconField>
 			</div>
 
 			<div>
 				<Label for="card-code">{t('cards.code')}</Label>
-				<Input id="card-code" bind:value={code} data-test-id="card-code" required />
+				<IconField icon={Barcode}>
+					<Input
+						id="card-code"
+						bind:value={code}
+						data-test-id="card-code"
+						required
+						placeholder={t('cards.codePlaceholder')}
+					/>
+				</IconField>
 				<ScanButton
 					onScanned={(result) => {
 						code = result.value;
@@ -159,22 +176,32 @@
 
 			<div>
 				<Label for="card-type">{t('cards.format')}</Label>
-				<select
-					id="card-type"
-					bind:value={codeType}
-					data-test-id="card-type"
-					class="border-input bg-background w-full rounded-md border px-3 py-2"
-				>
-					<option value="">{t('cards.formatAuto', { format: t(`cards.type.${effectiveType}`) })}</option>
-					{#each CODE_TYPES as type (type)}
-						<option value={type}>{t(`cards.type.${type}`)}</option>
-					{/each}
-				</select>
+				<IconField icon={ScanLine}>
+					<select
+						id="card-type"
+						bind:value={codeType}
+						data-test-id="card-type"
+						class="border-input bg-background w-full rounded-md border px-3 py-2"
+					>
+						<option value="">{t('cards.formatAuto', { format: t(`cards.type.${effectiveType}`) })}</option>
+						{#each CODE_TYPES as type (type)}
+							<option value={type}>{t(`cards.type.${type}`)}</option>
+						{/each}
+					</select>
+				</IconField>
 			</div>
 
 			<div>
 				<Label for="card-points">{t('cards.points')}</Label>
-				<Input id="card-points" bind:value={points} inputmode="numeric" data-test-id="card-points" />
+				<IconField icon={Star}>
+					<Input
+						id="card-points"
+						bind:value={points}
+						inputmode="numeric"
+						data-test-id="card-points"
+						placeholder={t('cards.pointsPlaceholder')}
+					/>
+				</IconField>
 			</div>
 
 			<div class="flex flex-wrap gap-2">

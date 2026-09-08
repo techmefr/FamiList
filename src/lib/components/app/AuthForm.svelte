@@ -7,7 +7,8 @@
 	import { Input } from '$lib/components/ui/input';
 	import { Label } from '$lib/components/ui/label';
 	import * as Card from '$lib/components/ui/card';
-	import { CheckCircle2 } from '@lucide/svelte';
+	import { CheckCircle2, User, Mail, Lock, Eye, EyeOff } from '@lucide/svelte';
+	import IconField from '$components/app/IconField.svelte';
 
 	/**
 	 * Le même bloc sert à l'écran de connexion et à la dernière étape de l'accueil. Là-bas on arrive
@@ -128,20 +129,31 @@
 		{#if mode === 'signup'}
 			<div>
 				<Label for="auth-name">{t('auth.displayName')}</Label>
-				<Input id="auth-name" bind:value={displayName} data-test-id="auth-name" required />
+				<IconField icon={User}>
+					<Input
+						id="auth-name"
+						bind:value={displayName}
+						data-test-id="auth-name"
+						required
+						placeholder={t('auth.namePlaceholder')}
+					/>
+				</IconField>
 			</div>
 		{/if}
 
 		<div>
 			<Label for="auth-email">{t('auth.email')}</Label>
-			<Input
-				id="auth-email"
-				type="email"
-				bind:value={email}
-				data-test-id="auth-email"
-				autocomplete="email"
-				required
-			/>
+			<IconField icon={Mail}>
+				<Input
+					id="auth-email"
+					type="email"
+					bind:value={email}
+					data-test-id="auth-email"
+					autocomplete="email"
+					required
+					placeholder={t('auth.emailPlaceholder')}
+				/>
+			</IconField>
 		</div>
 
 		<div>
@@ -150,32 +162,49 @@
 				Le type change, pas le champ : réécrire l'élément lui ferait perdre le focus et le
 				curseur en plein milieu d'une saisie.
 			-->
-			<Input
-				id="auth-password"
-				type={reveal ? 'text' : 'password'}
-				bind:value={password}
-				data-test-id="auth-password"
-				autocomplete={mode === 'signin' ? 'current-password' : 'new-password'}
-				minlength={8}
-				aria-describedby={mode === 'signup' ? 'auth-password-hint' : undefined}
-				required
-			/>
+			<IconField icon={Lock}>
+				<Input
+					id="auth-password"
+					type={reveal ? 'text' : 'password'}
+					bind:value={password}
+					data-test-id="auth-password"
+					autocomplete={mode === 'signin' ? 'current-password' : 'new-password'}
+					minlength={8}
+					aria-describedby={mode === 'signup' ? 'auth-password-hint' : undefined}
+					required
+				/>
+
+				{#snippet action()}
+					<!--
+						Un bouton bascule, pas une case : `aria-pressed` dit l'état, et le libellé ne
+						change pas sous le curseur du lecteur d'écran. `tabindex={-1}` serait plus
+						reposant à la tabulation, mais priverait du geste ceux qui n'ont que le clavier.
+					-->
+					<button
+						type="button"
+						onclick={() => (reveal = !reveal)}
+						aria-pressed={reveal}
+						aria-label={t('auth.showPassword')}
+						data-test-id="auth-reveal"
+						class="text-muted-foreground hover:text-foreground focus-visible:ring-ring
+							aria-pressed:text-primary flex size-11 items-center justify-center
+							rounded-md transition-colors focus-visible:ring-2 focus-visible:ring-inset
+							focus-visible:outline-none"
+					>
+						{#if reveal}
+							<EyeOff size={18} aria-hidden="true" />
+						{:else}
+							<Eye size={18} aria-hidden="true" />
+						{/if}
+					</button>
+				{/snippet}
+			</IconField>
 
 			{#if mode === 'signup'}
 				<p id="auth-password-hint" class="text-muted-foreground text-caption mt-2">
 					{t('auth.passwordHint')}
 				</p>
 			{/if}
-
-			<!--
-				Voir ce qu'on tape n'est pas un luxe quand le mot de passe fait huit caractères et que
-				l'écran est petit. Une case et non un œil posé dans le champ : le libellé dit ce qui se
-				passe, et rien n'a besoin d'être positionné par-dessus la saisie.
-			-->
-			<Label class="mt-3 gap-2.5 font-normal">
-				<input type="checkbox" bind:checked={reveal} data-test-id="auth-reveal" />
-				{t('auth.showPassword')}
-			</Label>
 		</div>
 
 		{#if session.error}

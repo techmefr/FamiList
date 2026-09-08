@@ -7,6 +7,7 @@
 	import { Input } from '$lib/components/ui/input';
 	import { Label } from '$lib/components/ui/label';
 	import { Search, X } from '@lucide/svelte';
+	import IconField from '$components/app/IconField.svelte';
 
 	let { value, onpick }: { value: string; onpick: (emoji: string) => void } = $props();
 
@@ -67,17 +68,7 @@
 
 		<div class="mt-4">
 			<Label for="emoji-search">{t('emojiPicker.search')}</Label>
-			<!--
-				La loupe est posée dans le champ plutôt qu'à côté : elle dit ce qu'on attend là sans
-				prendre une ligne, et le retrait intérieur lui laisse la place au lieu de la faire
-				chevaucher la saisie. `pe-` et non `pr-` : en arabe, le champ se lit dans l'autre sens.
-			-->
-			<div class="relative">
-				<Search
-					size={20}
-					aria-hidden="true"
-					class="text-muted-foreground pointer-events-none absolute start-3 top-1/2 -translate-y-1/2"
-				/>
+			<IconField icon={Search}>
 				<Input
 					id="emoji-search"
 					bind:ref={field}
@@ -86,9 +77,8 @@
 					placeholder={t('emojiPicker.searchPlaceholder')}
 					data-test-id="emoji-search"
 					autocomplete="off"
-					class="ps-11"
 				/>
-			</div>
+			</IconField>
 		</div>
 
 		<!--

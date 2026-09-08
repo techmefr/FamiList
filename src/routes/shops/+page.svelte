@@ -9,7 +9,8 @@
 	import * as Card from '$lib/components/ui/card';
 	import { Badge } from '$lib/components/ui/badge';
 	import EmojiPicker from '$components/app/EmojiPicker.svelte';
-	import { Plus } from '@lucide/svelte';
+	import { Plus, Store, LayoutList } from '@lucide/svelte';
+	import IconField from '$components/app/IconField.svelte';
 
 	let shopName = $state('');
 	let shopShort = $state('');
@@ -64,7 +65,15 @@
 	<div class="grid gap-3 sm:grid-cols-[1fr_auto]">
 		<div>
 			<Label for="shop-name">{t('shops.name')}</Label>
-			<Input id="shop-name" bind:value={shopName} data-test-id="shop-name" required />
+			<IconField icon={Store}>
+				<Input
+					id="shop-name"
+					bind:value={shopName}
+					data-test-id="shop-name"
+					required
+					placeholder={t('shops.namePlaceholder')}
+				/>
+			</IconField>
 		</div>
 		<!--
 			Le champ ne se remplit pas : il montre en filigrane ce qui sera pris si on n'y touche pas.
@@ -161,7 +170,15 @@
 		</div>
 		<div>
 			<Label for="aisle-name">{t('aisles.name')}</Label>
-			<Input id="aisle-name" bind:value={aisleName} data-test-id="aisle-name" required />
+			<IconField icon={LayoutList}>
+				<Input
+					id="aisle-name"
+					bind:value={aisleName}
+					data-test-id="aisle-name"
+					required
+					placeholder={t('aisles.namePlaceholder')}
+				/>
+			</IconField>
 		</div>
 	</div>
 	<Button type="submit" data-test-id="aisle-create">

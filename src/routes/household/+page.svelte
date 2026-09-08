@@ -8,7 +8,8 @@
 	import { Button } from '$lib/components/ui/button';
 	import { Input } from '$lib/components/ui/input';
 	import { Label } from '$lib/components/ui/label';
-	import { Users, Copy, Check } from '@lucide/svelte';
+	import { Users, Copy, Check, KeyRound } from '@lucide/svelte';
+	import IconField from '$components/app/IconField.svelte';
 
 	let invite = $state<{ code: string; expires: string } | null>(null);
 	let joinCode = $state('');
@@ -164,15 +165,18 @@
 		<form onsubmit={join} class="mt-4 flex flex-wrap items-end gap-3" data-test-id="join-form">
 			<div class="flex-1">
 				<Label for="join-code">{t('household.code')}</Label>
-				<Input
-					id="join-code"
-					bind:value={joinCode}
-					data-test-id="join-code"
-					maxlength={6}
-					autocapitalize="characters"
-					class="font-mono tracking-[0.3em] uppercase"
-					required
-				/>
+				<IconField icon={KeyRound}>
+					<Input
+						id="join-code"
+						bind:value={joinCode}
+						data-test-id="join-code"
+						maxlength={6}
+						autocapitalize="characters"
+						class="font-mono tracking-[0.3em] uppercase"
+						required
+						placeholder={t('household.codePlaceholder')}
+					/>
+				</IconField>
 			</div>
 			<Button type="submit" disabled={busy} data-test-id="join-submit">{t('household.join')}</Button>
 		</form>

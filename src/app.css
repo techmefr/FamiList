@@ -452,21 +452,68 @@
 }
 
 /**
- * Un libellé ne touche pas sa commande. Les composants shadcn n'apportent aucun écart entre les
- * deux : partout dans l'application, « Adresse e-mail » était posé à même le bord du champ, et
- * l'ensemble se lisait comme un seul bloc au lieu d'une question suivie de sa réponse.
+ * Les écarts d'un champ de saisie, en un seul endroit.
  *
- * La règle est ici plutôt qu'aux quinze endroits qui composent un champ : c'est une propriété du
- * couple, pas de chaque formulaire, et un champ écrit demain l'obtient sans qu'on y pense. Elle
- * vise le frère immédiat, donc rien ne bouge quand un texte d'aide s'intercale — là, l'écart est
- * une décision de mise en page qui s'écrit sur place.
+ * La règle tient en une phrase : le texte ne touche rien. Ni le bord du champ, ni le libellé
+ * au-dessus, ni l'aide en dessous. Les composants shadcn arrivent sans aucun de ces écarts —
+ * « Adresse e-mail » était posé à même le bord du champ, et la saisie collée au trait — et les
+ * poser à la main à chaque formulaire, c'est en oublier un sur trois.
  *
- * En rem : l'écart grandit avec la taille de texte choisie, comme le reste.
+ * Tout est en rem : les écarts grandissent avec la taille de texte choisie, comme le reste. Et
+ * tout est en propriétés logiques : en arabe, la même règle se lit de droite à gauche sans qu'on
+ * ait à l'écrire deux fois.
+ *
+ * Hors `@layer` volontairement, comme les autres règles de cette section : c'est le seul moyen de
+ * passer devant les utilitaires posés par les composants, qui sont régénérables.
  */
-[data-slot='label'] + input,
-[data-slot='label'] + select,
-[data-slot='label'] + textarea,
-[data-slot='label'] + button {
+
+/* Dedans. Les cases et les curseurs sont hors sujet : leur boîte est le dessin lui-même. */
+input:not([type='checkbox']):not([type='radio']):not([type='range']),
+select,
+textarea {
+	padding-inline: 0.875rem;
+	padding-block: 0.5rem;
+}
+
+/*
+ * Dedans encore, quand une icône occupe le début du champ. Le retrait est écrit ici plutôt qu'à
+ * chaque appel : c'est une conséquence de l'icône, pas une décision de mise en page, et un champ
+ * qui l'oublierait laisserait le dessin chevaucher la saisie.
+ */
+[data-slot='field'] > :is(input, select, textarea):not([type='checkbox']):not([type='radio']) {
+	padding-inline-start: 2.75rem;
+}
+
+/*
+ * Et symétriquement quand une commande occupe la fin du champ : le retrait suit la commande, il
+ * n'est pas à redemander. Sans lui, la fin de la saisie passe sous le bouton.
+ */
+[data-slot='field']:has(> [data-slot='field-action'])
+	> :is(input, select, textarea):not([type='checkbox']):not([type='radio']) {
+	padding-inline-end: max(2.75rem, 44px);
+}
+
+/*
+ * Au-dessus : le libellé et sa commande. Le bouton est de la partie — c'est ce que sont devenus
+ * les deux champs d'emoji —, et l'enveloppe à icône compte pour la commande qu'elle contient.
+ */
+[data-slot='label'] + :is(input, select, textarea, button, [data-slot='field']) {
+	margin-block-start: 0.5rem;
+}
+
+/*
+ * L'icône prend la couleur d'accent tant que le champ a le focus. C'est le seul mouvement de la
+ * série, et il sert : au clavier, il redit où l'on se trouve, en même temps que le contour.
+ *
+ * Écrit ici et non en variante Tailwind : `group-focus-within:text-primary` pèse exactement autant
+ * que `text-muted-foreground`, et c'est l'ordre de génération qui tranche — dans le mauvais sens.
+ */
+[data-slot='field']:focus-within > svg {
+	color: var(--primary);
+}
+
+/* En dessous : le texte d'aide ou le message d'erreur qui suit immédiatement le champ. */
+:is(input, select, textarea, [data-slot='field']) + :is(p, small) {
 	margin-block-start: 0.5rem;
 }
 

@@ -6,7 +6,15 @@
 	import { Button } from '$lib/components/ui/button';
 	import { Input } from '$lib/components/ui/input';
 	import { Label } from '$lib/components/ui/label';
-	import { ArrowLeft, Send, CalendarDays, UtensilsCrossed } from '@lucide/svelte';
+	import {
+		ArrowLeft,
+		Send,
+		CalendarDays,
+		UtensilsCrossed,
+		MessageCircleQuestionMark,
+		List
+	} from '@lucide/svelte';
+	import IconField from '$components/app/IconField.svelte';
 
 	const listId = $derived(page.params.id!);
 	const list = $derived(data.list(listId));
@@ -132,19 +140,29 @@
 		<form onsubmit={createPoll} class="bg-card mt-6 space-y-4 rounded-md border p-4" data-test-id="poll-form">
 			<div>
 				<Label for="poll-question">{t('chat.question')}</Label>
-				<Input id="poll-question" bind:value={question} data-test-id="poll-question" required />
+				<IconField icon={MessageCircleQuestionMark}>
+					<Input
+						id="poll-question"
+						bind:value={question}
+						data-test-id="poll-question"
+						required
+						placeholder={t('chat.questionPlaceholder')}
+					/>
+				</IconField>
 			</div>
 
 			<div>
 				<Label for="poll-choices">{t('chat.choices')}</Label>
-				<textarea
-					id="poll-choices"
-					bind:value={choices}
-					rows="4"
-					placeholder={t('chat.choicesPlaceholder')}
-					data-test-id="poll-choices"
-					class="border-input bg-background w-full rounded-md border p-2"
-				></textarea>
+				<IconField icon={List} align="top">
+					<textarea
+						id="poll-choices"
+						bind:value={choices}
+						rows="4"
+						placeholder={t('chat.choicesPlaceholder')}
+						data-test-id="poll-choices"
+						class="border-input bg-background w-full rounded-md border p-2"
+					></textarea>
+				</IconField>
 			</div>
 
 			<div class="flex flex-wrap gap-2">
