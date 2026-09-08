@@ -432,8 +432,10 @@
 		"unsupported": "The camera is not available here. The magnifier works on your phone.",
 		"frozen": "Frozen",
 		"zoom": "Magnification",
+		"contrast": "Contrast",
 		"light": "Light",
 		"freeze": "Freeze the picture",
-		"resume": "Resume"
+		"resume": "Resume",
+		"hint": "Move closer to the label, then freeze the image to read at your own pace."
 	}
 }

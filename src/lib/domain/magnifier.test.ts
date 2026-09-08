@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { digitalZoom, opticalZoom } from './magnifier';
+import { digitalZoom, opticalZoom, viewFilter } from './magnifier';
 
 describe('opticalZoom', () => {
 	it('vaut 1 quand l objectif ne zoome pas', () => {
@@ -34,5 +34,28 @@ describe('digitalZoom', () => {
 
 	it('porte tout le grossissement quand l objectif est fixe', () => {
 		expect(digitalZoom(4, 1)).toBe(4);
+	});
+});
+
+describe('viewFilter', () => {
+	it('ne touche pas à l’image quand aucune aide n’est demandée', () => {
+		expect(viewFilter({ contrast: false, brighten: false })).toBe('none');
+	});
+
+	it('éclaircit un peu quand la torche est logicielle', () => {
+		expect(viewFilter({ contrast: false, brighten: true })).toBe(
+			'brightness(1.35) contrast(1.05)'
+		);
+	});
+
+	it('retire la couleur et écarte les gris en mode contraste', () => {
+		expect(viewFilter({ contrast: true, brighten: false })).toBe('grayscale(1) contrast(1.9)');
+	});
+
+	// Le contraste fort remplace le léger de la torche : les cumuler bouchait les noirs.
+	it('cumule les deux sans empiler deux contrastes', () => {
+		expect(viewFilter({ contrast: true, brighten: true })).toBe(
+			'brightness(1.35) grayscale(1) contrast(1.9)'
+		);
 	});
 });

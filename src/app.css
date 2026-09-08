@@ -561,6 +561,65 @@ textarea {
 }
 
 /*
+ * Commandes de la loupe : un disque, et son nom écrit dessous.
+ *
+ * Le disque est en pixels — c'est une cible tactile, pas du texte, et le cran de réglage n'a rien
+ * à y changer. Le libellé, lui, est du texte : il suit la taille choisie, et la largeur du bouton
+ * suit avec, sans jamais couper un mot. Trois boutons nommés tiennent dans 375 px au cran normal,
+ * et passent à la ligne au-delà plutôt que de déborder.
+ *
+ * Écrit ici et non en utilitaires : le même bouton se répète trois fois, et la version en classes
+ * Tailwind faisait quatre lignes illisibles recopiées à l'identique.
+ */
+.fl-magnifier-control {
+	display: flex;
+	min-inline-size: 92px;
+	max-inline-size: 8rem;
+	flex-direction: column;
+	align-items: center;
+	gap: 0.375rem;
+	border-radius: 1rem;
+	padding-block: 0.25rem;
+	font-size: var(--fl-caption);
+	line-height: 1.25;
+	color: #fff;
+	text-align: center;
+	text-wrap: balance;
+	overflow-wrap: anywhere;
+}
+
+.fl-magnifier-control:focus-visible {
+	outline: 3px solid #fff;
+	outline-offset: 3px;
+}
+
+.fl-magnifier-disc {
+	display: grid;
+	block-size: 64px;
+	inline-size: 64px;
+	place-items: center;
+	border: 1px solid rgb(255 255 255 / 0.2);
+	border-radius: 9999px;
+	background: rgb(255 255 255 / 0.15);
+	color: #fff;
+	backdrop-filter: blur(12px);
+	transition:
+		background-color var(--fl-dur-tap) var(--fl-ease),
+		color var(--fl-dur-tap) var(--fl-ease);
+}
+
+.fl-magnifier-control:hover .fl-magnifier-disc {
+	background: rgb(255 255 255 / 0.3);
+}
+
+/* Actif : le disque se remplit. C'est un changement de luminosité, pas de teinte — il tient sans
+   la couleur, et `aria-pressed` le dit à qui ne le voit pas. */
+.fl-magnifier-disc.is-on {
+	background: #fff;
+	color: #1c1917;
+}
+
+/*
  * Curseur vertical, pour la loupe. `writing-mode` et pas `appearance: slider-vertical` : cette
  * dernière est retirée des navigateurs, la première est la façon standard depuis.
  *

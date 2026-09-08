@@ -432,8 +432,10 @@
 		"unsupported": "La caméra n’est pas disponible ici. La loupe fonctionne sur votre téléphone.",
 		"frozen": "Image figée",
 		"zoom": "Grossissement",
+		"contrast": "Contraste",
 		"light": "Éclairer",
 		"freeze": "Figer l’image",
-		"resume": "Reprendre"
+		"resume": "Reprendre",
+		"hint": "Approchez l’étiquette, puis figez l’image pour la lire tranquillement."
 	}
 }

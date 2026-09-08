@@ -429,8 +429,10 @@
 		"unsupported": "Tsy misy fakan-tsary eto. Miasa amin’ny findainao ny fitarafana.",
 		"frozen": "Sary voafatotra",
 		"zoom": "Fanalehibiazana",
+		"contrast": "Fifanoherana",
 		"light": "Jiro",
 		"freeze": "Hamatotra ny sary",
-		"resume": "Hanohy"
+		"resume": "Hanohy",
+		"hint": "Ataovy akaiky ny marika, avy eo vonoy ny sary mba hamakiana amim-pilaminana."
 	}
 }

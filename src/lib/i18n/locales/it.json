@@ -432,8 +432,10 @@
 		"unsupported": "La fotocamera non è disponibile qui. La lente funziona sul tuo telefono.",
 		"frozen": "Immagine fissa",
 		"zoom": "Ingrandimento",
+		"contrast": "Contrasto",
 		"light": "Illumina",
 		"freeze": "Fissa l’immagine",
-		"resume": "Riprendi"
+		"resume": "Riprendi",
+		"hint": "Avvicina l’etichetta, poi blocca l’immagine per leggerla con calma."
 	}
 }

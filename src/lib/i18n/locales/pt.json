@@ -432,8 +432,10 @@
 		"unsupported": "A câmara não está disponível aqui. A lupa funciona no seu telemóvel.",
 		"frozen": "Imagem fixa",
 		"zoom": "Ampliação",
+		"contrast": "Contraste",
 		"light": "Iluminar",
 		"freeze": "Fixar a imagem",
-		"resume": "Retomar"
+		"resume": "Retomar",
+		"hint": "Aproxime o rótulo e congele a imagem para ler com calma."
 	}
 }

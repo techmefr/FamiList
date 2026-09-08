@@ -3,8 +3,15 @@
 	import { browser } from '$app/environment';
 	import { t } from '$lib/i18n/index.svelte';
 	import { session } from '$stores/session.svelte';
-	import { digitalZoom, opticalZoom, ZOOM_MAX, ZOOM_MIN, type ZoomRange } from '$domain/magnifier';
-	import { Zap, ZoomIn, Camera, Snowflake, Play } from '@lucide/svelte';
+	import {
+		digitalZoom,
+		opticalZoom,
+		viewFilter,
+		ZOOM_MAX,
+		ZOOM_MIN,
+		type ZoomRange
+	} from '$domain/magnifier';
+	import { Zap, Contrast, Camera, Snowflake, Play } from '@lucide/svelte';
 
 	type Status = 'loading' | 'live' | 'denied' | 'unsupported';
 
@@ -16,9 +23,17 @@
 	let status = $state<Status>('loading');
 	let zoom = $state(1.5);
 	let torch = $state(false);
+	let contrast = $state(false);
 	let frozen = $state(false);
 	let range = $state<ZoomRange | null>(null);
 	let hasTorch = $state(false);
+
+	/**
+	 * Le conseil d'usage ne s'affiche que tant qu'on n'a touché à rien. Il répond à la seule
+	 * question qu'on se pose en arrivant devant une image noire, et disparaît au premier geste :
+	 * laissé en place, il masquerait justement la ligne qu'on essaie de lire.
+	 */
+	let touched = $state(false);
 
 	const applied = $derived(opticalZoom(zoom, range));
 	const scale = $derived(digitalZoom(zoom, applied));
@@ -29,6 +44,7 @@
 	 * souvent à décoller le texte du fond.
 	 */
 	const brighten = $derived(torch && !hasTorch);
+	const filter = $derived(viewFilter({ contrast, brighten }));
 
 	interface AdvancedConstraint {
 		zoom?: number;
@@ -95,6 +111,7 @@
 	});
 
 	function toggleTorch() {
+		touched = true;
 		torch = !torch;
 		if (hasTorch) applyAdvanced({ torch });
 	}
@@ -109,6 +126,8 @@
 	 * obligeait à dégeler pour regarder un détail de plus près.
 	 */
 	function toggleFreeze() {
+		touched = true;
+
 		if (frozen) {
 			frozen = false;
 			return;
@@ -158,9 +177,7 @@
 			data-test-id="magnifier-video"
 			class="absolute inset-0 size-full object-cover transition-transform duration-200"
 			class:hidden={frozen}
-			style="transform: scale({scale}); filter: {brighten
-				? 'brightness(1.35) contrast(1.05)'
-				: 'none'}"
+			style="transform: scale({scale}); filter: {filter}"
 		></video>
 	{/if}
 
@@ -169,9 +186,7 @@
 		data-test-id="magnifier-frozen"
 		class="absolute inset-0 size-full object-cover transition-transform duration-200"
 		class:hidden={!frozen}
-		style="transform: scale({scale}); filter: {brighten
-			? 'brightness(1.35) contrast(1.05)'
-			: 'none'}"
+		style="transform: scale({scale}); filter: {filter}"
 	></canvas>
 
 	{#if status !== 'live'}
@@ -194,12 +209,15 @@
 		</div>
 	{/if}
 
-	<div
-		class="pointer-events-none absolute inset-x-[8%] top-[18%] bottom-[34%] rounded-[20px] border-2 border-white/30"
-		aria-hidden="true"
-	></div>
+	<!--
+		Le bandeau du haut dit une chose à la fois. L'image figée d'abord — c'est un état, et ne pas
+		le signaler laisse croire que la caméra a planté. Sinon, tant qu'on n'a touché à rien, la
+		phrase qui explique quoi faire : approcher, puis figer. Elle s'efface au premier geste.
 
-	<!-- Le bandeau ne sert plus qu'à signaler l'image figée : le reste du temps il répétait le titre. -->
+		Le cadre en pointillés qui délimitait une « zone de lecture » a disparu. Il ne cadrait rien —
+		l'image occupe tout l'écran — et laissait croire que le reste ne comptait pas, alors que
+		c'est justement en promenant le téléphone qu'on trouve la ligne à lire.
+	-->
 	{#if frozen}
 		<div class="pointer-events-none absolute inset-x-0 top-3 flex justify-center">
 			<p
@@ -208,6 +226,15 @@
 			>
 				<Snowflake size={15} aria-hidden="true" />
 				{t('magnifier.frozen')}
+			</p>
+		</div>
+	{:else if status === 'live' && !touched}
+		<div class="pointer-events-none absolute inset-x-3 top-3 flex justify-center">
+			<p
+				class="text-label max-w-sm rounded-2xl bg-black/60 px-4 py-3 text-center text-white backdrop-blur-md"
+				data-test-id="magnifier-hint"
+			>
+				{t('magnifier.hint')}
 			</p>
 		</div>
 	{/if}
@@ -223,11 +250,21 @@
 
 		`end` et pas `right` : en arabe, l'interface est en miroir et le curseur passe à gauche.
 	-->
+	<!--
+		Le niveau est passé au-dessus du curseur, et l'icône de loupe qui s'y trouvait a sauté : elle
+		répétait ce que le chiffre dit mieux. Lu à voix haute, un curseur annonce « 2,5 » ; le
+		`aria-valuetext` en fait « 2,5 × », qui est l'unité réelle.
+	-->
 	<div
 		class="absolute end-[16px] top-1/2 flex -translate-y-1/2 flex-col items-center gap-3
 			rounded-full border border-white/15 bg-black/55 px-[10px] py-[16px] backdrop-blur-lg"
 	>
-		<ZoomIn size={18} class="text-white/70" aria-hidden="true" />
+		<span
+			class="text-label font-semibold tabular-nums text-white"
+			data-test-id="magnifier-level"
+		>
+			{zoom.toFixed(1)}×
+		</span>
 
 		<input
 			id="magnifier-zoom"
@@ -236,50 +273,83 @@
 			max={ZOOM_MAX}
 			step="0.1"
 			bind:value={zoom}
+			oninput={() => (touched = true)}
 			aria-label={t('magnifier.zoom')}
+			aria-valuetext="{zoom.toFixed(1)}×"
 			data-test-id="magnifier-slider"
 			class="fl-range-vertical accent-[var(--primary)]"
 		/>
-
-		<span class="text-caption tabular-nums text-white" data-test-id="magnifier-level">
-			{zoom.toFixed(1)}×
-		</span>
 	</div>
 
 	<!--
-		Tailles en pixels, pas en rem : ces deux boutons ne portent qu'une icône, rien à y lire, et le
-		cran de texte n'a donc rien à y changer. En `size-16`, ils atteignaient 140 px au cran Confort
-		et la barre tenait dans 375 px au pixel près — une icône de plus et elle débordait.
+		Les commandes portent leur nom en toutes lettres. Une icône seule se devine — un éclair, un
+		flocon —, et c'est précisément ce qu'on ne veut pas demander à quelqu'un qui ouvre la loupe
+		parce qu'il ne déchiffre pas une étiquette. Le mot est aussi le nom lu par un lecteur
+		d'écran : plus d'`aria-label` qui dirait autre chose que ce qui est écrit.
+
+		Le disque reste en pixels, pas en rem : c'est une cible, pas du texte, et en `size-16` il
+		atteignait 140 px au cran Confort. Le libellé, lui, suit la taille de texte choisie — c'est
+		du texte, il doit grandir — et la rangée passe à la ligne plutôt que de déborder.
+	-->
+	<!--
+		Le dégradé sous la rangée n'est pas une décoration : les libellés sont blancs, et l'image
+		derrière est justement une étiquette de produit, donc claire une fois sur deux. Sans lui,
+		« Éclairer » et « Contraste » s'effaçaient sur fond crème. Il descend jusqu'au bas de l'écran
+		pour couvrir aussi ce qui dépasse sous les boutons.
 	-->
 	<div
-		class="absolute inset-x-0 bottom-28 flex items-center justify-center gap-[24px] px-[20px] md:bottom-10"
+		class="absolute inset-x-0 bottom-0 flex flex-wrap items-start justify-center gap-x-4 gap-y-3
+			bg-gradient-to-t from-black/85 via-black/55 to-transparent px-4 pt-12 pb-24 md:pb-8"
 	>
 		<button
 			type="button"
 			onclick={toggleTorch}
 			aria-pressed={torch}
-			aria-label={t('magnifier.light')}
 			data-test-id="magnifier-light"
-			class="grid size-[64px] min-h-[64px] place-items-center rounded-full border border-white/20 backdrop-blur-lg
-				{torch ? 'bg-white text-neutral-900' : 'bg-white/15 text-white'}"
+			class="fl-magnifier-control"
 		>
-			<Zap size={26} aria-hidden="true" />
+			<span class="fl-magnifier-disc {torch ? 'is-on' : ''}">
+				<Zap size={26} aria-hidden="true" />
+			</span>
+			{t('magnifier.light')}
 		</button>
 
 		<button
 			type="button"
 			onclick={toggleFreeze}
 			aria-pressed={frozen}
-			aria-label={frozen ? t('magnifier.resume') : t('magnifier.freeze')}
 			data-test-id="magnifier-freeze"
-			class="grid size-[64px] min-h-[64px] place-items-center rounded-full border border-white/20 backdrop-blur-lg
-				{frozen ? 'bg-white text-neutral-900' : 'bg-white/15 text-white'}"
+			class="fl-magnifier-control"
 		>
-			{#if frozen}
-				<Play size={26} aria-hidden="true" />
-			{:else}
-				<Snowflake size={26} aria-hidden="true" />
-			{/if}
+			<span class="fl-magnifier-disc {frozen ? 'is-on' : ''}">
+				{#if frozen}
+					<Play size={26} aria-hidden="true" />
+				{:else}
+					<Snowflake size={26} aria-hidden="true" />
+				{/if}
+			</span>
+			{frozen ? t('magnifier.resume') : t('magnifier.freeze')}
+		</button>
+
+		<!--
+			Le contraste sert quand le texte est imprimé en gris pâle, ou posé sur une photo : on
+			retire la couleur, qui ne dit rien ici, et on écarte les gris. C'est souvent ce qui fait
+			la différence entre une ligne devinée et une ligne lue.
+		-->
+		<button
+			type="button"
+			onclick={() => {
+				touched = true;
+				contrast = !contrast;
+			}}
+			aria-pressed={contrast}
+			data-test-id="magnifier-contrast"
+			class="fl-magnifier-control"
+		>
+			<span class="fl-magnifier-disc {contrast ? 'is-on' : ''}">
+				<Contrast size={26} aria-hidden="true" />
+			</span>
+			{t('magnifier.contrast')}
 		</button>
 	</div>
 </div>

@@ -432,8 +432,10 @@
 		"unsupported": "La cámara no está disponible aquí. La lupa funciona en tu teléfono.",
 		"frozen": "Imagen congelada",
 		"zoom": "Aumento",
+		"contrast": "Contraste",
 		"light": "Iluminar",
 		"freeze": "Congelar la imagen",
-		"resume": "Reanudar"
+		"resume": "Reanudar",
+		"hint": "Acerque la etiqueta y congele la imagen para leerla con calma."
 	}
 }

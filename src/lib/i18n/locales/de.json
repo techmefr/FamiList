@@ -432,8 +432,10 @@
 		"unsupported": "Die Kamera ist hier nicht verfügbar. Die Lupe funktioniert auf Ihrem Telefon.",
 		"frozen": "Standbild",
 		"zoom": "Vergrößerung",
+		"contrast": "Kontrast",
 		"light": "Licht",
 		"freeze": "Bild einfrieren",
-		"resume": "Fortsetzen"
+		"resume": "Fortsetzen",
+		"hint": "Näher an das Etikett gehen, dann das Bild einfrieren und in Ruhe lesen."
 	}
 }

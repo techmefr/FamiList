@@ -42,3 +42,33 @@ export function digitalZoom(requested: number, applied: number): number {
 
 	return applied > 0 ? Math.max(1, target / applied) : target;
 }
+
+/**
+ * Ce qu'on applique à l'image pour la rendre lisible, en un seul filtre CSS.
+ *
+ * Deux besoins différents, et qui se cumulent. Sans torche matérielle, on éclaircit l'image
+ * reçue : ce n'est pas un vrai éclairage, mais sur une étiquette mate un peu grise, cela suffit
+ * souvent à décoller le texte du fond. Le mode contraste, lui, sert quand le texte est imprimé
+ * en gris clair sur fond blanc, ou en couleur sur une photo : on retire la couleur, qui ne porte
+ * ici aucune information, et on écarte les gris restants.
+ *
+ * Les deux contrastes ne s'empilent pas — celui de la torche est écrasé par celui du mode, qui
+ * est plus fort. Cumulés, ils bouchaient les noirs et mangeaient les jambages.
+ *
+ * Assemblé ici plutôt que dans le balisage : deux états qui se combinent, c'est exactement ce
+ * qu'on finit par écrire de travers dans une interpolation de chaîne.
+ */
+export interface ReadingAids {
+	contrast: boolean;
+	brighten: boolean;
+}
+
+export function viewFilter({ contrast, brighten }: ReadingAids): string {
+	const filters: string[] = [];
+
+	if (brighten) filters.push('brightness(1.35)');
+	if (contrast) filters.push('grayscale(1)', 'contrast(1.9)');
+	else if (brighten) filters.push('contrast(1.05)');
+
+	return filters.length > 0 ? filters.join(' ') : 'none';
+}
