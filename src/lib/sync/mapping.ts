@@ -13,6 +13,7 @@ import type {
 	ShopLayout
 } from '$db/schema';
 import { itemOrderKey, pollVoteKey } from '$db/schema';
+import { DEFAULT_MEMBER_TINT, DEFAULT_TINT } from '$domain/tint';
 import { DEFAULT_UNIT } from '$domain/units';
 
 /**
@@ -29,7 +30,7 @@ export const toShop = (row: Row): Shop => ({
 	id: text(row.id),
 	name: text(row.name),
 	short: text(row.short),
-	tint: text(row.tint, '#5A4A2F')
+	tint: text(row.tint, DEFAULT_TINT)
 });
 
 export const fromShop = (shop: Shop, householdId: string) => ({
@@ -61,7 +62,7 @@ export const toList = (row: Row, memberIds: string[]): List => ({
 	id: text(row.id),
 	name: text(row.name),
 	emoji: text(row.emoji, '🛒'),
-	color: text(row.color, '#C8532A'),
+	color: text(row.color, DEFAULT_TINT),
 	memberIds,
 	eventDate: typeof row.event_date === 'string' ? row.event_date : undefined
 });
@@ -119,7 +120,7 @@ export const toCard = (row: Row): LoyaltyCard => ({
 	code: text(row.code),
 	codeType: (text(row.code_type, 'code_39') as LoyaltyCard['codeType']) ?? 'code_39',
 	points: typeof row.points === 'number' ? row.points : 0,
-	tint: text(row.tint, '#5A4A2F'),
+	tint: text(row.tint, DEFAULT_TINT),
 	grad: text(row.grad),
 	notes: typeof row.notes === 'string' ? row.notes : undefined
 });
@@ -150,7 +151,7 @@ export const toMember = (row: Row, profile: Row | undefined, currentUserId: stri
 		name,
 		role: id === currentUserId ? 'self' : text(row.role, 'member'),
 		initial: text(profile?.initial) || name.slice(0, 1).toUpperCase(),
-		tint: text(row.tint, '#A94008')
+		tint: text(row.tint, DEFAULT_MEMBER_TINT)
 	};
 };
 

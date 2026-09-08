@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { data } from '$stores/data.svelte';
 	import { t } from '$lib/i18n/index.svelte';
-	import { tintForWhiteText } from '$domain/tint';
+	import { TINTS, tintForWhiteText } from '$domain/tint';
 	import { Button } from '$lib/components/ui/button';
 	import { Input } from '$lib/components/ui/input';
 	import { Label } from '$lib/components/ui/label';
@@ -13,8 +13,6 @@
 	let shopShort = $state('');
 	let aisleName = $state('');
 	let aisleEmoji = $state('🛒');
-
-	const TINTS = ['#5A4A2F', '#8B3A62', '#4A6B3A', '#C67A3E', '#2563EB', '#1F5C3A'];
 
 	function addShop(event: SubmitEvent) {
 		event.preventDefault();

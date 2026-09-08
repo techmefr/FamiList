@@ -6,6 +6,7 @@
 	import { feedback } from '$stores/feedback.svelte';
 	import { motionMs } from '$stores/settings.svelte';
 	import { t } from '$lib/i18n/index.svelte';
+	import { TINTS } from '$domain/tint';
 	import * as Card from '$lib/components/ui/card';
 	import { Badge } from '$lib/components/ui/badge';
 	import { Button } from '$lib/components/ui/button';
@@ -27,7 +28,7 @@
 		if (!name.trim()) return;
 
 		feedback.play('add');
-		data.addList({ name, emoji, color: '#C8532A' });
+		data.addList({ name, emoji, color: TINTS[data.lists.length % TINTS.length] });
 		name = '';
 		emoji = '🛒';
 		creating = false;

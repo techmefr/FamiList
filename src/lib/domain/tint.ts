@@ -10,6 +10,30 @@
  * On assombrit par paliers jusqu'à ce que le blanc passe. La teinte reste reconnaissable — c'est
  * la même couleur, plus foncée — et la convergence est garantie puisque le noir donne 21:1.
  */
+/**
+ * Palette des teintes attribuées aux magasins, aux cartes et aux listes.
+ *
+ * Ce sont des couleurs de repérage, pas la couleur d'accent : deux magasins doivent se distinguer
+ * l'un de l'autre, les aligner sur l'accent les rendrait tous identiques. On les parcourt en
+ * boucle à la création pour que les premières créations se distinguent d'emblée.
+ *
+ * Elles passent toutes par `tintForWhiteText` à l'affichage, qui les assombrit au besoin : la
+ * liste n'a donc pas à être vérifiée au contraste, seule sa lisibilité de teinte compte.
+ */
+export const TINTS = ['#5A4A2F', '#8B3A62', '#4A6B3A', '#C67A3E', '#2563EB', '#1F5C3A'];
+
+/** Teinte reprise quand la base n'en porte pas, pour un magasin, une carte ou une liste. */
+export const DEFAULT_TINT = TINTS[0];
+
+/**
+ * Teinte de repli d'un membre : la terracotta par défaut, recopiée de --primary dans app.css. Un
+ * membre sans couleur est un membre qui n'a pas encore choisi, autant lui donner celle de l'app.
+ */
+export const DEFAULT_MEMBER_TINT = '#A94008';
+
+/** Bas du dégradé d'une carte de fidélité, commun à toutes les teintes. */
+export const CARD_GRADIENT_END = '#2E2518';
+
 const CIBLE = 4.5;
 const PALIER = 0.04;
 

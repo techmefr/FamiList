@@ -8,6 +8,7 @@
 	import { t } from '$lib/i18n/index.svelte';
 	import { CODE_TYPES, guessCodeType, type CodeType } from '$domain/code-format';
 	import { normalizeEan13 } from '$domain/barcode';
+	import { CARD_GRADIENT_END, DEFAULT_TINT } from '$domain/tint';
 	import LoyaltyCardFace from '$components/app/LoyaltyCardFace.svelte';
 	import CardFullscreen from '$components/app/CardFullscreen.svelte';
 	import ScanButton from '$components/app/ScanButton.svelte';
@@ -31,7 +32,7 @@
 	const invalidEan = $derived(effectiveType === 'ean_13' && !normalizeEan13(code));
 
 	const shopTint = (shopName: string) =>
-		data.shops.find((s) => s.name === shopName)?.tint ?? '#5A4A2F';
+		data.shops.find((s) => s.name === shopName)?.tint ?? DEFAULT_TINT;
 
 	function reset() {
 		adding = false;
@@ -56,7 +57,7 @@
 			codeType: effectiveType,
 			points: Number(points) || 0,
 			tint,
-			grad: `linear-gradient(135deg, ${tint} 0%, #2E2518 100%)`
+			grad: `linear-gradient(135deg, ${tint} 0%, ${CARD_GRADIENT_END} 100%)`
 		});
 
 		reset();
