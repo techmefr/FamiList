@@ -44,14 +44,14 @@
 	role="dialog"
 	aria-modal="true"
 	aria-label={card.name}
-	data-test="card-fullscreen"
+	data-test-id="card-fullscreen"
 >
 	<div class="flex items-center gap-3 px-4 pt-6 pb-2 text-white">
 		<button
 			type="button"
 			onclick={onClose}
 			aria-label={t('common.close')}
-			data-test="card-close"
+			data-test-id="card-close"
 			class="grid size-11 min-w-[44px] shrink-0 place-items-center rounded-full border border-white/20 bg-white/10"
 		>
 			<X size={20} aria-hidden="true" />
@@ -89,7 +89,7 @@
 				<Button
 					variant={draft === null ? 'outline' : 'default'}
 					onclick={() => (draft === null ? (draft = card.notes ?? '') : save())}
-					data-test="card-notes-toggle"
+					data-test-id="card-notes-toggle"
 				>
 					{draft === null ? t('common.edit') : t('common.save')}
 				</Button>
@@ -100,11 +100,11 @@
 					bind:value={draft}
 					rows="3"
 					placeholder={t('cards.notesPlaceholder')}
-					data-test="card-notes"
+					data-test-id="card-notes"
 					class="w-full rounded-md border border-white/20 bg-black/40 p-3 text-white"
 				></textarea>
 			{:else}
-				<p class="text-white/85" data-test="card-notes-text">
+				<p class="text-white/85" data-test-id="card-notes-text">
 					{card.notes || t('cards.noNotes')}
 				</p>
 			{/if}

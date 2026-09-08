@@ -66,7 +66,7 @@
 		role="img"
 		aria-label={t('cards.qrLabel')}
 		class="h-auto w-full max-w-[17rem]"
-		data-test="code-qr"
+		data-test-id="code-qr"
 	>
 		<rect width={total} height={total} fill="#fff" />
 		{#each runs as run (`${run.y}-${run.x}`)}
@@ -82,7 +82,7 @@
 		shape-rendering="crispEdges"
 		role="img"
 		aria-label={t('cards.barcodeLabel')}
-		data-test="code-barcode"
+		data-test-id="code-barcode"
 	>
 		<rect width={barGeometry.total} height={height} fill="#fff" />
 		{#each barGeometry.rects as bar (bar.x)}
@@ -97,7 +97,7 @@
 		blanc en toutes circonstances pour rester scannable. Le jeton de thème, lui, s'éclaircit en thème
 		sombre — le message tombait alors à 2,4:1 sur ce blanc.
 	-->
-	<p class="text-label px-4 py-6 text-center text-red-700" data-test="code-invalid">
+	<p class="text-label px-4 py-6 text-center text-red-700" data-test-id="code-invalid">
 		{t('cards.invalidCode')}
 	</p>
 {/if}

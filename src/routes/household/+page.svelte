@@ -88,7 +88,7 @@
 <h1 class="text-h1 font-semibold">{t('household.title')}</h1>
 
 {#if error}
-	<p class="text-destructive mt-4" role="alert" data-test="household-error">{error}</p>
+	<p class="text-destructive mt-4" role="alert" data-test-id="household-error">{error}</p>
 {/if}
 
 <Card.Root class="mt-6">
@@ -101,7 +101,7 @@
 	<Card.Content>
 		<ul class="space-y-2">
 			{#each data.members as member (member.id)}
-				<li class="flex flex-wrap items-center gap-3" data-test="household-member">
+				<li class="flex flex-wrap items-center gap-3" data-test-class="household-member">
 					<span
 						class="text-caption grid size-9 shrink-0 place-items-center rounded-full font-semibold text-white"
 						style="background: {tintForWhiteText(member.tint)}"
@@ -116,7 +116,7 @@
 		</ul>
 
 		{#if data.members.length > 1}
-			<Button variant="outline" onclick={leave} disabled={busy} data-test="household-leave" class="mt-4">
+			<Button variant="outline" onclick={leave} disabled={busy} data-test-id="household-leave" class="mt-4">
 				{t('household.leave')}
 			</Button>
 		{/if}
@@ -132,8 +132,8 @@
 
 		{#if invite}
 			<div class="mt-4 flex flex-wrap items-center gap-3">
-				<p class="text-display font-mono tracking-[0.3em]" data-test="invite-code">{invite.code}</p>
-				<Button variant="outline" onclick={copyCode} data-test="invite-copy">
+				<p class="text-display font-mono tracking-[0.3em]" data-test-id="invite-code">{invite.code}</p>
+				<Button variant="outline" onclick={copyCode} data-test-id="invite-copy">
 					{#if copied}
 						<Check size={16} aria-hidden="true" />
 						{t('household.copied')}
@@ -147,7 +147,7 @@
 				{t('household.inviteExpires', { date: invite.expires })}
 			</p>
 		{:else}
-			<Button onclick={createInvite} disabled={busy} data-test="invite-create" class="mt-4">
+			<Button onclick={createInvite} disabled={busy} data-test-id="invite-create" class="mt-4">
 				{t('household.createInvite')}
 			</Button>
 		{/if}
@@ -161,20 +161,20 @@
 	<Card.Content>
 		<p class="text-muted-foreground text-label">{t('household.joinHint')}</p>
 
-		<form onsubmit={join} class="mt-4 flex flex-wrap items-end gap-3" data-test="join-form">
+		<form onsubmit={join} class="mt-4 flex flex-wrap items-end gap-3" data-test-id="join-form">
 			<div class="flex-1">
 				<Label for="join-code">{t('household.code')}</Label>
 				<Input
 					id="join-code"
 					bind:value={joinCode}
-					data-test="join-code"
+					data-test-id="join-code"
 					maxlength={6}
 					autocapitalize="characters"
 					class="font-mono tracking-[0.3em] uppercase"
 					required
 				/>
 			</div>
-			<Button type="submit" disabled={busy} data-test="join-submit">{t('household.join')}</Button>
+			<Button type="submit" disabled={busy} data-test-id="join-submit">{t('household.join')}</Button>
 		</form>
 	</Card.Content>
 </Card.Root>

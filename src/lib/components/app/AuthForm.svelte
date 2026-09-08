@@ -61,14 +61,14 @@
 	</Card.Root>
 {:else}
 	{#if providers.length > 0}
-		<div class="mt-6 flex flex-wrap gap-2" data-test="auth-providers">
+		<div class="mt-6 flex flex-wrap gap-2" data-test-id="auth-providers">
 			{#each providers as provider (provider.id)}
 				<Button
 					variant="outline"
 					class="flex-auto basis-[10rem]"
 					disabled={busy}
 					onclick={() => continueWith(provider.id)}
-					data-test="auth-provider-{provider.id}"
+					data-test-id="auth-provider-{provider.id}"
 				>
 					{t('auth.continueWith', { provider: provider.label })}
 				</Button>
@@ -86,24 +86,24 @@
 		<Button
 			variant={mode === 'signin' ? 'default' : 'outline'}
 			onclick={() => (chosen = 'signin')}
-			data-test="mode-signin"
+			data-test-id="mode-signin"
 		>
 			{t('auth.signIn')}
 		</Button>
 		<Button
 			variant={mode === 'signup' ? 'default' : 'outline'}
 			onclick={() => (chosen = 'signup')}
-			data-test="mode-signup"
+			data-test-id="mode-signup"
 		>
 			{t('auth.signUp')}
 		</Button>
 	</div>
 
-	<form onsubmit={submit} class="bg-card mt-4 space-y-4 rounded-md border p-4" data-test="auth-form">
+	<form onsubmit={submit} class="bg-card mt-4 space-y-4 rounded-md border p-4" data-test-id="auth-form">
 		{#if mode === 'signup'}
 			<div>
 				<Label for="auth-name">{t('auth.displayName')}</Label>
-				<Input id="auth-name" bind:value={displayName} data-test="auth-name" required />
+				<Input id="auth-name" bind:value={displayName} data-test-id="auth-name" required />
 			</div>
 		{/if}
 
@@ -113,7 +113,7 @@
 				id="auth-email"
 				type="email"
 				bind:value={email}
-				data-test="auth-email"
+				data-test-id="auth-email"
 				autocomplete="email"
 				required
 			/>
@@ -125,7 +125,7 @@
 				id="auth-password"
 				type="password"
 				bind:value={password}
-				data-test="auth-password"
+				data-test-id="auth-password"
 				autocomplete={mode === 'signin' ? 'current-password' : 'new-password'}
 				minlength={8}
 				required
@@ -133,12 +133,12 @@
 		</div>
 
 		{#if session.error}
-			<p class="text-destructive text-label" role="alert" data-test="auth-error">
+			<p class="text-destructive text-label" role="alert" data-test-id="auth-error">
 				{session.error}
 			</p>
 		{/if}
 
-		<Button type="submit" disabled={busy} data-test="auth-submit" class="w-full">
+		<Button type="submit" disabled={busy} data-test-id="auth-submit" class="w-full">
 			{busy ? t('common.loading') : mode === 'signin' ? t('auth.signIn') : t('auth.signUp')}
 		</Button>
 

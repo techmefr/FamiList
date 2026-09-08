@@ -148,14 +148,14 @@
 	Plein écran, mais sous la barre de navigation : au-dessus, l'image de la caméra recouvrirait les
 	onglets et il n'y aurait plus aucun moyen de quitter la loupe.
 -->
-<div class="fixed inset-0 z-0 overflow-hidden bg-black" data-test="magnifier">
+<div class="fixed inset-0 z-0 overflow-hidden bg-black" data-test-id="magnifier">
 	{#if status === 'live'}
 		<!-- svelte-ignore a11y_media_has_caption -->
 		<video
 			bind:this={video}
 			playsinline
 			muted
-			data-test="magnifier-video"
+			data-test-id="magnifier-video"
 			class="absolute inset-0 size-full object-cover transition-transform duration-200"
 			class:hidden={frozen}
 			style="transform: scale({scale}); filter: {brighten
@@ -166,7 +166,7 @@
 
 	<canvas
 		bind:this={canvas}
-		data-test="magnifier-frozen"
+		data-test-id="magnifier-frozen"
 		class="absolute inset-0 size-full object-cover transition-transform duration-200"
 		class:hidden={!frozen}
 		style="transform: scale({scale}); filter: {brighten
@@ -182,7 +182,7 @@
 				{:else}
 					<div
 						class="max-w-sm min-w-0 rounded-lg border border-white/15 bg-white/5 p-6"
-						data-test="magnifier-unavailable"
+						data-test-id="magnifier-unavailable"
 					>
 						<Camera size={32} class="mx-auto text-[var(--primary)]" aria-hidden="true" />
 						<p class="text-product mt-4 text-white">
@@ -204,7 +204,7 @@
 		<div class="pointer-events-none absolute inset-x-0 top-3 flex justify-center">
 			<p
 				class="text-caption flex items-center gap-2 rounded-full bg-black/60 px-4 py-2 font-semibold text-white backdrop-blur-md"
-				data-test="magnifier-frozen-badge"
+				data-test-id="magnifier-frozen-badge"
 			>
 				<Snowflake size={15} aria-hidden="true" />
 				{t('magnifier.frozen')}
@@ -237,11 +237,11 @@
 			step="0.1"
 			bind:value={zoom}
 			aria-label={t('magnifier.zoom')}
-			data-test="magnifier-slider"
+			data-test-id="magnifier-slider"
 			class="fl-range-vertical accent-[var(--primary)]"
 		/>
 
-		<span class="text-caption tabular-nums text-white" data-test="magnifier-level">
+		<span class="text-caption tabular-nums text-white" data-test-id="magnifier-level">
 			{zoom.toFixed(1)}×
 		</span>
 	</div>
@@ -259,7 +259,7 @@
 			onclick={toggleTorch}
 			aria-pressed={torch}
 			aria-label={t('magnifier.light')}
-			data-test="magnifier-light"
+			data-test-id="magnifier-light"
 			class="grid size-[64px] min-h-[64px] place-items-center rounded-full border border-white/20 backdrop-blur-lg
 				{torch ? 'bg-white text-neutral-900' : 'bg-white/15 text-white'}"
 		>
@@ -271,7 +271,7 @@
 			onclick={toggleFreeze}
 			aria-pressed={frozen}
 			aria-label={frozen ? t('magnifier.resume') : t('magnifier.freeze')}
-			data-test="magnifier-freeze"
+			data-test-id="magnifier-freeze"
 			class="grid size-[64px] min-h-[64px] place-items-center rounded-full border border-white/20 backdrop-blur-lg
 				{frozen ? 'bg-white text-neutral-900' : 'bg-white/15 text-white'}"
 		>

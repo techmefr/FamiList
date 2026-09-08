@@ -70,7 +70,7 @@
 <h1 class="text-h1 font-semibold">{t('admin.title')}</h1>
 
 {#if !session.isAdmin}
-	<p class="text-muted-foreground mt-6" data-test="admin-denied">{t('admin.denied')}</p>
+	<p class="text-muted-foreground mt-6" data-test-id="admin-denied">{t('admin.denied')}</p>
 {:else if loading}
 	<p class="text-muted-foreground mt-6">{t('common.loading')}</p>
 {:else}
@@ -79,26 +79,26 @@
 	{/if}
 
 	{#if notice}
-		<p class="text-primary mt-6" role="status" data-test="admin-notice">{notice}</p>
+		<p class="text-primary mt-6" role="status" data-test-id="admin-notice">{notice}</p>
 	{/if}
 
 	{#if accounts.some((account) => account.is_demo)}
 		<div class="bg-card mt-6 rounded-md border p-4">
 			<p class="text-label">{t('admin.demoHint')}</p>
-			<Button variant="outline" onclick={resetDemo} data-test="reset-demo" class="mt-3">
+			<Button variant="outline" onclick={resetDemo} data-test-id="reset-demo" class="mt-3">
 				{t('admin.resetDemo')}
 			</Button>
 		</div>
 	{/if}
 
 	{#if accounts.length === 0}
-		<p class="text-muted-foreground mt-6" data-test="admin-empty">{t('admin.empty')}</p>
+		<p class="text-muted-foreground mt-6" data-test-id="admin-empty">{t('admin.empty')}</p>
 	{:else}
 		<ul class="mt-6 space-y-3">
 			{#each accounts as account (account.id)}
 				{@const self = account.id === session.user?.id}
 				<li>
-					<Card.Root data-test="pending-account">
+					<Card.Root data-test-class="admin-pending-account">
 						<Card.Content class="flex flex-wrap items-center gap-4">
 							<div class="min-w-0 flex-1 basis-[12rem]">
 								<p class="text-product font-medium break-words">{account.display_name}</p>
@@ -113,11 +113,11 @@
 							</Badge>
 
 							{#if account.is_demo}
-								<Badge variant="secondary" data-test="demo-badge">{t('admin.demo')}</Badge>
+								<Badge variant="secondary" data-test-class="demo-badge">{t('admin.demo')}</Badge>
 							{/if}
 
 							{#if !self && account.status !== 'approved'}
-								<Button onclick={() => review(account.id, 'approved')} data-test="approve">
+								<Button onclick={() => review(account.id, 'approved')} data-test-class="admin-approve">
 									{t('admin.approve')}
 								</Button>
 							{/if}
@@ -125,7 +125,7 @@
 								<Button
 									variant="outline"
 									onclick={() => review(account.id, 'rejected')}
-									data-test="reject"
+									data-test-class="admin-reject"
 								>
 									{t('admin.reject')}
 								</Button>
@@ -135,7 +135,7 @@
 								<Button
 									variant="outline"
 									onclick={() => setDemo(account.id, !account.is_demo)}
-									data-test="toggle-demo"
+									data-test-class="toggle-demo"
 								>
 									{account.is_demo ? t('admin.unsetDemo') : t('admin.setDemo')}
 								</Button>

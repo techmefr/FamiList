@@ -61,7 +61,7 @@
 					playsinline
 					muted
 					class="w-full rounded-md bg-black"
-					data-test="scan-video"
+					data-test-id="scan-video"
 				></video>
 				<!-- La ligne qui balaie dit que la caméra tourne, là où une image figée ne dit rien. -->
 				<span
@@ -69,13 +69,13 @@
 					aria-hidden="true"
 				></span>
 			</div>
-			<Button variant="outline" onclick={stop} data-test="scan-stop" class="fl-press mt-2">
+			<Button variant="outline" onclick={stop} data-test-id="scan-stop" class="fl-press mt-2">
 				<X size={16} aria-hidden="true" />
 				{t('scan.stop')}
 			</Button>
 		</div>
 	{:else}
-		<Button variant="outline" onclick={start} data-test="scan-start" class="fl-press mt-3">
+		<Button variant="outline" onclick={start} data-test-id="scan-start" class="fl-press mt-3">
 			<ScanLine size={16} aria-hidden="true" />
 			{t('scan.start')}
 		</Button>
@@ -83,5 +83,5 @@
 {/if}
 
 {#if error}
-	<p class="text-destructive text-caption mt-2" role="alert" data-test="scan-error">{error}</p>
+	<p class="text-destructive text-caption mt-2" role="alert" data-test-id="scan-error">{error}</p>
 {/if}

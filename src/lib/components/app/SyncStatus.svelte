@@ -22,7 +22,7 @@
 		transition:slide={{ duration: motionMs(220), easing: cubicOut }}
 		class="text-caption bg-card text-muted-foreground flex items-center justify-center gap-2 border-b px-4 py-2"
 		role="status"
-		data-test="sync-status"
+		data-test-id="sync-status"
 	>
 		{#if sync.state === 'offline'}
 			<CloudOff size={16} aria-hidden="true" />

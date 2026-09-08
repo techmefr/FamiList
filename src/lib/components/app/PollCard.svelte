@@ -30,7 +30,7 @@
 	}
 </script>
 
-<div class="bg-card mt-2 rounded-md border p-4" data-test="poll">
+<div class="bg-card mt-2 rounded-md border p-4" data-test-class="poll-card">
 	<p class="text-product font-medium">{poll.question}</p>
 
 	<ul class="mt-3 space-y-2">
@@ -45,7 +45,7 @@
 					<button
 						type="button"
 						onclick={() => data.toggleVote(poll.id, option.id)}
-						data-test="poll-vote"
+						data-test-class="poll-vote"
 						class="border-input relative w-full overflow-hidden rounded-md border px-3 py-3 text-start
 							{mine ? 'border-primary' : ''}"
 						aria-pressed={mine}
@@ -79,7 +79,7 @@
 								<Button
 									variant={option.claimedBy ? 'outline' : 'default'}
 									onclick={() => data.toggleClaim(option.id)}
-									data-test="poll-claim"
+									data-test-class="poll-claim"
 								>
 									{option.claimedBy ? t('chat.release') : t('chat.claim')}
 								</Button>
@@ -92,10 +92,10 @@
 									bind:value={draft}
 									rows="3"
 									placeholder={t('chat.ingredientsPlaceholder')}
-									data-test="poll-ingredients"
+									data-test-class="poll-ingredients"
 									class="border-input bg-background mt-3 w-full rounded-md border p-2"
 								></textarea>
-								<Button onclick={() => saveIngredients(option.id)} data-test="poll-ingredients-save">
+								<Button onclick={() => saveIngredients(option.id)} data-test-class="poll-ingredients-save">
 									{t('common.save')}
 								</Button>
 							{:else}
@@ -103,14 +103,14 @@
 									<Button
 										variant="outline"
 										onclick={() => startEditing(option.id, option.ingredients)}
-										data-test="poll-ingredients-edit"
+										data-test-class="poll-ingredients-edit"
 									>
 										<Pencil size={16} aria-hidden="true" />
 										{t('chat.ingredients')}
 									</Button>
 
 									{#if option.ingredients.length > 0}
-										<Button onclick={() => push(option.id)} data-test="poll-push">
+										<Button onclick={() => push(option.id)} data-test-class="poll-push">
 											<ListPlus size={16} aria-hidden="true" />
 											{t('chat.pushToList')}
 										</Button>
@@ -142,7 +142,7 @@
 			<Button
 				variant="outline"
 				onclick={() => data.setEventDate(listId, winner.label)}
-				data-test="poll-set-date"
+				data-test-class="poll-set-date"
 				class="mt-3"
 			>
 				<CalendarCheck size={16} aria-hidden="true" />
@@ -152,6 +152,6 @@
 	{/if}
 
 	{#if pushed}
-		<p class="text-primary text-caption mt-3" role="status" data-test="poll-pushed">{pushed}</p>
+		<p class="text-primary text-caption mt-3" role="status" data-test-class="poll-pushed">{pushed}</p>
 	{/if}
 </div>

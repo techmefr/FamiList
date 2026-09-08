@@ -33,7 +33,7 @@
 					value={shop.id}
 					checked={active}
 					onchange={() => data.setActiveShop(shop.id)}
-					data-test="shop-{shop.id}"
+					data-test-id="shop-{shop.id}"
 					class="sr-only"
 				/>
 				<span

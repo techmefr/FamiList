@@ -40,7 +40,7 @@
 
 <div
 	class="bg-card flex flex-wrap items-center gap-3 rounded-md border px-3 py-2 transition-colors"
-	data-test="item-row"
+	data-test-class="item-row"
 >
 	<GripVertical
 		size={18}
@@ -61,7 +61,7 @@
 			type="checkbox"
 			checked={item.checked}
 			onchange={toggle}
-			data-test="item-check"
+			data-test-class="item-check"
 			class="accent-primary shrink-0"
 		/>
 
@@ -86,7 +86,7 @@
 			onclick={onMoveUp}
 			disabled={!canMoveUp}
 			aria-label={t('list.moveUp', { name: item.name })}
-			data-test="item-up"
+			data-test-class="item-up"
 			class="fl-press text-muted-foreground grid size-11 min-w-[44px] place-items-center disabled:opacity-30"
 		>
 			<ChevronUp size={18} aria-hidden="true" />
@@ -96,7 +96,7 @@
 			onclick={onMoveDown}
 			disabled={!canMoveDown}
 			aria-label={t('list.moveDown', { name: item.name })}
-			data-test="item-down"
+			data-test-class="item-down"
 			class="fl-press text-muted-foreground grid size-11 min-w-[44px] place-items-center disabled:opacity-30"
 		>
 			<ChevronDown size={18} aria-hidden="true" />
@@ -109,7 +109,7 @@
 			}}
 			aria-label={t('list.priority', { name: item.name })}
 			aria-pressed={item.priority}
-			data-test="item-priority"
+			data-test-class="item-priority"
 			class="fl-press grid size-11 min-w-[44px] place-items-center {item.priority
 				? 'text-primary'
 				: 'text-muted-foreground'}"
@@ -123,7 +123,7 @@
 				data.removeItem(item.id);
 			}}
 			aria-label={t('list.remove', { name: item.name })}
-			data-test="item-remove"
+			data-test-class="item-remove"
 			class="fl-press text-muted-foreground grid size-11 min-w-[44px] place-items-center"
 		>
 			<Trash2 size={18} aria-hidden="true" />

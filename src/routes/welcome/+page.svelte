@@ -66,7 +66,7 @@
 	<title>{t('welcome.title')} — {t('app.name')}</title>
 </svelte:head>
 
-<p class="text-muted-foreground text-caption" data-test="welcome-step">
+<p class="text-muted-foreground text-caption" data-test-id="welcome-step">
 	{t('welcome.step', { current: step, total: STEPS })}
 </p>
 
@@ -89,7 +89,7 @@
 
 	<div class="bg-card mt-6 rounded-md border p-4">
 		{#key settings.fontScaleId}
-			<p class="text-product fl-pop-in font-medium" data-test="welcome-preview">
+			<p class="text-product fl-pop-in font-medium" data-test-id="welcome-preview">
 				{t('profile.previewItem')}
 			</p>
 		{/key}
@@ -106,7 +106,7 @@
 			oninput={(event) => chooseScale(Number(event.currentTarget.value))}
 			aria-label={t('profile.textSize')}
 			aria-valuetext={scaleLabel}
-			data-test="welcome-size"
+			data-test-id="welcome-size"
 			class="h-[44px] min-w-0 flex-1 accent-[var(--primary)]"
 		/>
 
@@ -115,12 +115,12 @@
 				size={22}
 				class="fl-nudge text-primary shrink-0"
 				aria-hidden="true"
-				data-test="welcome-nudge"
+				data-test-id="welcome-nudge"
 			/>
 		{/if}
 	</div>
 
-	<p class="text-label mt-2 font-medium" data-test="welcome-size-label">{scaleLabel}</p>
+	<p class="text-label mt-2 font-medium" data-test-id="welcome-size-label">{scaleLabel}</p>
 	<p class="text-muted-foreground text-caption mt-1">{t('welcome.sizeHint')}</p>
 {:else if step === 2}
 	<p class="text-muted-foreground mt-2">{t('welcome.lookBody')}</p>
@@ -135,7 +135,7 @@
 						name="welcome-theme"
 						checked={settings.theme === value}
 						onchange={() => settings.setTheme(value)}
-						data-test="welcome-theme-{value}"
+						data-test-id="welcome-theme-{value}"
 						class="sr-only"
 					/>
 					{t(`theme.${value}`)}
@@ -155,7 +155,7 @@
 						name="welcome-accent"
 						checked={active}
 						onchange={() => settings.setAccent(accent.id)}
-						data-test="welcome-accent-{accent.id}"
+						data-test-id="welcome-accent-{accent.id}"
 						class="sr-only"
 					/>
 					<span
@@ -179,13 +179,13 @@
 
 <div class="mt-8 flex flex-wrap items-center gap-3">
 	{#if step > 1}
-		<Button variant="outline" class="fl-press" onclick={() => go(step - 1)} data-test="welcome-back">
+		<Button variant="outline" class="fl-press" onclick={() => go(step - 1)} data-test-id="welcome-back">
 			{t('welcome.back')}
 		</Button>
 	{/if}
 
 	{#if step < STEPS}
-		<Button class="fl-press flex-auto" onclick={() => go(step + 1)} data-test="welcome-next">
+		<Button class="fl-press flex-auto" onclick={() => go(step + 1)} data-test-id="welcome-next">
 			{t('welcome.next')}
 		</Button>
 	{/if}
@@ -195,6 +195,6 @@
 	Sortie de secours, présente à toutes les étapes : quelqu'un qui a déjà un compte n'a rien à
 	régler ici, ses préférences l'attendent dans son profil.
 -->
-<Button variant="ghost" class="mt-4 w-full" onclick={finish} data-test="welcome-skip">
+<Button variant="ghost" class="mt-4 w-full" onclick={finish} data-test-id="welcome-skip">
 	{step === STEPS ? t('welcome.skip') : t('welcome.haveAccount')}
 </Button>

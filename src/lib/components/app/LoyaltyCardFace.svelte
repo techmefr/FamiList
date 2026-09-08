@@ -10,7 +10,7 @@
 <article
 	class="relative min-h-[7.5rem] overflow-hidden rounded-lg p-5 text-white shadow-[var(--fl-shadow-2)]"
 	style="background: {card.grad || card.tint}"
-	data-test="loyalty-card"
+	data-test-class="loyalty-card"
 >
 	<span
 		class="pointer-events-none absolute -top-10 -right-10 size-40 rounded-full border border-white/20"

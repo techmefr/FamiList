@@ -24,7 +24,7 @@
 			<p class="text-muted-foreground">{t('auth.pendingBody')}</p>
 		{/if}
 
-		<Button variant="outline" onclick={() => session.signOut()} data-test="sign-out">
+		<Button variant="outline" onclick={() => session.signOut()} data-test-id="sign-out">
 			{t('auth.signOut')}
 		</Button>
 	</Card.Content>

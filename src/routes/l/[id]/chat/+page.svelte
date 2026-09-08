@@ -88,7 +88,7 @@
 	{#if list.eventDate}
 		<p
 			class="text-label text-primary mt-3 flex items-center gap-2 rounded-md bg-[var(--fl-primary-tint)] px-4 py-2"
-			data-test="event-date"
+			data-test-id="event-date"
 		>
 			<CalendarDays size={17} aria-hidden="true" />
 			{list.eventDate}
@@ -96,7 +96,7 @@
 	{/if}
 
 	{#if messages.length === 0}
-		<p class="text-muted-foreground mt-6" data-test="chat-empty">{t('chat.empty')}</p>
+		<p class="text-muted-foreground mt-6" data-test-id="chat-empty">{t('chat.empty')}</p>
 	{:else}
 		<ol class="mt-6 space-y-4">
 			{#each messages as message (message.id)}
@@ -104,7 +104,7 @@
 				{@const author = data.member(message.userId)}
 				{@const mine = message.userId === data.me}
 
-				<li class="flex flex-col {mine ? 'items-end' : 'items-start'}" data-test="chat-message">
+				<li class="flex flex-col {mine ? 'items-end' : 'items-start'}" data-test-class="chat-message">
 					<p class="text-muted-foreground text-caption">
 						{author?.name ?? t('chat.unknownAuthor')} — {time(message.createdAt)}
 					</p>
@@ -129,10 +129,10 @@
 	{/if}
 
 	{#if composing}
-		<form onsubmit={createPoll} class="bg-card mt-6 space-y-4 rounded-md border p-4" data-test="poll-form">
+		<form onsubmit={createPoll} class="bg-card mt-6 space-y-4 rounded-md border p-4" data-test-id="poll-form">
 			<div>
 				<Label for="poll-question">{t('chat.question')}</Label>
-				<Input id="poll-question" bind:value={question} data-test="poll-question" required />
+				<Input id="poll-question" bind:value={question} data-test-id="poll-question" required />
 			</div>
 
 			<div>
@@ -142,13 +142,13 @@
 					bind:value={choices}
 					rows="4"
 					placeholder={t('chat.choicesPlaceholder')}
-					data-test="poll-choices"
+					data-test-id="poll-choices"
 					class="border-input bg-background mt-1 w-full rounded-md border p-2"
 				></textarea>
 			</div>
 
 			<div class="flex flex-wrap gap-2">
-				<Button type="submit" data-test="poll-create">{t('chat.createPoll')}</Button>
+				<Button type="submit" data-test-id="poll-create">{t('chat.createPoll')}</Button>
 				<Button type="button" variant="outline" onclick={() => (composing = null)}>
 					{t('common.cancel')}
 				</Button>
@@ -156,11 +156,11 @@
 		</form>
 	{:else}
 		<div class="mt-6 flex flex-wrap gap-2">
-			<Button variant="outline" onclick={() => openPoll('date')} data-test="new-poll-date">
+			<Button variant="outline" onclick={() => openPoll('date')} data-test-id="new-poll-date">
 				<CalendarDays size={16} aria-hidden="true" />
 				{t('chat.newDatePoll')}
 			</Button>
-			<Button variant="outline" onclick={() => openPoll('apport')} data-test="new-poll-apport">
+			<Button variant="outline" onclick={() => openPoll('apport')} data-test-id="new-poll-apport">
 				<UtensilsCrossed size={16} aria-hidden="true" />
 				{t('chat.newApportPoll')}
 			</Button>
@@ -172,15 +172,15 @@
 		disparaît dès la première lettre tapée. min-w-[44px] sur le bouton parce qu'il ne porte qu'une
 		icône — il tombait à 43 px de large, un pixel sous la cible tactile.
 	-->
-	<form onsubmit={send} class="mt-4 flex gap-2" data-test="chat-form">
+	<form onsubmit={send} class="mt-4 flex gap-2" data-test-id="chat-form">
 		<Input
 			bind:value={body}
 			aria-label={t('chat.messageLabel')}
 			placeholder={t('chat.placeholder')}
-			data-test="chat-input"
+			data-test-id="chat-input"
 			required
 		/>
-		<Button type="submit" class="min-w-[44px]" data-test="chat-send" aria-label={t('chat.send')}>
+		<Button type="submit" class="min-w-[44px]" data-test-id="chat-send" aria-label={t('chat.send')}>
 			<Send size={18} aria-hidden="true" />
 		</Button>
 	</form>

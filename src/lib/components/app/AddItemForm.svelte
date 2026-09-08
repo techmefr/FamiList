@@ -32,7 +32,7 @@
 	}
 </script>
 
-<form onsubmit={submit} class="bg-card mt-6 space-y-3 rounded-md border p-4" data-test="add-item">
+<form onsubmit={submit} class="bg-card mt-6 space-y-3 rounded-md border p-4" data-test-id="add-item">
 	<!--
 		Les largeurs ne s'appliquent qu'à partir de sm : en dessous, chaque champ prend la ligne
 		entière. Une largeur en rem se multiplie par le cran de texte, et un w-32 devient 294 px au
@@ -41,18 +41,18 @@
 	<div class="grid gap-3 sm:grid-cols-[2fr_auto_auto]">
 		<div class="min-w-0">
 			<Label for="item-name">{t('add.name')}</Label>
-			<Input id="item-name" bind:value={name} data-test="add-name" required />
+			<Input id="item-name" bind:value={name} data-test-id="add-name" required />
 		</div>
 		<div class="sm:w-24">
 			<Label for="item-qty">{t('add.qty')}</Label>
-			<Input id="item-qty" bind:value={qty} data-test="add-qty" inputmode="decimal" />
+			<Input id="item-qty" bind:value={qty} data-test-id="add-qty" inputmode="decimal" />
 		</div>
 		<div class="min-w-0">
 			<Label for="item-unit">{t('add.unit')}</Label>
 			<select
 				id="item-unit"
 				bind:value={unit}
-				data-test="add-unit"
+				data-test-id="add-unit"
 				class="border-input bg-background min-h-[max(2.75rem,44px)] w-full rounded-md border px-3 py-1"
 			>
 				{#each UNITS as id (id)}
@@ -67,7 +67,7 @@
 		<select
 			id="item-aisle"
 			bind:value={aisleId}
-			data-test="add-aisle"
+			data-test-id="add-aisle"
 			class="border-input bg-background min-h-[max(2.75rem,44px)] w-full rounded-md border px-3 py-1"
 		>
 			<option value="">
@@ -81,7 +81,7 @@
 		</select>
 	</div>
 
-	<Button type="submit" data-test="add-submit" class="fl-press w-full sm:w-auto">
+	<Button type="submit" data-test-id="add-submit" class="fl-press w-full sm:w-auto">
 		<Plus size={18} aria-hidden="true" />
 		{t('add.submit')}
 	</Button>
