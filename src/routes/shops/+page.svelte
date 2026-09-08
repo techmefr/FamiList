@@ -2,6 +2,7 @@
 	import { data } from '$stores/data.svelte';
 	import { t } from '$lib/i18n/index.svelte';
 	import { TINTS, tintForWhiteText } from '$domain/tint';
+	import { trigram } from '$domain/trigram';
 	import { Button } from '$lib/components/ui/button';
 	import { Input } from '$lib/components/ui/input';
 	import { Label } from '$lib/components/ui/label';
@@ -49,9 +50,22 @@
 			<Label for="shop-name">{t('shops.name')}</Label>
 			<Input id="shop-name" bind:value={shopName} data-test-id="shop-name" required />
 		</div>
+		<!--
+			Le champ ne se remplit pas : il montre en place ce qui sera pris si on n'y touche pas. Une
+			valeur écrite d'office donnerait l'impression d'avoir été saisie, et il faudrait l'effacer
+			pour revenir au trigramme automatique.
+		-->
 		<div class="w-24">
 			<Label for="shop-short">{t('shops.short')}</Label>
-			<Input id="shop-short" bind:value={shopShort} data-test-id="shop-short" maxlength={3} />
+			<Input
+				id="shop-short"
+				bind:value={shopShort}
+				data-test-id="shop-short"
+				maxlength={3}
+				placeholder={trigram(shopName)}
+				autocapitalize="characters"
+				class="text-center uppercase"
+			/>
 		</div>
 	</div>
 	<Button type="submit" data-test-id="shop-create">

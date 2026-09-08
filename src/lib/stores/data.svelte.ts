@@ -34,6 +34,7 @@ import {
 	fromShop
 } from '$lib/sync/mapping';
 import { slugify } from '$domain/slug';
+import { trigram } from '$domain/trigram';
 import { DEFAULT_UNIT } from '$domain/units';
 
 const ACTIVE_SHOP_KEY = 'familist:active-shop';
@@ -343,7 +344,7 @@ class DataStore {
 		const shop: Shop = {
 			id: crypto.randomUUID(),
 			name: input.name.trim(),
-			short: input.short || input.name.slice(0, 2).toUpperCase(),
+			short: input.short.trim().toUpperCase() || trigram(input.name),
 			tint: input.tint
 		};
 

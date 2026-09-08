@@ -37,7 +37,7 @@
 					class="sr-only"
 				/>
 				<span
-					class="grid size-6 shrink-0 place-items-center rounded-full text-[0.625rem] font-semibold text-white"
+					class="grid size-7 shrink-0 place-items-center rounded-full text-[0.6875rem] font-semibold text-white"
 					style="background: {tintForWhiteText(shop.tint)}"
 					aria-hidden="true"
 				>
