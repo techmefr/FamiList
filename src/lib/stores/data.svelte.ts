@@ -344,7 +344,12 @@ class DataStore {
 		const shop: Shop = {
 			id: crypto.randomUUID(),
 			name: input.name.trim(),
-			short: input.short.trim().toUpperCase() || trigram(input.name),
+			// Un magasin, un trigramme : ce qui est déjà porté par un autre magasin du foyer est
+			// écarté, saisi à la main comme calculé.
+			short: trigram(
+				input.short.trim() || input.name,
+				this.shops.map((existant) => existant.short)
+			),
 			tint: input.tint
 		};
 

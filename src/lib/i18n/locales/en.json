@@ -199,6 +199,7 @@
 		"new": "Add a shop",
 		"name": "Shop name",
 		"short": "Initials",
+		"shortTaken": "Those initials are already taken.",
 		"empty": "No shops.",
 		"learned": "Learned route",
 		"notLearned": "Default route",

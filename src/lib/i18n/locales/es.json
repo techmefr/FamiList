@@ -199,6 +199,7 @@
 		"new": "Añadir una tienda",
 		"name": "Nombre de la tienda",
 		"short": "Iniciales",
+		"shortTaken": "Esas iniciales ya están ocupadas.",
 		"empty": "No hay tiendas.",
 		"learned": "Recorrido aprendido",
 		"notLearned": "Recorrido por defecto",

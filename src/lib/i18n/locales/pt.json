@@ -199,6 +199,7 @@
 		"new": "Adicionar uma loja",
 		"name": "Nome da loja",
 		"short": "Iniciais",
+		"shortTaken": "Estas iniciais já estão em uso.",
 		"empty": "Sem lojas.",
 		"learned": "Percurso aprendido",
 		"notLearned": "Percurso predefinido",

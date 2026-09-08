@@ -199,6 +199,7 @@
 		"new": "Geschäft hinzufügen",
 		"name": "Name des Geschäfts",
 		"short": "Initialen",
+		"shortTaken": "Dieses Kürzel ist schon vergeben.",
 		"empty": "Keine Geschäfte.",
 		"learned": "Gelernter Weg",
 		"notLearned": "Standardweg",

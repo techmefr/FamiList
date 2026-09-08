@@ -198,6 +198,7 @@
 		"new": "添加门店",
 		"name": "门店名称",
 		"short": "缩写",
+		"shortTaken": "该缩写已被使用。",
 		"empty": "暂无门店。",
 		"learned": "已学路线",
 		"notLearned": "默认路线",
