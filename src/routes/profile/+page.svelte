@@ -63,12 +63,7 @@
 		<p class="text-muted-foreground text-label">
 			{t('profile.signedInAs', { email: session.user?.email ?? '' })}
 		</p>
-		<Button
-			variant="outline"
-			onclick={() => session.signOut()}
-			data-test-id="sign-out"
-			class="fl-press"
-		>
+		<Button onclick={() => session.signOut()} data-test-id="sign-out" class="fl-press">
 			{t('auth.signOut')}
 		</Button>
 	</Card.Content>
@@ -105,7 +100,7 @@
 
 		<div class="flex flex-wrap items-center justify-between gap-4">
 			<p class="text-muted-foreground text-label">{t('profile.householdHint')}</p>
-			<Button variant="outline" href="/household" data-test-id="go-household" class="fl-press">
+			<Button href="/household" data-test-id="go-household" class="fl-press">
 				<Users size={18} aria-hidden="true" />
 				{t('nav.household')}
 			</Button>
@@ -114,7 +109,7 @@
 		{#if session.isAdmin}
 			<div class="flex flex-wrap items-center justify-between gap-4">
 				<p class="text-muted-foreground text-label">{t('profile.adminHint')}</p>
-				<Button variant="outline" href="/admin" data-test-id="go-admin" class="fl-press">
+				<Button href="/admin" data-test-id="go-admin" class="fl-press">
 					<ShieldCheck size={18} aria-hidden="true" />
 					{t('nav.admin')}
 				</Button>
@@ -290,7 +285,7 @@
 				<p class="text-muted-foreground text-caption mt-1">{t('profile.soundHint')}</p>
 			</div>
 			<div class="flex flex-wrap items-center gap-3">
-				<Button variant="outline" onclick={preview} data-test-id="sound-preview" class="fl-press">
+				<Button onclick={preview} data-test-id="sound-preview" class="fl-press">
 					<Volume2 size={18} aria-hidden="true" />
 					{t('profile.testFeedback')}
 				</Button>
@@ -326,7 +321,7 @@
 	</Card.Header>
 	<Card.Content class="flex flex-wrap items-center justify-between gap-4">
 		<p class="text-muted-foreground text-label">{t('profile.tourHint')}</p>
-		<Button variant="outline" onclick={replayTour} data-test-id="replay-tour" class="fl-press">
+		<Button onclick={replayTour} data-test-id="replay-tour" class="fl-press">
 			{t('profile.replayTour')}
 		</Button>
 	</Card.Content>

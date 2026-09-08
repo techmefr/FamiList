@@ -413,6 +413,29 @@
 }
 
 /**
+ * Le bouton principal réagit au survol et à l'appui.
+ *
+ * shadcn ne prévoit ce changement que pour un lien (`[a]:hover`) : un vrai `<button>` en couleur
+ * principale ne bougeait pas d'un pixel, alors que la variante discrète, elle, s'éclaircit au
+ * survol. Sur l'écran des réglages, la commande la plus visible était donc la seule à ne pas
+ * répondre.
+ *
+ * Les deux teintes existaient déjà dans le thème sans que rien ne s'en serve. Elles sont assez
+ * contrastées pour le texte blanc qu'elles portent : 7,3:1 au survol, 8,7:1 à l'appui.
+ *
+ * `.bg-primary` désigne la variante principale : c'est l'utilitaire que shadcn lui pose, et
+ * `[data-slot='button']` limite la portée à un bouton. Hors `@layer`, comme les autres règles
+ * de cette section, pour passer devant l'utilitaire sans toucher au composant.
+ */
+[data-slot='button'].bg-primary:hover {
+	background-color: var(--fl-primary-hover);
+}
+
+[data-slot='button'].bg-primary:active {
+	background-color: var(--fl-primary-pressed);
+}
+
+/**
  * Un libellé de bouton se lit en entier. Le composant shadcn arrive avec `whitespace-nowrap`,
  * ce qui suffit tant que le texte est petit ; au cran Confort, « Ajouter un magasin » mesure
  * plus large que l'écran et sort de la page, en emmenant la barre de navigation avec lui.
