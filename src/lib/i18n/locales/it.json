@@ -225,6 +225,8 @@
 		"shortTaken": "Queste iniziali sono già usate.",
 		"shortRegenerate": "Ricalcola le iniziali",
 		"empty": "Nessun negozio.",
+		"defaultName": "Il mio negozio",
+		"defaultBadge": "Predefinito",
 		"learned": "Percorso appreso",
 		"notLearned": "Percorso predefinito",
 		"locate": "Salva qui la mia posizione",

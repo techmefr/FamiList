@@ -21,6 +21,18 @@ export interface Shop {
 	 */
 	lat?: number;
 	lng?: number;
+	/**
+	 * Le magasin que le foyer n'a pas créé lui-même.
+	 *
+	 * Un parcours appartient toujours à un magasin — c'est la clé de `shop_layouts`. Sans magasin,
+	 * réordonner ses rayons n'avait donc nulle part où s'écrire, et les flèches ne faisaient rien.
+	 * Chaque foyer en reçoit un, vide, dès sa première ouverture : on peut ranger sa liste avant
+	 * d'avoir décrit le moindre commerce.
+	 *
+	 * Le premier vrai magasin le remplace au lieu de s'ajouter à côté — le rangement déjà fait
+	 * change simplement de nom. C'est ce drapeau qui dit lequel est remplaçable.
+	 */
+	isDefault: boolean;
 }
 
 export interface Aisle {

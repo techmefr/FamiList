@@ -37,8 +37,18 @@ import { slugify } from '$domain/slug';
 import { trigram } from '$domain/trigram';
 import { trigramSource } from '$domain/place';
 import { DEFAULT_UNIT } from '$domain/units';
+import { TINTS } from '$domain/tint';
+import { t } from '$lib/i18n/index.svelte';
 
 const ACTIVE_SHOP_KEY = 'familist:active-shop';
+
+/**
+ * Les douze derniers chiffres de l'identifiant du magasin par défaut ; les vingt-quatre premiers
+ * caractères viennent de l'identifiant du foyer. Le tout reste un UUID valide, et surtout il est
+ * le même sur tous les appareils du foyer — deux ouvertures simultanées ne créent pas deux
+ * magasins.
+ */
+const DEFAULT_SHOP_NODE = 'd0defa017000';
 
 /**
  * L'écran ne lit jamais Dexie directement : il lit cet état, écrit par des méthodes qui persistent
@@ -91,7 +101,12 @@ class DataStore {
 		await this.hydrate();
 		this.ready = true;
 
-		await sync.start(() => void this.hydrate());
+		// Le magasin par défaut se crée après la synchronisation, jamais avant : sur un appareil
+		// neuf le cache est vide, et le créer tout de suite en ferait un deuxième à côté de celui
+		// que le foyer possède déjà.
+		await sync.start(() => {
+			void this.hydrate().then(() => this.ensureDefaultShop());
+		});
 	}
 
 	private async hydrate() {
@@ -341,18 +356,79 @@ class DataStore {
 		return aisle;
 	}
 
+	/**
+	 * Le magasin par défaut du foyer, celui qu'on n'a pas créé soi-même.
+	 *
+	 * Il existe pour une raison technique devenue une raison d'usage : un parcours appartient
+	 * toujours à un magasin, donc sans magasin il n'y avait rien à réordonner. Il permet de ranger
+	 * sa liste dès la première ouverture, avant d'avoir décrit le moindre commerce.
+	 */
+	get defaultShop() {
+		return this.shops.find((shop) => shop.isDefault);
+	}
+
+	/**
+	 * Le crée s'il manque, une fois le foyer connu.
+	 *
+	 * Son identifiant se déduit de celui du foyer au lieu d'être tiré au sort : deux téléphones
+	 * qui ouvrent l'application en même temps sur un foyer neuf visent alors la même ligne, et le
+	 * foyer se retrouve avec un magasin par défaut, pas deux. Un index unique en base tient le
+	 * même rôle, pour ce que le client ne peut pas garantir.
+	 */
+	ensureDefaultShop() {
+		const household = this.householdId;
+		if (!household || this.shops.length > 0) return;
+
+		this.addShop({
+			id: `${household.slice(0, 24)}${DEFAULT_SHOP_NODE}`,
+			name: t('shops.defaultName'),
+			short: '',
+			tint: TINTS[0],
+			isDefault: true
+		});
+	}
+
+	/**
+	 * Ajouter un magasin — sauf le tout premier vrai, qui remplace le magasin par défaut au lieu
+	 * de s'ajouter à côté de lui.
+	 *
+	 * Remplacer et non supprimer puis recréer : le parcours appris pointe sur l'identifiant du
+	 * magasin, et le rangement déjà fait sous « Mon magasin » est justement ce qu'on veut garder.
+	 * Il change de nom, rien de plus.
+	 */
 	addShop(input: {
 		name: string;
 		short: string;
 		tint: string;
 		brand?: string;
 		address?: string;
+		id?: string;
+		isDefault?: boolean;
 	}) {
 		const brand = (input.brand ?? '').trim();
 		const address = (input.address ?? '').trim();
+		const remplace = !input.isDefault ? this.defaultShop : undefined;
+
+		if (remplace) {
+			this.updateShop(remplace.id, {
+				name: input.name.trim(),
+				short: this.proposedShort(
+					{ brand, name: input.name, address },
+					remplace.id,
+					input.short
+				),
+				tint: input.tint,
+				brand,
+				address,
+				isDefault: false
+			});
+
+			this.setActiveShop(remplace.id);
+			return this.shops.find((shop) => shop.id === remplace.id)!;
+		}
 
 		const shop: Shop = {
-			id: crypto.randomUUID(),
+			id: input.id ?? crypto.randomUUID(),
 			name: input.name.trim(),
 			// Un magasin, un trigramme : ce qui est déjà porté par un autre magasin du foyer est
 			// écarté, saisi à la main comme calculé. Le calcul part de l'enseigne et de la commune
@@ -363,7 +439,8 @@ class DataStore {
 			),
 			tint: input.tint,
 			brand,
-			address
+			address,
+			isDefault: input.isDefault ?? false
 		};
 
 		const layout: ShopLayout = {
@@ -406,9 +483,13 @@ class DataStore {
 	 * Le trigramme libre pour ce magasin, celui d'un autre magasin du foyer ne comptant pas comme
 	 * pris par lui-même — sans quoi recalculer sans rien changer donnerait un trigramme différent.
 	 */
-	proposedShort(place: { brand?: string; name: string; address?: string }, exceptId?: string) {
+	proposedShort(
+		place: { brand?: string; name: string; address?: string },
+		exceptId?: string,
+		saisi = ''
+	) {
 		return trigram(
-			trigramSource(place),
+			saisi.trim() || trigramSource(place),
 			this.shops
 				.filter((existant) => existant.id !== exceptId)
 				.map((existant) => existant.short)
@@ -441,8 +522,11 @@ class DataStore {
 	}
 
 	/**
-	 * Glisser-déposer des rayons : marque le magasin comme appris. Un parcours n'existe que pour un
-	 * magasin ; sans magasin actif il n'y a rien à apprendre, et rien à enregistrer.
+	 * Glisser-déposer des rayons : marque le magasin comme appris.
+	 *
+	 * La sortie sans magasin actif est un garde-fou, plus un cas courant : tout foyer en a un
+	 * depuis `ensureDefaultShop`. Elle a longtemps rendu les flèches et le glisser-déposer
+	 * inertes — rendus actifs, cliquables, sans le moindre effet ni message.
 	 */
 	reorderAisles(aisleOrder: string[]) {
 		if (!this.activeShopId) return;

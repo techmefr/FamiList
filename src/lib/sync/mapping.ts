@@ -36,7 +36,8 @@ export const toShop = (row: Row): Shop => ({
 	brand: text(row.brand),
 	address: text(row.address),
 	lat: number(row.lat),
-	lng: number(row.lng)
+	lng: number(row.lng),
+	isDefault: flag(row.is_default)
 });
 
 export const fromShop = (shop: Shop, householdId: string) => ({
@@ -48,7 +49,8 @@ export const fromShop = (shop: Shop, householdId: string) => ({
 	brand: shop.brand,
 	address: shop.address,
 	lat: shop.lat ?? null,
-	lng: shop.lng ?? null
+	lng: shop.lng ?? null,
+	is_default: shop.isDefault
 });
 
 export const toAisle = (row: Row): Aisle => ({

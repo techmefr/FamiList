@@ -229,6 +229,8 @@
 		"shortTaken": "هذه الأحرف مستخدمة بالفعل.",
 		"shortRegenerate": "إعادة حساب الأحرف الأولى",
 		"empty": "لا توجد متاجر.",
+		"defaultName": "متجري",
+		"defaultBadge": "افتراضي",
 		"learned": "مسار محفوظ",
 		"notLearned": "المسار الافتراضي",
 		"locate": "احفظ موقعي هنا",

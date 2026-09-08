@@ -225,6 +225,8 @@
 		"shortTaken": "Dieses Kürzel ist schon vergeben.",
 		"shortRegenerate": "Initialen neu berechnen",
 		"empty": "Keine Geschäfte.",
+		"defaultName": "Mein Geschäft",
+		"defaultBadge": "Standard",
 		"learned": "Gelernter Weg",
 		"notLearned": "Standardweg",
 		"locate": "Meine Position hier speichern",

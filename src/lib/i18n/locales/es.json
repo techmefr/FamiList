@@ -225,6 +225,8 @@
 		"shortTaken": "Esas iniciales ya están ocupadas.",
 		"shortRegenerate": "Recalcular las iniciales",
 		"empty": "No hay tiendas.",
+		"defaultName": "Mi tienda",
+		"defaultBadge": "Por defecto",
 		"learned": "Recorrido aprendido",
 		"notLearned": "Recorrido por defecto",
 		"locate": "Guardar mi posición aquí",

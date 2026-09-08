@@ -225,6 +225,8 @@
 		"shortTaken": "Those initials are already taken.",
 		"shortRegenerate": "Recalculate the initials",
 		"empty": "No shops.",
+		"defaultName": "My shop",
+		"defaultBadge": "Default",
 		"learned": "Learned route",
 		"notLearned": "Default route",
 		"locate": "Save my position here",

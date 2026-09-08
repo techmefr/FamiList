@@ -259,8 +259,12 @@
 									</p>
 								{/if}
 							</div>
-							<Badge variant={learned ? 'default' : 'secondary'}>
-								{learned ? t('shops.learned') : t('shops.notLearned')}
+							<Badge variant={shop.isDefault ? 'outline' : learned ? 'default' : 'secondary'}>
+								{shop.isDefault
+									? t('shops.defaultBadge')
+									: learned
+										? t('shops.learned')
+										: t('shops.notLearned')}
 							</Badge>
 						</div>
 

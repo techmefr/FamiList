@@ -224,6 +224,8 @@
 		"shortTaken": "该缩写已被使用。",
 		"shortRegenerate": "重新生成缩写",
 		"empty": "暂无门店。",
+		"defaultName": "我的门店",
+		"defaultBadge": "默认",
 		"learned": "已学路线",
 		"notLearned": "默认路线",
 		"locate": "在此保存我的位置",
