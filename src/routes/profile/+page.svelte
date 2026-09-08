@@ -73,7 +73,7 @@
 	<Card.Header>
 		<Card.Title class="text-h2">{t('profile.sharing')}</Card.Title>
 	</Card.Header>
-	<Card.Content class="space-y-6">
+	<Card.Content class="fl-divided">
 		<!--
 			Les personnes du foyer sont affichées ici, et pas seulement derrière le lien : « avec qui on
 			peut partager » est une question à laquelle l'écran des réglages doit répondre tout seul.
@@ -122,7 +122,7 @@
 	<Card.Header>
 		<Card.Title class="text-h2">{t('profile.appearance')}</Card.Title>
 	</Card.Header>
-	<Card.Content class="space-y-8">
+	<Card.Content class="fl-divided">
 		<fieldset>
 			<legend class="text-label mb-2 font-medium">{t('profile.theme')}</legend>
 			<div class="flex flex-wrap gap-2">
@@ -247,7 +247,7 @@
 	<Card.Header>
 		<Card.Title class="text-h2">{t('profile.feedbackTitle')}</Card.Title>
 	</Card.Header>
-	<Card.Content class="space-y-8">
+	<Card.Content class="fl-divided">
 		<fieldset>
 			<legend class="text-label mb-2 font-medium">{t('profile.motion')}</legend>
 			<div class="flex flex-wrap gap-2">
@@ -285,7 +285,12 @@
 				<p class="text-muted-foreground text-caption mt-1">{t('profile.soundHint')}</p>
 			</div>
 			<div class="flex flex-wrap items-center gap-3">
-				<Button onclick={preview} data-test-id="sound-preview" class="fl-press">
+				<Button
+					variant="outline"
+					onclick={preview}
+					data-test-id="sound-preview"
+					class="fl-press"
+				>
 					<Volume2 size={18} aria-hidden="true" />
 					{t('profile.testFeedback')}
 				</Button>

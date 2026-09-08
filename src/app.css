@@ -413,6 +413,26 @@
 }
 
 /**
+ * Une carte découpée en blocs.
+ *
+ * L'écran des réglages empile cinq questions dans une même carte — thème, couleur, taille,
+ * police, langue. Séparées par du vide seul, elles se lisaient comme une seule longue liste :
+ * on ne voyait plus où finissait un choix et où commençait le suivant.
+ *
+ * Le trait est celui des bordures du thème, à 8 % de noir : assez pour découper, pas assez pour
+ * faire un tableau. Il remplace l'écart vertical au lieu de s'y ajouter, sinon les blocs
+ * s'éloigneraient les uns des autres au lieu de se distinguer.
+ *
+ * Jamais avant le premier bloc : un trait sous le titre de la carte redirait ce que la carte dit
+ * déjà.
+ */
+.fl-divided > * + * {
+	border-block-start: 1px solid var(--border);
+	margin-block-start: 1.5rem;
+	padding-block-start: 1.5rem;
+}
+
+/**
  * Le bouton principal réagit au survol et à l'appui.
  *
  * shadcn ne prévoit ce changement que pour un lien (`[a]:hover`) : un vrai `<button>` en couleur

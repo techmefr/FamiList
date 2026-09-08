@@ -136,6 +136,9 @@
 	const isActive = (href: string) =>
 		href === '/' ? page.url.pathname === '/' : page.url.pathname.startsWith(href);
 
+	/** La loupe occupe toute la surface pour agrandir une étiquette : rien ne flotte par-dessus. */
+	const hidesCreate = $derived(page.url.pathname.startsWith('/magnifier'));
+
 	/**
 	 * Transition de page par l'API View Transitions : le navigateur photographie l'écran, laisse
 	 * SvelteKit remplacer le contenu, puis anime les deux images. Rien ne reste transformé après
@@ -207,12 +210,17 @@
 			</p>
 
 			<!--
-				Le bouton de création de la maquette : un disque plein, au centre, au-dessus de la barre.
+				Le bouton de création : sur téléphone, un disque plein posé en bas à droite, au-dessus de
+				la barre, à la place que recommande Android. C'est là que le pouce arrive sans que la
+				main change de prise, et c'est la place que les gens cherchent d'eux-mêmes.
 
-				Il ne la chevauche pas comme dans la maquette. Un creux central suppose un nombre pair
-				d'onglets ; avec cinq, le milieu de la barre tombe au milieu d'un onglet, et le disque
-				recouvrirait la loupe. Il est donc posé juste au-dessus. Le liseré à la couleur du fond
-				reste utile : c'est lui qui détache le disque, ici du contenu qui défile derrière.
+				Au centre, il tombait au milieu de l'onglet Loupe : la cible principale masquait à demi
+				une destination. Le liseré à la couleur du fond reste utile — c'est lui qui détache le
+				disque du contenu qui défile derrière.
+
+				Il disparaît sur la loupe, et seulement sur téléphone : là-bas le disque flotte sur
+				l'étiquette qu'on essaie de lire. Sur grand écran il est dans la colonne, il ne
+				recouvre rien, il y reste.
 
 				Un seul élément pour les deux tailles d'écran, et non deux dont un masqué : deux boutons
 				porteraient le même repère de test, et la visite guidée finirait par en désigner un
@@ -226,8 +234,9 @@
 				}}
 				data-test-id="nav-create"
 				aria-haspopup="dialog"
-				class="fl-press bg-primary text-primary-foreground shadow-fl-3 absolute bottom-full left-1/2 mb-2 flex size-[58px] -translate-x-1/2 items-center justify-center gap-0 rounded-full border-4 border-[var(--background)]
-					md:static md:mx-3 md:mb-3 md:h-[max(2.75rem,44px)] md:w-[calc(100%-1.5rem)] md:translate-x-0 md:justify-start md:gap-3 md:rounded-lg md:border-0 md:px-3 md:shadow-none"
+				class="fl-press bg-primary text-primary-foreground shadow-fl-3 absolute end-4 bottom-full mb-4 flex size-[58px] items-center justify-center gap-0 rounded-full border-4 border-[var(--background)]
+					md:static md:mx-3 md:mb-3 md:h-[max(2.75rem,44px)] md:w-[calc(100%-1.5rem)] md:justify-start md:gap-3 md:rounded-lg md:border-0 md:px-3 md:shadow-none
+					{hidesCreate ? 'max-md:hidden' : ''}"
 			>
 				<Plus size={26} aria-hidden="true" />
 				<span class="text-label sr-only font-medium md:not-sr-only">{t('nav.create')}</span>
