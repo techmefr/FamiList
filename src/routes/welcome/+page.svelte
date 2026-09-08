@@ -174,7 +174,7 @@
 {:else}
 	<p class="text-muted-foreground mt-2">{t('welcome.accountBody')}</p>
 
-	<AuthForm initialMode="signup" />
+	<AuthForm mode="signup" />
 {/if}
 
 <div class="mt-8 flex flex-wrap items-center gap-3">

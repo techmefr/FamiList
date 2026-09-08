@@ -185,7 +185,13 @@
 		<p class="text-muted-foreground">{t('common.loading')}</p>
 	</main>
 {:else if !session.isApproved}
-	<main class="fl-rise mx-auto w-full max-w-md px-4 py-10">
+	<!--
+		Les écrans hors session tiennent en une carte : posés en haut, ils laissaient sur un grand
+		écran un vide de deux tiers de page sous eux. `safe` fait toute la règle — quand le contenu
+		dépasse la hauteur disponible, l'alignement retombe sur le haut au lieu de couper le début,
+		ce qui arrive dès qu'un clavier logiciel s'ouvre.
+	-->
+	<main class="fl-rise mx-auto flex min-h-dvh w-full max-w-md flex-col justify-center-safe px-4 py-10">
 		{@render children()}
 	</main>
 {:else}
