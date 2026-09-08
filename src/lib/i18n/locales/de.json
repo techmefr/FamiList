@@ -158,12 +158,13 @@
 		"noShop": "Ein Geschäft hinzufügen"
 	},
 	"share": {
-		"title": "Wer macht bei dieser Liste mit?",
-		"note": "Der ganze Haushalt sieht die Liste. Ein Haken zeigt, wer mitmacht.",
+		"title": "Wer sieht diese Liste?",
+		"note": "Nur die angehakten Personen sehen die Liste, ihre Artikel und ihren Chat.",
 		"open": "Teilen",
 		"you": "Sie",
-		"summary": "Mit {names}",
-		"aloneSummary": "Bisher niemand sonst",
+		"youLocked": "Sie können sich nicht selbst entfernen.",
+		"summary": "Geteilt mit {names}",
+		"aloneSummary": "Nur für Sie sichtbar",
 		"alone": "Sie sind vorerst allein im Haushalt.",
 		"invite": "Jemanden einladen"
 	},

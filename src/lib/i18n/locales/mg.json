@@ -157,12 +157,13 @@
 		"noShop": "Hanampy fivarotana"
 	},
 	"share": {
-		"title": "Iza no mandray anjara amin'ity lisitra ity?",
-		"note": "Hitan'ny ankohonana manontolo ny lisitra. Ny mariky ny fanamarihana no milaza hoe iza no miaraka.",
+		"title": "Iza no mahita ity lisitra ity?",
+		"note": "Ny olona voamarika ihany no mahita ny lisitra, ny entana ao anatiny ary ny resaka.",
 		"open": "Hizara",
 		"you": "ianao",
-		"summary": "Miaraka amin'i {names}",
-		"aloneSummary": "Mbola tsy misy olon-kafa",
+		"youLocked": "Tsy afaka manaisotra ny tenanao ianao.",
+		"summary": "Zaraina amin'i {names}",
+		"aloneSummary": "Ianao irery no mahita azy",
 		"alone": "Mbola irery ianao ao amin'ny ankohonana.",
 		"invite": "Hanasa olona"
 	},

@@ -68,9 +68,15 @@
 								<span class="text-muted-foreground font-normal">· {t('share.you')}</span>
 							{/if}
 						</span>
+						<!--
+							Sa propre case est verrouillee : se decocher ici ferait disparaitre la liste de
+							l'ecran sur-le-champ, sans que rien n'ait prevenu. Quitter une liste partagee par
+							quelqu'un d'autre est un geste a part, qui reste a faire.
+						-->
 						<input
 							type="checkbox"
 							checked={on}
+							disabled={member.id === data.me}
 							onchange={(event) => toggle(member.id, event.currentTarget.checked)}
 							data-test-class="share-toggle"
 						/>
@@ -78,6 +84,8 @@
 				</li>
 			{/each}
 		</ul>
+
+		<p class="text-muted-foreground text-caption mt-2">{t('share.youLocked')}</p>
 
 		{#if data.members.length <= 1}
 			<p class="text-muted-foreground text-label mt-4">{t('share.alone')}</p>

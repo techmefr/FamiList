@@ -242,7 +242,14 @@ class DataStore {
 			name: input.name.trim(),
 			emoji: input.emoji,
 			color: input.color,
-			memberIds: this.userId ? [this.userId] : []
+			// Une liste naît ouverte au foyer : c'est le retrait qui est un geste, pas le partage.
+			// Le déclencheur `lists_share_with_household` fait la même chose côté base ; on l'écrit
+			// aussi ici pour que l'affichage soit juste avant même la première synchronisation.
+			memberIds: this.members.length
+				? this.members.map((m) => m.id)
+				: this.userId
+					? [this.userId]
+					: []
 		};
 
 		this.lists = [...this.lists, list];
@@ -262,12 +269,11 @@ class DataStore {
 	}
 
 	/**
-	 * Inscrit ou retire quelqu'un d'une liste.
+	 * Ouvre ou ferme une liste à quelqu'un.
 	 *
-	 * À prendre pour ce que c'est : `list_members` dit qui participe, pas qui a le droit de lire. La
-	 * policy `can_access_list` ouvre chaque liste à tout le foyer, et décocher une personne ici ne la
-	 * met donc pas dehors — cela la sort de la liste des participants. En faire une vraie clé
-	 * demanderait de réécrire la policy, ce qui fermerait du même coup les listes déjà partagées.
+	 * La ligne dans `list_members` est la clé : `can_access_list` s'appuie dessus, et tout ce qui
+	 * appartient à la liste — articles, discussion, sondages — suit. Retirer une personne la met
+	 * vraiment dehors, et elle ne peut pas s'y remettre seule.
 	 */
 	setListMember(listId: string, userId: string, member: boolean) {
 		const list = this.lists.find((l) => l.id === listId);

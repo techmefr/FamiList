@@ -158,12 +158,13 @@
 		"noShop": "Ajouter un magasin"
 	},
 	"share": {
-		"title": "Qui participe à cette liste ?",
-		"note": "Tout le foyer voit la liste. Cocher quelqu'un dit qu'il est de la partie.",
+		"title": "Qui a accès à cette liste ?",
+		"note": "Seules les personnes cochées voient la liste, ses articles et sa discussion.",
 		"open": "Partager",
 		"you": "vous",
-		"summary": "Avec {names}",
-		"aloneSummary": "Personne d'autre pour l'instant",
+		"youLocked": "Vous ne pouvez pas vous retirer vous-même.",
+		"summary": "Partagée avec {names}",
+		"aloneSummary": "Visible par vous seul",
 		"alone": "Vous êtes seul dans le foyer pour l'instant.",
 		"invite": "Inviter quelqu'un"
 	},

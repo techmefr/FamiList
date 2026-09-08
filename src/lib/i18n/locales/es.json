@@ -158,12 +158,13 @@
 		"noShop": "Añadir una tienda"
 	},
 	"share": {
-		"title": "¿Quién participa en esta lista?",
-		"note": "Todo el hogar ve la lista. Marcar a alguien indica que participa.",
+		"title": "¿Quién puede ver esta lista?",
+		"note": "Solo las personas marcadas ven la lista, sus artículos y su conversación.",
 		"open": "Compartir",
 		"you": "usted",
-		"summary": "Con {names}",
-		"aloneSummary": "Nadie más por ahora",
+		"youLocked": "No puede quitarse a sí mismo.",
+		"summary": "Compartida con {names}",
+		"aloneSummary": "Solo usted la ve",
 		"alone": "Por ahora está solo en el hogar.",
 		"invite": "Invitar a alguien"
 	},

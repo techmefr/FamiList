@@ -157,12 +157,13 @@
 		"noShop": "添加商店"
 	},
 	"share": {
-		"title": "谁参与这份清单？",
-		"note": "家庭成员都能看到这份清单。勾选表示这个人一起参与。",
+		"title": "谁能看到这份清单？",
+		"note": "只有勾选的人能看到这份清单、其中的商品和讨论。",
 		"open": "共享",
 		"you": "你",
-		"summary": "与 {names}",
-		"aloneSummary": "暂时没有其他人",
+		"youLocked": "不能移除你自己。",
+		"summary": "已共享给 {names}",
+		"aloneSummary": "只有你能看到",
 		"alone": "目前家庭里只有你一个人。",
 		"invite": "邀请他人"
 	},

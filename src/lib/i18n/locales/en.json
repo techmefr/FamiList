@@ -158,12 +158,13 @@
 		"noShop": "Add a shop"
 	},
 	"share": {
-		"title": "Who is on this list?",
-		"note": "Everyone in the household sees the list. Ticking someone says they are in on it.",
+		"title": "Who can see this list?",
+		"note": "Only the people ticked here see the list, its items and its chat.",
 		"open": "Share",
 		"you": "you",
-		"summary": "With {names}",
-		"aloneSummary": "Nobody else yet",
+		"youLocked": "You cannot remove yourself.",
+		"summary": "Shared with {names}",
+		"aloneSummary": "Only you can see it",
 		"alone": "You are on your own in the household for now.",
 		"invite": "Invite someone"
 	},
