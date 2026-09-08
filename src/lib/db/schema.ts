@@ -6,6 +6,21 @@ export interface Shop {
 	short: string;
 	tint: string;
 	dist?: string;
+	/**
+	 * L'enseigne, quand il y en a une. Un salon de coiffure ou une boucherie de quartier n'en a
+	 * pas, et tout doit marcher sans : c'est elle qui porte la carte de fidélité valable dans
+	 * toute la chaîne, et elle qui ouvre le trigramme.
+	 */
+	brand: string;
+	/** Telle qu'on l'écrit, sans normalisation. On n'en tire que la commune, pour le trigramme. */
+	address: string;
+	/**
+	 * Le point sur la carte, enregistré sur place depuis le GPS de l'appareil. Absent tant que
+	 * personne ne l'a fait : « pas encore relevé » et « au large de l'Afrique » ne sont pas la
+	 * même chose, d'où l'absence plutôt que zéro.
+	 */
+	lat?: number;
+	lng?: number;
 }
 
 export interface Aisle {
@@ -50,7 +65,10 @@ export interface Item {
 
 export interface LoyaltyCard {
 	id: string;
+	/** Rattachement à un magasin précis. Vide quand la carte vaut pour toute une enseigne. */
 	shopId: string;
+	/** Rattachement à une enseigne : une carte Carrefour marche dans tous les Carrefour. */
+	brand: string;
 	name: string;
 	num: string;
 	code: string;

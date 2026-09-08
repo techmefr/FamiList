@@ -26,11 +26,17 @@ type Row = Record<string, unknown>;
 const text = (value: unknown, fallback = '') => (typeof value === 'string' ? value : fallback);
 const flag = (value: unknown) => value === true;
 
+const number = (value: unknown) => (typeof value === 'number' ? value : undefined);
+
 export const toShop = (row: Row): Shop => ({
 	id: text(row.id),
 	name: text(row.name),
 	short: text(row.short),
-	tint: text(row.tint, DEFAULT_TINT)
+	tint: text(row.tint, DEFAULT_TINT),
+	brand: text(row.brand),
+	address: text(row.address),
+	lat: number(row.lat),
+	lng: number(row.lng)
 });
 
 export const fromShop = (shop: Shop, householdId: string) => ({
@@ -38,7 +44,11 @@ export const fromShop = (shop: Shop, householdId: string) => ({
 	household_id: householdId,
 	name: shop.name,
 	short: shop.short,
-	tint: shop.tint
+	tint: shop.tint,
+	brand: shop.brand,
+	address: shop.address,
+	lat: shop.lat ?? null,
+	lng: shop.lng ?? null
 });
 
 export const toAisle = (row: Row): Aisle => ({
@@ -115,6 +125,7 @@ export const fromItem = (item: Item) => ({
 export const toCard = (row: Row): LoyaltyCard => ({
 	id: text(row.id),
 	shopId: text(row.shop_id),
+	brand: text(row.brand),
 	name: text(row.name),
 	num: text(row.num),
 	code: text(row.code),
@@ -129,6 +140,7 @@ export const fromCard = (card: LoyaltyCard, householdId: string) => ({
 	id: card.id,
 	household_id: householdId,
 	shop_id: card.shopId || null,
+	brand: card.brand,
 	name: card.name,
 	num: card.num,
 	code: card.code,

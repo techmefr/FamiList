@@ -16,7 +16,7 @@
 	import { Button } from '$lib/components/ui/button';
 	import { Input } from '$lib/components/ui/input';
 	import { Label } from '$lib/components/ui/label';
-	import { Plus, Trash2, ScanLine, CreditCard, Barcode, Star } from '@lucide/svelte';
+	import { Plus, Trash2, ScanLine, CreditCard, Barcode, Star, Store } from '@lucide/svelte';
 	import IconField from '$components/app/IconField.svelte';
 
 	let openCardId = $state<string | null>(null);
@@ -35,14 +35,51 @@
 	let codeType = $state<CodeType | ''>('');
 	let points = $state('0');
 
+	/**
+	 * À quoi la carte est rattachée : `shop:<id>`, `brand:<enseigne>`, ou rien.
+	 *
+	 * Le rattachement était deviné en comparant le nom de la carte à celui des magasins, ce qui
+	 * cassait au premier renommage et ne pouvait pas exprimer le cas courant — une carte Carrefour
+	 * marche dans tous les Carrefour, pas seulement celui de Meximieux. Il se choisit donc, et le
+	 * choix distingue les deux portées.
+	 */
+	let attach = $state('');
+
 	const openCard = $derived(data.cards.find((c) => c.id === openCardId) ?? null);
 
 	/** Le format suit la saisie tant que l'utilisateur n'en a pas imposé un. */
 	const effectiveType = $derived(codeType || (code.trim() ? guessCodeType(code) : 'code_39'));
 	const invalidEan = $derived(effectiveType === 'ean_13' && !normalizeEan13(code));
 
-	const shopTint = (shopName: string) =>
-		data.shops.find((s) => s.name === shopName)?.tint ?? DEFAULT_TINT;
+	const enseignes = $derived([
+		...new Set(data.shops.map((shop) => shop.brand.trim()).filter(Boolean))
+	]);
+
+	const magasin = $derived(
+		attach.startsWith('shop:')
+			? (data.shops.find((shop) => shop.id === attach.slice(5)) ?? null)
+			: null
+	);
+
+	/** Un magasin rattaché apporte son enseigne avec lui : la carte vaut alors pour la chaîne. */
+	const enseigne = $derived(
+		attach.startsWith('brand:') ? attach.slice(6) : (magasin?.brand.trim() ?? '')
+	);
+
+	/**
+	 * La couleur vient du magasin, à défaut du premier magasin de l'enseigne : deux cartes de la
+	 * même chaîne se ressemblent, et c'est ce qu'on cherche à la caisse.
+	 */
+	const tint = $derived(
+		magasin?.tint ??
+			(enseigne
+				? (data.shops.find((shop) => shop.brand.trim() === enseigne)?.tint ?? DEFAULT_TINT)
+				: DEFAULT_TINT)
+	);
+
+	/** Le rattachement nomme la carte tant qu'on ne lui donne pas un autre nom. */
+	const suggestion = $derived(magasin?.name ?? enseigne);
+	const libelle = $derived(name.trim() || suggestion);
 
 	function reset() {
 		adding = false;
@@ -50,18 +87,18 @@
 		code = '';
 		codeType = '';
 		points = '0';
+		attach = '';
 	}
 
 	function submit(event: SubmitEvent) {
 		event.preventDefault();
-		if (!name.trim() || !code.trim() || invalidEan) return;
-
-		const tint = shopTint(name.trim());
+		if (!libelle || !code.trim() || invalidEan) return;
 
 		feedback.play('add');
 		data.addCard({
-			shopId: data.shops.find((s) => s.name === name.trim())?.id ?? '',
-			name: name.trim(),
+			shopId: magasin?.id ?? '',
+			brand: enseigne,
+			name: libelle,
 			num: `•••• •••• ${code.trim().slice(-4)}`,
 			code: code.trim(),
 			codeType: effectiveType,
@@ -136,6 +173,48 @@
 			class="bg-card mt-6 space-y-4 rounded-xl border p-4"
 			data-test-id="card-form"
 		>
+			<!--
+				Le rattachement en premier : c'est lui qui donne le nom, la couleur, et plus tard le
+				rappel à l'arrivée devant le magasin. Le choix reste facultatif — une carte de
+				bibliothèque ou de piscine ne se rattache à rien de ce qui est dans la liste.
+			-->
+			<div>
+				<Label for="card-attach">{t('cards.attach')}</Label>
+				<IconField icon={Store}>
+					<select
+						id="card-attach"
+						bind:value={attach}
+						data-test-id="card-attach"
+						aria-describedby="card-attach-hint"
+						class="border-input bg-background min-h-[max(2.75rem,44px)] w-full rounded-md border"
+					>
+						<option value="">{t('cards.attachNone')}</option>
+						{#if enseignes.length > 0}
+							<optgroup label={t('cards.attachBrands')}>
+								{#each enseignes as marque (marque)}
+									<option value={`brand:${marque}`}>{marque}</option>
+								{/each}
+							</optgroup>
+						{/if}
+						{#if data.shops.length > 0}
+							<optgroup label={t('cards.attachShops')}>
+								{#each data.shops as shop (shop.id)}
+									<option value={`shop:${shop.id}`}>{shop.name}</option>
+								{/each}
+							</optgroup>
+						{/if}
+					</select>
+				</IconField>
+				<p id="card-attach-hint" class="text-muted-foreground text-caption">
+					{t('cards.attachHint')}
+				</p>
+			</div>
+
+			<!--
+				Le nom n'est plus obligatoire : le rattachement le donne, et il s'affiche en filigrane
+				pour qu'on voie ce qui sera pris. On ne le remplit que pour distinguer deux cartes du
+				même magasin — celle de la mère et celle du père.
+			-->
 			<div>
 				<Label for="card-name">{t('cards.name')}</Label>
 				<IconField icon={CreditCard}>
@@ -143,8 +222,8 @@
 						id="card-name"
 						bind:value={name}
 						data-test-id="card-name"
-						required
-						placeholder={t('cards.namePlaceholder')}
+						required={!suggestion}
+						placeholder={suggestion || t('cards.namePlaceholder')}
 					/>
 				</IconField>
 			</div>
@@ -180,7 +259,7 @@
 						id="card-type"
 						bind:value={codeType}
 						data-test-id="card-type"
-						class="border-input bg-background w-full rounded-md border px-3 py-2"
+						class="border-input bg-background min-h-[max(2.75rem,44px)] w-full rounded-md border"
 					>
 						<option value="">{t('cards.formatAuto', { format: t(`cards.type.${effectiveType}`) })}</option>
 						{#each CODE_TYPES as type (type)}

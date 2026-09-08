@@ -522,8 +522,12 @@ textarea {
  * Dedans encore, quand une icône occupe le début du champ. Le retrait est écrit ici plutôt qu'à
  * chaque appel : c'est une conséquence de l'icône, pas une décision de mise en page, et un champ
  * qui l'oublierait laisserait le dessin chevaucher la saisie.
+ *
+ * `:has(> svg)` parce que l'icône est facultative : un champ qui n'a qu'une commande de fin — le
+ * trigramme et son bouton de recalcul — ne doit pas payer un retrait pour un dessin absent.
  */
-[data-slot='field'] > :is(input, select, textarea):not([type='checkbox']):not([type='radio']) {
+[data-slot='field']:has(> svg)
+	> :is(input, select, textarea):not([type='checkbox']):not([type='radio']) {
 	padding-inline-start: 2.75rem;
 }
 

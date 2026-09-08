@@ -7,7 +7,7 @@
 		action,
 		children
 	}: {
-		icon: Component;
+		icon?: Component;
 		align?: 'center' | 'top';
 		action?: Snippet;
 		children: Snippet;
@@ -33,18 +33,23 @@
 	`data-slot="field"` reprend l'écart libellé / commande d'app.css : l'enveloppe s'intercale entre
 	les deux, et sans ce repère le libellé retomberait collé au champ.
 
-	`action` est la place réservée à une commande en fin de champ — l'œil du mot de passe. Elle est
-	dans le champ et non à côté : c'est là qu'on regarde en tapant, et sur un téléphone une case
-	posée en dessous se trouve sous le clavier. Le retrait qui lui fait la place est dans app.css,
-	déclenché par la présence même de la commande.
+	`action` est la place réservée à une commande en fin de champ — l'œil du mot de passe, le
+	recalcul du trigramme. Elle est dans le champ et non à côté : c'est là qu'on regarde en tapant,
+	et sur un téléphone une case posée en dessous se trouve sous le clavier. Le retrait qui lui fait
+	la place est dans app.css, déclenché par la présence même de la commande.
+
+	L'icône est facultative, et c'est le seul cas où elle manque : un champ de trois caractères
+	centrés n'a pas la largeur pour une icône de tête et un bouton de fin, et son libellé suffit.
 -->
 <div class="relative" data-slot="field">
-	<Icon
-		size={20}
-		aria-hidden="true"
-		class={'text-muted-foreground pointer-events-none absolute start-3 transition-colors ' +
-			(align === 'top' ? 'top-3.5' : 'top-1/2 -translate-y-1/2')}
-	/>
+	{#if Icon}
+		<Icon
+			size={20}
+			aria-hidden="true"
+			class={'text-muted-foreground pointer-events-none absolute start-3 transition-colors ' +
+				(align === 'top' ? 'top-3.5' : 'top-1/2 -translate-y-1/2')}
+		/>
+	{/if}
 	{@render children()}
 	{#if action}
 		<div class="absolute inset-y-0 end-0 flex items-center" data-slot="field-action">

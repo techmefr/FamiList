@@ -35,6 +35,7 @@ import {
 } from '$lib/sync/mapping';
 import { slugify } from '$domain/slug';
 import { trigram } from '$domain/trigram';
+import { trigramSource } from '$domain/place';
 import { DEFAULT_UNIT } from '$domain/units';
 
 const ACTIVE_SHOP_KEY = 'familist:active-shop';
@@ -340,17 +341,29 @@ class DataStore {
 		return aisle;
 	}
 
-	addShop(input: { name: string; short: string; tint: string }) {
+	addShop(input: {
+		name: string;
+		short: string;
+		tint: string;
+		brand?: string;
+		address?: string;
+	}) {
+		const brand = (input.brand ?? '').trim();
+		const address = (input.address ?? '').trim();
+
 		const shop: Shop = {
 			id: crypto.randomUUID(),
 			name: input.name.trim(),
 			// Un magasin, un trigramme : ce qui est déjà porté par un autre magasin du foyer est
-			// écarté, saisi à la main comme calculé.
+			// écarté, saisi à la main comme calculé. Le calcul part de l'enseigne et de la commune
+			// plutôt que du nom — voir $domain/place.
 			short: trigram(
-				input.short.trim() || input.name,
+				input.short.trim() || trigramSource({ brand, name: input.name, address }),
 				this.shops.map((existant) => existant.short)
 			),
-			tint: input.tint
+			tint: input.tint,
+			brand,
+			address
 		};
 
 		const layout: ShopLayout = {
@@ -368,6 +381,38 @@ class DataStore {
 		this.setActiveShop(shop.id);
 
 		return shop;
+	}
+
+	/**
+	 * Modifier un magasin : l'adresse qu'on complète après coup, la position qu'on relève sur
+	 * place, le trigramme qu'on recalcule.
+	 *
+	 * Le trigramme n'est jamais recalculé tout seul ici. Changer l'adresse d'un magasin ne doit pas
+	 * changer sous les yeux la pastille qu'on a appris à reconnaître : c'est un geste explicite,
+	 * demandé depuis l'écran.
+	 */
+	updateShop(id: string, patch: Partial<Omit<Shop, 'id'>>) {
+		const shop = this.shops.find((candidate) => candidate.id === id);
+		if (!shop) return;
+
+		Object.assign(shop, patch);
+
+		const snapshot = $state.snapshot(shop) as Shop;
+		db.shops.put(snapshot);
+		this.push('shops', snapshot, fromShop);
+	}
+
+	/**
+	 * Le trigramme libre pour ce magasin, celui d'un autre magasin du foyer ne comptant pas comme
+	 * pris par lui-même — sans quoi recalculer sans rien changer donnerait un trigramme différent.
+	 */
+	proposedShort(place: { brand?: string; name: string; address?: string }, exceptId?: string) {
+		return trigram(
+			trigramSource(place),
+			this.shops
+				.filter((existant) => existant.id !== exceptId)
+				.map((existant) => existant.short)
+		);
 	}
 
 	addCard(input: Omit<LoyaltyCard, 'id'>) {
