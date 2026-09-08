@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="6 9 54 47" role="img">
+	<title>FamiList</title>
+	<!--
+		La marque sans sa pastille, en `currentColor` : la couleur vient du texte à côté. Le F est un
+		vrai trou — `evenodd` — pour que le fond passe au travers, quel qu'il soit.
+	-->
+	<g fill="currentColor" transform="translate(0 -1.5)">
+		<path
+			d="M8.8 14.5h6.1l2.3 7"
+			fill="none"
+			stroke="currentColor"
+			stroke-width="4.4"
+			stroke-linecap="round"
+			stroke-linejoin="round"
+		/>
+		<path
+			d="M17.5 21.5H55.5L50 41.5H25.5Z M30.5 24H44V28.5H35.5V30.5H40.5V34.7H35.5V38H30.5Z"
+			fill-rule="evenodd"
+		/>
+		<circle cx="27.5" cy="49.2" r="4.4" />
+		<circle cx="45.5" cy="49.2" r="4.4" />
+	</g>
+</svg>

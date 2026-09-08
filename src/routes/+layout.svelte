@@ -12,6 +12,7 @@
 	import { pushAppearance, syncAppearance } from '$lib/sync/appearance';
 	import SyncStatus from '$components/app/SyncStatus.svelte';
 	import CreateMenu from '$components/app/CreateMenu.svelte';
+	import Logo from '$components/app/Logo.svelte';
 
 	let { children } = $props();
 
@@ -194,7 +195,10 @@
 			style="view-transition-name: nav"
 			aria-label={t('nav.main')}
 		>
-			<p class="text-h2 hidden px-6 py-6 font-semibold md:block">{t('app.name')}</p>
+			<p class="text-h2 hidden items-center gap-2.5 px-6 py-6 font-semibold md:flex">
+				<Logo />
+				{t('app.name')}
+			</p>
 
 			<!--
 				Le bouton de création de la maquette : un disque plein, au centre, au-dessus de la barre.
