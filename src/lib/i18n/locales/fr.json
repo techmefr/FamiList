@@ -163,6 +163,9 @@
 		"aisleDown": "Descendre le rayon {name}",
 		"priority": "Marquer {name} comme prioritaire",
 		"remove": "Supprimer {name}",
+		"swipeCheck": "Cocher",
+		"swipeUncheck": "Décocher",
+		"swipeDelete": "Supprimer",
 		"noShop": "Ajouter un magasin"
 	},
 	"share": {

@@ -165,6 +165,9 @@
 		"aisleDown": "Опустить отдел {name}",
 		"priority": "Отметить {name} как важное",
 		"remove": "Удалить {name}",
+		"swipeCheck": "Отметить",
+		"swipeUncheck": "Снять",
+		"swipeDelete": "Удалить",
 		"noShop": "Добавить магазин"
 	},
 	"share": {

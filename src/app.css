@@ -613,6 +613,61 @@ textarea {
 }
 
 /*
+ * Une ligne qui se glisse au doigt.
+ *
+ * Le fond porte les deux actions, chacune de son côté ; la ligne coulisse par-dessus et les
+ * découvre. `overflow: clip` plutôt que `hidden` : `hidden` créerait un conteneur de défilement,
+ * et le contour de focus d'un bouton de la ligne s'y ferait rogner.
+ *
+ * `touch-action: pan-y` sur le contenu laisse le défilement vertical au navigateur et ne réserve
+ * que l'horizontale au geste. Sans lui la page se bloque dès qu'un doigt se pose sur une ligne.
+ */
+.fl-swipe {
+	position: relative;
+	overflow: clip;
+	border-radius: var(--radius-md);
+}
+
+.fl-swipe-track {
+	position: absolute;
+	inset: 0;
+	display: flex;
+	align-items: stretch;
+	justify-content: space-between;
+}
+
+.fl-swipe-action {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	padding-inline: 1rem;
+	/* Sans couleur tant que rien n'est déclenché : le fond doit se deviner, pas crier. */
+	background: var(--muted);
+	color: var(--muted-foreground);
+	transition:
+		background-color var(--fl-dur-tap) var(--fl-ease),
+		color var(--fl-dur-tap) var(--fl-ease);
+}
+
+/* Allumée : le geste est allé assez loin, relâcher maintenant déclenche l'action. */
+.fl-swipe-action[data-armed='true'][data-tone='primary'] {
+	background: var(--primary);
+	color: var(--primary-foreground);
+}
+
+.fl-swipe-action[data-armed='true'][data-tone='destructive'] {
+	background: var(--destructive);
+	color: var(--destructive-foreground, #fff);
+}
+
+.fl-swipe-content {
+	position: relative;
+	touch-action: pan-y;
+	transition-property: translate;
+	transition-timing-function: var(--fl-ease);
+}
+
+/*
  * La barre de navigation du bas, sur téléphone.
  *
  * `env(safe-area-inset-bottom)` d'abord, et c'est le point qui n'est pas cosmétique : la page

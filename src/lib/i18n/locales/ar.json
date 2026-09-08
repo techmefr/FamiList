@@ -167,6 +167,9 @@
 		"aisleDown": "تحريك القسم {name} للأسفل",
 		"priority": "تحديد {name} كأولوية",
 		"remove": "حذف {name}",
+		"swipeCheck": "تحديد",
+		"swipeUncheck": "إلغاء التحديد",
+		"swipeDelete": "حذف",
 		"noShop": "إضافة متجر"
 	},
 	"share": {

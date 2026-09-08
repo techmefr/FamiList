@@ -163,6 +163,9 @@
 		"aisleDown": "Bajar la sección {name}",
 		"priority": "Marcar {name} como prioritario",
 		"remove": "Eliminar {name}",
+		"swipeCheck": "Marcar",
+		"swipeUncheck": "Desmarcar",
+		"swipeDelete": "Eliminar",
 		"noShop": "Añadir una tienda"
 	},
 	"share": {

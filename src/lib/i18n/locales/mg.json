@@ -162,6 +162,9 @@
 		"aisleDown": "Ampidino ny faritra {name}",
 		"priority": "Mariho ho maika {name}",
 		"remove": "Fafao {name}",
+		"swipeCheck": "Marika",
+		"swipeUncheck": "Esory",
+		"swipeDelete": "Fafao",
 		"noShop": "Hanampy fivarotana"
 	},
 	"share": {

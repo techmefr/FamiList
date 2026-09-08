@@ -163,6 +163,9 @@
 		"aisleDown": "Move aisle {name} down",
 		"priority": "Mark {name} as priority",
 		"remove": "Delete {name}",
+		"swipeCheck": "Tick",
+		"swipeUncheck": "Untick",
+		"swipeDelete": "Delete",
 		"noShop": "Add a shop"
 	},
 	"share": {

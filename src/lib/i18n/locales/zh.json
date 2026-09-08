@@ -162,6 +162,9 @@
 		"aisleDown": "下移货区 {name}",
 		"priority": "将 {name} 标为重点",
 		"remove": "删除 {name}",
+		"swipeCheck": "勾选",
+		"swipeUncheck": "取消勾选",
+		"swipeDelete": "删除",
 		"noShop": "添加商店"
 	},
 	"share": {

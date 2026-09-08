@@ -163,6 +163,9 @@
 		"aisleDown": "Sposta giù il reparto {name}",
 		"priority": "Segna {name} come prioritario",
 		"remove": "Elimina {name}",
+		"swipeCheck": "Spunta",
+		"swipeUncheck": "Togli",
+		"swipeDelete": "Elimina",
 		"noShop": "Aggiungi un negozio"
 	},
 	"share": {

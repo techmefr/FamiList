@@ -163,6 +163,9 @@
 		"aisleDown": "Abteilung {name} nach unten",
 		"priority": "{name} als wichtig markieren",
 		"remove": "{name} löschen",
+		"swipeCheck": "Abhaken",
+		"swipeUncheck": "Abwählen",
+		"swipeDelete": "Löschen",
 		"noShop": "Ein Geschäft hinzufügen"
 	},
 	"share": {

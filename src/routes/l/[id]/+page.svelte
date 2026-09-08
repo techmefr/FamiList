@@ -11,6 +11,7 @@
 	import type { Item } from '$db/schema';
 	import ShopSwitcher from '$components/app/ShopSwitcher.svelte';
 	import ItemRow from '$components/app/ItemRow.svelte';
+	import SwipeRow from '$components/app/SwipeRow.svelte';
 	import AddItemSheet from '$components/app/AddItemSheet.svelte';
 	import ShareSheet from '$components/app/ShareSheet.svelte';
 	import { createDrag, move } from '$components/app/drag.svelte';
@@ -21,7 +22,10 @@
 		ArrowLeft,
 		GripVertical,
 		MessagesSquare,
-		UsersRound
+		UsersRound,
+		Check,
+		Undo2,
+		Trash2
 	} from '@lucide/svelte';
 
 	const listId = $derived(page.params.id!);
@@ -249,13 +253,39 @@
 								out:slide={{ duration: motionMs(180), easing: cubicOut }}
 								class={itemDrag.overIndex === index ? 'outline-primary rounded-md outline-2' : ''}
 							>
-								<ItemRow
-									{item}
-									canMoveUp={index > 0}
-									canMoveDown={index < group.items.length - 1}
-									onMoveUp={() => moveItem(group.aisleId, group.items, index, index - 1)}
-									onMoveDown={() => moveItem(group.aisleId, group.items, index, index + 1)}
-								/>
+								<!--
+									Le glissement double les boutons de la ligne, il ne les remplace pas : c'est
+									le geste rapide du chariot, une main occupée, et il ne se devine pas tout
+									seul. Supprimer demande d'aller plus loin que cocher — voir $domain/swipe.
+								-->
+								<SwipeRow
+									start={{
+										label: item.checked ? t('list.swipeUncheck') : t('list.swipeCheck'),
+										icon: item.checked ? Undo2 : Check,
+										tone: 'primary',
+										run: () => {
+											feedback.play(item.checked ? 'uncheck' : 'check');
+											data.toggleItem(item.id);
+										}
+									}}
+									end={{
+										label: t('list.swipeDelete'),
+										icon: Trash2,
+										tone: 'destructive',
+										run: () => {
+											feedback.play('remove');
+											data.removeItem(item.id);
+										}
+									}}
+								>
+									<ItemRow
+										{item}
+										canMoveUp={index > 0}
+										canMoveDown={index < group.items.length - 1}
+										onMoveUp={() => moveItem(group.aisleId, group.items, index, index - 1)}
+										onMoveDown={() => moveItem(group.aisleId, group.items, index, index + 1)}
+									/>
+								</SwipeRow>
 							</div>
 						{/each}
 					</div>
