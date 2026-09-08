@@ -2,16 +2,20 @@
 	import '../app.css';
 	import { page } from '$app/state';
 	import { goto, onNavigate } from '$app/navigation';
-	import { ListChecks, Store, CreditCard, User, ShieldCheck, Users, ZoomIn } from '@lucide/svelte';
+	import { ListChecks, Store, CreditCard, User, ZoomIn, Plus } from '@lucide/svelte';
 	import { i18n, t } from '$lib/i18n/index.svelte';
 	import { data } from '$stores/data.svelte';
 	import { session } from '$stores/session.svelte';
+	import { feedback } from '$stores/feedback.svelte';
 	import { settings } from '$stores/settings.svelte';
 	import { navDirection } from '$domain/motion';
 	import { pushAppearance, syncAppearance } from '$lib/sync/appearance';
 	import SyncStatus from '$components/app/SyncStatus.svelte';
+	import CreateMenu from '$components/app/CreateMenu.svelte';
 
 	let { children } = $props();
+
+	let menu = $state<CreateMenu | null>(null);
 
 	i18n.init();
 	session.init();
@@ -109,19 +113,24 @@
 		return () => clearTimeout(timer);
 	});
 
-	// La loupe se sert de l'appareil photo arrière, devant une étiquette de produit : c'est un geste
-	// de téléphone. Sur un écran d'ordinateur elle n'aurait rien à montrer, on ne la propose pas.
-	const nav = $derived([
+	/**
+	 * Cinq onglets, pas plus : au-delà, les libellés se serrent et les cibles passent sous le seuil
+	 * du doigt. Le foyer et la gestion des comptes sont donc allés dans le profil, qui est déjà
+	 * l'écran des réglages — ce sont des destinations qu'on visite rarement, pas des allers-retours.
+	 *
+	 * La loupe vient en deuxième, contre les listes : c'est l'outil qu'on ouvre en rayon, une main
+	 * sur le chariot, et le bord du pouce y arrive sans traverser la barre.
+	 *
+	 * Elle se sert de l'appareil photo arrière, devant une étiquette de produit : c'est un geste de
+	 * téléphone. Sur un écran d'ordinateur elle n'aurait rien à montrer, on ne la propose pas.
+	 */
+	const nav = [
 		{ href: '/', key: 'nav.lists', icon: ListChecks, handheld: false },
-		{ href: '/shops', key: 'nav.shops', icon: Store, handheld: false },
 		{ href: '/magnifier', key: 'nav.magnifier', icon: ZoomIn, handheld: true },
+		{ href: '/shops', key: 'nav.shops', icon: Store, handheld: false },
 		{ href: '/cards', key: 'nav.cards', icon: CreditCard, handheld: false },
-		{ href: '/household', key: 'nav.household', icon: Users, handheld: false },
-		{ href: '/profile', key: 'nav.profile', icon: User, handheld: false },
-		...(session.isAdmin
-			? [{ href: '/admin', key: 'nav.admin', icon: ShieldCheck, handheld: false }]
-			: [])
-	]);
+		{ href: '/profile', key: 'nav.profile', icon: User, handheld: false }
+	];
 
 	const isActive = (href: string) =>
 		href === '/' ? page.url.pathname === '/' : page.url.pathname.startsWith(href);
@@ -187,13 +196,40 @@
 		>
 			<p class="text-h2 hidden px-6 py-6 font-semibold md:block">{t('app.name')}</p>
 
+			<!--
+				Le bouton de création de la maquette : un disque plein, au centre, au-dessus de la barre.
+
+				Il ne la chevauche pas comme dans la maquette. Un creux central suppose un nombre pair
+				d'onglets ; avec cinq, le milieu de la barre tombe au milieu d'un onglet, et le disque
+				recouvrirait la loupe. Il est donc posé juste au-dessus. Le liseré à la couleur du fond
+				reste utile : c'est lui qui détache le disque, ici du contenu qui défile derrière.
+
+				Un seul élément pour les deux tailles d'écran, et non deux dont un masqué : deux boutons
+				porteraient le même repère de test, et la visite guidée finirait par en désigner un
+				invisible.
+			-->
+			<button
+				type="button"
+				onclick={() => {
+					feedback.play('tap');
+					menu?.show();
+				}}
+				data-test-id="nav-create"
+				aria-haspopup="dialog"
+				class="fl-press bg-primary text-primary-foreground shadow-fl-3 absolute bottom-full left-1/2 mb-2 flex size-[58px] -translate-x-1/2 items-center justify-center gap-0 rounded-full border-4 border-[var(--background)]
+					md:static md:mx-3 md:mb-3 md:h-[max(2.75rem,44px)] md:w-[calc(100%-1.5rem)] md:translate-x-0 md:justify-start md:gap-3 md:rounded-lg md:border-0 md:px-3 md:shadow-none"
+			>
+				<Plus size={26} aria-hidden="true" />
+				<span class="text-label sr-only font-medium md:not-sr-only">{t('nav.create')}</span>
+			</button>
+
 			<ul class="flex overflow-x-auto md:flex-col md:gap-1 md:overflow-x-visible md:px-3">
 				{#each nav as { href, key, icon: Icon, handheld } (href)}
 					{@const active = isActive(href)}
 					<li class="min-w-fit flex-1" class:md:hidden={handheld}>
 						<a
 							{href}
-							data-test="nav-{href}"
+							data-test-id="nav-{href}"
 							aria-current={active ? 'page' : undefined}
 							class="fl-press text-caption md:text-label relative flex flex-col items-center gap-1 px-2 py-3 md:flex-row md:gap-3 md:rounded-md md:px-3
 								{active ? 'text-primary' : 'text-muted-foreground'}"
@@ -220,9 +256,11 @@
 
 		<div>
 			<SyncStatus />
-			<main class="mx-auto w-full max-w-3xl px-4 pt-6 pb-28 md:pb-10">
+			<main class="mx-auto w-full max-w-3xl px-4 pt-6 pb-36 md:pb-10">
 				{@render children()}
 			</main>
 		</div>
 	</div>
+
+	<CreateMenu bind:this={menu} />
 {/if}

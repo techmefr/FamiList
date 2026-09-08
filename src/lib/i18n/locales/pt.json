@@ -11,7 +11,16 @@
 		"shops": "Lojas",
 		"admin": "Contas",
 		"household": "Casa",
-		"magnifier": "Lupa"
+		"magnifier": "Lupa",
+		"create": "Criar"
+	},
+	"create": {
+		"title": "O que quer criar?",
+		"item": "Adicionar um artigo",
+		"list": "Nova lista",
+		"aisle": "Nova secção",
+		"shop": "Nova loja",
+		"card": "Novo cartão de fidelização"
 	},
 	"lists": {
 		"title": "As minhas listas",
@@ -51,7 +60,10 @@
 		"testFeedback": "Ouvir",
 		"help": "Ajuda",
 		"tourHint": "Rever a visita guiada aos ecrãs principais.",
-		"replayTour": "Rever a visita"
+		"replayTour": "Rever a visita",
+		"sharing": "Partilha",
+		"householdHint": "Convidar os seus e partilhar as listas.",
+		"adminHint": "Aprovar as novas contas e gerir os perfis."
 	},
 	"theme": {
 		"light": "Claro",
@@ -145,6 +157,16 @@
 		"remove": "Eliminar {name}",
 		"noShop": "Adicionar uma loja"
 	},
+	"share": {
+		"title": "Quem participa nesta lista?",
+		"note": "Toda a casa vê a lista. Assinalar alguém indica que participa.",
+		"open": "Partilhar",
+		"you": "você",
+		"summary": "Com {names}",
+		"aloneSummary": "Mais ninguém por agora",
+		"alone": "Por agora está sozinho na casa.",
+		"invite": "Convidar alguém"
+	},
 	"units": {
 		"piece": "unidade",
 		"g": "g",
@@ -222,18 +244,16 @@
 		"haveAccount": "Já tenho uma conta"
 	},
 	"tour": {
-		"newListTitle": "Crie uma lista",
-		"newListBody": "Uma lista por ida às compras, ou uma por loja: como preferir.",
+		"createTitle": "O botão para criar",
+		"createBody": "Uma lista, um artigo, uma loja, uma secção, um cartão: tudo começa aqui.",
 		"shopsTitle": "As suas lojas",
 		"shopsBody": "Ordene os corredores pela ordem por que passa.",
 		"magnifierTitle": "A lupa",
 		"magnifierBody": "Para ler um rótulo pequeno demais, com a câmara.",
 		"cardsTitle": "Os seus cartões",
 		"cardsBody": "Os cartões de fidelidade, prontos para mostrar na caixa.",
-		"householdTitle": "A sua casa",
-		"householdBody": "Convide os seus: a lista atualiza-se para toda a gente.",
 		"profileTitle": "As suas definições",
-		"profileBody": "Tamanho do texto, cores, idioma: muda-se tudo aqui.",
+		"profileBody": "Tamanho do texto, cores, idioma, partilha com os seus: tudo se ajusta aqui.",
 		"next": "Seguinte",
 		"back": "Anterior",
 		"done": "Concluir",

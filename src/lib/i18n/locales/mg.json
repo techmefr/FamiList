@@ -11,7 +11,16 @@
 		"shops": "Fivarotana",
 		"admin": "Kaonty",
 		"household": "Ankohonana",
-		"magnifier": "Fitarafana"
+		"magnifier": "Fitarafana",
+		"create": "Hamorona"
+	},
+	"create": {
+		"title": "Inona no tianao hamboarina?",
+		"item": "Hanampy entana",
+		"list": "Lisitra vaovao",
+		"aisle": "Faritra vaovao",
+		"shop": "Fivarotana vaovao",
+		"card": "Karatra vaovao"
 	},
 	"lists": {
 		"title": "Ny lisitro",
@@ -50,7 +59,10 @@
 		"testFeedback": "Henoy",
 		"help": "Fanampiana",
 		"tourHint": "Hijery indray ny fitarihana amin'ny efijery lehibe.",
-		"replayTour": "Hijery ny fitarihana"
+		"replayTour": "Hijery ny fitarihana",
+		"sharing": "Fizarana",
+		"householdHint": "Manasa ny fianakaviana sy mizara ny lisitra.",
+		"adminHint": "Manaiky ny kaonty vaovao sy mitantana ny anjara asa."
 	},
 	"theme": {
 		"light": "Mazava",
@@ -144,6 +156,16 @@
 		"remove": "Fafao {name}",
 		"noShop": "Hanampy fivarotana"
 	},
+	"share": {
+		"title": "Iza no mandray anjara amin'ity lisitra ity?",
+		"note": "Hitan'ny ankohonana manontolo ny lisitra. Ny mariky ny fanamarihana no milaza hoe iza no miaraka.",
+		"open": "Hizara",
+		"you": "ianao",
+		"summary": "Miaraka amin'i {names}",
+		"aloneSummary": "Mbola tsy misy olon-kafa",
+		"alone": "Mbola irery ianao ao amin'ny ankohonana.",
+		"invite": "Hanasa olona"
+	},
 	"units": {
 		"piece": "singany",
 		"g": "g",
@@ -221,18 +243,16 @@
 		"haveAccount": "Manana kaonty aho sahady"
 	},
 	"tour": {
-		"newListTitle": "Mamorona lisitra",
-		"newListBody": "Lisitra iray isaky ny fivoahana, na iray isaky ny fivarotana: anjaranao.",
+		"createTitle": "Ny bokotra hamorona",
+		"createBody": "Lisitra, entana, fivarotana, faritra, karatra: eto no iaingan'ny zava-drehetra.",
 		"shopsTitle": "Ny fivarotanao",
 		"shopsBody": "Alaharo araka ny fandehananao azy ireo ny faritra.",
 		"magnifierTitle": "Ny fitarafana",
 		"magnifierBody": "Hamakiana marika kely loatra, amin'ny fakan-tsary.",
 		"cardsTitle": "Ny karatrao",
 		"cardsBody": "Ny karatra fahatokiana, vonona haseho eo am-pandoavam-bola.",
-		"householdTitle": "Ny ankohonanao",
-		"householdBody": "Asao ny havanao: mihavao ho an'ny rehetra ny lisitra.",
 		"profileTitle": "Ny safidinao",
-		"profileBody": "Haben-tsoratra, loko, fiteny: azo ovaina eto daholo.",
+		"profileBody": "Habe soratra, loko, fiteny, fizarana amin'ny fianakaviana: eto no amboarina ny zava-drehetra.",
 		"next": "Manaraka",
 		"back": "Mialoha",
 		"done": "Vita",

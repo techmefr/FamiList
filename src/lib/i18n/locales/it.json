@@ -11,7 +11,16 @@
 		"shops": "Negozi",
 		"admin": "Account",
 		"household": "Casa",
-		"magnifier": "Lente"
+		"magnifier": "Lente",
+		"create": "Crea"
+	},
+	"create": {
+		"title": "Che cosa vuoi creare?",
+		"item": "Aggiungi un articolo",
+		"list": "Nuova lista",
+		"aisle": "Nuovo reparto",
+		"shop": "Nuovo negozio",
+		"card": "Nuova carta fedeltà"
 	},
 	"lists": {
 		"title": "Le mie liste",
@@ -51,7 +60,10 @@
 		"testFeedback": "Ascolta",
 		"help": "Aiuto",
 		"tourHint": "Rivedere la visita guidata delle schermate principali.",
-		"replayTour": "Rivedere la visita"
+		"replayTour": "Rivedere la visita",
+		"sharing": "Condivisione",
+		"householdHint": "Invitare i propri cari e condividere le liste.",
+		"adminHint": "Approvare i nuovi account e gestire i ruoli."
 	},
 	"theme": {
 		"light": "Chiaro",
@@ -145,6 +157,16 @@
 		"remove": "Elimina {name}",
 		"noShop": "Aggiungi un negozio"
 	},
+	"share": {
+		"title": "Chi partecipa a questa lista?",
+		"note": "Tutta la casa vede la lista. Spuntare qualcuno indica che partecipa.",
+		"open": "Condividi",
+		"you": "tu",
+		"summary": "Con {names}",
+		"aloneSummary": "Ancora nessun altro",
+		"alone": "Per ora sei solo in casa.",
+		"invite": "Invita qualcuno"
+	},
 	"units": {
 		"piece": "pezzo",
 		"g": "g",
@@ -222,18 +244,16 @@
 		"haveAccount": "Ho già un account"
 	},
 	"tour": {
-		"newListTitle": "Crei una lista",
-		"newListBody": "Una lista per uscita, o una per negozio: decide lei.",
+		"createTitle": "Il pulsante per creare",
+		"createBody": "Una lista, un articolo, un negozio, un reparto, una carta: tutto parte da qui.",
 		"shopsTitle": "I suoi negozi",
 		"shopsBody": "Ordini i reparti come li percorre davvero.",
 		"magnifierTitle": "La lente",
 		"magnifierBody": "Per leggere un'etichetta troppo piccola, con la fotocamera.",
 		"cardsTitle": "Le sue carte",
 		"cardsBody": "Le carte fedeltà, pronte da mostrare alla cassa.",
-		"householdTitle": "La sua famiglia",
-		"householdBody": "Inviti i suoi cari: la lista si aggiorna per tutti.",
 		"profileTitle": "Le sue impostazioni",
-		"profileBody": "Dimensione del testo, colori, lingua: tutto si cambia qui.",
+		"profileBody": "Dimensione del testo, colori, lingua, condivisione con i propri cari: si regola tutto qui.",
 		"next": "Avanti",
 		"back": "Indietro",
 		"done": "Fine",

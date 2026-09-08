@@ -5,6 +5,7 @@
 	import { data } from '$stores/data.svelte';
 	import { feedback } from '$stores/feedback.svelte';
 	import { motionMs } from '$stores/settings.svelte';
+	import { createIntent } from '$stores/create.svelte';
 	import { t } from '$lib/i18n/index.svelte';
 	import { TINTS } from '$domain/tint';
 	import * as Card from '$lib/components/ui/card';
@@ -17,6 +18,14 @@
 	let creating = $state(false);
 	let name = $state('');
 	let emoji = $state('🛒');
+
+	/**
+	 * Le bouton central annonce ce qu'il vient chercher. Ici, c'est le formulaire replié qu'il
+	 * faut ouvrir : sans cela, le curseur n'aurait aucun champ où se poser en arrivant.
+	 */
+	$effect(() => {
+		if (createIntent.take('list')) creating = true;
+	});
 
 	const stats = (listId: string) => {
 		const items = data.itemsOf(listId);
@@ -54,7 +63,7 @@
 			feedback.play('tap');
 			creating = !creating;
 		}}
-		data-test="new-list"
+		data-test-id="new-list"
 		class="fl-press"
 	>
 		<Plus size={18} aria-hidden="true" />
@@ -71,14 +80,14 @@
 		<div class="grid gap-3 sm:grid-cols-[auto_1fr]">
 			<div class="w-20">
 				<Label for="list-emoji">{t('lists.emoji')}</Label>
-				<Input id="list-emoji" bind:value={emoji} data-test="list-emoji" maxlength={2} />
+				<Input id="list-emoji" bind:value={emoji} data-test-id="list-emoji" maxlength={2} />
 			</div>
 			<div>
 				<Label for="list-name">{t('lists.name')}</Label>
-				<Input id="list-name" bind:value={name} data-test="list-name" required />
+				<Input id="list-name" bind:value={name} data-test-id="list-name" required />
 			</div>
 		</div>
-		<Button type="submit" data-test="list-create" class="fl-press">{t('common.save')}</Button>
+		<Button type="submit" data-test-id="list-create" class="fl-press">{t('common.save')}</Button>
 	</form>
 {/if}
 
@@ -96,7 +105,7 @@
 				animate:flip={{ duration: motionMs(280), easing: cubicOut }}
 				out:slide={{ duration: motionMs(180), easing: cubicOut }}
 			>
-				<Card.Root data-test="list-card" class="fl-press">
+				<Card.Root data-test-class="list-card" class="fl-press">
 					<Card.Content class="flex flex-wrap items-center gap-x-4 gap-y-3">
 						<a href="/l/{list.id}" class="flex min-w-0 flex-auto flex-wrap items-center gap-4">
 							<span class="text-h1" aria-hidden="true">{list.emoji}</span>
@@ -121,7 +130,7 @@
 								data.removeList(list.id);
 							}}
 							aria-label={t('lists.delete', { name: list.name })}
-							data-test="list-delete"
+							data-test-class="list-delete"
 							class="fl-press text-muted-foreground grid size-11 min-w-[44px] shrink-0 place-items-center"
 						>
 							<Trash2 size={18} aria-hidden="true" />

@@ -11,7 +11,16 @@
 		"shops": "Shops",
 		"admin": "Accounts",
 		"household": "Household",
-		"magnifier": "Magnifier"
+		"magnifier": "Magnifier",
+		"create": "Create"
+	},
+	"create": {
+		"title": "What would you like to create?",
+		"item": "Add an item",
+		"list": "New list",
+		"aisle": "New aisle",
+		"shop": "New shop",
+		"card": "New loyalty card"
 	},
 	"lists": {
 		"title": "My lists",
@@ -51,7 +60,10 @@
 		"testFeedback": "Play",
 		"help": "Help",
 		"tourHint": "Replay the guided tour of the main screens.",
-		"replayTour": "Replay the tour"
+		"replayTour": "Replay the tour",
+		"sharing": "Sharing",
+		"householdHint": "Invite your family and share your lists.",
+		"adminHint": "Approve new accounts and manage roles."
 	},
 	"theme": {
 		"light": "Light",
@@ -145,6 +157,16 @@
 		"remove": "Delete {name}",
 		"noShop": "Add a shop"
 	},
+	"share": {
+		"title": "Who is on this list?",
+		"note": "Everyone in the household sees the list. Ticking someone says they are in on it.",
+		"open": "Share",
+		"you": "you",
+		"summary": "With {names}",
+		"aloneSummary": "Nobody else yet",
+		"alone": "You are on your own in the household for now.",
+		"invite": "Invite someone"
+	},
 	"units": {
 		"piece": "item",
 		"g": "g",
@@ -222,18 +244,16 @@
 		"haveAccount": "I already have an account"
 	},
 	"tour": {
-		"newListTitle": "Create a list",
-		"newListBody": "One list per trip, or one per shop — up to you.",
+		"createTitle": "The create button",
+		"createBody": "A list, an item, a shop, an aisle, a card: it all starts here.",
 		"shopsTitle": "Your shops",
 		"shopsBody": "Order the aisles the way you actually walk them.",
 		"magnifierTitle": "The magnifier",
 		"magnifierBody": "Read a label that is too small, using the camera.",
 		"cardsTitle": "Your cards",
 		"cardsBody": "Loyalty cards, ready to show at the till.",
-		"householdTitle": "Your household",
-		"householdBody": "Invite your family — the list updates for everyone.",
 		"profileTitle": "Your settings",
-		"profileBody": "Text size, colours, language: change any of it, any time.",
+		"profileBody": "Text size, colours, language, sharing with your family: it is all set here.",
 		"next": "Next",
 		"back": "Previous",
 		"done": "Done",

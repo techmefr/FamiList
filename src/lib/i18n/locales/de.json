@@ -11,7 +11,16 @@
 		"shops": "Geschäfte",
 		"admin": "Konten",
 		"household": "Haushalt",
-		"magnifier": "Lupe"
+		"magnifier": "Lupe",
+		"create": "Erstellen"
+	},
+	"create": {
+		"title": "Was möchten Sie anlegen?",
+		"item": "Artikel hinzufügen",
+		"list": "Neue Liste",
+		"aisle": "Neue Abteilung",
+		"shop": "Neues Geschäft",
+		"card": "Neue Kundenkarte"
 	},
 	"lists": {
 		"title": "Meine Listen",
@@ -51,7 +60,10 @@
 		"testFeedback": "Anhören",
 		"help": "Hilfe",
 		"tourHint": "Die Führung durch die wichtigsten Bildschirme erneut ansehen.",
-		"replayTour": "Führung ansehen"
+		"replayTour": "Führung ansehen",
+		"sharing": "Teilen",
+		"householdHint": "Angehörige einladen und Listen gemeinsam nutzen.",
+		"adminHint": "Neue Konten freigeben und Rollen verwalten."
 	},
 	"theme": {
 		"light": "Hell",
@@ -145,6 +157,16 @@
 		"remove": "{name} löschen",
 		"noShop": "Ein Geschäft hinzufügen"
 	},
+	"share": {
+		"title": "Wer macht bei dieser Liste mit?",
+		"note": "Der ganze Haushalt sieht die Liste. Ein Haken zeigt, wer mitmacht.",
+		"open": "Teilen",
+		"you": "Sie",
+		"summary": "Mit {names}",
+		"aloneSummary": "Bisher niemand sonst",
+		"alone": "Sie sind vorerst allein im Haushalt.",
+		"invite": "Jemanden einladen"
+	},
 	"units": {
 		"piece": "Stück",
 		"g": "g",
@@ -222,18 +244,16 @@
 		"haveAccount": "Ich habe schon ein Konto"
 	},
 	"tour": {
-		"newListTitle": "Liste anlegen",
-		"newListBody": "Eine Liste pro Einkauf oder eine pro Geschäft – wie Sie mögen.",
+		"createTitle": "Die Schaltfläche zum Anlegen",
+		"createBody": "Eine Liste, ein Artikel, ein Geschäft, eine Abteilung, eine Karte: Alles beginnt hier.",
 		"shopsTitle": "Ihre Geschäfte",
 		"shopsBody": "Ordnen Sie die Gänge so, wie Sie sie wirklich ablaufen.",
 		"magnifierTitle": "Die Lupe",
 		"magnifierBody": "Ein zu kleines Etikett mit der Kamera lesen.",
 		"cardsTitle": "Ihre Karten",
 		"cardsBody": "Kundenkarten, bereit zum Vorzeigen an der Kasse.",
-		"householdTitle": "Ihr Haushalt",
-		"householdBody": "Laden Sie Ihre Angehörigen ein – die Liste aktualisiert sich für alle.",
 		"profileTitle": "Ihre Einstellungen",
-		"profileBody": "Textgröße, Farben, Sprache: alles jederzeit änderbar.",
+		"profileBody": "Textgröße, Farben, Sprache, Teilen mit Angehörigen: Alles wird hier eingestellt.",
 		"next": "Weiter",
 		"back": "Zurück",
 		"done": "Fertig",

@@ -261,6 +261,38 @@ class DataStore {
 		return list;
 	}
 
+	/**
+	 * Inscrit ou retire quelqu'un d'une liste.
+	 *
+	 * À prendre pour ce que c'est : `list_members` dit qui participe, pas qui a le droit de lire. La
+	 * policy `can_access_list` ouvre chaque liste à tout le foyer, et décocher une personne ici ne la
+	 * met donc pas dehors — cela la sort de la liste des participants. En faire une vraie clé
+	 * demanderait de réécrire la policy, ce qui fermerait du même coup les listes déjà partagées.
+	 */
+	setListMember(listId: string, userId: string, member: boolean) {
+		const list = this.lists.find((l) => l.id === listId);
+		if (!list) return;
+
+		const memberIds = member
+			? [...new Set([...list.memberIds, userId])]
+			: list.memberIds.filter((id) => id !== userId);
+
+		const next = { ...list, memberIds };
+		this.lists = this.lists.map((l) => (l.id === listId ? next : l));
+		db.lists.put(next);
+
+		sync.enqueue(
+			member
+				? {
+						table: 'list_members',
+						op: 'upsert',
+						match: { list_id: listId, user_id: userId },
+						payload: { list_id: listId, user_id: userId }
+					}
+				: { table: 'list_members', op: 'delete', match: { list_id: listId, user_id: userId } }
+		);
+	}
+
 	removeList(id: string) {
 		const items = this.itemsOf(id).map((i) => i.id);
 		this.lists = this.lists.filter((l) => l.id !== id);

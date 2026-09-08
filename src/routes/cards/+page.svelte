@@ -5,6 +5,7 @@
 	import { data } from '$stores/data.svelte';
 	import { feedback } from '$stores/feedback.svelte';
 	import { motionMs } from '$stores/settings.svelte';
+	import { createIntent } from '$stores/create.svelte';
 	import { t } from '$lib/i18n/index.svelte';
 	import { CODE_TYPES, guessCodeType, type CodeType } from '$domain/code-format';
 	import { normalizeEan13 } from '$domain/barcode';
@@ -19,6 +20,14 @@
 
 	let openCardId = $state<string | null>(null);
 	let adding = $state(false);
+
+	/**
+	 * Le bouton central annonce ce qu'il vient chercher. Le formulaire de carte reste replié tant
+	 * qu'on ne l'a pas demandé : sans cela, le curseur arriverait sur un écran sans champ.
+	 */
+	$effect(() => {
+		if (createIntent.take('card')) adding = true;
+	});
 
 	let name = $state('');
 	let code = $state('');
@@ -82,7 +91,7 @@
 	</p>
 
 	{#if data.cards.length === 0}
-		<p class="text-muted-foreground mt-6" data-test="cards-empty">{t('cards.empty')}</p>
+		<p class="text-muted-foreground mt-6" data-test-id="cards-empty">{t('cards.empty')}</p>
 	{:else}
 		<ul class="mt-6 space-y-4">
 			{#each data.cards as card, index (card.id)}
@@ -99,7 +108,7 @@
 							openCardId = card.id;
 						}}
 						class="fl-press block w-full text-start"
-						data-test="card-open"
+						data-test-class="card-open"
 					>
 						<LoyaltyCardFace {card} />
 					</button>
@@ -110,7 +119,7 @@
 							data.removeCard(card.id);
 						}}
 						aria-label={t('cards.delete', { name: card.name })}
-						data-test="card-delete"
+						data-test-class="card-delete"
 						class="fl-press absolute end-2 bottom-2 grid size-11 min-w-[44px] place-items-center text-white/70"
 					>
 						<Trash2 size={18} aria-hidden="true" />
@@ -125,16 +134,16 @@
 			onsubmit={submit}
 			transition:slide={{ duration: motionMs(220), easing: cubicOut }}
 			class="bg-card mt-6 space-y-4 rounded-md border p-4"
-			data-test="card-form"
+			data-test-id="card-form"
 		>
 			<div>
 				<Label for="card-name">{t('cards.name')}</Label>
-				<Input id="card-name" bind:value={name} data-test="card-name" required />
+				<Input id="card-name" bind:value={name} data-test-id="card-name" required />
 			</div>
 
 			<div>
 				<Label for="card-code">{t('cards.code')}</Label>
-				<Input id="card-code" bind:value={code} data-test="card-code" required />
+				<Input id="card-code" bind:value={code} data-test-id="card-code" required />
 				<ScanButton
 					onScanned={(result) => {
 						code = result.value;
@@ -142,7 +151,7 @@
 					}}
 				/>
 				{#if invalidEan}
-					<p class="text-destructive text-caption mt-1" role="alert" data-test="card-code-error">
+					<p class="text-destructive text-caption mt-1" role="alert" data-test-id="card-code-error">
 						{t('cards.eanInvalid')}
 					</p>
 				{/if}
@@ -153,7 +162,7 @@
 				<select
 					id="card-type"
 					bind:value={codeType}
-					data-test="card-type"
+					data-test-id="card-type"
 					class="border-input bg-background mt-1 w-full rounded-md border px-3 py-2"
 				>
 					<option value="">{t('cards.formatAuto', { format: t(`cards.type.${effectiveType}`) })}</option>
@@ -165,11 +174,11 @@
 
 			<div>
 				<Label for="card-points">{t('cards.points')}</Label>
-				<Input id="card-points" bind:value={points} inputmode="numeric" data-test="card-points" />
+				<Input id="card-points" bind:value={points} inputmode="numeric" data-test-id="card-points" />
 			</div>
 
 			<div class="flex flex-wrap gap-2">
-				<Button type="submit" data-test="card-submit" class="fl-press">{t('cards.save')}</Button>
+				<Button type="submit" data-test-id="card-submit" class="fl-press">{t('cards.save')}</Button>
 				<Button type="button" variant="outline" onclick={reset}>{t('common.cancel')}</Button>
 			</div>
 		</form>
@@ -180,7 +189,7 @@
 				feedback.play('tap');
 				adding = true;
 			}}
-			data-test="card-add"
+			data-test-id="card-add"
 			class="fl-press mt-6 w-full border-dashed py-6"
 		>
 			<Plus size={20} aria-hidden="true" />

@@ -6,11 +6,12 @@
 	import { data } from '$stores/data.svelte';
 	import { feedback } from '$stores/feedback.svelte';
 	import { motionMs } from '$stores/settings.svelte';
-	import { t } from '$lib/i18n/index.svelte';
+	import { i18n, t } from '$lib/i18n/index.svelte';
 	import type { Item } from '$db/schema';
 	import ShopSwitcher from '$components/app/ShopSwitcher.svelte';
 	import ItemRow from '$components/app/ItemRow.svelte';
 	import AddItemForm from '$components/app/AddItemForm.svelte';
+	import ShareSheet from '$components/app/ShareSheet.svelte';
 	import { createDrag, move } from '$components/app/drag.svelte';
 	import { Button } from '$lib/components/ui/button';
 	import {
@@ -18,12 +19,37 @@
 		ChevronDown,
 		ArrowLeft,
 		GripVertical,
-		MessagesSquare
+		MessagesSquare,
+		UsersRound
 	} from '@lucide/svelte';
 
 	const listId = $derived(page.params.id!);
 	const list = $derived(data.list(listId));
 	const groups = $derived(data.groupedItems(listId));
+
+	let share = $state<ShareSheet | null>(null);
+
+	/**
+	 * Les prénoms plutôt qu'un décompte : « Avec Hélène et Marc » se lit d'un coup d'œil, « 2
+	 * participants » demande d'ouvrir la feuille pour savoir de qui il s'agit.
+	 *
+	 * `Intl.ListFormat` s'occupe du « et » et des virgules — ce sont des règles de langue, pas des
+	 * chaînes à traduire, et elles diffèrent d'une langue à l'autre.
+	 */
+	const others = $derived(
+		(list?.memberIds ?? [])
+			.filter((id) => id !== data.me)
+			.map((id) => data.member(id)?.name)
+			.filter((name): name is string => Boolean(name))
+	);
+
+	const sharedWith = $derived(
+		others.length === 0
+			? t('share.aloneSummary')
+			: t('share.summary', {
+					names: new Intl.ListFormat(i18n.locale, { type: 'conjunction' }).format(others)
+				})
+	);
 
 	let priorityOnly = $state(false);
 	let hideChecked = $state(false);
@@ -90,18 +116,35 @@
 		<div
 			class="fl-grow bg-secondary h-full rounded-full"
 			style="width: {total ? Math.round((done / total) * 100) : 0}%"
-			data-test="list-progress"
+			data-test-id="list-progress"
 		></div>
 	</div>
 
-	<a
-		href="/l/{listId}/chat"
-		data-test="open-chat"
-		class="text-primary text-label mt-3 inline-flex min-h-[max(2.75rem,44px)] items-center gap-2 underline"
-	>
-		<MessagesSquare size={16} aria-hidden="true" />
-		{t('chat.open')}
-	</a>
+	<div class="mt-3 flex flex-wrap items-center gap-x-5">
+		<a
+			href="/l/{listId}/chat"
+			data-test-id="open-chat"
+			class="text-primary text-label inline-flex min-h-[max(2.75rem,44px)] items-center gap-2 underline"
+		>
+			<MessagesSquare size={16} aria-hidden="true" />
+			{t('chat.open')}
+		</a>
+
+		<button
+			type="button"
+			onclick={() => share?.show()}
+			data-test-id="open-share"
+			aria-haspopup="dialog"
+			class="text-primary text-label inline-flex min-h-[max(2.75rem,44px)] items-center gap-2 underline"
+		>
+			<UsersRound size={16} aria-hidden="true" />
+			{t('share.open')}
+		</button>
+	</div>
+
+	<p class="text-muted-foreground text-caption" data-test-id="share-summary">{sharedWith}</p>
+
+	<ShareSheet bind:this={share} {listId} />
 
 	<div class="mt-6">
 		<ShopSwitcher />
@@ -111,13 +154,13 @@
 		<label
 			class="border-input flex min-h-[max(2.75rem,44px)] cursor-pointer items-center gap-2 rounded-full border px-4 py-2"
 		>
-			<input type="checkbox" bind:checked={priorityOnly} data-test="filter-priority" />
+			<input type="checkbox" bind:checked={priorityOnly} data-test-id="filter-priority" />
 			<span class="text-label">{t('list.priorityOnly')}</span>
 		</label>
 		<label
 			class="border-input flex min-h-[max(2.75rem,44px)] cursor-pointer items-center gap-2 rounded-full border px-4 py-2"
 		>
-			<input type="checkbox" bind:checked={hideChecked} data-test="filter-hide-checked" />
+			<input type="checkbox" bind:checked={hideChecked} data-test-id="filter-hide-checked" />
 			<span class="text-label">{t('list.hideChecked')}</span>
 		</label>
 		{#if done > 0}
@@ -127,7 +170,7 @@
 					feedback.play('success');
 					data.clearChecked(listId);
 				}}
-				data-test="clear-checked"
+				data-test-id="clear-checked"
 			>
 				{t('list.clearChecked', { count: done })}
 			</Button>
@@ -148,7 +191,7 @@
 					ne recompose pas la page d'un coup, les rayons se déplacent vers leur nouvelle place.
 				-->
 				<section
-					data-test="aisle-group"
+					data-test-class="aisle-group"
 					data-aisle={group.aisleId}
 					{...aisleDrag.handlers(aisleIndex)}
 					animate:flip={{ duration: motionMs(380), easing: cubicOut }}
@@ -171,7 +214,7 @@
 							onclick={() => moveAisle(aisleIndex, aisleIndex - 1)}
 							disabled={aisleIndex === 0}
 							aria-label={t('list.aisleUp', { name: aisle?.name ?? group.aisleId })}
-							data-test="aisle-up"
+							data-test-class="aisle-up"
 							class="text-muted-foreground grid size-11 min-w-[44px] place-items-center disabled:opacity-30"
 						>
 							<ChevronUp size={18} aria-hidden="true" />
@@ -181,7 +224,7 @@
 							onclick={() => moveAisle(aisleIndex, aisleIndex + 1)}
 							disabled={aisleIndex === visible.length - 1}
 							aria-label={t('list.aisleDown', { name: aisle?.name ?? group.aisleId })}
-							data-test="aisle-down"
+							data-test-class="aisle-down"
 							class="text-muted-foreground grid size-11 min-w-[44px] place-items-center disabled:opacity-30"
 						>
 							<ChevronDown size={18} aria-hidden="true" />

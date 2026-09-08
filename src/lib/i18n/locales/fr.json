@@ -11,7 +11,16 @@
 		"shops": "Magasins",
 		"admin": "Comptes",
 		"household": "Foyer",
-		"magnifier": "Loupe"
+		"magnifier": "Loupe",
+		"create": "Créer"
+	},
+	"create": {
+		"title": "Que voulez-vous créer ?",
+		"item": "Ajouter un article",
+		"list": "Nouvelle liste",
+		"aisle": "Nouveau rayon",
+		"shop": "Nouveau magasin",
+		"card": "Nouvelle carte de fidélité"
 	},
 	"lists": {
 		"title": "Mes listes",
@@ -51,7 +60,10 @@
 		"testFeedback": "Écouter",
 		"help": "Aide",
 		"tourHint": "Revoir la visite guidée des écrans principaux.",
-		"replayTour": "Revoir la visite"
+		"replayTour": "Revoir la visite",
+		"sharing": "Partage",
+		"householdHint": "Inviter vos proches et partager vos listes.",
+		"adminHint": "Approuver les nouveaux comptes et gérer les rôles."
 	},
 	"theme": {
 		"light": "Clair",
@@ -145,6 +157,16 @@
 		"remove": "Supprimer {name}",
 		"noShop": "Ajouter un magasin"
 	},
+	"share": {
+		"title": "Qui participe à cette liste ?",
+		"note": "Tout le foyer voit la liste. Cocher quelqu'un dit qu'il est de la partie.",
+		"open": "Partager",
+		"you": "vous",
+		"summary": "Avec {names}",
+		"aloneSummary": "Personne d'autre pour l'instant",
+		"alone": "Vous êtes seul dans le foyer pour l'instant.",
+		"invite": "Inviter quelqu'un"
+	},
 	"units": {
 		"piece": "pièce",
 		"g": "g",
@@ -222,18 +244,16 @@
 		"haveAccount": "J'ai déjà un compte"
 	},
 	"tour": {
-		"newListTitle": "Créez une liste",
-		"newListBody": "Une liste par sortie, ou une par magasin : c'est vous qui voyez.",
+		"createTitle": "Le bouton pour créer",
+		"createBody": "Une liste, un article, un magasin, un rayon, une carte : tout part d'ici.",
 		"shopsTitle": "Vos magasins",
 		"shopsBody": "Rangez les rayons dans l'ordre où vous les traversez.",
 		"magnifierTitle": "La loupe",
 		"magnifierBody": "Pour lire une étiquette trop petite, avec l'appareil photo.",
 		"cardsTitle": "Vos cartes",
 		"cardsBody": "Les cartes de fidélité, prêtes à présenter en caisse.",
-		"householdTitle": "Votre foyer",
-		"householdBody": "Invitez vos proches : la liste se met à jour chez tout le monde.",
 		"profileTitle": "Vos réglages",
-		"profileBody": "Taille du texte, couleurs, langue : tout se change ici, quand vous voulez.",
+		"profileBody": "Taille du texte, couleurs, langue, partage avec vos proches : tout se règle ici.",
 		"next": "Suivant",
 		"back": "Précédent",
 		"done": "Terminer",

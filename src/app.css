@@ -857,3 +857,35 @@ button[data-slot='switch'][data-state='checked'] {
 [dir='rtl'] [data-state='checked'] > [data-slot='switch-thumb'] {
 	transform: translateX(calc(-1 * var(--fl-switch-travel)));
 }
+
+/*
+ * La feuille de création, ouverte par le bouton central.
+ *
+ * `<dialog>` arrive avec ses propres styles de navigateur — marge automatique, bordure, fond opaque,
+ * largeur ajustée au contenu — qu'il faut défaire avant de poser les nôtres. On le vide donc, et
+ * c'est la carte à l'intérieur qui porte la peinture : le dialogue lui-même n'est plus qu'un cadre
+ * de positionnement.
+ *
+ * En bas sur téléphone, là où se trouve le pouce et là où se trouve le bouton qui vient de l'ouvrir.
+ * Centré sur grand écran, où le bas de la fenêtre est loin du regard.
+ */
+.fl-sheet {
+	margin: auto auto 0;
+	width: 100%;
+	max-width: 32rem;
+	border: none;
+	padding: 0;
+	background: transparent;
+	color: inherit;
+}
+
+.fl-sheet::backdrop {
+	background: rgb(28 25 23 / 0.5);
+}
+
+@media (min-width: 48rem) {
+	.fl-sheet {
+		margin: auto;
+		padding: 1rem;
+	}
+}

@@ -12,12 +12,11 @@ import { settings } from '$stores/settings.svelte';
  * liste figée : driver.js s'arrête net sur une cible absente.
  */
 const STEPS = [
-	{ selector: '[data-test="new-list"]', key: 'newList' },
-	{ selector: '[data-test="nav-/shops"]', key: 'shops' },
-	{ selector: '[data-test="nav-/magnifier"]', key: 'magnifier' },
-	{ selector: '[data-test="nav-/cards"]', key: 'cards' },
-	{ selector: '[data-test="nav-/household"]', key: 'household' },
-	{ selector: '[data-test="nav-/profile"]', key: 'profile' }
+	{ selector: '[data-test-id="nav-create"]', key: 'create' },
+	{ selector: '[data-test-id="nav-/magnifier"]', key: 'magnifier' },
+	{ selector: '[data-test-id="nav-/shops"]', key: 'shops' },
+	{ selector: '[data-test-id="nav-/cards"]', key: 'cards' },
+	{ selector: '[data-test-id="nav-/profile"]', key: 'profile' }
 ];
 
 /**
