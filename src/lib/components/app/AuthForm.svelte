@@ -7,8 +7,10 @@
 	import { Input } from '$lib/components/ui/input';
 	import { Label } from '$lib/components/ui/label';
 	import * as Card from '$lib/components/ui/card';
-	import { CheckCircle2, User, Mail, Lock, Eye, EyeOff } from '@lucide/svelte';
+	import { CheckCircle2, User, Mail, Lock, Eye, EyeOff, KeyRound } from '@lucide/svelte';
 	import IconField from '$components/app/IconField.svelte';
+	import CodeField from '$components/app/CodeField.svelte';
+	import { isCompleteOtp, normalizeOtp } from '$domain/otp';
 
 	/**
 	 * Le même bloc sert à l'écran de connexion et à la dernière étape de l'accueil. Là-bas on arrive
@@ -28,9 +30,63 @@
 	let busy = $state(false);
 	let signedUp = $state(false);
 
+	/**
+	 * Le chemin sans mot de passe.
+	 *
+	 * Un mot de passe de plus est un mot de passe de plus à retenir, et c'est celui-là qu'on oublie
+	 * — l'application ne s'ouvre pas tous les jours. Le code reçu par courriel évite la question
+	 * entière, et le même envoi porte aussi un lien : cliquer marche, recopier les six chiffres
+	 * marche, on ne demande pas laquelle des deux méthodes la personne préfère.
+	 *
+	 * Réservé à la connexion : pour créer un compte il faut un nom, et une adresse mal tapée
+	 * fabriquerait un compte fantôme à trier.
+	 */
+	let sansMotDePasse = $state(false);
+	let codeEnvoye = $state(false);
+	let code = $state('');
+
 	const providers = enabledProviders();
 
 	const MODES = ['signin', 'signup'] as const;
+
+	async function envoyerCode(event: SubmitEvent) {
+		event.preventDefault();
+		busy = true;
+
+		const ok = await session.sendEmailCode(email);
+		busy = false;
+
+		if (ok) codeEnvoye = true;
+	}
+
+	async function validerCode(event: SubmitEvent) {
+		event.preventDefault();
+		busy = true;
+
+		const ok = await session.verifyEmailCode(email, code);
+		busy = false;
+
+		if (!ok) {
+			code = '';
+			return;
+		}
+
+		goto('/');
+	}
+
+	/** Créer un compte demande un nom : le chemin sans mot de passe n'y mène pas. */
+	function revenirAuMotDePasse() {
+		sansMotDePasse = false;
+		codeEnvoye = false;
+		code = '';
+	}
+
+	function basculer() {
+		sansMotDePasse = !sansMotDePasse;
+		codeEnvoye = false;
+		code = '';
+		session.error = null;
+	}
 
 	async function submit(event: SubmitEvent) {
 		event.preventDefault();
@@ -91,7 +147,10 @@
 					name="auth-mode"
 					class="sr-only"
 					checked={mode === value}
-					onchange={() => (mode = value)}
+					onchange={() => {
+						mode = value;
+						if (value === 'signup') revenirAuMotDePasse();
+					}}
 					data-test-id="mode-{value}"
 				/>
 				{t(value === 'signin' ? 'auth.signIn' : 'auth.signUp')}
@@ -121,6 +180,79 @@
 		</div>
 	{/if}
 
+	{#if sansMotDePasse}
+		<form
+			onsubmit={codeEnvoye ? validerCode : envoyerCode}
+			class="bg-card shadow-fl-1 mt-4 space-y-5 rounded-xl border p-5"
+			data-test-id="auth-code-form"
+		>
+			<div>
+				<Label for="auth-otp-email">{t('auth.email')}</Label>
+				<IconField icon={Mail}>
+					<Input
+						id="auth-otp-email"
+						type="email"
+						bind:value={email}
+						data-test-id="auth-otp-email"
+						autocomplete="email"
+						readonly={codeEnvoye}
+						required
+						placeholder={t('auth.emailPlaceholder')}
+					/>
+				</IconField>
+			</div>
+
+			{#if codeEnvoye}
+				<p class="text-muted-foreground text-label" data-test-id="auth-code-sent">
+					{t('auth.codeSent', { email })}
+				</p>
+
+				<div>
+					<CodeField
+						id="auth-otp"
+						label={t('auth.code')}
+						hint={t('auth.codeHint')}
+						bind:value={code}
+						normalize={normalizeOtp}
+						length={6}
+						testId="auth-otp"
+					/>
+				</div>
+			{/if}
+
+			{#if session.error}
+				<p class="text-destructive text-label" role="alert" data-test-id="auth-error">
+					{session.error}
+				</p>
+			{/if}
+
+			<Button
+				type="submit"
+				disabled={busy || (codeEnvoye && !isCompleteOtp(code))}
+				data-test-id="auth-code-submit"
+				class="fl-press w-full"
+			>
+				{busy ? t('common.loading') : codeEnvoye ? t('auth.verify') : t('auth.sendCode')}
+			</Button>
+
+			{#if codeEnvoye}
+				<Button
+					variant="ghost"
+					class="w-full"
+					disabled={busy}
+					onclick={() => (codeEnvoye = false)}
+					data-test-id="auth-code-again"
+				>
+					{t('auth.resend')}
+				</Button>
+			{/if}
+		</form>
+
+		<Button variant="ghost" class="mt-2 w-full" onclick={basculer} data-test-id="auth-use-password">
+			<Lock size={18} aria-hidden="true" />
+			{t('auth.usePassword')}
+		</Button>
+	{:else}
 	<form
 		onsubmit={submit}
 		class="bg-card shadow-fl-1 mt-4 space-y-5 rounded-xl border p-5"
@@ -221,4 +353,17 @@
 			<p class="text-muted-foreground text-caption">{t('auth.approvalNotice')}</p>
 		{/if}
 	</form>
+
+		{#if mode === 'signin'}
+			<Button
+				variant="ghost"
+				class="mt-2 w-full"
+				onclick={basculer}
+				data-test-id="auth-passwordless"
+			>
+				<KeyRound size={18} aria-hidden="true" />
+				{t('auth.passwordless')}
+			</Button>
+		{/if}
+	{/if}
 {/if}

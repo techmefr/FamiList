@@ -388,6 +388,27 @@ export type Database = {
           },
         ]
       }
+      mfa_backup_codes: {
+        Row: {
+          code_hash: string
+          created_at: string
+          used_at: string | null
+          user_id: string
+        }
+        Insert: {
+          code_hash: string
+          created_at?: string
+          used_at?: string | null
+          user_id: string
+        }
+        Update: {
+          code_hash?: string
+          created_at?: string
+          used_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       poll_options: {
         Row: {
           claimed_by: string | null
@@ -676,8 +697,11 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      backup_codes_left: { Args: never; Returns: number }
       can_access_list: { Args: { target: string }; Returns: boolean }
       can_access_shop: { Args: { target: string }; Returns: boolean }
+      consume_backup_code: { Args: { code: string }; Returns: boolean }
+      create_backup_codes: { Args: never; Returns: string[] }
       create_invite: { Args: never; Returns: string }
       ensure_household: { Args: { household_name?: string }; Returns: string }
       household_profiles: {
@@ -693,6 +717,18 @@ export type Database = {
       is_approved: { Args: never; Returns: boolean }
       is_household_member: { Args: { target: string }; Returns: boolean }
       leave_household: { Args: { target: string }; Returns: undefined }
+      my_sessions: {
+        Args: never
+        Returns: {
+          aal: string
+          created_at: string
+          current: boolean
+          id: string
+          ip: string
+          refreshed_at: string
+          user_agent: string
+        }[]
+      }
       pending_accounts: {
         Args: never
         Returns: {
@@ -710,6 +746,7 @@ export type Database = {
         Args: { decision: string; target: string }
         Returns: undefined
       }
+      revoke_session: { Args: { target: string }; Returns: undefined }
       set_demo: { Args: { demo: boolean; target: string }; Returns: undefined }
       slugify: { Args: { value: string }; Returns: string }
     }

@@ -322,6 +322,19 @@
 
 <Card.Root class="mt-6">
 	<Card.Header>
+		<Card.Title class="text-h2">{t('security.title')}</Card.Title>
+	</Card.Header>
+	<Card.Content class="flex flex-wrap items-center justify-between gap-4">
+		<p class="text-muted-foreground text-label">{t('security.subtitle')}</p>
+		<Button href="/profile/security" data-test-id="go-security" class="fl-press">
+			<ShieldCheck size={18} aria-hidden="true" />
+			{t('security.title')}
+		</Button>
+	</Card.Content>
+</Card.Root>
+
+<Card.Root class="mt-6">
+	<Card.Header>
 		<Card.Title class="text-h2">{t('profile.help')}</Card.Title>
 	</Card.Header>
 	<Card.Content class="flex flex-wrap items-center justify-between gap-4">

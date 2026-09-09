@@ -57,6 +57,20 @@
 			return;
 		}
 
+		/**
+		 * La session existe mais s'est arrêtée au mot de passe, alors que le compte exige un
+		 * deuxième facteur. Ce n'est pas un compte en attente de validation : le renvoyer vers
+		 * l'écran d'attente lui dirait quelque chose de faux, et surtout ne lui donnerait pas le
+		 * champ où taper son code.
+		 *
+		 * La base refuse déjà toute lecture dans cet état ; ce détour évite en plus de lancer la
+		 * synchronisation, qui vide les tables locales avant de les remplir.
+		 */
+		if (session.needsSecondFactor) {
+			if (page.url.pathname !== '/auth/mfa') goto('/auth/mfa');
+			return;
+		}
+
 		if (!session.isApproved) {
 			if (page.url.pathname !== '/auth/pending') goto('/auth/pending');
 			return;
