@@ -152,6 +152,8 @@
 		"shop": "Shop",
 		"chooseShop": "Choose a shop",
 		"learnedShop": "Learned route",
+		"routeLearned": "Sorted to match your route through this shop. Move the aisles to adjust it.",
+		"routeDefault": "Default order. Move the aisles to teach your route through this shop.",
 		"back": "Back to lists",
 		"notFound": "List not found.",
 		"empty": "Nothing to show with these filters.",

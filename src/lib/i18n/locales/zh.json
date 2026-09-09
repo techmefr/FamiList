@@ -151,6 +151,8 @@
 		"shop": "门店",
 		"chooseShop": "选择门店",
 		"learnedShop": "已学路线",
+		"routeLearned": "已按您在该门店的路线排列。移动货区即可调整。",
+		"routeDefault": "默认顺序。移动货区即可记住您在该门店的路线。",
 		"back": "返回清单",
 		"notFound": "找不到清单。",
 		"empty": "当前筛选没有内容。",

@@ -152,6 +152,8 @@
 		"shop": "Geschäft",
 		"chooseShop": "Geschäft auswählen",
 		"learnedShop": "Gelernter Weg",
+		"routeLearned": "Nach Ihrem Weg durch dieses Geschäft sortiert. Verschieben Sie die Regale, um ihn anzupassen.",
+		"routeDefault": "Standardreihenfolge. Verschieben Sie die Regale, damit Ihr Weg durch dieses Geschäft gelernt wird.",
 		"back": "Zurück zu den Listen",
 		"notFound": "Liste nicht gefunden.",
 		"empty": "Mit diesen Filtern gibt es nichts zu zeigen.",

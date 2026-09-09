@@ -152,6 +152,8 @@
 		"shop": "Tienda",
 		"chooseShop": "Elegir una tienda",
 		"learnedShop": "Recorrido aprendido",
+		"routeLearned": "Ordenado según su recorrido por esta tienda. Mueva los pasillos para ajustarlo.",
+		"routeDefault": "Orden predeterminado. Mueva los pasillos para enseñar su recorrido por esta tienda.",
 		"back": "Volver a las listas",
 		"notFound": "Lista no encontrada.",
 		"empty": "Nada que mostrar con estos filtros.",

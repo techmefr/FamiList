@@ -25,12 +25,17 @@
 		UsersRound,
 		Check,
 		Undo2,
-		Trash2
+		Trash2,
+		Route
 	} from '@lucide/svelte';
 
 	const listId = $derived(page.params.id!);
 	const list = $derived(data.list(listId));
 	const groups = $derived(data.groupedItems(listId));
+
+	const appris = $derived(
+		data.layouts.find((l) => l.shopId === data.activeShopId)?.learned ?? false
+	);
 
 	let share = $state<ShareSheet | null>(null);
 	let add = $state<AddItemSheet | null>(null);
@@ -195,7 +200,26 @@
 	{#if visible.length === 0}
 		<p class="text-muted-foreground mt-8">{t('list.empty')}</p>
 	{:else}
-		<div class="mt-6 space-y-6">
+		<!--
+			Pourquoi les rayons sont dans cet ordre-là.
+
+			L'ordre adaptatif est la promesse de l'application, et c'est aussi la seule chose qu'on ne
+			voit pas : une liste rangée selon un parcours appris ressemble trait pour trait à une liste
+			rangée par défaut. Sans cette phrase, réordonner un rayon a l'air d'un caprice sans effet.
+
+			La maquette dit « glissez les rayons ou cochez » ; cocher n'apprend rien chez nous — seul un
+			déplacement marque le parcours comme appris. Et « glissez » ne vaut que sur ordinateur, le
+			glisser-déposer HTML5 ignorant le tactile : « déplacez » couvre les flèches comme la souris.
+		-->
+		<p
+			class="text-label text-secondary mt-6 flex items-start gap-2 rounded-md bg-[var(--fl-secondary-tint)] px-3.5 py-2.5 font-medium"
+			data-test-id="route-hint"
+		>
+			<Route size={18} class="mt-0.5 shrink-0" aria-hidden="true" />
+			<span>{appris ? t('list.routeLearned') : t('list.routeDefault')}</span>
+		</p>
+
+		<div class="mt-4 space-y-6">
 			{#each visible as group, aisleIndex (group.aisleId)}
 				{@const aisle = data.aisle(group.aisleId)}
 				{@const itemDrag = createDrag((from, to) => moveItem(group.aisleId, group.items, from, to))}

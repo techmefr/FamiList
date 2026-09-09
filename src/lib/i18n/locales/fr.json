@@ -152,6 +152,8 @@
 		"shop": "Magasin",
 		"chooseShop": "Choisir un magasin",
 		"learnedShop": "Parcours appris",
+		"routeLearned": "Rangé selon votre parcours dans ce magasin. Déplacez les rayons pour l'ajuster.",
+		"routeDefault": "Ordre par défaut. Déplacez les rayons pour apprendre votre parcours dans ce magasin.",
 		"back": "Retour aux listes",
 		"notFound": "Liste introuvable.",
 		"empty": "Rien à afficher avec ces filtres.",

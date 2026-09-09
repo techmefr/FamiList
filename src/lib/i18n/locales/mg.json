@@ -151,6 +151,8 @@
 		"shop": "Fivarotana",
 		"chooseShop": "Misafidy fivarotana",
 		"learnedShop": "Lalana voatadidy",
+		"routeLearned": "Nalahatra araka ny lalanao ao amin'ity fivarotana ity. Afindrao ny faritra hanitsiana azy.",
+		"routeDefault": "Filaharana mahazatra. Afindrao ny faritra mba hianarana ny lalanao ao amin'ity fivarotana ity.",
 		"back": "Miverina amin'ny lisitra",
 		"notFound": "Tsy hita ny lisitra.",
 		"empty": "Tsy misy asehohatra amin'ireo sivana ireo.",
