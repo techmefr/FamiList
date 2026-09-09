@@ -1,0 +1,78 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+# Un push qui en rattrape un autre annule la file en cours : ce qui compte, c'est le dernier état
+# de la branche, pas chaque état intermédiaire.
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # Rapide et sans dépendance externe : le check svelte-check plus la couverture unitaire de la
+  # logique pure. Sépare ce job du reste pour avoir un retour avant même que Supabase ait fini de
+  # démarrer dans le job e2e.
+  check-and-unit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Vérification des types
+        run: pnpm run check
+
+      - name: Tests unitaires (couverture ≥ 80 % sur la logique pure)
+        run: pnpm run test:coverage
+
+      - name: Build
+        run: pnpm run build
+
+  e2e:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Navigateur Playwright
+        run: pnpm exec playwright install --with-deps chromium
+
+      - uses: supabase/setup-cli@v1
+        with:
+          version: latest
+
+      # `db reset` applique les migrations puis `supabase/seed.sql`, qui pose le compte fixe
+      # utilisé par les E2E (e2e@familist.test) — confirmé et approuvé sans mail ni clé de service.
+      - name: Pile Supabase locale
+        run: |
+          supabase start
+          supabase db reset
+
+      - name: Tests E2E
+        run: pnpm exec playwright test
+
+      - name: Rapport Playwright
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 7

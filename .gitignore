@@ -57,3 +57,12 @@ AGENTS.md
 .tabnine/
 graphify-out/
 repomix-output.*
+
+# E2E
+/test-results/
+/playwright-report/
+/playwright/.cache/
+/blob-report/
+
+# Couverture
+/coverage/
