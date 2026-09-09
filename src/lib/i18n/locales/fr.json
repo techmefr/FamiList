@@ -379,7 +379,9 @@
 		"next": "Continuer",
 		"back": "Retour",
 		"skip": "Plus tard",
-		"haveAccount": "J'ai déjà un compte"
+		"haveAccount": "J'ai déjà un compte",
+		"langTitle": "Dans quelle langue ?",
+		"langBody": "Chaque langue est écrite dans sa propre écriture : cherchez la vôtre."
 	},
 	"tour": {
 		"createTitle": "Le bouton pour créer",
@@ -395,7 +397,26 @@
 		"next": "Suivant",
 		"back": "Précédent",
 		"done": "Terminer",
-		"progress": "{{current}} sur {{total}}"
+		"progress": "{{current}} sur {{total}}",
+		"help": "Aide",
+		"listRouteTitle": "L'ordre des rayons",
+		"listRouteBody": "Prenez un rayon par sa poignée et déplacez-le : l'application retient le chemin que vous suivez dans ce magasin.",
+		"listFiltersTitle": "Filtrer la liste",
+		"listFiltersBody": "N'afficher que l'essentiel, ou masquer ce qui est déjà pris. La pastille signale un filtre actif.",
+		"listShareTitle": "Partager la liste",
+		"listShareBody": "Envoyez la liste telle quelle à quelqu'un qui n'a pas l'application.",
+		"listChatTitle": "Se parler sur la liste",
+		"listChatBody": "Une question posée depuis le rayon trouve sa réponse ici, sans quitter la liste.",
+		"shopsAislesTitle": "Vos rayons",
+		"shopsAislesBody": "Décrivez les rayons de ce magasin une fois : vos listes s'y rangeront toutes seules.",
+		"cardsScanTitle": "Enregistrer une carte",
+		"cardsScanBody": "Avec l'appareil photo, ou depuis une image déjà présente sur votre appareil.",
+		"magnifierZoomTitle": "Grossir",
+		"magnifierZoomBody": "Glissez pour agrandir l'étiquette autant qu'il faut.",
+		"magnifierFreezeTitle": "Figer l'image",
+		"magnifierFreezeBody": "Une image immobile se lit mieux qu'une main qui tremble. Touchez à nouveau pour repartir.",
+		"profileHouseholdTitle": "Votre foyer",
+		"profileHouseholdBody": "Invitez vos proches : vos listes et vos magasins deviennent les leurs."
 	},
 	"admin": {
 		"title": "Validation des comptes",

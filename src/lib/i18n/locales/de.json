@@ -379,7 +379,9 @@
 		"next": "Weiter",
 		"back": "Zurück",
 		"skip": "Später",
-		"haveAccount": "Ich habe schon ein Konto"
+		"haveAccount": "Ich habe schon ein Konto",
+		"langTitle": "In welcher Sprache?",
+		"langBody": "Jede Sprache steht in ihrer eigenen Schrift: suchen Sie Ihre."
 	},
 	"tour": {
 		"createTitle": "Die Schaltfläche zum Anlegen",
@@ -395,7 +397,26 @@
 		"next": "Weiter",
 		"back": "Zurück",
 		"done": "Fertig",
-		"progress": "{{current}} von {{total}}"
+		"progress": "{{current}} von {{total}}",
+		"help": "Hilfe",
+		"listRouteTitle": "Die Reihenfolge der Gänge",
+		"listRouteBody": "Fassen Sie einen Gang am Griff und verschieben Sie ihn: die App merkt sich Ihren Weg durch diesen Laden.",
+		"listFiltersTitle": "Liste filtern",
+		"listFiltersBody": "Nur das Nötigste zeigen oder Erledigtes ausblenden. Der Punkt steht für einen aktiven Filter.",
+		"listShareTitle": "Liste teilen",
+		"listShareBody": "Schicken Sie die Liste so, wie sie ist, an jemanden ohne die App.",
+		"listChatTitle": "Über die Liste sprechen",
+		"listChatBody": "Eine Frage aus dem Gang bekommt hier ihre Antwort, ohne die Liste zu verlassen.",
+		"shopsAislesTitle": "Ihre Gänge",
+		"shopsAislesBody": "Beschreiben Sie die Gänge dieses Ladens einmal, dann sortieren sich Ihre Listen von selbst.",
+		"cardsScanTitle": "Eine Karte speichern",
+		"cardsScanBody": "Mit der Kamera oder aus einem Bild, das schon auf dem Gerät liegt.",
+		"magnifierZoomTitle": "Vergrößern",
+		"magnifierZoomBody": "Schieben Sie, um das Etikett so weit zu vergrößern, wie Sie es brauchen.",
+		"magnifierFreezeTitle": "Bild einfrieren",
+		"magnifierFreezeBody": "Ein stehendes Bild liest sich besser als eine zitternde Hand. Nochmals tippen, um fortzufahren.",
+		"profileHouseholdTitle": "Ihr Haushalt",
+		"profileHouseholdBody": "Laden Sie Ihre Angehörigen ein: Ihre Listen und Läden werden auch die ihren."
 	},
 	"admin": {
 		"title": "Kontofreigabe",

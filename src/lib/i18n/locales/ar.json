@@ -383,7 +383,9 @@
 		"next": "متابعة",
 		"back": "رجوع",
 		"skip": "لاحقًا",
-		"haveAccount": "لديّ حساب بالفعل"
+		"haveAccount": "لديّ حساب بالفعل",
+		"langTitle": "بأي لغة؟",
+		"langBody": "كل لغة مكتوبة بحروفها: ابحث عن لغتك."
 	},
 	"tour": {
 		"createTitle": "زر الإنشاء",
@@ -399,7 +401,26 @@
 		"next": "التالي",
 		"back": "السابق",
 		"done": "إنهاء",
-		"progress": "{{current}} من {{total}}"
+		"progress": "{{current}} من {{total}}",
+		"help": "مساعدة",
+		"listRouteTitle": "ترتيب الأقسام",
+		"listRouteBody": "أمسك القسم من مقبضه وحرّكه: يحفظ التطبيق المسار الذي تسلكه في هذا المتجر.",
+		"listFiltersTitle": "تصفية القائمة",
+		"listFiltersBody": "أظهر الأساسي فقط أو أخفِ ما أخذته. النقطة تعني أن هناك تصفية مفعّلة.",
+		"listShareTitle": "مشاركة القائمة",
+		"listShareBody": "أرسل القائمة كما هي إلى من لا يملك التطبيق.",
+		"listChatTitle": "الحديث حول القائمة",
+		"listChatBody": "سؤال يُطرح من أمام الرف تجد جوابه هنا، دون مغادرة القائمة.",
+		"shopsAislesTitle": "أقسامك",
+		"shopsAislesBody": "صِف أقسام هذا المتجر مرة واحدة، وستترتّب قوائمك وحدها.",
+		"cardsScanTitle": "حفظ بطاقة",
+		"cardsScanBody": "بالكاميرا، أو من صورة موجودة على جهازك.",
+		"magnifierZoomTitle": "التكبير",
+		"magnifierZoomBody": "حرّك المؤشّر لتكبير الملصق بالقدر الذي تحتاجه.",
+		"magnifierFreezeTitle": "تثبيت الصورة",
+		"magnifierFreezeBody": "الصورة الثابتة أسهل قراءة من يد ترتجف. المس مرة أخرى للمتابعة.",
+		"profileHouseholdTitle": "أسرتك",
+		"profileHouseholdBody": "ادعُ أهلك: تصبح قوائمك ومتاجرك لهم أيضًا."
 	},
 	"admin": {
 		"title": "اعتماد الحسابات",

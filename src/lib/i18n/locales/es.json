@@ -379,7 +379,9 @@
 		"next": "Continuar",
 		"back": "Atrás",
 		"skip": "Más tarde",
-		"haveAccount": "Ya tengo una cuenta"
+		"haveAccount": "Ya tengo una cuenta",
+		"langTitle": "¿En qué idioma?",
+		"langBody": "Cada idioma está escrito en su propia escritura: busque el suyo."
 	},
 	"tour": {
 		"createTitle": "El botón para crear",
@@ -395,7 +397,26 @@
 		"next": "Siguiente",
 		"back": "Anterior",
 		"done": "Terminar",
-		"progress": "{{current}} de {{total}}"
+		"progress": "{{current}} de {{total}}",
+		"help": "Ayuda",
+		"listRouteTitle": "El orden de las secciones",
+		"listRouteBody": "Coja una sección por su asa y muévala: la aplicación recuerda el recorrido que hace en esta tienda.",
+		"listFiltersTitle": "Filtrar la lista",
+		"listFiltersBody": "Mostrar solo lo esencial u ocultar lo que ya está en el carro. El punto indica un filtro activo.",
+		"listShareTitle": "Compartir la lista",
+		"listShareBody": "Envíe la lista tal cual a alguien que no tenga la aplicación.",
+		"listChatTitle": "Hablar sobre la lista",
+		"listChatBody": "Una pregunta hecha desde la sección encuentra aquí su respuesta, sin salir de la lista.",
+		"shopsAislesTitle": "Sus secciones",
+		"shopsAislesBody": "Describa una vez las secciones de esta tienda: sus listas se ordenarán solas.",
+		"cardsScanTitle": "Guardar una tarjeta",
+		"cardsScanBody": "Con la cámara o desde una imagen que ya tenga en el dispositivo.",
+		"magnifierZoomTitle": "Ampliar",
+		"magnifierZoomBody": "Deslice para agrandar la etiqueta todo lo que necesite.",
+		"magnifierFreezeTitle": "Congelar la imagen",
+		"magnifierFreezeBody": "Una imagen quieta se lee mejor que una mano que tiembla. Toque otra vez para continuar.",
+		"profileHouseholdTitle": "Su hogar",
+		"profileHouseholdBody": "Invite a los suyos: sus listas y sus tiendas pasan a ser también las de ellos."
 	},
 	"admin": {
 		"title": "Validación de cuentas",

@@ -379,7 +379,9 @@
 		"next": "Continua",
 		"back": "Indietro",
 		"skip": "Più tardi",
-		"haveAccount": "Ho già un account"
+		"haveAccount": "Ho già un account",
+		"langTitle": "In quale lingua?",
+		"langBody": "Ogni lingua è scritta nella propria scrittura: cerchi la sua."
 	},
 	"tour": {
 		"createTitle": "Il pulsante per creare",
@@ -395,7 +397,26 @@
 		"next": "Avanti",
 		"back": "Indietro",
 		"done": "Fine",
-		"progress": "{{current}} di {{total}}"
+		"progress": "{{current}} di {{total}}",
+		"help": "Aiuto",
+		"listRouteTitle": "L'ordine dei reparti",
+		"listRouteBody": "Prenda un reparto per la maniglia e lo sposti: l'applicazione ricorda il percorso che fa in questo negozio.",
+		"listFiltersTitle": "Filtrare la lista",
+		"listFiltersBody": "Mostrare solo l'essenziale o nascondere ciò che è già preso. Il pallino segnala un filtro attivo.",
+		"listShareTitle": "Condividere la lista",
+		"listShareBody": "Mandi la lista così com'è a chi non ha l'applicazione.",
+		"listChatTitle": "Parlarsi sulla lista",
+		"listChatBody": "Una domanda posta dal reparto trova qui la sua risposta, senza uscire dalla lista.",
+		"shopsAislesTitle": "I suoi reparti",
+		"shopsAislesBody": "Descriva una volta i reparti di questo negozio: le sue liste si ordineranno da sole.",
+		"cardsScanTitle": "Salvare una tessera",
+		"cardsScanBody": "Con la fotocamera o da un'immagine già presente sul dispositivo.",
+		"magnifierZoomTitle": "Ingrandire",
+		"magnifierZoomBody": "Faccia scorrere per ingrandire l'etichetta quanto serve.",
+		"magnifierFreezeTitle": "Fermare l'immagine",
+		"magnifierFreezeBody": "Un'immagine ferma si legge meglio di una mano che trema. Tocchi di nuovo per riprendere.",
+		"profileHouseholdTitle": "La sua famiglia",
+		"profileHouseholdBody": "Inviti i suoi cari: le sue liste e i suoi negozi diventano anche i loro."
 	},
 	"admin": {
 		"title": "Approvazione degli account",

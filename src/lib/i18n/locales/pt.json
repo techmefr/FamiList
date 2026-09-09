@@ -379,7 +379,9 @@
 		"next": "Continuar",
 		"back": "Voltar",
 		"skip": "Mais tarde",
-		"haveAccount": "Já tenho uma conta"
+		"haveAccount": "Já tenho uma conta",
+		"langTitle": "Em que língua?",
+		"langBody": "Cada língua está escrita na sua própria escrita: procure a sua."
 	},
 	"tour": {
 		"createTitle": "O botão para criar",
@@ -395,7 +397,26 @@
 		"next": "Seguinte",
 		"back": "Anterior",
 		"done": "Concluir",
-		"progress": "{{current}} de {{total}}"
+		"progress": "{{current}} de {{total}}",
+		"help": "Ajuda",
+		"listRouteTitle": "A ordem dos corredores",
+		"listRouteBody": "Pegue num corredor pela pega e desloque-o: a aplicação memoriza o caminho que faz nesta loja.",
+		"listFiltersTitle": "Filtrar a lista",
+		"listFiltersBody": "Mostrar apenas o essencial ou esconder o que já está no carrinho. O ponto indica um filtro ativo.",
+		"listShareTitle": "Partilhar a lista",
+		"listShareBody": "Envie a lista tal como está a alguém que não tenha a aplicação.",
+		"listChatTitle": "Falar sobre a lista",
+		"listChatBody": "Uma pergunta feita a partir do corredor encontra aqui a resposta, sem sair da lista.",
+		"shopsAislesTitle": "Os seus corredores",
+		"shopsAislesBody": "Descreva uma vez os corredores desta loja: as suas listas organizam-se sozinhas.",
+		"cardsScanTitle": "Guardar um cartão",
+		"cardsScanBody": "Com a câmara ou a partir de uma imagem já presente no aparelho.",
+		"magnifierZoomTitle": "Ampliar",
+		"magnifierZoomBody": "Deslize para aumentar o rótulo tanto quanto precisar.",
+		"magnifierFreezeTitle": "Congelar a imagem",
+		"magnifierFreezeBody": "Uma imagem parada lê-se melhor do que uma mão a tremer. Toque de novo para continuar.",
+		"profileHouseholdTitle": "A sua casa",
+		"profileHouseholdBody": "Convide os seus: as suas listas e as suas lojas passam a ser também deles."
 	},
 	"admin": {
 		"title": "Validação de contas",

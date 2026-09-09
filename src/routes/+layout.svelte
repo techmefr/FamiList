@@ -13,6 +13,7 @@
 	import SyncStatus from '$components/app/SyncStatus.svelte';
 	import CreateMenu from '$components/app/CreateMenu.svelte';
 	import Logo from '$components/app/Logo.svelte';
+	import HelpButton from '$components/app/HelpButton.svelte';
 
 	let { children } = $props();
 
@@ -88,7 +89,7 @@
 			const { startTour } = await import('$lib/tour');
 			if (cancelled) return;
 
-			startTour(() => settings.setTourSeen(true));
+			startTour(page.url.pathname, () => settings.setTourSeen(true));
 		}, 700);
 
 		return () => {
@@ -293,7 +294,17 @@
 
 		<div>
 			<SyncStatus />
-			<main class="mx-auto w-full max-w-3xl px-4 pt-6 pb-36 md:pb-10">
+
+			<!--
+				Une seule ligne au-dessus du contenu, pour l'aide. Elle est identique sur tous les écrans
+				et à toutes les tailles : chercher le point d'interrogation ailleurs selon la page, ou
+				selon qu'on est sur un téléphone, ferait perdre plus de temps qu'il n'en fait gagner.
+			-->
+			<div class="mx-auto flex w-full max-w-3xl justify-end px-4 pt-3">
+				<HelpButton />
+			</div>
+
+			<main class="mx-auto w-full max-w-3xl px-4 pt-2 pb-36 md:pb-10">
 				{@render children()}
 			</main>
 		</div>

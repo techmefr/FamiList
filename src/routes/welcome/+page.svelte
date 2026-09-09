@@ -1,10 +1,12 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import { t } from '$lib/i18n/index.svelte';
+	import { i18n, t, LOCALES, type Locale } from '$lib/i18n/index.svelte';
 	import {
 		settings,
 		ACCENT_PRESETS,
 		FONT_SCALE_PRESETS,
+		MOTION_PREFERENCES,
+		type MotionPreference,
 		type Theme
 	} from '$stores/settings.svelte';
 	import { Button } from '$lib/components/ui/button';
@@ -12,7 +14,7 @@
 	import AuthForm from '$components/app/AuthForm.svelte';
 	import { ArrowRight, Check } from '@lucide/svelte';
 
-	const STEPS = 3;
+	const STEPS = 4;
 
 	let step = $state(1);
 	let heading = $state<HTMLHeadingElement | null>(null);
@@ -71,13 +73,29 @@
 </p>
 
 <!--
+	La jauge redit en image ce que la ligne au-dessus dit en mots : combien il en reste. Quatre
+	écrans sans repère visuel donnent l'impression d'un formulaire qui ne finit pas, et c'est à ce
+	moment-là qu'on abandonne. Elle est décorative au sens strict — le texte porte déjà
+	l'information, la doubler dans la synthèse vocale ne ferait que la ralentir.
+-->
+<div class="bg-muted mt-2 h-1 overflow-hidden rounded-full" aria-hidden="true">
+	<div
+		class="bg-primary h-full rounded-full transition-[width] duration-300 ease-[var(--fl-ease)]"
+		style="width: {(step / STEPS) * 100}%"
+		data-test-id="welcome-progress"
+	></div>
+</div>
+
+<!--
 	Le titre change à chaque étape et porte le focus : c'est lui qui annonce où l'on est. `tabindex`
 	à -1 le rend focalisable sans l'insérer dans l'ordre de tabulation.
 -->
-<h1 bind:this={heading} tabindex="-1" class="text-h1 mt-1 font-semibold outline-none">
+<h1 bind:this={heading} tabindex="-1" class="text-h1 mt-3 font-semibold outline-none">
 	{#if step === 1}
-		{t('welcome.sizeTitle')}
+		{t('welcome.langTitle')}
 	{:else if step === 2}
+		{t('welcome.sizeTitle')}
+	{:else if step === 3}
 		{t('welcome.lookTitle')}
 	{:else}
 		{t('welcome.accountTitle')}
@@ -85,6 +103,33 @@
 </h1>
 
 {#if step === 1}
+	<!--
+		La langue vient avant tout le reste, et c'est la seule étape dont le contenu ne dépend pas de
+		la langue en cours : chaque nom est écrit dans sa propre langue. Quelqu'un qui ouvre
+		l'application dans une langue qu'il ne lit pas ne peut pas comprendre « Réglages » pour aller
+		la changer — mais il reconnaît « Malagasy » dans une liste, et cela suffit.
+	-->
+	<p class="text-muted-foreground mt-2">{t('welcome.langBody')}</p>
+
+	<fieldset class="mt-6">
+		<legend class="sr-only">{t('profile.language')}</legend>
+		<div class="flex flex-wrap gap-2">
+			{#each LOCALES as locale (locale.code)}
+				<Label class={optionClass}>
+					<input
+						type="radio"
+						name="welcome-locale"
+						checked={i18n.locale === locale.code}
+						onchange={() => i18n.setLocale(locale.code as Locale)}
+						data-test-id="welcome-locale-{locale.code}"
+						class="sr-only"
+					/>
+					<span lang={locale.code} dir={locale.dir}>{locale.native}</span>
+				</Label>
+			{/each}
+		</div>
+	</fieldset>
+{:else if step === 2}
 	<p class="text-muted-foreground mt-2">{t('welcome.sizeBody')}</p>
 
 	<div class="bg-card mt-6 rounded-xl border p-4">
@@ -122,7 +167,7 @@
 
 	<p class="text-label mt-2 font-medium" data-test-id="welcome-size-label">{scaleLabel}</p>
 	<p class="text-muted-foreground text-caption mt-1">{t('welcome.sizeHint')}</p>
-{:else if step === 2}
+{:else if step === 3}
 	<p class="text-muted-foreground mt-2">{t('welcome.lookBody')}</p>
 
 	<fieldset class="mt-6">
@@ -171,6 +216,32 @@
 			{/each}
 		</div>
 	</fieldset>
+
+	<!--
+		Le mouvement se règle ici et non dans un écran d'accessibilité à part. Une personne que les
+		glissements écœurent n'a pas à traverser l'application entière pour trouver l'interrupteur :
+		le réglage système est déjà respecté par défaut, ce choix-ci sert à celles dont l'appareil ne
+		le porte pas, ou qui veulent le contraire ici précisément.
+	-->
+	<fieldset class="mt-6">
+		<legend class="text-label mb-2 font-medium">{t('profile.motion')}</legend>
+		<div class="flex flex-wrap gap-2">
+			{#each MOTION_PREFERENCES as value (value)}
+				<Label class={optionClass}>
+					<input
+						type="radio"
+						name="welcome-motion"
+						checked={settings.motion === value}
+						onchange={() => settings.setMotion(value as MotionPreference)}
+						data-test-id="welcome-motion-{value}"
+						class="sr-only"
+					/>
+					{t(`motion.${value}`)}
+				</Label>
+			{/each}
+		</div>
+		<p class="text-muted-foreground text-caption mt-2">{t('profile.motionHint')}</p>
+	</fieldset>
 {:else}
 	<p class="text-muted-foreground mt-2">{t('welcome.accountBody')}</p>
 
@@ -179,7 +250,12 @@
 
 <div class="mt-8 flex flex-wrap items-center gap-3">
 	{#if step > 1}
-		<Button variant="outline" class="fl-press" onclick={() => go(step - 1)} data-test-id="welcome-back">
+		<Button
+			variant="outline"
+			class="fl-press"
+			onclick={() => go(step - 1)}
+			data-test-id="welcome-back"
+		>
 			{t('welcome.back')}
 		</Button>
 	{/if}

@@ -378,7 +378,9 @@
 		"next": "Tohizana",
 		"back": "Hiverina",
 		"skip": "Any aoriana",
-		"haveAccount": "Manana kaonty aho sahady"
+		"haveAccount": "Manana kaonty aho sahady",
+		"langTitle": "Amin'ny fiteny inona?",
+		"langBody": "Voasoratra amin'ny sorany manokana ny fiteny tsirairay: tadiavo ny anao."
 	},
 	"tour": {
 		"createTitle": "Ny bokotra hamorona",
@@ -394,7 +396,26 @@
 		"next": "Manaraka",
 		"back": "Mialoha",
 		"done": "Vita",
-		"progress": "{{current}} amin'ny {{total}}"
+		"progress": "{{current}} amin'ny {{total}}",
+		"help": "Fanampiana",
+		"listRouteTitle": "Ny filaharan'ny faritra",
+		"listRouteBody": "Raiso amin'ny tahony ny faritra iray ka afindrao: tadidin'ny rindranasa ny lalana izorenao ao amin'ity fivarotana ity.",
+		"listFiltersTitle": "Sivano ny lisitra",
+		"listFiltersBody": "Asehoy ny ilaina fotsiny, na afeno izay efa noraisina. Ny teboka dia midika fa misy sivana miasa.",
+		"listShareTitle": "Zarao ny lisitra",
+		"listShareBody": "Alefaso araka izao ny lisitra ho an'ny olona tsy manana ny rindranasa.",
+		"listChatTitle": "Miresaka eo amin'ny lisitra",
+		"listChatBody": "Ny fanontaniana apetraka eo anoloan'ny talantalana dia mahita valiny eto, tsy mila miala amin'ny lisitra.",
+		"shopsAislesTitle": "Ny faritrao",
+		"shopsAislesBody": "Faritano indray mandeha ny faritry ny fivarotana: ho voalamina ho azy ny lisitrao.",
+		"cardsScanTitle": "Tehirizo karatra",
+		"cardsScanBody": "Amin'ny fakan-tsary, na avy amin'ny sary efa ao anaty fitaovanao.",
+		"magnifierZoomTitle": "Manalehibe",
+		"magnifierZoomBody": "Sintomy mba hanalehibe ny marika araka izay ilainao.",
+		"magnifierFreezeTitle": "Ajanony ny sary",
+		"magnifierFreezeBody": "Mora vakiana kokoa ny sary tsy mihetsika noho ny tanana mangovitra. Tsindrio indray hanohizana.",
+		"profileHouseholdTitle": "Ny ankohonanao",
+		"profileHouseholdBody": "Asao ny havanao: ho azy ireo koa ny lisitrao sy ny fivarotanao."
 	},
 	"admin": {
 		"title": "Fankatoavana kaonty",

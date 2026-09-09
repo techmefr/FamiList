@@ -379,7 +379,9 @@
 		"next": "Continue",
 		"back": "Back",
 		"skip": "Later",
-		"haveAccount": "I already have an account"
+		"haveAccount": "I already have an account",
+		"langTitle": "Which language?",
+		"langBody": "Every language is written in its own script: look for yours."
 	},
 	"tour": {
 		"createTitle": "The create button",
@@ -395,7 +397,26 @@
 		"next": "Next",
 		"back": "Previous",
 		"done": "Done",
-		"progress": "{{current}} of {{total}}"
+		"progress": "{{current}} of {{total}}",
+		"help": "Help",
+		"listRouteTitle": "The order of the aisles",
+		"listRouteBody": "Take an aisle by its handle and move it: the app remembers the route you walk in this shop.",
+		"listFiltersTitle": "Filter the list",
+		"listFiltersBody": "Show only what matters, or hide what is already in the trolley. The dot means a filter is on.",
+		"listShareTitle": "Share the list",
+		"listShareBody": "Send the list as it is to someone who does not have the app.",
+		"listChatTitle": "Talk on the list",
+		"listChatBody": "A question asked from the aisle gets its answer here, without leaving the list.",
+		"shopsAislesTitle": "Your aisles",
+		"shopsAislesBody": "Describe this shop's aisles once and your lists will sort themselves into them.",
+		"cardsScanTitle": "Save a card",
+		"cardsScanBody": "With the camera, or from an image already on your device.",
+		"magnifierZoomTitle": "Zoom in",
+		"magnifierZoomBody": "Slide to enlarge the label as much as you need.",
+		"magnifierFreezeTitle": "Freeze the image",
+		"magnifierFreezeBody": "A still image reads better than a shaking hand. Tap again to resume.",
+		"profileHouseholdTitle": "Your household",
+		"profileHouseholdBody": "Invite the people you live with: your lists and shops become theirs too."
 	},
 	"admin": {
 		"title": "Account approval",
