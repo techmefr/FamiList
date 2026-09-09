@@ -15,10 +15,13 @@ export const test = base.extend<{ signedInPage: import('@playwright/test').Page 
 	signedInPage: async ({ page }, use) => {
 		// Sans ça, le tour guidé s'ouvre tout seul (première visite = stockage vide) et son overlay
 		// intercepte les clics des tests suivants — on ne teste pas le tour ici, on le neutralise.
+		// `changedAt` doit être posé : sans lui `localWins` est faux, et la synchronisation
+		// d'apparence qui suit la connexion réécrase aussitôt ce réglage avec celui, vierge, resté
+		// en base pour ce compte fixe.
 		await page.addInitScript(() => {
 			localStorage.setItem(
 				'familist:appearance',
-				JSON.stringify({ hasSeenTour: true, hasSeenWelcome: true })
+				JSON.stringify({ hasSeenTour: true, hasSeenWelcome: true, changedAt: Date.now() })
 			);
 		});
 

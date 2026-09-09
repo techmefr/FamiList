@@ -443,7 +443,14 @@
 		"unsetDemo": "Togli la demo",
 		"resetDemo": "Reimposta la demo",
 		"demoReset": "La casa dimostrativa è tornata allo stato iniziale.",
-		"demoHint": "L’account dimostrativo è aperto a tutti. Reimpostalo quando è stato usato molto."
+		"demoHint": "L’account dimostrativo è aperto a tutti. Reimpostalo quando è stato usato molto.",
+		"reportsTitle": "Segnalazioni",
+		"reportsEmpty": "Nessuna segnalazione.",
+		"reportStatus": {
+			"open": "Aperta",
+			"resolved": "Risolta"
+		},
+		"resolveReport": "Segna come risolta"
 	},
 	"sync": {
 		"offline": "Non in linea — le modifiche partiranno al ritorno della rete",
@@ -572,5 +579,20 @@
 		"revoke": "Chiudere",
 		"on": "su",
 		"unknownDevice": "Apparecchio sconosciuto"
+	},
+	"bugReport": {
+		"button": "Segnala un problema",
+		"title": "Segnala un problema",
+		"subtitle": "Descrivi cosa non va, o cosa vorresti vedere. Uno screenshot aiuta molto.",
+		"description": "Descrizione",
+		"descriptionPlaceholder": "Cosa è successo? Cosa ti aspettavi invece?",
+		"screenshotAdd": "Aggiungi uno screenshot",
+		"screenshotRemove": "Rimuovi",
+		"screenshotAlt": "Screenshot allegato alla segnalazione",
+		"tooBig": "Questa immagine è troppo pesante.",
+		"captureFailed": "Impossibile leggere questa immagine.",
+		"submit": "Invia",
+		"success": "Grazie, la tua segnalazione è stata inviata.",
+		"backHome": "Torna alla home"
 	}
 }

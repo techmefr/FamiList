@@ -443,7 +443,14 @@
 		"unsetDemo": "Retirer la démo",
 		"resetDemo": "Réinitialiser la démo",
 		"demoReset": "Le foyer de démonstration est revenu à son état de départ.",
-		"demoHint": "Le compte de démonstration est ouvert à tous. Remettez-le à zéro quand il a trop servi."
+		"demoHint": "Le compte de démonstration est ouvert à tous. Remettez-le à zéro quand il a trop servi.",
+		"reportsTitle": "Signalements",
+		"reportsEmpty": "Aucun signalement.",
+		"reportStatus": {
+			"open": "Ouvert",
+			"resolved": "Résolu"
+		},
+		"resolveReport": "Marquer comme résolu"
 	},
 	"sync": {
 		"offline": "Hors connexion — vos modifications partiront au retour du réseau",
@@ -572,5 +579,20 @@
 		"revoke": "Fermer",
 		"on": "sur",
 		"unknownDevice": "Appareil inconnu"
+	},
+	"bugReport": {
+		"button": "Signaler un bug",
+		"title": "Signaler un problème",
+		"subtitle": "Décrivez ce qui ne va pas, ou ce que vous aimeriez voir. Une capture d'écran aide beaucoup.",
+		"description": "Description",
+		"descriptionPlaceholder": "Qu'est-ce qui s'est passé ? Qu'attendiez-vous à la place ?",
+		"screenshotAdd": "Ajouter une capture",
+		"screenshotRemove": "Retirer",
+		"screenshotAlt": "Capture d'écran jointe au signalement",
+		"tooBig": "Cette image est trop lourde.",
+		"captureFailed": "Impossible de lire cette image.",
+		"submit": "Envoyer",
+		"success": "Merci, votre signalement a bien été envoyé.",
+		"backHome": "Retour à l'accueil"
 	}
 }

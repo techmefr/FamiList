@@ -72,6 +72,42 @@ export type Database = {
           },
         ]
       }
+      bug_reports: {
+        Row: {
+          created_at: string
+          description: string
+          id: string
+          path: string | null
+          resolved_at: string | null
+          screenshot: string | null
+          status: string
+          user_agent: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          description: string
+          id?: string
+          path?: string | null
+          resolved_at?: string | null
+          screenshot?: string | null
+          status?: string
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          id?: string
+          path?: string | null
+          resolved_at?: string | null
+          screenshot?: string | null
+          status?: string
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       household_invites: {
         Row: {
           code: string
@@ -717,6 +753,19 @@ export type Database = {
       is_approved: { Args: never; Returns: boolean }
       is_household_member: { Args: { target: string }; Returns: boolean }
       leave_household: { Args: { target: string }; Returns: undefined }
+      list_bug_reports: {
+        Args: never
+        Returns: {
+          created_at: string
+          description: string
+          email: string
+          id: string
+          path: string
+          screenshot: string
+          status: string
+          user_agent: string
+        }[]
+      }
       my_sessions: {
         Args: never
         Returns: {
@@ -742,6 +791,7 @@ export type Database = {
       }
       redeem_invite: { Args: { invite_code: string }; Returns: string }
       reset_demo: { Args: never; Returns: undefined }
+      resolve_bug_report: { Args: { target: string }; Returns: undefined }
       review_account: {
         Args: { decision: string; target: string }
         Returns: undefined
@@ -749,6 +799,15 @@ export type Database = {
       revoke_session: { Args: { target: string }; Returns: undefined }
       set_demo: { Args: { demo: boolean; target: string }; Returns: undefined }
       slugify: { Args: { value: string }; Returns: string }
+      submit_bug_report: {
+        Args: {
+          description: string
+          path: string
+          screenshot: string
+          user_agent: string
+        }
+        Returns: string
+      }
     }
     Enums: {
       [_ in never]: never

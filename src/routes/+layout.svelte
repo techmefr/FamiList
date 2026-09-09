@@ -14,6 +14,7 @@
 	import CreateMenu from '$components/app/CreateMenu.svelte';
 	import Logo from '$components/app/Logo.svelte';
 	import HelpButton from '$components/app/HelpButton.svelte';
+	import BugReportButton from '$components/app/BugReportButton.svelte';
 
 	let { children } = $props();
 
@@ -314,7 +315,8 @@
 				et à toutes les tailles : chercher le point d'interrogation ailleurs selon la page, ou
 				selon qu'on est sur un téléphone, ferait perdre plus de temps qu'il n'en fait gagner.
 			-->
-			<div class="mx-auto flex w-full max-w-3xl justify-end px-4 pt-3">
+			<div class="mx-auto flex w-full max-w-3xl justify-end gap-1 px-4 pt-3">
+				<BugReportButton />
 				<HelpButton />
 			</div>
 

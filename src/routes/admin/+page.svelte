@@ -16,19 +16,45 @@
 		is_demo: boolean;
 	}
 
+	interface BugReport {
+		id: string;
+		email: string | null;
+		description: string;
+		screenshot: string | null;
+		path: string | null;
+		user_agent: string | null;
+		status: string;
+		created_at: string;
+	}
+
 	let accounts = $state<PendingAccount[]>([]);
+	let reports = $state<BugReport[]>([]);
 	let loading = $state(true);
 	let error = $state<string | null>(null);
 
 	async function load() {
 		loading = true;
-		const { data, error: rpcError } = await supabase.rpc('pending_accounts');
+		const [{ data, error: rpcError }, { data: reportData, error: reportError }] =
+			await Promise.all([
+				supabase.rpc('pending_accounts'),
+				supabase.rpc('list_bug_reports')
+			]);
 
 		// Un non-admin reçoit une erreur, pas une liste vide : la distinction évite de croire
 		// qu'il n'y a personne en attente alors qu'on n'a simplement pas le droit de regarder.
-		error = rpcError?.message ?? null;
+		error = rpcError?.message ?? reportError?.message ?? null;
 		accounts = (data as PendingAccount[]) ?? [];
+		reports = (reportData as BugReport[]) ?? [];
 		loading = false;
+	}
+
+	async function resolveReport(id: string) {
+		const { error: rpcError } = await supabase.rpc('resolve_bug_report', { target: id });
+		if (rpcError) {
+			error = rpcError.message;
+			return;
+		}
+		await load();
 	}
 
 	async function review(id: string, decision: 'approved' | 'rejected') {
@@ -139,6 +165,52 @@
 									data-test-class="toggle-demo"
 								>
 									{account.is_demo ? t('admin.unsetDemo') : t('admin.setDemo')}
+								</Button>
+							{/if}
+						</Card.Content>
+					</Card.Root>
+				</li>
+			{/each}
+		</ul>
+	{/if}
+
+	<h2 class="text-h2 mt-10 font-semibold">{t('admin.reportsTitle')}</h2>
+
+	{#if reports.length === 0}
+		<EmptyState illustration="inbox" text={t('admin.reportsEmpty')} testId="admin-reports-empty" />
+	{:else}
+		<ul class="mt-6 space-y-3" data-test-id="bug-reports">
+			{#each reports as report (report.id)}
+				<li>
+					<Card.Root data-test-class="bug-report">
+						<Card.Content class="space-y-3">
+							<div class="flex flex-wrap items-start justify-between gap-4">
+								<div class="min-w-0 flex-1 basis-[16rem]">
+									<p class="whitespace-pre-wrap">{report.description}</p>
+									<p class="text-muted-foreground text-caption mt-1">
+										{report.email ?? '—'} · {report.path ?? '—'} · {formatDate(report.created_at)}
+									</p>
+								</div>
+								<Badge variant={report.status === 'open' ? 'secondary' : 'default'}>
+									{t(`admin.reportStatus.${report.status}`)}
+								</Badge>
+							</div>
+
+							{#if report.screenshot}
+								<img
+									src={report.screenshot}
+									alt={t('bugReport.screenshotAlt')}
+									class="max-h-64 rounded-lg border"
+								/>
+							{/if}
+
+							{#if report.status === 'open'}
+								<Button
+									variant="outline"
+									onclick={() => resolveReport(report.id)}
+									data-test-class="resolve-bug"
+								>
+									{t('admin.resolveReport')}
 								</Button>
 							{/if}
 						</Card.Content>

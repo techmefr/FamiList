@@ -443,7 +443,14 @@
 		"unsetDemo": "Remove demo flag",
 		"resetDemo": "Reset the demo",
 		"demoReset": "The demo household is back to its starting state.",
-		"demoHint": "The demo account is open to everyone. Reset it once it has been used a lot."
+		"demoHint": "The demo account is open to everyone. Reset it once it has been used a lot.",
+		"reportsTitle": "Bug reports",
+		"reportsEmpty": "No reports.",
+		"reportStatus": {
+			"open": "Open",
+			"resolved": "Resolved"
+		},
+		"resolveReport": "Mark as resolved"
 	},
 	"sync": {
 		"offline": "Offline — your changes will sync when the network is back",
@@ -572,5 +579,20 @@
 		"revoke": "Close",
 		"on": "on",
 		"unknownDevice": "Unknown device"
+	},
+	"bugReport": {
+		"button": "Report a bug",
+		"title": "Report a problem",
+		"subtitle": "Describe what went wrong, or what you'd like to see. A screenshot helps a lot.",
+		"description": "Description",
+		"descriptionPlaceholder": "What happened? What did you expect instead?",
+		"screenshotAdd": "Add a screenshot",
+		"screenshotRemove": "Remove",
+		"screenshotAlt": "Screenshot attached to the report",
+		"tooBig": "This image is too large.",
+		"captureFailed": "Couldn't read this image.",
+		"submit": "Send",
+		"success": "Thanks, your report has been sent.",
+		"backHome": "Back to home"
 	}
 }

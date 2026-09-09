@@ -443,7 +443,14 @@
 		"unsetDemo": "Retirar a demo",
 		"resetDemo": "Reiniciar a demo",
 		"demoReset": "A casa de demonstração voltou ao estado inicial.",
-		"demoHint": "A conta de demonstração está aberta a todos. Reinicie-a quando tiver sido muito usada."
+		"demoHint": "A conta de demonstração está aberta a todos. Reinicie-a quando tiver sido muito usada.",
+		"reportsTitle": "Relatórios de problemas",
+		"reportsEmpty": "Nenhum relatório.",
+		"reportStatus": {
+			"open": "Aberto",
+			"resolved": "Resolvido"
+		},
+		"resolveReport": "Marcar como resolvido"
 	},
 	"sync": {
 		"offline": "Sem ligação — as alterações serão enviadas quando a rede voltar",
@@ -572,5 +579,20 @@
 		"revoke": "Fechar",
 		"on": "em",
 		"unknownDevice": "Aparelho desconhecido"
+	},
+	"bugReport": {
+		"button": "Reportar um problema",
+		"title": "Reportar um problema",
+		"subtitle": "Descreva o que correu mal, ou o que gostaria de ver. Uma captura de ecrã ajuda muito.",
+		"description": "Descrição",
+		"descriptionPlaceholder": "O que aconteceu? O que esperava em vez disso?",
+		"screenshotAdd": "Adicionar uma captura",
+		"screenshotRemove": "Remover",
+		"screenshotAlt": "Captura de ecrã anexada ao relatório",
+		"tooBig": "Esta imagem é demasiado pesada.",
+		"captureFailed": "Não foi possível ler esta imagem.",
+		"submit": "Enviar",
+		"success": "Obrigado, o seu relatório foi enviado.",
+		"backHome": "Voltar ao início"
 	}
 }

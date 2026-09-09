@@ -442,7 +442,14 @@
 		"unsetDemo": "取消演示标记",
 		"resetDemo": "重置演示",
 		"demoReset": "演示家庭已恢复到初始状态。",
-		"demoHint": "演示账号对所有人开放。使用较多后请重置。"
+		"demoHint": "演示账号对所有人开放。使用较多后请重置。",
+		"reportsTitle": "问题报告",
+		"reportsEmpty": "暂无报告。",
+		"reportStatus": {
+			"open": "待处理",
+			"resolved": "已解决"
+		},
+		"resolveReport": "标记为已解决"
 	},
 	"sync": {
 		"offline": "离线 — 网络恢复后将同步你的更改",
@@ -568,5 +575,20 @@
 		"revoke": "关闭",
 		"on": "·",
 		"unknownDevice": "未知设备"
+	},
+	"bugReport": {
+		"button": "报告问题",
+		"title": "报告问题",
+		"subtitle": "描述出了什么问题，或者您希望看到什么改进。截图会很有帮助。",
+		"description": "描述",
+		"descriptionPlaceholder": "发生了什么？您原本期望什么？",
+		"screenshotAdd": "添加截图",
+		"screenshotRemove": "移除",
+		"screenshotAlt": "报告附带的截图",
+		"tooBig": "这张图片太大了。",
+		"captureFailed": "无法读取此图片。",
+		"submit": "发送",
+		"success": "谢谢，您的报告已发送。",
+		"backHome": "返回首页"
 	}
 }

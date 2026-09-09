@@ -442,7 +442,14 @@
 		"unsetDemo": "Esory ny fanandramana",
 		"resetDemo": "Averina ny fanandramana",
 		"demoReset": "Niverina tamin’ny toetrany voalohany ny ankohonana fanandramana.",
-		"demoHint": "Misokatra ho an’ny rehetra ny kaonty fanandramana. Avereno rehefa be ny nampiasa azy."
+		"demoHint": "Misokatra ho an’ny rehetra ny kaonty fanandramana. Avereno rehefa be ny nampiasa azy.",
+		"reportsTitle": "Fanambarana olana",
+		"reportsEmpty": "Tsy misy fanambarana.",
+		"reportStatus": {
+			"open": "Mbola misokatra",
+			"resolved": "Voavaha"
+		},
+		"resolveReport": "Marihina ho voavaha"
 	},
 	"sync": {
 		"offline": "Tsy misy fifandraisana — halefa rehefa miverina ny aterineto ny fanovana",
@@ -569,5 +576,20 @@
 		"revoke": "Akatony",
 		"on": "amin'ny",
 		"unknownDevice": "Fitaovana tsy fantatra"
+	},
+	"bugReport": {
+		"button": "Milaza olana",
+		"title": "Milaza olana",
+		"subtitle": "Lazao izay tsy mety, na izay tianao ho hita. Manampy be ny sary an-tsehatra.",
+		"description": "Famaritana",
+		"descriptionPlaceholder": "Inona no nitranga? Inona no nantenainao ho solony?",
+		"screenshotAdd": "Ampio sary an-tsehatra",
+		"screenshotRemove": "Esory",
+		"screenshotAlt": "Sary an-tsehatra nampiarahina tamin'ny fanambarana",
+		"tooBig": "Lehibe loatra io sary io.",
+		"captureFailed": "Tsy voavaky io sary io.",
+		"submit": "Alefaso",
+		"success": "Misaotra, voaray ny fanambaranao.",
+		"backHome": "Miverina any am-piandohana"
 	}
 }
