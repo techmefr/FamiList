@@ -13,6 +13,7 @@
 	import LoyaltyCardFace from '$components/app/LoyaltyCardFace.svelte';
 	import CardFullscreen from '$components/app/CardFullscreen.svelte';
 	import ScanButton from '$components/app/ScanButton.svelte';
+	import ImportCodeButton from '$components/app/ImportCodeButton.svelte';
 	import NewShopSheet from '$components/app/NewShopSheet.svelte';
 	import { Button } from '$lib/components/ui/button';
 	import { Input } from '$lib/components/ui/input';
@@ -268,12 +269,25 @@
 						placeholder={t('cards.codePlaceholder')}
 					/>
 				</IconField>
-				<ScanButton
-					onScanned={(result) => {
-						code = result.value;
-						if (result.codeType) codeType = result.codeType;
-					}}
-				/>
+				<!--
+					Deux chemins vers le même code : la caméra, et une image déjà sur l'appareil. Le second
+					n'est pas un repli — c'est le chemin normal quand on enregistre ses cartes assis
+					devant un ordinateur, la carte étant dans un courriel ou dans une vieille photo.
+				-->
+				<div class="mt-2 flex flex-wrap items-start gap-2">
+					<ScanButton
+						onScanned={(result) => {
+							code = result.value;
+							if (result.codeType) codeType = result.codeType;
+						}}
+					/>
+					<ImportCodeButton
+						onScanned={(result) => {
+							code = result.value;
+							if (result.codeType) codeType = result.codeType;
+						}}
+					/>
+				</div>
 				{#if invalidEan}
 					<p class="text-destructive text-caption mt-1" role="alert" data-test-id="card-code-error">
 						{t('cards.eanInvalid')}

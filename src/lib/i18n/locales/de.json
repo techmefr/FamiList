@@ -110,7 +110,10 @@
 	"scan": {
 		"start": "Code scannen",
 		"stop": "Anhalten",
-		"failed": "Scannen nicht möglich: Kamera erlauben oder den Code von Hand eingeben."
+		"failed": "Scannen nicht möglich: Kamera erlauben oder den Code von Hand eingeben.",
+		"fromImage": "Aus einem Bild",
+		"noCodeInImage": "In diesem Bild wurde kein Code gefunden.",
+		"imageFailed": "Dieses Bild konnte nicht gelesen werden."
 	},
 	"cards": {
 		"title": "Karten",

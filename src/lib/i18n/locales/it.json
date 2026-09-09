@@ -110,7 +110,10 @@
 	"scan": {
 		"start": "Scansiona il codice",
 		"stop": "Ferma",
-		"failed": "Scansione impossibile: consenti la fotocamera o digita il codice a mano."
+		"failed": "Scansione impossibile: consenti la fotocamera o digita il codice a mano.",
+		"fromImage": "Da un'immagine",
+		"noCodeInImage": "Nessun codice trovato in questa immagine.",
+		"imageFailed": "Impossibile leggere questa immagine."
 	},
 	"cards": {
 		"title": "Carte",

@@ -109,7 +109,10 @@
 	"scan": {
 		"start": "扫描条码",
 		"stop": "停止",
-		"failed": "无法扫描：请允许使用摄像头，或手动输入号码。"
+		"failed": "无法扫描：请允许使用摄像头，或手动输入号码。",
+		"fromImage": "从图片读取",
+		"noCodeInImage": "这张图片里没有找到条码。",
+		"imageFailed": "无法读取这张图片。"
 	},
 	"cards": {
 		"title": "会员卡",

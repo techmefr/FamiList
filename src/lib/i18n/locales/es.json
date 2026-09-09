@@ -110,7 +110,10 @@
 	"scan": {
 		"start": "Escanear el código",
 		"stop": "Detener",
-		"failed": "No se puede escanear: permite la cámara o escribe el código a mano."
+		"failed": "No se puede escanear: permite la cámara o escribe el código a mano.",
+		"fromImage": "Desde una imagen",
+		"noCodeInImage": "No se ha encontrado ningún código en esta imagen.",
+		"imageFailed": "No se ha podido leer esta imagen."
 	},
 	"cards": {
 		"title": "Tarjetas",

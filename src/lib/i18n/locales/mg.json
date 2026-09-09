@@ -109,7 +109,10 @@
 	"scan": {
 		"start": "Sikana ny kaody",
 		"stop": "Ajanony",
-		"failed": "Tsy afaka misikana: avelao hiasa ny fakan-tsary, na soraty an-tanana ny kaody."
+		"failed": "Tsy afaka misikana: avelao hiasa ny fakan-tsary, na soraty an-tanana ny kaody.",
+		"fromImage": "Avy amin'ny sary",
+		"noCodeInImage": "Tsy nahitana kaody tamin'ity sary ity.",
+		"imageFailed": "Tsy voavaky io sary io."
 	},
 	"cards": {
 		"title": "Karatra",

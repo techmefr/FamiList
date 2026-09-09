@@ -110,7 +110,10 @@
 	"scan": {
 		"start": "Scan the code",
 		"stop": "Stop",
-		"failed": "Cannot scan: allow the camera, or type the code in by hand."
+		"failed": "Cannot scan: allow the camera, or type the code in by hand.",
+		"fromImage": "From an image",
+		"noCodeInImage": "No code found in that image.",
+		"imageFailed": "That image could not be read."
 	},
 	"cards": {
 		"title": "Cards",

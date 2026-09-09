@@ -110,7 +110,10 @@
 	"scan": {
 		"start": "Scanner le code",
 		"stop": "Arrêter",
-		"failed": "Lecture impossible : autorisez la caméra, ou saisissez le code à la main."
+		"failed": "Lecture impossible : autorisez la caméra, ou saisissez le code à la main.",
+		"fromImage": "Depuis une image",
+		"noCodeInImage": "Aucun code trouvé sur cette image.",
+		"imageFailed": "Impossible de lire cette image."
 	},
 	"cards": {
 		"title": "Cartes",
