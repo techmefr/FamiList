@@ -15,6 +15,7 @@
 		List
 	} from '@lucide/svelte';
 	import IconField from '$components/app/IconField.svelte';
+	import EmptyState from '$components/app/EmptyState.svelte';
 
 	const listId = $derived(page.params.id!);
 	const list = $derived(data.list(listId));
@@ -104,7 +105,7 @@
 	{/if}
 
 	{#if messages.length === 0}
-		<p class="text-muted-foreground mt-6" data-test-id="chat-empty">{t('chat.empty')}</p>
+		<EmptyState illustration="chat" text={t('chat.empty')} testId="chat-empty" />
 	{:else}
 		<ol class="mt-6 space-y-4">
 			{#each messages as message (message.id)}

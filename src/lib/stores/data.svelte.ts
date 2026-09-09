@@ -580,6 +580,33 @@ class DataStore {
 		return this.pollVotes.filter((v) => v.optionId === optionId).map((v) => v.userId);
 	}
 
+	/**
+	 * Son propre portrait.
+	 *
+	 * L'écriture ne passe pas par la file de sortie : celle-ci fait des `upsert`, et personne n'a
+	 * le droit d'insérer une ligne dans `profiles` — c'est un déclencheur qui la crée à
+	 * l'inscription. Une mise à jour directe, comme pour les réglages d'apparence.
+	 *
+	 * L'écran est servi d'abord, le serveur ensuite : changer sa photo doit se voir tout de suite,
+	 * et la prochaine synchronisation confirmera.
+	 */
+	async setMyAvatar(avatar: string | undefined) {
+		const id = this.me;
+		if (!id) return;
+
+		const membre = this.members.find((m) => m.id === id);
+		if (!membre) return;
+
+		const suivant: Member = { ...membre, avatar };
+		this.members = this.members.map((m) => (m.id === id ? suivant : m));
+		db.members.put(suivant);
+
+		await supabase
+			.from('profiles')
+			.update({ avatar: avatar ?? '' })
+			.eq('id', id);
+	}
+
 	member(id: string) {
 		return this.members.find((m) => m.id === id);
 	}

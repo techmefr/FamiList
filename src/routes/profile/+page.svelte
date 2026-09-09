@@ -21,6 +21,8 @@
 	import { Button } from '$lib/components/ui/button';
 	import { Switch } from '$lib/components/ui/switch';
 	import { Check, Volume2, Users, ShieldCheck } from '@lucide/svelte';
+	import Avatar from '$components/app/Avatar.svelte';
+	import AvatarPicker from '$components/app/AvatarPicker.svelte';
 
 	const themes: Theme[] = ['light', 'dark', 'system'];
 
@@ -66,6 +68,15 @@
 
 <Card.Root class="mt-6">
 	<Card.Header>
+		<Card.Title class="text-h2">{t('profile.avatar')}</Card.Title>
+	</Card.Header>
+	<Card.Content class="fl-divided">
+		<AvatarPicker />
+	</Card.Content>
+</Card.Root>
+
+<Card.Root class="mt-6">
+	<Card.Header>
 		<Card.Title class="text-h2">{t('profile.sharing')}</Card.Title>
 	</Card.Header>
 	<Card.Content class="fl-divided">
@@ -80,13 +91,7 @@
 						class="border-input flex items-center gap-2 rounded-full border py-1 ps-1 pe-3"
 						data-test-class="sharing-member"
 					>
-						<span
-							class="text-caption grid size-9 shrink-0 place-items-center rounded-full font-semibold text-white"
-							style="background: {tintForWhiteText(member.tint)}"
-							aria-hidden="true"
-						>
-							{member.initial}
-						</span>
+						<Avatar {member} size={36} />
 						<span class="text-label">{member.name}</span>
 					</li>
 				{/each}

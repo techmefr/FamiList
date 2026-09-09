@@ -2,7 +2,7 @@
 	import { data } from '$stores/data.svelte';
 	import { feedback } from '$stores/feedback.svelte';
 	import { settings } from '$stores/settings.svelte';
-	import { tintForWhiteText } from '$domain/tint';
+	import Avatar from '$components/app/Avatar.svelte';
 	import { t } from '$lib/i18n/index.svelte';
 	import { Button } from '$lib/components/ui/button';
 	import { X } from '@lucide/svelte';
@@ -55,13 +55,7 @@
 						data-test-class="share-member"
 						class="hover:bg-muted flex min-h-[max(3.5rem,56px)] cursor-pointer items-center gap-3 rounded-lg px-2"
 					>
-						<span
-							class="text-caption grid size-11 shrink-0 place-items-center rounded-full font-semibold text-white"
-							style="background: {tintForWhiteText(member.tint)}"
-							aria-hidden="true"
-						>
-							{member.initial}
-						</span>
+						<Avatar {member} />
 						<span class="text-label min-w-0 flex-1 font-medium">
 							{member.name}
 							{#if member.id === data.me}

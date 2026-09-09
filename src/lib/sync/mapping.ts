@@ -15,6 +15,7 @@ import type {
 import { itemOrderKey, pollVoteKey } from '$db/schema';
 import { DEFAULT_MEMBER_TINT, DEFAULT_TINT } from '$domain/tint';
 import { DEFAULT_UNIT } from '$domain/units';
+import { initialsOf } from '$domain/avatar';
 
 /**
  * Traduction entre le modèle local, écrit pour l'écran, et les colonnes Postgres. Tout passe par
@@ -164,8 +165,9 @@ export const toMember = (row: Row, profile: Row | undefined, currentUserId: stri
 		id,
 		name,
 		role: id === currentUserId ? 'self' : text(row.role, 'member'),
-		initial: text(profile?.initial) || name.slice(0, 1).toUpperCase(),
-		tint: text(row.tint, DEFAULT_MEMBER_TINT)
+		initial: text(profile?.initial) || initialsOf(name),
+		tint: text(row.tint, DEFAULT_MEMBER_TINT),
+		avatar: text(profile?.avatar) || undefined
 	};
 };
 

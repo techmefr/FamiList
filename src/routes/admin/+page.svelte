@@ -5,6 +5,7 @@
 	import { Button } from '$lib/components/ui/button';
 	import * as Card from '$lib/components/ui/card';
 	import { Badge } from '$lib/components/ui/badge';
+	import EmptyState from '$components/app/EmptyState.svelte';
 
 	interface PendingAccount {
 		id: string;
@@ -92,7 +93,7 @@
 	{/if}
 
 	{#if accounts.length === 0}
-		<p class="text-muted-foreground mt-6" data-test-id="admin-empty">{t('admin.empty')}</p>
+		<EmptyState illustration="inbox" text={t('admin.empty')} testId="admin-empty" />
 	{:else}
 		<ul class="mt-6 space-y-3">
 			{#each accounts as account (account.id)}

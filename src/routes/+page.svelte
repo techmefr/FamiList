@@ -6,7 +6,7 @@
 	import { feedback } from '$stores/feedback.svelte';
 	import { motionMs } from '$stores/settings.svelte';
 	import { createIntent } from '$stores/create.svelte';
-	import { t } from '$lib/i18n/index.svelte';
+	import { i18n, t } from '$lib/i18n/index.svelte';
 	import { TINTS } from '$domain/tint';
 	import * as Card from '$lib/components/ui/card';
 	import { Badge } from '$lib/components/ui/badge';
@@ -14,8 +14,10 @@
 	import { Input } from '$lib/components/ui/input';
 	import { Label } from '$lib/components/ui/label';
 	import EmojiPicker from '$components/app/EmojiPicker.svelte';
-	import { Plus, Trash2, ListChecks } from '@lucide/svelte';
+	import Avatar from '$components/app/Avatar.svelte';
+	import { Plus, Trash2, ListChecks, CalendarDays, Users, Lock } from '@lucide/svelte';
 	import IconField from '$components/app/IconField.svelte';
+	import EmptyState from '$components/app/EmptyState.svelte';
 
 	let creating = $state(false);
 	let name = $state('');
@@ -34,6 +36,32 @@
 		const items = data.itemsOf(listId);
 		return { total: items.length, done: items.filter((i) => i.checked).length };
 	};
+
+	/**
+	 * Qui voit cette liste.
+	 *
+	 * Les visages plutôt qu'un décompte : on reconnaît une pile de deux portraits sans la lire, là
+	 * où « 2 membres » demande de s'arrêter dessus. Et la distinction privée / partagée est ce qui
+	 * décide si on peut y écrire une surprise d'anniversaire.
+	 */
+	const membersOf = (list: { memberIds: string[] }) =>
+		list.memberIds
+			.map((id) => data.member(id))
+			.filter((member): member is NonNullable<typeof member> => Boolean(member));
+
+	/**
+	 * La date d'un événement, écrite dans la langue de l'écran.
+	 *
+	 * Elle est stockée en ISO — une date n'est pas une chaîne à traduire — et mise en forme ici :
+	 * « 14 février » en français, « February 14 » en anglais. Une date invalide est simplement
+	 * ignorée plutôt que de faire apparaître « Invalid Date » sur la carte.
+	 */
+	function eventLabel(iso: string) {
+		const date = new Date(iso);
+		if (Number.isNaN(date.getTime())) return '';
+
+		return new Intl.DateTimeFormat(i18n.locale, { day: 'numeric', month: 'long' }).format(date);
+	}
 
 	function create(event: SubmitEvent) {
 		event.preventDefault();
@@ -116,7 +144,7 @@
 {#if !data.ready}
 	<p class="text-muted-foreground mt-6">{t('common.loading')}</p>
 {:else if data.lists.length === 0}
-	<p class="fl-rise text-muted-foreground mt-6">{t('lists.empty')}</p>
+	<EmptyState illustration="lists" text={t('lists.empty')} testId="lists-empty" />
 {:else}
 	<ul class="mt-6 space-y-3">
 		{#each data.lists as list, index (list.id)}
@@ -133,9 +161,22 @@
 							<span class="text-h1" aria-hidden="true">{list.emoji}</span>
 							<span class="min-w-0 flex-1 basis-[6rem]">
 								<span class="text-product block font-medium break-words">{list.name}</span>
-								<span class="text-muted-foreground text-label">
+								<span class="text-muted-foreground text-label block">
 									{t('lists.progress', { done, total })}
 								</span>
+								{#if list.eventDate && eventLabel(list.eventDate)}
+									<!--
+										La date d'un repas de famille ou d'un anniversaire : c'est elle qui dit
+										jusqu'à quand la liste sert, et elle était modélisée sans jamais s'afficher.
+									-->
+									<span
+										class="text-caption text-secondary mt-1.5 inline-flex items-center gap-1 rounded-full bg-[var(--fl-secondary-tint)] px-2 py-0.5 font-semibold"
+										data-test-class="list-date"
+									>
+										<CalendarDays size={12} aria-hidden="true" />
+										{eventLabel(list.eventDate)}
+									</span>
+								{/if}
 								<span class="bg-muted mt-1.5 block h-1 overflow-hidden rounded-full" aria-hidden="true">
 									<span
 										class="fl-grow bg-secondary block h-full rounded-full"
@@ -165,10 +206,63 @@
 							</button>
 						</div>
 					</Card.Content>
+
+					<!--
+						Le pied de carte répond à « qui d'autre voit ça ». Les portraits se chevauchent parce
+						qu'un foyer en compte rarement plus de cinq et qu'une pile serrée se lit d'un coup ;
+						le mot à côté est là parce que la pile seule ne dit pas si on est seul.
+					-->
+					<Card.Footer class="text-caption text-muted-foreground flex items-center gap-2">
+						{@const membres = membersOf(list)}
+						{#if membres.length > 1}
+							<span class="flex items-center" data-test-class="list-members">
+								{#each membres.slice(0, 4) as membre, rang (membre.id)}
+									<span class={rang === 0 ? '' : '-ms-2'}>
+										<Avatar member={membre} size={26} ring />
+									</span>
+								{/each}
+								{#if membres.length > 4}
+									<span class="ms-1.5">+{membres.length - 4}</span>
+								{/if}
+							</span>
+							<span class="inline-flex items-center gap-1 font-medium">
+								<Users size={13} aria-hidden="true" />
+								{t('lists.shared')}
+							</span>
+						{:else}
+							<span class="inline-flex items-center gap-1 font-medium" data-test-class="list-private">
+								<Lock size={13} aria-hidden="true" />
+								{t('lists.private')}
+							</span>
+						{/if}
+					</Card.Footer>
 				</Card.Root>
 			</li>
 		{/each}
 	</ul>
+{/if}
+
+<!--
+	Ajouter une liste depuis la fin de la pile.
+
+	Le bouton du haut existe toujours, mais on ne s'aperçoit qu'il manque une liste qu'après avoir
+	parcouru celles qu'on a. Le trait tireté la distingue des vraies sans en faire une commande de
+	plus à ignorer ; elle disparaît quand le formulaire est déjà ouvert, pour ne pas offrir deux
+	fois la même chose.
+-->
+{#if data.ready && !creating}
+	<button
+		type="button"
+		onclick={() => {
+			feedback.play('tap');
+			creating = true;
+		}}
+		data-test-id="new-list-card"
+		class="fl-press border-input text-primary text-label mt-3 flex min-h-[max(3.5rem,56px)] w-full items-center justify-center gap-2 rounded-xl border border-dashed font-medium"
+	>
+		<Plus size={20} aria-hidden="true" />
+		{t('lists.new')}
+	</button>
 {/if}
 
 <EmojiPicker bind:this={picker} value={emoji} onpick={(choix) => (emoji = choix)} />

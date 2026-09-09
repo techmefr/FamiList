@@ -97,6 +97,15 @@ export interface Member {
 	role: string;
 	initial: string;
 	tint: string;
+	/**
+	 * Le portrait, en `data:` — une vignette carrée de 128 px, pas la photo d'origine.
+	 *
+	 * Elle voyage dans la ligne du profil plutôt que dans un espace de fichiers : à cette taille
+	 * elle pèse quelques kilo-octets, elle se synchronise avec le reste sans deuxième chemin de
+	 * données, et elle reste lisible hors ligne comme le reste du foyer. Absente tant que personne
+	 * n'en a posé — ce sont alors les initiales qui font le portrait.
+	 */
+	avatar?: string;
 }
 
 /** Parcours appris dans un magasin : ordre des rayons. Propre à l'utilisateur. */

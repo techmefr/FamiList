@@ -13,11 +13,13 @@
 	import LoyaltyCardFace from '$components/app/LoyaltyCardFace.svelte';
 	import CardFullscreen from '$components/app/CardFullscreen.svelte';
 	import ScanButton from '$components/app/ScanButton.svelte';
+	import NewShopSheet from '$components/app/NewShopSheet.svelte';
 	import { Button } from '$lib/components/ui/button';
 	import { Input } from '$lib/components/ui/input';
 	import { Label } from '$lib/components/ui/label';
 	import { Plus, Trash2, ScanLine, CreditCard, Barcode, Star, Store } from '@lucide/svelte';
 	import IconField from '$components/app/IconField.svelte';
+	import EmptyState from '$components/app/EmptyState.svelte';
 
 	let openCardId = $state<string | null>(null);
 	let adding = $state(false);
@@ -44,6 +46,31 @@
 	 * choix distingue les deux portées.
 	 */
 	let attach = $state('');
+
+	/**
+	 * Créer un magasin sans quitter la carte.
+	 *
+	 * On s'aperçoit qu'un magasin manque exactement ici : au moment de rattacher la carte. La liste
+	 * porte donc une dernière entrée qui ouvre le formulaire dans une feuille, et le magasin créé
+	 * devient le rattachement choisi — sans que la saisie en cours ne soit perdue.
+	 *
+	 * Un `<select>` ne peut pas ouvrir une boîte de dialogue pendant son propre changement : on
+	 * remet la valeur d'avant, puis on ouvre.
+	 */
+	const NOUVEAU = '__new__';
+	let nouveauMagasin = $state<NewShopSheet | null>(null);
+	let avantNouveau = '';
+
+	function surChangementRattachement(event: Event) {
+		const select = event.currentTarget as HTMLSelectElement;
+		if (select.value !== NOUVEAU) {
+			avantNouveau = select.value;
+			return;
+		}
+
+		attach = avantNouveau;
+		nouveauMagasin?.show();
+	}
 
 	const openCard = $derived(data.cards.find((c) => c.id === openCardId) ?? null);
 
@@ -128,7 +155,7 @@
 	</p>
 
 	{#if data.cards.length === 0}
-		<p class="text-muted-foreground mt-6" data-test-id="cards-empty">{t('cards.empty')}</p>
+		<EmptyState illustration="cards" text={t('cards.empty')} testId="cards-empty" />
 	{:else}
 		<ul class="mt-6 space-y-4">
 			{#each data.cards as card, index (card.id)}
@@ -184,6 +211,7 @@
 					<select
 						id="card-attach"
 						bind:value={attach}
+						onchange={surChangementRattachement}
 						data-test-id="card-attach"
 						aria-describedby="card-attach-hint"
 						class="border-input bg-background min-h-[max(2.75rem,44px)] w-full rounded-md border"
@@ -203,6 +231,7 @@
 								{/each}
 							</optgroup>
 						{/if}
+						<option value={NOUVEAU}>{t('cards.attachNew')}</option>
 					</select>
 				</IconField>
 				<p id="card-attach-hint" class="text-muted-foreground text-caption">
@@ -308,3 +337,12 @@
 {#if openCard}
 	<CardFullscreen card={openCard} onClose={() => (openCardId = null)} />
 {/if}
+
+<!-- Le magasin qui manque se crée ici, et devient aussitôt le rattachement de la carte. -->
+<NewShopSheet
+	bind:this={nouveauMagasin}
+	oncreated={(shop) => {
+		attach = `shop:${shop.id}`;
+		avantNouveau = attach;
+	}}
+/>

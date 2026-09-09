@@ -18,11 +18,13 @@
 	import FilterSheet from '$components/app/FilterSheet.svelte';
 	import { createReorder, move } from '$components/app/reorder.svelte';
 	import { Button } from '$lib/components/ui/button';
+	import EmptyState from '$components/app/EmptyState.svelte';
 	import {
 		ArrowLeft,
 		MessagesSquare,
 		UsersRound,
 		SlidersHorizontal,
+		Plus,
 		Check,
 		Undo2,
 		Trash2,
@@ -239,7 +241,30 @@
 	</div>
 
 	{#if visible.length === 0}
-		<p class="text-muted-foreground mt-8">{t('list.empty')}</p>
+		<!--
+			Deux vides qui ne veulent pas dire la même chose : une liste où personne n'a rien écrit, et
+			une liste pleine dont les filtres ne laissent rien passer. Le second se répare en touchant
+			les filtres, le premier en ajoutant un article — le dessin le dit avant la phrase.
+		-->
+		{#if filtresActifs > 0}
+			<EmptyState illustration="filter" text={t('list.empty')} testId="list-empty">
+				{#snippet action()}
+					<Button variant="outline" onclick={() => filters?.show()} data-test-id="empty-filters">
+						<SlidersHorizontal size={18} aria-hidden="true" />
+						{t('list.filters')}
+					</Button>
+				{/snippet}
+			</EmptyState>
+		{:else}
+			<EmptyState illustration="cart" text={t('list.noItems')} testId="list-empty">
+				{#snippet action()}
+					<Button onclick={() => add?.show()} data-test-id="empty-add-item">
+						<Plus size={18} aria-hidden="true" />
+						{t('add.submit')}
+					</Button>
+				{/snippet}
+			</EmptyState>
+		{/if}
 	{:else}
 		<!--
 			Pourquoi les rayons sont dans cet ordre-là.
