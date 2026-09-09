@@ -77,6 +77,7 @@ export type Database = {
           created_at: string
           description: string
           id: string
+          kind: string
           path: string | null
           resolved_at: string | null
           screenshot: string | null
@@ -88,6 +89,7 @@ export type Database = {
           created_at?: string
           description: string
           id?: string
+          kind?: string
           path?: string | null
           resolved_at?: string | null
           screenshot?: string | null
@@ -99,6 +101,7 @@ export type Database = {
           created_at?: string
           description?: string
           id?: string
+          kind?: string
           path?: string | null
           resolved_at?: string | null
           screenshot?: string | null
@@ -760,6 +763,7 @@ export type Database = {
           description: string
           email: string
           id: string
+          kind: string
           path: string
           screenshot: string
           status: string
@@ -802,6 +806,7 @@ export type Database = {
       submit_bug_report: {
         Args: {
           description: string
+          kind?: string
           path: string
           screenshot: string
           user_agent: string

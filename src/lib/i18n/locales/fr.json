@@ -450,6 +450,10 @@
 			"open": "Ouvert",
 			"resolved": "Résolu"
 		},
+		"reportKind": {
+			"bug": "Bug",
+			"suggestion": "Amélioration"
+		},
 		"resolveReport": "Marquer comme résolu"
 	},
 	"sync": {
@@ -581,11 +585,19 @@
 		"unknownDevice": "Appareil inconnu"
 	},
 	"bugReport": {
-		"button": "Signaler un bug",
-		"title": "Signaler un problème",
-		"subtitle": "Décrivez ce qui ne va pas, ou ce que vous aimeriez voir. Une capture d'écran aide beaucoup.",
+		"title": {
+			"bug": "Signaler un problème",
+			"suggestion": "Proposer une amélioration"
+		},
+		"subtitle": {
+			"bug": "Décrivez ce qui ne va pas. Une capture d'écran aide beaucoup.",
+			"suggestion": "Dites-nous ce qui vous aiderait, ou ce que vous aimeriez voir apparaître. Une capture d'écran aide à illustrer votre idée."
+		},
 		"description": "Description",
-		"descriptionPlaceholder": "Qu'est-ce qui s'est passé ? Qu'attendiez-vous à la place ?",
+		"descriptionPlaceholder": {
+			"bug": "Qu'est-ce qui s'est passé ? Qu'attendiez-vous à la place ?",
+			"suggestion": "Qu'aimeriez-vous voir ? En quoi cela vous aiderait ?"
+		},
 		"screenshotAdd": "Ajouter une capture",
 		"screenshotRemove": "Retirer",
 		"screenshotAlt": "Capture d'écran jointe au signalement",
@@ -594,5 +606,11 @@
 		"submit": "Envoyer",
 		"success": "Merci, votre signalement a bien été envoyé.",
 		"backHome": "Retour à l'accueil"
+	},
+	"helpMenu": {
+		"button": "Aide",
+		"tutorial": "Voir le tutoriel",
+		"suggestion": "Proposer une amélioration",
+		"bug": "Signaler un bug"
 	}
 }

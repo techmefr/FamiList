@@ -4,6 +4,7 @@
 	import { t } from '$lib/i18n/index.svelte';
 	import { feedback } from '$stores/feedback.svelte';
 	import { SCREENSHOT_MAX_DIM, SCREENSHOT_MAX_BYTES, fitWithin } from '$domain/screenshot';
+	import { isReportKind, type ReportKind } from '$domain/bug-report';
 	import { Button } from '$lib/components/ui/button';
 	import { Label } from '$lib/components/ui/label';
 	import IconField from '$components/app/IconField.svelte';
@@ -21,6 +22,9 @@
 	 * préciser sur quel écran, le lien envoyé par le bouton l'a déjà noté.
 	 */
 	const chemin = $derived(page.url.searchParams.get('from') ?? '');
+
+	const rawKind = page.url.searchParams.get('kind');
+	const kind: ReportKind = isReportKind(rawKind) ? rawKind : 'bug';
 
 	/**
 	 * Réduite ici, dans le navigateur, avant de partir : une capture de téléphone pèse plusieurs
@@ -79,7 +83,8 @@
 			description: description.trim(),
 			screenshot: screenshot ?? '',
 			path: chemin,
-			user_agent: navigator.userAgent
+			user_agent: navigator.userAgent,
+			kind
 		});
 
 		occupe = false;
@@ -96,11 +101,11 @@
 </script>
 
 <svelte:head>
-	<title>{t('bugReport.title')} — {t('app.name')}</title>
+	<title>{t(`bugReport.title.${kind}`)} — {t('app.name')}</title>
 </svelte:head>
 
-<h1 class="text-h1 font-semibold">{t('bugReport.title')}</h1>
-<p class="text-muted-foreground mt-2">{t('bugReport.subtitle')}</p>
+<h1 class="text-h1 font-semibold">{t(`bugReport.title.${kind}`)}</h1>
+<p class="text-muted-foreground mt-2">{t(`bugReport.subtitle.${kind}`)}</p>
 
 {#if envoye}
 	<p class="text-primary mt-6" role="status" data-test-id="bug-success">
@@ -117,7 +122,7 @@
 					bind:value={description}
 					rows="5"
 					required
-					placeholder={t('bugReport.descriptionPlaceholder')}
+					placeholder={t(`bugReport.descriptionPlaceholder.${kind}`)}
 					data-test-id="bug-description"
 					class="border-input bg-background w-full rounded-md border p-2"
 				></textarea>

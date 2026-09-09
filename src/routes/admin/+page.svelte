@@ -23,6 +23,7 @@
 		screenshot: string | null;
 		path: string | null;
 		user_agent: string | null;
+		kind: string;
 		status: string;
 		created_at: string;
 	}
@@ -191,9 +192,12 @@
 										{report.email ?? '—'} · {report.path ?? '—'} · {formatDate(report.created_at)}
 									</p>
 								</div>
-								<Badge variant={report.status === 'open' ? 'secondary' : 'default'}>
-									{t(`admin.reportStatus.${report.status}`)}
-								</Badge>
+								<div class="flex shrink-0 flex-wrap gap-2">
+									<Badge variant="secondary">{t(`admin.reportKind.${report.kind}`)}</Badge>
+									<Badge variant={report.status === 'open' ? 'secondary' : 'default'}>
+										{t(`admin.reportStatus.${report.status}`)}
+									</Badge>
+								</div>
 							</div>
 
 							{#if report.screenshot}

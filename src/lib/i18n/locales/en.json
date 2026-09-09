@@ -450,7 +450,11 @@
 			"open": "Open",
 			"resolved": "Resolved"
 		},
-		"resolveReport": "Mark as resolved"
+		"resolveReport": "Mark as resolved",
+		"reportKind": {
+			"bug": "Bug",
+			"suggestion": "Suggestion"
+		}
 	},
 	"sync": {
 		"offline": "Offline — your changes will sync when the network is back",
@@ -582,10 +586,7 @@
 	},
 	"bugReport": {
 		"button": "Report a bug",
-		"title": "Report a problem",
-		"subtitle": "Describe what went wrong, or what you'd like to see. A screenshot helps a lot.",
 		"description": "Description",
-		"descriptionPlaceholder": "What happened? What did you expect instead?",
 		"screenshotAdd": "Add a screenshot",
 		"screenshotRemove": "Remove",
 		"screenshotAlt": "Screenshot attached to the report",
@@ -593,6 +594,24 @@
 		"captureFailed": "Couldn't read this image.",
 		"submit": "Send",
 		"success": "Thanks, your report has been sent.",
-		"backHome": "Back to home"
+		"backHome": "Back to home",
+		"title": {
+			"bug": "Report a problem",
+			"suggestion": "Suggest an improvement"
+		},
+		"subtitle": {
+			"bug": "Describe what went wrong. A screenshot helps a lot.",
+			"suggestion": "Tell us what would help you, or what you'd like to see. A screenshot helps illustrate your idea."
+		},
+		"descriptionPlaceholder": {
+			"bug": "What happened? What did you expect instead?",
+			"suggestion": "What would you like to see? How would it help?"
+		}
+	},
+	"helpMenu": {
+		"button": "Help",
+		"tutorial": "Watch the tutorial",
+		"suggestion": "Suggest an improvement",
+		"bug": "Report a bug"
 	}
 }

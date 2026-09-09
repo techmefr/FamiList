@@ -450,7 +450,11 @@
 			"open": "Aberto",
 			"resolved": "Resolvido"
 		},
-		"resolveReport": "Marcar como resolvido"
+		"resolveReport": "Marcar como resolvido",
+		"reportKind": {
+			"bug": "Erro",
+			"suggestion": "Sugestão"
+		}
 	},
 	"sync": {
 		"offline": "Sem ligação — as alterações serão enviadas quando a rede voltar",
@@ -582,10 +586,7 @@
 	},
 	"bugReport": {
 		"button": "Reportar um problema",
-		"title": "Reportar um problema",
-		"subtitle": "Descreva o que correu mal, ou o que gostaria de ver. Uma captura de ecrã ajuda muito.",
 		"description": "Descrição",
-		"descriptionPlaceholder": "O que aconteceu? O que esperava em vez disso?",
 		"screenshotAdd": "Adicionar uma captura",
 		"screenshotRemove": "Remover",
 		"screenshotAlt": "Captura de ecrã anexada ao relatório",
@@ -593,6 +594,24 @@
 		"captureFailed": "Não foi possível ler esta imagem.",
 		"submit": "Enviar",
 		"success": "Obrigado, o seu relatório foi enviado.",
-		"backHome": "Voltar ao início"
+		"backHome": "Voltar ao início",
+		"title": {
+			"bug": "Reportar um problema",
+			"suggestion": "Propor uma melhoria"
+		},
+		"subtitle": {
+			"bug": "Descreva o que correu mal. Uma captura de ecrã ajuda muito.",
+			"suggestion": "Diga-nos o que o ajudaria, ou o que gostaria de ver. Uma captura de ecrã ajuda a ilustrar a sua ideia."
+		},
+		"descriptionPlaceholder": {
+			"bug": "O que aconteceu? O que esperava em vez disso?",
+			"suggestion": "O que gostaria de ver? Em que é que isso ajudaria?"
+		}
+	},
+	"helpMenu": {
+		"button": "Ajuda",
+		"tutorial": "Ver o tutorial",
+		"suggestion": "Propor uma melhoria",
+		"bug": "Reportar um problema"
 	}
 }

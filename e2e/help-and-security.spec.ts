@@ -5,6 +5,7 @@ test('le bouton d’aide ouvre un tour guidé propre à l’écran ouvert', asyn
 }) => {
 	await page.goto('/shops');
 	await page.getByTestId('help').click();
+	await page.getByTestId('help-menu-tutorial').click();
 
 	await expect(page.locator('.driver-popover')).toBeVisible();
 	// Sur /shops, la cible est le formulaire de rayon : le tour d'ensemble ne doit pas s'y substituer.

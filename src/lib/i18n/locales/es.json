@@ -450,7 +450,11 @@
 			"open": "Abierto",
 			"resolved": "Resuelto"
 		},
-		"resolveReport": "Marcar como resuelto"
+		"resolveReport": "Marcar como resuelto",
+		"reportKind": {
+			"bug": "Error",
+			"suggestion": "Mejora"
+		}
 	},
 	"sync": {
 		"offline": "Sin conexión — tus cambios se enviarán al volver la red",
@@ -582,10 +586,7 @@
 	},
 	"bugReport": {
 		"button": "Informar de un error",
-		"title": "Informar de un problema",
-		"subtitle": "Describe lo que ha fallado, o lo que te gustaría ver. Una captura de pantalla ayuda mucho.",
 		"description": "Descripción",
-		"descriptionPlaceholder": "¿Qué ha pasado? ¿Qué esperabas en su lugar?",
 		"screenshotAdd": "Añadir una captura",
 		"screenshotRemove": "Quitar",
 		"screenshotAlt": "Captura de pantalla adjunta al informe",
@@ -593,6 +594,24 @@
 		"captureFailed": "No se pudo leer esta imagen.",
 		"submit": "Enviar",
 		"success": "Gracias, tu informe se ha enviado.",
-		"backHome": "Volver al inicio"
+		"backHome": "Volver al inicio",
+		"title": {
+			"bug": "Informar de un problema",
+			"suggestion": "Proponer una mejora"
+		},
+		"subtitle": {
+			"bug": "Describe lo que ha fallado. Una captura de pantalla ayuda mucho.",
+			"suggestion": "Cuéntanos qué te ayudaría, o qué te gustaría ver. Una captura de pantalla ayuda a ilustrar tu idea."
+		},
+		"descriptionPlaceholder": {
+			"bug": "¿Qué ha pasado? ¿Qué esperabas en su lugar?",
+			"suggestion": "¿Qué te gustaría ver? ¿En qué te ayudaría?"
+		}
+	},
+	"helpMenu": {
+		"button": "Ayuda",
+		"tutorial": "Ver el tutorial",
+		"suggestion": "Proponer una mejora",
+		"bug": "Informar de un error"
 	}
 }

@@ -450,7 +450,11 @@
 			"open": "Offen",
 			"resolved": "Erledigt"
 		},
-		"resolveReport": "Als erledigt markieren"
+		"resolveReport": "Als erledigt markieren",
+		"reportKind": {
+			"bug": "Fehler",
+			"suggestion": "Vorschlag"
+		}
 	},
 	"sync": {
 		"offline": "Offline — Ihre Änderungen werden übertragen, sobald das Netz zurück ist",
@@ -582,10 +586,7 @@
 	},
 	"bugReport": {
 		"button": "Fehler melden",
-		"title": "Ein Problem melden",
-		"subtitle": "Beschreiben Sie, was nicht funktioniert, oder was Sie sich wünschen. Ein Screenshot hilft sehr.",
 		"description": "Beschreibung",
-		"descriptionPlaceholder": "Was ist passiert? Was hätten Sie stattdessen erwartet?",
 		"screenshotAdd": "Screenshot hinzufügen",
 		"screenshotRemove": "Entfernen",
 		"screenshotAlt": "Dem Bericht beigefügter Screenshot",
@@ -593,6 +594,24 @@
 		"captureFailed": "Dieses Bild konnte nicht gelesen werden.",
 		"submit": "Senden",
 		"success": "Danke, Ihre Meldung wurde gesendet.",
-		"backHome": "Zurück zur Startseite"
+		"backHome": "Zurück zur Startseite",
+		"title": {
+			"bug": "Ein Problem melden",
+			"suggestion": "Eine Verbesserung vorschlagen"
+		},
+		"subtitle": {
+			"bug": "Beschreiben Sie, was nicht funktioniert. Ein Screenshot hilft sehr.",
+			"suggestion": "Sagen Sie uns, was Ihnen helfen würde, oder was Sie sich wünschen. Ein Screenshot hilft, Ihre Idee zu veranschaulichen."
+		},
+		"descriptionPlaceholder": {
+			"bug": "Was ist passiert? Was hätten Sie stattdessen erwartet?",
+			"suggestion": "Was würden Sie sich wünschen? Wie würde es Ihnen helfen?"
+		}
+	},
+	"helpMenu": {
+		"button": "Hilfe",
+		"tutorial": "Anleitung ansehen",
+		"suggestion": "Verbesserung vorschlagen",
+		"bug": "Fehler melden"
 	}
 }

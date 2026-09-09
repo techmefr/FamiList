@@ -449,7 +449,11 @@
 			"open": "Mbola misokatra",
 			"resolved": "Voavaha"
 		},
-		"resolveReport": "Marihina ho voavaha"
+		"resolveReport": "Marihina ho voavaha",
+		"reportKind": {
+			"bug": "Olana",
+			"suggestion": "Hevitra"
+		}
 	},
 	"sync": {
 		"offline": "Tsy misy fifandraisana — halefa rehefa miverina ny aterineto ny fanovana",
@@ -579,10 +583,7 @@
 	},
 	"bugReport": {
 		"button": "Milaza olana",
-		"title": "Milaza olana",
-		"subtitle": "Lazao izay tsy mety, na izay tianao ho hita. Manampy be ny sary an-tsehatra.",
 		"description": "Famaritana",
-		"descriptionPlaceholder": "Inona no nitranga? Inona no nantenainao ho solony?",
 		"screenshotAdd": "Ampio sary an-tsehatra",
 		"screenshotRemove": "Esory",
 		"screenshotAlt": "Sary an-tsehatra nampiarahina tamin'ny fanambarana",
@@ -590,6 +591,24 @@
 		"captureFailed": "Tsy voavaky io sary io.",
 		"submit": "Alefaso",
 		"success": "Misaotra, voaray ny fanambaranao.",
-		"backHome": "Miverina any am-piandohana"
+		"backHome": "Miverina any am-piandohana",
+		"title": {
+			"bug": "Milaza olana",
+			"suggestion": "Manolotra fanatsarana"
+		},
+		"subtitle": {
+			"bug": "Lazao izay tsy mety. Manampy be ny sary an-tsehatra.",
+			"suggestion": "Lazao izay hanampy anao, na izay tianao ho hita. Manampy hanazava ny hevitrao ny sary an-tsehatra."
+		},
+		"descriptionPlaceholder": {
+			"bug": "Inona no nitranga? Inona no nantenainao ho solony?",
+			"suggestion": "Inona no tianao ho hita? Ahoana no hanampiany anao?"
+		}
+	},
+	"helpMenu": {
+		"button": "Fanampiana",
+		"tutorial": "Jereo ny fizarana torolalana",
+		"suggestion": "Manolotra fanatsarana",
+		"bug": "Milaza olana"
 	}
 }
