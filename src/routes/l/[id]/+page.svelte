@@ -12,17 +12,17 @@
 	import ShopSwitcher from '$components/app/ShopSwitcher.svelte';
 	import ItemRow from '$components/app/ItemRow.svelte';
 	import SwipeRow from '$components/app/SwipeRow.svelte';
+	import AisleCard from '$components/app/AisleCard.svelte';
 	import AddItemSheet from '$components/app/AddItemSheet.svelte';
 	import ShareSheet from '$components/app/ShareSheet.svelte';
-	import { createDrag, move } from '$components/app/drag.svelte';
+	import FilterSheet from '$components/app/FilterSheet.svelte';
+	import { createReorder, move } from '$components/app/reorder.svelte';
 	import { Button } from '$lib/components/ui/button';
 	import {
-		ChevronUp,
-		ChevronDown,
 		ArrowLeft,
-		GripVertical,
 		MessagesSquare,
 		UsersRound,
+		SlidersHorizontal,
 		Check,
 		Undo2,
 		Trash2,
@@ -39,6 +39,7 @@
 
 	let share = $state<ShareSheet | null>(null);
 	let add = $state<AddItemSheet | null>(null);
+	let filters = $state<FilterSheet | null>(null);
 
 	/**
 	 * Le bouton de création amène ici, puis demande la feuille : c'est le même aller-retour que pour
@@ -73,6 +74,7 @@
 
 	let priorityOnly = $state(false);
 	let hideChecked = $state(false);
+	const filtresActifs = $derived(Number(priorityOnly) + Number(hideChecked));
 
 	const visible = $derived(
 		groups
@@ -89,6 +91,22 @@
 	const done = $derived(data.itemsOf(listId).filter((i) => i.checked).length);
 
 	/**
+	 * Quels rayons sont dépliés.
+	 *
+	 * Les deux premiers à l'ouverture, comme dans la maquette : tout déplier remplit trois écrans
+	 * de téléphone, tout replier donne une page qui n'a l'air de rien contenir. On ne retient que
+	 * ce que la personne a changé — le reste suit la règle, y compris pour les rayons qui
+	 * apparaissent ensuite parce qu'on vient d'y ajouter un article.
+	 */
+	let plies = $state<Record<string, boolean>>({});
+	const ouvert = (aisleId: string, index: number) => plies[aisleId] ?? index < 2;
+
+	function basculer(aisleId: string, index: number) {
+		feedback.play('tap');
+		plies = { ...plies, [aisleId]: !ouvert(aisleId, index) };
+	}
+
+	/**
 	 * L'écran ne montre que les rayons non vides : on réinjecte les rayons masqués à la fin, sinon
 	 * réordonner ferait disparaître le parcours appris des rayons momentanément vides.
 	 */
@@ -99,15 +117,24 @@
 	}
 
 	function moveAisle(from: number, to: number) {
-		commitAisleOrder(move(visible.map((g) => g.aisleId), from, to));
+		if (to < 0 || to >= visible.length) return;
+		feedback.play('tap');
+		commitAisleOrder(
+			move(
+				visible.map((g) => g.aisleId),
+				from,
+				to
+			)
+		);
 	}
 
 	function moveItem(aisleId: string, items: Item[], from: number, to: number) {
 		if (to < 0 || to >= items.length) return;
+		feedback.play('tap');
 		data.reorderItems(aisleId, move(items, from, to));
 	}
 
-	const aisleDrag = createDrag(moveAisle);
+	const aisleReorder = createReorder(moveAisle);
 </script>
 
 <svelte:head>
@@ -120,7 +147,10 @@
 	<p class="text-muted-foreground">{t('list.notFound')}</p>
 	<a href="/" class="text-primary mt-4 inline-block underline">{t('list.back')}</a>
 {:else}
-	<a href="/" class="text-muted-foreground text-label inline-flex min-h-[max(2.75rem,44px)] items-center gap-2">
+	<a
+		href="/"
+		class="text-muted-foreground text-label inline-flex min-h-[max(2.75rem,44px)] items-center gap-2"
+	>
 		<ArrowLeft size={16} aria-hidden="true" />
 		{t('list.back')}
 	</a>
@@ -166,23 +196,34 @@
 
 	<ShareSheet bind:this={share} {listId} />
 
-	<div class="mt-6">
+	<!-- Sur téléphone, le magasin descend dans la barre du pouce, en bas : voir plus bas. -->
+	<div class="mt-6 max-md:hidden">
 		<ShopSwitcher />
 	</div>
 
+	<!--
+		Les filtres sur grand écran seulement : sur téléphone, le même bouton flotte en bas à gauche,
+		à portée du pouce. Un seul jeu de commandes pour les deux, dans la feuille.
+	-->
 	<div class="mt-4 flex flex-wrap items-center gap-2">
-		<label
-			class="border-input flex min-h-[max(2.75rem,44px)] cursor-pointer items-center gap-2 rounded-full border px-4 py-2"
+		<Button
+			variant="outline"
+			onclick={() => filters?.show()}
+			aria-haspopup="dialog"
+			data-test-id="open-filters"
+			class="max-md:hidden"
 		>
-			<input type="checkbox" bind:checked={priorityOnly} data-test-id="filter-priority" />
-			<span class="text-label">{t('list.priorityOnly')}</span>
-		</label>
-		<label
-			class="border-input flex min-h-[max(2.75rem,44px)] cursor-pointer items-center gap-2 rounded-full border px-4 py-2"
-		>
-			<input type="checkbox" bind:checked={hideChecked} data-test-id="filter-hide-checked" />
-			<span class="text-label">{t('list.hideChecked')}</span>
-		</label>
+			<SlidersHorizontal size={18} aria-hidden="true" />
+			{t('list.filters')}
+			{#if filtresActifs > 0}
+				<span
+					class="bg-primary text-primary-foreground text-caption grid size-5 place-items-center rounded-full font-semibold"
+				>
+					{filtresActifs}
+				</span>
+			{/if}
+		</Button>
+
 		{#if done > 0}
 			<Button
 				variant="outline"
@@ -208,8 +249,7 @@
 			rangée par défaut. Sans cette phrase, réordonner un rayon a l'air d'un caprice sans effet.
 
 			La maquette dit « glissez les rayons ou cochez » ; cocher n'apprend rien chez nous — seul un
-			déplacement marque le parcours comme appris. Et « glissez » ne vaut que sur ordinateur, le
-			glisser-déposer HTML5 ignorant le tactile : « déplacez » couvre les flèches comme la souris.
+			déplacement marque le parcours comme appris.
 		-->
 		<p
 			class="text-label text-secondary mt-6 flex items-start gap-2 rounded-md bg-[var(--fl-secondary-tint)] px-3.5 py-2.5 font-medium"
@@ -219,104 +259,135 @@
 			<span>{appris ? t('list.routeLearned') : t('list.routeDefault')}</span>
 		</p>
 
-		<div class="mt-4 space-y-6">
+		<div class="mt-4 space-y-3" data-reorder-zone>
 			{#each visible as group, aisleIndex (group.aisleId)}
 				{@const aisle = data.aisle(group.aisleId)}
-				{@const itemDrag = createDrag((from, to) => moveItem(group.aisleId, group.items, from, to))}
+				{@const nom = aisle?.name ?? group.aisleId}
+				{@const itemReorder = createReorder((from, to) =>
+					moveItem(group.aisleId, group.items, from, to)
+				)}
 				<!--
-					Le glissement des rayons est ce qui rend visible l'ordre adaptatif : changer de magasin
-					ne recompose pas la page d'un coup, les rayons se déplacent vers leur nouvelle place.
+					Le déplacement des rayons est ce qui rend visible l'ordre adaptatif : changer de
+					magasin ne recompose pas la page d'un coup, les rayons glissent vers leur nouvelle
+					place. Pendant un geste au doigt la bascule est coupée — les cartes sont déjà là où il
+					faut, c'est la poignée qui les y a mises, et animer par-dessus les ferait reculer.
 				-->
-				<section
-					data-test-class="aisle-group"
-					data-aisle={group.aisleId}
-					{...aisleDrag.handlers(aisleIndex)}
-					animate:flip={{ duration: motionMs(380), easing: cubicOut }}
-					class="transition-[outline-color] {aisleDrag.overIndex === aisleIndex
-						? 'outline-primary rounded-md outline-2'
-						: ''}"
+				<div
+					data-reorder-row
+					data-held={aisleReorder.index === aisleIndex}
+					class="fl-reorder-row rounded-xl"
+					animate:flip={{
+						duration: aisleReorder.busy ? 0 : motionMs(380),
+						easing: cubicOut
+					}}
 				>
-					<div class="mb-2 flex items-center gap-2">
-						<GripVertical
-							size={18}
-							class="text-muted-foreground shrink-0 cursor-grab"
-							aria-hidden="true"
-						/>
-						<h2 class="text-h2 flex flex-1 items-center gap-2 font-medium">
-							<span aria-hidden="true">{aisle?.emoji ?? '🛒'}</span>
-							{aisle?.name ?? group.aisleId}
-						</h2>
-						<button
-							type="button"
-							onclick={() => moveAisle(aisleIndex, aisleIndex - 1)}
-							disabled={aisleIndex === 0}
-							aria-label={t('list.aisleUp', { name: aisle?.name ?? group.aisleId })}
-							data-test-class="aisle-up"
-							class="text-muted-foreground grid size-11 min-w-[44px] place-items-center disabled:opacity-30"
-						>
-							<ChevronUp size={18} aria-hidden="true" />
-						</button>
-						<button
-							type="button"
-							onclick={() => moveAisle(aisleIndex, aisleIndex + 1)}
-							disabled={aisleIndex === visible.length - 1}
-							aria-label={t('list.aisleDown', { name: aisle?.name ?? group.aisleId })}
-							data-test-class="aisle-down"
-							class="text-muted-foreground grid size-11 min-w-[44px] place-items-center disabled:opacity-30"
-						>
-							<ChevronDown size={18} aria-hidden="true" />
-						</button>
-					</div>
-
-					<div class="space-y-2">
-						{#each group.items as item, index (item.id)}
-							<div
-								{...itemDrag.handlers(index)}
-								animate:flip={{ duration: motionMs(280), easing: cubicOut }}
-								in:fly={{ y: 10, duration: motionMs(220), easing: cubicOut }}
-								out:slide={{ duration: motionMs(180), easing: cubicOut }}
-								class={itemDrag.overIndex === index ? 'outline-primary rounded-md outline-2' : ''}
-							>
-								<!--
-									Le glissement double les boutons de la ligne, il ne les remplace pas : c'est
-									le geste rapide du chariot, une main occupée, et il ne se devine pas tout
-									seul. Supprimer demande d'aller plus loin que cocher — voir $domain/swipe.
-								-->
-								<SwipeRow
-									start={{
-										label: item.checked ? t('list.swipeUncheck') : t('list.swipeCheck'),
-										icon: item.checked ? Undo2 : Check,
-										tone: 'primary',
-										run: () => {
-											feedback.play(item.checked ? 'uncheck' : 'check');
-											data.toggleItem(item.id);
-										}
+					<AisleCard
+						name={nom}
+						emoji={aisle?.emoji ?? '🛒'}
+						rank={aisleIndex}
+						done={group.items.filter((i) => i.checked).length}
+						total={group.items.length}
+						open={ouvert(group.aisleId, aisleIndex)}
+						grip={aisleReorder.handle(aisleIndex)}
+						onToggle={() => basculer(group.aisleId, aisleIndex)}
+						onMoveUp={() => moveAisle(aisleIndex, aisleIndex - 1)}
+						onMoveDown={() => moveAisle(aisleIndex, aisleIndex + 1)}
+						canMoveUp={aisleIndex > 0}
+						canMoveDown={aisleIndex < visible.length - 1}
+					>
+						<div data-reorder-zone class="space-y-2">
+							{#each group.items as item, index (item.id)}
+								<div
+									data-reorder-row
+									data-held={itemReorder.index === index}
+									class="fl-reorder-row rounded-md"
+									animate:flip={{
+										duration: itemReorder.busy ? 0 : motionMs(280),
+										easing: cubicOut
 									}}
-									end={{
-										label: t('list.swipeDelete'),
-										icon: Trash2,
-										tone: 'destructive',
-										run: () => {
-											feedback.play('remove');
-											data.removeItem(item.id);
-										}
-									}}
+									in:fly={{ y: 10, duration: motionMs(220), easing: cubicOut }}
+									out:slide={{ duration: motionMs(180), easing: cubicOut }}
 								>
-									<ItemRow
-										{item}
-										canMoveUp={index > 0}
-										canMoveDown={index < group.items.length - 1}
-										onMoveUp={() => moveItem(group.aisleId, group.items, index, index - 1)}
-										onMoveDown={() => moveItem(group.aisleId, group.items, index, index + 1)}
-									/>
-								</SwipeRow>
-							</div>
-						{/each}
-					</div>
-				</section>
+									<!--
+										Le glissement double les boutons de la ligne, il ne les remplace pas : c'est
+										le geste rapide du chariot, une main occupée, et il ne se devine pas tout
+										seul. Supprimer demande d'aller plus loin que cocher — voir $domain/swipe.
+									-->
+									<SwipeRow
+										start={{
+											label: item.checked ? t('list.swipeUncheck') : t('list.swipeCheck'),
+											icon: item.checked ? Undo2 : Check,
+											tone: 'primary',
+											run: () => {
+												feedback.play(item.checked ? 'uncheck' : 'check');
+												data.toggleItem(item.id);
+											}
+										}}
+										end={{
+											label: t('list.swipeDelete'),
+											icon: Trash2,
+											tone: 'destructive',
+											run: () => {
+												feedback.play('remove');
+												data.removeItem(item.id);
+											}
+										}}
+									>
+										<ItemRow
+											{item}
+											grip={itemReorder.handle(index)}
+											canMoveUp={index > 0}
+											canMoveDown={index < group.items.length - 1}
+											onMoveUp={() => moveItem(group.aisleId, group.items, index, index - 1)}
+											onMoveDown={() => moveItem(group.aisleId, group.items, index, index + 1)}
+										/>
+									</SwipeRow>
+								</div>
+							{/each}
+						</div>
+					</AisleCard>
+				</div>
 			{/each}
 		</div>
 	{/if}
+
+	<!--
+		La barre du pouce.
+
+		Sur téléphone, toute la navigation vit en bas : le magasin et les filtres, qu'on manipule
+		autant que les onglets, n'ont rien à faire en haut de l'écran — il faudrait changer de prise
+		de main à chaque fois. Le magasin passe devant parce que c'est lui qui commande l'ordre de
+		tout le reste ; les filtres ne font que masquer.
+
+		Le fond est flou : la barre flotte au-dessus d'une liste qui défile, et posée à plat elle se
+		confondait avec les cartes qui passent dessous. Elle s'arrête avant le bouton de création,
+		qui garde son coin.
+	-->
+	<div
+		class="fl-above-nav fl-dock flex items-center gap-1 md:hidden"
+		data-test-id="thumb-bar"
+	>
+		<ShopSwitcher compact />
+
+		<button
+			type="button"
+			onclick={() => filters?.show()}
+			aria-haspopup="dialog"
+			data-test-id="open-filters-mobile"
+			class="fl-press bg-muted text-foreground text-label flex min-h-[max(2.75rem,44px)] shrink-0 items-center gap-2 rounded-full px-3 font-medium"
+		>
+			<SlidersHorizontal size={18} aria-hidden="true" />
+			<span class="sr-only">{t('list.filters')}</span>
+			{#if filtresActifs > 0}
+				<span
+					class="bg-primary text-primary-foreground text-caption grid size-5 place-items-center rounded-full font-semibold"
+				>
+					{filtresActifs}
+				</span>
+			{/if}
+		</button>
+	</div>
 {/if}
 
+<FilterSheet bind:this={filters} bind:priorityOnly bind:hideChecked />
 <AddItemSheet bind:this={add} {listId} />

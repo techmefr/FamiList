@@ -668,6 +668,76 @@ textarea {
 }
 
 /*
+ * Réordonner à la poignée.
+ *
+ * `touch-action: none` est ce qui fait exister le geste : sans lui, le navigateur décide dès le
+ * premier pixel que le doigt vient faire défiler la page et ne nous envoie plus rien. Il ne vaut
+ * que sur la poignée — ailleurs, on veut évidemment que la page défile.
+ *
+ * Les autres lignes s'écartent avec une transition ; celle qu'on tient suit le doigt sans, et
+ * c'est le script qui pose ce `transition: none` le temps du geste.
+ */
+.fl-reorder-grip {
+	touch-action: none;
+	cursor: grab;
+	-webkit-user-select: none;
+	user-select: none;
+}
+
+.fl-reorder-grip:active {
+	cursor: grabbing;
+}
+
+.fl-reorder-row {
+	transition: translate var(--fl-dur-tap) var(--fl-ease);
+}
+
+.fl-reorder-row[data-held='true'] {
+	box-shadow: var(--fl-shadow-3);
+}
+
+/*
+ * Une commande posée à portée du pouce, au-dessus de la barre de navigation.
+ *
+ * Sur téléphone la navigation vit en bas, et une commande qu'on utilise autant que les filtres n'a
+ * rien à faire en haut de l'écran : il faut changer de prise pour l'atteindre. La hauteur de la
+ * barre est mesurée par la mise en page — elle grandit avec la taille du texte, une valeur écrite
+ * en dur ferait passer le bouton dessous au premier cran d'agrandissement.
+ *
+ * Au-delà de 48rem la barre est une colonne : la commande reprend sa place dans le flux.
+ */
+@media (width < 48rem) {
+	.fl-above-nav {
+		position: fixed;
+		inset-block-end: calc(var(--fl-navbar-h, 4rem) + 0.75rem);
+		/* Elle s'arrête avant le bouton de création, qui fait 58 px et garde son coin. */
+		inset-inline: 1rem calc(1rem + 58px + 0.75rem);
+		z-index: 10;
+	}
+}
+
+/*
+ * Le fond des commandes flottantes.
+ *
+ * Posées à plat, elles avaient la valeur des cartes qui défilent dessous et l'œil ne savait plus ce
+ * qui bouge de ce qui reste. Ce qui les détache, c'est le flou de ce qui passe derrière — la même
+ * recette que la barre de navigation, pour que les deux se lisent comme un seul plancher.
+ */
+.fl-dock {
+	background: color-mix(in srgb, var(--card) 82%, transparent);
+	border: 1px solid var(--border);
+	border-radius: 9999px;
+	box-shadow: var(--fl-shadow-3);
+	padding: 0.25rem;
+}
+
+@supports (backdrop-filter: blur(1px)) {
+	.fl-dock {
+		backdrop-filter: blur(16px) saturate(1.6);
+	}
+}
+
+/*
  * La barre de navigation du bas, sur téléphone.
  *
  * `env(safe-area-inset-bottom)` d'abord, et c'est le point qui n'est pas cosmétique : la page

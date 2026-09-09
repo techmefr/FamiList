@@ -18,6 +18,16 @@
 
 	let menu = $state<CreateMenu | null>(null);
 
+	/**
+	 * La hauteur de la barre du bas, publiée en variable CSS.
+	 *
+	 * Les commandes flottantes d'une page — les filtres d'une liste — doivent se poser juste
+	 * au-dessus d'elle. Cette hauteur n'est pas une constante : la barre grandit avec la taille du
+	 * texte et avec l'encoche de l'appareil, et une valeur écrite en dur mettrait le bouton dessous
+	 * dès le premier cran d'agrandissement.
+	 */
+	let navbarH = $state(0);
+
 	i18n.init();
 	session.init();
 
@@ -198,8 +208,9 @@
 		{@render children()}
 	</main>
 {:else}
-	<div class="min-h-dvh md:grid md:grid-cols-[16rem_1fr]">
+	<div class="min-h-dvh md:grid md:grid-cols-[16rem_1fr]" style="--fl-navbar-h: {navbarH}px">
 		<nav
+			bind:clientHeight={navbarH}
 			class="fl-navbar bg-card fixed inset-x-0 bottom-0 z-10 border-t md:sticky md:top-0 md:h-dvh md:border-t-0 md:border-e"
 			style="view-transition-name: nav"
 			aria-label={t('nav.main')}

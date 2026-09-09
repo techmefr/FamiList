@@ -4,16 +4,18 @@
 	import { feedback } from '$stores/feedback.svelte';
 	import { t } from '$lib/i18n/index.svelte';
 	import { unitKey } from '$domain/units';
-	import { Star, Trash2, ChevronUp, ChevronDown, GripVertical } from '@lucide/svelte';
+	import { Star, Trash2, ArrowUp, ArrowDown, GripVertical } from '@lucide/svelte';
 
 	let {
 		item,
+		grip,
 		onMoveUp,
 		onMoveDown,
 		canMoveUp,
 		canMoveDown
 	}: {
 		item: Item;
+		grip: Record<string, unknown>;
 		onMoveUp: () => void;
 		onMoveDown: () => void;
 		canMoveUp: boolean;
@@ -42,11 +44,19 @@
 	class="bg-card flex flex-wrap items-center gap-3 rounded-md border px-3 py-2 transition-colors"
 	data-test-class="item-row"
 >
-	<GripVertical
-		size={18}
-		class="text-muted-foreground shrink-0 cursor-grab"
+	<!--
+		La poignée. Elle double les flèches sans les remplacer : celles-ci restent le chemin du
+		clavier, elle est le geste du pouce. Ni focalisable ni annoncée, pour la même raison —
+		atteindre au clavier une poignée dont on ne peut rien faire au clavier serait un piège.
+	-->
+	<span
+		{...grip}
+		data-test-class="item-grip"
 		aria-hidden="true"
-	/>
+		class="fl-reorder-grip text-muted-foreground -my-2 flex shrink-0 items-center self-stretch pe-1"
+	>
+		<GripVertical size={18} />
+	</span>
 
 	<!--
 		La case est dans l'étiquette, pas à côté : seule, elle offrait une cible de 28 px là où il en
@@ -89,7 +99,7 @@
 			data-test-class="item-up"
 			class="fl-press text-muted-foreground grid size-11 min-w-[44px] place-items-center disabled:opacity-30"
 		>
-			<ChevronUp size={18} aria-hidden="true" />
+			<ArrowUp size={18} aria-hidden="true" />
 		</button>
 		<button
 			type="button"
@@ -99,7 +109,7 @@
 			data-test-class="item-down"
 			class="fl-press text-muted-foreground grid size-11 min-w-[44px] place-items-center disabled:opacity-30"
 		>
-			<ChevronDown size={18} aria-hidden="true" />
+			<ArrowDown size={18} aria-hidden="true" />
 		</button>
 		<button
 			type="button"
