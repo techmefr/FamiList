@@ -1,4 +1,5 @@
 import { Capacitor } from '@capacitor/core';
+import { SCAN_FORMATS, normalizeFormat, normalizeValue, scanScale } from '$domain/scan-image';
 import type { CodeType } from '$domain/code-format';
 
 export interface ScanResult {
@@ -23,18 +24,11 @@ export interface ScanResult {
  */
 export type ScanSupport = 'native' | 'browser' | 'none';
 
-const BARCODE_FORMATS = ['qr_code', 'ean_13', 'code_39'] as const;
-
-/** Les noms de formats diffèrent d'une couche à l'autre ; on ne garde que ceux qu'on sait dessiner. */
-function normalizeFormat(raw: string): CodeType | null {
-	const lower = raw.toLowerCase().replace(/[^a-z0-9]/g, '');
-
-	if (lower.includes('qr')) return 'qr_code';
-	if (lower.includes('ean13')) return 'ean_13';
-	if (lower.includes('code39')) return 'code_39';
-
-	return null;
-}
+/** Le résultat d'un décodeur, quel qu'il soit, ramené au modèle de la carte. */
+const resultatDe = (value: string, format: string): ScanResult => ({
+	value: normalizeValue(value, format),
+	codeType: normalizeFormat(format)
+});
 
 export function scanSupport(): ScanSupport {
 	if (Capacitor.isNativePlatform()) return 'native';
@@ -51,14 +45,38 @@ interface DetectedBarcode {
 	format: string;
 }
 
-type DetectorConstructor = new (options: { formats: string[] }) => {
-	detect(source: CanvasImageSource): Promise<DetectedBarcode[]>;
+type DetectorConstructor = {
+	new (options: { formats: string[] }): {
+		detect(source: CanvasImageSource): Promise<DetectedBarcode[]>;
+	};
+	getSupportedFormats?: () => Promise<string[]>;
 };
 
-const nouveauDetecteur = () =>
-	new (window as unknown as { BarcodeDetector: DetectorConstructor }).BarcodeDetector({
-		formats: [...BARCODE_FORMATS]
-	});
+const constructeurDetecteur = () =>
+	(window as unknown as { BarcodeDetector: DetectorConstructor }).BarcodeDetector;
+
+/**
+ * Demander un format que l'implémentation ne connaît pas la fait refuser en bloc. On croise donc
+ * notre liste avec la sienne, une seule fois — et si elle ne sait pas répondre, on s'en tient aux
+ * trois formats que tout le monde gère.
+ */
+let formatsUtilisables: Promise<string[]> | null = null;
+
+function formatsDemandes() {
+	formatsUtilisables ??= Promise.resolve(constructeurDetecteur().getSupportedFormats?.())
+		.then((supportes) =>
+			supportes
+				? SCAN_FORMATS.filter((format) => supportes.includes(format))
+				: ['qr_code', 'ean_13', 'code_39']
+		)
+		.catch(() => ['qr_code', 'ean_13', 'code_39']);
+
+	return formatsUtilisables;
+}
+
+async function nouveauDetecteur() {
+	return new (constructeurDetecteur())({ formats: await formatsDemandes() });
+}
 
 /** Le décodeur de secours, chargé une seule fois et gardé. */
 let secours: Promise<import('@zxing/browser').BrowserMultiFormatReader> | null = null;
@@ -83,7 +101,7 @@ async function scanNative(): Promise<ScanResult | null> {
 	const first = barcodes.find((barcode) => barcode.rawValue);
 	if (!first?.rawValue) return null;
 
-	return { value: first.rawValue, codeType: normalizeFormat(first.format) };
+	return resultatDe(first.rawValue, first.format);
 }
 
 /**
@@ -92,7 +110,7 @@ async function scanNative(): Promise<ScanResult | null> {
  * allumé et l'appareil photo reste pris.
  */
 async function scanBrowser(video: HTMLVideoElement, signal: AbortSignal): Promise<ScanResult | null> {
-	const detector = aBarcodeDetector() ? nouveauDetecteur() : null;
+	const detector = aBarcodeDetector() ? await nouveauDetecteur() : null;
 	const lecteur = detector ? null : await lecteurDeSecours();
 
 	const stream = await navigator.mediaDevices.getUserMedia({
@@ -106,7 +124,7 @@ async function scanBrowser(video: HTMLVideoElement, signal: AbortSignal): Promis
 		while (!signal.aborted) {
 			if (detector) {
 				const [found] = await detector.detect(video);
-				if (found) return { value: found.rawValue, codeType: normalizeFormat(found.format) };
+				if (found) return resultatDe(found.rawValue, found.format);
 			} else if (lecteur) {
 				// Une image à la fois, plutôt que `decodeOnce` : celui-ci prendrait la caméra lui-même
 				// et ne rendrait la main qu'au premier code trouvé, donc jamais sur un arrêt voulu.
@@ -136,9 +154,17 @@ async function decoderUneImage(
 
 	toile.getContext('2d')?.drawImage(source, 0, 0, toile.width, toile.height);
 
+	return decoderLaToile(lecteur, toile);
+}
+
+/** Le décodage lui-même, commun au flux vidéo et à l'image importée. */
+function decoderLaToile(
+	lecteur: import('@zxing/browser').BrowserMultiFormatReader,
+	toile: HTMLCanvasElement
+): ScanResult | null {
 	try {
 		const resultat = lecteur.decodeFromCanvas(toile);
-		return { value: resultat.getText(), codeType: normalizeFormat(resultat.getBarcodeFormat().toString()) };
+		return resultatDe(resultat.getText(), resultat.getBarcodeFormat().toString());
 	} catch {
 		// Pas de code sur cette image : c'est le cas courant, pas une panne.
 		return null;
@@ -156,26 +182,35 @@ export async function scanImage(file: File): Promise<ScanResult | null> {
 	const image = await createImageBitmap(file);
 
 	try {
+		// Le détecteur du navigateur d'abord, parce qu'il est rapide et qu'il ne coûte aucun
+		// téléchargement. Mais on ne s'arrête pas à son silence : il ignore des formats courants
+		// sur les cartes de fidélité, et le décodeur de secours, lui, les lit. Rendre `null` ici
+		// laissait ce dernier inutilisé sur tout Chrome, c'est-à-dire sur presque tout Android.
 		if (aBarcodeDetector()) {
-			const [found] = await nouveauDetecteur().detect(image);
-			return found ? { value: found.rawValue, codeType: normalizeFormat(found.format) } : null;
+			const [found] = await (await nouveauDetecteur()).detect(image).catch(() => []);
+			if (found) return resultatDe(found.rawValue, found.format);
 		}
 
+		// Une photo de téléphone en pleine résolution échoue souvent sur un code à barres, là où
+		// la même image réduite passe.
+		const scale = scanScale(image.width, image.height);
 		const toile = document.createElement('canvas');
-		toile.width = image.width;
-		toile.height = image.height;
-		toile.getContext('2d')?.drawImage(image, 0, 0);
+		toile.width = Math.max(1, Math.round(image.width * scale));
+		toile.height = Math.max(1, Math.round(image.height * scale));
+		toile.getContext('2d')?.drawImage(image, 0, 0, toile.width, toile.height);
 
 		const lecteur = await lecteurDeSecours();
-		try {
-			const resultat = lecteur.decodeFromCanvas(toile);
-			return {
-				value: resultat.getText(),
-				codeType: normalizeFormat(resultat.getBarcodeFormat().toString())
-			};
-		} catch {
-			return null;
-		}
+		const reduit = decoderLaToile(lecteur, toile);
+		if (reduit || scale === 1) return reduit;
+
+		// Un code déjà petit dans l'image peut au contraire souffrir de la réduction : on redonne
+		// sa chance à la taille d'origine avant d'abandonner.
+		const entiere = document.createElement('canvas');
+		entiere.width = image.width;
+		entiere.height = image.height;
+		entiere.getContext('2d')?.drawImage(image, 0, 0);
+
+		return decoderLaToile(lecteur, entiere);
 	} finally {
 		image.close();
 	}
