@@ -1,6 +1,7 @@
 import { browser } from '$app/environment';
 import { supabase } from '$db/supabase';
 import { db, type OutboxEntry } from '$db/schema';
+import { describeError } from './errors';
 import {
 	toAisle,
 	toCard,
@@ -43,6 +44,23 @@ class SyncStore {
 	private channel: ReturnType<typeof supabase.channel> | null = null;
 	private pulling: Promise<void> | null = null;
 	private onPulled: (() => void) | null = null;
+	private pullTimer: ReturnType<typeof setTimeout> | null = null;
+	private watchingNetwork = false;
+
+	/**
+	 * Lance un travail qu'on ne peut pas attendre — la file poussée en arrière-plan, le réveil du
+	 * réseau, la relecture différée du temps réel — sans le laisser finir en rejet muet.
+	 *
+	 * Sans cela, une panne de ces chemins-là s'écrit dans une console que personne n'ouvre :
+	 * l'écran continue d'afficher un foyer qui a l'air à jour alors que plus rien ne part. On la
+	 * ramène là où l'interface lit déjà l'état de la synchronisation.
+	 */
+	private detach(work: Promise<unknown>) {
+		void work.catch((cause) => {
+			this.state = 'error';
+			this.lastError = describeError(cause);
+		});
+	}
 
 	/** Appelé une fois le compte validé. Renvoie true si le cache local a été rempli. */
 	async start(onPulled: () => void) {
@@ -52,8 +70,15 @@ class SyncStore {
 
 		// L'état est branché sur le navigateur, pas seulement sur nos appels : sinon le bandeau
 		// n'apparaîtrait qu'à la première écriture, longtemps après la perte du réseau.
-		addEventListener('online', () => void this.resume());
-		addEventListener('offline', () => (this.state = 'offline'));
+		//
+		// Une seule fois : `start()` est rappelé à chaque changement de foyer ou de compte, et
+		// sans cette garde chaque passage ajoutait une paire d'écouteurs. Après trois changements,
+		// un simple retour du réseau lançait trois relectures complètes en même temps.
+		if (!this.watchingNetwork) {
+			this.watchingNetwork = true;
+			addEventListener('online', () => this.detach(this.resume()));
+			addEventListener('offline', () => (this.state = 'offline'));
+		}
 
 		if (!navigator.onLine) {
 			this.state = 'offline';
@@ -83,6 +108,12 @@ class SyncStore {
 		// vieille promesse au prochain `pull()`, qui croirait avoir relu le nouveau foyer : on
 		// rejoindrait une famille et l'écran resterait sur l'ancienne, sans plus rien attendre.
 		this.pulling = null;
+
+		// Une relecture programmée par le temps réel appartient elle aussi au foyer qu'on quitte.
+		// Laissée en place, elle part huit dixièmes de seconde plus tard, au milieu du chargement
+		// du nouveau foyer.
+		if (this.pullTimer) clearTimeout(this.pullTimer);
+		this.pullTimer = null;
 	}
 
 	private async resume() {
@@ -132,7 +163,7 @@ class SyncStore {
 		// l'écran un magasin qu'on vient de créer, ou ramène celui qu'on vient de supprimer. Si la
 		// file ne se vide pas — hors réseau, serveur en erreur — on ne relit pas du tout, plutôt
 		// que d'écraser un travail qui n'a pas encore atteint le serveur.
-		await this.flush();
+		await this.flush(true);
 		if ((await db.outbox.count()) > 0) return;
 
 		this.state = 'syncing';
@@ -274,8 +305,18 @@ class SyncStore {
 
 	/** Enregistre une écriture et tente de la pousser tout de suite. */
 	async enqueue(entry: OutboxEntry) {
-		await db.outbox.add(entry);
-		void this.flush();
+		// Les appelants n'attendent pas cette promesse — le magasin de données l'appelle depuis des
+		// méthodes synchrones. Un stockage local plein doit donc se voir sur le bandeau plutôt que
+		// disparaître : sans cela, l'écriture n'est ni partie ni signalée.
+		try {
+			await db.outbox.add(entry);
+		} catch (cause) {
+			this.state = 'error';
+			this.lastError = describeError(cause);
+			return;
+		}
+
+		this.detach(this.flush());
 	}
 
 	/**
@@ -283,8 +324,11 @@ class SyncStore {
 	 * articles. Une panne réseau arrête la boucle et laisse tout en attente. Un refus définitif du
 	 * serveur, lui, jette l'écriture : la garder bloquerait la file pour toujours et l'utilisateur
 	 * ne verrait plus rien partir.
+	 *
+	 * `depuisRelecture` dit que l'appel vient de la relecture elle-même, qui vide la file avant de
+	 * lire : elle n'a pas besoin qu'on lui en programme une seconde derrière.
 	 */
-	async flush() {
+	async flush(depuisRelecture = false) {
 		if (!browser || !navigator.onLine) {
 			this.state = 'offline';
 			return;
@@ -331,7 +375,9 @@ class SyncStore {
 		// écritures, et elle remplace le cache par ce qu'elle a lu : le magasin qu'on vient de
 		// créer disparaît de l'écran alors qu'il est bien enregistré. On relit donc une fois
 		// celle-là terminée, avec un serveur qui sait tout.
-		if (sent > 0) void Promise.resolve(this.pulling).then(() => this.pull());
+		if (sent > 0 && !depuisRelecture) {
+			this.detach(Promise.resolve(this.pulling).then(() => this.pull()));
+		}
 	}
 
 	/**
@@ -348,11 +394,9 @@ class SyncStore {
 			.subscribe();
 	}
 
-	private pullTimer: ReturnType<typeof setTimeout> | null = null;
-
 	private schedulePull() {
 		if (this.pullTimer) clearTimeout(this.pullTimer);
-		this.pullTimer = setTimeout(() => void this.pull(), 800);
+		this.pullTimer = setTimeout(() => this.detach(this.pull()), 800);
 	}
 }
 
