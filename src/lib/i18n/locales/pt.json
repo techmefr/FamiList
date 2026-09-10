@@ -619,6 +619,9 @@
 		"tooBig": "Esta imagem é demasiado pesada.",
 		"captureFailed": "Não foi possível ler esta imagem.",
 		"submit": "Enviar",
+		"minimize": "Reduzir",
+		"resume": "Retomar",
+		"minimizedHint": "Relato em curso. Reduzido, deixa-o ver o ecrã novamente e tirar uma captura.",
 		"success": "Obrigado, o seu relatório foi enviado.",
 		"backHome": "Voltar ao início",
 		"title": {

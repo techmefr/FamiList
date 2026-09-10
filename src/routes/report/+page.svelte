@@ -1,182 +1,46 @@
 <script lang="ts">
 	import { page } from '$app/state';
-	import { supabase } from '$db/supabase';
+	import { untrack } from 'svelte';
 	import { t } from '$lib/i18n/index.svelte';
-	import { feedback } from '$stores/feedback.svelte';
-	import { SCREENSHOT_MAX_DIM, SCREENSHOT_MAX_BYTES, fitWithin } from '$domain/screenshot';
-	import { isReportKind, type ReportKind } from '$domain/bug-report';
+	import { report } from '$stores/report.svelte';
+	import { isReportKind } from '$domain/bug-report';
 	import { Button } from '$lib/components/ui/button';
-	import { Label } from '$lib/components/ui/label';
-	import IconField from '$components/app/IconField.svelte';
-	import { Camera, ImageOff, MessageSquareWarning } from '@lucide/svelte';
-
-	let description = $state('');
-	let screenshot = $state<string | null>(null);
-	let input = $state<HTMLInputElement | null>(null);
-	let erreur = $state('');
-	let occupe = $state(false);
-	let envoye = $state(false);
+	import ReportForm from '$components/app/ReportForm.svelte';
 
 	/**
-	 * D'où vient le signalement : la personne qui écrit « le bouton ne répond pas » n'a pas à
-	 * préciser sur quel écran, le lien envoyé par le bouton l'a déjà noté.
+	 * La page reste pour les liens directs — un message qui dit « signale-le ici » — mais ce n'est
+	 * plus le chemin normal : le bouton d'aide ouvre un panneau, qui ne fait pas disparaître
+	 * l'écran à photographier.
+	 *
+	 * Le brouillon est le même des deux côtés, d'où la lecture de l'état plutôt qu'une copie
+	 * locale : arriver ici avec un signalement commencé dans le panneau le retrouve, au lieu d'en
+	 * ouvrir un second à côté.
 	 */
-	const chemin = $derived(page.url.searchParams.get('from') ?? '');
-
 	const rawKind = page.url.searchParams.get('kind');
-	const kind: ReportKind = isReportKind(rawKind) ? rawKind : 'bug';
+	const kind = isReportKind(rawKind) ? rawKind : 'bug';
 
-	/**
-	 * Réduite ici, dans le navigateur, avant de partir : une capture de téléphone pèse plusieurs
-	 * mégaoctets, la colonne en base plafonne à 1,5 Mo de texte. `createImageBitmap` applique aussi
-	 * l'orientation EXIF, sans quoi une capture prise en portrait ressort couchée.
-	 */
-	async function reduire(fichier: File): Promise<string> {
-		const source = await createImageBitmap(fichier, { imageOrientation: 'from-image' });
-		const { width, height } = fitWithin(source.width, source.height, SCREENSHOT_MAX_DIM);
-
-		const toile = document.createElement('canvas');
-		toile.width = width;
-		toile.height = height;
-
-		const pinceau = toile.getContext('2d');
-		if (!pinceau) throw new Error('canvas indisponible');
-
-		pinceau.drawImage(source, 0, 0, width, height);
-		source.close();
-
-		return toile.toDataURL('image/jpeg', 0.75);
-	}
-
-	async function choisir(event: Event) {
-		const fichier = (event.currentTarget as HTMLInputElement).files?.[0];
-		if (!fichier) return;
-
-		erreur = '';
-
-		if (fichier.size > SCREENSHOT_MAX_BYTES) {
-			erreur = t('bugReport.tooBig');
-			return;
+	untrack(() => {
+		if (!report.hasDraft) {
+			report.kind = kind;
+			report.path = page.url.searchParams.get('from') ?? '';
+			report.sent = false;
 		}
-
-		try {
-			screenshot = await reduire(fichier);
-		} catch {
-			erreur = t('bugReport.captureFailed');
-		} finally {
-			if (input) input.value = '';
-		}
-	}
-
-	function retirer() {
-		screenshot = null;
-	}
-
-	async function envoyer(event: SubmitEvent) {
-		event.preventDefault();
-		if (!description.trim()) return;
-
-		erreur = '';
-		occupe = true;
-
-		const { error } = await supabase.rpc('submit_bug_report', {
-			description: description.trim(),
-			screenshot: screenshot ?? '',
-			path: chemin,
-			user_agent: navigator.userAgent,
-			kind
-		});
-
-		occupe = false;
-
-		if (error) {
-			erreur = error.message;
-			feedback.play('error');
-			return;
-		}
-
-		feedback.play('success');
-		envoye = true;
-	}
+	});
 </script>
 
 <svelte:head>
-	<title>{t(`bugReport.title.${kind}`)} — {t('app.name')}</title>
+	<title>{t(`bugReport.title.${report.kind}`)} — {t('app.name')}</title>
 </svelte:head>
 
-<h1 class="text-h1 font-semibold">{t(`bugReport.title.${kind}`)}</h1>
-<p class="text-muted-foreground mt-2">{t(`bugReport.subtitle.${kind}`)}</p>
+<h1 class="text-h1 font-semibold">{t(`bugReport.title.${report.kind}`)}</h1>
+<p class="text-muted-foreground mt-2">{t(`bugReport.subtitle.${report.kind}`)}</p>
 
-{#if envoye}
-	<p class="text-primary mt-6" role="status" data-test-id="bug-success">
-		{t('bugReport.success')}
-	</p>
-	<Button href="/" class="fl-press mt-4">{t('bugReport.backHome')}</Button>
-{:else}
-	<form onsubmit={envoyer} class="mt-6 space-y-4" data-test-id="bug-form">
-		<div>
-			<Label for="bug-description">{t('bugReport.description')}</Label>
-			<IconField icon={MessageSquareWarning} align="top">
-				<textarea
-					id="bug-description"
-					bind:value={description}
-					rows="5"
-					required
-					placeholder={t(`bugReport.descriptionPlaceholder.${kind}`)}
-					data-test-id="bug-description"
-					class="border-input bg-background w-full rounded-md border p-2"
-				></textarea>
-			</IconField>
-		</div>
+<div class="mt-6">
+	<ReportForm />
+</div>
 
-		{#if screenshot}
-			<div class="relative w-fit">
-				<img
-					src={screenshot}
-					alt={t('bugReport.screenshotAlt')}
-					class="max-h-48 rounded-lg border"
-					data-test-id="bug-screenshot-preview"
-				/>
-				<Button
-					type="button"
-					variant="outline"
-					onclick={retirer}
-					data-test-id="bug-screenshot-remove"
-					class="fl-press absolute end-2 top-2"
-				>
-					<ImageOff size={16} aria-hidden="true" />
-					{t('bugReport.screenshotRemove')}
-				</Button>
-			</div>
-		{:else}
-			<Button
-				type="button"
-				variant="outline"
-				onclick={() => input?.click()}
-				data-test-id="bug-screenshot-add"
-				class="fl-press"
-			>
-				<Camera size={18} aria-hidden="true" />
-				{t('bugReport.screenshotAdd')}
-			</Button>
-		{/if}
-
-		<input
-			bind:this={input}
-			type="file"
-			accept="image/*"
-			onchange={choisir}
-			aria-label={t('bugReport.screenshotAdd')}
-			data-test-id="bug-screenshot-input"
-			class="sr-only"
-		/>
-
-		{#if erreur}
-			<p class="text-destructive" role="alert" data-test-id="bug-error">{erreur}</p>
-		{/if}
-
-		<Button type="submit" disabled={occupe} data-test-id="bug-submit" class="fl-press">
-			{t('bugReport.submit')}
-		</Button>
-	</form>
+{#if report.sent}
+	<Button href="/" onclick={() => report.close()} class="fl-press mt-4">
+		{t('bugReport.backHome')}
+	</Button>
 {/if}

@@ -619,6 +619,9 @@
 		"tooBig": "This image is too large.",
 		"captureFailed": "Couldn't read this image.",
 		"submit": "Send",
+		"minimize": "Minimise",
+		"resume": "Resume",
+		"minimizedHint": "Report in progress. Minimised, it lets you see your screen again and take a screenshot.",
 		"success": "Thanks, your report has been sent.",
 		"backHome": "Back to home",
 		"title": {

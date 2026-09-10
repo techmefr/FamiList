@@ -619,6 +619,9 @@
 		"tooBig": "Lehibe loatra io sary io.",
 		"captureFailed": "Tsy voavaky io sary io.",
 		"submit": "Alefaso",
+		"minimize": "Ahena",
+		"resume": "Tohizana",
+		"minimizedHint": "Misy fitarainana am-panoratana. Rehefa ahena dia hita indray ny efijery ka azo alaina sary.",
 		"success": "Misaotra, voaray ny fanambaranao.",
 		"backHome": "Miverina any am-piandohana",
 		"title": {

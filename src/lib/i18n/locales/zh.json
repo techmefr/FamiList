@@ -615,6 +615,9 @@
 		"tooBig": "这张图片太大了。",
 		"captureFailed": "无法读取此图片。",
 		"submit": "发送",
+		"minimize": "收起",
+		"resume": "继续填写",
+		"minimizedHint": "反馈尚未发送。收起后可重新看到页面，方便截图。",
 		"success": "谢谢，您的报告已发送。",
 		"backHome": "返回首页",
 		"title": {

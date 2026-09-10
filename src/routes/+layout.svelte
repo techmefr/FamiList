@@ -14,6 +14,7 @@
 	import CreateMenu from '$components/app/CreateMenu.svelte';
 	import Logo from '$components/app/Logo.svelte';
 	import HelpButton from '$components/app/HelpButton.svelte';
+	import ReportPanel from '$components/app/ReportPanel.svelte';
 
 	let { children } = $props();
 
@@ -322,6 +323,14 @@
 				{@render children()}
 			</main>
 		</div>
+
+		<!--
+			Le signalement est posé ici, dans la grille, et non à côté d'elle : c'est cet élément qui
+			publie `--fl-navbar-h`, dont le panneau a besoin pour ne pas passer sous les onglets.
+			Il vit hors des pages pour survivre à une navigation — on peut aller reproduire le
+			problème ailleurs, le brouillon suit.
+		-->
+		<ReportPanel />
 	</div>
 
 	<CreateMenu bind:this={menu} />

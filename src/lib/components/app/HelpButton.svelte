@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/state';
-	import { goto } from '$app/navigation';
 	import { t } from '$lib/i18n/index.svelte';
+	import { report } from '$stores/report.svelte';
 	import { settings } from '$stores/settings.svelte';
 	import { feedback } from '$stores/feedback.svelte';
 	import { CircleQuestionMark, GraduationCap, Lightbulb, Bug, X } from '@lucide/svelte';
@@ -31,12 +31,15 @@
 	}
 
 	/**
-	 * L'écran ouvert part avec la personne, en paramètre d'URL : c'est ce qui évite de lui demander
-	 * de redécrire où elle se trouvait, et ce qui donne au signalement de quoi être reproduit.
+	 * Le signalement s'ouvre par-dessus l'écran, sans le quitter.
+	 *
+	 * Le formulaire demande une capture de ce qui ne va pas : une navigation ferait disparaître
+	 * exactement ce qu'il faut photographier. Le panneau, lui, se réduit et laisse revoir l'écran.
+	 * L'endroit d'où l'on part est noté au passage, pour ne pas avoir à le redécrire.
 	 */
 	function signaler(kind: 'bug' | 'suggestion') {
 		hide();
-		goto(`/report?from=${encodeURIComponent(page.url.pathname)}&kind=${kind}`);
+		report.show(kind, page.url.pathname);
 	}
 
 	const ACTIONS = [

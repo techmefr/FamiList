@@ -619,6 +619,9 @@
 		"tooBig": "Dieses Bild ist zu groß.",
 		"captureFailed": "Dieses Bild konnte nicht gelesen werden.",
 		"submit": "Senden",
+		"minimize": "Verkleinern",
+		"resume": "Fortsetzen",
+		"minimizedHint": "Meldung in Arbeit. Verkleinert gibt sie den Bildschirm wieder frei, für einen Screenshot.",
 		"success": "Danke, Ihre Meldung wurde gesendet.",
 		"backHome": "Zurück zur Startseite",
 		"title": {
