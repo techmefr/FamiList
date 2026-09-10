@@ -73,7 +73,12 @@
 		"replayTour": "Ver la visita",
 		"sharing": "Compartir",
 		"householdHint": "Invitar a los suyos y compartir sus listas.",
-		"adminHint": "Aprobar las cuentas nuevas y gestionar los permisos."
+		"adminHint": "Aprobar las cuentas nuevas y gestionar los permisos.",
+		"name": "Nombre",
+		"namePlaceholder": "Nombre y apellido",
+		"nameSave": "Guardar",
+		"nameSaved": "Guardado",
+		"nameFailed": "No se ha podido guardar el nombre. Inténtalo de nuevo en un momento."
 	},
 	"theme": {
 		"light": "Claro",

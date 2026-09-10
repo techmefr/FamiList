@@ -174,7 +174,10 @@ export const toMember = (row: Row, profile: Row | undefined, currentUserId: stri
 		// Un rôle vide en base est une valeur manquante, pas un rôle : il retombe sur 'member'
 		// comme une colonne absente, sinon la traduction chercherait une clé vide.
 		role: id === currentUserId ? 'self' : text(row.role) || 'member',
-		initial: text(profile?.initial) || initialsOf(name),
+		// Les initiales se calculent, elles ne se lisent pas : la colonne `profiles.initial` est
+		// remplie par un trigger à l'inscription, avec une seule lettre, et plus rien ne la met à
+		// jour ensuite — un changement de nom la laisserait périmée en plus d'être tronquée.
+		initial: initialsOf(name),
 		tint: text(row.tint, DEFAULT_MEMBER_TINT),
 		avatar: text(profile?.avatar) || undefined
 	};

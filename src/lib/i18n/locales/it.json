@@ -73,7 +73,12 @@
 		"replayTour": "Rivedere la visita",
 		"sharing": "Condivisione",
 		"householdHint": "Invitare i propri cari e condividere le liste.",
-		"adminHint": "Approvare i nuovi account e gestire i ruoli."
+		"adminHint": "Approvare i nuovi account e gestire i ruoli.",
+		"name": "Nome",
+		"namePlaceholder": "Nome e cognome",
+		"nameSave": "Salva",
+		"nameSaved": "Salvato",
+		"nameFailed": "Non è stato possibile salvare il nome. Riprova tra un momento."
 	},
 	"theme": {
 		"light": "Chiaro",

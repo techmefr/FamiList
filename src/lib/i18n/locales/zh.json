@@ -72,7 +72,12 @@
 		"replayTour": "重看导览",
 		"sharing": "共享",
 		"householdHint": "邀请家人，一起共用清单。",
-		"adminHint": "审批新账号并管理权限。"
+		"adminHint": "审批新账号并管理权限。",
+		"name": "姓名",
+		"namePlaceholder": "姓名",
+		"nameSave": "保存",
+		"nameSaved": "已保存",
+		"nameFailed": "姓名保存失败，请稍后再试。"
 	},
 	"theme": {
 		"light": "浅色",

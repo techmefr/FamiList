@@ -73,7 +73,12 @@
 		"replayTour": "Rever a visita",
 		"sharing": "Partilha",
 		"householdHint": "Convidar os seus e partilhar as listas.",
-		"adminHint": "Aprovar as novas contas e gerir os perfis."
+		"adminHint": "Aprovar as novas contas e gerir os perfis.",
+		"name": "Nome",
+		"namePlaceholder": "Nome e apelido",
+		"nameSave": "Guardar",
+		"nameSaved": "Guardado",
+		"nameFailed": "Não foi possível guardar o nome. Tente novamente daqui a pouco."
 	},
 	"theme": {
 		"light": "Claro",

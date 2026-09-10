@@ -73,7 +73,12 @@
 		"replayTour": "Führung ansehen",
 		"sharing": "Teilen",
 		"householdHint": "Angehörige einladen und Listen gemeinsam nutzen.",
-		"adminHint": "Neue Konten freigeben und Rollen verwalten."
+		"adminHint": "Neue Konten freigeben und Rollen verwalten.",
+		"name": "Name",
+		"namePlaceholder": "Vorname Nachname",
+		"nameSave": "Speichern",
+		"nameSaved": "Gespeichert",
+		"nameFailed": "Der Name konnte nicht gespeichert werden. Versuche es gleich noch einmal."
 	},
 	"theme": {
 		"light": "Hell",

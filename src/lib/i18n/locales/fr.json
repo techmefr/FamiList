@@ -73,7 +73,12 @@
 		"replayTour": "Revoir la visite",
 		"sharing": "Partage",
 		"householdHint": "Inviter vos proches et partager vos listes.",
-		"adminHint": "Approuver les nouveaux comptes et gérer les rôles."
+		"adminHint": "Approuver les nouveaux comptes et gérer les rôles.",
+		"name": "Nom",
+		"namePlaceholder": "Prénom Nom",
+		"nameSave": "Enregistrer",
+		"nameSaved": "Enregistré",
+		"nameFailed": "Le nom n’a pas pu être enregistré. Réessayez dans un instant."
 	},
 	"theme": {
 		"light": "Clair",

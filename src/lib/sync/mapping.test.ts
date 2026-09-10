@@ -227,7 +227,7 @@ describe('toMember', () => {
 	it('affiche le nom du profil, avec ses initiales et sa photo', () => {
 		const member = toMember(
 			{ user_id: 'u1', role: 'owner', tint: 'green' },
-			{ display_name: 'Hélène Moreau', initial: 'HM', avatar: 'data:image/jpeg;base64,x' },
+			{ display_name: 'Hélène Moreau', avatar: 'data:image/jpeg;base64,x' },
 			'someone-else'
 		);
 		expect(member).toEqual({
@@ -255,8 +255,19 @@ describe('toMember', () => {
 		expect(toMember({ user_id: 'u1' }, undefined, 'x').name).toBe('—');
 	});
 
-	it("calcule les initiales quand le profil n'en fournit pas", () => {
+	it('calcule les initiales depuis le nom', () => {
 		const member = toMember({ user_id: 'u1' }, { display_name: 'Jean Dupont' }, 'x');
+		expect(member.initial).toBe('JD');
+	});
+
+	// La colonne est remplie par un trigger avec une seule lettre, et jamais remise à jour : la
+	// suivre donnerait une initiale tronquée, et périmée dès le premier changement de nom.
+	it("ignore l'initiale stockée en base", () => {
+		const member = toMember(
+			{ user_id: 'u1' },
+			{ display_name: 'Jean Dupont', initial: 'J' },
+			'x'
+		);
 		expect(member.initial).toBe('JD');
 	});
 

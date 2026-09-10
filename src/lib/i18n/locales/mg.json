@@ -73,7 +73,12 @@
 		"replayTour": "Hijery ny fitarihana",
 		"sharing": "Fizarana",
 		"householdHint": "Manasa ny fianakaviana sy mizara ny lisitra.",
-		"adminHint": "Manaiky ny kaonty vaovao sy mitantana ny anjara asa."
+		"adminHint": "Manaiky ny kaonty vaovao sy mitantana ny anjara asa.",
+		"name": "Anarana",
+		"namePlaceholder": "Anarana sy fanampiny",
+		"nameSave": "Tehirizo",
+		"nameSaved": "Voatahiry",
+		"nameFailed": "Tsy voatahiry ny anarana. Andramo indray afaka kelikely."
 	},
 	"theme": {
 		"light": "Mazava",

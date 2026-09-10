@@ -73,7 +73,12 @@
 		"replayTour": "Replay the tour",
 		"sharing": "Sharing",
 		"householdHint": "Invite your family and share your lists.",
-		"adminHint": "Approve new accounts and manage roles."
+		"adminHint": "Approve new accounts and manage roles.",
+		"name": "Name",
+		"namePlaceholder": "First name Last name",
+		"nameSave": "Save",
+		"nameSaved": "Saved",
+		"nameFailed": "That name could not be saved. Try again in a moment."
 	},
 	"theme": {
 		"light": "Light",

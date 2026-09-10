@@ -23,6 +23,7 @@
 	import { Check, Volume2, Users, ShieldCheck } from '@lucide/svelte';
 	import Avatar from '$components/app/Avatar.svelte';
 	import AvatarPicker from '$components/app/AvatarPicker.svelte';
+	import NameField from '$components/app/NameField.svelte';
 
 	const themes: Theme[] = ['light', 'dark', 'system'];
 
@@ -56,13 +57,17 @@
 	<Card.Header>
 		<Card.Title class="text-h2">{t('profile.account')}</Card.Title>
 	</Card.Header>
-	<Card.Content class="flex flex-wrap items-center justify-between gap-4">
-		<p class="text-muted-foreground text-label">
-			{t('profile.signedInAs', { email: session.user?.email ?? '' })}
-		</p>
-		<Button onclick={() => session.signOut()} data-test-id="sign-out" class="fl-press">
-			{t('auth.signOut')}
-		</Button>
+	<Card.Content class="fl-divided">
+		<NameField />
+
+		<div class="flex flex-wrap items-center justify-between gap-4">
+			<p class="text-muted-foreground text-label">
+				{t('profile.signedInAs', { email: session.user?.email ?? '' })}
+			</p>
+			<Button onclick={() => session.signOut()} data-test-id="sign-out" class="fl-press">
+				{t('auth.signOut')}
+			</Button>
+		</div>
 	</Card.Content>
 </Card.Root>
 

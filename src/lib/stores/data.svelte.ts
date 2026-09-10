@@ -18,6 +18,7 @@ import {
 	type ShopLayout
 } from '$db/schema';
 import { supabase } from '$db/supabase';
+import { initialsOf } from '$domain/avatar';
 import { accountDecision } from '$domain/account-switch';
 import { guessAisleKind, FALLBACK_AISLE_KIND } from '$domain/guess-aisle';
 import { groupByAisle, learnedItemOrder } from '$domain/aisle-order';
@@ -76,7 +77,10 @@ class DataStore {
 	activeShop = $derived(this.shops.find((s) => s.id === this.activeShopId) ?? this.shops[0]);
 	activeLayout = $derived(this.layouts.find((l) => l.shopId === this.activeShopId));
 
-	private userId = '';
+	// L'identifiant est lu de façon asynchrone, après le premier rendu : sans état réactif, tout ce
+	// qui dérive de `me` — le champ du nom, le sélecteur de portrait — resterait calculé sur la
+	// chaîne vide et ne trouverait jamais son propre membre.
+	private userId = $state('');
 	private userIdKnown = false;
 
 	async load() {
@@ -613,6 +617,37 @@ class DataStore {
 			.from('profiles')
 			.update({ avatar: avatar ?? '' })
 			.eq('id', id);
+	}
+
+	/**
+	 * Change le nom affiché.
+	 *
+	 * Les initiales suivent d'elles-mêmes : elles se calculent depuis le nom à chaque lecture, la
+	 * colonne `initial` n'étant plus regardée. Le nom est aussi écrit dans les métadonnées du
+	 * compte, où l'inscription l'avait posé, pour que les deux ne divergent pas.
+	 */
+	async setMyName(name: string) {
+		const id = this.me;
+		if (!id) return;
+
+		const membre = this.members.find((m) => m.id === id);
+		if (!membre) return;
+
+		const suivant: Member = { ...membre, name, initial: initialsOf(name) };
+		this.members = this.members.map((m) => (m.id === id ? suivant : m));
+		db.members.put(suivant);
+
+		const { error } = await supabase.from('profiles').update({ display_name: name }).eq('id', id);
+		if (error) {
+			// Le nom affiché revient à ce que la base connaît : le laisser à l'écran ferait croire à
+			// un enregistrement qui n'a pas eu lieu, jusqu'à la prochaine synchronisation.
+			this.members = this.members.map((m) => (m.id === id ? membre : m));
+			db.members.put(membre);
+			return error.message;
+		}
+
+		await supabase.auth.updateUser({ data: { display_name: name } });
+		return null;
 	}
 
 	member(id: string) {
