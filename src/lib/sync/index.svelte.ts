@@ -78,6 +78,11 @@ class SyncStore {
 		this.channel = null;
 		this.householdId = null;
 		this.state = 'idle';
+
+		// Une relecture en vol appartient au foyer qu'on quitte. La garder ferait rendre cette
+		// vieille promesse au prochain `pull()`, qui croirait avoir relu le nouveau foyer : on
+		// rejoindrait une famille et l'écran resterait sur l'ancienne, sans plus rien attendre.
+		this.pulling = null;
 	}
 
 	private async resume() {
@@ -194,6 +199,10 @@ class SyncStore {
 			const listId = row.list_id as string;
 			membersByList.set(listId, [...(membersByList.get(listId) ?? []), row.user_id as string]);
 		}
+
+		// Le foyer a pu changer pendant ces lectures — on vient de rejoindre une famille, ou de la
+		// quitter. Écrire maintenant remplirait le cache avec le foyer précédent.
+		if (this.householdId !== household) return;
 
 		await db.transaction(
 			'rw',
