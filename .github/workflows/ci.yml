@@ -61,16 +61,16 @@ jobs:
       - name: Navigateur Playwright
         run: pnpm exec playwright install --with-deps chromium
 
-      - uses: supabase/setup-cli@v1
-        with:
-          version: latest
-
+      # La CLI vient du `package.json`, pas d'une action qui suivrait une version flottante : la
+      # CI et la machine du dev appliquent alors les mêmes migrations avec le même outil. Une CLI
+      # trop ancienne refuse `supabase/config.toml`, et personne ne veut découvrir ça ici.
+      #
       # `db reset` applique les migrations puis `supabase/seed.sql`, qui pose le compte fixe
       # utilisé par les E2E (e2e@familist.test) — confirmé et approuvé sans mail ni clé de service.
       - name: Pile Supabase locale
         run: |
-          supabase start
-          supabase db reset
+          pnpm run db:start
+          pnpm run db:reset
 
       - name: Tests E2E
         run: pnpm exec playwright test
