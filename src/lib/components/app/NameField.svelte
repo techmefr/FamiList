@@ -77,7 +77,7 @@
 
 	<Button type="submit" disabled={occupe || !modifie} data-test-id="name-save" class="fl-press">
 		{#if enregistre}
-			<Check size={18} aria-hidden="true" />
+			<Check size={18} aria-hidden="true" data-test-id="name-saved" />
 			{t('profile.nameSaved')}
 		{:else}
 			{t('profile.nameSave')}

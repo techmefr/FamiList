@@ -1,4 +1,5 @@
 <script lang="ts">
+	import type { Snippet } from 'svelte';
 	import { tick } from 'svelte';
 	import { slide } from 'svelte/transition';
 	import { cubicOut } from 'svelte/easing';
@@ -9,7 +10,14 @@
 	import { Button } from '$lib/components/ui/button';
 	import { ScanLine, X } from '@lucide/svelte';
 
-	let { onScanned }: { onScanned: (result: ScanResult) => void } = $props();
+	/**
+	 * `actions` reçoit les autres façons d'obtenir le même code — aujourd'hui l'import d'une image.
+	 * Elles sont rendues ici, et pas côté appelant, parce que c'est ce composant qui décide de la
+	 * rangée : il en disparaît quand la caméra manque, et il la remplace entièrement par l'aperçu
+	 * vidéo pendant le scan. Les laisser dehors les mettrait à côté de la vidéo.
+	 */
+	let { onScanned, actions }: { onScanned: (result: ScanResult) => void; actions?: Snippet } =
+		$props();
 
 	let video = $state<HTMLVideoElement | null>(null);
 	let scanning = $state(false);
@@ -51,9 +59,16 @@
 	}
 </script>
 
-{#if support !== 'none'}
+<!--
+	La rangée des façons d'attraper un code.
+
+	Les boutons sont étirés à la même hauteur plutôt qu'alignés en haut : sur écran étroit, l'un des
+	libellés passe sur deux lignes et l'autre non, et deux boutons de hauteurs différentes côte à
+	côte se voient tout de suite.
+-->
+<div class="mt-2 flex flex-wrap items-stretch gap-2">
 	{#if scanning}
-		<div class="mt-3" transition:slide={{ duration: motionMs(200), easing: cubicOut }}>
+		<div class="w-full" transition:slide={{ duration: motionMs(200), easing: cubicOut }}>
 			<div class="relative overflow-hidden rounded-md">
 				<!-- svelte-ignore a11y_media_has_caption -->
 				<video
@@ -70,18 +85,24 @@
 				></span>
 			</div>
 			<Button variant="outline" onclick={stop} data-test-id="scan-stop" class="fl-press mt-2">
-				<X size={16} aria-hidden="true" />
+				<X size={18} aria-hidden="true" />
 				{t('scan.stop')}
 			</Button>
 		</div>
 	{:else}
-		<Button variant="outline" onclick={start} data-test-id="scan-start" class="fl-press mt-3">
-			<ScanLine size={16} aria-hidden="true" />
-			{t('scan.start')}
-		</Button>
-	{/if}
-{/if}
+		{#if support !== 'none'}
+			<Button variant="outline" onclick={start} data-test-id="scan-start" class="fl-press">
+				<ScanLine size={18} aria-hidden="true" />
+				{t('scan.start')}
+			</Button>
+		{/if}
 
-{#if error}
-	<p class="text-destructive text-caption mt-2" role="alert" data-test-id="scan-error">{error}</p>
-{/if}
+		{@render actions?.()}
+	{/if}
+
+	{#if error}
+		<p class="text-destructive text-caption w-full" role="alert" data-test-id="scan-error">
+			{error}
+		</p>
+	{/if}
+</div>

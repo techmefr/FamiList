@@ -70,8 +70,9 @@
 	class="sr-only"
 />
 
+<!-- Pleine largeur : le message prend sa propre ligne au lieu d'étirer un seul bouton de la rangée. -->
 {#if erreur}
-	<p class="text-destructive text-caption mt-2" role="alert" data-test-id="import-code-error">
+	<p class="text-destructive text-caption w-full" role="alert" data-test-id="import-code-error">
 		{erreur}
 	</p>
 {/if}

@@ -274,20 +274,21 @@
 					n'est pas un repli — c'est le chemin normal quand on enregistre ses cartes assis
 					devant un ordinateur, la carte étant dans un courriel ou dans une vieille photo.
 				-->
-				<div class="mt-2 flex flex-wrap items-start gap-2">
-					<ScanButton
-						onScanned={(result) => {
-							code = result.value;
-							if (result.codeType) codeType = result.codeType;
-						}}
-					/>
-					<ImportCodeButton
-						onScanned={(result) => {
-							code = result.value;
-							if (result.codeType) codeType = result.codeType;
-						}}
-					/>
-				</div>
+				<ScanButton
+					onScanned={(result) => {
+						code = result.value;
+						if (result.codeType) codeType = result.codeType;
+					}}
+				>
+					{#snippet actions()}
+						<ImportCodeButton
+							onScanned={(result) => {
+								code = result.value;
+								if (result.codeType) codeType = result.codeType;
+							}}
+						/>
+					{/snippet}
+				</ScanButton>
 				{#if invalidEan}
 					<p class="text-destructive text-caption mt-1" role="alert" data-test-id="card-code-error">
 						{t('cards.eanInvalid')}
