@@ -223,7 +223,10 @@ class DataStore {
 		this.push('items', $state.snapshot(item), fromItem);
 	}
 
-	addItem(listId: string, input: { name: string; qty: string; unit: string; aisleId?: string }) {
+	addItem(
+		listId: string,
+		input: { name: string; qty: string; unit: string; aisleId?: string; note?: string }
+	) {
 		const item: Item = {
 			id: crypto.randomUUID(),
 			listId,
@@ -233,6 +236,7 @@ class DataStore {
 			unit: input.unit || DEFAULT_UNIT,
 			checked: false,
 			priority: false,
+			note: input.note?.trim() || undefined,
 			createdAt: Date.now()
 		};
 
@@ -240,6 +244,31 @@ class DataStore {
 		db.items.add(item);
 		this.push('items', item, fromItem);
 		return item;
+	}
+
+	/**
+	 * Modifier un article après coup : la faute de frappe, la quantité qu'on revoit devant le
+	 * rayon, la précision qu'on ajoute — « la grande bouteille », « sans sucre ».
+	 *
+	 * Une note vidée redevient absente plutôt que chaîne vide : l'affichage teste la présence de
+	 * la note pour décider du tiret qui la précède.
+	 */
+	updateItem(
+		id: string,
+		patch: { name?: string; qty?: string; unit?: string; aisleId?: string; note?: string }
+	) {
+		const item = this.items.find((candidate) => candidate.id === id);
+		if (!item) return;
+
+		if (patch.name !== undefined) item.name = patch.name.trim();
+		if (patch.qty !== undefined) item.qty = patch.qty || '1';
+		if (patch.unit !== undefined) item.unit = patch.unit || DEFAULT_UNIT;
+		if (patch.aisleId !== undefined) item.aisleId = patch.aisleId;
+		if (patch.note !== undefined) item.note = patch.note.trim() || undefined;
+
+		const snapshot = $state.snapshot(item) as Item;
+		db.items.put(snapshot);
+		this.push('items', snapshot, fromItem);
 	}
 
 	removeItem(id: string) {

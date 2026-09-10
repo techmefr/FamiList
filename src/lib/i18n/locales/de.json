@@ -192,7 +192,8 @@
 		"swipeCheck": "Abhaken",
 		"swipeUncheck": "Abwählen",
 		"swipeDelete": "Löschen",
-		"noShop": "Ein Geschäft hinzufügen"
+		"noShop": "Ein Geschäft hinzufügen",
+		"edit": "{name} bearbeiten"
 	},
 	"share": {
 		"title": "Wer sieht diese Liste?",
@@ -238,7 +239,11 @@
 		"aisle": "Abteilung",
 		"submit": "Hinzufügen",
 		"aisleAuto": "Automatische Erkennung",
-		"aisleGuessed": "Erkannt: {name}"
+		"aisleGuessed": "Erkannt: {name}",
+		"editTitle": "Artikel bearbeiten",
+		"saveEdit": "Speichern",
+		"note": "Hinweis (optional)",
+		"notePlaceholder": "Die große Flasche, ohne Zucker…"
 	},
 	"shops": {
 		"title": "Geschäfte und Abteilungen",

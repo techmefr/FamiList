@@ -4,9 +4,11 @@
 	import { feedback } from '$stores/feedback.svelte';
 	import { settings } from '$stores/settings.svelte';
 	import { t } from '$lib/i18n/index.svelte';
+	import type { Item } from '$db/schema';
 	import {
 		DEFAULT_UNIT_GROUP,
 		UNIT_GROUPS,
+		unitGroupOf,
 		unitsOf,
 		type UnitGroupId,
 		type UnitId
@@ -14,7 +16,7 @@
 	import { Button } from '$lib/components/ui/button';
 	import { Input } from '$lib/components/ui/input';
 	import { Label } from '$lib/components/ui/label';
-	import { Plus, ShoppingBasket, Hash, LayoutList, X } from '@lucide/svelte';
+	import { Plus, ShoppingBasket, Hash, LayoutList, X, StickyNote, Check } from '@lucide/svelte';
 	import IconField from '$components/app/IconField.svelte';
 
 	let { listId }: { listId: string } = $props();
@@ -27,6 +29,10 @@
 	let group = $state<UnitGroupId>(DEFAULT_UNIT_GROUP);
 	let unit = $state<UnitId>(unitsOf(DEFAULT_UNIT_GROUP)[0]);
 	let aisleId = $state('');
+	let note = $state('');
+
+	/** L'article en cours de modification, ou rien du tout quand on en ajoute un. */
+	let edite = $state<Item | null>(null);
 
 	/**
 	 * Même contrat que les autres feuilles : `showModal()` et rien d'autre, jamais de booléen en
@@ -41,7 +47,22 @@
 	 * fait que si personne n'a bougé entre-temps — on ne vole pas le focus de quelqu'un qui a déjà
 	 * tabulé ailleurs.
 	 */
-	export async function show() {
+	export async function show(item?: Item) {
+		edite = item ?? null;
+
+		if (item) {
+			name = item.name;
+			qty = item.qty;
+			aisleId = item.aisleId;
+			note = item.note ?? '';
+			// La famille se déduit de l'unité enregistrée : l'écran s'ouvre sur la rangée où se
+			// trouve cette unité, pas sur celle de départ.
+			group = unitGroupOf(item.unit);
+			unit = unitsOf(group).find((id) => id === item.unit) ?? unitsOf(group)[0];
+		} else {
+			reset();
+		}
+
 		dialog?.showModal();
 		await tick();
 		field?.focus();
@@ -76,14 +97,22 @@
 		qty = '1';
 		chooseGroup(DEFAULT_UNIT_GROUP);
 		aisleId = '';
+		note = '';
 	}
 
 	function submit(event: SubmitEvent) {
 		event.preventDefault();
 		if (!name.trim()) return;
 
-		feedback.play('add');
-		data.addItem(listId, { name, qty, unit, aisleId: effectiveAisle });
+		if (edite) {
+			feedback.play('success');
+			data.updateItem(edite.id, { name, qty, unit, aisleId: effectiveAisle, note });
+		} else {
+			feedback.play('add');
+			data.addItem(listId, { name, qty, unit, aisleId: effectiveAisle, note });
+		}
+
+		edite = null;
 		reset();
 		hide();
 	}
@@ -111,7 +140,9 @@
 		class="bg-card relative rounded-t-2xl border p-4 md:rounded-2xl"
 		class:fl-rise={settings.animates}
 	>
-		<h2 id="add-title" class="text-h2 pe-12 font-semibold">{t('create.item')}</h2>
+		<h2 id="add-title" class="text-h2 pe-12 font-semibold">
+			{edite ? t('add.editTitle') : t('create.item')}
+		</h2>
 
 		<form onsubmit={submit} class="mt-4 space-y-5">
 			<div>
@@ -219,13 +250,36 @@
 				</IconField>
 			</div>
 
+			<!--
+				La note existait en base et s'affichait déjà sous l'article, sans qu'aucun écran ne
+				permette de l'écrire. C'est là qu'elle se remplit : « la grande bouteille », « sans
+				sucre », ce qu'on dirait à voix haute à qui fait les courses à sa place.
+			-->
+			<div>
+				<Label for="item-note">{t('add.note')}</Label>
+				<IconField icon={StickyNote}>
+					<Input
+						id="item-note"
+						bind:value={note}
+						data-test-id="add-note"
+						maxlength={120}
+						placeholder={t('add.notePlaceholder')}
+					/>
+				</IconField>
+			</div>
+
 			<div class="flex flex-wrap justify-end gap-2">
 				<Button type="button" variant="outline" onclick={hide} class="fl-press">
 					{t('common.cancel')}
 				</Button>
 				<Button type="submit" data-test-id="add-submit" class="fl-press">
-					<Plus size={18} aria-hidden="true" />
-					{t('add.submit')}
+					{#if edite}
+						<Check size={18} aria-hidden="true" />
+						{t('add.saveEdit')}
+					{:else}
+						<Plus size={18} aria-hidden="true" />
+						{t('add.submit')}
+					{/if}
 				</Button>
 			</div>
 		</form>

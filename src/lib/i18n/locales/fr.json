@@ -192,7 +192,8 @@
 		"swipeCheck": "Cocher",
 		"swipeUncheck": "Décocher",
 		"swipeDelete": "Supprimer",
-		"noShop": "Ajouter un magasin"
+		"noShop": "Ajouter un magasin",
+		"edit": "Modifier {name}"
 	},
 	"share": {
 		"title": "Qui a accès à cette liste ?",
@@ -238,7 +239,11 @@
 		"aisle": "Rayon",
 		"submit": "Ajouter",
 		"aisleAuto": "Détection automatique",
-		"aisleGuessed": "Détecté : {name}"
+		"aisleGuessed": "Détecté : {name}",
+		"editTitle": "Modifier l’article",
+		"saveEdit": "Enregistrer",
+		"note": "Précision (facultatif)",
+		"notePlaceholder": "La grande bouteille, sans sucre…"
 	},
 	"shops": {
 		"title": "Magasins et rayons",

@@ -192,7 +192,8 @@
 		"swipeCheck": "Tick",
 		"swipeUncheck": "Untick",
 		"swipeDelete": "Delete",
-		"noShop": "Add a shop"
+		"noShop": "Add a shop",
+		"edit": "Edit {name}"
 	},
 	"share": {
 		"title": "Who can see this list?",
@@ -238,7 +239,11 @@
 		"aisle": "Aisle",
 		"submit": "Add",
 		"aisleAuto": "Automatic detection",
-		"aisleGuessed": "Detected: {name}"
+		"aisleGuessed": "Detected: {name}",
+		"editTitle": "Edit item",
+		"saveEdit": "Save",
+		"note": "Note (optional)",
+		"notePlaceholder": "The large bottle, sugar-free…"
 	},
 	"shops": {
 		"title": "Shops and aisles",

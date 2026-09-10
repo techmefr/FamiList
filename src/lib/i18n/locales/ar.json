@@ -196,7 +196,8 @@
 		"swipeCheck": "تحديد",
 		"swipeUncheck": "إلغاء التحديد",
 		"swipeDelete": "حذف",
-		"noShop": "إضافة متجر"
+		"noShop": "إضافة متجر",
+		"edit": "تعديل {name}"
 	},
 	"share": {
 		"title": "من يمكنه رؤية هذه القائمة؟",
@@ -242,7 +243,11 @@
 		"aisle": "القسم",
 		"submit": "إضافة",
 		"aisleAuto": "كشف تلقائي",
-		"aisleGuessed": "تم الكشف: {name}"
+		"aisleGuessed": "تم الكشف: {name}",
+		"editTitle": "تعديل العنصر",
+		"saveEdit": "حفظ",
+		"note": "ملاحظة (اختياري)",
+		"notePlaceholder": "الزجاجة الكبيرة، بدون سكر…"
 	},
 	"shops": {
 		"title": "المتاجر والأقسام",

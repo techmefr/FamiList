@@ -192,7 +192,8 @@
 		"swipeCheck": "Spunta",
 		"swipeUncheck": "Togli",
 		"swipeDelete": "Elimina",
-		"noShop": "Aggiungi un negozio"
+		"noShop": "Aggiungi un negozio",
+		"edit": "Modifica {name}"
 	},
 	"share": {
 		"title": "Chi può vedere questa lista?",
@@ -238,7 +239,11 @@
 		"aisle": "Reparto",
 		"submit": "Aggiungi",
 		"aisleAuto": "Rilevamento automatico",
-		"aisleGuessed": "Rilevato: {name}"
+		"aisleGuessed": "Rilevato: {name}",
+		"editTitle": "Modifica l’articolo",
+		"saveEdit": "Salva",
+		"note": "Nota (facoltativa)",
+		"notePlaceholder": "La bottiglia grande, senza zucchero…"
 	},
 	"shops": {
 		"title": "Negozi e reparti",

@@ -4,13 +4,15 @@
 	import { feedback } from '$stores/feedback.svelte';
 	import { t } from '$lib/i18n/index.svelte';
 	import { unitKey } from '$domain/units';
-	import { Star, Trash2, ArrowUp, ArrowDown, GripVertical } from '@lucide/svelte';
+	import { longpress } from '$components/app/longpress.svelte';
+	import { Star, Trash2, ArrowUp, ArrowDown, GripVertical, Pencil } from '@lucide/svelte';
 
 	let {
 		item,
 		grip,
 		onMoveUp,
 		onMoveDown,
+		onEdit,
 		canMoveUp,
 		canMoveDown
 	}: {
@@ -18,9 +20,20 @@
 		grip: Record<string, unknown>;
 		onMoveUp: () => void;
 		onMoveDown: () => void;
+		onEdit: () => void;
 		canMoveUp: boolean;
 		canMoveDown: boolean;
 	} = $props();
+
+	/**
+	 * L'appui long ouvre la fiche. C'est le geste attendu sur téléphone, mais il n'existe pas au
+	 * clavier ni au lecteur d'écran : le bouton crayon fait la même chose et reste le chemin
+	 * annoncé.
+	 */
+	function editer() {
+		feedback.play('tap');
+		onEdit();
+	}
 
 	const inputId = $derived(`item-${item.id}`);
 
@@ -64,6 +77,7 @@
 	-->
 	<label
 		for={inputId}
+		use:longpress={editer}
 		class="flex min-h-[max(2.75rem,44px)] min-w-0 flex-1 basis-[12rem] cursor-pointer items-center gap-3 py-1"
 	>
 		<input
@@ -110,6 +124,15 @@
 			class="fl-press text-muted-foreground grid size-11 min-w-[44px] place-items-center disabled:opacity-30"
 		>
 			<ArrowDown size={18} aria-hidden="true" />
+		</button>
+		<button
+			type="button"
+			onclick={editer}
+			aria-label={t('list.edit', { name: item.name })}
+			data-test-class="item-edit"
+			class="fl-press text-muted-foreground grid size-11 min-w-[44px] place-items-center"
+		>
+			<Pencil size={18} aria-hidden="true" />
 		</button>
 		<button
 			type="button"

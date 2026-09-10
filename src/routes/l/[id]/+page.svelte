@@ -365,6 +365,7 @@
 											canMoveDown={index < group.items.length - 1}
 											onMoveUp={() => moveItem(group.aisleId, group.items, index, index - 1)}
 											onMoveDown={() => moveItem(group.aisleId, group.items, index, index + 1)}
+											onEdit={() => add?.show(item)}
 										/>
 									</SwipeRow>
 								</div>

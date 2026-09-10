@@ -192,7 +192,8 @@
 		"swipeCheck": "Marcar",
 		"swipeUncheck": "Desmarcar",
 		"swipeDelete": "Eliminar",
-		"noShop": "Añadir una tienda"
+		"noShop": "Añadir una tienda",
+		"edit": "Editar {name}"
 	},
 	"share": {
 		"title": "¿Quién puede ver esta lista?",
@@ -238,7 +239,11 @@
 		"aisle": "Sección",
 		"submit": "Añadir",
 		"aisleAuto": "Detección automática",
-		"aisleGuessed": "Detectado: {name}"
+		"aisleGuessed": "Detectado: {name}",
+		"editTitle": "Editar el artículo",
+		"saveEdit": "Guardar",
+		"note": "Detalle (opcional)",
+		"notePlaceholder": "La botella grande, sin azúcar…"
 	},
 	"shops": {
 		"title": "Tiendas y secciones",

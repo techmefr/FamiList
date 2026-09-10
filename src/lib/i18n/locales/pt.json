@@ -192,7 +192,8 @@
 		"swipeCheck": "Marcar",
 		"swipeUncheck": "Desmarcar",
 		"swipeDelete": "Apagar",
-		"noShop": "Adicionar uma loja"
+		"noShop": "Adicionar uma loja",
+		"edit": "Editar {name}"
 	},
 	"share": {
 		"title": "Quem pode ver esta lista?",
@@ -238,7 +239,11 @@
 		"aisle": "Secção",
 		"submit": "Adicionar",
 		"aisleAuto": "Deteção automática",
-		"aisleGuessed": "Detetado: {name}"
+		"aisleGuessed": "Detetado: {name}",
+		"editTitle": "Editar o artigo",
+		"saveEdit": "Guardar",
+		"note": "Nota (opcional)",
+		"notePlaceholder": "A garrafa grande, sem açúcar…"
 	},
 	"shops": {
 		"title": "Lojas e secções",

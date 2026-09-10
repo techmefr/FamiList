@@ -191,7 +191,8 @@
 		"swipeCheck": "勾选",
 		"swipeUncheck": "取消勾选",
 		"swipeDelete": "删除",
-		"noShop": "添加商店"
+		"noShop": "添加商店",
+		"edit": "编辑 {name}"
 	},
 	"share": {
 		"title": "谁能看到这份清单？",
@@ -237,7 +238,11 @@
 		"aisle": "货区",
 		"submit": "添加",
 		"aisleAuto": "自动识别",
-		"aisleGuessed": "已识别：{name}"
+		"aisleGuessed": "已识别：{name}",
+		"editTitle": "编辑商品",
+		"saveEdit": "保存",
+		"note": "备注（可选）",
+		"notePlaceholder": "大瓶装、无糖……"
 	},
 	"shops": {
 		"title": "门店与货区",

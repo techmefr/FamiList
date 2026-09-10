@@ -192,7 +192,8 @@
 		"swipeCheck": "Marika",
 		"swipeUncheck": "Esory",
 		"swipeDelete": "Fafao",
-		"noShop": "Hanampy fivarotana"
+		"noShop": "Hanampy fivarotana",
+		"edit": "Ovay {name}"
 	},
 	"share": {
 		"title": "Iza no mahita ity lisitra ity?",
@@ -238,7 +239,11 @@
 		"aisle": "Faritra",
 		"submit": "Ampio",
 		"aisleAuto": "Famantarana ho azy",
-		"aisleGuessed": "Voafantatra : {name}"
+		"aisleGuessed": "Voafantatra : {name}",
+		"editTitle": "Ovay ny entana",
+		"saveEdit": "Tehirizo",
+		"note": "Fanamarihana (tsy voatery)",
+		"notePlaceholder": "Ilay tavoahangy lehibe, tsy misy siramamy…"
 	},
 	"shops": {
 		"title": "Fivarotana sy faritra",
