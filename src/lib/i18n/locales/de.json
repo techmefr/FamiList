@@ -75,8 +75,11 @@
 		"sharing": "Teilen",
 		"householdHint": "Angehörige einladen und Listen gemeinsam nutzen.",
 		"adminHint": "Neue Konten freigeben und Rollen verwalten.",
-		"name": "Name",
+		"firstName": "Vorname",
+		"lastName": "Nachname",
+		"name": "Anzeigename",
 		"namePlaceholder": "Vorname Nachname",
+		"nameHint": "Diesen Namen sieht Ihr Haushalt.",
 		"nameSave": "Speichern",
 		"nameSaved": "Gespeichert",
 		"nameFailed": "Der Name konnte nicht gespeichert werden. Versuche es gleich noch einmal."

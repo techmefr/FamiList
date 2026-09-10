@@ -93,7 +93,18 @@ export interface LoyaltyCard {
 
 export interface Member {
 	id: string;
+	/**
+	 * Le nom affiché, celui que voit le foyer. Libre : « Mamie » et « Lulu » sont des réponses
+	 * valables, et c'est pour ça qu'il ne suffit pas à porter l'identité à lui seul.
+	 */
 	name: string;
+	/**
+	 * Le prénom et le nom, quand la personne les a renseignés depuis son profil. Vides sinon —
+	 * l'inscription ne les demande pas, et aucun compte créé avant ne les a. Ils ne servent qu'à
+	 * tirer des initiales justes même quand le nom affiché est un surnom.
+	 */
+	firstName: string;
+	lastName: string;
 	role: string;
 	initial: string;
 	tint: string;

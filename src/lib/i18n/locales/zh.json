@@ -74,8 +74,11 @@
 		"sharing": "共享",
 		"householdHint": "邀请家人，一起共用清单。",
 		"adminHint": "审批新账号并管理权限。",
-		"name": "姓名",
+		"firstName": "名",
+		"lastName": "姓",
+		"name": "显示名称",
 		"namePlaceholder": "姓名",
+		"nameHint": "这是家里其他人看到的名称。",
 		"nameSave": "保存",
 		"nameSaved": "已保存",
 		"nameFailed": "姓名保存失败，请稍后再试。"

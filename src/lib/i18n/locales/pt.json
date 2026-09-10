@@ -75,8 +75,11 @@
 		"sharing": "Partilha",
 		"householdHint": "Convidar os seus e partilhar as listas.",
 		"adminHint": "Aprovar as novas contas e gerir os perfis.",
-		"name": "Nome",
+		"firstName": "Nome",
+		"lastName": "Sobrenome",
+		"name": "Nome exibido",
 		"namePlaceholder": "Nome e apelido",
+		"nameHint": "É este o nome que a sua família vê.",
 		"nameSave": "Guardar",
 		"nameSaved": "Guardado",
 		"nameFailed": "Não foi possível guardar o nome. Tente novamente daqui a pouco."

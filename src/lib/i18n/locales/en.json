@@ -75,8 +75,11 @@
 		"sharing": "Sharing",
 		"householdHint": "Invite your family and share your lists.",
 		"adminHint": "Approve new accounts and manage roles.",
-		"name": "Name",
+		"firstName": "First name",
+		"lastName": "Last name",
+		"name": "Display name",
 		"namePlaceholder": "First name Last name",
+		"nameHint": "This is the name your household sees.",
 		"nameSave": "Save",
 		"nameSaved": "Saved",
 		"nameFailed": "That name could not be saved. Try again in a moment."

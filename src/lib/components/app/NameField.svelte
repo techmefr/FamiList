@@ -9,47 +9,77 @@
 
 	const moi = $derived(data.members.find((m) => m.id === data.me));
 
-	let saisi = $state<string | null>(null);
+	let prenom = $state<string | null>(null);
+	let nom = $state<string | null>(null);
+	let affiche = $state<string | null>(null);
 	let occupe = $state(false);
 	let enregistre = $state(false);
 	let erreur = $state('');
 
 	/**
-	 * Tant que personne n'a tapé, le champ suit le nom du foyer — il se remplit tout seul quand la
-	 * synchronisation arrive, au lieu de rester vide sur un appareil qui vient de s'ouvrir. Dès la
-	 * première frappe, c'est la saisie qui commande : une mise à jour venue du serveur ne doit pas
-	 * effacer ce qu'on est en train d'écrire.
-	 */
-	/**
-	 * Le champ se remplit du nom connu dès que la synchronisation le rapporte, puis se tait : une
-	 * mise à jour venue du serveur ne doit pas effacer ce qu'on est en train d'écrire.
+	 * Les champs se remplissent de ce que la synchronisation rapporte, puis se taisent : une mise à
+	 * jour venue du serveur ne doit pas effacer ce qu'on est en train d'écrire.
 	 */
 	$effect(() => {
-		if (saisi === null && moi) saisi = moi.name;
+		if (prenom === null && moi) {
+			prenom = moi.firstName;
+			nom = moi.lastName;
+			affiche = moi.name;
+		}
 	});
 
-	// Tant que le compte n'est pas identifié, on ne sait pas quel profil écrire : le champ reste
-	// fermé plutôt que d'accepter une frappe qui partirait dans le vide.
+	const compose = (p: string, n: string) => `${p.trim()} ${n.trim()}`.trim();
+
+	/**
+	 * Le nom affiché suit le prénom et le nom tant qu'il n'a pas été personnalisé — c'est le cas le
+	 * plus courant, et le retaper une troisième fois n'apprendrait rien à personne. Dès qu'il porte
+	 * autre chose (« Mamie », « Lulu »), il ne bouge plus : ce surnom-là est un choix, pas un
+	 * brouillon à écraser à la frappe suivante.
+	 */
+	function poser(champ: 'prenom' | 'nom', valeur: string) {
+		const avant = compose(prenom ?? '', nom ?? '');
+		const perso = (affiche ?? '').trim() !== '' && (affiche ?? '').trim() !== avant;
+
+		if (champ === 'prenom') prenom = valeur;
+		else nom = valeur;
+
+		if (!perso) affiche = compose(prenom ?? '', nom ?? '');
+	}
+
+	// Tant que le compte n'est pas identifié, on ne sait pas quel profil écrire : les champs
+	// restent fermés plutôt que d'accepter une frappe qui partirait dans le vide.
 	const modifie = $derived(
-		!!moi && (saisi ?? '').trim().length > 0 && (saisi ?? '').trim() !== moi.name
+		!!moi &&
+			(affiche ?? '').trim().length > 0 &&
+			((affiche ?? '').trim() !== moi.name ||
+				(prenom ?? '').trim() !== moi.firstName ||
+				(nom ?? '').trim() !== moi.lastName)
 	);
 
 	async function enregistrer(event: SubmitEvent) {
 		event.preventDefault();
 		if (!modifie) return;
 
-		const nom = (saisi ?? '').trim();
+		const identite = {
+			name: (affiche ?? '').trim(),
+			firstName: (prenom ?? '').trim(),
+			lastName: (nom ?? '').trim()
+		};
 
 		occupe = true;
-		erreur = (await data.setMyName(nom)) ?? '';
+		erreur = (await data.setMyName(identite)) ?? '';
 		occupe = false;
 
 		if (erreur) {
-			saisi = moi?.name ?? '';
+			prenom = moi?.firstName ?? '';
+			nom = moi?.lastName ?? '';
+			affiche = moi?.name ?? '';
 			return;
 		}
 
-		saisi = nom;
+		prenom = identite.firstName;
+		nom = identite.lastName;
+		affiche = identite.name;
 		enregistre = true;
 		feedback.play('success');
 		setTimeout(() => (enregistre = false), 2000);
@@ -58,21 +88,47 @@
 
 <!--
 	Le nom se pose à l'inscription, et jusqu'ici plus rien ne permettait d'y revenir : une faute de
-	frappe restait affichée à tout le foyer. Les initiales de la pastille se recalculent depuis ce
-	champ, elles n'ont rien à saisir de leur côté.
+	frappe restait affichée à tout le foyer. Le prénom et le nom, eux, ne se demandent qu'ici — pas
+	à l'inscription, qui reste courte. Les initiales de la pastille se recalculent depuis ces
+	champs, elles n'ont rien à saisir de leur côté.
 -->
 <form onsubmit={enregistrer} class="flex flex-wrap items-end gap-3" data-test-id="name-form">
+	<div class="min-w-0 flex-1 basis-40">
+		<Label for="first-name">{t('profile.firstName')}</Label>
+		<Input
+			id="first-name"
+			bind:value={() => prenom ?? '', (v) => poser('prenom', v)}
+			data-test-id="first-name-input"
+			disabled={!moi}
+			maxlength={60}
+			autocomplete="given-name"
+		/>
+	</div>
+
+	<div class="min-w-0 flex-1 basis-40">
+		<Label for="last-name">{t('profile.lastName')}</Label>
+		<Input
+			id="last-name"
+			bind:value={() => nom ?? '', (v) => poser('nom', v)}
+			data-test-id="last-name-input"
+			disabled={!moi}
+			maxlength={60}
+			autocomplete="family-name"
+		/>
+	</div>
+
 	<div class="min-w-0 flex-1 basis-48">
 		<Label for="display-name">{t('profile.name')}</Label>
 		<Input
 			id="display-name"
-			bind:value={() => saisi ?? '', (v) => (saisi = v)}
+			bind:value={() => affiche ?? '', (v) => (affiche = v)}
 			data-test-id="name-input"
 			disabled={!moi}
 			maxlength={60}
-			autocomplete="name"
+			autocomplete="nickname"
 			placeholder={t('profile.namePlaceholder')}
 		/>
+		<p class="text-muted-foreground text-caption mt-1">{t('profile.nameHint')}</p>
 	</div>
 
 	<Button type="submit" disabled={occupe || !modifie} data-test-id="name-save" class="fl-press">

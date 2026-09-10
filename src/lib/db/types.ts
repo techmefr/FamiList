@@ -547,12 +547,14 @@ export type Database = {
           avatar: string
           created_at: string
           display_name: string
+          first_name: string
           font_id: string
           haptics: boolean
           has_seen_tour: boolean
           id: string
           initial: string
           is_demo: boolean
+          last_name: string
           motion: string
           requested_at: string
           reviewed_at: string | null
@@ -569,12 +571,14 @@ export type Database = {
           avatar?: string
           created_at?: string
           display_name?: string
+          first_name?: string
           font_id?: string
           haptics?: boolean
           has_seen_tour?: boolean
           id: string
           initial?: string
           is_demo?: boolean
+          last_name?: string
           motion?: string
           requested_at?: string
           reviewed_at?: string | null
@@ -591,12 +595,14 @@ export type Database = {
           avatar?: string
           created_at?: string
           display_name?: string
+          first_name?: string
           font_id?: string
           haptics?: boolean
           has_seen_tour?: boolean
           id?: string
           initial?: string
           is_demo?: boolean
+          last_name?: string
           motion?: string
           requested_at?: string
           reviewed_at?: string | null
@@ -748,14 +754,21 @@ export type Database = {
         Returns: {
           avatar: string
           display_name: string
+          first_name: string
           id: string
           initial: string
+          last_name: string
         }[]
       }
       is_admin: { Args: never; Returns: boolean }
       is_approved: { Args: never; Returns: boolean }
       is_household_member: { Args: { target: string }; Returns: boolean }
+      is_household_owner: { Args: { target: string }; Returns: boolean }
       leave_household: { Args: { target: string }; Returns: undefined }
+      list_belongs_to_household_of: {
+        Args: { member: string; target: string }
+        Returns: boolean
+      }
       list_bug_reports: {
         Args: never
         Returns: {
@@ -770,6 +783,7 @@ export type Database = {
           user_agent: string
         }[]
       }
+      lock_household_membership: { Args: never; Returns: undefined }
       my_sessions: {
         Args: never
         Returns: {

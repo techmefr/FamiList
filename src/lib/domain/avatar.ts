@@ -33,6 +33,19 @@ export function initialsOf(name: string): string {
 	return premiere(mots[0]) + premiere(mots[mots.length - 1]);
 }
 
+/**
+ * Les initiales d'un membre, tirées de ce qu'on sait de lui.
+ *
+ * Le prénom et le nom priment quand ils sont renseignés : le nom affiché est libre, il peut être
+ * « Mamie » ou « Lulu », et découper un surnom d'un seul mot rendrait une lettre là où l'identité
+ * complète en donne deux. Tant qu'ils sont vides — c'est le cas de tous les comptes créés avant
+ * qu'ils existent — on retombe sur le nom affiché, qui est souvent « Prénom Nom » de toute façon.
+ */
+export function initialsFor(firstName: string, lastName: string, displayName: string): string {
+	const complet = `${firstName.trim()} ${lastName.trim()}`.trim();
+	return complet ? initialsOf(complet) : initialsOf(displayName);
+}
+
 function premiere(mot: string): string {
 	return [...mot][0].toLocaleUpperCase();
 }

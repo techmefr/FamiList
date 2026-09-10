@@ -233,6 +233,8 @@ describe('toMember', () => {
 		expect(member).toEqual({
 			id: 'u1',
 			name: 'Hélène Moreau',
+			firstName: '',
+			lastName: '',
 			role: 'owner',
 			initial: 'HM',
 			tint: 'green',
@@ -269,6 +271,20 @@ describe('toMember', () => {
 			'x'
 		);
 		expect(member.initial).toBe('JD');
+	});
+
+	// Le nom affiché est libre : un surnom d'un seul mot ne doit pas réduire la pastille à une
+	// lettre alors que le profil porte un prénom et un nom.
+	it("tire les initiales du prénom et du nom quand ils sont là, pas du nom affiché", () => {
+		const member = toMember(
+			{ user_id: 'u1' },
+			{ display_name: 'Mamie', first_name: 'Hélène', last_name: 'Moreau' },
+			'x'
+		);
+		expect(member.initial).toBe('HM');
+		expect(member.name).toBe('Mamie');
+		expect(member.firstName).toBe('Hélène');
+		expect(member.lastName).toBe('Moreau');
 	});
 
 	it('ne fabrique pas de photo par défaut', () => {

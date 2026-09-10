@@ -18,7 +18,7 @@ import {
 	type ShopLayout
 } from '$db/schema';
 import { supabase } from '$db/supabase';
-import { initialsOf } from '$domain/avatar';
+import { initialsFor } from '$domain/avatar';
 import { accountDecision } from '$domain/account-switch';
 import { guessAisleKind, FALLBACK_AISLE_KIND } from '$domain/guess-aisle';
 import { groupByAisle, learnedItemOrder } from '$domain/aisle-order';
@@ -700,24 +700,37 @@ class DataStore {
 	}
 
 	/**
-	 * Change le nom affiché.
+	 * Change son identité : prénom, nom, et nom affiché.
 	 *
-	 * Les initiales suivent d'elles-mêmes : elles se calculent depuis le nom à chaque lecture, la
-	 * colonne `initial` n'étant plus regardée. Le nom est aussi écrit dans les métadonnées du
+	 * Les trois partent ensemble, en une écriture — ils se saisissent dans le même formulaire, et
+	 * n'enregistrer que le nom affiché laisserait des initiales tirées d'un prénom périmé.
+	 *
+	 * Les initiales suivent d'elles-mêmes : elles se calculent à chaque lecture, la colonne
+	 * `initial` n'étant plus regardée. Le nom affiché est aussi écrit dans les métadonnées du
 	 * compte, où l'inscription l'avait posé, pour que les deux ne divergent pas.
 	 */
-	async setMyName(name: string) {
+	async setMyName(identite: { name: string; firstName: string; lastName: string }) {
 		const id = this.me;
 		if (!id) return;
 
 		const membre = this.members.find((m) => m.id === id);
 		if (!membre) return;
 
-		const suivant: Member = { ...membre, name, initial: initialsOf(name) };
+		const { name, firstName, lastName } = identite;
+		const suivant: Member = {
+			...membre,
+			name,
+			firstName,
+			lastName,
+			initial: initialsFor(firstName, lastName, name)
+		};
 		this.members = this.members.map((m) => (m.id === id ? suivant : m));
 		db.members.put(suivant);
 
-		const { error } = await supabase.from('profiles').update({ display_name: name }).eq('id', id);
+		const { error } = await supabase
+			.from('profiles')
+			.update({ display_name: name, first_name: firstName, last_name: lastName })
+			.eq('id', id);
 		if (error) {
 			// Le nom affiché revient à ce que la base connaît : le laisser à l'écran ferait croire à
 			// un enregistrement qui n'a pas eu lieu, jusqu'à la prochaine synchronisation.

@@ -15,7 +15,7 @@ import type {
 import { itemOrderKey, pollVoteKey } from '$db/schema';
 import { DEFAULT_MEMBER_TINT, DEFAULT_TINT } from '$domain/tint';
 import { DEFAULT_UNIT } from '$domain/units';
-import { initialsOf } from '$domain/avatar';
+import { initialsFor } from '$domain/avatar';
 
 /**
  * Traduction entre le modèle local, écrit pour l'écran, et les colonnes Postgres. Tout passe par
@@ -165,19 +165,23 @@ export const fromCard = (card: LoyaltyCard, householdId: string) => ({
 export const toMember = (row: Row, profile: Row | undefined, currentUserId: string): Member => {
 	const id = text(row.user_id);
 	const name = text(profile?.display_name) || text(profile?.email) || '—';
+	const firstName = text(profile?.first_name);
+	const lastName = text(profile?.last_name);
 
 	// Le rôle est stocké tel quel et traduit à l'affichage : la base ne parle pas la langue de
 	// l'utilisateur, et un foyer peut mêler plusieurs langues.
 	return {
 		id,
 		name,
+		firstName,
+		lastName,
 		// Un rôle vide en base est une valeur manquante, pas un rôle : il retombe sur 'member'
 		// comme une colonne absente, sinon la traduction chercherait une clé vide.
 		role: id === currentUserId ? 'self' : text(row.role) || 'member',
 		// Les initiales se calculent, elles ne se lisent pas : la colonne `profiles.initial` est
 		// remplie par un trigger à l'inscription, avec une seule lettre, et plus rien ne la met à
 		// jour ensuite — un changement de nom la laisserait périmée en plus d'être tronquée.
-		initial: initialsOf(name),
+		initial: initialsFor(firstName, lastName, name),
 		tint: text(row.tint, DEFAULT_MEMBER_TINT),
 		avatar: text(profile?.avatar) || undefined
 	};

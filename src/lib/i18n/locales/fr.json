@@ -75,8 +75,11 @@
 		"sharing": "Partage",
 		"householdHint": "Inviter vos proches et partager vos listes.",
 		"adminHint": "Approuver les nouveaux comptes et gérer les rôles.",
-		"name": "Nom",
+		"firstName": "Prénom",
+		"lastName": "Nom",
+		"name": "Nom affiché",
 		"namePlaceholder": "Prénom Nom",
+		"nameHint": "C'est ce nom que voit votre foyer.",
 		"nameSave": "Enregistrer",
 		"nameSaved": "Enregistré",
 		"nameFailed": "Le nom n’a pas pu être enregistré. Réessayez dans un instant."

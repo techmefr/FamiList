@@ -1,5 +1,29 @@
 import { describe, it, expect } from 'vitest';
-import { initialsOf, coverSquare, AVATAR_SIZE, AVATAR_MAX_BYTES } from './avatar';
+import { initialsOf, initialsFor, coverSquare, AVATAR_SIZE, AVATAR_MAX_BYTES } from './avatar';
+
+describe('initialsFor', () => {
+	it('prend le prenom et le nom quand ils sont renseignes', () => {
+		expect(initialsFor('Hélène', 'Moreau', 'Mamie')).toBe('HM');
+	});
+
+	it('ignore le surnom, meme quand il tiendrait deux lettres', () => {
+		expect(initialsFor('Hélène', 'Moreau', 'Tata Lulu')).toBe('HM');
+	});
+
+	it("retombe sur le nom affiche tant que l'identite n'est pas saisie", () => {
+		expect(initialsFor('', '', 'Jean Dupont')).toBe('JD');
+		expect(initialsFor('   ', '   ', 'Jean Dupont')).toBe('JD');
+	});
+
+	it('se contente du prenom quand le nom manque', () => {
+		expect(initialsFor('Hélène', '', 'Mamie')).toBe('H');
+		expect(initialsFor('', 'Moreau', 'Mamie')).toBe('M');
+	});
+
+	it('rend un tiret quand il ne reste rien a lire', () => {
+		expect(initialsFor('', '', '')).toBe('—');
+	});
+});
 
 describe('initialsOf', () => {
 	it('prend deux initiales sur un nom en deux mots', () => {

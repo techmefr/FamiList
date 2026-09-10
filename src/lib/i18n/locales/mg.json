@@ -75,8 +75,11 @@
 		"sharing": "Fizarana",
 		"householdHint": "Manasa ny fianakaviana sy mizara ny lisitra.",
 		"adminHint": "Manaiky ny kaonty vaovao sy mitantana ny anjara asa.",
-		"name": "Anarana",
+		"firstName": "Anarana",
+		"lastName": "Fanampin'anarana",
+		"name": "Anarana aseho",
 		"namePlaceholder": "Anarana sy fanampiny",
+		"nameHint": "Io no anarana hitan'ny fianakavianao.",
 		"nameSave": "Tehirizo",
 		"nameSaved": "Voatahiry",
 		"nameFailed": "Tsy voatahiry ny anarana. Andramo indray afaka kelikely."
