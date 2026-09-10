@@ -923,11 +923,32 @@ class DataStore {
 		record: T,
 		map: (record: T, householdId: string) => Record<string, unknown>
 	) {
-		sync.enqueue({
-			table,
-			op: 'upsert',
-			match: { id: record.id },
-			payload: map(record, this.householdId)
+		const enfiler = (householdId: string) =>
+			sync.enqueue({
+				table,
+				op: 'upsert',
+				match: { id: record.id },
+				payload: map(record, householdId)
+			});
+
+		const connu = this.householdId;
+		if (connu) {
+			enfiler(connu);
+			return;
+		}
+
+		/**
+		 * Le foyer n'est pas encore provisionné — première ouverture, ou changement de compte en
+		 * cours. Estampiller la ligne avec une chaîne vide, ce qu'on faisait ici, produisait un
+		 * refus définitif de Postgres (« invalid input syntax for type uuid ») : la file jetait
+		 * l'écriture en silence, et le magasin qu'on venait de créer disparaissait de l'écran à la
+		 * relecture suivante, définitivement.
+		 *
+		 * On attend donc l'identifiant. Si on ne peut pas l'obtenir, on n'enfile rien : une file
+		 * vide et un bandeau d'erreur valent mieux qu'une écriture qui part se faire refuser.
+		 */
+		void sync.whenHousehold().then((householdId) => {
+			if (householdId) enfiler(householdId);
 		});
 	}
 

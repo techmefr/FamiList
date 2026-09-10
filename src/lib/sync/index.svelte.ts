@@ -125,6 +125,38 @@ class SyncStore {
 		this.listen();
 	}
 
+	/**
+	 * Le foyer, en attendant qu'il soit connu s'il ne l'est pas encore.
+	 *
+	 * Une écriture partie avant que le foyer soit provisionné portait jusqu'ici une chaîne vide à
+	 * la place de l'identifiant. Postgres refuse — « invalid input syntax for type uuid » — et ce
+	 * refus est définitif : la file jetait l'écriture, sans que rien ne la rattrape. Le magasin
+	 * créé restait à l'écran le temps d'une relecture, puis disparaissait pour de bon.
+	 *
+	 * Mieux vaut donc attendre l'identifiant que d'écrire à côté. Rendre une chaîne vide reste
+	 * possible — hors réseau, serveur en erreur — et l'appelant doit alors renoncer plutôt que
+	 * d'enfiler quelque chose d'invalide.
+	 */
+	async whenHousehold(delaiMs = 5000): Promise<string> {
+		if (this.householdId) return this.householdId;
+		if (!browser) return '';
+
+		/**
+		 * On attend celui que `start()` est en train de poser — on n'en provisionne pas un second.
+		 *
+		 * `ensure_household` rend le foyer existant quand il y en a un, mais deux appels partis en
+		 * même temps ne voient ni l'un ni l'autre de membre : les deux en créent un, et le compte
+		 * se retrouve dans deux foyers dont un seul sera lu. Provisionner ici, en parallèle du
+		 * démarrage, produisait exactement ça — et les listes du foyer disparaissaient.
+		 */
+		const fin = Date.now() + delaiMs;
+		while (!this.householdId && Date.now() < fin) {
+			await new Promise((resolve) => setTimeout(resolve, 50));
+		}
+
+		return this.householdId ?? '';
+	}
+
 	private async provision() {
 		const { data, error } = await supabase.rpc('ensure_household');
 
@@ -384,6 +416,11 @@ class SyncStore {
 			await db.outbox.delete(entry.seq as number);
 		}
 
+		// Relire après un refus définitif serait logique — l'écran doit montrer ce que le serveur a
+		// vraiment. Essayé, et retiré : chaque relecture vide les douze tables et les réécrit, donc
+		// reconstruit tout le DOM, et les refus de routine suffisaient à rendre les cartes de liste
+		// inatteignables au clic. À reprendre quand la relecture réconciliera par identifiant au
+		// lieu de tout remplacer (#95).
 		if (rejected) return;
 
 		this.state = 'idle';
