@@ -47,7 +47,23 @@ describe('isMatrixFormat', () => {
 });
 
 describe('CODE_TYPES', () => {
-	it('couvre les trois types réellement gérés par guessCodeType', () => {
-		expect(CODE_TYPES).toEqual(['code_39', 'ean_13', 'qr_code']);
+	it('liste les formats que la carte sait dessiner', () => {
+		expect(CODE_TYPES).toEqual([
+			'code_128',
+			'code_39',
+			'code_93',
+			'ean_13',
+			'ean_8',
+			'itf',
+			'qr_code'
+		]);
+	});
+
+	it('contient tout format que la détection peut proposer', () => {
+		// Proposer un format absent de la liste reviendrait à enregistrer une carte qu'on ne sait
+		// pas redessiner.
+		for (const value of ['3017620422003', 'ABC-123', 'café@2026']) {
+			expect(CODE_TYPES).toContain(guessCodeType(value));
+		}
 	});
 });

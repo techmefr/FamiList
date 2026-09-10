@@ -146,7 +146,7 @@
 		"codePlaceholder": "3560070123456",
 		"format": "Endriky ny kaody",
 		"formatAuto": "Famantarana hoazy ({format})",
-		"eanInvalid": "Tsy EAN-13 mety io kaody io.",
+		"formatInvalid": "Tsy {format} mety io kaody io.",
 		"save": "Tehirizo ny karatra",
 		"showAtCheckout": "ASEHOY EO AMIN’NY KAISY",
 		"brightnessHint": "Ampiakaro ny famirapiratan’ny efijery mba hora-mora vakiana.",
@@ -157,8 +157,12 @@
 		"qrLabel": "Kaody QR an’ny karatra",
 		"barcodeLabel": "Kaody tsipika an’ny karatra",
 		"type": {
+			"code_128": "Code 128",
 			"code_39": "Code 39",
+			"code_93": "Code 93",
 			"ean_13": "EAN-13",
+			"ean_8": "EAN-8",
+			"itf": "ITF",
 			"qr_code": "Kaody QR"
 		}
 	},

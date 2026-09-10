@@ -1,4 +1,16 @@
-export const CODE_TYPES = ['code_39', 'ean_13', 'qr_code'] as const;
+/**
+ * Les formats que la carte sait dessiner, donc les seuls qu'on propose. Le Code 128 vient en
+ * tête : c'est celui qu'impriment la plupart des enseignes.
+ */
+export const CODE_TYPES = [
+	'code_128',
+	'code_39',
+	'code_93',
+	'ean_13',
+	'ean_8',
+	'itf',
+	'qr_code'
+] as const;
 
 export type CodeType = (typeof CODE_TYPES)[number];
 

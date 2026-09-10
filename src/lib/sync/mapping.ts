@@ -13,6 +13,7 @@ import type {
 	ShopLayout
 } from '$db/schema';
 import { itemOrderKey, pollVoteKey } from '$db/schema';
+import { CODE_TYPES, type CodeType } from '$domain/code-format';
 import { DEFAULT_MEMBER_TINT, DEFAULT_TINT } from '$domain/tint';
 import { DEFAULT_UNIT } from '$domain/units';
 import { initialsFor } from '$domain/avatar';
@@ -132,6 +133,13 @@ export const fromItem = (item: Item) => ({
 	assigned_to: item.assignedTo ?? null
 });
 
+/**
+ * Un appareil plus récent peut avoir enregistré un format que celui-ci ne connaît pas encore :
+ * on le ramène au Code 39 plutôt que de laisser un type mensonger traverser l'application.
+ */
+const toCodeType = (raw: string): CodeType =>
+	(CODE_TYPES as readonly string[]).includes(raw) ? (raw as CodeType) : 'code_39';
+
 export const toCard = (row: Row): LoyaltyCard => ({
 	id: text(row.id),
 	shopId: text(row.shop_id),
@@ -139,7 +147,7 @@ export const toCard = (row: Row): LoyaltyCard => ({
 	name: text(row.name),
 	num: text(row.num),
 	code: text(row.code),
-	codeType: (text(row.code_type, 'code_39') as LoyaltyCard['codeType']) ?? 'code_39',
+	codeType: toCodeType(text(row.code_type, 'code_39')),
 	points: typeof row.points === 'number' ? row.points : 0,
 	tint: text(row.tint, DEFAULT_TINT),
 	grad: text(row.grad),

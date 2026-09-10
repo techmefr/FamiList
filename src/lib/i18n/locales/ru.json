@@ -148,7 +148,7 @@
 		"codePlaceholder": "3560070123456",
 		"format": "Формат кода",
 		"formatAuto": "Определить автоматически ({format})",
-		"eanInvalid": "Этот код не является правильным EAN-13.",
+		"formatInvalid": "Этот код не является корректным {format}.",
 		"save": "Сохранить карту",
 		"showAtCheckout": "ПОКАЖИТЕ НА КАССЕ",
 		"brightnessHint": "Увеличьте яркость экрана, чтобы код считался легче.",
@@ -159,8 +159,12 @@
 		"qrLabel": "QR-код карты",
 		"barcodeLabel": "Штрихкод карты",
 		"type": {
+			"code_128": "Code 128",
 			"code_39": "Code 39",
+			"code_93": "Code 93",
 			"ean_13": "EAN-13",
+			"ean_8": "EAN-8",
+			"itf": "ITF",
 			"qr_code": "QR-код"
 		}
 	},

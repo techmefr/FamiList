@@ -17,12 +17,17 @@ describe('normalizeFormat', () => {
 		['EAN_13', 'ean_13'],
 		['ean-13', 'ean_13'],
 		['CODE_39', 'code_39'],
-		['UPC_A', 'ean_13']
+		['CODE_93', 'code_93'],
+		['CODE_128', 'code_128'],
+		['EAN_8', 'ean_8'],
+		['ITF', 'itf'],
+		['UPC_A', 'ean_13'],
+		['UPC_E', 'ean_13']
 	])('ramène %s au format dessinable %s', (raw, expected) => {
 		expect(normalizeFormat(raw)).toBe(expected);
 	});
 
-	it.each(['CODE_128', 'ITF', 'EAN_8', 'PDF_417', 'inconnu'])(
+	it.each(['PDF_417', 'AZTEC', 'DATA_MATRIX', 'CODABAR', 'inconnu'])(
 		'rend null pour %s, que la carte ne sait pas dessiner',
 		(raw) => {
 			expect(normalizeFormat(raw)).toBeNull();

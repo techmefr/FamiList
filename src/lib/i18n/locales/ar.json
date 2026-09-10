@@ -150,7 +150,7 @@
 		"codePlaceholder": "3560070123456",
 		"format": "صيغة الرمز",
 		"formatAuto": "كشف تلقائي ({format})",
-		"eanInvalid": "هذا الرمز لا يشكّل EAN-13 صالحًا.",
+		"formatInvalid": "هذا الرمز ليس {format} صالحًا.",
 		"save": "حفظ البطاقة",
 		"showAtCheckout": "اعرضها عند الصندوق",
 		"brightnessHint": "ارفع سطوع الشاشة ليسهل قراءة الرمز.",
@@ -161,8 +161,12 @@
 		"qrLabel": "رمز QR للبطاقة",
 		"barcodeLabel": "الرمز الشريطي للبطاقة",
 		"type": {
+			"code_128": "Code 128",
 			"code_39": "Code 39",
+			"code_93": "Code 93",
 			"ean_13": "EAN-13",
+			"ean_8": "EAN-8",
+			"itf": "ITF",
 			"qr_code": "رمز QR"
 		}
 	},

@@ -1,4 +1,5 @@
 import Dexie, { type EntityTable } from 'dexie';
+import type { CodeType } from '$domain/code-format';
 
 export interface Shop {
 	id: string;
@@ -84,7 +85,7 @@ export interface LoyaltyCard {
 	name: string;
 	num: string;
 	code: string;
-	codeType: 'code_39' | 'ean_13' | 'qr_code';
+	codeType: CodeType;
 	points: number;
 	tint: string;
 	grad: string;

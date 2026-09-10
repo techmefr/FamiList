@@ -1,4 +1,5 @@
 import type { CodeType } from '$domain/code-format';
+import { expandUpcE } from '$domain/barcode';
 
 /**
  * Les formats qu'on demande à un décodeur.
@@ -34,21 +35,27 @@ export function normalizeFormat(raw: string): CodeType | null {
 
 	if (lower.includes('qr')) return 'qr_code';
 	if (lower.includes('ean13')) return 'ean_13';
+	if (lower.includes('ean8')) return 'ean_8';
 	if (lower.includes('code39')) return 'code_39';
+	if (lower.includes('code93')) return 'code_93';
+	if (lower.includes('code128')) return 'code_128';
+	if (lower.includes('itf')) return 'itf';
 
 	// UPC-A est un EAN-13 dont le premier chiffre est zéro : le lecteur rend douze chiffres, le
-	// treizième est ce zéro implicite. Le dessin EAN-13 est donc exact, à ce préfixe près.
-	if (lower.includes('upca')) return 'ean_13';
+	// treizième est ce zéro implicite. Le dessin EAN-13 est donc exact, à ce préfixe près. UPC-E
+	// est le même code comprimé, qu'on réétend plutôt que de l'encoder.
+	if (lower.includes('upca') || lower.includes('upce')) return 'ean_13';
 
 	return null;
 }
 
-/** Un UPC-A rendu sur douze chiffres est complété en EAN-13, que la carte sait dessiner. */
+/** Les deux variantes UPC sont ramenées à l'EAN-13 correspondant, que la carte sait dessiner. */
 export function normalizeValue(value: string, raw: string): string {
 	const lower = raw.toLowerCase().replace(/[^a-z0-9]/g, '');
 	const digits = value.trim();
 
 	if (lower.includes('upca') && /^\d{12}$/.test(digits)) return `0${digits}`;
+	if (lower.includes('upce')) return expandUpcE(digits) ?? value;
 
 	return value;
 }

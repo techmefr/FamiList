@@ -7,8 +7,8 @@
 	import { motionMs } from '$stores/settings.svelte';
 	import { createIntent } from '$stores/create.svelte';
 	import { t } from '$lib/i18n/index.svelte';
-	import { CODE_TYPES, guessCodeType, type CodeType } from '$domain/code-format';
-	import { normalizeEan13 } from '$domain/barcode';
+	import { CODE_TYPES, guessCodeType, isMatrixFormat, type CodeType } from '$domain/code-format';
+	import { linearCode } from '$domain/barcode';
 	import { CARD_GRADIENT_END, DEFAULT_TINT } from '$domain/tint';
 	import LoyaltyCardFace from '$components/app/LoyaltyCardFace.svelte';
 	import CardFullscreen from '$components/app/CardFullscreen.svelte';
@@ -77,7 +77,14 @@
 
 	/** Le format suit la saisie tant que l'utilisateur n'en a pas imposé un. */
 	const effectiveType = $derived(codeType || (code.trim() ? guessCodeType(code) : 'code_39'));
-	const invalidEan = $derived(effectiveType === 'ean_13' && !normalizeEan13(code));
+
+	/**
+	 * Un format que la saisie ne peut pas former est signalé à la saisie, pas à la caisse : sinon
+	 * la carte s'enregistre et ne se dessine plus le jour où on en a besoin.
+	 */
+	const invalidCode = $derived(
+		!isMatrixFormat(effectiveType) && code.trim() !== '' && !linearCode(code, effectiveType)
+	);
 
 	const enseignes = $derived([
 		...new Set(data.shops.map((shop) => shop.brand.trim()).filter(Boolean))
@@ -120,7 +127,7 @@
 
 	function submit(event: SubmitEvent) {
 		event.preventDefault();
-		if (!libelle || !code.trim() || invalidEan) return;
+		if (!libelle || !code.trim() || invalidCode) return;
 
 		feedback.play('add');
 		data.addCard({
@@ -289,9 +296,9 @@
 						/>
 					{/snippet}
 				</ScanButton>
-				{#if invalidEan}
+				{#if invalidCode}
 					<p class="text-destructive text-caption mt-1" role="alert" data-test-id="card-code-error">
-						{t('cards.eanInvalid')}
+						{t('cards.formatInvalid', { format: t(`cards.type.${effectiveType}`) })}
 					</p>
 				{/if}
 			</div>

@@ -146,7 +146,7 @@
 		"codePlaceholder": "3560070123456",
 		"format": "Formato del código",
 		"formatAuto": "Detección automática ({format})",
-		"eanInvalid": "Este código no forma un EAN-13 válido.",
+		"formatInvalid": "Este código no es un {format} válido.",
 		"save": "Guardar la tarjeta",
 		"showAtCheckout": "MUESTRA EN CAJA",
 		"brightnessHint": "Sube el brillo de la pantalla para facilitar la lectura.",
@@ -157,8 +157,12 @@
 		"qrLabel": "Código QR de la tarjeta",
 		"barcodeLabel": "Código de barras de la tarjeta",
 		"type": {
+			"code_128": "Code 128",
 			"code_39": "Code 39",
+			"code_93": "Code 93",
 			"ean_13": "EAN-13",
+			"ean_8": "EAN-8",
+			"itf": "ITF",
 			"qr_code": "Código QR"
 		}
 	},

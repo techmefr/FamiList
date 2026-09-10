@@ -145,7 +145,7 @@
 		"codePlaceholder": "3560070123456",
 		"format": "条码格式",
 		"formatAuto": "自动识别（{format}）",
-		"eanInvalid": "此号码不是有效的 EAN-13。",
+		"formatInvalid": "此代码不是有效的 {format}。",
 		"save": "保存卡片",
 		"showAtCheckout": "请在收银台出示",
 		"brightnessHint": "调高屏幕亮度，便于扫描。",
@@ -156,8 +156,12 @@
 		"qrLabel": "卡片二维码",
 		"barcodeLabel": "卡片条形码",
 		"type": {
+			"code_128": "Code 128",
 			"code_39": "Code 39",
+			"code_93": "Code 93",
 			"ean_13": "EAN-13",
+			"ean_8": "EAN-8",
+			"itf": "ITF",
 			"qr_code": "二维码"
 		}
 	},
