@@ -30,7 +30,9 @@ export default defineConfig({
 	},
 	projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
 	webServer: {
-		command: 'pnpm exec vite dev --port 4173 --strictPort',
+		// `--host 127.0.0.1` explicite : sur un runner CI, `localhost` ne résout parfois que vers ::1,
+		// le port est alors vu en écoute mais la connexion sur 127.0.0.1 est refusée.
+		command: 'pnpm exec vite dev --host 127.0.0.1 --port 4173 --strictPort',
 		port: PORT,
 		reuseExistingServer: !process.env.CI,
 		timeout: 60_000,
