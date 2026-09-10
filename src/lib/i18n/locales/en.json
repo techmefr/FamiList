@@ -497,6 +497,13 @@
 		"choices": "Choices (one per line)",
 		"choicesPlaceholder": "Friday 22 May — 8pm\nSaturday 23 May — 7.30pm",
 		"createPoll": "Create the poll",
+		"apportPreset": {
+			"aperitif": "Drinks",
+			"starter": "Starter",
+			"main": "Main course",
+			"dessert": "Dessert"
+		},
+		"pollNoChoices": "Write at least one choice, one per line.",
 		"claim": "I’ll take it",
 		"release": "Step back",
 		"ingredients": "What I’m bringing",

@@ -497,6 +497,13 @@
 		"choices": "Scelte (una per riga)",
 		"choicesPlaceholder": "Venerdì 22 maggio — 20:00\nSabato 23 maggio — 19:30",
 		"createPoll": "Crea il sondaggio",
+		"apportPreset": {
+			"aperitif": "Aperitivo",
+			"starter": "Antipasto",
+			"main": "Piatto principale",
+			"dessert": "Dolce"
+		},
+		"pollNoChoices": "Scrivi almeno una scelta, una per riga.",
 		"claim": "Ci penso io",
 		"release": "Mi tiro indietro",
 		"ingredients": "Cosa porto",

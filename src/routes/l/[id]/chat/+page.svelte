@@ -25,14 +25,22 @@
 	let composing = $state<'date' | 'apport' | null>(null);
 	let question = $state('');
 	let choices = $state('');
+	let pollError = $state(false);
 
-	/** Parts d'un repas : ce sont celles que le prototype propose, et elles couvrent presque tout. */
+	/**
+	 * Parts d'un repas : ce sont celles que le prototype propose, et elles couvrent presque tout.
+	 * Indexé par clé stable et pas par libellé, sinon l'emoji ne se retrouve plus dès que la langue
+	 * courante n'est pas le français.
+	 */
 	const APPORT_PRESET = [
-		{ label: 'Apéritif', emoji: '🍾' },
-		{ label: 'Entrée', emoji: '🍞' },
-		{ label: 'Plat principal', emoji: '🥘' },
-		{ label: 'Dessert', emoji: '🍰' }
+		{ key: 'aperitif', emoji: '🍾' },
+		{ key: 'starter', emoji: '🍞' },
+		{ key: 'main', emoji: '🥘' },
+		{ key: 'dessert', emoji: '🍰' }
 	];
+
+	const apportEmojis = () =>
+		new Map(APPORT_PRESET.map((p) => [t(`chat.apportPreset.${p.key}`), p.emoji]));
 
 	function send(event: SubmitEvent) {
 		event.preventDefault();
@@ -44,25 +52,34 @@
 
 	function openPoll(kind: 'date' | 'apport') {
 		composing = kind;
+		pollError = false;
 		question = kind === 'date' ? t('chat.dateQuestion') : t('chat.apportQuestion');
-		choices = kind === 'apport' ? APPORT_PRESET.map((p) => p.label).join('\n') : '';
+		choices =
+			kind === 'apport'
+				? APPORT_PRESET.map((p) => t(`chat.apportPreset.${p.key}`)).join('\n')
+				: '';
 	}
 
 	function createPoll(event: SubmitEvent) {
 		event.preventDefault();
 		if (!composing) return;
 
+		const emojis = apportEmojis();
 		const labels = choices
 			.split('\n')
 			.map((line) => line.trim())
 			.filter(Boolean)
 			.map((label) => ({
 				label,
-				emoji: APPORT_PRESET.find((p) => p.label === label)?.emoji
+				emoji: emojis.get(label)
 			}));
 
-		if (labels.length === 0) return;
+		if (labels.length === 0) {
+			pollError = true;
+			return;
+		}
 
+		pollError = false;
 		data.createPoll(listId, composing, question, labels);
 		composing = null;
 	}
@@ -165,6 +182,12 @@
 					></textarea>
 				</IconField>
 			</div>
+
+			{#if pollError}
+				<p class="text-destructive text-caption" role="alert" data-test-id="poll-error">
+					{t('chat.pollNoChoices')}
+				</p>
+			{/if}
 
 			<div class="flex flex-wrap gap-2">
 				<Button type="submit" data-test-id="poll-create">{t('chat.createPoll')}</Button>

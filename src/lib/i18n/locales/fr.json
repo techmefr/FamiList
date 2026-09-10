@@ -497,6 +497,13 @@
 		"choices": "Choix (un par ligne)",
 		"choicesPlaceholder": "Vendredi 22 mai — 20h\nSamedi 23 mai — 19h30",
 		"createPoll": "Créer le sondage",
+		"apportPreset": {
+			"aperitif": "Apéritif",
+			"starter": "Entrée",
+			"main": "Plat principal",
+			"dessert": "Dessert"
+		},
+		"pollNoChoices": "Écrivez au moins un choix, un par ligne.",
 		"claim": "Je m’en occupe",
 		"release": "Je me retire",
 		"ingredients": "Ce que j’apporte",

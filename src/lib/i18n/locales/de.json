@@ -497,6 +497,13 @@
 		"choices": "Auswahl (eine pro Zeile)",
 		"choicesPlaceholder": "Freitag, 22. Mai — 20 Uhr\nSamstag, 23. Mai — 19:30 Uhr",
 		"createPoll": "Umfrage erstellen",
+		"apportPreset": {
+			"aperitif": "Aperitif",
+			"starter": "Vorspeise",
+			"main": "Hauptgericht",
+			"dessert": "Nachtisch"
+		},
+		"pollNoChoices": "Schreiben Sie mindestens eine Option, eine pro Zeile.",
 		"claim": "Ich übernehme das",
 		"release": "Doch nicht",
 		"ingredients": "Was ich mitbringe",

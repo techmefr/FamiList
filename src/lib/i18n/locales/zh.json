@@ -496,6 +496,13 @@
 		"choices": "选项（每行一个）",
 		"choicesPlaceholder": "5月22日周五 — 20:00\n5月23日周六 — 19:30",
 		"createPoll": "创建投票",
+		"apportPreset": {
+			"aperitif": "餐前酒",
+			"starter": "前菜",
+			"main": "主菜",
+			"dessert": "甜点"
+		},
+		"pollNoChoices": "请至少填写一个选项，每行一个。",
 		"claim": "我来负责",
 		"release": "我退出",
 		"ingredients": "我要带的东西",

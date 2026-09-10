@@ -497,6 +497,13 @@
 		"choices": "Safidy (iray isaky ny andalana)",
 		"choicesPlaceholder": "Zoma 22 May — 20 ora\nSabotsy 23 May — 19 ora sy sasany",
 		"createPoll": "Hamorona fanadihadiana",
+		"apportPreset": {
+			"aperitif": "Apéritif",
+			"starter": "Sakafo mialoha",
+			"main": "Sakafo lehibe",
+			"dessert": "Desera"
+		},
+		"pollNoChoices": "Soraty farafahakeliny safidy iray, tsirairay isaky ny andalana.",
 		"claim": "Izaho no misahana",
 		"release": "Miala aho",
 		"ingredients": "Izay ho entiko",
