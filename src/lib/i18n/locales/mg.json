@@ -27,6 +27,7 @@
 		"demoNotice": "Angona fanandramana, mbola tsy mifandray.",
 		"progress": "{done} amin'ny {total} entana efa nalaina",
 		"remaining": {
+			"one": "sisa {count}",
 			"other": "sisa {count}"
 		},
 		"shared": "Iombonana",
@@ -484,9 +485,11 @@
 		"pushToList": "Ampio amin’ny lisitra",
 		"setEventDate": "Raiketo « {date} »",
 		"votes": {
+			"one": "vato {count}",
 			"other": "vato {count}"
 		},
 		"pushed": {
+			"one": "Nampiana zavatra {count} ny lisitra",
 			"other": "Nampiana zavatra {count} ny lisitra"
 		}
 	},
