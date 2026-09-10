@@ -31,7 +31,7 @@
 	let accounts = $state<PendingAccount[]>([]);
 	let reports = $state<BugReport[]>([]);
 	let loading = $state(true);
-	let error = $state<string | null>(null);
+	let errors = $state<string[]>([]);
 
 	async function load() {
 		loading = true;
@@ -43,7 +43,12 @@
 
 		// Un non-admin reçoit une erreur, pas une liste vide : la distinction évite de croire
 		// qu'il n'y a personne en attente alors qu'on n'a simplement pas le droit de regarder.
-		error = rpcError?.message ?? reportError?.message ?? null;
+		//
+		// Les deux lectures sont indépendantes et peuvent échouer chacune pour sa raison : n'en
+		// montrer qu'une laisserait croire que l'autre a répondu.
+		errors = [rpcError?.message, reportError?.message].filter(
+			(message): message is string => !!message
+		);
 		accounts = (data as PendingAccount[]) ?? [];
 		reports = (reportData as BugReport[]) ?? [];
 		loading = false;
@@ -52,7 +57,7 @@
 	async function resolveReport(id: string) {
 		const { error: rpcError } = await supabase.rpc('resolve_bug_report', { target: id });
 		if (rpcError) {
-			error = rpcError.message;
+			errors = [rpcError.message];
 			return;
 		}
 		await load();
@@ -61,7 +66,7 @@
 	async function review(id: string, decision: 'approved' | 'rejected') {
 		const { error: rpcError } = await supabase.rpc('review_account', { target: id, decision });
 		if (rpcError) {
-			error = rpcError.message;
+			errors = [rpcError.message];
 			return;
 		}
 		await load();
@@ -69,14 +74,18 @@
 
 	async function setDemo(id: string, demo: boolean) {
 		const { error: rpcError } = await supabase.rpc('set_demo', { target: id, demo });
-		error = rpcError?.message ?? null;
+		errors = rpcError ? [rpcError.message] : [];
 		await load();
 	}
 
 	async function resetDemo() {
 		const { error: rpcError } = await supabase.rpc('reset_demo');
-		error = rpcError?.message ?? null;
+		errors = rpcError ? [rpcError.message] : [];
 		notice = rpcError ? null : t('admin.demoReset');
+
+		// La réinitialisation refait le foyer de démonstration : sans relecture, l'écran garde les
+		// comptes et les badges d'avant, et laisse croire qu'il ne s'est rien passé.
+		if (!rpcError) await load();
 	}
 
 	let notice = $state<string | null>(null);
@@ -102,8 +111,12 @@
 {:else if loading}
 	<p class="text-muted-foreground mt-6">{t('common.loading')}</p>
 {:else}
-	{#if error}
-		<p class="text-destructive mt-6" role="alert">{error}</p>
+	{#if errors.length > 0}
+		<div class="mt-6" role="alert" data-test-id="admin-errors">
+			{#each errors as message (message)}
+				<p class="text-destructive">{message}</p>
+			{/each}
+		</div>
 	{/if}
 
 	{#if notice}
