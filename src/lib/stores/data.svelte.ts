@@ -18,6 +18,7 @@ import {
 	type ShopLayout
 } from '$db/schema';
 import { supabase } from '$db/supabase';
+import { accountDecision } from '$domain/account-switch';
 import { guessAisleKind, FALLBACK_AISLE_KIND } from '$domain/guess-aisle';
 import { groupByAisle, learnedItemOrder } from '$domain/aisle-order';
 import { sync } from '$lib/sync/index.svelte';
@@ -76,25 +77,32 @@ class DataStore {
 	activeLayout = $derived(this.layouts.find((l) => l.shopId === this.activeShopId));
 
 	private userId = '';
+	private userIdKnown = false;
 
 	async load() {
 		if (!browser) return;
 
-		const { data } = await supabase.auth.getUser();
-		const user = data.user?.id ?? '';
+		const { data, error } = await supabase.auth.getUser();
+		const answer = { id: data.user?.id ?? '', failed: !!error };
 
 		// Changer de compte sur le même appareil doit tout reprendre à zéro. Sans cette
 		// comparaison, le cache du compte précédent resterait à l'écran : les listes d'une
-		// personne s'afficheraient à une autre.
+		// personne s'afficheraient à une autre. Une réponse en erreur, elle, ne dit rien de
+		// l'identité et ne décide de rien.
 		if (this.ready) {
-			if (user !== this.userId) {
-				this.userId = user;
-				await this.reload();
-			}
+			const decision = accountDecision({ id: this.userId, known: this.userIdKnown }, answer);
+			if (decision === 'ignore') return;
+
+			this.userId = answer.id;
+			this.userIdKnown = true;
+			if (decision === 'reload') await this.reload();
 			return;
 		}
 
-		this.userId = user;
+		if (!answer.failed) {
+			this.userId = answer.id;
+			this.userIdKnown = true;
+		}
 
 		// Le cache s'affiche d'abord, la synchronisation le remplace ensuite. Hors réseau, ou le
 		// temps que le serveur réponde, l'application reste utilisable.
@@ -822,6 +830,7 @@ class DataStore {
 		sync.stop();
 		this.ready = false;
 		this.userId = '';
+		this.userIdKnown = false;
 		await this.clearCache();
 		await this.hydrate();
 	}
