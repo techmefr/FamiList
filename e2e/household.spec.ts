@@ -8,6 +8,25 @@ import {
 	signOut
 } from './fixtures';
 
+test('un code inconnu est refusé en toutes lettres, pas en jargon de base', async ({
+	signedInPage: page
+}) => {
+	await page.goto('/household');
+	await page.getByTestId('join-code').fill('ZZZZZZ');
+	await page.getByTestId('join-submit').click();
+
+	const refus = page.getByTestId('household-error');
+	await expect(refus).toBeVisible();
+
+	// Le message de la base — « code invalide ou expire », sans accents et jamais traduit —
+	// n'arrive plus jusqu'à l'écran.
+	await expect(refus).toContainText(/invalid or has expired/i);
+	await expect(refus).not.toContainText('code invalide ou expire');
+
+	// Ce refus-là n'a pas de sortie « saisir mon code » : il ne s'agit pas du deuxième facteur.
+	await expect(page.getByTestId('household-second-factor')).toHaveCount(0);
+});
+
 /**
  * Le parcours qui faisait défaut : créer un code dans un foyer, le consommer depuis un autre
  * compte, se retrouver ensemble. Il échouait pour tout le monde — le foyer créé à l'inscription

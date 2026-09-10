@@ -508,6 +508,13 @@
 		"code": "Einladungscode",
 		"codePlaceholder": "ABC123",
 		"join": "Beitreten",
+		"errorCode": "Dieser Code ist ungültig oder abgelaufen. Bitte die einladende Person um einen neuen.",
+		"errorSecondFactor": "Gib zuerst deinen Code der Zwei-Schritt-Bestätigung ein.",
+		"errorNotApproved": "Dein Konto ist noch nicht freigegeben.",
+		"errorLeaveFirst": "In deinem aktuellen Haushalt liegen Einkäufe oder Karten. Leere ihn oder lass dich mit einem anderen Konto einladen.",
+		"errorLastMember": "Du bist allein in diesem Haushalt: Beim Verlassen wäre er nicht mehr erreichbar.",
+		"errorUnknown": "Das hat nicht geklappt. Versuche es gleich noch einmal.",
+		"goToSecondFactor": "Code eingeben",
 		"role": {
 			"self": "Sie",
 			"owner": "Verantwortlich",

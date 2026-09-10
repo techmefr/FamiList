@@ -508,6 +508,13 @@
 		"code": "Kaody fanasana",
 		"codePlaceholder": "ABC123",
 		"join": "Hiditra",
+		"errorCode": "Tsy mety na lany daty io kaody io. Mangataha kaody vaovao amin’ilay manasa anao.",
+		"errorSecondFactor": "Ampidiro aloha ny kaody fanamarinana roa dingana.",
+		"errorNotApproved": "Mbola tsy nekena ny kaontinao.",
+		"errorLeaveFirst": "Misy entana na karatra ao amin’ny tokantranonao ankehitriny. Foano izany, na mangataha fanasana amin’ny kaonty hafa.",
+		"errorLastMember": "Irery ianao ao amin’ity tokantrano ity : raha miala ianao dia tsy ho azo idirana intsony.",
+		"errorUnknown": "Tsy nahomby. Andramo indray afaka kelikely.",
+		"goToSecondFactor": "Ampidiro ny kaody",
 		"role": {
 			"self": "Ianao",
 			"owner": "Tompon’andraikitra",

@@ -508,6 +508,13 @@
 		"code": "Código de invitación",
 		"codePlaceholder": "ABC123",
 		"join": "Unirse",
+		"errorCode": "Este código no es válido o ha caducado. Pide uno nuevo a quien te invita.",
+		"errorSecondFactor": "Introduce primero tu código de verificación en dos pasos.",
+		"errorNotApproved": "Tu cuenta todavía no está aprobada.",
+		"errorLeaveFirst": "Tu hogar actual tiene compras o tarjetas. Vacíalo o pide la invitación desde otra cuenta.",
+		"errorLastMember": "Estás solo en este hogar: al salir quedaría inaccesible.",
+		"errorUnknown": "No ha funcionado. Inténtalo de nuevo en un momento.",
+		"goToSecondFactor": "Introducir mi código",
 		"role": {
 			"self": "Tú",
 			"owner": "Responsable",

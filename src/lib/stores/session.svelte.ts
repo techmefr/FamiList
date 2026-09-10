@@ -86,9 +86,7 @@ class SessionStore {
 			return;
 		}
 
-		const { data: niveaux } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
-		this.level = niveaux?.currentLevel ?? null;
-		this.nextLevel = niveaux?.nextLevel ?? null;
+		await this.refreshLevels();
 
 		const { data, error } = await supabase
 			.from('profiles')
@@ -99,6 +97,24 @@ class SessionStore {
 		// Le profil est créé par un trigger à l'inscription. S'il manque encore, on ne bloque pas :
 		// l'écran d'attente s'affichera, et le prochain rafraîchissement le trouvera.
 		this.profile = error ? null : (data as Profile | null);
+	}
+
+	/**
+	 * Relit le niveau d'authentification de la session.
+	 *
+	 * Appelé à chaque changement de session, et à nouveau quand la base refuse une écriture pour
+	 * « compte non valide » : c'est le seul moyen de savoir si le refus vient d'un deuxième
+	 * facteur manquant plutôt que d'un compte non approuvé. Une lecture qui échoue laisse les
+	 * niveaux inchangés — les mettre à `null` ferait passer un compte protégé pour un compte sans
+	 * deuxième facteur.
+	 */
+	async refreshLevels() {
+		const { data, error } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
+		if (error) return false;
+
+		this.level = data?.currentLevel ?? null;
+		this.nextLevel = data?.nextLevel ?? null;
+		return true;
 	}
 
 	async signUp(email: string, password: string, displayName: string) {

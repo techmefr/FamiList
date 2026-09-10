@@ -505,6 +505,13 @@
 		"code": "邀请码",
 		"codePlaceholder": "ABC123",
 		"join": "加入",
+		"errorCode": "此邀请码无效或已过期，请向邀请你的人索取新的邀请码。",
+		"errorSecondFactor": "请先输入两步验证码。",
+		"errorNotApproved": "你的账户尚未通过审核。",
+		"errorLeaveFirst": "你当前的家庭里还有购物清单或会员卡。请先清空，或改用另一个账户接受邀请。",
+		"errorLastMember": "这个家庭只有你一个人，离开后将无法再访问。",
+		"errorUnknown": "操作未成功，请稍后再试。",
+		"goToSecondFactor": "输入验证码",
 		"role": {
 			"self": "你",
 			"owner": "负责人",

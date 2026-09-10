@@ -508,6 +508,13 @@
 		"code": "Invitation code",
 		"codePlaceholder": "ABC123",
 		"join": "Join",
+		"errorCode": "This code is invalid or has expired. Ask the person inviting you for a new one.",
+		"errorSecondFactor": "Enter your two-step verification code first.",
+		"errorNotApproved": "Your account has not been approved yet.",
+		"errorLeaveFirst": "Your current household has shopping or cards in it. Empty it, or get invited from another account.",
+		"errorLastMember": "You are alone in this household: leaving would make it unreachable.",
+		"errorUnknown": "That did not work. Try again in a moment.",
+		"goToSecondFactor": "Enter my code",
 		"role": {
 			"self": "You",
 			"owner": "Owner",

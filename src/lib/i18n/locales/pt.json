@@ -508,6 +508,13 @@
 		"code": "Código de convite",
 		"codePlaceholder": "ABC123",
 		"join": "Juntar-se",
+		"errorCode": "Este código é inválido ou expirou. Peça um novo a quem o convida.",
+		"errorSecondFactor": "Introduza primeiro o seu código de verificação em duas etapas.",
+		"errorNotApproved": "A sua conta ainda não foi aprovada.",
+		"errorLeaveFirst": "A sua casa atual tem compras ou cartões. Esvazie-a ou peça o convite a partir de outra conta.",
+		"errorLastMember": "Está sozinho nesta casa: sair torná-la-ia inacessível.",
+		"errorUnknown": "Não resultou. Tente novamente daqui a pouco.",
+		"goToSecondFactor": "Introduzir o meu código",
 		"role": {
 			"self": "Você",
 			"owner": "Responsável",

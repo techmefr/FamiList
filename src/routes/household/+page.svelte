@@ -1,5 +1,8 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
 	import { supabase } from '$db/supabase';
+	import { session } from '$stores/session.svelte';
+	import { householdErrorKey } from '$domain/household-error';
 	import { data } from '$stores/data.svelte';
 	import { sync } from '$lib/sync/index.svelte';
 	import { t, i18n } from '$lib/i18n/index.svelte';
@@ -14,8 +17,23 @@
 	let invite = $state<{ code: string; expires: string } | null>(null);
 	let joinCode = $state('');
 	let error = $state<string | null>(null);
+	let secondFacteurRequis = $state(false);
 	let busy = $state(false);
 	let copied = $state(false);
+
+	/**
+	 * Un refus de la base, dit dans la langue de la personne — et, quand la cause est une session
+	 * restée au mot de passe, avec la porte pour en sortir.
+	 *
+	 * Le niveau d'authentification est relu avant de conclure : « compte non valide » recouvre
+	 * aussi bien un compte en attente qu'un deuxième facteur pas encore présenté, et ce que le
+	 * client croit savoir de la session peut dater d'une lecture qui a échoué.
+	 */
+	async function montrerRefus(message: string) {
+		await session.refreshLevels();
+		secondFacteurRequis = session.needsSecondFactor;
+		error = t(householdErrorKey(message, secondFacteurRequis));
+	}
 
 	async function createInvite() {
 		busy = true;
@@ -25,7 +43,7 @@
 
 		busy = false;
 		if (rpcError) {
-			error = rpcError.message;
+			await montrerRefus(rpcError.message);
 			return;
 		}
 
@@ -53,7 +71,7 @@
 
 		if (rpcError) {
 			busy = false;
-			error = rpcError.message;
+			await montrerRefus(rpcError.message);
 			return;
 		}
 
@@ -73,7 +91,7 @@
 
 		if (rpcError) {
 			busy = false;
-			error = rpcError.message;
+			await montrerRefus(rpcError.message);
 			return;
 		}
 
@@ -89,7 +107,24 @@
 <h1 class="text-h1 font-semibold">{t('household.title')}</h1>
 
 {#if error}
-	<p class="text-destructive mt-6" role="alert" data-test-id="household-error">{error}</p>
+	<div class="mt-6" role="alert" data-test-id="household-error">
+		<p class="text-destructive">{error}</p>
+
+		<!--
+			Le seul refus qui a une sortie immédiate : la personne a bien son code de vérification,
+			il ne lui manque que l'écran où le taper.
+		-->
+		{#if secondFacteurRequis}
+			<Button
+				variant="outline"
+				onclick={() => goto('/auth/mfa')}
+				data-test-id="household-second-factor"
+				class="mt-3"
+			>
+				{t('household.goToSecondFactor')}
+			</Button>
+		{/if}
+	</div>
 {/if}
 
 <Card.Root class="mt-6">

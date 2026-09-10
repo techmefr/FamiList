@@ -508,6 +508,13 @@
 		"code": "Codice d’invito",
 		"codePlaceholder": "ABC123",
 		"join": "Unisciti",
+		"errorCode": "Questo codice non è valido o è scaduto. Chiedine uno nuovo a chi ti invita.",
+		"errorSecondFactor": "Inserisci prima il codice di verifica in due passaggi.",
+		"errorNotApproved": "Il tuo account non è ancora approvato.",
+		"errorLeaveFirst": "La tua casa attuale contiene spesa o carte. Svuotala, oppure fatti invitare da un altro account.",
+		"errorLastMember": "Sei solo in questa casa: uscendo diventerebbe irraggiungibile.",
+		"errorUnknown": "Non ha funzionato. Riprova tra un momento.",
+		"goToSecondFactor": "Inserire il codice",
 		"role": {
 			"self": "Tu",
 			"owner": "Responsabile",
