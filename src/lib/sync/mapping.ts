@@ -94,7 +94,14 @@ export const fromList = (list: List, householdId: string) => ({
  * un nombre part à null plutôt que de faire échouer l'insertion : l'article reste dans la liste.
  */
 const toNumber = (value: string) => {
-	const parsed = Number(value.replace(',', '.'));
+	// Number('') vaut 0, pas NaN : sans ce départ, vider le champ quantité dans l'interface
+	// enregistrait une quantité de zéro au lieu d'aucune quantité.
+	const written = value.trim();
+	if (written === '') return null;
+
+	// Toutes les virgules, pas seulement la première : « 1,234,5 » n'est pas un nombre, et une
+	// seule virgule remplacée laissait passer une chaîne à moitié convertie.
+	const parsed = Number(written.replace(/,/g, '.'));
 	return Number.isFinite(parsed) ? parsed : null;
 };
 
@@ -164,7 +171,9 @@ export const toMember = (row: Row, profile: Row | undefined, currentUserId: stri
 	return {
 		id,
 		name,
-		role: id === currentUserId ? 'self' : text(row.role, 'member'),
+		// Un rôle vide en base est une valeur manquante, pas un rôle : il retombe sur 'member'
+		// comme une colonne absente, sinon la traduction chercherait une clé vide.
+		role: id === currentUserId ? 'self' : text(row.role) || 'member',
 		initial: text(profile?.initial) || initialsOf(name),
 		tint: text(row.tint, DEFAULT_MEMBER_TINT),
 		avatar: text(profile?.avatar) || undefined

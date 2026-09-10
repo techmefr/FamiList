@@ -168,6 +168,17 @@ describe('toItem / fromItem', () => {
 		expect(fromItem({ ...item, qty: 'beaucoup' }).qty).toBeNull();
 	});
 
+	it('écrit null, et non zéro, pour un champ quantité vidé', () => {
+		const item = toItem({ id: 'i1', qty: 6 });
+		expect(fromItem({ ...item, qty: '' }).qty).toBeNull();
+		expect(fromItem({ ...item, qty: '   ' }).qty).toBeNull();
+	});
+
+	it('écrit null pour une quantité à plusieurs virgules', () => {
+		const item = toItem({ id: 'i1' });
+		expect(fromItem({ ...item, qty: '1,234,5' }).qty).toBeNull();
+	});
+
 	it('range le rayon vide en null, jamais en chaîne vide', () => {
 		const item = toItem({ id: 'i1', aisle_id: null });
 		expect(fromItem(item).aisle_id).toBeNull();
@@ -234,6 +245,11 @@ describe('toMember', () => {
 		expect(member.role).toBe('self');
 	});
 
+	it("retombe sur 'member' pour un rôle absent comme pour un rôle vide", () => {
+		expect(toMember({ user_id: 'u1' }, { display_name: 'Moi' }, 'x').role).toBe('member');
+		expect(toMember({ user_id: 'u1', role: '' }, { display_name: 'Moi' }, 'x').role).toBe('member');
+	});
+
 	it("retombe sur l'email puis sur un tiret si le nom manque", () => {
 		expect(toMember({ user_id: 'u1' }, { email: 'a@b.test' }, 'x').name).toBe('a@b.test');
 		expect(toMember({ user_id: 'u1' }, undefined, 'x').name).toBe('—');
@@ -246,10 +262,6 @@ describe('toMember', () => {
 
 	it('ne fabrique pas de photo par défaut', () => {
 		expect(toMember({ user_id: 'u1' }, { display_name: 'Moi' }, 'x').avatar).toBeUndefined();
-	});
-
-	it("retombe sur le rôle 'member' quand la colonne est absente", () => {
-		expect(toMember({ user_id: 'u1' }, undefined, 'x').role).toBe('member');
 	});
 });
 
