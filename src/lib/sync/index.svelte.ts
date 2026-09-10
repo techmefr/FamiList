@@ -246,6 +246,7 @@ class SyncStore {
 		await db.transaction(
 			'rw',
 			[
+				db.outbox,
 				db.shops,
 				db.aisles,
 				db.lists,
@@ -260,6 +261,23 @@ class SyncStore {
 				db.pollVotes
 			],
 			async () => {
+				/**
+				 * Dernier regard sur la file, à l'abri de la transaction.
+				 *
+				 * La file était vide au départ, mais treize lectures prennent du temps, et
+				 * quelqu'un a pu créer un magasin pendant ce temps-là. Ce qu'on tient dans les
+				 * mains ne connaît pas cette écriture : l'écrire effacerait de l'écran quelque
+				 * chose que la personne vient de faire, et qui ne reviendrait qu'à la relecture
+				 * suivante — quand elle a lieu. On a vu le magasin disparaître pour de bon.
+				 *
+				 * On abandonne donc cette relecture-là, sans rien toucher. L'envoi de l'écriture
+				 * en attente en programme une autre derrière lui, avec un serveur qui la connaît.
+				 *
+				 * Le contrôle est ici, dans la transaction, et pas juste avant : Dexie sérialise
+				 * les transactions sur ces tables, ce qui ferme la fenêtre au lieu de la réduire.
+				 */
+				if ((await db.outbox.count()) > 0) return;
+
 				await Promise.all([
 					db.shops.clear(),
 					db.aisles.clear(),

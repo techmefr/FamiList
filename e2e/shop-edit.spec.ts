@@ -14,12 +14,22 @@ test('créer, modifier puis supprimer un magasin', async ({ signedInPage: page }
 	// Un trigramme choisi ici plutôt que déduit : la déduplication automatique travaille sur le
 	// cache local, qui n'est pas encore rempli à la première seconde, et deux passages du test se
 	// retrouveraient avec le même — ce que le formulaire refuse ensuite, à juste titre.
-	const court = `E${Date.now() % 100}`.slice(0, 3);
+	//
+	// En base 36 plutôt qu'en centaines : `Date.now() % 100` ne donnait que cent valeurs, et un
+	// passage interrompu laisse son magasin derrière lui. Les trigrammes se reprenaient donc au
+	// bout de quelques échecs, le formulaire refusait la création — en silence — et le test
+	// attendait une carte qui n'arriverait jamais.
+	const court = Date.now().toString(36).slice(-3).toUpperCase();
 
 	await page.goto('/shops');
 	await page.getByTestId('shop-name').fill(nom);
 	await page.getByTestId('shop-short').fill(court);
 	await page.getByTestId('shop-create').click();
+
+	// Un trigramme déjà pris fait sortir le formulaire sans rien créer et sans rien dire d'autre
+	// qu'une alerte qui peut être hors écran. Sans cette ligne, ce refus se déguise en « carte
+	// introuvable » quinze secondes plus tard, et on cherche le défaut au mauvais endroit.
+	await expect(page.getByTestId('shop-short-error')).toHaveCount(0);
 
 	const carte = page.locator('[data-test-class="shop-card"]').filter({ hasText: nom });
 	await expect(carte).toBeVisible();
