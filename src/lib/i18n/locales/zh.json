@@ -263,7 +263,12 @@
 		"relocate": "更新位置",
 		"geoDenied": "无法获取位置。请允许定位后重试。",
 		"geoUnavailable": "此设备无法提供位置。",
-		"delete": "删除门店 {name}"
+		"delete": "删除门店 {name}",
+		"edit": "编辑",
+		"save": "保存",
+		"cancel": "取消",
+		"deleteConfirm": "删除 {name}？在这家店学到的动线将会丢失。",
+		"deleteYes": "删除"
 	},
 	"aisles": {
 		"title": "货区",

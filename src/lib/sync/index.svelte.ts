@@ -127,6 +127,14 @@ class SyncStore {
 		const household = this.householdId;
 		if (!household) return;
 
+		// Ce qui attend dans la file part d'abord. La relecture vide les tables et les réécrit
+		// depuis le serveur : lancée alors qu'une écriture n'est pas encore partie, elle efface de
+		// l'écran un magasin qu'on vient de créer, ou ramène celui qu'on vient de supprimer. Si la
+		// file ne se vide pas — hors réseau, serveur en erreur — on ne relit pas du tout, plutôt
+		// que d'écraser un travail qui n'a pas encore atteint le serveur.
+		await this.flush();
+		if ((await db.outbox.count()) > 0) return;
+
 		this.state = 'syncing';
 
 		const [
@@ -288,6 +296,7 @@ class SyncStore {
 		// d'hier laissait le bandeau en erreur pour toujours, avec un message décrivant une écriture
 		// déjà abandonnée, pendant que tout le reste partait normalement.
 		let rejected = false;
+		let sent = 0;
 
 		for (const entry of pending) {
 			const query = supabase.from(entry.table as 'items');
@@ -309,6 +318,7 @@ class SyncStore {
 				this.lastError = error.message;
 			}
 
+			sent += 1;
 			await db.outbox.delete(entry.seq as number);
 		}
 
@@ -316,6 +326,12 @@ class SyncStore {
 
 		this.state = 'idle';
 		this.lastError = null;
+
+		// Une relecture partie avant cet envoi a lu un serveur qui ne connaissait pas encore ces
+		// écritures, et elle remplace le cache par ce qu'elle a lu : le magasin qu'on vient de
+		// créer disparaît de l'écran alors qu'il est bien enregistré. On relit donc une fois
+		// celle-là terminée, avec un serveur qui sait tout.
+		if (sent > 0) void Promise.resolve(this.pulling).then(() => this.pull());
 	}
 
 	/**

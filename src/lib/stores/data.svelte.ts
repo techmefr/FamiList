@@ -492,6 +492,38 @@ class DataStore {
 	}
 
 	/**
+	 * Supprimer un magasin, et avec lui le parcours qu'on y avait appris.
+	 *
+	 * Le serveur efface en cascade la disposition et l'ordre des articles, et détache les cartes
+	 * de fidélité sans les perdre (`on delete set null`) : une carte survit au magasin, c'est le
+	 * rattachement qui disparaît. Le cache local fait la même chose de son côté, tout de suite,
+	 * pour que l'écran ne montre pas un magasin à moitié parti en attendant la synchronisation.
+	 *
+	 * Le magasin par défaut se recrée tout seul si c'était le dernier : un parcours appartient
+	 * toujours à un magasin, et se retrouver sans aucun laisserait les listes sans rangement.
+	 */
+	removeShop(id: string) {
+		const shop = this.shops.find((candidate) => candidate.id === id);
+		if (!shop) return;
+
+		const orders = this.itemOrders.filter((entry) => entry.shopId === id).map((entry) => entry.key);
+
+		this.shops = this.shops.filter((candidate) => candidate.id !== id);
+		this.layouts = this.layouts.filter((layout) => layout.shopId !== id);
+		this.itemOrders = this.itemOrders.filter((entry) => entry.shopId !== id);
+		this.cards = this.cards.map((card) => (card.shopId === id ? { ...card, shopId: '' } : card));
+
+		db.shops.delete(id);
+		db.shopLayouts.delete(id);
+		db.shopItemOrders.bulkDelete(orders);
+		db.cards.bulkPut($state.snapshot(this.cards) as LoyaltyCard[]);
+
+		sync.enqueue({ table: 'shops', op: 'delete', match: { id } });
+
+		if (this.activeShopId === id) this.setActiveShop(this.shops[0]?.id ?? '');
+	}
+
+	/**
 	 * Le trigramme libre pour ce magasin, celui d'un autre magasin du foyer ne comptant pas comme
 	 * pris par lui-même — sans quoi recalculer sans rien changer donnerait un trigramme différent.
 	 */

@@ -264,7 +264,12 @@
 		"relocate": "Position aktualisieren",
 		"geoDenied": "Position nicht verfügbar. Erlauben Sie den Standortzugriff und versuchen Sie es erneut.",
 		"geoUnavailable": "Dieses Gerät liefert keine Position.",
-		"delete": "Geschäft {name} löschen"
+		"delete": "Geschäft {name} löschen",
+		"edit": "Bearbeiten",
+		"save": "Speichern",
+		"cancel": "Abbrechen",
+		"deleteConfirm": "{name} löschen? Der in diesem Geschäft gelernte Weg geht verloren.",
+		"deleteYes": "Löschen"
 	},
 	"aisles": {
 		"title": "Abteilungen",

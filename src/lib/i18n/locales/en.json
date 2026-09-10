@@ -264,7 +264,12 @@
 		"relocate": "Update the position",
 		"geoDenied": "Position unavailable. Allow location access, then try again.",
 		"geoUnavailable": "This device does not provide a position.",
-		"delete": "Delete shop {name}"
+		"delete": "Delete shop {name}",
+		"edit": "Edit",
+		"save": "Save",
+		"cancel": "Cancel",
+		"deleteConfirm": "Delete {name}? The route learned in this shop will be lost.",
+		"deleteYes": "Delete"
 	},
 	"aisles": {
 		"title": "Aisles",

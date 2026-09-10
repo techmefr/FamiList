@@ -264,7 +264,12 @@
 		"relocate": "Mettre à jour la position",
 		"geoDenied": "Position indisponible. Autorisez la localisation, puis réessayez.",
 		"geoUnavailable": "Cet appareil ne donne pas la position.",
-		"delete": "Supprimer le magasin {name}"
+		"delete": "Supprimer le magasin {name}",
+		"edit": "Modifier",
+		"save": "Enregistrer",
+		"cancel": "Annuler",
+		"deleteConfirm": "Supprimer {name} ? Le parcours appris dans ce magasin sera perdu.",
+		"deleteYes": "Supprimer"
 	},
 	"aisles": {
 		"title": "Rayons",

@@ -10,7 +10,8 @@
 	import { Badge } from '$lib/components/ui/badge';
 	import EmojiPicker from '$components/app/EmojiPicker.svelte';
 	import ShopForm from '$components/app/ShopForm.svelte';
-	import { Plus, LayoutList, MapPin } from '@lucide/svelte';
+	import { feedback } from '$stores/feedback.svelte';
+	import { Plus, LayoutList, MapPin, Pencil, Trash2 } from '@lucide/svelte';
 	import IconField from '$components/app/IconField.svelte';
 	import EmptyState from '$components/app/EmptyState.svelte';
 
@@ -24,6 +25,22 @@
 	 */
 	let releve = $state<string | null>(null);
 	let erreurGps = $state('');
+
+	/** Le magasin ouvert en modification, et celui dont la suppression attend d'être confirmée. */
+	let modifie = $state<string | null>(null);
+	let aSupprimer = $state<string | null>(null);
+
+	/**
+	 * Supprimer un magasin demande une confirmation, là où supprimer une carte n'en demande pas :
+	 * le parcours appris part avec lui, et il ne se retrouve pas — le refaire, c'est refaire ses
+	 * courses une fois en rangeant les rayons.
+	 */
+	function supprimer(shop: Shop) {
+		feedback.play('remove');
+		data.removeShop(shop.id);
+		aSupprimer = null;
+		if (modifie === shop.id) modifie = null;
+	}
 
 	/**
 	 * La position du magasin, prise sur place.
@@ -146,7 +163,68 @@
 									{t('shops.located')}
 								</p>
 							{/if}
+
+							<Button
+								variant="outline"
+								onclick={() => {
+									aSupprimer = null;
+									modifie = modifie === shop.id ? null : shop.id;
+								}}
+								data-test-class="shop-edit"
+							>
+								<Pencil size={18} aria-hidden="true" />
+								{t('shops.edit')}
+							</Button>
+
+							<Button
+								variant="outline"
+								onclick={() => (aSupprimer = aSupprimer === shop.id ? null : shop.id)}
+								aria-label={t('shops.delete', { name: shop.name })}
+								data-test-class="shop-delete"
+							>
+								<Trash2 size={18} aria-hidden="true" />
+							</Button>
 						</div>
+
+						<!--
+							La confirmation est posée là où on a cliqué, pas dans une fenêtre qui recouvre
+							l'écran : la question reste à côté du magasin dont elle parle.
+						-->
+						{#if aSupprimer === shop.id}
+							<div
+								class="border-destructive/40 mt-3 flex flex-wrap items-center gap-3 rounded-lg border p-3"
+								data-test-class="shop-delete-confirm"
+							>
+								<p class="text-label min-w-0 flex-1 basis-[12rem]">
+									{t('shops.deleteConfirm', { name: shop.name })}
+								</p>
+								<Button
+									variant="destructive"
+									onclick={() => supprimer(shop)}
+									data-test-class="shop-delete-yes"
+								>
+									{t('shops.deleteYes')}
+								</Button>
+								<Button
+									variant="outline"
+									onclick={() => (aSupprimer = null)}
+									data-test-class="shop-delete-no"
+								>
+									{t('shops.cancel')}
+								</Button>
+							</div>
+						{/if}
+
+						{#if modifie === shop.id}
+							<div class="mt-3 border-t pt-3">
+								<ShopForm
+									prefix="edit-{shop.id}"
+									{shop}
+									onsaved={() => (modifie = null)}
+									oncancel={() => (modifie = null)}
+								/>
+							</div>
+						{/if}
 					</Card.Content>
 				</Card.Root>
 			</li>

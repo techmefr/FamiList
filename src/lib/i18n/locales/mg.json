@@ -264,7 +264,12 @@
 		"relocate": "Havaozy ny toerana",
 		"geoDenied": "Tsy hita ny toerana. Ekeo ny fahazoan-dalana amin'ny toerana, avy eo andramo indray.",
 		"geoUnavailable": "Tsy manome toerana ity fitaovana ity.",
-		"delete": "Fafao ny fivarotana {name}"
+		"delete": "Fafao ny fivarotana {name}",
+		"edit": "Ovay",
+		"save": "Tehirizo",
+		"cancel": "Ajanony",
+		"deleteConfirm": "Fafana {name} ? Ho very ny lalana efa hain’ny fivarotana.",
+		"deleteYes": "Fafao"
 	},
 	"aisles": {
 		"title": "Faritra",

@@ -264,7 +264,12 @@
 		"relocate": "Atualizar a posição",
 		"geoDenied": "Posição indisponível. Permita a localização e tente novamente.",
 		"geoUnavailable": "Este aparelho não fornece a posição.",
-		"delete": "Eliminar a loja {name}"
+		"delete": "Eliminar a loja {name}",
+		"edit": "Editar",
+		"save": "Guardar",
+		"cancel": "Cancelar",
+		"deleteConfirm": "Eliminar {name}? O percurso aprendido nesta loja será perdido.",
+		"deleteYes": "Eliminar"
 	},
 	"aisles": {
 		"title": "Secções",

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { untrack } from 'svelte';
 	import { data } from '$stores/data.svelte';
 	import { feedback } from '$stores/feedback.svelte';
 	import { t } from '$lib/i18n/index.svelte';
@@ -8,7 +9,7 @@
 	import { Input } from '$lib/components/ui/input';
 	import { Label } from '$lib/components/ui/label';
 	import IconField from '$components/app/IconField.svelte';
-	import { Plus, Store, Building2, MapPin, RefreshCw } from '@lucide/svelte';
+	import { Plus, Store, Building2, MapPin, RefreshCw, Check } from '@lucide/svelte';
 
 	/**
 	 * Le formulaire de création d'un magasin, là où on en a besoin.
@@ -22,17 +23,38 @@
 	 * sur une même page, et deux `for` identiques feraient pointer les deux étiquettes au même
 	 * endroit.
 	 */
+	/**
+	 * Avec `shop`, le même formulaire modifie au lieu de créer : les champs sont ceux de la
+	 * création, les règles sur le trigramme aussi, et un second formulaire d'édition n'aurait fait
+	 * que les répéter à l'identique — en laissant les deux diverger avec le temps.
+	 */
 	let {
 		prefix = 'shop',
-		oncreated
-	}: { prefix?: string; oncreated?: (shop: Shop) => void } = $props();
+		shop: edite,
+		oncreated,
+		onsaved,
+		oncancel
+	}: {
+		prefix?: string;
+		shop?: Shop;
+		oncreated?: (shop: Shop) => void;
+		onsaved?: () => void;
+		oncancel?: () => void;
+	} = $props();
 
-	let brand = $state('');
-	let name = $state('');
-	let address = $state('');
-	let short = $state('');
+	// Les champs partent du magasin tel qu'il est à l'ouverture, et lui appartiennent ensuite : le
+	// formulaire est remonté à chaque édition, et une mise à jour venue de la synchronisation ne
+	// doit pas écraser une saisie en cours.
+	let brand = $state(untrack(() => edite?.brand ?? ''));
+	let name = $state(untrack(() => edite?.name ?? ''));
+	let address = $state(untrack(() => edite?.address ?? ''));
+	let short = $state(untrack(() => edite?.short ?? ''));
 
-	const pris = $derived(data.shops.map((shop) => shop.short));
+	// Le trigramme du magasin qu'on modifie ne se compte pas comme pris par un autre : le garder
+	// tel quel doit rester possible.
+	const pris = $derived(
+		data.shops.filter((shop) => shop.id !== edite?.id).map((shop) => shop.short)
+	);
 
 	/**
 	 * Les enseignes déjà saisies dans le foyer, proposées à la frappe. On ne tient pas de
@@ -44,7 +66,7 @@
 	]);
 
 	/** Ce que portera la pastille si personne ne remplit le champ. */
-	const propose = $derived(data.proposedShort({ brand, name, address }));
+	const propose = $derived(data.proposedShort({ brand, name, address }, edite?.id));
 
 	const saisi = $derived(short.trim().toUpperCase());
 
@@ -58,6 +80,20 @@
 	function submit(event: SubmitEvent) {
 		event.preventDefault();
 		if (!name.trim() || dejaPris) return;
+
+		if (edite) {
+			feedback.play('success');
+			// Le trigramme laissé vide revient à celui que la pastille montre déjà : on ne le vide
+			// jamais, un magasin sans pastille n'existe pas.
+			data.updateShop(edite.id, {
+				brand: brand.trim(),
+				name: name.trim(),
+				address: address.trim(),
+				short: saisi || edite.short
+			});
+			onsaved?.();
+			return;
+		}
 
 		feedback.play('add');
 		const shop = data.addShop({
@@ -180,8 +216,20 @@
 		</p>
 	{/if}
 
-	<Button type="submit" data-test-id="shop-create">
-		<Plus size={18} aria-hidden="true" />
-		{t('shops.new')}
-	</Button>
+	{#if edite}
+		<div class="flex flex-wrap items-stretch gap-2">
+			<Button type="submit" data-test-class="shop-save">
+				<Check size={18} aria-hidden="true" />
+				{t('shops.save')}
+			</Button>
+			<Button type="button" variant="outline" onclick={() => oncancel?.()} data-test-class="shop-cancel">
+				{t('shops.cancel')}
+			</Button>
+		</div>
+	{:else}
+		<Button type="submit" data-test-id="shop-create">
+			<Plus size={18} aria-hidden="true" />
+			{t('shops.new')}
+		</Button>
+	{/if}
 </form>

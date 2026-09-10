@@ -264,7 +264,12 @@
 		"relocate": "Aggiorna la posizione",
 		"geoDenied": "Posizione non disponibile. Consenti la localizzazione e riprova.",
 		"geoUnavailable": "Questo dispositivo non fornisce la posizione.",
-		"delete": "Elimina il negozio {name}"
+		"delete": "Elimina il negozio {name}",
+		"edit": "Modifica",
+		"save": "Salva",
+		"cancel": "Annulla",
+		"deleteConfirm": "Eliminare {name}? Il percorso imparato in questo negozio andrà perso.",
+		"deleteYes": "Elimina"
 	},
 	"aisles": {
 		"title": "Reparti",
