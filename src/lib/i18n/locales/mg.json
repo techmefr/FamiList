@@ -37,7 +37,8 @@
 		"namePlaceholder": "Fividianana isan-kerinandro",
 		"emoji": "Emoji",
 		"empty": "Mbola tsy misy lisitra.",
-		"delete": "Fafao ny lisitra {name}"
+		"delete": "Fafao ny lisitra {name}",
+		"rename": "Ovay ny anaran’ny {name}"
 	},
 	"profile": {
 		"title": "Mombamomba",

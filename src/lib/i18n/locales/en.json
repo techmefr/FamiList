@@ -37,7 +37,8 @@
 		"namePlaceholder": "Weekly shop",
 		"emoji": "Emoji",
 		"empty": "No lists yet.",
-		"delete": "Delete list {name}"
+		"delete": "Delete list {name}",
+		"rename": "Rename {name}"
 	},
 	"profile": {
 		"title": "Profile",

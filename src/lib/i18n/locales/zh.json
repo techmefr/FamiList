@@ -36,7 +36,8 @@
 		"namePlaceholder": "本周采购",
 		"emoji": "表情",
 		"empty": "还没有清单。",
-		"delete": "删除清单 {name}"
+		"delete": "删除清单 {name}",
+		"rename": "重命名 {name}"
 	},
 	"profile": {
 		"title": "我的",

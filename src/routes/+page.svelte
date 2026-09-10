@@ -4,7 +4,7 @@
 	import { cubicOut } from 'svelte/easing';
 	import { data } from '$stores/data.svelte';
 	import { feedback } from '$stores/feedback.svelte';
-	import { motionMs } from '$stores/settings.svelte';
+	import { motionMs, settings } from '$stores/settings.svelte';
 	import { createIntent } from '$stores/create.svelte';
 	import { i18n, t } from '$lib/i18n/index.svelte';
 	import { TINTS } from '$domain/tint';
@@ -15,7 +15,8 @@
 	import { Label } from '$lib/components/ui/label';
 	import EmojiPicker from '$components/app/EmojiPicker.svelte';
 	import Avatar from '$components/app/Avatar.svelte';
-	import { Plus, Trash2, ListChecks, CalendarDays, Users, Lock } from '@lucide/svelte';
+	import { longpress } from '$components/app/longpress.svelte';
+	import { Plus, Trash2, Pencil, ListChecks, CalendarDays, Users, Lock } from '@lucide/svelte';
 	import IconField from '$components/app/IconField.svelte';
 	import EmptyState from '$components/app/EmptyState.svelte';
 
@@ -23,6 +24,33 @@
 	let name = $state('');
 	let emoji = $state('🛒');
 	let picker = $state<EmojiPicker | null>(null);
+
+	/** La liste en cours de renommage. Le même formulaire sert à créer et à corriger. */
+	let renomme = $state<string | null>(null);
+
+	/**
+	 * Ouvrir le formulaire sur une liste existante, par appui long sur sa carte.
+	 *
+	 * Le nom et l'emoji se corrigent au même endroit qu'ils se posent : un second formulaire
+	 * n'aurait fait que répéter les deux mêmes champs et la même palette.
+	 */
+	function renommer(list: { id: string; name: string; emoji: string }) {
+		feedback.play('tap');
+		renomme = list.id;
+		name = list.name;
+		emoji = list.emoji;
+		creating = true;
+
+		// Le formulaire est en haut de page, la carte peut être loin en dessous.
+		window.scrollTo({ top: 0, behavior: settings.animates ? 'smooth' : 'auto' });
+	}
+
+	function annuler() {
+		renomme = null;
+		name = '';
+		emoji = '🛒';
+		creating = false;
+	}
 
 	/**
 	 * Le bouton central annonce ce qu'il vient chercher. Ici, c'est le formulaire replié qu'il
@@ -67,11 +95,15 @@
 		event.preventDefault();
 		if (!name.trim()) return;
 
-		feedback.play('add');
-		data.addList({ name, emoji, color: TINTS[data.lists.length % TINTS.length] });
-		name = '';
-		emoji = '🛒';
-		creating = false;
+		if (renomme) {
+			feedback.play('success');
+			data.updateList(renomme, { name, emoji });
+		} else {
+			feedback.play('add');
+			data.addList({ name, emoji, color: TINTS[data.lists.length % TINTS.length] });
+		}
+
+		annuler();
 	}
 
 	/**
@@ -137,7 +169,20 @@
 				</IconField>
 			</div>
 		</div>
-		<Button type="submit" data-test-id="list-create" class="fl-press">{t('common.save')}</Button>
+		<div class="flex flex-wrap items-stretch gap-2">
+			<Button type="submit" data-test-id="list-create" class="fl-press">{t('common.save')}</Button>
+			{#if renomme}
+				<Button
+					type="button"
+					variant="outline"
+					onclick={annuler}
+					data-test-id="list-rename-cancel"
+					class="fl-press"
+				>
+					{t('common.cancel')}
+				</Button>
+			{/if}
+		</div>
 	</form>
 {/if}
 
@@ -157,7 +202,16 @@
 			>
 				<Card.Root data-test-class="list-card" class="fl-press">
 					<Card.Content class="flex flex-wrap items-center gap-x-4 gap-y-3">
-						<a href="/l/{list.id}" class="flex min-w-0 flex-auto flex-wrap items-center gap-4">
+						<!--
+							L'appui long ouvre le renommage : c'est le geste du pouce, et il évite d'ajouter
+							un troisième bouton sur une carte qui en porte déjà. Le clavier et le lecteur
+							d'écran passent par le crayon, à côté de la corbeille.
+						-->
+						<a
+							href="/l/{list.id}"
+							use:longpress={() => renommer(list)}
+							class="flex min-w-0 flex-auto flex-wrap items-center gap-4"
+						>
 							<span class="text-h1" aria-hidden="true">{list.emoji}</span>
 							<span class="min-w-0 flex-1 basis-[6rem]">
 								<span class="text-product block font-medium break-words">{list.name}</span>
@@ -192,6 +246,15 @@
 						-->
 						<div class="ms-auto flex shrink-0 items-center gap-2">
 							<Badge variant="secondary">{t('lists.remaining', { count: total - done })}</Badge>
+							<button
+								type="button"
+								onclick={() => renommer(list)}
+								aria-label={t('lists.rename', { name: list.name })}
+								data-test-class="list-rename"
+								class="fl-press text-muted-foreground hover:text-foreground grid size-11 min-w-[44px] place-items-center rounded-md transition-colors"
+							>
+								<Pencil size={18} aria-hidden="true" />
+							</button>
 							<button
 								type="button"
 								onclick={() => {

@@ -37,7 +37,8 @@
 		"namePlaceholder": "Courses de la semaine",
 		"emoji": "Emoji",
 		"empty": "Aucune liste pour l'instant.",
-		"delete": "Supprimer la liste {name}"
+		"delete": "Supprimer la liste {name}",
+		"rename": "Renommer {name}"
 	},
 	"profile": {
 		"title": "Profil",

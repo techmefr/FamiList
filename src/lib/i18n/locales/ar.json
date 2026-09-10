@@ -41,7 +41,8 @@
 		"namePlaceholder": "تسوق الأسبوع",
 		"emoji": "رمز تعبيري",
 		"empty": "لا توجد قوائم بعد.",
-		"delete": "حذف القائمة {name}"
+		"delete": "حذف القائمة {name}",
+		"rename": "إعادة تسمية {name}"
 	},
 	"profile": {
 		"title": "الملف الشخصي",

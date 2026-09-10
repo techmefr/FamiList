@@ -327,6 +327,25 @@ class DataStore {
 	}
 
 	/**
+	 * Renommer une liste, ou changer son emoji.
+	 *
+	 * Les deux vont ensemble parce qu'ils se corrigent ensemble : « Cources » se relit une semaine
+	 * plus tard, et l'emoji pris à la va-vite au moment de créer ne dit plus rien une fois la
+	 * liste remplie.
+	 */
+	updateList(id: string, patch: { name?: string; emoji?: string }) {
+		const list = this.lists.find((candidate) => candidate.id === id);
+		if (!list) return;
+
+		if (patch.name !== undefined) list.name = patch.name.trim();
+		if (patch.emoji !== undefined) list.emoji = patch.emoji;
+
+		const snapshot = $state.snapshot(list) as List;
+		db.lists.put(snapshot);
+		this.push('lists', snapshot, fromList);
+	}
+
+	/**
 	 * Ouvre ou ferme une liste à quelqu'un.
 	 *
 	 * La ligne dans `list_members` est la clé : `can_access_list` s'appuie dessus, et tout ce qui

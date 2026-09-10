@@ -37,7 +37,8 @@
 		"namePlaceholder": "Wocheneinkauf",
 		"emoji": "Emoji",
 		"empty": "Noch keine Listen.",
-		"delete": "Liste {name} löschen"
+		"delete": "Liste {name} löschen",
+		"rename": "{name} umbenennen"
 	},
 	"profile": {
 		"title": "Profil",

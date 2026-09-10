@@ -37,7 +37,8 @@
 		"namePlaceholder": "Compras da semana",
 		"emoji": "Emoji",
 		"empty": "Ainda não há listas.",
-		"delete": "Eliminar a lista {name}"
+		"delete": "Eliminar a lista {name}",
+		"rename": "Renomear {name}"
 	},
 	"profile": {
 		"title": "Perfil",

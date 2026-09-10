@@ -37,7 +37,8 @@
 		"namePlaceholder": "Spesa della settimana",
 		"emoji": "Emoji",
 		"empty": "Nessuna lista per ora.",
-		"delete": "Elimina la lista {name}"
+		"delete": "Elimina la lista {name}",
+		"rename": "Rinomina {name}"
 	},
 	"profile": {
 		"title": "Profilo",
