@@ -202,9 +202,19 @@ class SessionStore {
 		return true;
 	}
 
-	/** Les facteurs TOTP vérifiés du compte. Les inscriptions inachevées ne comptent pas. */
-	async listFactors(): Promise<Factor[]> {
-		const { data } = await supabase.auth.mfa.listFactors();
+	/**
+	 * Les facteurs TOTP vérifiés du compte. Les inscriptions inachevées ne comptent pas.
+	 *
+	 * `null` quand la lecture échoue : une liste vide voudrait dire « pas de deuxième facteur »,
+	 * ce qui est un état légitime et rassurant, alors que l'appel n'a rien pu établir.
+	 */
+	async listFactors(): Promise<Factor[] | null> {
+		const { data, error } = await supabase.auth.mfa.listFactors();
+
+		if (error) {
+			this.error = error.message;
+			return null;
+		}
 
 		return (data?.totp ?? []).map((factor) => ({
 			id: factor.id,
@@ -296,17 +306,25 @@ class SessionStore {
 		return (data ?? []) as string[];
 	}
 
-	async backupCodesLeft(): Promise<number> {
-		const { data } = await supabase.rpc('backup_codes_left');
+	/** `null` sur échec : zéro se lirait comme « plus aucun code de secours ». */
+	async backupCodesLeft(): Promise<number | null> {
+		const { data, error } = await supabase.rpc('backup_codes_left');
+
+		if (error) {
+			this.error = error.message;
+			return null;
+		}
+
 		return typeof data === 'number' ? data : 0;
 	}
 
-	async listSessions(): Promise<OpenSession[]> {
+	/** `null` sur échec : une liste vide se lirait comme « aucun appareil connecté ». */
+	async listSessions(): Promise<OpenSession[] | null> {
 		const { data, error } = await supabase.rpc('my_sessions');
 
 		if (error) {
 			this.error = error.message;
-			return [];
+			return null;
 		}
 
 		return (data ?? []) as OpenSession[];

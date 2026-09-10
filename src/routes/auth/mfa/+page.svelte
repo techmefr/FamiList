@@ -20,7 +20,16 @@
 	 * plusieurs ici demanderait de faire choisir entre deux lignes identiques.
 	 */
 	$effect(() => {
-		session.listFactors().then((facteurs) => (facteur = facteurs[0] ?? null));
+		session.listFactors().then((facteurs) => {
+			// Une lecture en échec laissait le facteur à null : le bouton restait actif et ne faisait
+			// rien du tout au clic, sans un mot d'explication.
+			if (facteurs === null) {
+				erreur = session.error ?? '';
+				return;
+			}
+
+			facteur = facteurs[0] ?? null;
+		});
 	});
 
 	async function valider(event: SubmitEvent) {
@@ -90,7 +99,7 @@
 				<Button
 					type="submit"
 					class="fl-press w-full"
-					disabled={busy || !isCompleteOtp(code)}
+					disabled={busy || !facteur || !isCompleteOtp(code)}
 					data-test-id="mfa-submit"
 				>
 					{busy ? t('common.loading') : t('mfa.submit')}

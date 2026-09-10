@@ -38,6 +38,8 @@
 
 	let busy = $state(false);
 	let erreur = $state('');
+	let chargement = $state(true);
+	let erreurChargement = $state('');
 
 	let ancien = $state('');
 	let nouveau = $state('');
@@ -51,10 +53,31 @@
 		new Intl.DateTimeFormat(i18n.locale, { dateStyle: 'long', timeStyle: 'short' })
 	);
 
+	/**
+	 * Tant que ces trois lectures n'ont pas répondu, l'écran ne conclut rien. Sans cela il affiche
+	 * « deuxième facteur désactivé » et « aucun appareil connecté », qui se lisent comme un état
+	 * établi — au mieux le temps du chargement, au pire pour de bon si la lecture a échoué.
+	 */
 	async function recharger() {
-		facteurs = await session.listFactors();
-		sessions = await session.listSessions();
-		restants = await session.backupCodesLeft();
+		chargement = true;
+		erreurChargement = '';
+
+		const [lusFacteurs, lusSessions, lusRestants] = await Promise.all([
+			session.listFactors(),
+			session.listSessions(),
+			session.backupCodesLeft()
+		]);
+
+		chargement = false;
+
+		if (lusFacteurs === null || lusSessions === null || lusRestants === null) {
+			erreurChargement = session.error ?? '';
+			return;
+		}
+
+		facteurs = lusFacteurs;
+		sessions = lusSessions;
+		restants = lusRestants;
 	}
 
 	$effect(() => {
@@ -284,7 +307,15 @@
 		</Card.Title>
 	</Card.Header>
 	<Card.Content class="space-y-4">
-		{#if inscription}
+		{#if chargement}
+			<p class="text-muted-foreground text-label" role="status" data-test-id="security-loading">
+				{t('common.loading')}
+			</p>
+		{:else if erreurChargement}
+			<p class="text-destructive text-label" role="alert" data-test-id="security-load-error">
+				{erreurChargement}
+			</p>
+		{:else if inscription}
 			<p class="text-label">{t('security.scan')}</p>
 
 			<!--
@@ -457,7 +488,15 @@
 	<Card.Content>
 		<p class="text-muted-foreground text-label">{t('security.sessionsBody')}</p>
 
-		{#if sessions.length === 0}
+		{#if chargement}
+			<p class="text-muted-foreground text-label mt-4" role="status" data-test-id="sessions-loading">
+				{t('common.loading')}
+			</p>
+		{:else if erreurChargement}
+			<p class="text-destructive text-label mt-4" role="alert" data-test-id="sessions-error">
+				{erreurChargement}
+			</p>
+		{:else if sessions.length === 0}
 			<EmptyState illustration="inbox" text={t('security.sessionsEmpty')} testId="sessions-empty" />
 		{:else}
 			<ul class="fl-divided mt-4" data-test-id="sessions">
