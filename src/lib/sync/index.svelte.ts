@@ -275,6 +275,11 @@ class SyncStore {
 
 		const pending = await db.outbox.orderBy('seq').toArray();
 
+		// L'erreur qui compte est celle de ce cycle-ci. En relisant `this.state`, un refus définitif
+		// d'hier laissait le bandeau en erreur pour toujours, avec un message décrivant une écriture
+		// déjà abandonnée, pendant que tout le reste partait normalement.
+		let rejected = false;
+
 		for (const entry of pending) {
 			const query = supabase.from(entry.table as 'items');
 
@@ -290,6 +295,7 @@ class SyncStore {
 			}
 
 			if (error) {
+				rejected = true;
 				this.state = 'error';
 				this.lastError = error.message;
 			}
@@ -297,7 +303,10 @@ class SyncStore {
 			await db.outbox.delete(entry.seq as number);
 		}
 
-		if (this.state !== 'error') this.state = 'idle';
+		if (rejected) return;
+
+		this.state = 'idle';
+		this.lastError = null;
 	}
 
 	/**
