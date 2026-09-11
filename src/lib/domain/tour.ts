@@ -21,9 +21,13 @@ export interface TourStep {
 export const NAV_STEPS: TourStep[] = [
 	{ selector: '[data-test-id="nav-create"]', key: 'create' },
 	{ selector: '[data-test-id="nav-/magnifier"]', key: 'magnifier' },
+	{ selector: '[data-test-id="nav-/chat"]', key: 'chat' },
 	{ selector: '[data-test-id="nav-/shops"]', key: 'shops' },
 	{ selector: '[data-test-id="nav-/cards"]', key: 'cards' },
-	{ selector: '[data-test-id="nav-/profile"]', key: 'profile' }
+	// Le profil est dans la colonne sur grand écran et dans l'en-tête sur téléphone. Deux repères,
+	// une seule étape : `pickSteps` garde celui qui se voit et laisse tomber l'autre.
+	{ selector: '[data-test-id="nav-/profile"]', key: 'profile' },
+	{ selector: '[data-test-id="header-profile"]', key: 'profile' }
 ];
 
 /**

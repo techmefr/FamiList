@@ -2,7 +2,17 @@
 	import '../app.css';
 	import { page } from '$app/state';
 	import { goto, onNavigate } from '$app/navigation';
-	import { ListChecks, Store, CreditCard, User, ZoomIn, Plus } from '@lucide/svelte';
+	import {
+		ListChecks,
+		Store,
+		CreditCard,
+		User,
+		ZoomIn,
+		Plus,
+		MessagesSquare,
+		Users,
+		ShieldCheck
+	} from '@lucide/svelte';
 	import { i18n, t } from '$lib/i18n/index.svelte';
 	import { data } from '$stores/data.svelte';
 	import { session } from '$stores/session.svelte';
@@ -141,23 +151,35 @@
 	});
 
 	/**
-	 * Cinq onglets, pas plus : au-delà, les libellés se serrent et les cibles passent sous le seuil
-	 * du doigt. Le foyer et la gestion des comptes sont donc allés dans le profil, qui est déjà
-	 * l'écran des réglages — ce sont des destinations qu'on visite rarement, pas des allers-retours.
+	 * Une seule table pour les deux tailles d'écran, et un champ qui dit où l'entrée a sa place.
+	 *
+	 * `handheld` : le téléphone seulement. La loupe se sert de l'appareil photo arrière devant une
+	 * étiquette de produit — sur un écran d'ordinateur elle n'aurait rien à montrer.
+	 *
+	 * `desktop` : la colonne seulement. Sur téléphone, cinq onglets sont un maximum : au-delà, les
+	 * libellés se serrent et les cibles passent sous le seuil du doigt. Y tiennent donc les quatre
+	 * allers-retours du quotidien — les listes, la loupe, les discussions, les cartes. Les magasins
+	 * en sortent : le bouton de création pose déjà un rayon et un magasin, et on ne va sur cet
+	 * écran que pour ranger, pas en faisant ses courses. Le foyer, les comptes et le profil sont
+	 * des destinations qu'on visite rarement ; sur téléphone on y arrive par l'en-tête et par le
+	 * profil, dans la colonne ils ont leur onglet comme le reste.
 	 *
 	 * La loupe vient en deuxième, contre les listes : c'est l'outil qu'on ouvre en rayon, une main
 	 * sur le chariot, et le bord du pouce y arrive sans traverser la barre.
-	 *
-	 * Elle se sert de l'appareil photo arrière, devant une étiquette de produit : c'est un geste de
-	 * téléphone. Sur un écran d'ordinateur elle n'aurait rien à montrer, on ne la propose pas.
 	 */
 	const nav = [
-		{ href: '/', key: 'nav.lists', icon: ListChecks, handheld: false },
-		{ href: '/magnifier', key: 'nav.magnifier', icon: ZoomIn, handheld: true },
-		{ href: '/shops', key: 'nav.shops', icon: Store, handheld: false },
-		{ href: '/cards', key: 'nav.cards', icon: CreditCard, handheld: false },
-		{ href: '/profile', key: 'nav.profile', icon: User, handheld: false }
-	];
+		{ href: '/', key: 'nav.lists', icon: ListChecks, place: 'partout' },
+		{ href: '/magnifier', key: 'nav.magnifier', icon: ZoomIn, place: 'handheld' },
+		{ href: '/chat', key: 'nav.chat', icon: MessagesSquare, place: 'partout' },
+		{ href: '/cards', key: 'nav.cards', icon: CreditCard, place: 'partout' },
+		{ href: '/shops', key: 'nav.shops', icon: Store, place: 'desktop' },
+		{ href: '/household', key: 'nav.household', icon: Users, place: 'desktop' },
+		{ href: '/admin', key: 'nav.admin', icon: ShieldCheck, place: 'desktop', admin: true },
+		{ href: '/profile', key: 'nav.profile', icon: User, place: 'desktop' }
+	] as const;
+
+	/** Les comptes ne s'affichent que pour qui peut les gérer. */
+	const entries = $derived(nav.filter((entry) => !('admin' in entry) || session.isAdmin));
 
 	const isActive = (href: string) =>
 		href === '/' ? page.url.pathname === '/' : page.url.pathname.startsWith(href);
@@ -270,9 +292,13 @@
 			</button>
 
 			<ul class="flex overflow-x-auto md:flex-col md:gap-1 md:overflow-x-visible md:px-3">
-				{#each nav as { href, key, icon: Icon, handheld } (href)}
+				{#each entries as { href, key, icon: Icon, place } (href)}
 					{@const active = isActive(href)}
-					<li class="min-w-fit flex-1" class:md:hidden={handheld}>
+					<li
+						class="min-w-fit flex-1"
+						class:md:hidden={place === 'handheld'}
+						class:max-md:hidden={place === 'desktop'}
+					>
 						<a
 							{href}
 							data-test-id="nav-{href}"
@@ -311,13 +337,34 @@
 			<SyncStatus />
 
 			<!--
-				Une seule ligne au-dessus du contenu, pour l'aide. Elle est identique sur tous les écrans
-				et à toutes les tailles : chercher le point d'interrogation ailleurs selon la page, ou
-				selon qu'on est sur un téléphone, ferait perdre plus de temps qu'il n'en fait gagner.
+				L'en-tête. L'aide y est à la même place sur tous les écrans et à toutes les tailles :
+				chercher le point d'interrogation ailleurs selon la page ferait perdre plus de temps
+				qu'il n'en fait gagner.
+
+				Sur téléphone, elle porte en plus ce que la colonne affiche déjà sur grand écran — le
+				logo et le nom, qui disent où l'on est — et le profil, qui a quitté la barre du bas
+				pour laisser la place aux quatre destinations du quotidien. Un réglage se cherche en
+				haut de l'écran ; un aller-retour se fait avec le pouce, en bas.
 			-->
-			<div class="mx-auto flex w-full max-w-3xl justify-end px-4 pt-3">
-				<HelpButton />
-			</div>
+			<header class="mx-auto flex w-full max-w-3xl items-center justify-between gap-4 px-4 pt-3">
+				<p class="text-h2 flex items-center gap-2 font-semibold md:hidden">
+					<Logo />
+					{t('app.name')}
+				</p>
+
+				<div class="ms-auto flex items-center gap-1">
+					<HelpButton />
+					<a
+						href="/profile"
+						data-test-id="header-profile"
+						aria-label={t('nav.profile')}
+						aria-current={isActive('/profile') ? 'page' : undefined}
+						class="fl-press text-muted-foreground flex size-[max(2.5rem,44px)] items-center justify-center rounded-full md:hidden"
+					>
+						<User size={22} aria-hidden="true" />
+					</a>
+				</div>
+			</header>
 
 			<main class="mx-auto w-full max-w-3xl px-4 pt-2 pb-36 md:pb-10">
 				{@render children()}

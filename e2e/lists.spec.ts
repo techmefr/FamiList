@@ -13,7 +13,8 @@ test('créer une liste, y ajouter un article, le cocher, puis tout supprimer', a
 	const nom = nomListe();
 
 	await page.goto('/');
-	await page.getByTestId('new-list').click();
+	await page.getByTestId('nav-create').click();
+	await page.getByTestId('create-list').click();
 	await page.getByTestId('list-name').fill(nom);
 	await page.getByTestId('list-create').click();
 
@@ -42,7 +43,8 @@ test('une liste sans article affiche un état vide illustré', async ({ signedIn
 	const nom = nomListe();
 
 	await page.goto('/');
-	await page.getByTestId('new-list').click();
+	await page.getByTestId('nav-create').click();
+	await page.getByTestId('create-list').click();
 	await page.getByTestId('list-name').fill(nom);
 	await page.getByTestId('list-create').click();
 

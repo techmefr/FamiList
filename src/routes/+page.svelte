@@ -119,20 +119,7 @@
 	<title>{t('lists.title')} — {t('app.name')}</title>
 </svelte:head>
 
-<div class="flex flex-wrap items-center justify-between gap-4">
-	<h1 class="text-h1 font-semibold">{t('lists.title')}</h1>
-	<Button
-		onclick={() => {
-			feedback.play('tap');
-			creating = !creating;
-		}}
-		data-test-id="new-list"
-		class="fl-press"
-	>
-		<Plus size={18} aria-hidden="true" />
-		{t('lists.new')}
-	</Button>
-</div>
+<h1 class="text-h1 font-semibold">{t('lists.title')}</h1>
 
 {#if creating}
 	<form

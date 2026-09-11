@@ -12,7 +12,8 @@
 		"admin": "Contas",
 		"household": "Casa",
 		"magnifier": "Lupa",
-		"create": "Criar"
+		"create": "Criar",
+		"chat": "Conversas"
 	},
 	"create": {
 		"title": "O que quer criar?",
@@ -82,7 +83,8 @@
 		"nameHint": "É este o nome que a sua família vê.",
 		"nameSave": "Guardar",
 		"nameSaved": "Guardado",
-		"nameFailed": "Não foi possível guardar o nome. Tente novamente daqui a pouco."
+		"nameFailed": "Não foi possível guardar o nome. Tente novamente daqui a pouco.",
+		"administration": "Administração"
 	},
 	"theme": {
 		"light": "Claro",
@@ -447,7 +449,9 @@
 		"magnifierFreezeTitle": "Congelar a imagem",
 		"magnifierFreezeBody": "Uma imagem parada lê-se melhor do que uma mão a tremer. Toque de novo para continuar.",
 		"profileHouseholdTitle": "A sua casa",
-		"profileHouseholdBody": "Convide os seus: as suas listas e as suas lojas passam a ser também deles."
+		"profileHouseholdBody": "Convide os seus: as suas listas e as suas lojas passam a ser também deles.",
+		"chatTitle": "Todas as suas conversas",
+		"chatBody": "Cada lista tem a sua: proponham uma data e dividam quem traz o quê."
 	},
 	"admin": {
 		"title": "Validação de contas",
@@ -521,7 +525,9 @@
 		"pushed": {
 			"one": "{count} artigo adicionado à lista",
 			"other": "{count} artigos adicionados à lista"
-		}
+		},
+		"indexTitle": "Conversas",
+		"indexEmpty": "Ainda não há listas: crie uma para iniciar uma conversa."
 	},
 	"household": {
 		"title": "A minha casa",

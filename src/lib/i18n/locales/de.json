@@ -12,7 +12,8 @@
 		"admin": "Konten",
 		"household": "Haushalt",
 		"magnifier": "Lupe",
-		"create": "Erstellen"
+		"create": "Erstellen",
+		"chat": "Unterhaltungen"
 	},
 	"create": {
 		"title": "Was möchten Sie anlegen?",
@@ -82,7 +83,8 @@
 		"nameHint": "Diesen Namen sieht Ihr Haushalt.",
 		"nameSave": "Speichern",
 		"nameSaved": "Gespeichert",
-		"nameFailed": "Der Name konnte nicht gespeichert werden. Versuche es gleich noch einmal."
+		"nameFailed": "Der Name konnte nicht gespeichert werden. Versuche es gleich noch einmal.",
+		"administration": "Verwaltung"
 	},
 	"theme": {
 		"light": "Hell",
@@ -447,7 +449,9 @@
 		"magnifierFreezeTitle": "Bild einfrieren",
 		"magnifierFreezeBody": "Ein stehendes Bild liest sich besser als eine zitternde Hand. Nochmals tippen, um fortzufahren.",
 		"profileHouseholdTitle": "Ihr Haushalt",
-		"profileHouseholdBody": "Laden Sie Ihre Angehörigen ein: Ihre Listen und Läden werden auch die ihren."
+		"profileHouseholdBody": "Laden Sie Ihre Angehörigen ein: Ihre Listen und Läden werden auch die ihren.",
+		"chatTitle": "Alle Unterhaltungen",
+		"chatBody": "Jede Liste hat ihre eigene: einen Termin vorschlagen, aufteilen, wer was mitbringt."
 	},
 	"admin": {
 		"title": "Kontofreigabe",
@@ -521,7 +525,9 @@
 		"pushed": {
 			"one": "{count} Artikel zur Liste hinzugefügt",
 			"other": "{count} Artikel zur Liste hinzugefügt"
-		}
+		},
+		"indexTitle": "Unterhaltungen",
+		"indexEmpty": "Noch keine Listen – lege eine an, um ein Gespräch zu beginnen."
 	},
 	"household": {
 		"title": "Mein Haushalt",

@@ -12,7 +12,8 @@
 		"admin": "Comptes",
 		"household": "Foyer",
 		"magnifier": "Loupe",
-		"create": "Créer"
+		"create": "Créer",
+		"chat": "Discussions"
 	},
 	"create": {
 		"title": "Que voulez-vous créer ?",
@@ -82,7 +83,8 @@
 		"nameHint": "C'est ce nom que voit votre foyer.",
 		"nameSave": "Enregistrer",
 		"nameSaved": "Enregistré",
-		"nameFailed": "Le nom n’a pas pu être enregistré. Réessayez dans un instant."
+		"nameFailed": "Le nom n’a pas pu être enregistré. Réessayez dans un instant.",
+		"administration": "Administration"
 	},
 	"theme": {
 		"light": "Clair",
@@ -447,7 +449,9 @@
 		"magnifierFreezeTitle": "Figer l'image",
 		"magnifierFreezeBody": "Une image immobile se lit mieux qu'une main qui tremble. Touchez à nouveau pour repartir.",
 		"profileHouseholdTitle": "Votre foyer",
-		"profileHouseholdBody": "Invitez vos proches : vos listes et vos magasins deviennent les leurs."
+		"profileHouseholdBody": "Invitez vos proches : vos listes et vos magasins deviennent les leurs.",
+		"chatTitle": "Toutes vos discussions",
+		"chatBody": "Chaque liste a la sienne : on y propose une date, on se répartit quoi apporter."
 	},
 	"admin": {
 		"title": "Validation des comptes",
@@ -521,7 +525,9 @@
 		"pushed": {
 			"one": "{count} article ajouté à la liste",
 			"other": "{count} articles ajoutés à la liste"
-		}
+		},
+		"indexTitle": "Discussions",
+		"indexEmpty": "Aucune liste : créez-en une pour démarrer une discussion."
 	},
 	"household": {
 		"title": "Mon foyer",

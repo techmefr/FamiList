@@ -111,7 +111,15 @@
 			</Button>
 		</div>
 
-		{#if session.isAdmin}
+	</Card.Content>
+</Card.Root>
+
+{#if session.isAdmin}
+	<Card.Root class="mt-6">
+		<Card.Header>
+			<Card.Title class="text-h2">{t('profile.administration')}</Card.Title>
+		</Card.Header>
+		<Card.Content>
 			<div class="flex flex-wrap items-center justify-between gap-4">
 				<p class="text-muted-foreground text-label">{t('profile.adminHint')}</p>
 				<Button href="/admin" data-test-id="go-admin" class="fl-press">
@@ -119,9 +127,9 @@
 					{t('nav.admin')}
 				</Button>
 			</div>
-		{/if}
-	</Card.Content>
-</Card.Root>
+		</Card.Content>
+	</Card.Root>
+{/if}
 
 <Card.Root class="mt-6">
 	<Card.Header>

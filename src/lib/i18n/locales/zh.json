@@ -12,7 +12,8 @@
 		"admin": "账号",
 		"household": "家庭",
 		"magnifier": "放大镜",
-		"create": "新建"
+		"create": "新建",
+		"chat": "讨论"
 	},
 	"create": {
 		"title": "要新建什么？",
@@ -81,7 +82,8 @@
 		"nameHint": "这是家里其他人看到的名称。",
 		"nameSave": "保存",
 		"nameSaved": "已保存",
-		"nameFailed": "姓名保存失败，请稍后再试。"
+		"nameFailed": "姓名保存失败，请稍后再试。",
+		"administration": "管理"
 	},
 	"theme": {
 		"light": "浅色",
@@ -446,7 +448,9 @@
 		"magnifierFreezeTitle": "定格画面",
 		"magnifierFreezeBody": "静止的画面比抖动的手好读。再点一次继续。",
 		"profileHouseholdTitle": "你的家庭",
-		"profileHouseholdBody": "邀请家里人：你的清单和商店也会成为他们的。"
+		"profileHouseholdBody": "邀请家里人：你的清单和商店也会成为他们的。",
+		"chatTitle": "全部讨论",
+		"chatBody": "每个清单都有自己的讨论：约个时间，分好谁带什么。"
 	},
 	"admin": {
 		"title": "账号审核",
@@ -518,7 +522,9 @@
 		},
 		"pushed": {
 			"other": "已向清单添加 {count} 件物品"
-		}
+		},
+		"indexTitle": "讨论",
+		"indexEmpty": "还没有清单：新建一个清单即可开始讨论。"
 	},
 	"household": {
 		"title": "我的家庭",

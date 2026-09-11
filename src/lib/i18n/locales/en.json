@@ -12,7 +12,8 @@
 		"admin": "Accounts",
 		"household": "Household",
 		"magnifier": "Magnifier",
-		"create": "Create"
+		"create": "Create",
+		"chat": "Chats"
 	},
 	"create": {
 		"title": "What would you like to create?",
@@ -82,7 +83,8 @@
 		"nameHint": "This is the name your household sees.",
 		"nameSave": "Save",
 		"nameSaved": "Saved",
-		"nameFailed": "That name could not be saved. Try again in a moment."
+		"nameFailed": "That name could not be saved. Try again in a moment.",
+		"administration": "Administration"
 	},
 	"theme": {
 		"light": "Light",
@@ -447,7 +449,9 @@
 		"magnifierFreezeTitle": "Freeze the image",
 		"magnifierFreezeBody": "A still image reads better than a shaking hand. Tap again to resume.",
 		"profileHouseholdTitle": "Your household",
-		"profileHouseholdBody": "Invite the people you live with: your lists and shops become theirs too."
+		"profileHouseholdBody": "Invite the people you live with: your lists and shops become theirs too.",
+		"chatTitle": "All your chats",
+		"chatBody": "Every list has one: agree on a date, share out who brings what."
 	},
 	"admin": {
 		"title": "Account approval",
@@ -521,7 +525,9 @@
 		"pushed": {
 			"one": "{count} item added to the list",
 			"other": "{count} items added to the list"
-		}
+		},
+		"indexTitle": "Chats",
+		"indexEmpty": "No lists yet — create one to start a conversation."
 	},
 	"household": {
 		"title": "My household",

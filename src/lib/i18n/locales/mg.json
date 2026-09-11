@@ -12,7 +12,8 @@
 		"admin": "Kaonty",
 		"household": "Ankohonana",
 		"magnifier": "Fitarafana",
-		"create": "Hamorona"
+		"create": "Hamorona",
+		"chat": "Resaka"
 	},
 	"create": {
 		"title": "Inona no tianao hamboarina?",
@@ -82,7 +83,8 @@
 		"nameHint": "Io no anarana hitan'ny fianakavianao.",
 		"nameSave": "Tehirizo",
 		"nameSaved": "Voatahiry",
-		"nameFailed": "Tsy voatahiry ny anarana. Andramo indray afaka kelikely."
+		"nameFailed": "Tsy voatahiry ny anarana. Andramo indray afaka kelikely.",
+		"administration": "Fitantanana"
 	},
 	"theme": {
 		"light": "Mazava",
@@ -447,7 +449,9 @@
 		"magnifierFreezeTitle": "Ajanony ny sary",
 		"magnifierFreezeBody": "Mora vakiana kokoa ny sary tsy mihetsika noho ny tanana mangovitra. Tsindrio indray hanohizana.",
 		"profileHouseholdTitle": "Ny ankohonanao",
-		"profileHouseholdBody": "Asao ny havanao: ho azy ireo koa ny lisitrao sy ny fivarotanao."
+		"profileHouseholdBody": "Asao ny havanao: ho azy ireo koa ny lisitrao sy ny fivarotanao.",
+		"chatTitle": "Ny resaka rehetra",
+		"chatBody": "Manana ny azy ny lisitra tsirairay: manolotra daty, mizara iza mitondra inona."
 	},
 	"admin": {
 		"title": "Fankatoavana kaonty",
@@ -521,7 +525,9 @@
 		"pushed": {
 			"one": "Nampiana zavatra {count} ny lisitra",
 			"other": "Nampiana zavatra {count} ny lisitra"
-		}
+		},
+		"indexTitle": "Resaka",
+		"indexEmpty": "Mbola tsy misy lisitra: mamorona iray hanombohana resaka."
 	},
 	"household": {
 		"title": "Ny ankohonako",

@@ -10,7 +10,8 @@ import { test, expect } from './fixtures';
  */
 async function nouvelleListe(page: Page, nom: string) {
 	await page.goto('/');
-	await page.getByTestId('new-list').click();
+	await page.getByTestId('nav-create').click();
+	await page.getByTestId('create-list').click();
 	await page.getByTestId('list-name').fill(nom);
 	await page.getByTestId('list-create').click();
 

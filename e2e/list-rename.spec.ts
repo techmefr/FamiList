@@ -12,7 +12,8 @@ test('renommer une liste, au bouton comme à l appui long', async ({ signedInPag
 	const renomme = `${nom} corrigé`;
 
 	await page.goto('/');
-	await page.getByTestId('new-list').click();
+	await page.getByTestId('nav-create').click();
+	await page.getByTestId('create-list').click();
 	await page.getByTestId('list-name').fill(nom);
 	await page.getByTestId('list-create').click();
 
