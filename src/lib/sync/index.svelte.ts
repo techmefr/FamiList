@@ -157,7 +157,44 @@ class SyncStore {
 		return this.householdId ?? '';
 	}
 
+	/**
+	 * Le foyer affiché, choisi explicitement.
+	 *
+	 * Rejoindre une famille ne fait plus quitter la sienne : `ensure_household` rendrait le plus
+	 * ancien, donc celui de l'inscription, et l'invitation n'aurait l'air d'avoir rien fait.
+	 */
+	adopt(householdId: string) {
+		this.householdId = householdId;
+		localStorage.setItem(HOUSEHOLD_KEY, householdId);
+	}
+
+	/** Les foyers dont le compte est membre, du plus ancien au plus récent. */
+	async households(): Promise<string[]> {
+		const { data: session } = await supabase.auth.getUser();
+		const moi = session.user?.id;
+		if (!moi) return [];
+
+		const { data, error } = await supabase
+			.from('household_members')
+			.select('household_id, joined_at')
+			.eq('user_id', moi)
+			.order('joined_at');
+
+		if (error) return [];
+
+		return (data ?? []).map((row) => row.household_id as string);
+	}
+
 	private async provision() {
+		// Le foyer retenu la dernière fois passe avant : sans ça, un compte membre de plusieurs
+		// foyers reviendrait au plus ancien à chaque ouverture, quel que soit celui qu'il regardait.
+		// On vérifie quand même l'appartenance — on a pu en être sorti depuis un autre appareil.
+		const retenu = localStorage.getItem(HOUSEHOLD_KEY);
+		if (retenu && (await this.households()).includes(retenu)) {
+			this.householdId = retenu;
+			return true;
+		}
+
 		const { data, error } = await supabase.rpc('ensure_household');
 
 		if (error) {

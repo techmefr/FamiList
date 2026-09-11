@@ -67,7 +67,9 @@
 		busy = true;
 		error = null;
 
-		const { error: rpcError } = await supabase.rpc('redeem_invite', { invite_code: joinCode });
+		const { data: rejoint, error: rpcError } = await supabase.rpc('redeem_invite', {
+			invite_code: joinCode
+		});
 
 		if (rpcError) {
 			busy = false;
@@ -75,7 +77,11 @@
 			return;
 		}
 
-		// Le foyer a changé : tout le cache local appartient à l'ancien, il faut repartir du serveur.
+		// On reste membre du foyer précédent — rejoindre n'en fait plus quitter un. C'est donc ici
+		// qu'on dit lequel regarder, sinon la relecture reprendrait le plus ancien.
+		if (rejoint) sync.adopt(rejoint as unknown as string);
+
+		// Le foyer affiché a changé : tout le cache local appartient à l'autre, on repart du serveur.
 		await data.reload();
 		busy = false;
 		joinCode = '';
