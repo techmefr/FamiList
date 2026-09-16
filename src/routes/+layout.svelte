@@ -35,6 +35,7 @@
 	import HelpButton from '$components/app/HelpButton.svelte';
 	import ReportPanel from '$components/app/ReportPanel.svelte';
 	import SearchSheet from '$components/app/SearchSheet.svelte';
+	import ListPanel from '$components/app/ListPanel.svelte';
 
 	let { children } = $props();
 
@@ -42,12 +43,17 @@
 	let recherche = $state<SearchSheet | null>(null);
 
 	/**
-	 * La hauteur de la barre du bas, publiée en variable CSS.
+	 * La hauteur mesurée de l'élément de navigation, publiée en variable CSS.
 	 *
 	 * Les commandes flottantes d'une page — les filtres d'une liste — doivent se poser juste
-	 * au-dessus d'elle. Cette hauteur n'est pas une constante : la barre grandit avec la taille du
-	 * texte et avec l'encoche de l'appareil, et une valeur écrite en dur mettrait le bouton dessous
-	 * dès le premier cran d'agrandissement.
+	 * au-dessus de la barre du bas. Cette hauteur n'est pas une constante : la barre grandit avec la
+	 * taille du texte et avec l'encoche de l'appareil, et une valeur écrite en dur mettrait le
+	 * bouton dessous dès le premier cran d'agrandissement.
+	 *
+	 * C'est bien une mesure brute et non `--fl-navbar-h` : dans les deux autres régimes la
+	 * navigation est une colonne haute comme l'écran, et publier sa hauteur sous ce nom ferait
+	 * croire aux commandes flottantes qu'un plancher de 900 px leur barre le bas de la page. La
+	 * feuille de style décide où la mesure compte.
 	 */
 	let navbarH = $state(0);
 
@@ -240,18 +246,24 @@
 	});
 
 	/**
-	 * Une seule table pour les deux tailles d'écran, et un champ qui dit où l'entrée a sa place.
+	 * Une seule table pour les trois régimes, et un champ qui dit où l'entrée a sa place.
 	 *
-	 * `handheld` : le téléphone seulement. La loupe se sert de l'appareil photo arrière devant une
-	 * étiquette de produit — sur un écran d'ordinateur elle n'aurait rien à montrer.
+	 * Trois régimes, mais deux jeux d'entrées seulement : la tablette en portrait reprend celui du
+	 * téléphone. Ce n'est pas un raccourci, c'est la place disponible — le rail est une colonne
+	 * étroite, elle porte des icônes surmontées d'un mot court, pas neuf destinations.
 	 *
-	 * `desktop` : la colonne seulement. Sur téléphone, cinq onglets sont un maximum : au-delà, les
-	 * libellés se serrent et les cibles passent sous le seuil du doigt. Y tiennent donc les quatre
-	 * allers-retours du quotidien — les listes, la loupe, les discussions, les cartes. Les magasins
-	 * en sortent : le bouton de création pose déjà un rayon et un magasin, et on ne va sur cet
-	 * écran que pour ranger, pas en faisant ses courses. Le foyer, les comptes et le profil sont
-	 * des destinations qu'on visite rarement ; sur téléphone on y arrive par l'en-tête et par le
-	 * profil, dans la colonne ils ont leur onglet comme le reste.
+	 * `handheld` : téléphone et tablette en portrait, c'est-à-dire tout ce qui se tient à la main.
+	 * La loupe se sert de l'appareil photo arrière devant une étiquette de produit — une tablette en
+	 * a un, un écran d'ordinateur n'aurait rien à montrer.
+	 *
+	 * `desktop` : la colonne complète seulement. Dans une barre au pouce comme dans un rail, cinq
+	 * onglets sont un maximum : au-delà, les libellés se serrent et les cibles passent sous le seuil
+	 * du doigt. Y tiennent donc les quatre allers-retours du quotidien — les listes, la loupe, les
+	 * discussions, les cartes. Les magasins en sortent : le bouton de création pose déjà un rayon et
+	 * un magasin, et on ne va sur cet écran que pour ranger, pas en faisant ses courses. Le foyer,
+	 * les comptes et le profil sont des destinations qu'on visite rarement ; hors de la colonne
+	 * complète on y arrive par l'en-tête et par le profil, dans la colonne ils ont leur onglet comme
+	 * le reste.
 	 *
 	 * La loupe vient en deuxième, contre les listes : c'est l'outil qu'on ouvre en rayon, une main
 	 * sur le chariot, et le bord du pouce y arrive sans traverser la barre.
@@ -352,14 +364,15 @@
 		{@render children()}
 	</main>
 {:else}
-	<div class="min-h-dvh md:grid md:grid-cols-[16rem_1fr]" style="--fl-navbar-h: {navbarH}px">
+	<div class="fl-shell" style="--fl-navbar-measured: {navbarH}px">
 		<nav
 			bind:clientHeight={navbarH}
-			class="fl-navbar bg-card fixed inset-x-0 bottom-0 z-10 border-t md:sticky md:top-0 md:h-dvh md:border-t-0 md:border-e"
+			class="fl-navbar bg-card fixed inset-x-0 bottom-0 z-10 border-t"
 			style="view-transition-name: nav"
 			aria-label={t('nav.main')}
 		>
-			<p class="text-h2 hidden items-center gap-2.5 px-6 py-6 font-semibold md:flex">
+			<!-- Le nom du foyer n'entre pas dans un rail de 5,5rem : en portrait il reste dans l'en-tête. -->
+			<p class="text-h2 hidden items-center gap-2.5 px-6 py-6 font-semibold full:flex">
 				<Logo />
 				{t('app.name')}
 			</p>
@@ -375,8 +388,9 @@
 				disque du contenu qui défile derrière.
 
 				Il disparaît sur la loupe, et seulement sur téléphone : là-bas le disque flotte sur
-				l'étiquette qu'on essaie de lire. Sur grand écran il est dans la colonne, il ne
-				recouvre rien, il y reste.
+				l'étiquette qu'on essaie de lire. Dès que la navigation est une colonne — rail compris —
+				il y reprend sa place dans le flux, ne recouvre rien, et y reste. En rail il garde son
+				libellé caché : la colonne est trop étroite pour un mot à côté d'une icône.
 
 				Un seul élément pour les deux tailles d'écran, et non deux dont un masqué : deux boutons
 				porteraient le même repère de test, et la visite guidée finirait par en désigner un
@@ -391,26 +405,27 @@
 				data-test-id="nav-create"
 				aria-haspopup="dialog"
 				class="fl-press fl-thumb-side bg-primary text-primary-foreground shadow-fl-3 absolute bottom-full mb-4 flex size-[58px] items-center justify-center gap-0 rounded-full border-4 border-[var(--background)]
-					md:static md:mx-3 md:mb-3 md:h-[max(2.75rem,44px)] md:w-[calc(100%-1.5rem)] md:justify-start md:gap-3 md:rounded-lg md:border-0 md:px-3 md:shadow-none
-					{hidesCreate ? 'max-md:hidden' : ''}"
+					md:static md:mx-3 md:mb-3 md:h-[max(2.75rem,44px)] md:w-[calc(100%-1.5rem)] md:rounded-lg md:border-0 md:px-3 md:shadow-none
+					full:justify-start full:gap-3
+					{hidesCreate ? 'phone:hidden' : ''}"
 			>
 				<Plus size={26} aria-hidden="true" />
-				<span class="text-label sr-only font-medium md:not-sr-only">{t('nav.create')}</span>
+				<span class="text-label sr-only font-medium full:not-sr-only">{t('nav.create')}</span>
 			</button>
 
-			<ul class="flex overflow-x-auto md:flex-col md:gap-1 md:overflow-x-visible md:px-3">
+			<ul class="flex overflow-x-auto md:gap-1 md:px-3">
 				{#each entries as { href, key, icon: Icon, place } (href)}
 					{@const active = isActive(href)}
 					<li
-						class="min-w-fit flex-1"
-						class:md:hidden={place === 'handheld'}
-						class:max-md:hidden={place === 'desktop'}
+						class="min-w-fit flex-1 md:flex-none"
+						class:full:hidden={place === 'handheld'}
+						class:compact:hidden={place === 'desktop'}
 					>
 						<a
 							{href}
 							data-test-id="nav-{href}"
 							aria-current={active ? 'page' : undefined}
-							class="fl-press text-caption md:text-label relative flex flex-col items-center gap-1 px-2 py-2 md:flex-row md:gap-3 md:rounded-md md:px-3 md:py-3
+							class="fl-press text-caption full:text-label relative flex flex-col items-center gap-1 px-2 py-2 full:flex-row full:gap-3 full:rounded-md full:px-3 full:py-3
 								{active ? 'text-primary' : 'text-muted-foreground'}"
 						>
 							<!--
@@ -440,6 +455,8 @@
 			</ul>
 		</nav>
 
+		<ListPanel />
+
 		<div>
 			<SyncStatus />
 			<InstallBanner />
@@ -449,13 +466,13 @@
 				chercher le point d'interrogation ailleurs selon la page ferait perdre plus de temps
 				qu'il n'en fait gagner.
 
-				Sur téléphone, elle porte en plus ce que la colonne affiche déjà sur grand écran — le
-				logo et le nom, qui disent où l'on est — et le profil, qui a quitté la barre du bas
-				pour laisser la place aux quatre destinations du quotidien. Un réglage se cherche en
-				haut de l'écran ; un aller-retour se fait avec le pouce, en bas.
+				Partout où la navigation n'affiche que les destinations du quotidien — téléphone et
+				tablette en portrait — elle porte en plus ce que la colonne complète montre d'elle-même :
+				le logo et le nom, qui disent où l'on est, et le profil. Un réglage se cherche en haut
+				de l'écran ; un aller-retour se fait avec le pouce, sur le bord.
 			-->
 			<header class="mx-auto flex w-full max-w-3xl items-center justify-between gap-4 px-4 pt-3">
-				<p class="text-h2 flex items-center gap-2 font-semibold md:hidden">
+				<p class="text-h2 flex items-center gap-2 font-semibold full:hidden">
 					<Logo />
 					{t('app.name')}
 				</p>
@@ -487,7 +504,7 @@
 						data-test-id="header-profile"
 						aria-label={t('nav.profile')}
 						aria-current={isActive('/profile') ? 'page' : undefined}
-						class="fl-press text-muted-foreground flex size-[max(2.5rem,44px)] items-center justify-center rounded-full md:hidden"
+						class="fl-press text-muted-foreground flex size-[max(2.5rem,44px)] items-center justify-center rounded-full full:hidden"
 					>
 						<User size={22} aria-hidden="true" />
 					</a>
@@ -501,7 +518,7 @@
 
 		<!--
 			Le signalement est posé ici, dans la grille, et non à côté d'elle : c'est cet élément qui
-			publie `--fl-navbar-h`, dont le panneau a besoin pour ne pas passer sous les onglets.
+			publie `--fl-navbar-measured`, dont le panneau a besoin pour ne pas passer sous les onglets.
 			Il vit hors des pages pour survivre à une navigation — on peut aller reproduire le
 			problème ailleurs, le brouillon suit.
 		-->
