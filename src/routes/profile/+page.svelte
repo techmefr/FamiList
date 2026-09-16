@@ -13,6 +13,7 @@
 	import { goto } from '$app/navigation';
 	import { fade } from 'svelte/transition';
 	import { i18n, t, LOCALES, type Locale } from '$lib/i18n/index.svelte';
+	import { flagForLocale } from '$lib/i18n/flags';
 	import { session } from '$stores/session.svelte';
 	import { data } from '$stores/data.svelte';
 	import { tintForWhiteText } from '$domain/tint';
@@ -238,6 +239,7 @@
 			<legend class="text-label mb-2 font-medium">{t('profile.language')}</legend>
 			<div class="flex flex-wrap gap-2">
 				{#each LOCALES as locale (locale.code)}
+					{@const flag = flagForLocale(locale.code)}
 					<Label class="fl-choice">
 						<input
 							type="radio"
@@ -248,6 +250,9 @@
 							data-test-id="locale-{locale.code}"
 							class="sr-only"
 						/>
+						{#if flag}
+							<span aria-hidden="true">{flag}</span>
+						{/if}
 						<span lang={locale.code}>{locale.native}</span>
 					</Label>
 				{/each}
