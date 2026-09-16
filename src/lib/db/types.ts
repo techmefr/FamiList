@@ -828,7 +828,7 @@ export type Database = {
           screenshot: string
           user_agent: string
         }
-        Returns: string
+        Returns: Json
       }
     }
     Enums: {

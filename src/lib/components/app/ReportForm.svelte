@@ -4,6 +4,7 @@
 	import { feedback } from '$stores/feedback.svelte';
 	import { report } from '$stores/report.svelte';
 	import { SCREENSHOT_MAX_DIM, SCREENSHOT_MAX_BYTES, fitWithin } from '$domain/screenshot';
+	import { readReportOutcome } from '$domain/report-outcome';
 	import { Button } from '$lib/components/ui/button';
 	import { Label } from '$lib/components/ui/label';
 	import IconField from '$components/app/IconField.svelte';
@@ -62,7 +63,7 @@
 		erreur = '';
 		occupe = true;
 
-		const { error } = await supabase.rpc('submit_bug_report', {
+		const { data, error } = await supabase.rpc('submit_bug_report', {
 			description: report.description.trim(),
 			screenshot: report.screenshot ?? '',
 			path: report.path,
@@ -74,6 +75,16 @@
 
 		if (error) {
 			erreur = error.message;
+			feedback.play('error');
+			return;
+		}
+
+		// Un plafond atteint n'arrive pas par une exception : Postgres ne parlerait qu'anglais, et
+		// la personne a besoin de savoir si elle doit attendre ou retirer sa capture.
+		const issue = readReportOutcome(data);
+
+		if (issue.errorKey) {
+			erreur = t(issue.errorKey);
 			feedback.play('error');
 			return;
 		}
