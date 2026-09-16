@@ -554,6 +554,7 @@
 		"errorNotApproved": "A sua conta ainda não foi aprovada.",
 		"errorLeaveFirst": "A sua casa atual tem compras ou cartões. Esvazie-a ou peça o convite a partir de outra conta.",
 		"errorLastMember": "Está sozinho nesta casa: sair torná-la-ia inacessível.",
+		"errorTooManyAttempts": "Demasiados códigos tentados. Aguarde um quarto de hora antes de tentar de novo.",
 		"errorUnknown": "Não resultou. Tente novamente daqui a pouco.",
 		"goToSecondFactor": "Introduzir o meu código",
 		"role": {
