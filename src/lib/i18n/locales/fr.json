@@ -50,6 +50,8 @@
 		"fontNote": "« Système » reprend la police réglée sur votre appareil.",
 		"accent": "Couleur principale",
 		"language": "Langue",
+		"hand": "Main dominante",
+		"handHint": "Le bouton d’ajout se pose du côté de votre pouce. Indépendant du sens de lecture.",
 		"previewItem": "Tomates grappe — 500 g",
 		"previewNote": "Aperçu à la taille réelle d'un article dans une liste.",
 		"account": "Compte",
@@ -95,6 +97,10 @@
 		"system": "Système",
 		"full": "Complètes",
 		"none": "Aucune"
+	},
+	"hand": {
+		"right": "Droitier",
+		"left": "Gaucher"
 	},
 	"scale": {
 		"xs": "Très petit",

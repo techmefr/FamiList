@@ -49,6 +49,8 @@
 		"fontNote": "“系统”使用您设备上设置的字体。",
 		"accent": "主色",
 		"language": "语言",
+		"hand": "惯用手",
+		"handHint": "添加按钮会放在拇指一侧，与阅读方向无关。",
 		"previewItem": "串收番茄 — 500 克",
 		"previewNote": "按清单中商品的实际大小预览。",
 		"account": "账号",
@@ -94,6 +96,10 @@
 		"system": "跟随系统",
 		"full": "完整",
 		"none": "关闭"
+	},
+	"hand": {
+		"right": "惯用右手",
+		"left": "惯用左手"
 	},
 	"scale": {
 		"xs": "很小",

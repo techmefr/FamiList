@@ -710,9 +710,44 @@ textarea {
 	.fl-above-nav {
 		position: fixed;
 		inset-block-end: calc(var(--fl-navbar-h, 4rem) + 0.75rem);
-		/* Elle s'arrête avant le bouton de création, qui fait 58 px et garde son coin. */
-		inset-inline: 1rem calc(1rem + 58px + 0.75rem);
+		inset-inline: 1rem;
 		z-index: 10;
+		/* Elle s'arrête avant le bouton de création, qui fait 58 px et garde son coin. */
+		margin-right: calc(58px + 0.75rem);
+	}
+
+	[data-hand='left'] .fl-above-nav {
+		margin-right: 0;
+		margin-left: calc(58px + 0.75rem);
+	}
+}
+
+/*
+ * Le côté des commandes qu'on atteint au pouce : le bouton de création, et la réserve que les
+ * commandes flottantes lui laissent juste au-dessus.
+ *
+ * Ici, et ici seulement, on écrit `left` et `right` là où le reste de l'application parle en
+ * `start` et `end`. Les propriétés logiques servent à suivre le sens de lecture ; or une main
+ * gauche reste une main gauche en arabe. Accrocher ce bouton à `end` le ferait basculer avec la
+ * langue, et l'application le poserait du mauvais côté pour un droitier arabophone comme pour un
+ * gaucher francophone — deux fois faux, pour la même raison.
+ *
+ * Les deux réglages se composent donc au lieu de se disputer le même axe : le texte suit `dir`,
+ * le pouce suit `data-hand`. Un gaucher arabophone lit de droite à gauche et garde son bouton à
+ * gauche.
+ *
+ * Au-delà de 48rem la barre est une colonne et le bouton reprend sa place dans le flux : plus
+ * rien ne flotte, il n'y a plus de côté à choisir.
+ */
+@media (width < 48rem) {
+	.fl-thumb-side {
+		right: 1rem;
+		left: auto;
+	}
+
+	[data-hand='left'] .fl-thumb-side {
+		right: auto;
+		left: 1rem;
 	}
 }
 

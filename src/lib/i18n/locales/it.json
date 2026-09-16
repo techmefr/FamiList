@@ -50,6 +50,8 @@
 		"fontNote": "«Sistema» usa il carattere impostato sul dispositivo.",
 		"accent": "Colore principale",
 		"language": "Lingua",
+		"hand": "Mano dominante",
+		"handHint": "Il pulsante di aggiunta si posiziona dal lato del pollice. Indipendente dal senso di lettura.",
 		"previewItem": "Pomodori a grappolo — 500 g",
 		"previewNote": "Anteprima alla dimensione reale di un articolo in una lista.",
 		"account": "Account",
@@ -95,6 +97,10 @@
 		"system": "Sistema",
 		"full": "Complete",
 		"none": "Nessuna"
+	},
+	"hand": {
+		"right": "Destrorso",
+		"left": "Mancino"
 	},
 	"scale": {
 		"xs": "Molto piccolo",

@@ -1,3 +1,4 @@
+import type { Hand } from '$domain/hand';
 import type { MotionPreference } from '$domain/motion';
 
 export type Theme = 'light' | 'dark' | 'system';
@@ -68,6 +69,9 @@ export const DEFAULT_ACCENT = 'terracotta';
 export const DEFAULT_FONT_SCALE = 'sm';
 export const DEFAULT_FONT = 'system';
 export const DEFAULT_MOTION: MotionPreference = 'system';
+
+/** Droitier par défaut : c'est la place qu'occupe déjà le bouton de création. */
+export const DEFAULT_HAND: Hand = 'right';
 
 /**
  * Son et vibration partent allumés. Les deux ne se déclenchent que sur un geste, durent moins d'un

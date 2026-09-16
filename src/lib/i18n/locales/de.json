@@ -50,6 +50,8 @@
 		"fontNote": "„System“ übernimmt die auf Ihrem Gerät eingestellte Schrift.",
 		"accent": "Hauptfarbe",
 		"language": "Sprache",
+		"hand": "Dominante Hand",
+		"handHint": "Die Schaltfläche zum Hinzufügen liegt auf der Seite Ihres Daumens. Unabhängig von der Leserichtung.",
 		"previewItem": "Strauchtomaten — 500 g",
 		"previewNote": "Vorschau in der echten Größe eines Artikels in einer Liste.",
 		"account": "Konto",
@@ -95,6 +97,10 @@
 		"system": "System",
 		"full": "Vollständig",
 		"none": "Keine"
+	},
+	"hand": {
+		"right": "Rechtshändig",
+		"left": "Linkshändig"
 	},
 	"scale": {
 		"xs": "Sehr klein",

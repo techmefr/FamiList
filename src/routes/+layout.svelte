@@ -259,9 +259,10 @@
 			</p>
 
 			<!--
-				Le bouton de création : sur téléphone, un disque plein posé en bas à droite, au-dessus de
-				la barre, à la place que recommande Android. C'est là que le pouce arrive sans que la
-				main change de prise, et c'est la place que les gens cherchent d'eux-mêmes.
+				Le bouton de création : sur téléphone, un disque plein posé au-dessus de la barre, du côté
+				de la main qui tient l'appareil — à droite par défaut, la place que recommande Android.
+				C'est là que le pouce arrive sans que la main change de prise, et c'est la place que les
+				gens cherchent d'eux-mêmes ; `fl-thumb-side` la déplace pour un gaucher.
 
 				Au centre, il tombait au milieu de l'onglet Loupe : la cible principale masquait à demi
 				une destination. Le liseré à la couleur du fond reste utile — c'est lui qui détache le
@@ -283,7 +284,7 @@
 				}}
 				data-test-id="nav-create"
 				aria-haspopup="dialog"
-				class="fl-press bg-primary text-primary-foreground shadow-fl-3 absolute end-4 bottom-full mb-4 flex size-[58px] items-center justify-center gap-0 rounded-full border-4 border-[var(--background)]
+				class="fl-press fl-thumb-side bg-primary text-primary-foreground shadow-fl-3 absolute bottom-full mb-4 flex size-[58px] items-center justify-center gap-0 rounded-full border-4 border-[var(--background)]
 					md:static md:mx-3 md:mb-3 md:h-[max(2.75rem,44px)] md:w-[calc(100%-1.5rem)] md:justify-start md:gap-3 md:rounded-lg md:border-0 md:px-3 md:shadow-none
 					{hidesCreate ? 'max-md:hidden' : ''}"
 			>
