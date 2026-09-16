@@ -73,4 +73,13 @@ test('activer la 2FA, se reconnecter avec un code, puis la retirer', async ({
 	await expect(page.getByTestId('totp-switch')).toHaveAttribute('aria-checked', 'false', {
 		timeout: 15_000
 	});
+
+	// Puis on relit après rechargement. L'interrupteur prend l'avance du geste : il repasse à
+	// « éteint » dès le clic, avant même que le retrait soit parti. S'arrêter là ferait fermer le
+	// navigateur sur une requête en vol — sous charge elle n'arrivait jamais, le facteur restait en
+	// base, et tout ce qui se connectait ensuite butait sur une demande de code.
+	await page.reload();
+	await expect(page.getByTestId('totp-switch')).toHaveAttribute('aria-checked', 'false', {
+		timeout: 15_000
+	});
 });
