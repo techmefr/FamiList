@@ -860,5 +860,24 @@
 		"iosShare": "Tap the Share button, at the bottom of Safari",
 		"iosAdd": "Choose “Add to Home Screen”",
 		"note": "Nothing is downloaded from an app store, and you find your account and your lists exactly as they were."
+	},
+	"search": {
+		"title": "Search",
+		"label": "Search your household",
+		"placeholder": "milk, birthday, Tesco…",
+		"open": "Search",
+		"hint": "Type at least {count} letters.",
+		"empty": "Nothing matches your search.",
+		"checked": "Already ticked",
+		"count": {
+			"one": "{count} result",
+			"other": "{count} results"
+		},
+		"group": {
+			"list": "Lists",
+			"item": "Items",
+			"shop": "Shops",
+			"card": "Cards"
+		}
 	}
 }

@@ -13,7 +13,8 @@
 		Users,
 		ShieldCheck,
 		Tags,
-		CookingPot
+		CookingPot,
+		Search
 	} from '@lucide/svelte';
 	import { i18n, t } from '$lib/i18n/index.svelte';
 	import { data } from '$stores/data.svelte';
@@ -32,10 +33,12 @@
 	import Logo from '$components/app/Logo.svelte';
 	import HelpButton from '$components/app/HelpButton.svelte';
 	import ReportPanel from '$components/app/ReportPanel.svelte';
+	import SearchSheet from '$components/app/SearchSheet.svelte';
 
 	let { children } = $props();
 
 	let menu = $state<CreateMenu | null>(null);
+	let recherche = $state<SearchSheet | null>(null);
 
 	/**
 	 * La hauteur de la barre du bas, publiée en variable CSS.
@@ -240,6 +243,19 @@
 	const isActive = (href: string) =>
 		href === '/' ? page.url.pathname === '/' : page.url.pathname.startsWith(href);
 
+	/**
+	 * Ctrl+K, ⌘K sur Mac : le raccourci que tout le monde essaie déjà pour chercher. Il double le
+	 * bouton de l'en-tête, il ne le remplace pas — sur téléphone il n'y a pas de clavier pour le
+	 * taper, et c'est là que l'application sert le plus.
+	 */
+	function surRaccourci(event: KeyboardEvent) {
+		if (event.key !== 'k' || !(event.ctrlKey || event.metaKey) || event.altKey) return;
+		if (!session.isApproved) return;
+
+		event.preventDefault();
+		void recherche?.show();
+	}
+
 	/** La loupe occupe toute la surface pour agrandir une étiquette : rien ne flotte par-dessus. */
 	const hidesCreate = $derived(page.url.pathname.startsWith('/magnifier'));
 
@@ -286,6 +302,8 @@
 		});
 	});
 </script>
+
+<svelte:window onkeydown={surRaccourci} />
 
 {#if session.loading}
 	<main class="grid min-h-dvh place-items-center px-4">
@@ -411,6 +429,26 @@
 				</p>
 
 				<div class="ms-auto flex items-center gap-1">
+					<!--
+						La recherche est dans l'en-tête, à côté de l'aide, et à la même place sur les deux
+						tailles d'écran. Elle n'entre pas dans la barre du bas : celle-ci porte des
+						destinations, une par onglet, et la recherche n'en est pas une — elle ouvre une
+						feuille par-dessus la page et la rend ensuite. Ajouter un cinquième onglet sur
+						téléphone aurait en plus resserré les quatre autres sous le seuil du doigt.
+					-->
+					<button
+						type="button"
+						onclick={() => {
+							feedback.play('tap');
+							void recherche?.show();
+						}}
+						data-test-id="header-search"
+						aria-label={t('search.open')}
+						aria-haspopup="dialog"
+						class="fl-press text-muted-foreground hover:text-foreground flex size-[max(2.5rem,44px)] items-center justify-center rounded-full"
+					>
+						<Search size={22} aria-hidden="true" />
+					</button>
 					<HelpButton />
 					<a
 						href="/profile"
@@ -439,4 +477,5 @@
 	</div>
 
 	<CreateMenu bind:this={menu} />
+	<SearchSheet bind:this={recherche} />
 {/if}

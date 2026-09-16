@@ -860,5 +860,24 @@
 		"iosShare": "Tsindrio ny bokotra Zarao, eo ambanin'ny Safari",
 		"iosAdd": "Fidio ny «Eo amin'ny efijery fandraisana»",
 		"note": "Tsy misy zavatra alaina avy amin'ny fivarotana rindranasa, ary hitanao toy ny teo ihany ny kaontinao sy ny lisitrao."
+	},
+	"search": {
+		"title": "Hikaroka",
+		"label": "Karohy ao amin'ny tokantrano",
+		"placeholder": "ronono, tsingerintaona, Carrefour…",
+		"open": "Hikaroka",
+		"hint": "Soraty litera {count} farafahakeliny.",
+		"empty": "Tsy misy mifanaraka amin'ny fikarohana.",
+		"checked": "Efa voamarika",
+		"count": {
+			"one": "valiny {count}",
+			"other": "valiny {count}"
+		},
+		"group": {
+			"list": "Lisitra",
+			"item": "Entana",
+			"shop": "Fivarotana",
+			"card": "Karatra"
+		}
 	}
 }
