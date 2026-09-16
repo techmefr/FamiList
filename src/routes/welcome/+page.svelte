@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { i18n, t, LOCALES, type Locale } from '$lib/i18n/index.svelte';
+	import { flagForLocale } from '$lib/i18n/flags';
 	import {
 		settings,
 		ACCENT_PRESETS,
@@ -115,6 +116,7 @@
 		<legend class="sr-only">{t('profile.language')}</legend>
 		<div class="flex flex-wrap gap-2">
 			{#each LOCALES as locale (locale.code)}
+				{@const flag = flagForLocale(locale.code)}
 				<Label class={optionClass}>
 					<input
 						type="radio"
@@ -124,6 +126,9 @@
 						data-test-id="welcome-locale-{locale.code}"
 						class="sr-only"
 					/>
+					{#if flag}
+						<span aria-hidden="true">{flag}</span>
+					{/if}
 					<span lang={locale.code} dir={locale.dir}>{locale.native}</span>
 				</Label>
 			{/each}
