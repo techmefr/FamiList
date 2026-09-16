@@ -40,6 +40,19 @@ test.describe('accessibilite', () => {
 		});
 	}
 
+	/**
+	 * Le formulaire de suppression de compte n'existe qu'après un premier geste : l'écran replié ne
+	 * dirait rien du champ de confirmation ni de l'avertissement qui l'accompagne. On l'ouvre, et on
+	 * s'arrête là — le compte de fixture sert à tous les autres tests.
+	 */
+	test('suppression de compte', async ({ signedInPage: page }) => {
+		await page.goto('/profile/security');
+		await page.getByTestId('delete-start').click();
+		await expect(page.getByTestId('delete-confirm')).toBeVisible();
+
+		await expectNoNewViolations(page, 'suppression-de-compte');
+	});
+
 	test('detail de liste et palette d emojis', async ({ signedInPage: page }) => {
 		const nom = `A11y ${Date.now()}`;
 

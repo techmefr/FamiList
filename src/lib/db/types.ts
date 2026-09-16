@@ -981,8 +981,10 @@ export type Database = {
       consume_backup_code: { Args: { code: string }; Returns: boolean }
       create_backup_codes: { Args: never; Returns: string[] }
       create_invite: { Args: never; Returns: string }
+      delete_account: { Args: never; Returns: undefined }
       demote_admin: { Args: { target: string }; Returns: undefined }
       ensure_household: { Args: { household_name?: string }; Returns: string }
+      export_account: { Args: never; Returns: Json }
       flush_admin_notifications: { Args: never; Returns: undefined }
       flush_bug_report_issues: { Args: never; Returns: undefined }
       household_profiles: {

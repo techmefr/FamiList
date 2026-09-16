@@ -832,7 +832,22 @@
 		"sessionSeen": "{date} 见过",
 		"revoke": "关闭",
 		"on": "·",
-		"unknownDevice": "未知设备"
+		"unknownDevice": "未知设备",
+		"dataTitle": "我的数据",
+		"dataBody": "一个 JSON 文件，包含应用保存的关于您的一切：个人资料、您的家庭、您写下的内容。只有当您是某个家庭的唯一成员时，该家庭的内容才会完整导出；其他家庭里，别人的清单和消息仍属于他们。",
+		"dataExport": "下载我的数据",
+		"dataError": "文件准备失败。请稍后再试。",
+		"deleteTitle": "删除我的账户",
+		"deleteBody": "您的账户、个人资料和偏好设置都会被抹去。您是唯一成员的家庭会连同清单一起消失。在共享家庭中，家庭留给其他人：您的消息仍可阅读，但不再署您的名字，您的投票会被撤回。",
+		"deleteWarning": "此删除不可撤销，无法恢复。",
+		"deleteStart": "删除我的账户",
+		"deleteConfirmLabel": "请输入您的电子邮箱地址以确认",
+		"deleteConfirmHint": "我们再次询问，是为了确认这确实是您本人的操作。",
+		"deleteSubmit": "永久删除",
+		"deleteErrorLastAdmin": "您是唯一的管理员。离开前请先指定另一位，否则将无人能够审核新的注册。",
+		"deleteErrorDemo": "演示账户无法删除。",
+		"deleteErrorSecondFactor": "请先确认第二重验证，再删除账户。",
+		"deleteErrorUnknown": "删除未能完成。没有任何内容被抹去。"
 	},
 	"bugReport": {
 		"button": "报告问题",

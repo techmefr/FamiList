@@ -838,7 +838,22 @@
 		"sessionSeen": "Vue le {date}",
 		"revoke": "Fermer",
 		"on": "sur",
-		"unknownDevice": "Appareil inconnu"
+		"unknownDevice": "Appareil inconnu",
+		"dataTitle": "Mes données",
+		"dataBody": "Un fichier JSON avec tout ce que l'application retient de vous : votre profil, vos foyers, ce que vous avez écrit. Le contenu d'un foyer n'y est entier que si vous en êtes le seul membre — ailleurs, les listes et les messages des autres restent les leurs.",
+		"dataExport": "Télécharger mes données",
+		"dataError": "Le fichier n'a pas pu être préparé. Réessayez dans un instant.",
+		"deleteTitle": "Supprimer mon compte",
+		"deleteBody": "Votre compte, votre profil et vos préférences sont effacés. Un foyer dont vous êtes le seul membre disparaît avec ses listes. Dans un foyer partagé, le foyer reste aux autres : vos messages y restent lisibles mais cessent de porter votre nom, et vos votes sont retirés.",
+		"deleteWarning": "Cette suppression est définitive. Rien ne permet de revenir en arrière.",
+		"deleteStart": "Supprimer mon compte",
+		"deleteConfirmLabel": "Pour confirmer, écrivez votre adresse de courriel",
+		"deleteConfirmHint": "Nous la redemandons pour être sûrs que ce geste est bien le vôtre.",
+		"deleteSubmit": "Supprimer définitivement",
+		"deleteErrorLastAdmin": "Vous êtes le seul administrateur. Nommez quelqu'un d'autre avant de partir, sinon plus personne ne pourra valider les inscriptions.",
+		"deleteErrorDemo": "Le compte de démonstration ne se supprime pas.",
+		"deleteErrorSecondFactor": "Confirmez votre deuxième facteur avant de supprimer votre compte.",
+		"deleteErrorUnknown": "La suppression n'a pas abouti. Rien n'a été effacé."
 	},
 	"bugReport": {
 		"title": {

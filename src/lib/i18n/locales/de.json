@@ -838,7 +838,22 @@
 		"sessionSeen": "Gesehen am {date}",
 		"revoke": "Schließen",
 		"on": "auf",
-		"unknownDevice": "Unbekanntes Gerät"
+		"unknownDevice": "Unbekanntes Gerät",
+		"dataTitle": "Meine Daten",
+		"dataBody": "Eine JSON-Datei mit allem, was die App über Sie speichert: Ihr Profil, Ihre Haushalte, was Sie geschrieben haben. Der Inhalt eines Haushalts ist nur dann vollständig enthalten, wenn Sie dessen einziges Mitglied sind — sonst bleiben die Listen und Nachrichten der anderen bei ihnen.",
+		"dataExport": "Meine Daten herunterladen",
+		"dataError": "Die Datei konnte nicht erstellt werden. Versuchen Sie es gleich noch einmal.",
+		"deleteTitle": "Mein Konto löschen",
+		"deleteBody": "Ihr Konto, Ihr Profil und Ihre Einstellungen werden gelöscht. Ein Haushalt, dessen einziges Mitglied Sie sind, verschwindet mitsamt seinen Listen. In einem geteilten Haushalt bleibt der Haushalt den anderen: Ihre Nachrichten bleiben lesbar, tragen aber nicht mehr Ihren Namen, und Ihre Stimmen werden entfernt.",
+		"deleteWarning": "Diese Löschung ist endgültig. Es gibt keinen Weg zurück.",
+		"deleteStart": "Mein Konto löschen",
+		"deleteConfirmLabel": "Geben Sie zur Bestätigung Ihre E-Mail-Adresse ein",
+		"deleteConfirmHint": "Wir fragen sie erneut, um sicher zu sein, dass Sie es sind.",
+		"deleteSubmit": "Endgültig löschen",
+		"deleteErrorLastAdmin": "Sie sind die einzige Administratorin oder der einzige Administrator. Ernennen Sie jemand anderen, bevor Sie gehen, sonst kann niemand mehr Anmeldungen bestätigen.",
+		"deleteErrorDemo": "Das Demokonto lässt sich nicht löschen.",
+		"deleteErrorSecondFactor": "Bestätigen Sie Ihren zweiten Faktor, bevor Sie Ihr Konto löschen.",
+		"deleteErrorUnknown": "Die Löschung ist nicht erfolgt. Es wurde nichts gelöscht."
 	},
 	"bugReport": {
 		"button": "Fehler melden",
