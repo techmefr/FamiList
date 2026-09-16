@@ -15,7 +15,11 @@ export default defineConfig({
 	},
 	test: {
 		// Tout src/lib : un test rangé ailleurs que dans domain/ ne doit pas être ignoré en silence.
-		include: ["src/lib/**/*.test.ts"],
+		// Et les Edge Functions, dont la logique pure — la rédaction d'un courriel, par exemple — se
+		// teste exactement comme celle de domain/. Leur code ne peut pas vivre dans src/lib : la CLI
+		// ne copie que `supabase/functions` dans le conteneur Deno, un import hors de ce dossier ne
+		// se résoudrait pas au déploiement.
+		include: ["src/lib/**/*.test.ts", "supabase/functions/**/*.test.ts"],
 		environment: "node",
 		coverage: {
 			provider: "v8",

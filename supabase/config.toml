@@ -106,8 +106,10 @@ openai_api_key = "env(OPENAI_API_KEY)"
 enabled = true
 # Port to use for the email testing server web interface.
 port = 54324
-# Uncomment to expose additional ports for testing user applications that send emails.
-# smtp_port = 54325
+# Exposé parce que l'application envoie désormais du courriel elle-même, hors de Supabase Auth :
+# la fonction `notify-admins` a besoin d'un vrai relais SMTP pour être vérifiée en local, et c'est
+# celui-ci. Les courriels restent capturés par Mailpit, rien ne sort de la machine.
+smtp_port = 54325
 # pop3_port = 54326
 # admin_email = "admin@email.com"
 # sender_name = "Admin"
