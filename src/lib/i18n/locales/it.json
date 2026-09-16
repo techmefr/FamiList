@@ -121,6 +121,10 @@
 	"scan": {
 		"start": "Scansiona il codice",
 		"stop": "Ferma",
+		"torch": "Torcia",
+		"takePhoto": "Scatta una foto",
+		"stillSearching": "Non succede nulla? Scatta una foto della tessera, l'immagine verrà analizzata.",
+		"givenUp": "Nessun codice rilevato. Scatta una foto della tessera oppure digita il codice a mano.",
 		"failed": "Scansione impossibile: consenti la fotocamera o digita il codice a mano.",
 		"fromImage": "Da un'immagine",
 		"noCodeInImage": "Nessun codice trovato in questa immagine.",

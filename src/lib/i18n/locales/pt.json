@@ -121,6 +121,10 @@
 	"scan": {
 		"start": "Ler o código",
 		"stop": "Parar",
+		"torch": "Luz",
+		"takePhoto": "Tirar uma foto",
+		"stillSearching": "Não acontece nada? Tire uma foto do cartão e a imagem será analisada.",
+		"givenUp": "Nenhum código detetado. Tire uma foto do cartão ou escreva o código à mão.",
 		"failed": "Leitura impossível: permita a câmara ou escreva o código à mão.",
 		"fromImage": "A partir de uma imagem",
 		"noCodeInImage": "Não foi encontrado nenhum código nesta imagem.",

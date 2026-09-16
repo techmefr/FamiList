@@ -1,10 +1,21 @@
 import { Capacitor } from '@capacitor/core';
 import { SCAN_FORMATS, normalizeFormat, normalizeValue, scanScale } from '$domain/scan-image';
+import { SCAN_TIMEOUT_MS } from '$domain/scan-timing';
 import type { CodeType } from '$domain/code-format';
 
 export interface ScanResult {
 	value: string;
 	codeType: CodeType | null;
+}
+
+/**
+ * `onTrack` remonte la piste vidéo tant qu'elle vit, et `null` dès qu'elle est rendue. C'est le
+ * seul moyen pour l'écran d'allumer la lampe : les capacités de torche appartiennent à la piste,
+ * que le lecteur ouvre et ferme lui-même.
+ */
+export interface ScanOptions {
+	timeoutMs?: number;
+	onTrack?: (track: MediaStreamTrack | null) => void;
 }
 
 /**
@@ -108,8 +119,16 @@ async function scanNative(): Promise<ScanResult | null> {
  * Lecture par le navigateur : on ouvre le flux vidéo, on regarde chaque image jusqu'à trouver un
  * code, et on rend la caméra dans tous les cas — y compris en cas d'erreur, sinon le voyant reste
  * allumé et l'appareil photo reste pris.
+ *
+ * La recherche a une fin. Devant une carte que le décodeur ne saura jamais lire — écran trop
+ * brillant, code effacé — la boucle sans fin ne laissait que « Arrêter » : aucun message, aucune
+ * autre voie proposée, et la caméra allumée aussi longtemps qu'on voulait bien y croire.
  */
-async function scanBrowser(video: HTMLVideoElement, signal: AbortSignal): Promise<ScanResult | null> {
+async function scanBrowser(
+	video: HTMLVideoElement,
+	signal: AbortSignal,
+	{ timeoutMs = SCAN_TIMEOUT_MS, onTrack }: ScanOptions = {}
+): Promise<ScanResult | null> {
 	const detector = aBarcodeDetector() ? await nouveauDetecteur() : null;
 	const lecteur = detector ? null : await lecteurDeSecours();
 
@@ -119,9 +138,12 @@ async function scanBrowser(video: HTMLVideoElement, signal: AbortSignal): Promis
 
 	video.srcObject = stream;
 	await video.play();
+	onTrack?.(stream.getVideoTracks()[0] ?? null);
+
+	const fin = Date.now() + timeoutMs;
 
 	try {
-		while (!signal.aborted) {
+		while (!signal.aborted && Date.now() < fin) {
 			if (detector) {
 				const [found] = await detector.detect(video);
 				if (found) return resultatDe(found.rawValue, found.format);
@@ -137,6 +159,7 @@ async function scanBrowser(video: HTMLVideoElement, signal: AbortSignal): Promis
 
 		return null;
 	} finally {
+		onTrack?.(null);
 		stream.getTracks().forEach((track) => track.stop());
 		video.srcObject = null;
 	}
@@ -218,12 +241,13 @@ export async function scanImage(file: File): Promise<ScanResult | null> {
 
 export async function scan(
 	video: HTMLVideoElement | null,
-	signal: AbortSignal
+	signal: AbortSignal,
+	options?: ScanOptions
 ): Promise<ScanResult | null> {
 	const support = scanSupport();
 
 	if (support === 'native') return scanNative();
-	if (support === 'browser' && video) return scanBrowser(video, signal);
+	if (support === 'browser' && video) return scanBrowser(video, signal, options);
 
 	return null;
 }
