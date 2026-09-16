@@ -14,6 +14,11 @@ export default defineConfig({
 
 			adapter: adapter({ fallback: 'index.html' }),
 
+			// Enregistrement à la main dans $native/pwa : le même build est empaqueté par Capacitor,
+			// où un service worker ne servirait à rien et risquerait de resservir la version d'avant
+			// après une mise à jour de l'application.
+			serviceWorker: { register: false },
+
 			alias: {
 				$components: 'src/lib/components',
 				$domain: 'src/lib/domain',
