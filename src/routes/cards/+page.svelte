@@ -37,6 +37,7 @@
 	let code = $state('');
 	let codeType = $state<CodeType | ''>('');
 	let points = $state('0');
+	let notes = $state('');
 
 	/**
 	 * À quoi la carte est rattachée : `shop:<id>`, `brand:<enseigne>`, ou rien.
@@ -122,6 +123,7 @@
 		code = '';
 		codeType = '';
 		points = '0';
+		notes = '';
 		attach = '';
 	}
 
@@ -138,6 +140,7 @@
 			code: code.trim(),
 			codeType: effectiveType,
 			points: Number(points) || 0,
+			notes: notes.trim(),
 			tint,
 			grad: `linear-gradient(135deg, ${tint} 0%, ${CARD_GRADIENT_END} 100%)`
 		});
@@ -331,6 +334,23 @@
 						placeholder={t('cards.pointsPlaceholder')}
 					/>
 				</IconField>
+			</div>
+
+			<!--
+				La note se saisit dès la création : ce qu'on a à écrire — le code secret de la carte, le
+				palier où les points se dépensent — on l'a sous les yeux au moment où on enregistre la
+				carte, pas plus tard. L'obliger à passer par le plein écran revenait à ne jamais l'écrire.
+			-->
+			<div>
+				<Label for="card-notes">{t('cards.notes')}</Label>
+				<textarea
+					id="card-notes"
+					bind:value={notes}
+					rows="3"
+					data-test-id="card-notes-input"
+					placeholder={t('cards.notesPlaceholder')}
+					class="border-input bg-background w-full rounded-md border p-3"
+				></textarea>
 			</div>
 
 			<div class="flex flex-wrap gap-2">
