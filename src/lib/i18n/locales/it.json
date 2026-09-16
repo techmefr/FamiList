@@ -337,6 +337,27 @@
 		"goneShop": "Negozio eliminato"
 	},
 	"recipes": {
+		"import": {
+			"title": "Importa da un link",
+			"privacy": "L’indirizzo viene inviato al server di questa istanza, che recupera la pagina al posto tuo e si presenta al sito visitato. Non viene conservato nulla e nessun’altra pagina viene aperta.",
+			"url": "Indirizzo della ricetta",
+			"urlPlaceholder": "https://esempio.it/la-mia-ricetta",
+			"submit": "Importa la ricetta",
+			"loading": "Lettura della pagina…",
+			"review": "Ricetta recuperata. Rileggi tutto prima di salvare: le righe che non si sono potute suddividere sono tornate così come erano.",
+			"social": "Instagram e TikTok non pubblicano alcuna ricetta leggibile: i loro link non si possono importare.",
+			"error": {
+				"invalid": "Questo indirizzo non è leggibile.",
+				"scheme": "Sono accettati solo indirizzi https.",
+				"credentials": "Questo indirizzo contiene credenziali: viene rifiutato.",
+				"port": "Questo indirizzo punta a una porta specifica: viene rifiutato.",
+				"private_host": "Questo indirizzo punta a una rete privata: viene rifiutato.",
+				"unreachable": "Non è stato possibile recuperare la pagina. Riprova più tardi.",
+				"not_html": "Questo link non porta a una pagina web.",
+				"too_large": "Questa pagina è troppo pesante da leggere.",
+				"no_recipe": "Nessuna ricetta leggibile in questa pagina. Il sito deve pubblicare la ricetta come dati strutturati."
+			}
+		},
 		"title": "Ricette",
 		"intro": "Le ricette della famiglia, e la lista della spesa che ne deriva.",
 		"empty": "Nessuna ricetta. Scrivine una: i suoi ingredienti diventeranno una lista.",
