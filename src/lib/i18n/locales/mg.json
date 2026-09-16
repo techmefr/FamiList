@@ -459,6 +459,7 @@
 		"empty": "Tsy misy fangatahana.",
 		"approve": "Ekena",
 		"reject": "Lavina",
+		"selfAccount": "Ny kaontinao",
 		"requestedAt": "Fangatahana tamin'ny {date}",
 		"status": {
 			"pending": "Miandry",
@@ -466,8 +467,7 @@
 			"rejected": "Nolavina"
 		},
 		"demo": "Fanandramana",
-		"setDemo": "Mariho ho fanandramana",
-		"unsetDemo": "Esory ny fanandramana",
+		"demoToggle": "Kaonty fanandramana",
 		"resetDemo": "Averina ny fanandramana",
 		"demoReset": "Niverina tamin’ny toetrany voalohany ny ankohonana fanandramana.",
 		"demoHint": "Misokatra ho an’ny rehetra ny kaonty fanandramana. Avereno rehefa be ny nampiasa azy.",

@@ -458,6 +458,7 @@
 		"empty": "暂无申请。",
 		"approve": "通过",
 		"reject": "拒绝",
+		"selfAccount": "您的账号",
 		"requestedAt": "申请于 {date}",
 		"status": {
 			"pending": "待审核",
@@ -465,8 +466,7 @@
 			"rejected": "已拒绝"
 		},
 		"demo": "演示",
-		"setDemo": "标记为演示账号",
-		"unsetDemo": "取消演示标记",
+		"demoToggle": "演示账号",
 		"resetDemo": "重置演示",
 		"demoReset": "演示家庭已恢复到初始状态。",
 		"demoHint": "演示账号对所有人开放。使用较多后请重置。",

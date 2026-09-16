@@ -459,6 +459,7 @@
 		"empty": "Aucune demande.",
 		"approve": "Valider",
 		"reject": "Refuser",
+		"selfAccount": "Votre compte",
 		"requestedAt": "Demande du {date}",
 		"status": {
 			"pending": "En attente",
@@ -466,8 +467,7 @@
 			"rejected": "Refusé"
 		},
 		"demo": "Démo",
-		"setDemo": "Marquer comme démo",
-		"unsetDemo": "Retirer la démo",
+		"demoToggle": "Compte de démo",
 		"resetDemo": "Réinitialiser la démo",
 		"demoReset": "Le foyer de démonstration est revenu à son état de départ.",
 		"demoHint": "Le compte de démonstration est ouvert à tous. Remettez-le à zéro quand il a trop servi.",

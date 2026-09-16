@@ -459,6 +459,7 @@
 		"empty": "Nessuna richiesta.",
 		"approve": "Approva",
 		"reject": "Rifiuta",
+		"selfAccount": "Il tuo account",
 		"requestedAt": "Richiesta del {date}",
 		"status": {
 			"pending": "In attesa",
@@ -466,8 +467,7 @@
 			"rejected": "Rifiutato"
 		},
 		"demo": "Demo",
-		"setDemo": "Segna come demo",
-		"unsetDemo": "Togli la demo",
+		"demoToggle": "Account demo",
 		"resetDemo": "Reimposta la demo",
 		"demoReset": "La casa dimostrativa è tornata allo stato iniziale.",
 		"demoHint": "L’account dimostrativo è aperto a tutti. Reimpostalo quando è stato usato molto.",

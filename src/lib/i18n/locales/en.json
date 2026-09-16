@@ -459,6 +459,7 @@
 		"empty": "No requests.",
 		"approve": "Approve",
 		"reject": "Refuse",
+		"selfAccount": "Your account",
 		"requestedAt": "Requested on {date}",
 		"status": {
 			"pending": "Pending",
@@ -466,8 +467,7 @@
 			"rejected": "Refused"
 		},
 		"demo": "Demo",
-		"setDemo": "Mark as demo",
-		"unsetDemo": "Remove demo flag",
+		"demoToggle": "Demo account",
 		"resetDemo": "Reset the demo",
 		"demoReset": "The demo household is back to its starting state.",
 		"demoHint": "The demo account is open to everyone. Reset it once it has been used a lot.",
