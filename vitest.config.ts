@@ -32,7 +32,12 @@ export default defineConfig({
 			// vérifient les mocks, pas le code. Cette couche-là est couverte par les E2E Playwright
 			// (voir e2e/), qui exercent les stores et le moteur de synchronisation à travers de
 			// vrais écrans et une vraie pile Supabase locale.
-			include: ["src/lib/domain/**/*.ts", "src/lib/sync/mapping.ts", "src/lib/sync/errors.ts"],
+			include: [
+				"src/lib/domain/**/*.ts",
+				"src/lib/sync/mapping.ts",
+				"src/lib/sync/errors.ts",
+				"src/lib/sync/realtime.ts"
+			],
 			exclude: ["**/*.test.ts", "**/*.d.ts"],
 			thresholds: {
 				statements: 80,
