@@ -569,7 +569,8 @@
 		"light": "Jiro",
 		"freeze": "Hamatotra ny sary",
 		"resume": "Hanohy",
-		"hint": "Ataovy akaiky ny marika, avy eo vonoy ny sary mba hamakiana amim-pilaminana."
+		"hint": "Ataovy akaiky ny marika, avy eo vonoy ny sary mba hamakiana amim-pilaminana.",
+		"gestures": "Tsindrio amin’ny rantsan-tanana roa hanalehibe, ary sinto amin’ny rantsan-tanana iray hifindra ao anatin’ny sary."
 	},
 	"mfa": {
 		"title": "Fanamarinana roa dingana",

@@ -569,7 +569,8 @@
 		"light": "Iluminar",
 		"freeze": "Fixar a imagem",
 		"resume": "Retomar",
-		"hint": "Aproxime o rótulo e congele a imagem para ler com calma."
+		"hint": "Aproxime o rótulo e congele a imagem para ler com calma.",
+		"gestures": "Faça pinça com dois dedos para ampliar e arraste um dedo para se deslocar na imagem."
 	},
 	"mfa": {
 		"title": "Verificação em duas etapas",

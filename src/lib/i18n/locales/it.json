@@ -569,7 +569,8 @@
 		"light": "Illumina",
 		"freeze": "Fissa l’immagine",
 		"resume": "Riprendi",
-		"hint": "Avvicina l’etichetta, poi blocca l’immagine per leggerla con calma."
+		"hint": "Avvicina l’etichetta, poi blocca l’immagine per leggerla con calma.",
+		"gestures": "Pizzica con due dita per ingrandire, trascina un dito per spostarti nell’immagine."
 	},
 	"mfa": {
 		"title": "Verifica in due passaggi",

@@ -569,7 +569,8 @@
 		"light": "Éclairer",
 		"freeze": "Figer l’image",
 		"resume": "Reprendre",
-		"hint": "Approchez l’étiquette, puis figez l’image pour la lire tranquillement."
+		"hint": "Approchez l’étiquette, puis figez l’image pour la lire tranquillement.",
+		"gestures": "Pincez avec deux doigts pour agrandir, glissez un doigt pour vous déplacer dans l’image."
 	},
 	"mfa": {
 		"title": "Vérification en deux étapes",
