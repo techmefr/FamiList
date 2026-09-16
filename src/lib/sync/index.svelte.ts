@@ -20,6 +20,7 @@ import {
 	toRecipeStep,
 	toShop
 } from './mapping';
+import { planRealtime, rowKey, type RealtimeEvent } from './realtime';
 
 const HOUSEHOLD_KEY = 'familist:household';
 
@@ -63,6 +64,15 @@ class SyncStore {
 	private onPulled: (() => void) | null = null;
 	private pullTimer: ReturnType<typeof setTimeout> | null = null;
 	private watchingNetwork = false;
+
+	/**
+	 * Horodatage du dernier évènement temps réel posé, par ligne. C'est la seule mémoire d'ordre
+	 * dont on dispose : le canal ne numérote pas ses messages.
+	 */
+	private appliedAt = new Map<string, string>();
+
+	/** Vrai après le premier abonnement : les suivants sont des reprises après coupure. */
+	private subscribed = false;
 
 	/**
 	 * Lance un travail qu'on ne peut pas attendre — la file poussée en arrière-plan, le réveil du
@@ -142,6 +152,12 @@ class SyncStore {
 		// du nouveau foyer.
 		if (this.pullTimer) clearTimeout(this.pullTimer);
 		this.pullTimer = null;
+
+		// Les horodatages appliqués décrivent les lignes du foyer qu'on quitte. Gardés, ils feraient
+		// écarter comme « retardataire » le premier évènement d'une ligne du nouveau foyer portant
+		// le même identifiant.
+		this.appliedAt.clear();
+		this.subscribed = false;
 	}
 
 	private async resume() {
@@ -441,6 +457,10 @@ class SyncStore {
 			}
 		);
 
+		// La relecture vient de poser l'état du serveur : tout évènement antérieur est absorbé, et
+		// les horodatages retenus ne servent plus qu'à faire grossir la carte.
+		this.appliedAt.clear();
+
 		this.state = 'idle';
 		this.lastError = null;
 		this.onPulled?.();
@@ -529,17 +549,86 @@ class SyncStore {
 	}
 
 	/**
-	 * Un changement venu d'un autre appareil déclenche une relecture complète. Nos propres
-	 * écritures reviennent aussi par ce canal : sans le délai, cocher un article relirait tout le
-	 * foyer à chaque case cochée.
+	 * Un changement venu d'un autre appareil se pose directement dans le cache quand il vient d'une
+	 * table qu'on sait reconstruire depuis son seul payload — voir `realtime.ts`. Tout le reste
+	 * déclenche encore la relecture complète, différée : nos propres écritures reviennent aussi par
+	 * ce canal, et sans le délai cocher un article relirait tout le foyer à chaque case cochée.
 	 */
 	private listen() {
 		if (this.channel || !this.householdId) return;
 
 		this.channel = supabase
 			.channel(`household:${this.householdId}`)
-			.on('postgres_changes', { event: '*', schema: 'public' }, () => this.schedulePull())
-			.subscribe();
+			.on('postgres_changes', { event: '*', schema: 'public' }, (payload) =>
+				this.detach(this.receive(payload))
+			)
+			.subscribe((status) => {
+				if (status !== 'SUBSCRIBED') return;
+
+				// Une reprise après coupure laisse un trou : les changements survenus pendant
+				// l'absence ne sont jamais rejoués, et aucun payload ne viendra les décrire. Seule
+				// une relecture complète les rattrape. Le tout premier abonnement, lui, suit déjà
+				// une relecture.
+				if (this.subscribed) this.schedulePull();
+				this.subscribed = true;
+			});
+	}
+
+	/**
+	 * Applique un payload, ou renvoie à la relecture complète.
+	 *
+	 * La décision est prise par une fonction pure, testée à part. Ne reste ici que ce qu'elle ne
+	 * peut pas savoir : l'état de la file d'attente, celui du cache, et le foyer affiché.
+	 */
+	private async receive(payload: Record<string, unknown>) {
+		const household = this.householdId;
+		if (!household) return;
+
+		const event: RealtimeEvent = {
+			table: String(payload.table ?? ''),
+			eventType: String(payload.eventType ?? ''),
+			commitTimestamp: String(payload.commit_timestamp ?? ''),
+			new: payload.new as Record<string, unknown> | undefined,
+			old: payload.old as Record<string, unknown> | undefined
+		};
+
+		// Une écriture locale encore en file, ou une relecture en vol, font autorité sur le payload :
+		// poser celui-ci effacerait un travail que le serveur ne connaît pas encore, ou courrait
+		// contre une lecture dont on ignore l'âge. Dans les deux cas la relecture tranche.
+		const busy = this.pulling !== null || (await db.outbox.count()) > 0;
+
+		const plan = planRealtime(event, {
+			knownListIds: new Set((await db.lists.toCollection().primaryKeys()) as string[]),
+			applied: this.appliedAt,
+			busy
+		});
+
+		if (plan.kind === 'skip') return;
+
+		if (plan.kind === 'pull') {
+			this.schedulePull();
+			return;
+		}
+
+		// Le foyer a pu changer pendant ces lectures, comme dans la relecture : écrire maintenant
+		// poserait une ligne de l'ancien foyer dans le cache du nouveau.
+		if (this.householdId !== household) return;
+
+		if (plan.kind === 'delete') {
+			// Supprimer un identifiant absent du cache ne fait rien : c'est exactement ce qu'on veut
+			// d'un DELETE portant sur une ligne qu'on n'a jamais eue.
+			if (plan.table === 'items') await db.items.delete(plan.id);
+			else await db.messages.delete(plan.id);
+		} else if (plan.table === 'items') {
+			await db.items.put(plan.row);
+		} else {
+			await db.messages.put(plan.row);
+		}
+
+		const id = plan.kind === 'delete' ? plan.id : plan.row.id;
+		this.appliedAt.set(rowKey(event.table, id), event.commitTimestamp);
+
+		this.onPulled?.();
 	}
 
 	private schedulePull() {
