@@ -28,7 +28,28 @@ export default defineConfig({
 		// Convention du dépôt : `data-test-id`, pas le `data-testid` par défaut de Playwright.
 		testIdAttribute: 'data-test-id'
 	},
-	projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
+	/**
+	 * Deux projets qui ne jouent pas les mêmes fichiers, plutôt que la même suite deux fois.
+	 *
+	 * L'application change vraiment de forme sous 48rem — barre du bas au lieu de la colonne,
+	 * onglets différents, bouton de création flottant du côté du pouce, glissement au doigt — et
+	 * rien de tout cela n'était exercé. Mais rejouer aussi les listes, les magasins ou la 2FA en
+	 * gabarit téléphone doublerait la durée du travail d'intégration pour revérifier des parcours
+	 * qui ne dépendent pas de l'écran. `e2e/mobile.spec.ts` porte donc ce qui en dépend, et lui
+	 * seul tourne sur le téléphone émulé.
+	 */
+	projects: [
+		{
+			name: 'chromium',
+			use: { ...devices['Desktop Chrome'] },
+			testIgnore: /mobile\.spec\.ts/
+		},
+		{
+			name: 'mobile',
+			use: { ...devices['Pixel 7'] },
+			testMatch: /mobile\.spec\.ts/
+		}
+	],
 	webServer: {
 		// `--host 127.0.0.1` explicite : sur un runner CI, `localhost` ne résout parfois que vers ::1,
 		// le port est alors vu en écoute mais la connexion sur 127.0.0.1 est refusée.
