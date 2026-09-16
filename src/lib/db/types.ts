@@ -629,6 +629,7 @@ export type Database = {
           is_demo: boolean
           last_name: string
           motion: string
+          nearby_cards: boolean
           requested_at: string
           reviewed_at: string | null
           reviewed_by: string | null
@@ -654,6 +655,7 @@ export type Database = {
           is_demo?: boolean
           last_name?: string
           motion?: string
+          nearby_cards?: boolean
           requested_at?: string
           reviewed_at?: string | null
           reviewed_by?: string | null
@@ -679,6 +681,7 @@ export type Database = {
           is_demo?: boolean
           last_name?: string
           motion?: string
+          nearby_cards?: boolean
           requested_at?: string
           reviewed_at?: string | null
           reviewed_by?: string | null

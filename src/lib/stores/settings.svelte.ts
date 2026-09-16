@@ -9,6 +9,7 @@ import {
 	DEFAULT_HAND,
 	DEFAULT_HAPTICS,
 	DEFAULT_MOTION,
+	DEFAULT_NEARBY_CARDS,
 	DEFAULT_SOUND,
 	FONT_PRESETS,
 	FONT_SCALE_PRESETS,
@@ -33,6 +34,7 @@ export interface AppearanceRow {
 	hand: string;
 	sound: boolean;
 	haptics: boolean;
+	nearby_cards: boolean;
 	has_seen_tour: boolean;
 }
 
@@ -45,6 +47,7 @@ class Settings {
 	hand = $state<Hand>(DEFAULT_HAND);
 	sound = $state(DEFAULT_SOUND);
 	haptics = $state(DEFAULT_HAPTICS);
+	nearbyCards = $state(DEFAULT_NEARBY_CARDS);
 	hasSeenTour = $state(false);
 
 	/**
@@ -90,6 +93,7 @@ class Settings {
 			if (isHand(saved.hand)) this.hand = saved.hand;
 			if (typeof saved.sound === 'boolean') this.sound = saved.sound;
 			if (typeof saved.haptics === 'boolean') this.haptics = saved.haptics;
+			if (typeof saved.nearbyCards === 'boolean') this.nearbyCards = saved.nearbyCards;
 			if (typeof saved.hasSeenTour === 'boolean') this.hasSeenTour = saved.hasSeenTour;
 			if (typeof saved.hasSeenWelcome === 'boolean') this.hasSeenWelcome = saved.hasSeenWelcome;
 			if (typeof saved.changedAt === 'number') this.#changedAt = saved.changedAt;
@@ -138,6 +142,7 @@ class Settings {
 						hand: this.hand,
 						sound: this.sound,
 						haptics: this.haptics,
+						nearbyCards: this.nearbyCards,
 						hasSeenTour: this.hasSeenTour,
 						hasSeenWelcome: this.hasSeenWelcome,
 						changedAt: this.#changedAt,
@@ -200,6 +205,11 @@ class Settings {
 		this.haptics = enabled;
 	}
 
+	setNearbyCards(enabled: boolean) {
+		this.#touch();
+		this.nearbyCards = enabled;
+	}
+
 	setTourSeen(seen: boolean) {
 		this.#touch();
 		this.hasSeenTour = seen;
@@ -233,6 +243,7 @@ class Settings {
 			hand: this.hand,
 			sound: this.sound,
 			haptics: this.haptics,
+			nearby_cards: this.nearbyCards,
 			has_seen_tour: this.hasSeenTour
 		};
 	}
@@ -252,6 +263,7 @@ class Settings {
 		if (isHand(row.hand)) this.hand = row.hand;
 		if (typeof row.sound === 'boolean') this.sound = row.sound;
 		if (typeof row.haptics === 'boolean') this.haptics = row.haptics;
+		if (typeof row.nearby_cards === 'boolean') this.nearbyCards = row.nearby_cards;
 		if (typeof row.has_seen_tour === 'boolean') this.hasSeenTour = row.has_seen_tour;
 
 		this.markSynced(userId);

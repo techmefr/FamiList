@@ -1,5 +1,7 @@
 <script lang="ts">
 	import { flip } from 'svelte/animate';
+	import { page } from '$app/state';
+	import { replaceState } from '$app/navigation';
 	import { slide } from 'svelte/transition';
 	import { cubicOut } from 'svelte/easing';
 	import { data } from '$stores/data.svelte';
@@ -31,6 +33,21 @@
 	 */
 	$effect(() => {
 		if (createIntent.take('card')) adding = true;
+	});
+
+	/**
+	 * La carte désignée par la notification de proximité s'ouvre en grand toute seule.
+	 *
+	 * On y arrive le code-barres à la main, devant la caisse : demander un tapotement de plus sur
+	 * la bonne vignette annulerait le service rendu. L'adresse est nettoyée après coup, pour qu'un
+	 * retour arrière ne rouvre pas la carte en boucle.
+	 */
+	$effect(() => {
+		const demandee = page.url.searchParams.get('card');
+		if (!demandee) return;
+
+		if (data.cards.some((card) => card.id === demandee)) openCardId = demandee;
+		replaceState('/cards', page.state);
 	});
 
 	let name = $state('');

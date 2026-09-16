@@ -18,6 +18,7 @@
 	import { session } from '$stores/session.svelte';
 	import { data } from '$stores/data.svelte';
 	import { tintForWhiteText } from '$domain/tint';
+	import { nearbySupported, requestNearbyPermission } from '$native/nearby';
 	import * as Card from '$lib/components/ui/card';
 	import { Label } from '$lib/components/ui/label';
 	import { Button } from '$lib/components/ui/button';
@@ -35,6 +36,29 @@
 	 */
 	function preview() {
 		feedback.play('success');
+	}
+
+	let nearbyRefused = $state(false);
+
+	/**
+	 * L'autorisation de position est demandée au moment de l'activation, jamais avant.
+	 *
+	 * La demander au lancement gaspillerait la seule occasion de l'obtenir, et personne ne comprend
+	 * pourquoi une liste de courses veut savoir où l'on est tant qu'on ne l'a pas décidé ici. Un
+	 * refus laisse le réglage éteint : il vaut mieux un interrupteur honnête qu'un interrupteur
+	 * allumé qui ne déclenche rien.
+	 */
+	async function toggleNearby(enabled: boolean) {
+		nearbyRefused = false;
+
+		if (!enabled) {
+			settings.setNearbyCards(false);
+			return;
+		}
+
+		const permission = await requestNearbyPermission();
+		nearbyRefused = permission === 'denied';
+		settings.setNearbyCards(permission === 'granted');
 	}
 
 	/**
@@ -360,6 +384,28 @@
 				checked={settings.haptics}
 				onCheckedChange={(checked) => settings.setHaptics(checked)}
 				data-test-id="haptics-toggle"
+			/>
+		</div>
+
+		<div class="flex flex-wrap items-center justify-between gap-4">
+			<div class="min-w-0">
+				<Label for="nearby">{t('profile.nearbyCards')}</Label>
+				<p class="text-muted-foreground text-caption mt-1">
+					{nearbySupported() ? t('profile.nearbyCardsHint') : t('profile.nearbyCardsWeb')}
+				</p>
+				{#if nearbyRefused}
+					<p class="text-caption text-destructive mt-1" role="status" data-test-id="nearby-denied">
+						{t('profile.nearbyCardsDenied')}
+					</p>
+				{/if}
+			</div>
+			<Switch
+				id="nearby"
+				size="lg"
+				disabled={!nearbySupported()}
+				checked={settings.nearbyCards}
+				onCheckedChange={(checked) => toggleNearby(checked)}
+				data-test-id="nearby-toggle"
 			/>
 		</div>
 	</Card.Content>
