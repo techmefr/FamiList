@@ -50,6 +50,8 @@
 		"fontNote": "“System” uses the font set on your device.",
 		"accent": "Main colour",
 		"language": "Language",
+		"hand": "Dominant hand",
+		"handHint": "The add button sits on your thumb’s side. Independent of reading direction.",
 		"previewItem": "Vine tomatoes — 500 g",
 		"previewNote": "Preview at the real size of an item in a list.",
 		"account": "Account",
@@ -95,6 +97,10 @@
 		"system": "System",
 		"full": "Full",
 		"none": "None"
+	},
+	"hand": {
+		"right": "Right-handed",
+		"left": "Left-handed"
 	},
 	"scale": {
 		"xs": "Very small",

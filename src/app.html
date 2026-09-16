@@ -30,6 +30,9 @@
 					// Le mouvement est refusé avant la première image, sinon les entrées de la
 					// première page jouent quand même.
 					root.dataset.motion = saved.motion ?? 'system';
+					// Le côté du pouce est posé ici aussi : appliqué après coup, le bouton de
+					// création traverserait l'écran sous les yeux de la personne.
+					root.dataset.hand = saved.hand ?? 'right';
 
 					if (dark) {
 						document

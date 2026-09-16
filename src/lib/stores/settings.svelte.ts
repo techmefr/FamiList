@@ -1,10 +1,12 @@
 import { browser } from '$app/environment';
+import { isHand, type Hand } from '$domain/hand';
 import { animates, isMotionPreference, type MotionPreference } from '$domain/motion';
 import {
 	ACCENT_PRESETS,
 	DEFAULT_ACCENT,
 	DEFAULT_FONT,
 	DEFAULT_FONT_SCALE,
+	DEFAULT_HAND,
 	DEFAULT_HAPTICS,
 	DEFAULT_MOTION,
 	DEFAULT_SOUND,
@@ -17,6 +19,7 @@ import {
 
 export { ACCENT_PRESETS, FONT_PRESETS, FONT_SCALE_PRESETS, type Theme };
 export { MOTION_PREFERENCES, type MotionPreference } from '$domain/motion';
+export { HANDS, type Hand } from '$domain/hand';
 
 const THEMES: Theme[] = ['light', 'dark', 'system'];
 
@@ -27,6 +30,7 @@ export interface AppearanceRow {
 	type_scale: string;
 	font_id: string;
 	motion: string;
+	hand: string;
 	sound: boolean;
 	haptics: boolean;
 	has_seen_tour: boolean;
@@ -38,6 +42,7 @@ class Settings {
 	fontScaleId = $state<string>(DEFAULT_FONT_SCALE);
 	fontId = $state<string>(DEFAULT_FONT);
 	motion = $state<MotionPreference>(DEFAULT_MOTION);
+	hand = $state<Hand>(DEFAULT_HAND);
 	sound = $state(DEFAULT_SOUND);
 	haptics = $state(DEFAULT_HAPTICS);
 	hasSeenTour = $state(false);
@@ -82,6 +87,7 @@ class Settings {
 			if (saved.fontScaleId) this.fontScaleId = saved.fontScaleId;
 			if (saved.fontId) this.fontId = saved.fontId;
 			if (isMotionPreference(saved.motion)) this.motion = saved.motion;
+			if (isHand(saved.hand)) this.hand = saved.hand;
 			if (typeof saved.sound === 'boolean') this.sound = saved.sound;
 			if (typeof saved.haptics === 'boolean') this.haptics = saved.haptics;
 			if (typeof saved.hasSeenTour === 'boolean') this.hasSeenTour = saved.hasSeenTour;
@@ -114,6 +120,7 @@ class Settings {
 				root.dataset.scale = this.fontScaleId;
 				root.dataset.font = this.fontId;
 				root.dataset.motion = this.motion;
+				root.dataset.hand = this.hand;
 
 				// La barre de statut du système suit le thème choisi, pas celui de l'appareil.
 				document
@@ -128,6 +135,7 @@ class Settings {
 						fontScaleId: this.fontScaleId,
 						fontId: this.fontId,
 						motion: this.motion,
+						hand: this.hand,
 						sound: this.sound,
 						haptics: this.haptics,
 						hasSeenTour: this.hasSeenTour,
@@ -176,6 +184,12 @@ class Settings {
 		this.motion = preference;
 	}
 
+	setHand(hand: Hand) {
+		if (!isHand(hand)) return;
+		this.#touch();
+		this.hand = hand;
+	}
+
 	setSound(enabled: boolean) {
 		this.#touch();
 		this.sound = enabled;
@@ -216,6 +230,7 @@ class Settings {
 			type_scale: this.fontScaleId,
 			font_id: this.fontId,
 			motion: this.motion,
+			hand: this.hand,
 			sound: this.sound,
 			haptics: this.haptics,
 			has_seen_tour: this.hasSeenTour
@@ -234,6 +249,7 @@ class Settings {
 			this.fontScaleId = row.type_scale as string;
 		if (FONT_PRESETS.some((f) => f.id === row.font_id)) this.fontId = row.font_id as string;
 		if (isMotionPreference(row.motion)) this.motion = row.motion;
+		if (isHand(row.hand)) this.hand = row.hand;
 		if (typeof row.sound === 'boolean') this.sound = row.sound;
 		if (typeof row.haptics === 'boolean') this.haptics = row.haptics;
 		if (typeof row.has_seen_tour === 'boolean') this.hasSeenTour = row.has_seen_tour;

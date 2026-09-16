@@ -50,6 +50,8 @@
 		"fontNote": "Ny \"Rafitra\" dia mampiasa ny endri-tsoratra voafaritra amin'ny fitaovanao.",
 		"accent": "Loko lehibe",
 		"language": "Fiteny",
+		"hand": "Tanana matanjaka",
+		"handHint": "Apetraka eo amin'ny ilan'ny ankihiben-tananao ny bokotra fanampiana. Tsy miankina amin'ny fomba famakiana.",
 		"previewItem": "Voatabia sampahony — 500 g",
 		"previewNote": "Topi-maso amin'ny haben'ny entana marina ao anaty lisitra.",
 		"account": "Kaonty",
@@ -95,6 +97,10 @@
 		"system": "Rafitra",
 		"full": "Feno",
 		"none": "Tsy misy"
+	},
+	"hand": {
+		"right": "Havanana",
+		"left": "Havia"
 	},
 	"scale": {
 		"xs": "Kely dia kely",

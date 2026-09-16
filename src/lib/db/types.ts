@@ -549,6 +549,7 @@ export type Database = {
           display_name: string
           first_name: string
           font_id: string
+          hand: string
           haptics: boolean
           has_seen_tour: boolean
           id: string
@@ -573,6 +574,7 @@ export type Database = {
           display_name?: string
           first_name?: string
           font_id?: string
+          hand?: string
           haptics?: boolean
           has_seen_tour?: boolean
           id: string
@@ -597,6 +599,7 @@ export type Database = {
           display_name?: string
           first_name?: string
           font_id?: string
+          hand?: string
           haptics?: boolean
           has_seen_tour?: boolean
           id?: string
