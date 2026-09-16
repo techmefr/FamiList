@@ -224,7 +224,11 @@
 		"summary": "Geteilt mit {names}",
 		"aloneSummary": "Nur für Sie sichtbar",
 		"alone": "Sie sind vorerst allein im Haushalt.",
-		"invite": "Jemanden einladen"
+		"invite": "Jemanden einladen",
+		"send": "Liste senden",
+		"sent": "Liste gesendet.",
+		"sendCopied": "Liste kopiert, füge sie ein, wo du möchtest.",
+		"sendFailed": "Die Liste konnte nicht gesendet werden."
 	},
 	"units": {
 		"piece": "Stück",

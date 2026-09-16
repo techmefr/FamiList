@@ -224,7 +224,11 @@
 		"summary": "Shared with {names}",
 		"aloneSummary": "Only you can see it",
 		"alone": "You are on your own in the household for now.",
-		"invite": "Invite someone"
+		"invite": "Invite someone",
+		"send": "Send the list",
+		"sent": "List sent.",
+		"sendCopied": "List copied, paste it wherever you like.",
+		"sendFailed": "Could not send the list."
 	},
 	"units": {
 		"piece": "item",

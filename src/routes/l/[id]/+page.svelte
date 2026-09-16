@@ -8,6 +8,9 @@
 	import { feedback } from '$stores/feedback.svelte';
 	import { motionMs } from '$stores/settings.svelte';
 	import { i18n, t } from '$lib/i18n/index.svelte';
+	import { listToMarkdown } from '$domain/list-markdown';
+	import { unitKey } from '$domain/units';
+	import { shareText, type ShareOutcome } from '$native/share';
 	import type { Item } from '$db/schema';
 	import ShopSwitcher from '$components/app/ShopSwitcher.svelte';
 	import ItemRow from '$components/app/ItemRow.svelte';
@@ -25,6 +28,7 @@
 		UsersRound,
 		SlidersHorizontal,
 		Plus,
+		Send,
 		Check,
 		Undo2,
 		Trash2,
@@ -73,6 +77,65 @@
 					names: new Intl.ListFormat(i18n.locale, { type: 'conjunction' }).format(others)
 				})
 	);
+
+	/**
+	 * Envoyer la liste au dehors, en texte, à quelqu'un qui n'a pas l'application.
+	 *
+	 * C'est une action distincte du partage de la feuille au-dessus : celle-ci donne l'accès dans le
+	 * foyer, celle-là fait sortir une copie figée. Deux gestes, deux boutons.
+	 */
+	const STATUS_KEY: Record<Exclude<ShareOutcome, 'cancelled'>, string> = {
+		shared: 'share.sent',
+		copied: 'share.sendCopied',
+		failed: 'share.sendFailed'
+	};
+
+	let shareStatus = $state<string | null>(null);
+
+	/** Même règle que la ligne d'article : une unité inconnue s'écrit telle qu'elle a été saisie. */
+	function unitLabel(unit: string): string {
+		const key = unitKey(unit);
+		return key ? t(key) : unit;
+	}
+
+	/**
+	 * Le texte porte la liste entière, pas la vue filtrée : masquer les articles cochés est une
+	 * commodité de lecture ici, pas une décision sur ce qu'on envoie là-bas.
+	 */
+	function listeEnTexte(): string {
+		return listToMarkdown({
+			name: list?.name ?? '',
+			emoji: list?.emoji ?? '',
+			aisles: groups.map((group) => {
+				const aisle = data.aisle(group.aisleId);
+				return {
+					name: aisle?.name ?? group.aisleId,
+					emoji: aisle?.emoji ?? '',
+					items: group.items.map((item) => ({
+						name: item.name,
+						qty: item.qty,
+						unit: unitLabel(item.unit),
+						checked: item.checked,
+						priority: item.priority,
+						note: item.note
+					}))
+				};
+			})
+		});
+	}
+
+	async function envoyer() {
+		if (!list) return;
+
+		feedback.play('tap');
+		const outcome = await shareText(list.name, listeEnTexte());
+
+		// Une feuille refermée sans choisir : la personne sait ce qu'elle vient de faire.
+		if (outcome === 'cancelled') return;
+
+		feedback.play(outcome === 'failed' ? 'error' : 'success');
+		shareStatus = t(STATUS_KEY[outcome]);
+	}
 
 	let priorityOnly = $state(false);
 	let hideChecked = $state(false);
@@ -192,9 +255,27 @@
 			<UsersRound size={16} aria-hidden="true" />
 			{t('share.open')}
 		</button>
+
+		<button
+			type="button"
+			onclick={envoyer}
+			data-test-id="send-list"
+			class="text-primary text-label inline-flex min-h-[max(2.75rem,44px)] items-center gap-2 underline"
+		>
+			<Send size={16} aria-hidden="true" />
+			{t('share.send')}
+		</button>
 	</div>
 
 	<p class="text-muted-foreground text-caption" data-test-id="share-summary">{sharedWith}</p>
+
+	<!--
+		Le repli presse-papier ne fait rien bouger à l'écran : sans cette ligne, l'envoi aurait l'air
+		d'avoir échoué sur un ordinateur de bureau. `aria-live` la fait lire à voix haute aussi.
+	-->
+	<p class="text-muted-foreground text-caption" aria-live="polite" data-test-id="send-status">
+		{shareStatus ?? ''}
+	</p>
 
 	<ShareSheet bind:this={share} {listId} />
 
