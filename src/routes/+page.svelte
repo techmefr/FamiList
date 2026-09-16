@@ -16,7 +16,16 @@
 	import EmojiPicker from '$components/app/EmojiPicker.svelte';
 	import Avatar from '$components/app/Avatar.svelte';
 	import { longpress } from '$components/app/longpress.svelte';
-	import { Plus, Trash2, Pencil, ListChecks, CalendarDays, Users, Lock } from '@lucide/svelte';
+	import {
+		Plus,
+		Trash2,
+		Pencil,
+		Copy,
+		ListChecks,
+		CalendarDays,
+		Users,
+		Lock
+	} from '@lucide/svelte';
 	import IconField from '$components/app/IconField.svelte';
 	import EmptyState from '$components/app/EmptyState.svelte';
 
@@ -241,6 +250,23 @@
 								class="fl-press text-muted-foreground hover:text-foreground grid size-11 min-w-[44px] place-items-center rounded-md transition-colors"
 							>
 								<Pencil size={18} aria-hidden="true" />
+							</button>
+							<!--
+								La duplication vit sur la carte, avec le crayon et la corbeille, et non dans la
+								liste ouverte : c'est ici qu'on voit ses listes côte à côte et qu'on reconnaît
+								celle qui revient chaque semaine. La barre du bas ne porte que la navigation.
+							-->
+							<button
+								type="button"
+								onclick={() => {
+									feedback.play('add');
+									data.duplicateList(list.id);
+								}}
+								aria-label={t('lists.duplicate', { name: list.name })}
+								data-test-class="list-duplicate"
+								class="fl-press text-muted-foreground hover:text-foreground grid size-11 min-w-[44px] place-items-center rounded-md transition-colors"
+							>
+								<Copy size={18} aria-hidden="true" />
 							</button>
 							<button
 								type="button"

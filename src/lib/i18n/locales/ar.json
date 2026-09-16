@@ -43,7 +43,8 @@
 		"emoji": "رمز تعبيري",
 		"empty": "لا توجد قوائم بعد.",
 		"delete": "حذف القائمة {name}",
-		"rename": "إعادة تسمية {name}"
+		"rename": "إعادة تسمية {name}",
+		"duplicate": "تكرار {name}"
 	},
 	"profile": {
 		"title": "الملف الشخصي",

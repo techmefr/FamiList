@@ -41,7 +41,8 @@
 		"emoji": "Эмодзи",
 		"empty": "Списков пока нет.",
 		"delete": "Удалить список {name}",
-		"rename": "Переименовать {name}"
+		"rename": "Переименовать {name}",
+		"duplicate": "Дублировать {name}"
 	},
 	"profile": {
 		"title": "Профиль",
