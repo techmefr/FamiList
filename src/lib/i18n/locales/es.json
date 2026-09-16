@@ -41,7 +41,16 @@
 		"empty": "Todavía no hay listas.",
 		"delete": "Eliminar la lista {name}",
 		"rename": "Renombrar {name}",
-		"duplicate": "Duplicar {name}"
+		"duplicate": "Duplicar {name}",
+		"eventDate": "Fecha límite",
+		"eventDateClear": "Déjalo vacío para quitar la fecha.",
+		"reminderPlanned": "Recordatorio el {when}.",
+		"reminderLate": "Demasiado tarde para un recordatorio: habría salido el día anterior a las 18 h.",
+		"reminderInvalid": "Fecha ilegible, no se programará ningún recordatorio.",
+		"reminderWeb": "Los recordatorios solo llegan en la aplicación instalada. En un navegador la fecha se sigue viendo, pero no se enviará ninguna notificación.",
+		"reminderDenied": "Notificaciones rechazadas: la fecha se guarda, pero no se enviará ningún recordatorio. Puedes permitirlas de nuevo en los ajustes del teléfono.",
+		"reminderTitle": "{name} es mañana",
+		"reminderBody": "Aún quedan artículos por comprar antes del {date}."
 	},
 	"profile": {
 		"title": "Perfil",

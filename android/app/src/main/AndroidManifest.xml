@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <application
         android:allowBackup="true"
@@ -43,4 +44,14 @@
          demande explicite, et l'application reste utilisable sans : le code peut etre saisi. -->
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-feature android:name="android.hardware.camera" android:required="false" />
+
+    <!-- Rappel de la date limite d'une liste. Demandee seulement quand une date est posee, et
+         refusable : la date reste enregistree et affichee, c'est le rappel seul qui manque. -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
+    <!-- Le greffon de notifications locales la declare, l'application ne s'en sert pas : ses
+         rappels sont programmes en alarme inexacte, a la minute pres, ce qui suffit largement
+         pour des courses. La garder obligerait a la justifier aupres du Play Store pour une
+         precision dont on n'a pas besoin. -->
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" tools:node="remove" />
 </manifest>

@@ -41,7 +41,16 @@
 		"empty": "Nessuna lista per ora.",
 		"delete": "Elimina la lista {name}",
 		"rename": "Rinomina {name}",
-		"duplicate": "Duplica {name}"
+		"duplicate": "Duplica {name}",
+		"eventDate": "Data limite",
+		"eventDateClear": "Lascia vuoto per togliere la data.",
+		"reminderPlanned": "Promemoria il {when}.",
+		"reminderLate": "Troppo tardi per un promemoria: sarebbe partito il giorno prima alle 18.",
+		"reminderInvalid": "Data illeggibile, nessun promemoria verrà programmato.",
+		"reminderWeb": "I promemoria arrivano solo sull’app installata. Nel browser la data resta visibile, ma non partirà alcuna notifica.",
+		"reminderDenied": "Notifiche rifiutate: la data è salvata, ma non partirà alcun promemoria. Puoi riattivarle nelle impostazioni del telefono.",
+		"reminderTitle": "{name} è domani",
+		"reminderBody": "Mancano ancora degli articoli prima del {date}."
 	},
 	"profile": {
 		"title": "Profilo",

@@ -22,6 +22,8 @@
 	import { navDirection } from '$domain/motion';
 	import { pushAppearance, syncAppearance } from '$lib/sync/appearance';
 	import { registerServiceWorker } from '$native/pwa';
+	import { reminderPlans } from '$domain/reminder';
+	import { applyReminders } from '$native/reminders';
 	import SyncStatus from '$components/app/SyncStatus.svelte';
 	import CreateMenu from '$components/app/CreateMenu.svelte';
 	import Logo from '$components/app/Logo.svelte';
@@ -45,6 +47,44 @@
 	i18n.init();
 	session.init();
 	registerServiceWorker();
+
+	/**
+	 * Les rappels de date, reposés d'un bloc à chaque changement.
+	 *
+	 * C'est ici et pas sur la page des listes parce que l'appareil doit rester à jour même si on
+	 * n'y repasse jamais : une date choisie par quelqu'un d'autre du foyer arrive par la
+	 * synchronisation, et c'est cet effet qui la transforme en alarme. Chaque appareil programme
+	 * ses propres rappels depuis sa copie — personne n'envoie rien à personne, et tout le monde est
+	 * prévenu.
+	 *
+	 * Rejoué au lancement, il rattrape aussi ce que le système a perdu : un redémarrage du
+	 * téléphone ou une réinstallation vident les alarmes en attente.
+	 */
+	$effect(() => {
+		const plans = reminderPlans(
+			data.lists.map((list) => {
+				const items = data.itemsOf(list.id);
+
+				return {
+					listId: list.id,
+					name: list.name,
+					eventDate: list.eventDate,
+					total: items.length,
+					done: items.filter((item) => item.checked).length
+				};
+			}),
+			new Date()
+		);
+
+		void applyReminders(plans, (plan) => ({
+			title: t('lists.reminderTitle', { name: plan.name }),
+			body: t('lists.reminderBody', {
+				date: new Intl.DateTimeFormat(i18n.locale, { dateStyle: 'long' }).format(
+					new Date(plan.eventDate)
+				)
+			})
+		}));
+	});
 
 	// Comparaison exacte : /auth/pending parle d'un compte, il suppose donc une session.
 	// Un startsWith('/auth') le rendrait public et laisserait l'écran d'attente affiché
