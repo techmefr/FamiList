@@ -14,6 +14,9 @@ import {
 	type PollOption,
 	type PollVote,
 	type Price,
+	type Recipe,
+	type RecipeIngredient,
+	type RecipeStep,
 	type Shop,
 	type ShopItemOrder,
 	type ShopLayout
@@ -35,6 +38,9 @@ import {
 	fromPoll,
 	fromPollOption,
 	fromPrice,
+	fromRecipe,
+	fromRecipeIngredient,
+	fromRecipeStep,
 	fromShop
 } from '$lib/sync/mapping';
 import { copiedItem, copyName } from '$domain/duplicate';
@@ -47,6 +53,7 @@ import {
 	pricedProducts,
 	sameDay
 } from '$domain/price';
+import { DEFAULT_SERVINGS, generatedItems, scalingFactor, type RecipeLine } from '$domain/recipe';
 import { trigram } from '$domain/trigram';
 import { trigramSource } from '$domain/place';
 import { DEFAULT_UNIT } from '$domain/units';
@@ -82,6 +89,9 @@ class DataStore {
 	pollOptions = $state<PollOption[]>([]);
 	pollVotes = $state<PollVote[]>([]);
 	prices = $state<Price[]>([]);
+	recipes = $state<Recipe[]>([]);
+	recipeIngredients = $state<RecipeIngredient[]>([]);
+	recipeSteps = $state<RecipeStep[]>([]);
 
 	activeShopId = $state<string>('');
 	ready = $state(false);
@@ -147,7 +157,10 @@ class DataStore {
 			polls,
 			pollOptions,
 			pollVotes,
-			prices
+			prices,
+			recipes,
+			recipeIngredients,
+			recipeSteps
 		] = await Promise.all([
 			db.shops.toArray(),
 			db.aisles.orderBy('position').toArray(),
@@ -161,7 +174,10 @@ class DataStore {
 			db.polls.toArray(),
 			db.pollOptions.toArray(),
 			db.pollVotes.toArray(),
-			db.prices.toArray()
+			db.prices.toArray(),
+			db.recipes.toArray(),
+			db.recipeIngredients.toArray(),
+			db.recipeSteps.toArray()
 		]);
 
 		this.shops = shops;
@@ -177,6 +193,9 @@ class DataStore {
 		this.pollOptions = pollOptions;
 		this.pollVotes = pollVotes;
 		this.prices = prices;
+		this.recipes = recipes;
+		this.recipeIngredients = recipeIngredients;
+		this.recipeSteps = recipeSteps;
 
 		const saved = localStorage.getItem(ACTIVE_SHOP_KEY);
 		const known = saved && shops.some((s) => s.id === saved) ? saved : (shops[0]?.id ?? '');
@@ -1079,6 +1098,147 @@ class DataStore {
 		this.push('lists', snapshot, fromList);
 	}
 
+	recipe(id: string) {
+		return this.recipes.find((r) => r.id === id);
+	}
+
+	/** Les lignes d'une recette, dans l'ordre où elles ont été saisies. */
+	ingredientsOf(recipeId: string) {
+		return this.recipeIngredients
+			.filter((line) => line.recipeId === recipeId)
+			.toSorted((a, b) => a.position - b.position);
+	}
+
+	stepsOf(recipeId: string) {
+		return this.recipeSteps
+			.filter((step) => step.recipeId === recipeId)
+			.toSorted((a, b) => a.position - b.position);
+	}
+
+	/**
+	 * Une recette, avec ses ingrédients et ses étapes, écrits d'un seul geste.
+	 *
+	 * Les trois tables partent dans la file dans cet ordre : la recette d'abord, ses lignes ensuite.
+	 * La file est vidée dans l'ordre d'arrivée, et les clés étrangères côté serveur refuseraient une
+	 * ligne dont la recette n'existe pas encore.
+	 *
+	 * Les lignes sans nom sont écartées ici plutôt qu'à l'écran : un formulaire propose toujours une
+	 * rangée vide de plus que ce qu'on a rempli, et l'enregistrer produirait des ingrédients
+	 * fantômes qu'on retrouverait dans la liste de courses.
+	 */
+	addRecipe(input: {
+		name: string;
+		emoji: string;
+		servings: number;
+		notes?: string;
+		ingredients: RecipeLine[];
+		steps: string[];
+	}) {
+		const recipe: Recipe = {
+			id: crypto.randomUUID(),
+			name: input.name.trim(),
+			emoji: input.emoji,
+			servings: input.servings > 0 ? Math.round(input.servings) : DEFAULT_SERVINGS,
+			notes: input.notes?.trim() || undefined,
+			createdBy: this.userId || undefined,
+			createdAt: Date.now()
+		};
+
+		const lignes: RecipeIngredient[] = input.ingredients
+			.filter((line) => line.name.trim())
+			.map((line, position) => ({
+				id: crypto.randomUUID(),
+				recipeId: recipe.id,
+				name: line.name.trim(),
+				qty: line.qty.trim(),
+				unit: line.unit || DEFAULT_UNIT,
+				position
+			}));
+
+		const etapes: RecipeStep[] = input.steps
+			.filter((body) => body.trim())
+			.map((body, position) => ({
+				id: crypto.randomUUID(),
+				recipeId: recipe.id,
+				body: body.trim(),
+				position
+			}));
+
+		this.recipes = [...this.recipes, recipe];
+		this.recipeIngredients = [...this.recipeIngredients, ...lignes];
+		this.recipeSteps = [...this.recipeSteps, ...etapes];
+
+		db.recipes.add(recipe);
+		db.recipeIngredients.bulkAdd(lignes);
+		db.recipeSteps.bulkAdd(etapes);
+
+		this.push('recipes', recipe, fromRecipe);
+		for (const ligne of lignes) this.push('recipe_ingredients', ligne, fromRecipeIngredient);
+		for (const etape of etapes) this.push('recipe_steps', etape, fromRecipeStep);
+
+		return recipe;
+	}
+
+	/**
+	 * Le serveur supprime les lignes et les étapes de lui-même — `on delete cascade` sur la recette.
+	 * On ne met donc dans la file que la recette, et on vide le cache local à la main pour que
+	 * l'écran soit juste avant la prochaine relecture.
+	 */
+	removeRecipe(id: string) {
+		const lignes = this.recipeIngredients.filter((line) => line.recipeId === id).map((l) => l.id);
+		const etapes = this.recipeSteps.filter((step) => step.recipeId === id).map((s) => s.id);
+
+		this.recipes = this.recipes.filter((r) => r.id !== id);
+		this.recipeIngredients = this.recipeIngredients.filter((line) => line.recipeId !== id);
+		this.recipeSteps = this.recipeSteps.filter((step) => step.recipeId !== id);
+
+		db.recipes.delete(id);
+		db.recipeIngredients.bulkDelete(lignes);
+		db.recipeSteps.bulkDelete(etapes);
+		sync.enqueue({ table: 'recipes', op: 'delete', match: { id } });
+	}
+
+	/**
+	 * La liste de courses d'une recette, pour un nombre de convives donné.
+	 *
+	 * C'est une copie, pas un lien. Les articles nés ici vivent ensuite leur vie — on les coche, on
+	 * corrige « grande bouteille » devant le rayon, on en supprime — et la recette continue la
+	 * sienne. Un lien vivant ferait qu'une correction de recette réécrive une course en train de se
+	 * faire, et que supprimer la recette vide la liste. `pushIngredients`, le seul précédent de la
+	 * base, copie pour les mêmes raisons.
+	 *
+	 * Sans liste visée, on en crée une au nom de la recette : c'est le cas courant — on décide de
+	 * cuisiner ça, on va acheter de quoi. Avec une liste visée, les ingrédients s'ajoutent aux
+	 * courses de la semaine sans écraser ce qui s'y trouve déjà.
+	 *
+	 * Le rayon n'est pas décidé ici : `addItem` devine celui de chaque article depuis son nom, donc
+	 * la liste générée arrive rangée selon le parcours du magasin actif, comme si elle avait été
+	 * saisie à la main.
+	 */
+	generateList(recipeId: string, people: number, targetListId?: string) {
+		const recipe = this.recipe(recipeId);
+		if (!recipe) return null;
+
+		const cible = targetListId ? this.list(targetListId) : null;
+		const liste =
+			cible ??
+			this.addList({
+				name: recipe.name,
+				emoji: recipe.emoji,
+				color: TINTS[this.lists.length % TINTS.length]
+			});
+
+		const articles = generatedItems(
+			this.ingredientsOf(recipeId),
+			scalingFactor(recipe.servings, people),
+			this.itemsOf(liste.id).map((item) => item.name)
+		);
+
+		for (const article of articles) this.addItem(liste.id, article);
+
+		return { listId: liste.id, added: articles.length };
+	}
+
 	/**
 	 * Les tables du foyer prennent toutes le même chemin : on écrit la ligne complète, l'upsert
 	 * côté serveur se charge de savoir si elle existait déjà.
@@ -1163,7 +1323,10 @@ class DataStore {
 			db.polls.clear(),
 			db.pollOptions.clear(),
 			db.pollVotes.clear(),
-			db.prices.clear()
+			db.prices.clear(),
+			db.recipes.clear(),
+			db.recipeIngredients.clear(),
+			db.recipeSteps.clear()
 		]);
 
 		localStorage.removeItem(ACTIVE_SHOP_KEY);

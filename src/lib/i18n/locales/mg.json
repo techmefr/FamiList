@@ -14,7 +14,8 @@
 		"magnifier": "Fitarafana",
 		"create": "Hamorona",
 		"chat": "Resaka",
-		"prices": "Vidiny"
+		"prices": "Vidiny",
+		"recipes": "Recettes"
 	},
 	"create": {
 		"title": "Inona no tianao hamboarina?",
@@ -22,7 +23,8 @@
 		"list": "Lisitra vaovao",
 		"aisle": "Faritra vaovao",
 		"shop": "Fivarotana vaovao",
-		"card": "Karatra vaovao"
+		"card": "Karatra vaovao",
+		"recipe": "Recettes vaovao"
 	},
 	"lists": {
 		"title": "Ny lisitro",
@@ -327,6 +329,48 @@
 		"recordedOn": "Voarakitra ny {date}",
 		"cheapest": "Mora indrindra",
 		"goneShop": "Fivarotana voafafa"
+	},
+	"recipes": {
+		"title": "Recettes",
+		"intro": "Ny recettes an ny fianakaviana, sy ny lisitry ny fividianana avy amin izy ireo.",
+		"empty": "Tsy misy recettes. Soraty iray, ny akora ao anatiny dia ho lasa lisitra.",
+		"name": "Anaran ny recette",
+		"namePlaceholder": "Gratin voatabia mavo",
+		"emoji": "Emoji",
+		"servings": "Isan ny anjara",
+		"servingsHint": "Isan ny olona nanoratana ireo habetsahana ireo.",
+		"stepper": "Dingana amin ny fenoina",
+		"step": {
+			"recette": "Ny recette",
+			"ingredients": "Ny akora",
+			"etapes": "Ny fanomanana"
+		},
+		"ingredientsHint": "Akora iray isaky ny andalana. Tsy raisina ny andalana banga.",
+		"ingredientName": "Akora {rank}",
+		"ingredientPlaceholder": "Voatabia mavo",
+		"qty": "Habetsahana",
+		"unit": "Fandrefesana",
+		"addIngredient": "Hanampy akora",
+		"removeIngredient": "Esory ny akora {rank}",
+		"stepsHint": "Dingana iray isaky ny andalana, araka ny filaharan ny fanomanana.",
+		"stepBody": "Dingana {rank}",
+		"addStep": "Hanampy dingana",
+		"removeStep": "Esory ny dingana {rank}",
+		"next": "Manaraka",
+		"back": "Miverina",
+		"generate": "Hamorona lisitra",
+		"generateSubmit": "Hamorona ireo entana",
+		"people": "Ho an olona firy?",
+		"peopleHint": "Nosoratana ho an ny {servings} ireo habetsahana. Hovaina araka izany.",
+		"target": "Aiza no hanampiana ireo entana",
+		"targetNew": "Amin ny lisitra vaovao",
+		"delete": "Fafao ny recette {name}",
+		"deleteConfirm": "Fafao ny {name}? Tsy hiova ireo lisitra efa noforonina.",
+		"deleteYes": "Fafao",
+		"servingsCount": {
+			"one": "Ho an olona 1",
+			"other": "Ho an olona {count}"
+		}
 	},
 	"aisles": {
 		"title": "Faritra",

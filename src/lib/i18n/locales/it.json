@@ -14,7 +14,8 @@
 		"magnifier": "Lente",
 		"create": "Crea",
 		"chat": "Conversazioni",
-		"prices": "Prezzi"
+		"prices": "Prezzi",
+		"recipes": "Ricette"
 	},
 	"create": {
 		"title": "Che cosa vuoi creare?",
@@ -22,7 +23,8 @@
 		"list": "Nuova lista",
 		"aisle": "Nuovo reparto",
 		"shop": "Nuovo negozio",
-		"card": "Nuova carta fedeltà"
+		"card": "Nuova carta fedeltà",
+		"recipe": "Nuova ricetta"
 	},
 	"lists": {
 		"title": "Le mie liste",
@@ -327,6 +329,48 @@
 		"recordedOn": "Rilevato il {date}",
 		"cheapest": "Il più economico",
 		"goneShop": "Negozio eliminato"
+	},
+	"recipes": {
+		"title": "Ricette",
+		"intro": "Le ricette della famiglia, e la lista della spesa che ne deriva.",
+		"empty": "Nessuna ricetta. Scrivine una: i suoi ingredienti diventeranno una lista.",
+		"name": "Nome della ricetta",
+		"namePlaceholder": "Gratin di zucchine",
+		"emoji": "Emoji",
+		"servings": "Porzioni",
+		"servingsHint": "Il numero di persone per cui sono scritte le quantità.",
+		"stepper": "Passaggi del modulo",
+		"step": {
+			"recette": "La ricetta",
+			"ingredients": "Gli ingredienti",
+			"etapes": "La preparazione"
+		},
+		"ingredientsHint": "Un ingrediente per riga. Le righe vuote vengono ignorate.",
+		"ingredientName": "Ingrediente {rank}",
+		"ingredientPlaceholder": "Zucchine",
+		"qty": "Quantità",
+		"unit": "Unità",
+		"addIngredient": "Aggiungi un ingrediente",
+		"removeIngredient": "Togli l'ingrediente {rank}",
+		"stepsHint": "Un passaggio per riga, nell’ordine della preparazione.",
+		"stepBody": "Passaggio {rank}",
+		"addStep": "Aggiungi un passaggio",
+		"removeStep": "Togli il passaggio {rank}",
+		"next": "Avanti",
+		"back": "Indietro",
+		"generate": "Genera la lista",
+		"generateSubmit": "Crea gli articoli",
+		"people": "Per quante persone?",
+		"peopleHint": "Le quantità sono scritte per {servings}. Verranno riproporzionate.",
+		"target": "Dove aggiungere gli articoli",
+		"targetNew": "In una nuova lista",
+		"delete": "Elimina la ricetta {name}",
+		"deleteConfirm": "Eliminare {name}? Le liste già generate non cambieranno.",
+		"deleteYes": "Elimina",
+		"servingsCount": {
+			"one": "Per 1 persona",
+			"other": "Per {count} persone"
+		}
 	},
 	"aisles": {
 		"title": "Reparti",

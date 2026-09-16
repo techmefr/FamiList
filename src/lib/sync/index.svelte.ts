@@ -15,6 +15,9 @@ import {
 	toPollOption,
 	toPollVote,
 	toPrice,
+	toRecipe,
+	toRecipeIngredient,
+	toRecipeStep,
 	toShop
 } from './mapping';
 
@@ -276,7 +279,10 @@ class SyncStore {
 			polls,
 			pollOptions,
 			pollVotes,
-			prices
+			prices,
+			recipes,
+			recipeIngredients,
+			recipeSteps
 		] = await Promise.all([
 			supabase.from('shops').select('*').eq('household_id', household),
 			supabase.from('aisles').select('*').eq('household_id', household),
@@ -291,7 +297,12 @@ class SyncStore {
 			supabase.from('polls').select('*'),
 			supabase.from('poll_options').select('*'),
 			supabase.from('poll_votes').select('*'),
-			supabase.from('item_prices').select('*').eq('household_id', household)
+			supabase.from('item_prices').select('*').eq('household_id', household),
+			supabase.from('recipes').select('*').eq('household_id', household),
+			// Les lignes d'une recette ne portent pas de foyer : la policy les filtre déjà par la
+			// recette dont elles dépendent, comme pour les articles d'une liste.
+			supabase.from('recipe_ingredients').select('*'),
+			supabase.from('recipe_steps').select('*')
 		]);
 
 		const failed = [
@@ -308,7 +319,10 @@ class SyncStore {
 			polls,
 			pollOptions,
 			pollVotes,
-			prices
+			prices,
+			recipes,
+			recipeIngredients,
+			recipeSteps
 		]
 			.map((result) => result.error)
 			.find(Boolean);
@@ -356,7 +370,10 @@ class SyncStore {
 				db.polls,
 				db.pollOptions,
 				db.pollVotes,
-				db.prices
+				db.prices,
+				db.recipes,
+				db.recipeIngredients,
+				db.recipeSteps
 			],
 			async () => {
 				/**
@@ -389,7 +406,10 @@ class SyncStore {
 					db.polls.clear(),
 					db.pollOptions.clear(),
 					db.pollVotes.clear(),
-					db.prices.clear()
+					db.prices.clear(),
+					db.recipes.clear(),
+					db.recipeIngredients.clear(),
+					db.recipeSteps.clear()
 				]);
 
 				await Promise.all([
@@ -411,7 +431,12 @@ class SyncStore {
 					db.polls.bulkAdd((polls.data ?? []).map(toPoll)),
 					db.pollOptions.bulkAdd((pollOptions.data ?? []).map(toPollOption)),
 					db.pollVotes.bulkAdd((pollVotes.data ?? []).map(toPollVote)),
-					db.prices.bulkAdd((prices.data ?? []).map(toPrice))
+					db.prices.bulkAdd((prices.data ?? []).map(toPrice)),
+					db.recipes.bulkAdd((recipes.data ?? []).map(toRecipe)),
+					db.recipeIngredients.bulkAdd(
+						(recipeIngredients.data ?? []).map(toRecipeIngredient)
+					),
+					db.recipeSteps.bulkAdd((recipeSteps.data ?? []).map(toRecipeStep))
 				]);
 			}
 		);

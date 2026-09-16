@@ -9,6 +9,9 @@ import type {
 	PollOption,
 	PollVote,
 	Price,
+	Recipe,
+	RecipeIngredient,
+	RecipeStep,
 	Shop,
 	ShopItemOrder,
 	ShopLayout
@@ -18,6 +21,7 @@ import { CODE_TYPES, type CodeType } from '$domain/code-format';
 import { DEFAULT_MEMBER_TINT, DEFAULT_TINT } from '$domain/tint';
 import { DEFAULT_UNIT } from '$domain/units';
 import { DEFAULT_CURRENCY } from '$domain/price';
+import { DEFAULT_SERVINGS } from '$domain/recipe';
 import { initialsFor } from '$domain/avatar';
 
 /**
@@ -316,4 +320,60 @@ export const fromPrice = (price: Price, householdId: string) => ({
 	// L'heure du relevé, pas celle de l'envoi : la file peut attendre la sortie du magasin.
 	recorded_at: new Date(price.recordedAt).toISOString(),
 	recorded_by: price.recordedBy || null
+});
+
+export const toRecipe = (row: Row): Recipe => ({
+	id: text(row.id),
+	name: text(row.name),
+	emoji: text(row.emoji, '🍲'),
+	// Un nombre de parts absent ou illisible retombe sur la valeur de départ : zéro part rendrait la
+	// mise à l'échelle absurde, et la recette resterait pourtant affichée.
+	servings: typeof row.servings === 'number' && row.servings > 0 ? row.servings : DEFAULT_SERVINGS,
+	notes: typeof row.notes === 'string' ? row.notes : undefined,
+	createdBy: typeof row.created_by === 'string' ? row.created_by : undefined,
+	createdAt: Date.parse(text(row.created_at)) || 0
+});
+
+export const fromRecipe = (recipe: Recipe, householdId: string) => ({
+	id: recipe.id,
+	household_id: householdId,
+	created_by: recipe.createdBy ?? null,
+	name: recipe.name,
+	emoji: recipe.emoji,
+	servings: recipe.servings,
+	notes: recipe.notes ?? null
+});
+
+export const toRecipeIngredient = (row: Row): RecipeIngredient => ({
+	id: text(row.id),
+	recipeId: text(row.recipe_id),
+	name: text(row.name),
+	// Comme pour un article : la quantité voyage en numeric et se saisit au clavier. Une quantité
+	// absente redevient un champ vide, pas « null » écrit en toutes lettres dans le formulaire.
+	qty: row.qty === null || row.qty === undefined ? '' : String(row.qty),
+	unit: text(row.unit, DEFAULT_UNIT),
+	position: typeof row.position === 'number' ? row.position : 0
+});
+
+export const fromRecipeIngredient = (ingredient: RecipeIngredient) => ({
+	id: ingredient.id,
+	recipe_id: ingredient.recipeId,
+	name: ingredient.name,
+	qty: toNumber(ingredient.qty),
+	unit: ingredient.unit,
+	position: ingredient.position
+});
+
+export const toRecipeStep = (row: Row): RecipeStep => ({
+	id: text(row.id),
+	recipeId: text(row.recipe_id),
+	body: text(row.body),
+	position: typeof row.position === 'number' ? row.position : 0
+});
+
+export const fromRecipeStep = (step: RecipeStep) => ({
+	id: step.id,
+	recipe_id: step.recipeId,
+	body: step.body,
+	position: step.position
 });

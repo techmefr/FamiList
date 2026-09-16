@@ -5,12 +5,14 @@
 	"cartes": {},
 	"connexion": {},
 	"creation-de-liste": {},
+	"creation-de-recette": {},
 	"detail-de-liste": {},
 	"discussion": {},
 	"foyer": {},
 	"magasins": {},
 	"prix": {},
 	"profil": {},
+	"recettes": {},
 	"securite": {},
 	"signalement": {}
 }
