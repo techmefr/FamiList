@@ -275,6 +275,7 @@
 		"notLearned": "Default route",
 		"locate": "Save my position here",
 		"locating": "Finding your position…",
+		"waitingSync": "Syncing…",
 		"located": "Position saved",
 		"relocate": "Update the position",
 		"geoDenied": "Position unavailable. Allow location access, then try again.",
