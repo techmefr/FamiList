@@ -3,6 +3,7 @@
 	import { supabase } from '$db/supabase';
 	import { session } from '$stores/session.svelte';
 	import { householdErrorKey } from '$domain/household-error';
+	import { readInviteOutcome } from '$domain/invite-outcome';
 	import { data } from '$stores/data.svelte';
 	import { sync } from '$lib/sync/index.svelte';
 	import { t, i18n } from '$lib/i18n/index.svelte';
@@ -67,7 +68,7 @@
 		busy = true;
 		error = null;
 
-		const { data: rejoint, error: rpcError } = await supabase.rpc('redeem_invite', {
+		const { data: reponse, error: rpcError } = await supabase.rpc('redeem_invite', {
 			invite_code: joinCode
 		});
 
@@ -77,9 +78,19 @@
 			return;
 		}
 
+		// Un code refusé n'arrive plus par une exception : la base doit pouvoir retenir la tentative,
+		// ce qu'une transaction annulée lui interdirait.
+		const issue = readInviteOutcome(reponse);
+
+		if (issue.errorKey) {
+			busy = false;
+			error = t(issue.errorKey);
+			return;
+		}
+
 		// On reste membre du foyer précédent — rejoindre n'en fait plus quitter un. C'est donc ici
 		// qu'on dit lequel regarder, sinon la relecture reprendrait le plus ancien.
-		if (rejoint) sync.adopt(rejoint as unknown as string);
+		if (issue.householdId) sync.adopt(issue.householdId);
 
 		// Le foyer affiché a changé : tout le cache local appartient à l'autre, on repart du serveur.
 		await data.reload();
