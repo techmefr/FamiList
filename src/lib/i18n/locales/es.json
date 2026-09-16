@@ -600,7 +600,13 @@
 		"reportKind": {
 			"bug": "Error",
 			"suggestion": "Mejora"
-		}
+		},
+		"roleAdmin": "Administrador",
+		"twoFactor": "2FA",
+		"promote": "Nombrar administrador",
+		"demote": "Quitar el rol",
+		"resetMfa": "Desbloquear la 2FA",
+		"mfaReset": "Se ha quitado el segundo factor. Esta cuenta inicia sesión solo con su contraseña y luego vuelve a activar la 2FA desde un dispositivo que todavía tenga."
 	},
 	"sync": {
 		"offline": "Sin conexión — tus cambios se enviarán al volver la red",

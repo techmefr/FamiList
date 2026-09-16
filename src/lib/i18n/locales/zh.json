@@ -598,7 +598,13 @@
 		"reportKind": {
 			"bug": "缺陷",
 			"suggestion": "建议"
-		}
+		},
+		"roleAdmin": "管理员",
+		"twoFactor": "两步验证",
+		"promote": "设为管理员",
+		"demote": "移除角色",
+		"resetMfa": "解锁两步验证",
+		"mfaReset": "第二因素已移除。该账号现在仅凭密码登录，随后可在仍持有的设备上重新启用两步验证。"
 	},
 	"sync": {
 		"offline": "离线 — 网络恢复后将同步你的更改",
