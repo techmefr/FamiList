@@ -224,7 +224,11 @@
 		"summary": "已共享给 {names}",
 		"aloneSummary": "只有你能看到",
 		"alone": "目前家庭里只有你一个人。",
-		"invite": "邀请他人"
+		"invite": "邀请他人",
+		"send": "发送清单",
+		"sent": "清单已发送。",
+		"sendCopied": "清单已复制，可以粘贴到任何地方。",
+		"sendFailed": "无法发送清单。"
 	},
 	"units": {
 		"piece": "个",

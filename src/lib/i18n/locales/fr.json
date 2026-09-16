@@ -225,7 +225,11 @@
 		"summary": "Partagée avec {names}",
 		"aloneSummary": "Visible par vous seul",
 		"alone": "Vous êtes seul dans le foyer pour l'instant.",
-		"invite": "Inviter quelqu'un"
+		"invite": "Inviter quelqu'un",
+		"send": "Envoyer la liste",
+		"sent": "Liste envoyée.",
+		"sendCopied": "Liste copiée, collez-la où vous voulez.",
+		"sendFailed": "Impossible d'envoyer la liste."
 	},
 	"units": {
 		"piece": "pièce",
