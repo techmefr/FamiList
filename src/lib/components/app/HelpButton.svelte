@@ -4,7 +4,8 @@
 	import { report } from '$stores/report.svelte';
 	import { settings } from '$stores/settings.svelte';
 	import { feedback } from '$stores/feedback.svelte';
-	import { CircleQuestionMark, GraduationCap, Lightbulb, Bug, X } from '@lucide/svelte';
+	import { install } from '$stores/install.svelte';
+	import { CircleQuestionMark, GraduationCap, Lightbulb, Bug, Download, X } from '@lucide/svelte';
 
 	let dialog = $state<HTMLDialogElement | null>(null);
 
@@ -42,11 +43,25 @@
 		report.show(kind, page.url.pathname);
 	}
 
-	const ACTIONS = [
+	/**
+	 * L'installation ne figure ici que là où elle veut dire quelque chose : ni dans l'application
+	 * Capacitor, ni une fois posée sur l'écran d'accueil, ni dans un navigateur qui n'offre aucun
+	 * chemin. Elle y reste en revanche après un « plus tard » — le bandeau se tait six mois, mais
+	 * revenir de soi-même doit rester possible le lendemain.
+	 */
+	const ACTIONS = $derived([
 		{ key: 'tutorial', icon: GraduationCap, action: tutoriel },
+		...(install.canExplain
+			? [{ key: 'install', icon: Download, action: () => expliquerInstallation() }]
+			: []),
 		{ key: 'suggestion', icon: Lightbulb, action: () => signaler('suggestion') },
 		{ key: 'bug', icon: Bug, action: () => signaler('bug') }
-	] as const;
+	]);
+
+	function expliquerInstallation() {
+		hide();
+		install.showDetails();
+	}
 </script>
 
 <!--

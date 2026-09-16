@@ -839,7 +839,26 @@
 	"helpMenu": {
 		"button": "Aiuto",
 		"tutorial": "Guarda il tutorial",
+		"install": "Installa sulla schermata Home",
 		"suggestion": "Proponi un miglioramento",
 		"bug": "Segnala un problema"
+	},
+	"install": {
+		"title": "Familiste sulla schermata Home",
+		"body": "Una volta installata, l'app si apre da un'icona, senza passare dal browser, e si avvia anche senza rete.",
+		"action": "Installa",
+		"how": "Come fare",
+		"more": "Scopri di più",
+		"later": "Più tardi",
+		"detailsTitle": "Che cosa offre l'installazione",
+		"benefit": {
+			"home": "Un'icona sulla schermata Home, come le altre app",
+			"browser": "Si apre a schermo intero, senza barra degli indirizzi né schede",
+			"offline": "Si avvia anche senza rete: le tue liste restano lì"
+		},
+		"iosTitle": "Su iPhone e iPad",
+		"iosShare": "Tocca il pulsante Condividi, in basso in Safari",
+		"iosAdd": "Scegli «Aggiungi a Home»",
+		"note": "Non si scarica nulla da uno store, e ritrovi il tuo account e le tue liste così come sono."
 	}
 }
