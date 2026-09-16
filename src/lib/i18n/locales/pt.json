@@ -460,6 +460,7 @@
 		"empty": "Sem pedidos.",
 		"approve": "Validar",
 		"reject": "Recusar",
+		"selfAccount": "A sua conta",
 		"requestedAt": "Pedido de {date}",
 		"status": {
 			"pending": "Pendente",
@@ -467,8 +468,7 @@
 			"rejected": "Recusada"
 		},
 		"demo": "Demo",
-		"setDemo": "Marcar como demo",
-		"unsetDemo": "Retirar a demo",
+		"demoToggle": "Conta demo",
 		"resetDemo": "Reiniciar a demo",
 		"demoReset": "A casa de demonstração voltou ao estado inicial.",
 		"demoHint": "A conta de demonstração está aberta a todos. Reinicie-a quando tiver sido muito usada.",
