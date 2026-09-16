@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { untrack } from 'svelte';
 	import { data } from '$stores/data.svelte';
+	import { sync } from '$lib/sync/index.svelte';
 	import { feedback } from '$stores/feedback.svelte';
 	import { t } from '$lib/i18n/index.svelte';
 	import { TINTS } from '$domain/tint';
@@ -77,9 +78,18 @@
 	 */
 	const dejaPris = $derived(saisi.length > 0 && pris.some((court) => court.toUpperCase() === saisi));
 
+	/**
+	 * Créer avant que la première synchronisation soit retombée, c'est choisir un trigramme et une
+	 * teinte parmi un cache encore vide : le magasin prend alors ceux d'un autre. On attend, plutôt
+	 * que d'avoir à corriger après coup un magasin que son doublon rend non modifiable.
+	 *
+	 * Seulement à la création : modifier un magasin suppose qu'on le voit déjà.
+	 */
+	const attendSynchro = $derived(!edite && !sync.settled);
+
 	function submit(event: SubmitEvent) {
 		event.preventDefault();
-		if (!name.trim() || dejaPris) return;
+		if (!name.trim() || dejaPris || attendSynchro) return;
 
 		if (edite) {
 			feedback.play('success');
@@ -227,9 +237,14 @@
 			</Button>
 		</div>
 	{:else}
-		<Button type="submit" data-test-id="shop-create">
+		<Button type="submit" disabled={attendSynchro} data-test-id="shop-create">
 			<Plus size={18} aria-hidden="true" />
 			{t('shops.new')}
 		</Button>
+		{#if attendSynchro}
+			<p class="text-muted-foreground text-caption mt-2" role="status" data-test-id="shop-waiting">
+				{t('shops.waitingSync')}
+			</p>
+		{/if}
 	{/if}
 </form>

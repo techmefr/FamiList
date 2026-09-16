@@ -275,6 +275,7 @@
 		"notLearned": "Parcours par défaut",
 		"locate": "Enregistrer ma position ici",
 		"locating": "Recherche de la position…",
+		"waitingSync": "Synchronisation en cours…",
 		"located": "Position enregistrée",
 		"relocate": "Mettre à jour la position",
 		"geoDenied": "Position indisponible. Autorisez la localisation, puis réessayez.",

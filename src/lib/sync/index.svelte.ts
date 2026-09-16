@@ -41,6 +41,19 @@ class SyncStore {
 	state = $state<SyncState>('idle');
 	lastError = $state<string | null>(null);
 
+	/**
+	 * Vrai dès que la première tentative de synchronisation est retombée, qu'elle ait réussi, échoué
+	 * ou trouvé le réseau absent.
+	 *
+	 * Ce qui se décide à partir du cache complet attend ce drapeau — le trigramme d'un magasin se
+	 * choisit parmi ceux déjà pris, et le cache est vide pendant la seconde qui suit l'ouverture.
+	 * Sans lui, un magasin créé dans cette fenêtre prend un trigramme déjà porté.
+	 *
+	 * Il retombe sur les chemins d'échec aussi, et pas seulement sur le succès : hors réseau, la
+	 * réponse ne viendra jamais, et bloquer l'écran indéfiniment serait pire que le doublon.
+	 */
+	settled = $state(false);
+
 	private channel: ReturnType<typeof supabase.channel> | null = null;
 	private pulling: Promise<void> | null = null;
 	private onPulled: (() => void) | null = null;
@@ -64,6 +77,14 @@ class SyncStore {
 
 	/** Appelé une fois le compte validé. Renvoie true si le cache local a été rempli. */
 	async start(onPulled: () => void) {
+		try {
+			return await this.attempt(onPulled);
+		} finally {
+			this.settled = true;
+		}
+	}
+
+	private async attempt(onPulled: () => void) {
 		if (!browser) return false;
 
 		this.onPulled = onPulled;
@@ -103,6 +124,9 @@ class SyncStore {
 		this.channel = null;
 		this.householdId = null;
 		this.state = 'idle';
+		// Changer de foyer ou de compte repart d'un cache qui ne dit plus rien du nouveau : ce qui
+		// attend la première synchronisation doit l'attendre de nouveau.
+		this.settled = false;
 
 		// Une relecture en vol appartient au foyer qu'on quitte. La garder ferait rendre cette
 		// vieille promesse au prochain `pull()`, qui croirait avoir relu le nouveau foyer : on
