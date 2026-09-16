@@ -121,6 +121,10 @@
 	"scan": {
 		"start": "Scan the code",
 		"stop": "Stop",
+		"torch": "Light",
+		"takePhoto": "Take a photo",
+		"stillSearching": "Nothing yet? Take a photo of the card and it will be read from the image.",
+		"givenUp": "No code detected. Take a photo of the card, or type the code in by hand.",
 		"failed": "Cannot scan: allow the camera, or type the code in by hand.",
 		"fromImage": "From an image",
 		"noCodeInImage": "No code found in that image.",
