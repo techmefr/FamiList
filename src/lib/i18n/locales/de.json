@@ -460,6 +460,7 @@
 		"empty": "Keine Anfragen.",
 		"approve": "Freigeben",
 		"reject": "Ablehnen",
+		"selfAccount": "Ihr Konto",
 		"requestedAt": "Angefragt am {date}",
 		"status": {
 			"pending": "Ausstehend",
@@ -467,8 +468,7 @@
 			"rejected": "Abgelehnt"
 		},
 		"demo": "Demo",
-		"setDemo": "Als Demo markieren",
-		"unsetDemo": "Demo entfernen",
+		"demoToggle": "Demokonto",
 		"resetDemo": "Demo zurücksetzen",
 		"demoReset": "Der Demo-Haushalt ist wieder im Ausgangszustand.",
 		"demoHint": "Das Demokonto steht allen offen. Setzen Sie es zurück, wenn es viel benutzt wurde.",

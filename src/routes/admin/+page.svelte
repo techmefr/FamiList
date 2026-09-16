@@ -5,6 +5,9 @@
 	import { Button } from '$lib/components/ui/button';
 	import * as Card from '$lib/components/ui/card';
 	import { Badge } from '$lib/components/ui/badge';
+	import { Label } from '$lib/components/ui/label';
+	import { Switch } from '$lib/components/ui/switch';
+	import { Check, X, RotateCcw, UserCheck } from '@lucide/svelte';
 	import EmptyState from '$components/app/EmptyState.svelte';
 
 	interface PendingAccount {
@@ -127,6 +130,7 @@
 		<div class="bg-card mt-6 rounded-xl border p-4">
 			<p class="text-label">{t('admin.demoHint')}</p>
 			<Button variant="outline" onclick={resetDemo} data-test-id="reset-demo" class="mt-3">
+				<RotateCcw size={18} aria-hidden="true" />
 				{t('admin.resetDemo')}
 			</Button>
 		</div>
@@ -157,29 +161,47 @@
 								<Badge variant="secondary" data-test-class="demo-badge">{t('admin.demo')}</Badge>
 							{/if}
 
-							{#if !self && account.status !== 'approved'}
-								<Button onclick={() => review(account.id, 'approved')} data-test-class="admin-approve">
-									{t('admin.approve')}
-								</Button>
-							{/if}
-							{#if !self && account.status !== 'rejected'}
-								<Button
-									variant="outline"
-									onclick={() => review(account.id, 'rejected')}
-									data-test-class="admin-reject"
+							<!--
+								Les actions sont désactivées plutôt que masquées : une ligne garde la même largeur
+								quel que soit son état, et un administrateur voit que l'action existe mais qu'elle
+								ne s'applique pas ici.
+							-->
+							{#if self}
+								<p
+									class="text-muted-foreground text-label ms-auto flex shrink-0 items-center gap-2"
+									data-test-class="admin-self"
 								>
-									{t('admin.reject')}
-								</Button>
-							{/if}
-
-							{#if !self}
-								<Button
-									variant="outline"
-									onclick={() => setDemo(account.id, !account.is_demo)}
-									data-test-class="toggle-demo"
-								>
-									{account.is_demo ? t('admin.unsetDemo') : t('admin.setDemo')}
-								</Button>
+									<UserCheck size={18} aria-hidden="true" />
+									{t('admin.selfAccount')}
+								</p>
+							{:else}
+								<div class="ms-auto flex shrink-0 flex-wrap items-center gap-3">
+									<Button
+										onclick={() => review(account.id, 'approved')}
+										disabled={account.status === 'approved'}
+										data-test-class="admin-approve"
+									>
+										<Check size={18} aria-hidden="true" />
+										{t('admin.approve')}
+									</Button>
+									<Button
+										variant="outline"
+										onclick={() => review(account.id, 'rejected')}
+										disabled={account.status === 'rejected'}
+										data-test-class="admin-reject"
+									>
+										<X size={18} aria-hidden="true" />
+										{t('admin.reject')}
+									</Button>
+									<Label for="demo-{account.id}" class="text-label">{t('admin.demoToggle')}</Label>
+									<Switch
+										id="demo-{account.id}"
+										size="lg"
+										checked={account.is_demo}
+										onCheckedChange={(checked) => setDemo(account.id, checked)}
+										data-test-class="toggle-demo"
+									/>
+								</div>
 							{/if}
 						</Card.Content>
 					</Card.Root>
