@@ -6,7 +6,7 @@
 	import { data } from '$stores/data.svelte';
 	import { createIntent } from '$stores/create.svelte';
 	import { feedback } from '$stores/feedback.svelte';
-	import { motionMs } from '$stores/settings.svelte';
+	import { motionMs, settings } from '$stores/settings.svelte';
 	import { i18n, t } from '$lib/i18n/index.svelte';
 	import { listToMarkdown } from '$domain/list-markdown';
 	import { unitKey } from '$domain/units';
@@ -201,6 +201,43 @@
 	}
 
 	const aisleReorder = createReorder(moveAisle);
+
+	/**
+	 * L'article désigné par la recherche.
+	 *
+	 * Trouver un article et atterrir en haut d'une liste de quarante lignes ne répond qu'à moitié à
+	 * la question : il faut encore le chercher des yeux. On déplie donc son rayon — il pouvait être
+	 * replié, ou plus bas que l'écran — on l'amène à la vue, et on le cerne le temps de le voir.
+	 *
+	 * Le cadre s'efface tout seul : laissé en place, il se confondrait avec une sélection, et rien
+	 * dans la page ne dit comment l'enlever.
+	 */
+	const HIGHLIGHT_MS = 2400;
+	let surligne = $state<string | null>(null);
+
+	$effect(() => {
+		const cible = page.url.searchParams.get('item');
+		if (!cible || !data.ready) return;
+
+		const item = data.itemsOf(listId).find((i) => i.id === cible);
+		if (!item) return;
+
+		plies[item.aisleId] = true;
+		surligne = cible;
+
+		const timer = setTimeout(() => (surligne = null), HIGHLIGHT_MS);
+		const frame = requestAnimationFrame(() => {
+			document.getElementById(`item-${cible}`)?.scrollIntoView({
+				block: 'center',
+				behavior: settings.animates ? 'smooth' : 'auto'
+			});
+		});
+
+		return () => {
+			clearTimeout(timer);
+			cancelAnimationFrame(frame);
+		};
+	});
 </script>
 
 <svelte:head>
@@ -419,9 +456,12 @@
 						<div data-reorder-zone class="space-y-2">
 							{#each group.items as item, index (item.id)}
 								<div
+									id="item-{item.id}"
 									data-reorder-row
 									data-held={itemReorder.index === index}
-									class="fl-reorder-row rounded-md"
+									class="fl-reorder-row rounded-md {surligne === item.id
+										? 'ring-primary ring-2 ring-offset-2'
+										: ''}"
 									animate:flip={{
 										duration: itemReorder.busy ? 0 : motionMs(280),
 										easing: cubicOut

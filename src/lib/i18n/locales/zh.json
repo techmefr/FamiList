@@ -854,5 +854,23 @@
 		"iosShare": "点按 Safari 底部的「分享」按钮",
 		"iosAdd": "选择「添加到主屏幕」",
 		"note": "不会从应用商店下载任何东西，你的账户和清单也原封不动。"
+	},
+	"search": {
+		"title": "搜索",
+		"label": "在家庭中搜索",
+		"placeholder": "牛奶、生日、家乐福…",
+		"open": "搜索",
+		"hint": "请至少输入 {count} 个字。",
+		"empty": "没有找到匹配的内容。",
+		"checked": "已勾选",
+		"count": {
+			"other": "{count} 个结果"
+		},
+		"group": {
+			"list": "列表",
+			"item": "商品",
+			"shop": "商店",
+			"card": "卡片"
+		}
 	}
 }
