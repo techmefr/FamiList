@@ -600,7 +600,13 @@
 			"bug": "Bug",
 			"suggestion": "Amélioration"
 		},
-		"resolveReport": "Marquer comme résolu"
+		"resolveReport": "Marquer comme résolu",
+		"roleAdmin": "Administrateur",
+		"twoFactor": "2FA",
+		"promote": "Nommer administrateur",
+		"demote": "Retirer le rôle",
+		"resetMfa": "Débloquer la 2FA",
+		"mfaReset": "Le deuxième facteur a été retiré. Ce compte se reconnecte avec son mot de passe seul, puis réactive la 2FA depuis un appareil qu'il a encore."
 	},
 	"sync": {
 		"offline": "Hors connexion — vos modifications partiront au retour du réseau",

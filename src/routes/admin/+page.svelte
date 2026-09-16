@@ -7,7 +7,7 @@
 	import { Badge } from '$lib/components/ui/badge';
 	import { Label } from '$lib/components/ui/label';
 	import { Switch } from '$lib/components/ui/switch';
-	import { Check, X, RotateCcw, UserCheck } from '@lucide/svelte';
+	import { Check, X, RotateCcw, UserCheck, ShieldCheck, ShieldOff, KeyRound } from '@lucide/svelte';
 	import EmptyState from '$components/app/EmptyState.svelte';
 
 	interface PendingAccount {
@@ -17,6 +17,8 @@
 		requested_at: string;
 		status: string;
 		is_demo: boolean;
+		role: 'user' | 'admin';
+		has_mfa: boolean;
 	}
 
 	interface BugReport {
@@ -75,6 +77,23 @@
 		await load();
 	}
 
+	async function setRole(id: string, admin: boolean) {
+		const { error: rpcError } = await supabase.rpc(admin ? 'promote_admin' : 'demote_admin', {
+			target: id
+		});
+		errors = rpcError ? [rpcError.message] : [];
+		await load();
+	}
+
+	// Le facteur retiré, la personne se reconnecte avec son seul mot de passe : le dire ici évite
+	// qu'on croie l'action sans effet parce que la ligne, elle, ne change presque pas.
+	async function resetMfa(id: string) {
+		const { error: rpcError } = await supabase.rpc('admin_reset_mfa', { target: id });
+		errors = rpcError ? [rpcError.message] : [];
+		notice = rpcError ? null : t('admin.mfaReset');
+		await load();
+	}
+
 	async function setDemo(id: string, demo: boolean) {
 		const { error: rpcError } = await supabase.rpc('set_demo', { target: id, demo });
 		errors = rpcError ? [rpcError.message] : [];
@@ -92,6 +111,12 @@
 	}
 
 	let notice = $state<string | null>(null);
+
+	// Le dernier administrateur ne peut pas se retirer : la base le refuse déjà, l'écran se contente
+	// de ne pas proposer un bouton qui n'aboutirait qu'à un message d'erreur.
+	const adminCount = $derived(
+		accounts.filter((account) => account.role === 'admin' && account.status === 'approved').length
+	);
 
 	$effect(() => {
 		if (session.isAdmin) load();
@@ -157,6 +182,14 @@
 								{t(`admin.status.${account.status}`)}
 							</Badge>
 
+							{#if account.role === 'admin'}
+								<Badge data-test-class="admin-badge">{t('admin.roleAdmin')}</Badge>
+							{/if}
+
+							{#if account.has_mfa}
+								<Badge variant="secondary" data-test-class="mfa-badge">{t('admin.twoFactor')}</Badge>
+							{/if}
+
 							{#if account.is_demo}
 								<Badge variant="secondary" data-test-class="demo-badge">{t('admin.demo')}</Badge>
 							{/if}
@@ -167,13 +200,30 @@
 								ne s'applique pas ici.
 							-->
 							{#if self}
-								<p
-									class="text-muted-foreground text-label ms-auto flex shrink-0 items-center gap-2"
-									data-test-class="admin-self"
-								>
-									<UserCheck size={18} aria-hidden="true" />
-									{t('admin.selfAccount')}
-								</p>
+								<div class="ms-auto flex shrink-0 flex-wrap items-center gap-3">
+									<p
+										class="text-muted-foreground text-label flex items-center gap-2"
+										data-test-class="admin-self"
+									>
+										<UserCheck size={18} aria-hidden="true" />
+										{t('admin.selfAccount')}
+									</p>
+
+									<!--
+										Passer la main fait partie du parcours : on nomme son successeur, puis on se
+										retire. Sans ce bouton, la seule façon de se retirer serait la base.
+									-->
+									{#if account.role === 'admin' && adminCount > 1}
+										<Button
+											variant="outline"
+											onclick={() => setRole(account.id, false)}
+											data-test-class="admin-demote"
+										>
+											<ShieldOff size={18} aria-hidden="true" />
+											{t('admin.demote')}
+										</Button>
+									{/if}
+								</div>
 							{:else}
 								<div class="ms-auto flex shrink-0 flex-wrap items-center gap-3">
 									<Button
@@ -192,6 +242,36 @@
 									>
 										<X size={18} aria-hidden="true" />
 										{t('admin.reject')}
+									</Button>
+									{#if account.role === 'admin'}
+										<Button
+											variant="outline"
+											onclick={() => setRole(account.id, false)}
+											disabled={adminCount < 2}
+											data-test-class="admin-demote"
+										>
+											<ShieldOff size={18} aria-hidden="true" />
+											{t('admin.demote')}
+										</Button>
+									{:else}
+										<Button
+											variant="outline"
+											onclick={() => setRole(account.id, true)}
+											disabled={account.status !== 'approved'}
+											data-test-class="admin-promote"
+										>
+											<ShieldCheck size={18} aria-hidden="true" />
+											{t('admin.promote')}
+										</Button>
+									{/if}
+									<Button
+										variant="outline"
+										onclick={() => resetMfa(account.id)}
+										disabled={!account.has_mfa}
+										data-test-class="admin-reset-mfa"
+									>
+										<KeyRound size={18} aria-hidden="true" />
+										{t('admin.resetMfa')}
 									</Button>
 									<Label for="demo-{account.id}" class="text-label">{t('admin.demoToggle')}</Label>
 									<Switch

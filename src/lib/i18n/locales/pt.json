@@ -600,7 +600,13 @@
 		"reportKind": {
 			"bug": "Erro",
 			"suggestion": "Sugestão"
-		}
+		},
+		"roleAdmin": "Administrador",
+		"twoFactor": "2FA",
+		"promote": "Tornar administrador",
+		"demote": "Remover a função",
+		"resetMfa": "Desbloquear a 2FA",
+		"mfaReset": "O segundo fator foi removido. Esta conta passa a entrar apenas com a palavra-passe e depois reativa a 2FA num aparelho que ainda tenha."
 	},
 	"sync": {
 		"offline": "Sem ligação — as alterações serão enviadas quando a rede voltar",

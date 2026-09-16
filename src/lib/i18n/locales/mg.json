@@ -600,7 +600,13 @@
 		"reportKind": {
 			"bug": "Olana",
 			"suggestion": "Hevitra"
-		}
+		},
+		"roleAdmin": "Mpitantana",
+		"twoFactor": "2FA",
+		"promote": "Atao mpitantana",
+		"demote": "Esory ny andraikitra",
+		"resetMfa": "Vahao ny 2FA",
+		"mfaReset": "Voaesotra ilay singa faharoa. Miditra amin'ny tenimiafina fotsiny izao ity kaonty ity, avy eo mamerina mampandeha ny 2FA amin'ny fitaovana mbola ananany."
 	},
 	"sync": {
 		"offline": "Tsy misy fifandraisana — halefa rehefa miverina ny aterineto ny fanovana",

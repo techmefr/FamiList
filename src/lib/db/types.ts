@@ -817,12 +817,14 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      admin_reset_mfa: { Args: { target: string }; Returns: undefined }
       backup_codes_left: { Args: never; Returns: number }
       can_access_list: { Args: { target: string }; Returns: boolean }
       can_access_shop: { Args: { target: string }; Returns: boolean }
       consume_backup_code: { Args: { code: string }; Returns: boolean }
       create_backup_codes: { Args: never; Returns: string[] }
       create_invite: { Args: never; Returns: string }
+      demote_admin: { Args: { target: string }; Returns: undefined }
       ensure_household: { Args: { household_name?: string }; Returns: string }
       household_profiles: {
         Args: never
@@ -876,12 +878,15 @@ export type Database = {
         Returns: {
           display_name: string
           email: string
+          has_mfa: boolean
           id: string
           is_demo: boolean
           requested_at: string
+          role: string
           status: string
         }[]
       }
+      promote_admin: { Args: { target: string }; Returns: undefined }
       redeem_invite: { Args: { invite_code: string }; Returns: Json }
       reset_demo: { Args: never; Returns: undefined }
       resolve_bug_report: { Args: { target: string }; Returns: undefined }
