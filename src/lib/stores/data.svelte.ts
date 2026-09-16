@@ -309,12 +309,13 @@ class DataStore {
 		return removed.length;
 	}
 
-	addList(input: { name: string; emoji: string; color: string }) {
+	addList(input: { name: string; emoji: string; color: string; eventDate?: string }) {
 		const list: List = {
 			id: crypto.randomUUID(),
 			name: input.name.trim(),
 			emoji: input.emoji,
 			color: input.color,
+			eventDate: input.eventDate || undefined,
 			// Une liste naît ouverte au foyer : c'est le retrait qui est un geste, pas le partage.
 			// Le déclencheur `lists_share_with_household` fait la même chose côté base ; on l'écrit
 			// aussi ici pour que l'affichage soit juste avant même la première synchronisation.
@@ -342,18 +343,20 @@ class DataStore {
 	}
 
 	/**
-	 * Renommer une liste, ou changer son emoji.
+	 * Renommer une liste, changer son emoji, poser ou retirer sa date.
 	 *
-	 * Les deux vont ensemble parce qu'ils se corrigent ensemble : « Cources » se relit une semaine
-	 * plus tard, et l'emoji pris à la va-vite au moment de créer ne dit plus rien une fois la
-	 * liste remplie.
+	 * Les trois vont ensemble parce qu'ils se corrigent ensemble : « Cources » se relit une semaine
+	 * plus tard, l'emoji pris à la va-vite au moment de créer ne dit plus rien une fois la liste
+	 * remplie, et le repas prévu samedi se décale au dimanche.
 	 */
-	updateList(id: string, patch: { name?: string; emoji?: string }) {
+	updateList(id: string, patch: { name?: string; emoji?: string; eventDate?: string }) {
 		const list = this.lists.find((candidate) => candidate.id === id);
 		if (!list) return;
 
 		if (patch.name !== undefined) list.name = patch.name.trim();
 		if (patch.emoji !== undefined) list.emoji = patch.emoji;
+		// Un champ vidé retire la date : c'est le seul geste disponible pour annuler un rappel.
+		if (patch.eventDate !== undefined) list.eventDate = patch.eventDate || undefined;
 
 		const snapshot = $state.snapshot(list) as List;
 		db.lists.put(snapshot);

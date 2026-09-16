@@ -41,7 +41,16 @@
 		"empty": "Noch keine Listen.",
 		"delete": "Liste {name} löschen",
 		"rename": "{name} umbenennen",
-		"duplicate": "{name} duplizieren"
+		"duplicate": "{name} duplizieren",
+		"eventDate": "Stichtag",
+		"eventDateClear": "Leer lassen, um das Datum zu entfernen.",
+		"reminderPlanned": "Erinnerung am {when}.",
+		"reminderLate": "Zu spät für eine Erinnerung: sie wäre am Vortag um 18 Uhr gekommen.",
+		"reminderInvalid": "Unlesbares Datum, es wird keine Erinnerung geplant.",
+		"reminderWeb": "Erinnerungen kommen nur in der installierten App an. Im Browser bleibt das Datum sichtbar, aber es wird keine Benachrichtigung gesendet.",
+		"reminderDenied": "Benachrichtigungen abgelehnt: das Datum ist gespeichert, aber es kommt keine Erinnerung. In den Telefoneinstellungen wieder erlauben.",
+		"reminderTitle": "{name} ist morgen",
+		"reminderBody": "Vor dem {date} fehlen noch Artikel."
 	},
 	"profile": {
 		"title": "Profil",
