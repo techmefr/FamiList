@@ -2,11 +2,21 @@ import { describe, expect, it } from 'vitest';
 import { readReportOutcome } from './report-outcome';
 
 describe('readReportOutcome', () => {
-	it('rend le signalement déposé', () => {
+	it('rend le signalement déposé avec son numéro court', () => {
+		expect(readReportOutcome({ status: 'submitted', id: 'r1', number: 42 })).toEqual({
+			sent: true,
+			errorKey: null,
+			number: 42
+		});
+	});
+
+	it('accepte un envoi dont le numéro manque ou ne se lit pas', () => {
 		expect(readReportOutcome({ status: 'submitted', id: 'r1' })).toEqual({
 			sent: true,
-			errorKey: null
+			errorKey: null,
+			number: null
 		});
+		expect(readReportOutcome({ status: 'submitted', number: '42' }).number).toBeNull();
 	});
 
 	it('sépare le plafond de signalements du plafond de captures', () => {

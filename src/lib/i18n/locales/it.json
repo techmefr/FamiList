@@ -651,11 +651,15 @@
 		"demoHint": "L’account dimostrativo è aperto a tutti. Reimpostalo quando è stato usato molto.",
 		"reportsTitle": "Segnalazioni",
 		"reportsEmpty": "Nessuna segnalazione.",
+		"reportNumber": "Segnalazione {number}",
 		"reportStatus": {
 			"open": "Aperta",
 			"resolved": "Risolta"
 		},
 		"resolveReport": "Segna come risolta",
+		"publishReport": "Apri una issue",
+		"reportIssuePending": "Pubblicazione richiesta",
+		"reportIssue": "Issue n. {number}",
 		"reportKind": {
 			"bug": "Bug",
 			"suggestion": "Suggerimento"
@@ -831,6 +835,7 @@
 		"resume": "Riprendi",
 		"minimizedHint": "Segnalazione in corso. Ridotta, ti lascia rivedere lo schermo e fare uno screenshot.",
 		"success": "Grazie, la tua segnalazione è stata inviata.",
+		"reference": "Riferimento: {number}",
 		"backHome": "Torna alla home",
 		"title": {
 			"bug": "Segnala un problema",

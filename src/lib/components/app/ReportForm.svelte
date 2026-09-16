@@ -90,6 +90,7 @@
 		}
 
 		feedback.play('success');
+		report.number = issue.number;
 		report.sent = true;
 	}
 </script>
@@ -98,6 +99,17 @@
 	<p class="text-primary" role="status" data-test-id="bug-success">
 		{t('bugReport.success')}
 	</p>
+
+	<!--
+		Le numéro court est la seule référence que la personne puisse citer si elle nous réécrit :
+		l'identifiant de la ligne est un UUID, illisible et inutilisable à l'oral. Il n'apparaît que
+		si la base a su le rendre — un envoi abouti ne se transforme pas en échec pour si peu.
+	-->
+	{#if report.number !== null}
+		<p class="text-muted-foreground text-label mt-2" data-test-id="bug-reference">
+			{t('bugReport.reference', { number: report.number })}
+		</p>
+	{/if}
 {:else}
 	<form onsubmit={envoyer} class="space-y-4" data-test-id="bug-form">
 		<div>

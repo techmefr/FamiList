@@ -19,26 +19,31 @@ export type ReportOutcomeKey =
 	| 'bugReport.errorTooMuchStorage'
 	| 'bugReport.errorUnknown';
 
-export type ReportOutcome = { sent: boolean; errorKey: ReportOutcomeKey | null };
+export type ReportOutcome = { sent: boolean; errorKey: ReportOutcomeKey | null; number: number | null };
 
 export function readReportOutcome(payload: unknown): ReportOutcome {
 	if (payload === null || typeof payload !== 'object') {
-		return { sent: false, errorKey: 'bugReport.errorUnknown' };
+		return { sent: false, errorKey: 'bugReport.errorUnknown', number: null };
 	}
 
-	const answer = payload as { status?: unknown };
+	const answer = payload as { status?: unknown; number?: unknown };
 
 	if (answer.status === 'rate_limited') {
-		return { sent: false, errorKey: 'bugReport.errorTooMany' };
+		return { sent: false, errorKey: 'bugReport.errorTooMany', number: null };
 	}
 
 	if (answer.status === 'storage_limited') {
-		return { sent: false, errorKey: 'bugReport.errorTooMuchStorage' };
+		return { sent: false, errorKey: 'bugReport.errorTooMuchStorage', number: null };
 	}
 
 	if (answer.status === 'submitted') {
-		return { sent: true, errorKey: null };
+		// Le numéro court est la seule référence que la personne pourra citer si elle nous réécrit.
+		// Un envoi reste un envoi s'il manque : on ne refuse pas un signalement déposé parce que la
+		// base n'a pas su nous dire son numéro.
+		const number = typeof answer.number === 'number' ? answer.number : null;
+
+		return { sent: true, errorKey: null, number };
 	}
 
-	return { sent: false, errorKey: 'bugReport.errorUnknown' };
+	return { sent: false, errorKey: 'bugReport.errorUnknown', number: null };
 }

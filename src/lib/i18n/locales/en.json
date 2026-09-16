@@ -651,11 +651,15 @@
 		"demoHint": "The demo account is open to everyone. Reset it once it has been used a lot.",
 		"reportsTitle": "Bug reports",
 		"reportsEmpty": "No reports.",
+		"reportNumber": "Report {number}",
 		"reportStatus": {
 			"open": "Open",
 			"resolved": "Resolved"
 		},
 		"resolveReport": "Mark as resolved",
+		"publishReport": "Open an issue",
+		"reportIssuePending": "Publication requested",
+		"reportIssue": "Issue #{number}",
 		"reportKind": {
 			"bug": "Bug",
 			"suggestion": "Suggestion"
@@ -831,6 +835,7 @@
 		"resume": "Resume",
 		"minimizedHint": "Report in progress. Minimised, it lets you see your screen again and take a screenshot.",
 		"success": "Thanks, your report has been sent.",
+		"reference": "Reference: {number}",
 		"backHome": "Back to home",
 		"title": {
 			"bug": "Report a problem",

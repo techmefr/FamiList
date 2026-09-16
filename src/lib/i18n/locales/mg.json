@@ -651,11 +651,15 @@
 		"demoHint": "Misokatra ho an’ny rehetra ny kaonty fanandramana. Avereno rehefa be ny nampiasa azy.",
 		"reportsTitle": "Fanambarana olana",
 		"reportsEmpty": "Tsy misy fanambarana.",
+		"reportNumber": "Tatitra {number}",
 		"reportStatus": {
 			"open": "Mbola misokatra",
 			"resolved": "Voavaha"
 		},
 		"resolveReport": "Marihina ho voavaha",
+		"publishReport": "Hanokatra olana",
+		"reportIssuePending": "Nangatahina ny famoahana",
+		"reportIssue": "Olana #{number}",
 		"reportKind": {
 			"bug": "Olana",
 			"suggestion": "Hevitra"
@@ -831,6 +835,7 @@
 		"resume": "Tohizana",
 		"minimizedHint": "Misy fitarainana am-panoratana. Rehefa ahena dia hita indray ny efijery ka azo alaina sary.",
 		"success": "Misaotra, voaray ny fanambaranao.",
+		"reference": "Laharana: {number}",
 		"backHome": "Miverina any am-piandohana",
 		"title": {
 			"bug": "Milaza olana",

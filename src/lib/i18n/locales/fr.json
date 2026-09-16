@@ -651,6 +651,7 @@
 		"demoHint": "Le compte de démonstration est ouvert à tous. Remettez-le à zéro quand il a trop servi.",
 		"reportsTitle": "Signalements",
 		"reportsEmpty": "Aucun signalement.",
+		"reportNumber": "Signalement {number}",
 		"reportStatus": {
 			"open": "Ouvert",
 			"resolved": "Résolu"
@@ -660,6 +661,9 @@
 			"suggestion": "Amélioration"
 		},
 		"resolveReport": "Marquer comme résolu",
+		"publishReport": "Ouvrir une issue",
+		"reportIssuePending": "Publication demandée",
+		"reportIssue": "Issue #{number}",
 		"roleAdmin": "Administrateur",
 		"twoFactor": "2FA",
 		"promote": "Nommer administrateur",
@@ -842,6 +846,7 @@
 		"resume": "Reprendre",
 		"minimizedHint": "Signalement en cours. Réduit, il vous laisse revoir votre écran et prendre une capture.",
 		"success": "Merci, votre signalement a bien été envoyé.",
+		"reference": "Référence : {number}",
 		"backHome": "Retour à l'accueil"
 	},
 	"helpMenu": {

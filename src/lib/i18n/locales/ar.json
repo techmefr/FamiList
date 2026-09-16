@@ -663,11 +663,15 @@
 		"demoHint": "الحساب التجريبي مفتوح للجميع. أعِد ضبطه عندما يكثر استعماله.",
 		"reportsTitle": "البلاغات",
 		"reportsEmpty": "لا توجد بلاغات.",
+		"reportNumber": "البلاغ {number}",
 		"reportStatus": {
 			"open": "مفتوح",
 			"resolved": "تم الحل"
 		},
 		"resolveReport": "وضع علامة كمحلول",
+		"publishReport": "فتح مسألة",
+		"reportIssuePending": "تم طلب النشر",
+		"reportIssue": "المسألة رقم {number}",
 		"reportKind": {
 			"bug": "مشكلة",
 			"suggestion": "اقتراح"
@@ -855,6 +859,7 @@
 		"resume": "متابعة",
 		"minimizedHint": "بلاغ قيد الكتابة. عند تصغيره يظهر لك الشاشة من جديد لالتقاط صورة لها.",
 		"success": "شكرًا لك، تم إرسال بلاغك.",
+		"reference": "المرجع: {number}",
 		"backHome": "العودة إلى الرئيسية",
 		"title": {
 			"bug": "الإبلاغ عن مشكلة",

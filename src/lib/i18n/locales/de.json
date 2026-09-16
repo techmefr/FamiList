@@ -651,11 +651,15 @@
 		"demoHint": "Das Demokonto steht allen offen. Setzen Sie es zurück, wenn es viel benutzt wurde.",
 		"reportsTitle": "Fehlermeldungen",
 		"reportsEmpty": "Keine Meldungen.",
+		"reportNumber": "Meldung {number}",
 		"reportStatus": {
 			"open": "Offen",
 			"resolved": "Erledigt"
 		},
 		"resolveReport": "Als erledigt markieren",
+		"publishReport": "Issue eröffnen",
+		"reportIssuePending": "Veröffentlichung angefordert",
+		"reportIssue": "Issue #{number}",
 		"reportKind": {
 			"bug": "Fehler",
 			"suggestion": "Vorschlag"
@@ -831,6 +835,7 @@
 		"resume": "Fortsetzen",
 		"minimizedHint": "Meldung in Arbeit. Verkleinert gibt sie den Bildschirm wieder frei, für einen Screenshot.",
 		"success": "Danke, Ihre Meldung wurde gesendet.",
+		"reference": "Referenz: {number}",
 		"backHome": "Zurück zur Startseite",
 		"title": {
 			"bug": "Ein Problem melden",

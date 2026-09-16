@@ -648,11 +648,15 @@
 		"demoHint": "演示账号对所有人开放。使用较多后请重置。",
 		"reportsTitle": "问题报告",
 		"reportsEmpty": "暂无报告。",
+		"reportNumber": "反馈 {number}",
 		"reportStatus": {
 			"open": "待处理",
 			"resolved": "已解决"
 		},
 		"resolveReport": "标记为已解决",
+		"publishReport": "创建议题",
+		"reportIssuePending": "已申请发布",
+		"reportIssue": "议题 #{number}",
 		"reportKind": {
 			"bug": "缺陷",
 			"suggestion": "建议"
@@ -825,6 +829,7 @@
 		"resume": "继续填写",
 		"minimizedHint": "反馈尚未发送。收起后可重新看到页面，方便截图。",
 		"success": "谢谢，您的报告已发送。",
+		"reference": "参考编号：{number}",
 		"backHome": "返回首页",
 		"title": {
 			"bug": "报告问题",
