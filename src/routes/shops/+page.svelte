@@ -11,20 +11,13 @@
 	import EmojiPicker from '$components/app/EmojiPicker.svelte';
 	import ShopForm from '$components/app/ShopForm.svelte';
 	import { feedback } from '$stores/feedback.svelte';
-	import { Plus, LayoutList, MapPin, Pencil, Trash2 } from '@lucide/svelte';
+	import { Plus, LayoutList, Pencil, Trash2 } from '@lucide/svelte';
 	import IconField from '$components/app/IconField.svelte';
 	import EmptyState from '$components/app/EmptyState.svelte';
 
 	let aisleName = $state('');
 	let aisleEmoji = $state('🛒');
 	let picker = $state<EmojiPicker | null>(null);
-
-	/**
-	 * Le magasin dont on relève la position, et le dernier échec. Un seul relevé à la fois : le GPS
-	 * met quelques secondes, et deux demandes en parallèle donneraient deux réponses à ranger.
-	 */
-	let releve = $state<string | null>(null);
-	let erreurGps = $state('');
 
 	/** Le magasin ouvert en modification, et celui dont la suppression attend d'être confirmée. */
 	let modifie = $state<string | null>(null);
@@ -40,41 +33,6 @@
 		data.removeShop(shop.id);
 		aSupprimer = null;
 		if (modifie === shop.id) modifie = null;
-	}
-
-	/**
-	 * La position du magasin, prise sur place.
-	 *
-	 * C'est l'appareil qui la donne, pas un service de géocodage : l'adresse ne sort jamais du
-	 * téléphone, il n'y a ni clé d'API ni quota, et la chose marche sans réseau. En échange il faut
-	 * être devant le magasin — ce qui tombe bien, on y est quand on fait ses courses.
-	 *
-	 * Elle sert à retrouver le magasin quand on y revient, pour sortir la bonne carte de fidélité
-	 * sans la chercher.
-	 */
-	function releverPosition(shop: Shop) {
-		if (!navigator.geolocation) {
-			erreurGps = t('shops.geoUnavailable');
-			return;
-		}
-
-		releve = shop.id;
-		erreurGps = '';
-
-		navigator.geolocation.getCurrentPosition(
-			(position) => {
-				data.updateShop(shop.id, {
-					lat: position.coords.latitude,
-					lng: position.coords.longitude
-				});
-				releve = null;
-			},
-			() => {
-				erreurGps = t('shops.geoDenied');
-				releve = null;
-			},
-			{ enableHighAccuracy: true, timeout: 15000 }
-		);
 	}
 
 	function addAisle(event: SubmitEvent) {
@@ -97,17 +55,12 @@
 	<ShopForm />
 </div>
 
-{#if erreurGps}
-	<p class="text-destructive mt-6" role="alert" data-test-id="shop-geo-error">{erreurGps}</p>
-{/if}
-
 {#if data.shops.length === 0}
 	<EmptyState illustration="shop" text={t('shops.empty')} testId="shops-empty" />
 {:else}
 	<ul class="mt-6 space-y-3">
 		{#each data.shops as shop (shop.id)}
 			{@const learned = data.layouts.find((l) => l.shopId === shop.id)?.learned}
-			{@const situe = shop.lat !== undefined && shop.lng !== undefined}
 			<li>
 				<Card.Root data-test-class="shop-card">
 					<Card.Content>
@@ -136,34 +89,7 @@
 							</Badge>
 						</div>
 
-						<!--
-							Le relevé de position vit sur la fiche du magasin et pas dans le formulaire : on
-							l'enregistre en y étant, c'est-à-dire longtemps après l'avoir créé.
-						-->
 						<div class="mt-3 flex flex-wrap items-center gap-3">
-							<Button
-								variant="outline"
-								onclick={() => releverPosition(shop)}
-								disabled={releve !== null}
-								data-test-class="shop-locate"
-							>
-								<MapPin size={18} aria-hidden="true" />
-								{releve === shop.id
-									? t('shops.locating')
-									: situe
-										? t('shops.relocate')
-										: t('shops.locate')}
-							</Button>
-							{#if situe}
-								<p
-									class="text-muted-foreground text-caption"
-									role="status"
-									data-test-class="shop-located"
-								>
-									{t('shops.located')}
-								</p>
-							{/if}
-
 							<Button
 								variant="outline"
 								onclick={() => {
