@@ -550,6 +550,7 @@
 		"errorNotApproved": "Mbola tsy nekena ny kaontinao.",
 		"errorLeaveFirst": "Misy entana na karatra ao amin’ny tokantranonao ankehitriny. Foano izany, na mangataha fanasana amin’ny kaonty hafa.",
 		"errorLastMember": "Irery ianao ao amin’ity tokantrano ity : raha miala ianao dia tsy ho azo idirana intsony.",
+		"errorTooManyAttempts": "Kaody betsaka loatra no nandramana. Miandrasa fahefatry ny ora vao manandrana indray.",
 		"errorUnknown": "Tsy nahomby. Andramo indray afaka kelikely.",
 		"goToSecondFactor": "Ampidiro ny kaody",
 		"role": {

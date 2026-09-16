@@ -550,6 +550,7 @@
 		"errorNotApproved": "Votre compte n’est pas encore validé.",
 		"errorLeaveFirst": "Votre foyer actuel contient des courses ou des cartes. Videz-le ou faites-vous inviter depuis un autre compte.",
 		"errorLastMember": "Vous êtes seul dans ce foyer : le quitter le rendrait inaccessible.",
+		"errorTooManyAttempts": "Trop de codes essayés. Patientez un quart d’heure avant de réessayer.",
 		"errorUnknown": "L’opération a échoué. Réessayez dans un instant.",
 		"goToSecondFactor": "Saisir mon code",
 		"role": {

@@ -550,6 +550,7 @@
 		"errorNotApproved": "Your account has not been approved yet.",
 		"errorLeaveFirst": "Your current household has shopping or cards in it. Empty it, or get invited from another account.",
 		"errorLastMember": "You are alone in this household: leaving would make it unreachable.",
+		"errorTooManyAttempts": "Too many codes tried. Wait about fifteen minutes before trying again.",
 		"errorUnknown": "That did not work. Try again in a moment.",
 		"goToSecondFactor": "Enter my code",
 		"role": {

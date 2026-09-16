@@ -807,7 +807,7 @@ export type Database = {
           status: string
         }[]
       }
-      redeem_invite: { Args: { invite_code: string }; Returns: string }
+      redeem_invite: { Args: { invite_code: string }; Returns: Json }
       reset_demo: { Args: never; Returns: undefined }
       resolve_bug_report: { Args: { target: string }; Returns: undefined }
       review_account: {

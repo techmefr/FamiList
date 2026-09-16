@@ -550,6 +550,7 @@
 		"errorNotApproved": "Dein Konto ist noch nicht freigegeben.",
 		"errorLeaveFirst": "In deinem aktuellen Haushalt liegen Einkäufe oder Karten. Leere ihn oder lass dich mit einem anderen Konto einladen.",
 		"errorLastMember": "Du bist allein in diesem Haushalt: Beim Verlassen wäre er nicht mehr erreichbar.",
+		"errorTooManyAttempts": "Zu viele Codes versucht. Warte etwa eine Viertelstunde und versuche es dann erneut.",
 		"errorUnknown": "Das hat nicht geklappt. Versuche es gleich noch einmal.",
 		"goToSecondFactor": "Code eingeben",
 		"role": {

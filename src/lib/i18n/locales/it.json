@@ -550,6 +550,7 @@
 		"errorNotApproved": "Il tuo account non è ancora approvato.",
 		"errorLeaveFirst": "La tua casa attuale contiene spesa o carte. Svuotala, oppure fatti invitare da un altro account.",
 		"errorLastMember": "Sei solo in questa casa: uscendo diventerebbe irraggiungibile.",
+		"errorTooManyAttempts": "Troppi codici tentati. Attendi un quarto d’ora prima di riprovare.",
 		"errorUnknown": "Non ha funzionato. Riprova tra un momento.",
 		"goToSecondFactor": "Inserire il codice",
 		"role": {
