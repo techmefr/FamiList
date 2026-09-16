@@ -13,7 +13,8 @@
 		"household": "家庭",
 		"magnifier": "放大镜",
 		"create": "新建",
-		"chat": "讨论"
+		"chat": "讨论",
+		"prices": "价格"
 	},
 	"create": {
 		"title": "要新建什么？",
@@ -213,7 +214,11 @@
 		"swipeUncheck": "取消勾选",
 		"swipeDelete": "删除",
 		"noShop": "添加商店",
-		"edit": "编辑 {name}"
+		"edit": "编辑 {name}",
+		"price": "价格",
+		"pricePlaceholder": "0.00",
+		"priceOf": "{name} 在本门店的价格",
+		"cheaperAt": "{shop} 更便宜：{price}"
 	},
 	"share": {
 		"title": "谁能看到这份清单？",
@@ -300,6 +305,18 @@
 		"cancel": "取消",
 		"deleteConfirm": "删除 {name}？在这家店学到的动线将会丢失。",
 		"deleteYes": "删除"
+	},
+	"prices": {
+		"title": "价格记录",
+		"intro": "各门店最近记录的价格，由低到高排列。",
+		"open": "价格记录",
+		"empty": "还没有价格。购物时勾选商品即可记下它的价格。",
+		"shopCount": {
+			"other": "{count} 家门店"
+		},
+		"recordedOn": "记录于 {date}",
+		"cheapest": "最便宜",
+		"goneShop": "已删除的门店"
 	},
 	"aisles": {
 		"title": "货区",

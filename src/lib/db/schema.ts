@@ -1,5 +1,6 @@
 import Dexie, { type EntityTable } from 'dexie';
 import type { CodeType } from '$domain/code-format';
+import type { PriceEntry } from '$domain/price';
 
 export interface Shop {
 	id: string;
@@ -135,6 +136,15 @@ export interface ShopItemOrder {
 	productSlugs: string[];
 }
 
+/**
+ * Un prix relevé, tel qu'il est gardé sur l'appareil. La forme vient du domaine, qui porte la
+ * comparaison entre magasins ; seule la personne qui a relevé s'y ajoute, et elle ne sert qu'à
+ * remplir la colonne correspondante en base.
+ */
+export interface Price extends PriceEntry {
+	recordedBy: string;
+}
+
 export interface Message {
 	id: string;
 	listId: string;
@@ -212,6 +222,7 @@ class FamiListDatabase extends Dexie {
 	polls!: EntityTable<Poll, 'id'>;
 	pollOptions!: EntityTable<PollOption, 'id'>;
 	pollVotes!: EntityTable<PollVote, 'key'>;
+	prices!: EntityTable<Price, 'id'>;
 
 	constructor() {
 		super('familist');
@@ -246,6 +257,9 @@ class FamiListDatabase extends Dexie {
 			pollOptions: 'id, pollId',
 			pollVotes: 'key, optionId'
 		});
+
+		// Indexé par slug : c'est par produit qu'on interroge l'historique, jamais par identifiant.
+		this.version(5).stores({ prices: 'id, productSlug, shopId' });
 	}
 }
 

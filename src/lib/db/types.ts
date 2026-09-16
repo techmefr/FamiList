@@ -202,6 +202,78 @@ export type Database = {
         }
         Relationships: []
       }
+      invite_attempts: {
+        Row: {
+          attempted_at: string
+          id: number
+          user_id: string
+        }
+        Insert: {
+          attempted_at?: string
+          id?: never
+          user_id: string
+        }
+        Update: {
+          attempted_at?: string
+          id?: never
+          user_id?: string
+        }
+        Relationships: []
+      }
+      item_prices: {
+        Row: {
+          amount: number
+          created_at: string
+          currency: string
+          household_id: string
+          id: string
+          product_name: string
+          product_slug: string
+          recorded_at: string
+          recorded_by: string | null
+          shop_id: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          currency?: string
+          household_id: string
+          id?: string
+          product_name: string
+          product_slug: string
+          recorded_at?: string
+          recorded_by?: string | null
+          shop_id: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          currency?: string
+          household_id?: string
+          id?: string
+          product_name?: string
+          product_slug?: string
+          recorded_at?: string
+          recorded_by?: string | null
+          shop_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "item_prices_household_id_fkey"
+            columns: ["household_id"]
+            isOneToOne: false
+            referencedRelation: "households"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "item_prices_shop_id_fkey"
+            columns: ["shop_id"]
+            isOneToOne: false
+            referencedRelation: "shops"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       items: {
         Row: {
           aisle_id: string | null

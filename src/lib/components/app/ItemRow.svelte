@@ -2,8 +2,10 @@
 	import type { Item } from '$db/schema';
 	import { data } from '$stores/data.svelte';
 	import { feedback } from '$stores/feedback.svelte';
-	import { t } from '$lib/i18n/index.svelte';
+	import { i18n, t } from '$lib/i18n/index.svelte';
 	import { unitKey } from '$domain/units';
+	import { slugify } from '$domain/slug';
+	import { formatAmount } from '$domain/price';
 	import { longpress } from '$components/app/longpress.svelte';
 	import { Star, Trash2, ArrowUp, ArrowDown, GripVertical, Pencil } from '@lucide/svelte';
 
@@ -51,6 +53,42 @@
 		feedback.play(item.checked ? 'uncheck' : 'check');
 		data.toggleItem(item.id);
 	}
+
+	/**
+	 * Ce qui est en train d'être tapé, tant que le champ n'a pas été quitté. `null` veut dire « rien
+	 * en cours » : le champ affiche alors le prix enregistré, remis en forme dans la langue lue.
+	 * Sans cet état, chaque frappe serait réécrite par le formatage et le champ deviendrait
+	 * intapable.
+	 */
+	let draft = $state<string | null>(null);
+
+	const recorded = $derived(data.priceOf(item));
+
+	const priceValue = $derived(
+		draft ??
+			(recorded
+				? i18n.number(recorded.amount, { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+				: '')
+	);
+
+	/**
+	 * Le prix du même produit ailleurs, et seulement s'il est plus bas que celui d'ici.
+	 *
+	 * C'est toute la fonctionnalité en une ligne, posée au moment où elle sert : le produit est dans
+	 * la main, devant le rayon. Rien à afficher quand on est déjà au moins cher — une ligne qui dit
+	 * « vous avez bien fait » occupe la place sans rien apprendre.
+	 */
+	const cheaper = $derived.by(() => {
+		if (!item.checked) return null;
+
+		const best = data.priceComparison(slugify(item.name))[0];
+		if (!best || best.shopId === data.activeShopId) return null;
+		if (recorded && best.amount >= recorded.amount) return null;
+
+		return best;
+	});
+
+	const cheaperShop = $derived(data.shops.find((shop) => shop.id === cheaper?.shopId));
 </script>
 
 <div
@@ -162,4 +200,45 @@
 			<Trash2 size={18} aria-hidden="true" />
 		</button>
 	</div>
+
+	<!--
+		Le prix, sur un article coché seulement.
+
+		C'est le seul moment où quelqu'un l'a sous les yeux : l'étiquette est devant lui et le produit
+		part dans le chariot. Le demander à l'ajout reviendrait à le faire deviner la veille sur le
+		canapé, et le demander après la course obligerait à rouvrir chaque ligne de mémoire.
+
+		Il prend toute la largeur sous la ligne, plutôt qu'une case coincée entre les boutons : un
+		champ de saisie à côté de cinq cibles de 44 px se touche par erreur à chaque course.
+	-->
+	{#if item.checked}
+		<div class="flex w-full flex-wrap items-center gap-x-3 gap-y-1 ps-9">
+			<label class="text-caption text-muted-foreground flex items-center gap-2">
+				<span>{t('list.price')}</span>
+				<input
+					type="text"
+					inputmode="decimal"
+					value={priceValue}
+					placeholder={t('list.pricePlaceholder')}
+					aria-label={t('list.priceOf', { name: item.name })}
+					data-test-class="item-price"
+					oninput={(event) => (draft = event.currentTarget.value)}
+					onchange={(event) => {
+						data.setItemPrice(item, event.currentTarget.value);
+						draft = null;
+					}}
+					class="border-input bg-background text-label h-9 w-24 rounded-md border px-2"
+				/>
+			</label>
+
+			{#if cheaper && cheaperShop}
+				<p class="text-caption text-secondary font-medium" data-test-class="item-cheaper">
+					{t('list.cheaperAt', {
+						shop: cheaperShop.name,
+						price: formatAmount(cheaper.amount, cheaper.currency, i18n.locale)
+					})}
+				</p>
+			{/if}
+		</div>
+	{/if}
 </div>

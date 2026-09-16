@@ -13,7 +13,8 @@
 		"household": "Haushalt",
 		"magnifier": "Lupe",
 		"create": "Erstellen",
-		"chat": "Unterhaltungen"
+		"chat": "Unterhaltungen",
+		"prices": "Preise"
 	},
 	"create": {
 		"title": "Was möchten Sie anlegen?",
@@ -214,7 +215,11 @@
 		"swipeUncheck": "Abwählen",
 		"swipeDelete": "Löschen",
 		"noShop": "Ein Geschäft hinzufügen",
-		"edit": "{name} bearbeiten"
+		"edit": "{name} bearbeiten",
+		"price": "Preis",
+		"pricePlaceholder": "0,00",
+		"priceOf": "Preis von {name} in diesem Geschäft",
+		"cheaperAt": "Günstiger bei {shop}: {price}"
 	},
 	"share": {
 		"title": "Wer sieht diese Liste?",
@@ -301,6 +306,19 @@
 		"cancel": "Abbrechen",
 		"deleteConfirm": "{name} löschen? Der in diesem Geschäft gelernte Weg geht verloren.",
 		"deleteYes": "Löschen"
+	},
+	"prices": {
+		"title": "Preisverlauf",
+		"intro": "Der zuletzt erfasste Preis je Geschäft, vom günstigsten zum teuersten.",
+		"open": "Preisverlauf",
+		"empty": "Noch keine Preise. Hake einen Artikel beim Einkaufen ab, um seinen Preis zu notieren.",
+		"shopCount": {
+			"one": "1 Geschäft",
+			"other": "{count} Geschäfte"
+		},
+		"recordedOn": "Erfasst am {date}",
+		"cheapest": "Am günstigsten",
+		"goneShop": "Gelöschtes Geschäft"
 	},
 	"aisles": {
 		"title": "Abteilungen",
