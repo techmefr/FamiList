@@ -665,7 +665,10 @@
 		"promote": "Nombrar administrador",
 		"demote": "Quitar el rol",
 		"resetMfa": "Desbloquear la 2FA",
-		"mfaReset": "Se ha quitado el segundo factor. Esta cuenta inicia sesión solo con su contraseña y luego vuelve a activar la 2FA desde un dispositivo que todavía tenga."
+		"mfaReset": "Se ha quitado el segundo factor. Esta cuenta inicia sesión solo con su contraseña y luego vuelve a activar la 2FA desde un dispositivo que todavía tenga.",
+		"errorDenied": "Esta cuenta no tiene el rol de administrador.",
+		"errorSecondFactor": "Tu sesión se detuvo en la contraseña. Termina la verificación en dos pasos para actuar aquí.",
+		"elevate": "Terminar la verificación"
 	},
 	"sync": {
 		"offline": "Sin conexión — tus cambios se enviarán al volver la red",

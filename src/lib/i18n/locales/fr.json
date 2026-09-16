@@ -665,7 +665,10 @@
 		"promote": "Nommer administrateur",
 		"demote": "Retirer le rôle",
 		"resetMfa": "Débloquer la 2FA",
-		"mfaReset": "Le deuxième facteur a été retiré. Ce compte se reconnecte avec son mot de passe seul, puis réactive la 2FA depuis un appareil qu'il a encore."
+		"mfaReset": "Le deuxième facteur a été retiré. Ce compte se reconnecte avec son mot de passe seul, puis réactive la 2FA depuis un appareil qu'il a encore.",
+		"errorDenied": "Ce compte n'a pas le rôle administrateur.",
+		"errorSecondFactor": "Votre session s'est arrêtée au mot de passe. Terminez la vérification en deux étapes pour agir ici.",
+		"elevate": "Terminer la vérification"
 	},
 	"sync": {
 		"offline": "Hors connexion — vos modifications partiront au retour du réseau",
