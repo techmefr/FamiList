@@ -659,7 +659,10 @@
 		"promote": "Make administrator",
 		"demote": "Remove role",
 		"resetMfa": "Unlock 2FA",
-		"mfaReset": "The second factor has been removed. This account now signs in with its password alone, then re-enables 2FA from a device it still has."
+		"mfaReset": "The second factor has been removed. This account now signs in with its password alone, then re-enables 2FA from a device it still has.",
+		"errorDenied": "This account does not have the administrator role.",
+		"errorSecondFactor": "Your session stopped at the password. Finish the two-step verification to act here.",
+		"elevate": "Finish verification"
 	},
 	"sync": {
 		"offline": "Offline — your changes will sync when the network is back",

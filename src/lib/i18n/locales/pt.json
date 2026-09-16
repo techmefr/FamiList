@@ -659,7 +659,10 @@
 		"promote": "Tornar administrador",
 		"demote": "Remover a função",
 		"resetMfa": "Desbloquear a 2FA",
-		"mfaReset": "O segundo fator foi removido. Esta conta passa a entrar apenas com a palavra-passe e depois reativa a 2FA num aparelho que ainda tenha."
+		"mfaReset": "O segundo fator foi removido. Esta conta passa a entrar apenas com a palavra-passe e depois reativa a 2FA num aparelho que ainda tenha.",
+		"errorDenied": "Esta conta não tem a função de administrador.",
+		"errorSecondFactor": "A sua sessão parou na palavra-passe. Conclua a verificação em duas etapas para agir aqui.",
+		"elevate": "Concluir a verificação"
 	},
 	"sync": {
 		"offline": "Sem ligação — as alterações serão enviadas quando a rede voltar",

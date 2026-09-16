@@ -659,7 +659,10 @@
 		"promote": "Nomina amministratore",
 		"demote": "Togli il ruolo",
 		"resetMfa": "Sblocca la 2FA",
-		"mfaReset": "Il secondo fattore è stato rimosso. Questo account accede solo con la sua password, poi riattiva la 2FA da un dispositivo che ha ancora."
+		"mfaReset": "Il secondo fattore è stato rimosso. Questo account accede solo con la sua password, poi riattiva la 2FA da un dispositivo che ha ancora.",
+		"errorDenied": "Questo account non ha il ruolo di amministratore.",
+		"errorSecondFactor": "La tua sessione si è fermata alla password. Completa la verifica in due passaggi per agire qui.",
+		"elevate": "Completa la verifica"
 	},
 	"sync": {
 		"offline": "Non in linea — le modifiche partiranno al ritorno della rete",

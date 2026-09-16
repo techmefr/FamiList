@@ -659,7 +659,10 @@
 		"promote": "Atao mpitantana",
 		"demote": "Esory ny andraikitra",
 		"resetMfa": "Vahao ny 2FA",
-		"mfaReset": "Voaesotra ilay singa faharoa. Miditra amin'ny tenimiafina fotsiny izao ity kaonty ity, avy eo mamerina mampandeha ny 2FA amin'ny fitaovana mbola ananany."
+		"mfaReset": "Voaesotra ilay singa faharoa. Miditra amin'ny tenimiafina fotsiny izao ity kaonty ity, avy eo mamerina mampandeha ny 2FA amin'ny fitaovana mbola ananany.",
+		"errorDenied": "Tsy manana andraikitra mpitantana ity kaonty ity.",
+		"errorSecondFactor": "Nijanona teo amin'ny tenimiafina ny fidiranao. Vitao ny fanamarinana roa dingana vao afaka miasa eto.",
+		"elevate": "Vitao ny fanamarinana"
 	},
 	"sync": {
 		"offline": "Tsy misy fifandraisana — halefa rehefa miverina ny aterineto ny fanovana",

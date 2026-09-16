@@ -7,7 +7,17 @@
 	import { Badge } from '$lib/components/ui/badge';
 	import { Label } from '$lib/components/ui/label';
 	import { Switch } from '$lib/components/ui/switch';
-	import { Check, X, RotateCcw, UserCheck, ShieldCheck, ShieldOff, KeyRound } from '@lucide/svelte';
+	import { adminErrorKey, needsElevation } from '$domain/admin-error';
+	import {
+		Check,
+		X,
+		RotateCcw,
+		UserCheck,
+		ShieldCheck,
+		ShieldOff,
+		KeyRound,
+		LifeBuoy
+	} from '@lucide/svelte';
 	import EmptyState from '$components/app/EmptyState.svelte';
 
 	interface PendingAccount {
@@ -37,6 +47,23 @@
 	let reports = $state<BugReport[]>([]);
 	let loading = $state(true);
 	let errors = $state<string[]>([]);
+	let elevationRequise = $state(false);
+
+	/**
+	 * Un refus de la base, dit à l'écran.
+	 *
+	 * La cause se lit dans le message plutôt que dans l'état du client : la session a pu être
+	 * élevée, ou cesser de l'être, depuis la dernière fois qu'on l'a regardée — un deuxième facteur
+	 * posé sur un autre appareil laisse justement cet onglet-ci en arrière.
+	 */
+	function refuser(messages: (string | undefined)[]) {
+		const bruts = messages.filter((message): message is string => !!message);
+		elevationRequise = needsElevation(bruts);
+		errors = bruts.map((message) => {
+			const key = adminErrorKey(message);
+			return key ? t(key) : message;
+		});
+	}
 
 	async function load() {
 		loading = true;
@@ -51,9 +78,7 @@
 		//
 		// Les deux lectures sont indépendantes et peuvent échouer chacune pour sa raison : n'en
 		// montrer qu'une laisserait croire que l'autre a répondu.
-		errors = [rpcError?.message, reportError?.message].filter(
-			(message): message is string => !!message
-		);
+		refuser([rpcError?.message, reportError?.message]);
 		accounts = (data as PendingAccount[]) ?? [];
 		reports = (reportData as BugReport[]) ?? [];
 		loading = false;
@@ -62,7 +87,7 @@
 	async function resolveReport(id: string) {
 		const { error: rpcError } = await supabase.rpc('resolve_bug_report', { target: id });
 		if (rpcError) {
-			errors = [rpcError.message];
+			refuser([rpcError.message]);
 			return;
 		}
 		await load();
@@ -71,7 +96,7 @@
 	async function review(id: string, decision: 'approved' | 'rejected') {
 		const { error: rpcError } = await supabase.rpc('review_account', { target: id, decision });
 		if (rpcError) {
-			errors = [rpcError.message];
+			refuser([rpcError.message]);
 			return;
 		}
 		await load();
@@ -81,7 +106,7 @@
 		const { error: rpcError } = await supabase.rpc(admin ? 'promote_admin' : 'demote_admin', {
 			target: id
 		});
-		errors = rpcError ? [rpcError.message] : [];
+		refuser([rpcError?.message]);
 		await load();
 	}
 
@@ -89,20 +114,20 @@
 	// qu'on croie l'action sans effet parce que la ligne, elle, ne change presque pas.
 	async function resetMfa(id: string) {
 		const { error: rpcError } = await supabase.rpc('admin_reset_mfa', { target: id });
-		errors = rpcError ? [rpcError.message] : [];
+		refuser([rpcError?.message]);
 		notice = rpcError ? null : t('admin.mfaReset');
 		await load();
 	}
 
 	async function setDemo(id: string, demo: boolean) {
 		const { error: rpcError } = await supabase.rpc('set_demo', { target: id, demo });
-		errors = rpcError ? [rpcError.message] : [];
+		refuser([rpcError?.message]);
 		await load();
 	}
 
 	async function resetDemo() {
 		const { error: rpcError } = await supabase.rpc('reset_demo');
-		errors = rpcError ? [rpcError.message] : [];
+		refuser([rpcError?.message]);
 		notice = rpcError ? null : t('admin.demoReset');
 
 		// La réinitialisation refait le foyer de démonstration : sans relecture, l'écran garde les
@@ -145,6 +170,18 @@
 				<p class="text-destructive">{message}</p>
 			{/each}
 		</div>
+	{/if}
+
+	<!--
+		« Élevez votre session » a une suite, « vous n'êtes pas administrateur » n'en a pas : seul le
+		premier des deux refus mérite un bouton, et il mène à l'écran qui porte aussi les codes de
+		secours.
+	-->
+	{#if elevationRequise}
+		<Button href="/auth/mfa" class="fl-press mt-3" data-test-id="admin-elevate">
+			<LifeBuoy size={18} aria-hidden="true" />
+			{t('admin.elevate')}
+		</Button>
 	{/if}
 
 	{#if notice}

@@ -659,7 +659,10 @@
 		"promote": "Zum Administrator machen",
 		"demote": "Rolle entziehen",
 		"resetMfa": "2FA entsperren",
-		"mfaReset": "Der zweite Faktor wurde entfernt. Dieses Konto meldet sich jetzt nur mit seinem Passwort an und aktiviert die 2FA danach auf einem Gerät, das es noch hat."
+		"mfaReset": "Der zweite Faktor wurde entfernt. Dieses Konto meldet sich jetzt nur mit seinem Passwort an und aktiviert die 2FA danach auf einem Gerät, das es noch hat.",
+		"errorDenied": "Dieses Konto hat keine Administratorrolle.",
+		"errorSecondFactor": "Ihre Sitzung ist beim Passwort stehen geblieben. Schließen Sie die Zwei-Faktor-Prüfung ab, um hier zu handeln.",
+		"elevate": "Prüfung abschließen"
 	},
 	"sync": {
 		"offline": "Offline — Ihre Änderungen werden übertragen, sobald das Netz zurück ist",
