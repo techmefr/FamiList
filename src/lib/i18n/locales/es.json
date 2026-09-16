@@ -573,7 +573,8 @@
 		"light": "Iluminar",
 		"freeze": "Congelar la imagen",
 		"resume": "Reanudar",
-		"hint": "Acerque la etiqueta y congele la imagen para leerla con calma."
+		"hint": "Acerque la etiqueta y congele la imagen para leerla con calma.",
+		"gestures": "Pellizque con dos dedos para ampliar y arrastre un dedo para desplazarse por la imagen."
 	},
 	"mfa": {
 		"title": "Verificación en dos pasos",

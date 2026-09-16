@@ -573,7 +573,8 @@
 		"light": "Light",
 		"freeze": "Freeze the picture",
 		"resume": "Resume",
-		"hint": "Move closer to the label, then freeze the image to read at your own pace."
+		"hint": "Move closer to the label, then freeze the image to read at your own pace.",
+		"gestures": "Pinch with two fingers to enlarge, drag one finger to move around the picture."
 	},
 	"mfa": {
 		"title": "Two-step verification",
