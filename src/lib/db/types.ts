@@ -156,6 +156,54 @@ export type Database = {
         }
         Relationships: []
       }
+      client_errors: {
+        Row: {
+          fingerprint: string
+          first_seen_at: string
+          id: string
+          last_seen_at: string
+          message: string
+          occurrences: number
+          path: string | null
+          resolved_at: string | null
+          source: string
+          stack: string | null
+          status: string
+          user_agent: string | null
+          user_id: string | null
+        }
+        Insert: {
+          fingerprint: string
+          first_seen_at?: string
+          id?: string
+          last_seen_at?: string
+          message: string
+          occurrences?: number
+          path?: string | null
+          resolved_at?: string | null
+          source: string
+          stack?: string | null
+          status?: string
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          fingerprint?: string
+          first_seen_at?: string
+          id?: string
+          last_seen_at?: string
+          message?: string
+          occurrences?: number
+          path?: string | null
+          resolved_at?: string | null
+          source?: string
+          stack?: string | null
+          status?: string
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       household_invites: {
         Row: {
           code: string
@@ -1024,6 +1072,22 @@ export type Database = {
           user_agent: string
         }[]
       }
+      list_client_errors: {
+        Args: never
+        Returns: {
+          fingerprint: string
+          first_seen_at: string
+          last_seen_at: string
+          message: string
+          occurrences: number
+          path: string
+          people: number
+          source: string
+          stack: string
+          status: string
+          user_agent: string
+        }[]
+      }
       lock_household_membership: { Args: never; Returns: undefined }
       mark_admin_notifications_sent: {
         Args: { ids: string[] }
@@ -1066,8 +1130,20 @@ export type Database = {
       }
       release_bug_report_issues: { Args: { ids: string[] }; Returns: undefined }
       request_bug_report_issue: { Args: { target: string }; Returns: undefined }
+      report_crash: {
+        Args: {
+          fingerprint: string
+          message: string
+          path: string
+          source: string
+          stack: string
+          user_agent: string
+        }
+        Returns: Json
+      }
       reset_demo: { Args: never; Returns: undefined }
       resolve_bug_report: { Args: { target: string }; Returns: undefined }
+      resolve_client_error: { Args: { target: string }; Returns: undefined }
       review_account: {
         Args: { decision: string; target: string }
         Returns: undefined

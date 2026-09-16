@@ -203,7 +203,8 @@
 		"cancel": "Abbrechen",
 		"loading": "Wird geladen…",
 		"close": "Schließen",
-		"edit": "Bearbeiten"
+		"edit": "Bearbeiten",
+		"crashed": "Dieser Bildschirm konnte nicht angezeigt werden. Das Problem wurde erfasst."
 	},
 	"list": {
 		"shop": "Geschäft",
@@ -681,6 +682,26 @@
 		"publishReport": "Issue eröffnen",
 		"reportIssuePending": "Veröffentlichung angefordert",
 		"reportIssue": "Issue #{number}",
+		"crashesTitle": "Abstürze",
+		"crashesEmpty": "Keine Abstürze in den letzten dreißig Tagen.",
+		"crashesHint": "Automatisch erfasste Fehler, bereinigt um alles, was auf jemanden hinweisen könnte, und dreißig Tage aufbewahrt. Die Namen der Betroffenen werden nicht gespeichert.",
+		"crashSource": {
+			"window": "Browser",
+			"promise": "Promise",
+			"render": "Darstellung",
+			"sync": "Synchronisierung"
+		},
+		"crashOccurrences": {
+			"one": "{count} Mal",
+			"other": "{count} Mal"
+		},
+		"crashPeople": {
+			"one": "{count} Konto betroffen",
+			"other": "{count} Konten betroffen"
+		},
+		"crashSeen": "Vom {first} bis {last}",
+		"crashStack": "Aufrufliste",
+		"resolveCrash": "Als behoben markieren",
 		"reportKind": {
 			"bug": "Fehler",
 			"suggestion": "Vorschlag"

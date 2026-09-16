@@ -203,7 +203,8 @@
 		"cancel": "Annulla",
 		"loading": "Caricamento…",
 		"close": "Chiudi",
-		"edit": "Modifica"
+		"edit": "Modifica",
+		"crashed": "Questa schermata non è stata visualizzata. Il problema è stato registrato."
 	},
 	"list": {
 		"shop": "Negozio",
@@ -681,6 +682,26 @@
 		"publishReport": "Apri una issue",
 		"reportIssuePending": "Pubblicazione richiesta",
 		"reportIssue": "Issue n. {number}",
+		"crashesTitle": "Arresti anomali",
+		"crashesEmpty": "Nessun arresto anomalo negli ultimi trenta giorni.",
+		"crashesHint": "Errori raccolti automaticamente, ripuliti da tutto ciò che potrebbe indicare qualcuno e conservati trenta giorni. I nomi delle persone coinvolte non vengono registrati.",
+		"crashSource": {
+			"window": "Browser",
+			"promise": "Promise",
+			"render": "Visualizzazione",
+			"sync": "Sincronizzazione"
+		},
+		"crashOccurrences": {
+			"one": "{count} volta",
+			"other": "{count} volte"
+		},
+		"crashPeople": {
+			"one": "{count} account coinvolto",
+			"other": "{count} account coinvolti"
+		},
+		"crashSeen": "Dal {first} al {last}",
+		"crashStack": "Stack di chiamate",
+		"resolveCrash": "Segna come corretto",
 		"reportKind": {
 			"bug": "Bug",
 			"suggestion": "Suggerimento"

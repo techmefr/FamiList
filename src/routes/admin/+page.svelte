@@ -49,8 +49,30 @@
 		issue_requested_at: string | null;
 	}
 
+	/**
+	 * Un plantage, regroupé par empreinte et non par ligne.
+	 *
+	 * Pas d'adresse de courriel ici, contrairement à un signalement, et c'est délibéré : un
+	 * signalement est écrit par quelqu'un qui accepte d'être rappelé, un plantage arrive sans qu'on
+	 * le décide. `people` dit combien de comptes sont touchés, ce qui suffit à prioriser.
+	 */
+	interface ClientError {
+		fingerprint: string;
+		source: string;
+		message: string;
+		stack: string | null;
+		path: string | null;
+		user_agent: string | null;
+		occurrences: number;
+		people: number;
+		first_seen_at: string;
+		last_seen_at: string;
+		status: string;
+	}
+
 	let accounts = $state<PendingAccount[]>([]);
 	let reports = $state<BugReport[]>([]);
+	let crashes = $state<ClientError[]>([]);
 	let loading = $state(true);
 	let errors = $state<string[]>([]);
 	let elevationRequise = $state(false);
@@ -73,21 +95,37 @@
 
 	async function load() {
 		loading = true;
-		const [{ data, error: rpcError }, { data: reportData, error: reportError }] =
-			await Promise.all([
-				supabase.rpc('pending_accounts'),
-				supabase.rpc('list_bug_reports')
-			]);
+		const [
+			{ data, error: rpcError },
+			{ data: reportData, error: reportError },
+			{ data: crashData, error: crashError }
+		] = await Promise.all([
+			supabase.rpc('pending_accounts'),
+			supabase.rpc('list_bug_reports'),
+			supabase.rpc('list_client_errors')
+		]);
 
 		// Un non-admin reçoit une erreur, pas une liste vide : la distinction évite de croire
 		// qu'il n'y a personne en attente alors qu'on n'a simplement pas le droit de regarder.
 		//
-		// Les deux lectures sont indépendantes et peuvent échouer chacune pour sa raison : n'en
-		// montrer qu'une laisserait croire que l'autre a répondu.
-		refuser([rpcError?.message, reportError?.message]);
+		// Les lectures sont indépendantes et peuvent échouer chacune pour sa raison : n'en montrer
+		// qu'une laisserait croire que les autres ont répondu.
+		refuser([rpcError?.message, reportError?.message, crashError?.message]);
 		accounts = (data as PendingAccount[]) ?? [];
 		reports = (reportData as BugReport[]) ?? [];
+		crashes = (crashData as ClientError[]) ?? [];
 		loading = false;
+	}
+
+	async function resolveCrash(fingerprint: string) {
+		const { error: rpcError } = await supabase.rpc('resolve_client_error', {
+			target: fingerprint
+		});
+		if (rpcError) {
+			refuser([rpcError.message]);
+			return;
+		}
+		await load();
 	}
 
 	async function resolveReport(id: string) {
@@ -430,6 +468,69 @@
 									</Button>
 								{/if}
 							</div>
+						</Card.Content>
+					</Card.Root>
+				</li>
+			{/each}
+		</ul>
+	{/if}
+
+	<h2 class="text-h2 mt-10 font-semibold">{t('admin.crashesTitle')}</h2>
+	<p class="text-muted-foreground text-label mt-2">{t('admin.crashesHint')}</p>
+
+	{#if crashes.length === 0}
+		<EmptyState illustration="inbox" text={t('admin.crashesEmpty')} testId="admin-crashes-empty" />
+	{:else}
+		<ul class="mt-6 space-y-3" data-test-id="client-errors">
+			{#each crashes as crash (crash.fingerprint)}
+				<li>
+					<Card.Root data-test-class="client-error">
+						<Card.Content class="space-y-3">
+							<div class="flex flex-wrap items-start justify-between gap-4">
+								<div class="min-w-0 flex-1 basis-[16rem]">
+									<p class="break-words">{crash.message}</p>
+									<p class="text-muted-foreground text-caption mt-1">
+										{crash.path ?? '—'} · {t('admin.crashOccurrences', {
+											count: crash.occurrences
+										})} · {t('admin.crashPeople', { count: crash.people })}
+									</p>
+									<p class="text-muted-foreground text-caption">
+										{t('admin.crashSeen', {
+											first: formatDate(crash.first_seen_at),
+											last: formatDate(crash.last_seen_at)
+										})}
+									</p>
+								</div>
+								<div class="flex shrink-0 flex-wrap gap-2">
+									<Badge variant="secondary">{t(`admin.crashSource.${crash.source}`)}</Badge>
+									<Badge variant={crash.status === 'open' ? 'secondary' : 'default'}>
+										{t(`admin.reportStatus.${crash.status}`)}
+									</Badge>
+								</div>
+							</div>
+
+							<!--
+								La pile est repliée : elle fait quarante lignes et ce n'est pas ce qu'on lit en
+								premier. `details` plutôt qu'un bouton maison — il s'ouvre au clavier, s'annonce
+								tout seul aux lecteurs d'écran, et fonctionne sans script.
+							-->
+							{#if crash.stack}
+								<details class="text-caption">
+									<summary class="fl-press cursor-pointer">{t('admin.crashStack')}</summary>
+									<pre
+										class="bg-muted mt-2 overflow-x-auto rounded-lg p-3 whitespace-pre-wrap">{crash.stack}</pre>
+								</details>
+							{/if}
+
+							{#if crash.status === 'open'}
+								<Button
+									variant="outline"
+									onclick={() => resolveCrash(crash.fingerprint)}
+									data-test-class="resolve-crash"
+								>
+									{t('admin.resolveCrash')}
+								</Button>
+							{/if}
 						</Card.Content>
 					</Card.Root>
 				</li>

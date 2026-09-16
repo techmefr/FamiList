@@ -202,7 +202,8 @@
 		"cancel": "取消",
 		"loading": "加载中…",
 		"close": "关闭",
-		"edit": "编辑"
+		"edit": "编辑",
+		"crashed": "此页面无法显示。问题已记录。"
 	},
 	"list": {
 		"shop": "门店",
@@ -678,6 +679,24 @@
 		"publishReport": "创建议题",
 		"reportIssuePending": "已申请发布",
 		"reportIssue": "议题 #{number}",
+		"crashesTitle": "崩溃",
+		"crashesEmpty": "最近三十天没有崩溃。",
+		"crashesHint": "错误自动收集，已清除任何可指向某人的内容，保留三十天。不记录受影响者的姓名。",
+		"crashSource": {
+			"window": "浏览器",
+			"promise": "Promise",
+			"render": "渲染",
+			"sync": "同步"
+		},
+		"crashOccurrences": {
+			"other": "{count} 次"
+		},
+		"crashPeople": {
+			"other": "{count} 个账号受影响"
+		},
+		"crashSeen": "{first} 至 {last}",
+		"crashStack": "调用栈",
+		"resolveCrash": "标记为已修复",
 		"reportKind": {
 			"bug": "缺陷",
 			"suggestion": "建议"

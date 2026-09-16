@@ -15,7 +15,10 @@ const ROUTES: Array<{ screen: string; path: string; ready: string }> = [
 	{ screen: 'discussion', path: '/chat', ready: 'nav-create' },
 	{ screen: 'profil', path: '/profile', ready: 'sign-out' },
 	{ screen: 'securite', path: '/profile/security', ready: 'nav-create' },
-	{ screen: 'signalement', path: '/report', ready: 'nav-create' }
+	{ screen: 'signalement', path: '/report', ready: 'nav-create' },
+	// Le compte fixe est le premier créé, donc administrateur : l'écran s'ouvre pour de bon et
+	// porte ses trois sections, dont celle des plantages.
+	{ screen: 'administration', path: '/admin', ready: 'nav-create' }
 ];
 
 test.describe('accessibilite', () => {
