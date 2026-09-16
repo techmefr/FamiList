@@ -860,5 +860,24 @@
 		"iosShare": "Tippen Sie unten in Safari auf „Teilen“",
 		"iosAdd": "Wählen Sie „Zum Home-Bildschirm“",
 		"note": "Es wird nichts aus einem App-Store heruntergeladen, und Ihr Konto und Ihre Listen bleiben unverändert."
+	},
+	"search": {
+		"title": "Suchen",
+		"label": "Im Haushalt suchen",
+		"placeholder": "Milch, Geburtstag, Rewe…",
+		"open": "Suchen",
+		"hint": "Gib mindestens {count} Buchstaben ein.",
+		"empty": "Nichts passt zu deiner Suche.",
+		"checked": "Bereits abgehakt",
+		"count": {
+			"one": "{count} Ergebnis",
+			"other": "{count} Ergebnisse"
+		},
+		"group": {
+			"list": "Listen",
+			"item": "Artikel",
+			"shop": "Geschäfte",
+			"card": "Karten"
+		}
 	}
 }

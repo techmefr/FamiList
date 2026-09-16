@@ -860,5 +860,24 @@
 		"iosShare": "Tocca il pulsante Condividi, in basso in Safari",
 		"iosAdd": "Scegli «Aggiungi a Home»",
 		"note": "Non si scarica nulla da uno store, e ritrovi il tuo account e le tue liste così come sono."
+	},
+	"search": {
+		"title": "Cerca",
+		"label": "Cerca nella famiglia",
+		"placeholder": "latte, compleanno, Coop…",
+		"open": "Cerca",
+		"hint": "Scrivi almeno {count} lettere.",
+		"empty": "Nessun risultato per questa ricerca.",
+		"checked": "Già spuntato",
+		"count": {
+			"one": "{count} risultato",
+			"other": "{count} risultati"
+		},
+		"group": {
+			"list": "Liste",
+			"item": "Articoli",
+			"shop": "Negozi",
+			"card": "Carte"
+		}
 	}
 }

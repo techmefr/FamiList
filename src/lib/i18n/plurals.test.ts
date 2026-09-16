@@ -63,7 +63,8 @@ describe('formes plurielles', () => {
 			'recipes.servingsCount',
 			'chat.votes',
 			'chat.pushed',
-			'security.backupLeft'
+			'security.backupLeft',
+			'search.count'
 		]);
 	});
 

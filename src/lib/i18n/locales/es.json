@@ -860,5 +860,24 @@
 		"iosShare": "Toca el botón Compartir, en la parte inferior de Safari",
 		"iosAdd": "Elige «Añadir a pantalla de inicio»",
 		"note": "No se descarga nada de una tienda de aplicaciones, y encuentras tu cuenta y tus listas tal cual."
+	},
+	"search": {
+		"title": "Buscar",
+		"label": "Buscar en el hogar",
+		"placeholder": "leche, cumpleaños, Carrefour…",
+		"open": "Buscar",
+		"hint": "Escribe al menos {count} letras.",
+		"empty": "Nada coincide con tu búsqueda.",
+		"checked": "Ya marcado",
+		"count": {
+			"one": "{count} resultado",
+			"other": "{count} resultados"
+		},
+		"group": {
+			"list": "Listas",
+			"item": "Artículos",
+			"shop": "Tiendas",
+			"card": "Tarjetas"
+		}
 	}
 }
