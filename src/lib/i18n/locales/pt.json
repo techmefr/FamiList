@@ -839,7 +839,26 @@
 	"helpMenu": {
 		"button": "Ajuda",
 		"tutorial": "Ver o tutorial",
+		"install": "Instalar no ecrã principal",
 		"suggestion": "Propor uma melhoria",
 		"bug": "Reportar um problema"
+	},
+	"install": {
+		"title": "Familiste no seu ecrã principal",
+		"body": "Depois de instalada, a aplicação abre a partir de um ícone, sem passar pelo navegador, e arranca mesmo sem rede.",
+		"action": "Instalar",
+		"how": "Como fazer",
+		"more": "Saber mais",
+		"later": "Mais tarde",
+		"detailsTitle": "O que a instalação traz",
+		"benefit": {
+			"home": "Um ícone no ecrã principal, como as outras aplicações",
+			"browser": "Abre em ecrã inteiro, sem barra de endereço nem separadores",
+			"offline": "Arranca mesmo sem rede: as suas listas continuam lá"
+		},
+		"iosTitle": "No iPhone e no iPad",
+		"iosShare": "Toque no botão Partilhar, na parte de baixo do Safari",
+		"iosAdd": "Escolha «Adicionar ao ecrã principal»",
+		"note": "Nada é transferido de uma loja de aplicações, e encontra a sua conta e as suas listas tal como estavam."
 	}
 }

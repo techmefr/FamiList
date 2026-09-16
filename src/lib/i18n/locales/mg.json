@@ -839,7 +839,26 @@
 	"helpMenu": {
 		"button": "Fanampiana",
 		"tutorial": "Jereo ny fizarana torolalana",
+		"install": "Apetraho eo amin'ny efijery fandraisana",
 		"suggestion": "Manolotra fanatsarana",
 		"bug": "Milaza olana"
+	},
+	"install": {
+		"title": "Familiste eo amin'ny efijery fandraisanao",
+		"body": "Rehefa voapetraka dia sokafana avy amin'ny kisary ilay rindranasa, tsy mila mandalo mpitety tranonkala, ary miroso na tsy misy aterineto aza.",
+		"action": "Apetraho",
+		"how": "Ahoana no atao",
+		"more": "Hahafantatra bebe kokoa",
+		"later": "Aoriana",
+		"detailsTitle": "Izay entin'ny fametrahana",
+		"benefit": {
+			"home": "Kisary eo amin'ny efijery fandraisana, toy ny rindranasa hafa",
+			"browser": "Misokatra manerana ny efijery, tsy misy laharan'adiresy na vakizoro",
+			"offline": "Miroso na tsy misy aterineto aza: mbola eo ny lisitrao"
+		},
+		"iosTitle": "Amin'ny iPhone sy iPad",
+		"iosShare": "Tsindrio ny bokotra Zarao, eo ambanin'ny Safari",
+		"iosAdd": "Fidio ny «Eo amin'ny efijery fandraisana»",
+		"note": "Tsy misy zavatra alaina avy amin'ny fivarotana rindranasa, ary hitanao toy ny teo ihany ny kaontinao sy ny lisitrao."
 	}
 }

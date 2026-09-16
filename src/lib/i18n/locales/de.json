@@ -839,7 +839,26 @@
 	"helpMenu": {
 		"button": "Hilfe",
 		"tutorial": "Anleitung ansehen",
+		"install": "Auf dem Startbildschirm installieren",
 		"suggestion": "Verbesserung vorschlagen",
 		"bug": "Fehler melden"
+	},
+	"install": {
+		"title": "Familiste auf Ihrem Startbildschirm",
+		"body": "Einmal installiert, öffnet sich die App über ein Symbol, ganz ohne Browser, und startet auch ohne Netz.",
+		"action": "Installieren",
+		"how": "So geht es",
+		"more": "Mehr erfahren",
+		"later": "Später",
+		"detailsTitle": "Was die Installation bringt",
+		"benefit": {
+			"home": "Ein Symbol auf dem Startbildschirm, wie bei jeder anderen App",
+			"browser": "Öffnet im Vollbild, ohne Adressleiste und ohne Tabs",
+			"offline": "Startet auch ohne Netz: Ihre Listen bleiben da"
+		},
+		"iosTitle": "Auf iPhone und iPad",
+		"iosShare": "Tippen Sie unten in Safari auf „Teilen“",
+		"iosAdd": "Wählen Sie „Zum Home-Bildschirm“",
+		"note": "Es wird nichts aus einem App-Store heruntergeladen, und Ihr Konto und Ihre Listen bleiben unverändert."
 	}
 }

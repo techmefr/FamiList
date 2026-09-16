@@ -839,7 +839,26 @@
 	"helpMenu": {
 		"button": "Ayuda",
 		"tutorial": "Ver el tutorial",
+		"install": "Instalar en la pantalla de inicio",
 		"suggestion": "Proponer una mejora",
 		"bug": "Informar de un error"
+	},
+	"install": {
+		"title": "Familiste en tu pantalla de inicio",
+		"body": "Una vez instalada, la aplicación se abre desde un icono, sin pasar por el navegador, y arranca incluso sin red.",
+		"action": "Instalar",
+		"how": "Cómo hacerlo",
+		"more": "Saber más",
+		"later": "Más tarde",
+		"detailsTitle": "Lo que aporta la instalación",
+		"benefit": {
+			"home": "Un icono en la pantalla de inicio, como las demás aplicaciones",
+			"browser": "Se abre a pantalla completa, sin barra de direcciones ni pestañas",
+			"offline": "Arranca incluso sin red: tus listas siguen ahí"
+		},
+		"iosTitle": "En iPhone y iPad",
+		"iosShare": "Toca el botón Compartir, en la parte inferior de Safari",
+		"iosAdd": "Elige «Añadir a pantalla de inicio»",
+		"note": "No se descarga nada de una tienda de aplicaciones, y encuentras tu cuenta y tus listas tal cual."
 	}
 }
