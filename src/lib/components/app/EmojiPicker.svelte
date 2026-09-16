@@ -3,7 +3,7 @@
 	import { feedback } from '$stores/feedback.svelte';
 	import { settings } from '$stores/settings.svelte';
 	import { t } from '$lib/i18n/index.svelte';
-	import { EMOJIS, EMOJI_GROUPS, searchEmojis, type EmojiEntry } from '$domain/emoji';
+	import { EMOJIS, EMOJI_GROUPS, customEmoji, searchEmojis, type EmojiEntry } from '$domain/emoji';
 	import { Input } from '$lib/components/ui/input';
 	import { Label } from '$lib/components/ui/label';
 	import { Search, X } from '@lucide/svelte';
@@ -17,6 +17,7 @@
 
 	const name = (entry: EmojiEntry) => t(`emoji.${entry.key}`);
 	const found = $derived(searchEmojis(query, name));
+	const custom = $derived(customEmoji(query));
 
 	/**
 	 * Même contrat que les autres feuilles : le navigateur tient l'état ouvert / fermé, on ne le
@@ -81,9 +82,26 @@
 			</IconField>
 		</div>
 
+		{#if custom}
+			<!--
+				La palette ne peut pas tout prévoir : un caractère collé dans la recherche devient
+				un choix à part entière plutôt qu'une impasse.
+			-->
+			<button
+				type="button"
+				onclick={() => pick(custom)}
+				data-test-id="emoji-custom"
+				class="fl-press hover:bg-muted mt-3 flex w-full items-center gap-3 rounded-lg border
+					p-2 text-start"
+			>
+				<span class="text-2xl" aria-hidden="true">{custom}</span>
+				<span>{t('emojiPicker.useCharacter', { emoji: custom })}</span>
+			</button>
+		{/if}
+
 		<!--
-			Hauteur bornée et défilement interne : la palette tient cinquante-deux dessins, et une
-			feuille qui pousse au-delà de l'écran cacherait son propre champ de recherche.
+			Hauteur bornée et défilement interne : une feuille qui pousse au-delà de l'écran
+			cacherait son propre champ de recherche, seul moyen de traverser la palette vite.
 		-->
 		<div class="mt-4 max-h-[50vh] overflow-y-auto pe-1">
 			{#each sections as section (section.group)}
