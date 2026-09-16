@@ -50,6 +50,8 @@
 		"fontNote": "“Sistema” usa a fonte definida no seu aparelho.",
 		"accent": "Cor principal",
 		"language": "Idioma",
+		"hand": "Mão dominante",
+		"handHint": "O botão de adicionar fica do lado do seu polegar. Independente do sentido de leitura.",
 		"previewItem": "Tomates em rama — 500 g",
 		"previewNote": "Pré-visualização no tamanho real de um artigo numa lista.",
 		"account": "Conta",
@@ -95,6 +97,10 @@
 		"system": "Sistema",
 		"full": "Completas",
 		"none": "Nenhuma"
+	},
+	"hand": {
+		"right": "Destro",
+		"left": "Canhoto"
 	},
 	"scale": {
 		"xs": "Muito pequeno",

@@ -5,6 +5,7 @@
 		ACCENT_PRESETS,
 		FONT_PRESETS,
 		FONT_SCALE_PRESETS,
+		HANDS,
 		MOTION_PREFERENCES,
 		type MotionPreference,
 		type Theme
@@ -233,6 +234,32 @@
 			</div>
 
 			<p class="text-muted-foreground text-caption mt-2">{t('profile.fontNote')}</p>
+		</fieldset>
+
+		<!--
+			La main dominante est un réglage d'apparence : elle ne change rien à ce que fait
+			l'application, seulement le côté où se posent les commandes qu'on atteint au pouce.
+		-->
+		<fieldset>
+			<legend class="text-label mb-2 font-medium">{t('profile.hand')}</legend>
+			<div class="flex flex-wrap gap-2">
+				{#each HANDS as value (value)}
+					<Label class="fl-choice">
+						<input
+							type="radio"
+							name="hand"
+							{value}
+							checked={settings.hand === value}
+							onchange={() => settings.setHand(value)}
+							data-test-id="hand-{value}"
+							class="sr-only"
+						/>
+						{t(`hand.${value}`)}
+					</Label>
+				{/each}
+			</div>
+
+			<p class="text-muted-foreground text-caption mt-2">{t('profile.handHint')}</p>
 		</fieldset>
 
 		<fieldset>
