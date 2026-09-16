@@ -541,12 +541,21 @@ class DataStore {
 		tint: string;
 		brand?: string;
 		address?: string;
+		lat?: number;
+		lng?: number;
 		id?: string;
 		isDefault?: boolean;
 	}) {
 		const brand = (input.brand ?? '').trim();
 		const address = (input.address ?? '').trim();
 		const remplace = !input.isDefault ? this.defaultShop : undefined;
+
+		// Une position absente reste absente : écrire `lat: undefined` effacerait celle qu'un
+		// magasin remplacé avait déjà, et ferait porter la clé à un magasin qui n'en a pas.
+		const position =
+			input.lat !== undefined && input.lng !== undefined
+				? { lat: input.lat, lng: input.lng }
+				: {};
 
 		if (remplace) {
 			this.updateShop(remplace.id, {
@@ -559,7 +568,8 @@ class DataStore {
 				tint: input.tint,
 				brand,
 				address,
-				isDefault: false
+				isDefault: false,
+				...position
 			});
 
 			this.setActiveShop(remplace.id);
@@ -579,7 +589,8 @@ class DataStore {
 			tint: input.tint,
 			brand,
 			address,
-			isDefault: input.isDefault ?? false
+			isDefault: input.isDefault ?? false,
+			...position
 		};
 
 		const layout: ShopLayout = {

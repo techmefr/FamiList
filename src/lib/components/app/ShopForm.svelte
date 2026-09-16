@@ -50,6 +50,52 @@
 	let name = $state(untrack(() => edite?.name ?? ''));
 	let address = $state(untrack(() => edite?.address ?? ''));
 	let short = $state(untrack(() => edite?.short ?? ''));
+	let lat = $state(untrack(() => edite?.lat));
+	let lng = $state(untrack(() => edite?.lng));
+
+	let releve = $state(false);
+	let erreurGps = $state('');
+
+	const situe = $derived(lat !== undefined && lng !== undefined);
+
+	/**
+	 * La position du magasin, prise sur place, par le pin du champ adresse.
+	 *
+	 * C'est l'appareil qui la donne, pas un service de géocodage : l'adresse ne sort jamais du
+	 * téléphone, il n'y a ni clé d'API ni quota, et la chose marche sans réseau. En échange il faut
+	 * être devant le magasin — ce qui tombe bien, on y est quand on fait ses courses.
+	 *
+	 * Elle sert à retrouver le magasin quand on y revient, pour sortir la bonne carte de fidélité
+	 * sans la chercher. Le pin ne remplit que les coordonnées : l'adresse reste écrite à la main.
+	 *
+	 * Dans le formulaire et non sur la fiche du magasin : on peut désormais poser la position en
+	 * créant le magasin, alors qu'il fallait le créer puis revenir sur sa fiche.
+	 */
+	function releverPosition() {
+		if (!navigator.geolocation) {
+			erreurGps = t('shops.geoUnavailable');
+			return;
+		}
+
+		releve = true;
+		erreurGps = '';
+
+		navigator.geolocation.getCurrentPosition(
+			(position) => {
+				lat = position.coords.latitude;
+				lng = position.coords.longitude;
+				releve = false;
+				// En modification, la position vaut pour elle-même : on la relève devant le magasin,
+				// pas au moment où l'on pense à enregistrer le reste du formulaire.
+				if (edite) data.updateShop(edite.id, { lat, lng });
+			},
+			() => {
+				erreurGps = t('shops.geoDenied');
+				releve = false;
+			},
+			{ enableHighAccuracy: true, timeout: 15000 }
+		);
+	}
 
 	// Le trigramme du magasin qu'on modifie ne se compte pas comme pris par un autre : le garder
 	// tel quel doit rester possible.
@@ -111,6 +157,8 @@
 			name,
 			address,
 			short,
+			lat,
+			lng,
 			tint: TINTS[data.shops.length % TINTS.length]
 		});
 
@@ -118,6 +166,9 @@
 		name = '';
 		address = '';
 		short = '';
+		lat = undefined;
+		lng = undefined;
+		erreurGps = '';
 		oncreated?.(shop);
 	}
 </script>
@@ -163,7 +214,12 @@
 	<div class="grid gap-3 sm:grid-cols-[1fr_9rem]">
 		<div>
 			<Label for="{prefix}-address">{t('shops.address')}</Label>
-			<IconField icon={MapPin}>
+			<!--
+				Le pin n'est pas décoratif : il pose la position relevée par l'appareil. Il ne touche
+				pas à l'adresse écrite au-dessus — aucun service de géocodage n'est appelé, et rien de
+				ce qui est saisi ne sort du téléphone.
+			-->
+			<IconField>
 				<Input
 					id="{prefix}-address"
 					bind:value={address}
@@ -171,10 +227,34 @@
 					aria-describedby="{prefix}-address-hint"
 					placeholder={t('shops.addressPlaceholder')}
 				/>
+				{#snippet action()}
+					{@const libelle = releve
+						? t('shops.locating')
+						: situe
+							? t('shops.relocate')
+							: t('shops.locate')}
+					<button
+						type="button"
+						onclick={releverPosition}
+						disabled={releve}
+						aria-label={libelle}
+						title={libelle}
+						data-test-class="shop-locate"
+						class={'hover:text-foreground focus-visible:ring-ring flex size-11 items-center justify-center rounded-md transition-colors focus-visible:ring-2 focus-visible:ring-inset focus-visible:outline-none disabled:opacity-40 ' +
+							(situe ? 'text-primary' : 'text-muted-foreground')}
+					>
+						<MapPin size={18} aria-hidden="true" />
+					</button>
+				{/snippet}
 			</IconField>
 			<p id="{prefix}-address-hint" class="text-muted-foreground text-caption">
 				{t('shops.addressHint')}
 			</p>
+			{#if erreurGps}
+				<p class="text-destructive text-caption" role="alert" data-test-id="shop-geo-error">
+					{erreurGps}
+				</p>
+			{/if}
 		</div>
 		<!--
 			Le champ ne se remplit pas : il montre en filigrane ce qui sera pris si on n'y touche pas.

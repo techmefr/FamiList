@@ -296,7 +296,6 @@
 		"locate": "Enregistrer ma position ici",
 		"locating": "Recherche de la position…",
 		"waitingSync": "Synchronisation en cours…",
-		"located": "Position enregistrée",
 		"relocate": "Mettre à jour la position",
 		"geoDenied": "Position indisponible. Autorisez la localisation, puis réessayez.",
 		"geoUnavailable": "Cet appareil ne donne pas la position.",
