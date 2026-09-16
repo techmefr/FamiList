@@ -296,7 +296,6 @@
 		"locate": "Meine Position hier speichern",
 		"locating": "Position wird gesucht…",
 		"waitingSync": "Wird synchronisiert…",
-		"located": "Position gespeichert",
 		"relocate": "Position aktualisieren",
 		"geoDenied": "Position nicht verfügbar. Erlauben Sie den Standortzugriff und versuchen Sie es erneut.",
 		"geoUnavailable": "Dieses Gerät liefert keine Position.",

@@ -296,7 +296,6 @@
 		"locate": "Save my position here",
 		"locating": "Finding your position…",
 		"waitingSync": "Syncing…",
-		"located": "Position saved",
 		"relocate": "Update the position",
 		"geoDenied": "Position unavailable. Allow location access, then try again.",
 		"geoUnavailable": "This device does not provide a position.",
