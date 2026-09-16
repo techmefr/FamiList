@@ -72,7 +72,9 @@ jobs:
           pnpm run db:start
           pnpm run db:reset
 
-      - name: Tests E2E
+      # Inclut `e2e/a11y.spec.ts` : axe-core passe sur les écrans principaux, connectés compris, et
+      # échoue sur toute violation absente de `e2e/a11y-baseline.json`.
+      - name: Tests E2E et accessibilité
         run: pnpm exec playwright test
 
       - name: Rapport Playwright
