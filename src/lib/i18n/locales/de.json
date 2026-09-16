@@ -573,7 +573,8 @@
 		"light": "Licht",
 		"freeze": "Bild einfrieren",
 		"resume": "Fortsetzen",
-		"hint": "Näher an das Etikett gehen, dann das Bild einfrieren und in Ruhe lesen."
+		"hint": "Näher an das Etikett gehen, dann das Bild einfrieren und in Ruhe lesen.",
+		"gestures": "Mit zwei Fingern aufziehen zum Vergrößern, mit einem Finger ziehen, um sich im Bild zu bewegen."
 	},
 	"mfa": {
 		"title": "Bestätigung in zwei Schritten",
