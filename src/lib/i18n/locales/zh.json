@@ -38,7 +38,8 @@
 		"emoji": "表情",
 		"empty": "还没有清单。",
 		"delete": "删除清单 {name}",
-		"rename": "重命名 {name}"
+		"rename": "重命名 {name}",
+		"duplicate": "复制{name}"
 	},
 	"profile": {
 		"title": "我的",

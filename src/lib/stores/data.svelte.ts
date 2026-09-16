@@ -35,6 +35,7 @@ import {
 	fromPollOption,
 	fromShop
 } from '$lib/sync/mapping';
+import { copiedItem, copyName } from '$domain/duplicate';
 import { slugify } from '$domain/slug';
 import { trigram } from '$domain/trigram';
 import { trigramSource } from '$domain/place';
@@ -374,6 +375,70 @@ class DataStore {
 					}
 				: { table: 'list_members', op: 'delete', match: { list_id: listId, user_id: userId } }
 		);
+	}
+
+	/**
+	 * Refaire une liste qui revient : les courses de la semaine, le repas du dimanche.
+	 *
+	 * La copie reprend l'apparence de l'originale — emoji, couleur — et son partage : une liste
+	 * privée reste privée, une liste ouverte au foyer le reste. Recopier `memberIds` plutôt que
+	 * repartir de tout le foyer comme `addList` est ce qui empêche une liste d'anniversaire de
+	 * s'afficher chez la personne concernée.
+	 *
+	 * La date d'événement ne suit pas : elle datait l'occasion passée, et la reconduire ferait
+	 * afficher un repas déjà eu sur une liste à venir.
+	 *
+	 * L'ordre des rayons n'est pas recopié parce qu'il n'appartient pas à la liste : il vit dans le
+	 * parcours du magasin actif, et la copie s'y range donc toute seule.
+	 *
+	 * Rien de spécial pour le réseau : chaque ligne part par la même file que si on l'avait tapée,
+	 * ce qui rend la duplication utilisable hors ligne comme le reste.
+	 */
+	duplicateList(id: string) {
+		const source = this.lists.find((candidate) => candidate.id === id);
+		if (!source) return;
+
+		const copie: List = {
+			id: crypto.randomUUID(),
+			name: copyName(
+				source.name,
+				this.lists.map((l) => l.name)
+			),
+			emoji: source.emoji,
+			color: source.color,
+			memberIds: [...source.memberIds]
+		};
+
+		const articles: Item[] = this.itemsOf(id).map((item, rang) => ({
+			...copiedItem(item),
+			id: crypto.randomUUID(),
+			listId: copie.id,
+			// Le rang préserve l'ordre de saisie de l'originale : deux articles créés dans la même
+			// milliseconde se départageaient sinon au hasard de la relecture.
+			createdAt: Date.now() + rang
+		}));
+
+		this.lists = [...this.lists, copie];
+		this.items = [...this.items, ...articles];
+		db.lists.add(copie);
+		db.items.bulkAdd(articles);
+
+		this.push('lists', copie, fromList);
+		for (const article of articles) this.push('items', article, fromItem);
+
+		// Toute liste qui naît côté serveur est ouverte au foyer entier par
+		// `lists_share_with_household`. La copie d'une liste restreinte doit donc refermer derrière
+		// elle : les retraits partent dans la file après l'insertion, dans cet ordre.
+		for (const membre of this.members) {
+			if (copie.memberIds.includes(membre.id)) continue;
+			sync.enqueue({
+				table: 'list_members',
+				op: 'delete',
+				match: { list_id: copie.id, user_id: membre.id }
+			});
+		}
+
+		return copie;
 	}
 
 	removeList(id: string) {

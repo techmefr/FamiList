@@ -39,7 +39,8 @@
 		"emoji": "Emoji",
 		"empty": "Nessuna lista per ora.",
 		"delete": "Elimina la lista {name}",
-		"rename": "Rinomina {name}"
+		"rename": "Rinomina {name}",
+		"duplicate": "Duplica {name}"
 	},
 	"profile": {
 		"title": "Profilo",
