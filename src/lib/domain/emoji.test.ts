@@ -1,5 +1,14 @@
 import { describe, expect, it } from 'vitest';
-import { EMOJIS, EMOJI_GROUPS, foldForSearch, searchEmojis, type EmojiEntry } from './emoji';
+import {
+	EMOJIS,
+	EMOJI_GROUPS,
+	customEmoji,
+	foldForSearch,
+	searchEmojis,
+	type EmojiEntry
+} from './emoji';
+
+type Traductions = { emoji: Record<string, string>; emojiGroup: Record<string, string> };
 
 /** Un nom de démonstration, à la place de l'i18n : le domaine ne connaît pas la langue affichée. */
 const NOMS: Record<string, string> = {
@@ -31,6 +40,26 @@ describe('palette', () => {
 		for (const group of EMOJI_GROUPS) {
 			expect(EMOJIS.some((entry) => entry.group === group)).toBe(true);
 		}
+	});
+});
+
+/**
+ * Un emoji dont le nom manque dans une langue est introuvable à la recherche pour qui lit cette
+ * langue : la traduction est la vraie contrainte de la palette, autant que le test la tienne.
+ */
+describe('traductions', () => {
+	const locales = import.meta.glob<Traductions>('../i18n/locales/*.json', {
+		eager: true,
+		import: 'default'
+	});
+
+	it('couvre les dix langues', () => {
+		expect(Object.keys(locales)).toHaveLength(10);
+	});
+
+	it.each(Object.entries(locales))('nomme chaque emoji en %s', (_chemin, traductions) => {
+		for (const entry of EMOJIS) expect(traductions.emoji[entry.key]).toBeTruthy();
+		for (const group of EMOJI_GROUPS) expect(traductions.emojiGroup[group]).toBeTruthy();
 	});
 });
 
@@ -73,5 +102,35 @@ describe('searchEmojis', () => {
 
 	it('ne rend rien quand rien ne correspond', () => {
 		expect(searchEmojis('zzz', nom, palette)).toEqual([]);
+	});
+});
+
+describe('customEmoji', () => {
+	it('accepte un caractère absent de la palette', () => {
+		expect(customEmoji('🦖')).toBe('🦖');
+	});
+
+	it('accepte un emoji composé de plusieurs points de code', () => {
+		expect(customEmoji('👨‍🚒')).toBe('👨‍🚒');
+	});
+
+	it('ignore les espaces autour', () => {
+		expect(customEmoji('  🦖  ')).toBe('🦖');
+	});
+
+	it('ne propose pas un caractère déjà dans la palette', () => {
+		expect(customEmoji('🧀')).toBeNull();
+	});
+
+	/** Sans quoi taper le début d'un nom proposerait la lettre elle-même comme illustration. */
+	it('refuse les lettres et les chiffres', () => {
+		expect(customEmoji('a')).toBeNull();
+		expect(customEmoji('7')).toBeNull();
+	});
+
+	it('refuse une recherche vide ou plus longue qu’un signe', () => {
+		expect(customEmoji('')).toBeNull();
+		expect(customEmoji('   ')).toBeNull();
+		expect(customEmoji('🦖🦕')).toBeNull();
 	});
 });
