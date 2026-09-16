@@ -14,7 +14,8 @@
 		"magnifier": "Lupe",
 		"create": "Erstellen",
 		"chat": "Unterhaltungen",
-		"prices": "Preise"
+		"prices": "Preise",
+		"recipes": "Rezepte"
 	},
 	"create": {
 		"title": "Was möchten Sie anlegen?",
@@ -22,7 +23,8 @@
 		"list": "Neue Liste",
 		"aisle": "Neue Abteilung",
 		"shop": "Neues Geschäft",
-		"card": "Neue Kundenkarte"
+		"card": "Neue Kundenkarte",
+		"recipe": "Neues Rezept"
 	},
 	"lists": {
 		"title": "Meine Listen",
@@ -318,6 +320,48 @@
 		"recordedOn": "Erfasst am {date}",
 		"cheapest": "Am günstigsten",
 		"goneShop": "Gelöschtes Geschäft"
+	},
+	"recipes": {
+		"title": "Rezepte",
+		"intro": "Die Rezepte des Haushalts – und die Einkaufsliste, die daraus entsteht.",
+		"empty": "Noch keine Rezepte. Schreiben Sie eines, die Zutaten werden zu einer Liste.",
+		"name": "Name des Rezepts",
+		"namePlaceholder": "Zucchini-Gratin",
+		"emoji": "Emoji",
+		"servings": "Portionen",
+		"servingsHint": "Für wie viele Personen die Mengen notiert sind.",
+		"stepper": "Schritte des Formulars",
+		"step": {
+			"recette": "Das Rezept",
+			"ingredients": "Die Zutaten",
+			"etapes": "Die Zubereitung"
+		},
+		"ingredientsHint": "Eine Zutat pro Zeile. Leere Zeilen werden übergangen.",
+		"ingredientName": "Zutat {rank}",
+		"ingredientPlaceholder": "Zucchini",
+		"qty": "Menge",
+		"unit": "Einheit",
+		"addIngredient": "Zutat hinzufügen",
+		"removeIngredient": "Zutat {rank} entfernen",
+		"stepsHint": "Ein Schritt pro Zeile, in der Reihenfolge der Zubereitung.",
+		"stepBody": "Schritt {rank}",
+		"addStep": "Schritt hinzufügen",
+		"removeStep": "Schritt {rank} entfernen",
+		"next": "Weiter",
+		"back": "Zurück",
+		"generate": "Liste erzeugen",
+		"generateSubmit": "Artikel anlegen",
+		"people": "Für wie viele Personen?",
+		"peopleHint": "Die Mengen sind für {servings} notiert. Sie werden umgerechnet.",
+		"target": "Wohin die Artikel kommen",
+		"targetNew": "In eine neue Liste",
+		"delete": "Rezept {name} löschen",
+		"deleteConfirm": "{name} löschen? Bereits erzeugte Listen bleiben unverändert.",
+		"deleteYes": "Löschen",
+		"servingsCount": {
+			"one": "Für 1 Person",
+			"other": "Für {count} Personen"
+		}
 	},
 	"aisles": {
 		"title": "Abteilungen",

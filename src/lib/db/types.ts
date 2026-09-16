@@ -691,6 +691,111 @@ export type Database = {
         }
         Relationships: []
       }
+      recipe_ingredients: {
+        Row: {
+          id: string
+          name: string
+          position: number
+          qty: number | null
+          recipe_id: string
+          unit: string
+        }
+        Insert: {
+          id?: string
+          name: string
+          position?: number
+          qty?: number | null
+          recipe_id: string
+          unit?: string
+        }
+        Update: {
+          id?: string
+          name?: string
+          position?: number
+          qty?: number | null
+          recipe_id?: string
+          unit?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "recipe_ingredients_recipe_id_fkey"
+            columns: ["recipe_id"]
+            isOneToOne: false
+            referencedRelation: "recipes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      recipe_steps: {
+        Row: {
+          body: string
+          id: string
+          position: number
+          recipe_id: string
+        }
+        Insert: {
+          body: string
+          id?: string
+          position?: number
+          recipe_id: string
+        }
+        Update: {
+          body?: string
+          id?: string
+          position?: number
+          recipe_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "recipe_steps_recipe_id_fkey"
+            columns: ["recipe_id"]
+            isOneToOne: false
+            referencedRelation: "recipes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      recipes: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          emoji: string
+          household_id: string
+          id: string
+          name: string
+          notes: string | null
+          servings: number
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          emoji?: string
+          household_id: string
+          id?: string
+          name: string
+          notes?: string | null
+          servings?: number
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          emoji?: string
+          household_id?: string
+          id?: string
+          name?: string
+          notes?: string | null
+          servings?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "recipes_household_id_fkey"
+            columns: ["household_id"]
+            isOneToOne: false
+            referencedRelation: "households"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       shop_item_orders: {
         Row: {
           aisle_id: string
@@ -819,6 +924,7 @@ export type Database = {
     Functions: {
       backup_codes_left: { Args: never; Returns: number }
       can_access_list: { Args: { target: string }; Returns: boolean }
+      can_access_recipe: { Args: { target: string }; Returns: boolean }
       can_access_shop: { Args: { target: string }; Returns: boolean }
       consume_backup_code: { Args: { code: string }; Returns: boolean }
       create_backup_codes: { Args: never; Returns: string[] }
@@ -839,6 +945,7 @@ export type Database = {
       is_approved: { Args: never; Returns: boolean }
       is_household_member: { Args: { target: string }; Returns: boolean }
       is_household_owner: { Args: { target: string }; Returns: boolean }
+      is_household_sole_member: { Args: { target: string }; Returns: boolean }
       leave_household: { Args: { target: string }; Returns: undefined }
       list_belongs_to_household_of: {
         Args: { member: string; target: string }

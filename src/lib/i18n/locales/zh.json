@@ -14,7 +14,8 @@
 		"magnifier": "放大镜",
 		"create": "新建",
 		"chat": "讨论",
-		"prices": "价格"
+		"prices": "价格",
+		"recipes": "食谱"
 	},
 	"create": {
 		"title": "要新建什么？",
@@ -22,7 +23,8 @@
 		"list": "新建清单",
 		"aisle": "新建货区",
 		"shop": "新建门店",
-		"card": "新建会员卡"
+		"card": "新建会员卡",
+		"recipe": "新建食谱"
 	},
 	"lists": {
 		"title": "我的清单",
@@ -316,6 +318,47 @@
 		"recordedOn": "记录于 {date}",
 		"cheapest": "最便宜",
 		"goneShop": "已删除的门店"
+	},
+	"recipes": {
+		"title": "食谱",
+		"intro": "家里的食谱，以及由此生成的购物清单。",
+		"empty": "还没有食谱。写一份，它的配料会变成一份清单。",
+		"name": "食谱名称",
+		"namePlaceholder": "焗西葫芦",
+		"emoji": "表情符号",
+		"servings": "份数",
+		"servingsHint": "这些用量是按多少人写的。",
+		"stepper": "表单步骤",
+		"step": {
+			"recette": "食谱",
+			"ingredients": "配料",
+			"etapes": "做法"
+		},
+		"ingredientsHint": "每行一种配料。空行会被忽略。",
+		"ingredientName": "配料 {rank}",
+		"ingredientPlaceholder": "西葫芦",
+		"qty": "数量",
+		"unit": "单位",
+		"addIngredient": "添加配料",
+		"removeIngredient": "删除配料 {rank}",
+		"stepsHint": "每行一个步骤，按做菜的顺序。",
+		"stepBody": "步骤 {rank}",
+		"addStep": "添加步骤",
+		"removeStep": "删除步骤 {rank}",
+		"next": "下一步",
+		"back": "上一步",
+		"generate": "生成清单",
+		"generateSubmit": "创建条目",
+		"people": "做给几个人吃？",
+		"peopleHint": "用量是按 {servings} 写的，会按比例换算。",
+		"target": "把条目加到哪里",
+		"targetNew": "加到新清单",
+		"delete": "删除食谱 {name}",
+		"deleteConfirm": "删除 {name}？已经生成的清单不会改变。",
+		"deleteYes": "删除",
+		"servingsCount": {
+			"other": "{count} 人份"
+		}
 	},
 	"aisles": {
 		"title": "货区",

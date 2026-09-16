@@ -14,7 +14,8 @@
 		"magnifier": "المكبّرة",
 		"create": "إنشاء",
 		"chat": "المحادثات",
-		"prices": "الأسعار"
+		"prices": "الأسعار",
+		"recipes": "الوصفات"
 	},
 	"create": {
 		"title": "ما الذي تريد إنشاءه؟",
@@ -22,7 +23,8 @@
 		"list": "قائمة جديدة",
 		"aisle": "قسم جديد",
 		"shop": "متجر جديد",
-		"card": "بطاقة ولاء جديدة"
+		"card": "بطاقة ولاء جديدة",
+		"recipe": "وصفة جديدة"
 	},
 	"lists": {
 		"title": "قوائمي",
@@ -326,6 +328,52 @@
 		"recordedOn": "سُجّل في {date}",
 		"cheapest": "الأرخص",
 		"goneShop": "متجر محذوف"
+	},
+	"recipes": {
+		"title": "الوصفات",
+		"intro": "وصفات المنزل، وقائمة التسوق التي تخرج منها.",
+		"empty": "لا توجد وصفات بعد. اكتب واحدة وستتحول مكوناتها إلى قائمة.",
+		"name": "اسم الوصفة",
+		"namePlaceholder": "غراتان الكوسا",
+		"emoji": "رمز تعبيري",
+		"servings": "عدد الحصص",
+		"servingsHint": "عدد الأشخاص الذي كُتبت المقادير من أجله.",
+		"stepper": "خطوات النموذج",
+		"step": {
+			"recette": "الوصفة",
+			"ingredients": "المكونات",
+			"etapes": "طريقة التحضير"
+		},
+		"ingredientsHint": "مكوّن واحد في كل سطر. السطور الفارغة تُتجاهل.",
+		"ingredientName": "المكوّن {rank}",
+		"ingredientPlaceholder": "كوسا",
+		"qty": "الكمية",
+		"unit": "الوحدة",
+		"addIngredient": "إضافة مكوّن",
+		"removeIngredient": "إزالة المكوّن {rank}",
+		"stepsHint": "خطوة واحدة في كل سطر، بترتيب التحضير.",
+		"stepBody": "الخطوة {rank}",
+		"addStep": "إضافة خطوة",
+		"removeStep": "إزالة الخطوة {rank}",
+		"next": "التالي",
+		"back": "السابق",
+		"generate": "إنشاء القائمة",
+		"generateSubmit": "إنشاء العناصر",
+		"people": "لكم من الأشخاص؟",
+		"peopleHint": "المقادير مكتوبة لـ {servings}. سيتم تعديلها بالتناسب.",
+		"target": "أين تُضاف العناصر",
+		"targetNew": "في قائمة جديدة",
+		"delete": "حذف الوصفة {name}",
+		"deleteConfirm": "حذف {name}؟ القوائم التي أُنشئت من قبل لن تتغير.",
+		"deleteYes": "حذف",
+		"servingsCount": {
+			"zero": "بدون حصص",
+			"one": "لشخص واحد",
+			"two": "لشخصين",
+			"few": "لـ {count} أشخاص",
+			"many": "لـ {count} شخصًا",
+			"other": "لـ {count} شخص"
+		}
 	},
 	"aisles": {
 		"title": "الأقسام",

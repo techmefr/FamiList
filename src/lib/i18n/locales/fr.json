@@ -14,7 +14,8 @@
 		"magnifier": "Loupe",
 		"create": "Créer",
 		"chat": "Discussions",
-		"prices": "Prix"
+		"prices": "Prix",
+		"recipes": "Recettes"
 	},
 	"create": {
 		"title": "Que voulez-vous créer ?",
@@ -22,7 +23,8 @@
 		"list": "Nouvelle liste",
 		"aisle": "Nouveau rayon",
 		"shop": "Nouveau magasin",
-		"card": "Nouvelle carte de fidélité"
+		"card": "Nouvelle carte de fidélité",
+		"recipe": "Nouvelle recette"
 	},
 	"lists": {
 		"title": "Mes listes",
@@ -318,6 +320,48 @@
 		"recordedOn": "Relevé le {date}",
 		"cheapest": "Le moins cher",
 		"goneShop": "Magasin supprimé"
+	},
+	"recipes": {
+		"title": "Recettes",
+		"intro": "Les recettes du foyer, et de quoi en tirer la liste de courses.",
+		"empty": "Aucune recette. Écrivez-en une, ses ingrédients deviendront une liste.",
+		"name": "Nom de la recette",
+		"namePlaceholder": "Gratin de courgettes",
+		"emoji": "Emoji",
+		"servings": "Nombre de parts",
+		"servingsHint": "Le nombre de personnes pour lequel les quantités sont écrites.",
+		"stepper": "Étapes de la saisie",
+		"step": {
+			"recette": "La recette",
+			"ingredients": "Les ingrédients",
+			"etapes": "La préparation"
+		},
+		"ingredientsHint": "Un ingrédient par ligne. Les lignes laissées vides sont ignorées.",
+		"ingredientName": "Ingrédient {rank}",
+		"ingredientPlaceholder": "Courgettes",
+		"qty": "Quantité",
+		"unit": "Unité",
+		"addIngredient": "Ajouter un ingrédient",
+		"removeIngredient": "Retirer l'ingrédient {rank}",
+		"stepsHint": "Une étape par ligne, dans l’ordre de la préparation.",
+		"stepBody": "Étape {rank}",
+		"addStep": "Ajouter une étape",
+		"removeStep": "Retirer l'étape {rank}",
+		"next": "Suivant",
+		"back": "Précédent",
+		"generate": "Générer la liste",
+		"generateSubmit": "Créer les articles",
+		"people": "Pour combien de personnes ?",
+		"peopleHint": "Les quantités sont écrites pour {servings}. Elles seront mises à l’échelle.",
+		"target": "Où ajouter les articles",
+		"targetNew": "Dans une nouvelle liste",
+		"delete": "Supprimer la recette {name}",
+		"deleteConfirm": "Supprimer {name} ? Les listes déjà générées ne changeront pas.",
+		"deleteYes": "Supprimer",
+		"servingsCount": {
+			"one": "Pour 1 personne",
+			"other": "Pour {count} personnes"
+		}
 	},
 	"aisles": {
 		"title": "Rayons",

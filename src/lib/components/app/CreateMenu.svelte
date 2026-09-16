@@ -7,7 +7,15 @@
 	import { settings } from '$stores/settings.svelte';
 	import { createIntent, type CreateKind } from '$stores/create.svelte';
 	import { t } from '$lib/i18n/index.svelte';
-	import { ShoppingBasket, ListPlus, LayoutList, Store, CreditCard, X } from '@lucide/svelte';
+	import {
+		ShoppingBasket,
+		ListPlus,
+		LayoutList,
+		Store,
+		CreditCard,
+		CookingPot,
+		X
+	} from '@lucide/svelte';
 
 	let dialog = $state<HTMLDialogElement | null>(null);
 
@@ -45,6 +53,12 @@
 	const ACTIONS = [
 		{ kind: 'item', icon: ShoppingBasket, target: itemTarget, field: null },
 		{ kind: 'list', icon: ListPlus, target: () => '/', field: '[data-test-id="list-name"]' },
+		{
+			kind: 'recipe',
+			icon: CookingPot,
+			target: () => '/recipes',
+			field: '[data-test-id="recipe-name"]'
+		},
 		{ kind: 'aisle', icon: LayoutList, target: () => '/shops', field: '[data-test-id="aisle-name"]' },
 		{ kind: 'shop', icon: Store, target: () => '/shops', field: '[data-test-id="shop-name"]' },
 		{ kind: 'card', icon: CreditCard, target: () => '/cards', field: '[data-test-id="card-name"]' }
