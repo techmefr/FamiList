@@ -41,7 +41,16 @@
 		"empty": "Ainda não há listas.",
 		"delete": "Eliminar a lista {name}",
 		"rename": "Renomear {name}",
-		"duplicate": "Duplicar {name}"
+		"duplicate": "Duplicar {name}",
+		"eventDate": "Data limite",
+		"eventDateClear": "Deixe vazio para remover a data.",
+		"reminderPlanned": "Lembrete a {when}.",
+		"reminderLate": "Tarde demais para um lembrete: teria saído na véspera às 18 h.",
+		"reminderInvalid": "Data ilegível, nenhum lembrete será agendado.",
+		"reminderWeb": "Os lembretes só chegam na aplicação instalada. Num navegador a data continua visível, mas nenhuma notificação será enviada.",
+		"reminderDenied": "Notificações recusadas: a data fica guardada, mas nenhum lembrete será enviado. Pode autorizar de novo nas definições do telemóvel.",
+		"reminderTitle": "{name} é amanhã",
+		"reminderBody": "Ainda faltam artigos para comprar antes de {date}."
 	},
 	"profile": {
 		"title": "Perfil",

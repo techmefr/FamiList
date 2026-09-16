@@ -8,6 +8,8 @@
 	import { createIntent } from '$stores/create.svelte';
 	import { i18n, t } from '$lib/i18n/index.svelte';
 	import { TINTS } from '$domain/tint';
+	import { reminderStatus } from '$domain/reminder';
+	import { remindersSupported, requestReminderPermission } from '$native/reminders';
 	import * as Card from '$lib/components/ui/card';
 	import { Badge } from '$lib/components/ui/badge';
 	import { Button } from '$lib/components/ui/button';
@@ -33,6 +35,10 @@
 	let name = $state('');
 	let emoji = $state('🛒');
 	let picker = $state<EmojiPicker | null>(null);
+	let eventDate = $state('');
+
+	/** Posé seulement après un enregistrement, quand la personne a refusé les notifications. */
+	let reminderRefused = $state(false);
 
 	/** La liste en cours de renommage. Le même formulaire sert à créer et à corriger. */
 	let renomme = $state<string | null>(null);
@@ -43,11 +49,13 @@
 	 * Le nom et l'emoji se corrigent au même endroit qu'ils se posent : un second formulaire
 	 * n'aurait fait que répéter les deux mêmes champs et la même palette.
 	 */
-	function renommer(list: { id: string; name: string; emoji: string }) {
+	function renommer(list: { id: string; name: string; emoji: string; eventDate?: string }) {
 		feedback.play('tap');
 		renomme = list.id;
 		name = list.name;
 		emoji = list.emoji;
+		eventDate = list.eventDate ?? '';
+		reminderRefused = false;
 		creating = true;
 
 		// Le formulaire est en haut de page, la carte peut être loin en dessous.
@@ -58,6 +66,8 @@
 		renomme = null;
 		name = '';
 		emoji = '🛒';
+		eventDate = '';
+		reminderRefused = false;
 		creating = false;
 	}
 
@@ -100,19 +110,57 @@
 		return new Intl.DateTimeFormat(i18n.locale, { day: 'numeric', month: 'long' }).format(date);
 	}
 
+	/**
+	 * Ce que le rappel fera vraiment, écrit sous le champ au moment où la date se saisit.
+	 *
+	 * L'application est un paquet statique sans serveur : le rappel est une alarme posée sur
+	 * l'appareil, et le navigateur ne sait pas en poser. Plutôt que de laisser croire à un rappel
+	 * qui ne partira jamais, on le dit à l'endroit exact où la promesse se formule.
+	 */
+	const reminderNotice = $derived.by(() => {
+		if (!eventDate) return '';
+		if (!remindersSupported()) return t('lists.reminderWeb');
+
+		const { status, at } = reminderStatus(eventDate, new Date());
+		if (status === 'invalid') return t('lists.reminderInvalid');
+		if (status === 'late') return t('lists.reminderLate');
+
+		const when = new Intl.DateTimeFormat(i18n.locale, {
+			dateStyle: 'long',
+			timeStyle: 'short'
+		}).format(at as Date);
+
+		return t('lists.reminderPlanned', { when });
+	});
+
+	/**
+	 * L'autorisation se demande ici, sur le geste qui pose la date, et pas au lancement.
+	 *
+	 * Android 13 ne la propose que deux fois : la dépenser à l'ouverture, avant que qui que ce soit
+	 * ait exprimé le besoin d'un rappel, reviendrait à la perdre. Un refus ne bloque rien — la date
+	 * est déjà enregistrée, seule la notification manque, et on le dit.
+	 */
+	async function demanderRappel() {
+		const permission = await requestReminderPermission();
+		reminderRefused = permission === 'denied';
+	}
+
 	function create(event: SubmitEvent) {
 		event.preventDefault();
 		if (!name.trim()) return;
 
+		const datee = Boolean(eventDate);
+
 		if (renomme) {
 			feedback.play('success');
-			data.updateList(renomme, { name, emoji });
+			data.updateList(renomme, { name, emoji, eventDate });
 		} else {
 			feedback.play('add');
-			data.addList({ name, emoji, color: TINTS[data.lists.length % TINTS.length] });
+			data.addList({ name, emoji, eventDate, color: TINTS[data.lists.length % TINTS.length] });
 		}
 
 		annuler();
+		if (datee) void demanderRappel();
 	}
 
 	/**
@@ -165,6 +213,21 @@
 				</IconField>
 			</div>
 		</div>
+		<div>
+			<Label for="list-event-date">{t('lists.eventDate')}</Label>
+			<IconField icon={CalendarDays}>
+				<Input
+					id="list-event-date"
+					type="date"
+					bind:value={eventDate}
+					data-test-id="list-event-date"
+					aria-describedby="list-event-date-help"
+				/>
+			</IconField>
+			<p id="list-event-date-help" class="text-caption text-muted-foreground mt-1">
+				{reminderNotice || t('lists.eventDateClear')}
+			</p>
+		</div>
 		<div class="flex flex-wrap items-stretch gap-2">
 			<Button type="submit" data-test-id="list-create" class="fl-press">{t('common.save')}</Button>
 			{#if renomme}
@@ -180,6 +243,17 @@
 			{/if}
 		</div>
 	</form>
+{/if}
+
+<!--
+	Le refus arrive après la fermeture du formulaire : la réponse du système est asynchrone, et
+	l'afficher dans un champ déjà rangé ne se verrait pas. Il est annoncé, pas seulement affiché —
+	c'est la seule information de la page qu'on ne peut deviner en regardant.
+-->
+{#if reminderRefused}
+	<p class="text-caption text-destructive mt-4" role="status" data-test-id="reminder-denied">
+		{t('lists.reminderDenied')}
+	</p>
 {/if}
 
 {#if !data.ready}

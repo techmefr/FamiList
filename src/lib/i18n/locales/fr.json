@@ -41,7 +41,16 @@
 		"empty": "Aucune liste pour l'instant.",
 		"delete": "Supprimer la liste {name}",
 		"rename": "Renommer {name}",
-		"duplicate": "Dupliquer {name}"
+		"duplicate": "Dupliquer {name}",
+		"eventDate": "Date limite",
+		"eventDateClear": "Laisser vide pour retirer la date.",
+		"reminderPlanned": "Rappel le {when}.",
+		"reminderLate": "Trop tard pour un rappel : il serait parti la veille à 18 h.",
+		"reminderInvalid": "Date illisible, aucun rappel ne sera programmé.",
+		"reminderWeb": "Les rappels n’arrivent que sur l’application installée. Dans un navigateur, la date reste affichée mais aucune notification ne partira.",
+		"reminderDenied": "Notifications refusées : la date est enregistrée, mais aucun rappel ne partira. À réautoriser dans les réglages du téléphone.",
+		"reminderTitle": "{name}, c’est demain",
+		"reminderBody": "Il reste des articles à prendre avant le {date}."
 	},
 	"profile": {
 		"title": "Profil",

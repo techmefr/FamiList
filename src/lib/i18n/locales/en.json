@@ -41,7 +41,16 @@
 		"empty": "No lists yet.",
 		"delete": "Delete list {name}",
 		"rename": "Rename {name}",
-		"duplicate": "Duplicate {name}"
+		"duplicate": "Duplicate {name}",
+		"eventDate": "Due date",
+		"eventDateClear": "Leave empty to remove the date.",
+		"reminderPlanned": "Reminder on {when}.",
+		"reminderLate": "Too late for a reminder: it would have gone out at 6 pm the day before.",
+		"reminderInvalid": "Unreadable date, no reminder will be scheduled.",
+		"reminderWeb": "Reminders only arrive on the installed app. In a browser the date still shows, but no notification will be sent.",
+		"reminderDenied": "Notifications declined: the date is saved, but no reminder will be sent. You can allow them again in your phone settings.",
+		"reminderTitle": "{name} is tomorrow",
+		"reminderBody": "Some items are still to buy before {date}."
 	},
 	"profile": {
 		"title": "Profile",

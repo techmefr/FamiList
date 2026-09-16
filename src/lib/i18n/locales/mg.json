@@ -41,7 +41,16 @@
 		"empty": "Mbola tsy misy lisitra.",
 		"delete": "Fafao ny lisitra {name}",
 		"rename": "Ovay ny anaran’ny {name}",
-		"duplicate": "Adikao ny {name}"
+		"duplicate": "Adikao ny {name}",
+		"eventDate": "Daty farany",
+		"eventDateClear": "Avelao foana raha tianao esorina ny daty.",
+		"reminderPlanned": "Fampahatsiahivana ny {when}.",
+		"reminderLate": "Tara loatra ny fampahatsiahivana : tokony ho lasa omalin’io tamin’ny 18 ora izy.",
+		"reminderInvalid": "Daty tsy voavaky, tsy hisy fampahatsiahivana hokarakaraina.",
+		"reminderWeb": "Tonga ao amin’ny rindrambaiko voapetraka ihany ny fampahatsiahivana. Ao amin’ny navigateur dia mbola hita ny daty, saingy tsy hisy fampandrenesana handeha.",
+		"reminderDenied": "Lavina ny fampandrenesana : voatahiry ny daty, fa tsy hisy fampahatsiahivana handeha. Azo avela indray ao amin’ny kirakira an’ny finday.",
+		"reminderTitle": "{name}, rahampitso izany",
+		"reminderBody": "Mbola misy entana halaina alohan’ny {date}."
 	},
 	"profile": {
 		"title": "Mombamomba",

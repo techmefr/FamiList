@@ -40,7 +40,16 @@
 		"empty": "还没有清单。",
 		"delete": "删除清单 {name}",
 		"rename": "重命名 {name}",
-		"duplicate": "复制{name}"
+		"duplicate": "复制{name}",
+		"eventDate": "截止日期",
+		"eventDateClear": "留空即可移除日期。",
+		"reminderPlanned": "将在{when}提醒。",
+		"reminderLate": "来不及提醒了：提醒本应在前一天 18 点发出。",
+		"reminderInvalid": "日期无法识别，不会安排提醒。",
+		"reminderWeb": "提醒仅在已安装的应用中送达。在浏览器里日期仍会显示，但不会发出通知。",
+		"reminderDenied": "通知已被拒绝：日期已保存，但不会发出提醒。可在手机设置中重新允许。",
+		"reminderTitle": "{name}就在明天",
+		"reminderBody": "{date}之前还有物品没买。"
 	},
 	"profile": {
 		"title": "我的",
