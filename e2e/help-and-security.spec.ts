@@ -21,7 +21,7 @@ test("l'écran Sécurité liste le mot de passe, la 2FA et les appareils connect
 	await page.goto('/profile/security');
 
 	await expect(page.getByTestId('password-form')).toBeVisible();
-	await expect(page.getByTestId('totp-enable')).toBeVisible();
+	await expect(page.getByTestId('totp-switch')).toBeVisible();
 	await expect(page.getByTestId('sessions')).toBeVisible();
 
 	// La session courante, ouverte à l'instant par ce test, doit apparaître dans sa propre liste.

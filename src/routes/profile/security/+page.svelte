@@ -10,6 +10,7 @@
 	import EmptyState from '$components/app/EmptyState.svelte';
 	import { Input } from '$lib/components/ui/input';
 	import { Label } from '$lib/components/ui/label';
+	import { Switch } from '$lib/components/ui/switch';
 	import IconField from '$components/app/IconField.svelte';
 	import {
 		ShieldCheck,
@@ -49,6 +50,14 @@
 
 	const actif = $derived(facteurs.length > 0);
 
+	/**
+	 * L'interrupteur n'est pas déduit de `actif` : entre le geste et le deuxième facteur réellement
+	 * posé, il y a un carré à photographier et un code à confirmer. Il prend donc l'avance du geste,
+	 * sinon il repartirait en arrière sous les doigts — et chaque sortie de l'inscription, abandon ou
+	 * échec, le remet sur l'état du compte pour qu'il cesse d'annoncer une protection inexistante.
+	 */
+	let interrupteurActif = $state(false);
+
 	const dateLongue = $derived(
 		new Intl.DateTimeFormat(i18n.locale, { dateStyle: 'long', timeStyle: 'short' })
 	);
@@ -76,6 +85,7 @@
 		}
 
 		facteurs = lusFacteurs;
+		interrupteurActif = lusFacteurs.length > 0 || inscription !== null;
 		sessions = lusSessions;
 		restants = lusRestants;
 	}
@@ -87,10 +97,35 @@
 	async function commencer() {
 		busy = true;
 		erreur = '';
+		interrupteurActif = true;
 		inscription = await session.enrollTotp();
 		busy = false;
 
-		if (!inscription) erreur = session.error ?? '';
+		if (!inscription) {
+			erreur = session.error ?? '';
+			interrupteurActif = false;
+		}
+	}
+
+	function abandonner() {
+		inscription = null;
+		code = '';
+		erreur = '';
+		interrupteurActif = actif;
+	}
+
+	async function basculer(demande: boolean) {
+		if (demande) {
+			await commencer();
+			return;
+		}
+
+		if (inscription) {
+			abandonner();
+			return;
+		}
+
+		for (const facteur of facteurs) await desactiver(facteur.id);
 	}
 
 	async function confirmer(event: SubmitEvent) {
@@ -126,6 +161,7 @@
 
 		if (!ok) {
 			erreur = session.error ?? '';
+			interrupteurActif = true;
 			return;
 		}
 
@@ -315,7 +351,44 @@
 			<p class="text-destructive text-label" role="alert" data-test-id="security-load-error">
 				{erreurChargement}
 			</p>
-		{:else if inscription}
+		{:else}
+			<div class="flex flex-wrap items-center justify-between gap-4">
+				<div class="min-w-0">
+					<Label for="totp-switch">{t('security.twoFactor')}</Label>
+					<p
+						id="totp-switch-state"
+						class="text-muted-foreground text-label mt-1"
+						role="status"
+						data-test-id="totp-state"
+					>
+						{#if inscription || (interrupteurActif && !actif)}
+							{t('security.twoFactorPending')}
+						{:else if actif}
+							{t('security.twoFactorOn', {
+								date: dateLongue.format(new Date(facteurs[0].createdAt))
+							})}
+						{:else}
+							{t('security.twoFactorOff')}
+						{/if}
+					</p>
+				</div>
+				<Switch
+					id="totp-switch"
+					size="lg"
+					bind:checked={interrupteurActif}
+					onCheckedChange={basculer}
+					disabled={busy}
+					aria-describedby="totp-switch-state"
+					data-test-id="totp-switch"
+				/>
+			</div>
+		{/if}
+
+		{#if !chargement && !erreurChargement && erreur && !inscription}
+			<p class="text-destructive text-label" role="alert" data-test-id="totp-error">{erreur}</p>
+		{/if}
+
+		{#if inscription}
 			<p class="text-label">{t('security.scan')}</p>
 
 			<!--
@@ -367,47 +440,11 @@
 					>
 						{busy ? t('common.loading') : t('security.confirm')}
 					</Button>
-					<Button
-						variant="outline"
-						onclick={() => {
-							inscription = null;
-							code = '';
-							erreur = '';
-						}}
-						data-test-id="totp-cancel"
-					>
+					<Button variant="outline" onclick={abandonner} data-test-id="totp-cancel">
 						{t('common.cancel')}
 					</Button>
 				</div>
 			</form>
-		{:else if actif}
-			{#each facteurs as facteur (facteur.id)}
-				<div class="flex flex-wrap items-center justify-between gap-3">
-					<p class="text-label" data-test-id="totp-active">
-						{t('security.twoFactorOn', { date: dateLongue.format(new Date(facteur.createdAt)) })}
-					</p>
-					<Button
-						variant="outline"
-						class="text-destructive"
-						disabled={busy}
-						onclick={() => desactiver(facteur.id)}
-						data-test-id="totp-disable"
-					>
-						{t('security.disable')}
-					</Button>
-				</div>
-			{/each}
-		{:else}
-			<p class="text-muted-foreground text-label">{t('security.twoFactorOff')}</p>
-
-			{#if erreur}
-				<p class="text-destructive text-label" role="alert" data-test-id="totp-error">{erreur}</p>
-			{/if}
-
-			<Button class="fl-press" disabled={busy} onclick={commencer} data-test-id="totp-enable">
-				<ShieldCheck size={18} aria-hidden="true" />
-				{t('security.enable')}
-			</Button>
 		{/if}
 	</Card.Content>
 </Card.Root>

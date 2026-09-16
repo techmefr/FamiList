@@ -25,7 +25,7 @@ test('activer la 2FA, se reconnecter avec un code, puis la retirer', async ({
 }) => {
 	await page.goto('/profile/security');
 
-	await page.getByTestId('totp-enable').click();
+	await page.getByTestId('totp-switch').click();
 
 	// Le carré à photographier, et la clé pour qui ne peut pas viser un carré : les deux doivent
 	// être là, c'est le seul moment où le secret existe à l'écran.
@@ -42,7 +42,12 @@ test('activer la 2FA, se reconnecter avec un code, puis la retirer', async ({
 	const secours = await page.locator('[data-test-id="backup-codes"] li').allInnerTexts();
 	expect(secours.length).toBeGreaterThan(0);
 
-	await expect(page.getByTestId('totp-active')).toBeVisible();
+	// L'interrupteur prend l'avance du geste pendant l'inscription : on le relit après rechargement,
+	// pour qu'il réponde de l'état du compte et non de cette avance.
+	await page.reload();
+	await expect(page.getByTestId('totp-switch')).toHaveAttribute('aria-checked', 'true', {
+		timeout: 15_000
+	});
 
 	// La vraie question : est-ce que la porte se referme ? On se déconnecte et on revient.
 	await signOut(page);
@@ -64,6 +69,8 @@ test('activer la 2FA, se reconnecter avec un code, puis la retirer', async ({
 	// Remise en état : le compte fixe est partagé par toute la suite, et le laisser en 2FA
 	// arrêterait tous les autres tests à la connexion.
 	await page.goto('/profile/security');
-	await page.getByTestId('totp-disable').click();
-	await expect(page.getByTestId('totp-enable')).toBeVisible({ timeout: 15_000 });
+	await page.getByTestId('totp-switch').click();
+	await expect(page.getByTestId('totp-switch')).toHaveAttribute('aria-checked', 'false', {
+		timeout: 15_000
+	});
 });
