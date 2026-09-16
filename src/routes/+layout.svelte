@@ -20,6 +20,7 @@
 	import { settings } from '$stores/settings.svelte';
 	import { navDirection } from '$domain/motion';
 	import { pushAppearance, syncAppearance } from '$lib/sync/appearance';
+	import { registerServiceWorker } from '$native/pwa';
 	import SyncStatus from '$components/app/SyncStatus.svelte';
 	import CreateMenu from '$components/app/CreateMenu.svelte';
 	import Logo from '$components/app/Logo.svelte';
@@ -42,6 +43,7 @@
 
 	i18n.init();
 	session.init();
+	registerServiceWorker();
 
 	// Comparaison exacte : /auth/pending parle d'un compte, il suppose donc une session.
 	// Un startsWith('/auth') le rendrait public et laisserait l'écran d'attente affiché
