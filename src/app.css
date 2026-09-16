@@ -18,6 +18,31 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
+/*
+ * Les trois régimes de navigation, décidés par la largeur *et* l'orientation.
+ *
+ * `phone` — moins de 48rem : la barre en bas, au pouce.
+ * `rail` — au moins 48rem et tenu en hauteur : une colonne étroite sur un bord, le jeu d'entrées
+ *   du téléphone. Une tablette en portrait a la hauteur d'un grand écran et la largeur d'un
+ *   téléphone ; la juger sur la seule largeur lui donnait une colonne de 16rem qui mangeait un
+ *   cinquième de la page.
+ * `full` — au moins 48rem et tenu en largeur : la colonne complète, toutes les destinations.
+ *
+ * `compact` est la réunion des deux premiers, écrite comme la négation de `full` plutôt qu'en
+ * disjonction : Tailwind ne garde que la première requête d'une liste séparée par des virgules, et
+ * le silence de cette perte — les entrées réservées à la colonne complète réapparaissaient dans le
+ * rail — vaut mieux que l'élégance de la forme.
+ *
+ * L'orientation, et non un second seuil de largeur : une fenêtre de bureau de 900 px de large sur
+ * 1200 de haut a exactement le problème de la tablette en portrait, et mérite la même réponse.
+ *
+ * Seules les variantes dont le balisage a besoin sont déclarées ici ; la charpente du rail et le
+ * panneau des listes sont écrits en requêtes complètes, plus bas, là où ils vivent.
+ */
+@custom-variant phone (@media (width < 48rem));
+@custom-variant full (@media (width >= 48rem) and (orientation: landscape));
+@custom-variant compact (@media not ((width >= 48rem) and (orientation: landscape)));
+
 :root {
 	--background: #f1ede5;
 	--foreground: #1c1917;
@@ -726,9 +751,9 @@ textarea {
  * Le côté des commandes qu'on atteint au pouce : le bouton de création, et la réserve que les
  * commandes flottantes lui laissent juste au-dessus.
  *
- * Ici, et ici seulement, on écrit `left` et `right` là où le reste de l'application parle en
- * `start` et `end`. Les propriétés logiques servent à suivre le sens de lecture ; or une main
- * gauche reste une main gauche en arabe. Accrocher ce bouton à `end` le ferait basculer avec la
+ * Ici, et dans le seul bloc du rail plus bas, on écrit `left` et `right` là où le reste de
+ * l'application parle en `start` et `end`. Les propriétés logiques suivent le sens de lecture ; or
+ * une main gauche reste une main gauche en arabe. Accrocher ce bouton à `end` le ferait basculer avec la
  * langue, et l'application le poserait du mauvais côté pour un droitier arabophone comme pour un
  * gaucher francophone — deux fois faux, pour la même raison.
  *
@@ -802,13 +827,145 @@ textarea {
 }
 
 /*
+ * La charpente de l'application, et la place de la navigation dans chacun des trois régimes.
+ *
+ * Écrite ici plutôt qu'en utilitaires sur l'élément : trois régimes font trois jeux de positions
+ * qui se contredisent, et la pile de préfixes correspondante sur une seule ligne de classes
+ * n'était plus relisible.
+ *
+ * `--fl-navbar-h` reste ce qu'elle a toujours dit : la hauteur que la barre du bas mange en bas de
+ * l'écran. Il n'y a de barre du bas que sur téléphone, donc la variable vaut zéro partout ailleurs,
+ * et les commandes flottantes qui s'en servent se posent au bord. La mise en page ne publie que la
+ * mesure brute, `--fl-navbar-measured` ; c'est ici qu'on décide si elle compte.
+ */
+.fl-shell {
+	--fl-navbar-h: 0px;
+	--fl-rail-w: 5.5rem;
+	min-block-size: 100dvh;
+}
+
+@media (width < 48rem) {
+	.fl-shell {
+		--fl-navbar-h: var(--fl-navbar-measured, 4rem);
+	}
+}
+
+@media (width >= 48rem) {
+	.fl-navbar {
+		display: flex;
+		flex-direction: column;
+		border-block-start: 0;
+	}
+
+	.fl-navbar > ul {
+		flex: 1 1 auto;
+		flex-direction: column;
+		overflow-x: visible;
+	}
+}
+
+/* Régime `full` : la colonne complète, puis le panneau des listes quand la largeur le permet. */
+@media (width >= 48rem) and (orientation: landscape) {
+	.fl-shell {
+		display: grid;
+		grid-template-columns: 16rem 1fr;
+	}
+
+	.fl-navbar {
+		position: sticky;
+		inset: 0 auto auto;
+		block-size: 100dvh;
+		border-inline-end: 1px solid var(--border);
+	}
+}
+
+@media (width >= 64rem) and (orientation: landscape) {
+	.fl-shell {
+		grid-template-columns: 16rem 20rem 1fr;
+	}
+}
+
+/*
+ * Régime `rail` : tablette tenue en hauteur.
+ *
+ * La colonne est étroite et posée sur un bord, et ses entrées sont centrées verticalement — une
+ * tablette se tient à deux mains, le pouce se repose au milieu du bord, ni en haut ni en bas.
+ *
+ * Le bord est celui de la main directrice, comme le bouton de création sur téléphone, et pour la
+ * même raison : c'est la deuxième et dernière place de l'application où l'on écrit `left` et
+ * `right` au lieu de `start` et `end`. Un gaucher arabophone lit de droite à gauche et garde
+ * quand même son rail à gauche ; accrocher la colonne à `end` la ferait basculer avec la langue et
+ * la poserait du mauvais côté pour lui comme pour un droitier francophone.
+ *
+ * La réserve laissée au contenu suit le même côté physique, sinon le rail recouvrirait la page en
+ * arabe.
+ */
+@media (width >= 48rem) and (orientation: portrait) {
+	.fl-shell {
+		padding-right: var(--fl-rail-w);
+	}
+
+	[data-hand='left'] .fl-shell {
+		padding-right: 0;
+		padding-left: var(--fl-rail-w);
+	}
+
+	.fl-navbar {
+		position: fixed;
+		inset-block: 0;
+		inset-inline: auto;
+		right: 0;
+		left: auto;
+		inline-size: var(--fl-rail-w);
+		border-left: 1px solid var(--border);
+		border-right: 0;
+	}
+
+	[data-hand='left'] .fl-navbar {
+		right: auto;
+		left: 0;
+		border-left: 0;
+		border-right: 1px solid var(--border);
+	}
+
+	.fl-navbar > ul {
+		justify-content: center;
+		gap: 0.25rem;
+		overflow-y: auto;
+	}
+}
+
+/*
+ * Le panneau des listes, façon boîte mail : il ne vit que dans le régime le plus large et n'existe
+ * pas du tout ailleurs. `display: none` et non un attribut masqué côté script : ainsi il ne coûte
+ * rien en tablette portrait ni sur téléphone, et surtout il ne double aucun lien pour les lecteurs
+ * d'écran, qui l'ignorent comme tout le monde.
+ */
+.fl-list-panel {
+	display: none;
+}
+
+@media (width >= 64rem) and (orientation: landscape) {
+	.fl-list-panel {
+		position: sticky;
+		inset-block-start: 0;
+		display: flex;
+		flex-direction: column;
+		block-size: 100dvh;
+		overflow-y: auto;
+		border-inline-end: 1px solid var(--border);
+	}
+}
+
+/*
  * La pastille de l'onglet actif.
  *
- * Sur téléphone c'est une capsule derrière la seule icône, pas un rectangle qui prend toute la
- * hauteur de la barre : c'est ce que font les barres d'aujourd'hui, et surtout un rectangle à
- * bords vifs collé aux voisins ne se lisait pas comme un état mais comme un défaut de rendu.
+ * Partout où l'icône est seule au-dessus de son libellé — téléphone et rail — c'est une capsule
+ * derrière elle, pas un rectangle qui prend toute la hauteur de la barre : c'est ce que font les
+ * barres d'aujourd'hui, et surtout un rectangle à bords vifs collé aux voisins ne se lisait pas
+ * comme un état mais comme un défaut de rendu.
  *
- * Elle vit dans l'enveloppe de l'icône, et cette enveloppe redevient `static` sur grand écran :
+ * Elle vit dans l'enveloppe de l'icône, et cette enveloppe redevient `static` en régime `full` :
  * la pastille reprend alors le lien entier pour bloc conteneur, et la colonne garde sa ligne
  * sélectionnée pleine largeur. Un seul élément, deux formes, aucune duplication à tenir à jour.
  *
@@ -831,7 +988,7 @@ textarea {
 	background: color-mix(in srgb, var(--primary) 15%, transparent);
 }
 
-@media (width >= 48rem) {
+@media (width >= 48rem) and (orientation: landscape) {
 	.fl-nav-icon {
 		position: static;
 		padding: 0;
