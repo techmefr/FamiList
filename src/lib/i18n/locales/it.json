@@ -13,7 +13,8 @@
 		"household": "Casa",
 		"magnifier": "Lente",
 		"create": "Crea",
-		"chat": "Conversazioni"
+		"chat": "Conversazioni",
+		"prices": "Prezzi"
 	},
 	"create": {
 		"title": "Che cosa vuoi creare?",
@@ -214,7 +215,11 @@
 		"swipeUncheck": "Togli",
 		"swipeDelete": "Elimina",
 		"noShop": "Aggiungi un negozio",
-		"edit": "Modifica {name}"
+		"edit": "Modifica {name}",
+		"price": "Prezzo",
+		"pricePlaceholder": "0,00",
+		"priceOf": "Prezzo di {name} in questo negozio",
+		"cheaperAt": "Meno caro da {shop}: {price}"
 	},
 	"share": {
 		"title": "Chi può vedere questa lista?",
@@ -301,6 +306,19 @@
 		"cancel": "Annulla",
 		"deleteConfirm": "Eliminare {name}? Il percorso imparato in questo negozio andrà perso.",
 		"deleteYes": "Elimina"
+	},
+	"prices": {
+		"title": "Storico dei prezzi",
+		"intro": "L'ultimo prezzo rilevato in ogni negozio, dal più economico al più caro.",
+		"open": "Storico dei prezzi",
+		"empty": "Nessun prezzo rilevato. Spunta un articolo mentre fai la spesa per annotarne il prezzo.",
+		"shopCount": {
+			"one": "1 negozio",
+			"other": "{count} negozi"
+		},
+		"recordedOn": "Rilevato il {date}",
+		"cheapest": "Il più economico",
+		"goneShop": "Negozio eliminato"
 	},
 	"aisles": {
 		"title": "Reparti",

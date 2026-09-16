@@ -25,6 +25,7 @@
 	import {
 		ArrowLeft,
 		MessagesSquare,
+		Tags,
 		UsersRound,
 		SlidersHorizontal,
 		Plus,
@@ -265,6 +266,20 @@
 			<Send size={16} aria-hidden="true" />
 			{t('share.send')}
 		</button>
+
+		<!--
+			L'historique des prix se rejoint d'ici, et pas seulement par la colonne de gauche : sur
+			téléphone la barre du bas est pleine, et c'est en préparant sa liste qu'on se demande où
+			acheter — pas en ouvrant un onglet dédié.
+		-->
+		<a
+			href="/prices"
+			data-test-id="open-prices"
+			class="text-primary text-label inline-flex min-h-[max(2.75rem,44px)] items-center gap-2 underline"
+		>
+			<Tags size={16} aria-hidden="true" />
+			{t('prices.open')}
+		</a>
 	</div>
 
 	<p class="text-muted-foreground text-caption" data-test-id="share-summary">{sharedWith}</p>

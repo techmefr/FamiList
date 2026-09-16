@@ -8,6 +8,7 @@ import type {
 	Poll,
 	PollOption,
 	PollVote,
+	Price,
 	Shop,
 	ShopItemOrder,
 	ShopLayout
@@ -16,6 +17,7 @@ import { itemOrderKey, pollVoteKey } from '$db/schema';
 import { CODE_TYPES, type CodeType } from '$domain/code-format';
 import { DEFAULT_MEMBER_TINT, DEFAULT_TINT } from '$domain/tint';
 import { DEFAULT_UNIT } from '$domain/units';
+import { DEFAULT_CURRENCY } from '$domain/price';
 import { initialsFor } from '$domain/avatar';
 
 /**
@@ -285,4 +287,33 @@ export const fromItemOrder = (order: ShopItemOrder, userId: string) => ({
 	user_id: userId,
 	aisle_id: order.aisleId,
 	product_slugs: order.productSlugs
+});
+
+/**
+ * Un prix relevé. `amount` arrive en `numeric`, que le client rend tantôt en nombre tantôt en
+ * chaîne selon la précision : on repasse par Number plutôt que de faire confiance au type reçu.
+ * Un montant illisible vaut zéro, ce que la comparaison écarte d'elle-même.
+ */
+export const toPrice = (row: Row): Price => ({
+	id: text(row.id),
+	shopId: text(row.shop_id),
+	productSlug: text(row.product_slug),
+	productName: text(row.product_name),
+	amount: Number(row.amount) || 0,
+	currency: text(row.currency, DEFAULT_CURRENCY),
+	recordedAt: Date.parse(text(row.recorded_at)) || 0,
+	recordedBy: text(row.recorded_by)
+});
+
+export const fromPrice = (price: Price, householdId: string) => ({
+	id: price.id,
+	household_id: householdId,
+	shop_id: price.shopId,
+	product_slug: price.productSlug,
+	product_name: price.productName,
+	amount: price.amount,
+	currency: price.currency,
+	// L'heure du relevé, pas celle de l'envoi : la file peut attendre la sortie du magasin.
+	recorded_at: new Date(price.recordedAt).toISOString(),
+	recorded_by: price.recordedBy || null
 });

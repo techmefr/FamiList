@@ -13,7 +13,8 @@
 		"household": "Ankohonana",
 		"magnifier": "Fitarafana",
 		"create": "Hamorona",
-		"chat": "Resaka"
+		"chat": "Resaka",
+		"prices": "Vidiny"
 	},
 	"create": {
 		"title": "Inona no tianao hamboarina?",
@@ -214,7 +215,11 @@
 		"swipeUncheck": "Esory",
 		"swipeDelete": "Fafao",
 		"noShop": "Hanampy fivarotana",
-		"edit": "Ovay {name}"
+		"edit": "Ovay {name}",
+		"price": "Vidiny",
+		"pricePlaceholder": "0,00",
+		"priceOf": "Vidin'ny {name} amin'ity fivarotana ity",
+		"cheaperAt": "Mora kokoa any {shop} : {price}"
 	},
 	"share": {
 		"title": "Iza no mahita ity lisitra ity?",
@@ -301,6 +306,19 @@
 		"cancel": "Ajanony",
 		"deleteConfirm": "Fafana {name} ? Ho very ny lalana efa hain’ny fivarotana.",
 		"deleteYes": "Fafao"
+	},
+	"prices": {
+		"title": "Tantaran'ny vidiny",
+		"intro": "Ny vidiny farany voarakitra isaky ny fivarotana, manomboka amin’ny mora indrindra.",
+		"open": "Tantaran'ny vidiny",
+		"empty": "Mbola tsy misy vidiny voarakitra. Mariho ny entana rehefa mividy mba hanoratana ny vidiny.",
+		"shopCount": {
+			"one": "Fivarotana 1",
+			"other": "Fivarotana {count}"
+		},
+		"recordedOn": "Voarakitra ny {date}",
+		"cheapest": "Mora indrindra",
+		"goneShop": "Fivarotana voafafa"
 	},
 	"aisles": {
 		"title": "Faritra",

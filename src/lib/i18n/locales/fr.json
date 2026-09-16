@@ -13,7 +13,8 @@
 		"household": "Foyer",
 		"magnifier": "Loupe",
 		"create": "Créer",
-		"chat": "Discussions"
+		"chat": "Discussions",
+		"prices": "Prix"
 	},
 	"create": {
 		"title": "Que voulez-vous créer ?",
@@ -214,7 +215,11 @@
 		"swipeUncheck": "Décocher",
 		"swipeDelete": "Supprimer",
 		"noShop": "Ajouter un magasin",
-		"edit": "Modifier {name}"
+		"edit": "Modifier {name}",
+		"price": "Prix",
+		"pricePlaceholder": "0,00",
+		"priceOf": "Prix de {name} dans ce magasin",
+		"cheaperAt": "Moins cher à {shop} : {price}"
 	},
 	"share": {
 		"title": "Qui a accès à cette liste ?",
@@ -301,6 +306,19 @@
 		"cancel": "Annuler",
 		"deleteConfirm": "Supprimer {name} ? Le parcours appris dans ce magasin sera perdu.",
 		"deleteYes": "Supprimer"
+	},
+	"prices": {
+		"title": "Historique des prix",
+		"intro": "Le dernier prix relevé dans chaque magasin, du moins cher au plus cher.",
+		"open": "Historique des prix",
+		"empty": "Aucun prix relevé. Cochez un article pendant vos courses pour noter son prix.",
+		"shopCount": {
+			"one": "1 magasin",
+			"other": "{count} magasins"
+		},
+		"recordedOn": "Relevé le {date}",
+		"cheapest": "Le moins cher",
+		"goneShop": "Magasin supprimé"
 	},
 	"aisles": {
 		"title": "Rayons",

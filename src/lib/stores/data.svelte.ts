@@ -13,6 +13,7 @@ import {
 	type PollKind,
 	type PollOption,
 	type PollVote,
+	type Price,
 	type Shop,
 	type ShopItemOrder,
 	type ShopLayout
@@ -33,15 +34,24 @@ import {
 	fromMessage,
 	fromPoll,
 	fromPollOption,
+	fromPrice,
 	fromShop
 } from '$lib/sync/mapping';
 import { copiedItem, copyName } from '$domain/duplicate';
 import { slugify } from '$domain/slug';
+import {
+	compareShops,
+	currencyForLocale,
+	latestAt,
+	parseAmount,
+	pricedProducts,
+	sameDay
+} from '$domain/price';
 import { trigram } from '$domain/trigram';
 import { trigramSource } from '$domain/place';
 import { DEFAULT_UNIT } from '$domain/units';
 import { TINTS } from '$domain/tint';
-import { t } from '$lib/i18n/index.svelte';
+import { i18n, t } from '$lib/i18n/index.svelte';
 
 const ACTIVE_SHOP_KEY = 'familist:active-shop';
 
@@ -71,6 +81,7 @@ class DataStore {
 	polls = $state<Poll[]>([]);
 	pollOptions = $state<PollOption[]>([]);
 	pollVotes = $state<PollVote[]>([]);
+	prices = $state<Price[]>([]);
 
 	activeShopId = $state<string>('');
 	ready = $state(false);
@@ -135,7 +146,8 @@ class DataStore {
 			messages,
 			polls,
 			pollOptions,
-			pollVotes
+			pollVotes,
+			prices
 		] = await Promise.all([
 			db.shops.toArray(),
 			db.aisles.orderBy('position').toArray(),
@@ -148,7 +160,8 @@ class DataStore {
 			db.messages.toArray(),
 			db.polls.toArray(),
 			db.pollOptions.toArray(),
-			db.pollVotes.toArray()
+			db.pollVotes.toArray(),
+			db.prices.toArray()
 		]);
 
 		this.shops = shops;
@@ -163,6 +176,7 @@ class DataStore {
 		this.polls = polls;
 		this.pollOptions = pollOptions;
 		this.pollVotes = pollVotes;
+		this.prices = prices;
 
 		const saved = localStorage.getItem(ACTIVE_SHOP_KEY);
 		const known = saved && shops.some((s) => s.id === saved) ? saved : (shops[0]?.id ?? '');
@@ -717,6 +731,78 @@ class DataStore {
 		});
 	}
 
+	/**
+	 * Le prix d'un produit, relevé au moment où on le met dans le chariot.
+	 *
+	 * C'est la seule minute où quelqu'un connaît le prix : l'étiquette est sous les yeux, et
+	 * l'article vient d'être coché. Le demander à l'ajout — souvent la veille, sur le canapé —
+	 * reviendrait à demander de deviner, et le demander après la course obligerait à rouvrir chaque
+	 * ligne de mémoire. Le champ n'apparaît donc que sur un article coché, et il reste facultatif :
+	 * une course entière peut se faire sans en remplir un seul.
+	 *
+	 * Le magasin est celui qui est actif — celui dont le parcours range déjà la liste. Une liste
+	 * n'appartient à aucun magasin ; c'est le sélecteur en bas de l'écran qui dit où l'on est.
+	 *
+	 * Un second relevé du même produit, dans le même magasin, le même jour, remplace le précédent au
+	 * lieu de s'ajouter : c'est une correction de frappe, pas une évolution de prix. Vider le champ
+	 * efface ce relevé du jour, pour la même raison.
+	 */
+	setItemPrice(item: Item, raw: string) {
+		const shopId = this.activeShopId;
+		if (!shopId) return;
+
+		const slug = slugify(item.name);
+		if (!slug) return;
+
+		const amount = parseAmount(raw);
+		const existing = latestAt(this.prices, slug, shopId);
+		const dujour = existing && sameDay(existing.recordedAt, Date.now()) ? existing : null;
+
+		if (amount === null) {
+			if (dujour) this.removePrice(dujour.id);
+			return;
+		}
+
+		const price: Price = {
+			id: dujour?.id ?? crypto.randomUUID(),
+			shopId,
+			productSlug: slug,
+			productName: item.name,
+			amount,
+			// La monnaie ne change jamais sur un relevé existant : celle d'hier reste celle d'hier,
+			// même si l'application a changé de langue depuis.
+			currency: dujour?.currency ?? currencyForLocale(i18n.locale),
+			recordedAt: Date.now(),
+			recordedBy: this.userId
+		};
+
+		this.prices = [...this.prices.filter((p) => p.id !== price.id), price];
+		db.prices.put(price);
+		this.push('item_prices', price, fromPrice);
+	}
+
+	removePrice(id: string) {
+		this.prices = this.prices.filter((p) => p.id !== id);
+		db.prices.delete(id);
+		sync.enqueue({ table: 'item_prices', op: 'delete', match: { id } });
+	}
+
+	/** Le dernier prix connu de ce produit dans le magasin actif, celui que le champ réaffiche. */
+	priceOf(item: Item) {
+		if (!this.activeShopId) return null;
+		return latestAt(this.prices, slugify(item.name), this.activeShopId);
+	}
+
+	/** Les magasins où ce produit a été relevé, du moins cher au plus cher. */
+	priceComparison(slug: string) {
+		return compareShops(this.prices, slug);
+	}
+
+	/** Les produits dont on connaît au moins un prix. */
+	get pricedProducts() {
+		return pricedProducts(this.prices);
+	}
+
 	messagesOf(listId: string) {
 		return this.messages
 			.filter((m) => m.listId === listId)
@@ -1062,7 +1148,8 @@ class DataStore {
 			db.messages.clear(),
 			db.polls.clear(),
 			db.pollOptions.clear(),
-			db.pollVotes.clear()
+			db.pollVotes.clear(),
+			db.prices.clear()
 		]);
 
 		localStorage.removeItem(ACTIVE_SHOP_KEY);
