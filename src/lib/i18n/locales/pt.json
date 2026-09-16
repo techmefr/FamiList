@@ -13,7 +13,8 @@
 		"household": "Casa",
 		"magnifier": "Lupa",
 		"create": "Criar",
-		"chat": "Conversas"
+		"chat": "Conversas",
+		"prices": "Preços"
 	},
 	"create": {
 		"title": "O que quer criar?",
@@ -214,7 +215,11 @@
 		"swipeUncheck": "Desmarcar",
 		"swipeDelete": "Apagar",
 		"noShop": "Adicionar uma loja",
-		"edit": "Editar {name}"
+		"edit": "Editar {name}",
+		"price": "Preço",
+		"pricePlaceholder": "0,00",
+		"priceOf": "Preço de {name} nesta loja",
+		"cheaperAt": "Mais barato na {shop}: {price}"
 	},
 	"share": {
 		"title": "Quem pode ver esta lista?",
@@ -301,6 +306,19 @@
 		"cancel": "Cancelar",
 		"deleteConfirm": "Eliminar {name}? O percurso aprendido nesta loja será perdido.",
 		"deleteYes": "Eliminar"
+	},
+	"prices": {
+		"title": "Histórico de preços",
+		"intro": "O último preço registado em cada loja, do mais barato ao mais caro.",
+		"open": "Histórico de preços",
+		"empty": "Ainda sem preços. Marque um artigo durante as compras para anotar o preço.",
+		"shopCount": {
+			"one": "1 loja",
+			"other": "{count} lojas"
+		},
+		"recordedOn": "Registado a {date}",
+		"cheapest": "O mais barato",
+		"goneShop": "Loja eliminada"
 	},
 	"aisles": {
 		"title": "Secções",

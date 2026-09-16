@@ -11,7 +11,8 @@
 		Plus,
 		MessagesSquare,
 		Users,
-		ShieldCheck
+		ShieldCheck,
+		Tags
 	} from '@lucide/svelte';
 	import { i18n, t } from '$lib/i18n/index.svelte';
 	import { data } from '$stores/data.svelte';
@@ -175,6 +176,7 @@
 		{ href: '/chat', key: 'nav.chat', icon: MessagesSquare, place: 'partout' },
 		{ href: '/cards', key: 'nav.cards', icon: CreditCard, place: 'partout' },
 		{ href: '/shops', key: 'nav.shops', icon: Store, place: 'desktop' },
+		{ href: '/prices', key: 'nav.prices', icon: Tags, place: 'desktop' },
 		{ href: '/household', key: 'nav.household', icon: Users, place: 'desktop' },
 		{ href: '/admin', key: 'nav.admin', icon: ShieldCheck, place: 'desktop', admin: true },
 		{ href: '/profile', key: 'nav.profile', icon: User, place: 'desktop' }

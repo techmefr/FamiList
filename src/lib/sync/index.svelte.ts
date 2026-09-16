@@ -14,6 +14,7 @@ import {
 	toPoll,
 	toPollOption,
 	toPollVote,
+	toPrice,
 	toShop
 } from './mapping';
 
@@ -274,7 +275,8 @@ class SyncStore {
 			messages,
 			polls,
 			pollOptions,
-			pollVotes
+			pollVotes,
+			prices
 		] = await Promise.all([
 			supabase.from('shops').select('*').eq('household_id', household),
 			supabase.from('aisles').select('*').eq('household_id', household),
@@ -288,7 +290,8 @@ class SyncStore {
 			supabase.from('messages').select('*'),
 			supabase.from('polls').select('*'),
 			supabase.from('poll_options').select('*'),
-			supabase.from('poll_votes').select('*')
+			supabase.from('poll_votes').select('*'),
+			supabase.from('item_prices').select('*').eq('household_id', household)
 		]);
 
 		const failed = [
@@ -304,7 +307,8 @@ class SyncStore {
 			messages,
 			polls,
 			pollOptions,
-			pollVotes
+			pollVotes,
+			prices
 		]
 			.map((result) => result.error)
 			.find(Boolean);
@@ -351,7 +355,8 @@ class SyncStore {
 				db.messages,
 				db.polls,
 				db.pollOptions,
-				db.pollVotes
+				db.pollVotes,
+				db.prices
 			],
 			async () => {
 				/**
@@ -383,7 +388,8 @@ class SyncStore {
 					db.messages.clear(),
 					db.polls.clear(),
 					db.pollOptions.clear(),
-					db.pollVotes.clear()
+					db.pollVotes.clear(),
+					db.prices.clear()
 				]);
 
 				await Promise.all([
@@ -404,7 +410,8 @@ class SyncStore {
 					db.messages.bulkAdd((messages.data ?? []).map(toMessage)),
 					db.polls.bulkAdd((polls.data ?? []).map(toPoll)),
 					db.pollOptions.bulkAdd((pollOptions.data ?? []).map(toPollOption)),
-					db.pollVotes.bulkAdd((pollVotes.data ?? []).map(toPollVote))
+					db.pollVotes.bulkAdd((pollVotes.data ?? []).map(toPollVote)),
+					db.prices.bulkAdd((prices.data ?? []).map(toPrice))
 				]);
 			}
 		);

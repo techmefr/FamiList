@@ -13,7 +13,8 @@
 		"household": "المنزل",
 		"magnifier": "المكبّرة",
 		"create": "إنشاء",
-		"chat": "المحادثات"
+		"chat": "المحادثات",
+		"prices": "الأسعار"
 	},
 	"create": {
 		"title": "ما الذي تريد إنشاءه؟",
@@ -218,7 +219,11 @@
 		"swipeUncheck": "إلغاء التحديد",
 		"swipeDelete": "حذف",
 		"noShop": "إضافة متجر",
-		"edit": "تعديل {name}"
+		"edit": "تعديل {name}",
+		"price": "السعر",
+		"pricePlaceholder": "0٫00",
+		"priceOf": "سعر {name} في هذا المتجر",
+		"cheaperAt": "أرخص في {shop}: {price}"
 	},
 	"share": {
 		"title": "من يمكنه رؤية هذه القائمة؟",
@@ -305,6 +310,23 @@
 		"cancel": "إلغاء",
 		"deleteConfirm": "حذف {name}؟ سيضيع المسار الذي تعلّمناه في هذا المتجر.",
 		"deleteYes": "حذف"
+	},
+	"prices": {
+		"title": "سجل الأسعار",
+		"intro": "آخر سعر مسجّل في كل متجر، من الأرخص إلى الأغلى.",
+		"open": "سجل الأسعار",
+		"empty": "لا توجد أسعار بعد. أشِّر على منتج أثناء التسوق لتسجيل سعره.",
+		"shopCount": {
+			"zero": "لا متاجر",
+			"one": "متجر واحد",
+			"two": "متجران",
+			"few": "{count} متاجر",
+			"many": "{count} متجرًا",
+			"other": "{count} متجر"
+		},
+		"recordedOn": "سُجّل في {date}",
+		"cheapest": "الأرخص",
+		"goneShop": "متجر محذوف"
 	},
 	"aisles": {
 		"title": "الأقسام",

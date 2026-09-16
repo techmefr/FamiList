@@ -57,7 +57,13 @@ const PATHS = pluralPaths(fr as unknown as Node);
 
 describe('formes plurielles', () => {
 	it('relève les phrases comptées du français', () => {
-		expect(PATHS).toEqual(['lists.remaining', 'chat.votes', 'chat.pushed', 'security.backupLeft']);
+		expect(PATHS).toEqual([
+			'lists.remaining',
+			'prices.shopCount',
+			'chat.votes',
+			'chat.pushed',
+			'security.backupLeft'
+		]);
 	});
 
 	describe.each(Object.keys(MESSAGES))('%s', (code) => {

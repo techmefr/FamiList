@@ -13,7 +13,8 @@
 		"household": "Household",
 		"magnifier": "Magnifier",
 		"create": "Create",
-		"chat": "Chats"
+		"chat": "Chats",
+		"prices": "Prices"
 	},
 	"create": {
 		"title": "What would you like to create?",
@@ -214,7 +215,11 @@
 		"swipeUncheck": "Untick",
 		"swipeDelete": "Delete",
 		"noShop": "Add a shop",
-		"edit": "Edit {name}"
+		"edit": "Edit {name}",
+		"price": "Price",
+		"pricePlaceholder": "0.00",
+		"priceOf": "Price of {name} at this shop",
+		"cheaperAt": "Cheaper at {shop}: {price}"
 	},
 	"share": {
 		"title": "Who can see this list?",
@@ -301,6 +306,19 @@
 		"cancel": "Cancel",
 		"deleteConfirm": "Delete {name}? The route learned in this shop will be lost.",
 		"deleteYes": "Delete"
+	},
+	"prices": {
+		"title": "Price history",
+		"intro": "The latest price recorded at each shop, cheapest first.",
+		"open": "Price history",
+		"empty": "No price recorded yet. Tick an item while shopping to note its price.",
+		"shopCount": {
+			"one": "1 shop",
+			"other": "{count} shops"
+		},
+		"recordedOn": "Recorded on {date}",
+		"cheapest": "Cheapest",
+		"goneShop": "Deleted shop"
 	},
 	"aisles": {
 		"title": "Aisles",
