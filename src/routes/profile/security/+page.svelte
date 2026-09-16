@@ -58,6 +58,15 @@
 	 */
 	let interrupteurActif = $state(false);
 
+	/**
+	 * Ce que dit la ligne d'état sous l'interrupteur, en un mot. L'interrupteur, lui, répond du
+	 * geste — il passe à « éteint » dès le clic, avant que le retrait soit parti. Le seul état qui
+	 * réponde du compte est celui-ci : il ne change qu'une fois la liste des facteurs relue.
+	 */
+	const etat = $derived(
+		inscription || (interrupteurActif && !actif) ? 'pending' : actif ? 'on' : 'off'
+	);
+
 	const dateLongue = $derived(
 		new Intl.DateTimeFormat(i18n.locale, { dateStyle: 'long', timeStyle: 'short' })
 	);
@@ -125,7 +134,21 @@
 			return;
 		}
 
-		for (const facteur of facteurs) await desactiver(facteur.id);
+		// Éteindre sans facteur connu ne doit pas être un geste sans suite. La boucle seule ne
+		// partait alors sur rien : l'interrupteur, qui a déjà pris l'avance, restait sur « éteint »
+		// sans qu'aucune demande ait été envoyée ni aucune erreur affichée — l'écran annonçait une
+		// protection retirée qui tenait toujours. On relit le compte, qui remet l'interrupteur sur
+		// son état réel.
+		if (facteurs.length === 0) {
+			await recharger();
+			return;
+		}
+
+		// On s'arrête au premier refus plutôt que d'enchaîner : `desactiver` a déjà remis
+		// l'interrupteur et affiché la raison, et le tour suivant l'effacerait aussitôt.
+		for (const facteur of facteurs) {
+			if (!(await desactiver(facteur.id))) return;
+		}
 	}
 
 	async function confirmer(event: SubmitEvent) {
@@ -162,11 +185,12 @@
 		if (!ok) {
 			erreur = session.error ?? '';
 			interrupteurActif = true;
-			return;
+			return false;
 		}
 
 		codes = [];
 		await recharger();
+		return true;
 	}
 
 	async function renouveler() {
@@ -360,8 +384,9 @@
 						class="text-muted-foreground text-label mt-1"
 						role="status"
 						data-test-id="totp-state"
+						data-test-state={etat}
 					>
-						{#if inscription || (interrupteurActif && !actif)}
+						{#if etat === 'pending'}
 							{t('security.twoFactorPending')}
 						{:else if actif}
 							{t('security.twoFactorOn', {
