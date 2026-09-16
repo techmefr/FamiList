@@ -1,10 +1,18 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
+	import { supabase } from '$db/supabase';
 	import { data } from '$stores/data.svelte';
 	import { feedback } from '$stores/feedback.svelte';
 	import { createIntent } from '$stores/create.svelte';
 	import { t } from '$lib/i18n/index.svelte';
 	import { DEFAULT_SERVINGS, MAX_SERVINGS, MIN_SERVINGS, type RecipeLine } from '$domain/recipe';
+	import {
+		importErrorOf,
+		importedLines,
+		parseImportedServings,
+		type ImportError,
+		type ImportedRecipe
+	} from '$domain/recipe-import';
 	import { UNITS, DEFAULT_UNIT } from '$domain/units';
 	import { Button } from '$lib/components/ui/button';
 	import { Input } from '$lib/components/ui/input';
@@ -22,7 +30,9 @@
 		Users,
 		ChevronLeft,
 		ChevronRight,
-		Check
+		Check,
+		Link2,
+		Download
 	} from '@lucide/svelte';
 
 	/**
@@ -55,6 +65,12 @@
 	let cible = $state('');
 	let aSupprimer = $state<string | null>(null);
 
+	/** L'import depuis un lien : l'adresse saisie, l'attente, le refus, et le fait d'avoir servi. */
+	let lien = $state('');
+	let importEnCours = $state(false);
+	let importRefus = $state<ImportError | null>(null);
+	let importe = $state(false);
+
 	const rang = $derived(ETAPES.indexOf(etape));
 	const derniere = $derived(rang === ETAPES.length - 1);
 
@@ -76,6 +92,80 @@
 		servings = DEFAULT_SERVINGS;
 		lines = [{ name: '', qty: '', unit: DEFAULT_UNIT }];
 		steps = [''];
+		importe = false;
+		importRefus = null;
+	}
+
+	/**
+	 * Le motif de refus renvoyé par la fonction edge.
+	 *
+	 * `functions.invoke` ne lève pas sur un 4xx : il rend une erreur qui porte la réponse HTTP dans
+	 * `context`. Sans la relire, tous les refus se ressembleraient — « adresse illisible » et
+	 * « aucune recette sur cette page » demandent pourtant deux gestes opposés.
+	 */
+	async function motifDuRefus(erreur: unknown): Promise<ImportError> {
+		const contexte = (erreur as { context?: unknown } | null)?.context;
+		if (!(contexte instanceof Response)) return 'unreachable';
+
+		try {
+			const corps = await contexte.json();
+			return importErrorOf(corps?.error);
+		} catch {
+			return 'unreachable';
+		}
+	}
+
+	/**
+	 * Pose la recette récupérée dans le formulaire, sans rien enregistrer.
+	 *
+	 * C'est tout l'intérêt de la manœuvre : ce qui revient d'une page inconnue est un brouillon.
+	 * Les quantités sont découpées au mieux, certaines lignes repartent telles quelles, et le
+	 * nombre de parts est parfois absent. La personne relit, corrige, puis enregistre — comme si
+	 * elle avait saisi la recette elle-même, mais sans l'avoir tapée.
+	 */
+	function preRemplir(recette: ImportedRecipe) {
+		const importees = importedLines(recette.ingredients);
+
+		name = recette.name ?? '';
+		emoji = EMOJI_PAR_DEFAUT;
+		servings = parseImportedServings(recette.servings) ?? DEFAULT_SERVINGS;
+		lines = importees.length ? importees : [{ name: '', qty: '', unit: DEFAULT_UNIT }];
+		steps = recette.steps.length ? recette.steps : [''];
+
+		creating = true;
+		etape = 'recette';
+		importe = true;
+		lien = '';
+	}
+
+	async function importer(event: SubmitEvent) {
+		event.preventDefault();
+
+		const url = lien.trim();
+		if (!url || importEnCours) return;
+
+		importEnCours = true;
+		importRefus = null;
+
+		try {
+			const { data: recette, error } = await supabase.functions.invoke<ImportedRecipe>(
+				'import-recipe',
+				{ body: { url } }
+			);
+
+			if (error || !recette) {
+				importRefus = await motifDuRefus(error);
+				return;
+			}
+
+			feedback.play('add');
+			preRemplir(recette);
+		} catch {
+			// Hors ligne, ou fonction indisponible : pour qui regarde l'écran, c'est la même chose.
+			importRefus = 'unreachable';
+		} finally {
+			importEnCours = false;
+		}
 	}
 
 	/**
@@ -179,8 +269,74 @@
 		<Plus size={18} aria-hidden="true" />
 		{t('create.recipe')}
 	</Button>
+
+	<!--
+		L'import depuis un lien, posé sous la création manuelle et non à sa place : une recette de
+		famille ne vient d'aucune page web, et c'est elle que cet écran sert d'abord.
+
+		Ce que l'adresse révèle est écrit en clair au-dessus du champ. L'application est servie en
+		statique et ne parle à personne d'autre qu'à sa propre base ; aller chercher une page tierce
+		demande de confier cette adresse au serveur de l'instance, qui se présentera au site visité.
+		C'est la première sortie réseau du projet, elle ne part que sur un geste explicite, et le
+		dire est moins coûteux que de le faire découvrir.
+	-->
+	<form onsubmit={importer} class="bg-card mt-4 space-y-3 rounded-xl border p-4">
+		<h2 class="text-h2 font-semibold">{t('recipes.import.title')}</h2>
+		<p class="text-muted-foreground text-caption">{t('recipes.import.privacy')}</p>
+
+		<div>
+			<Label for="recipe-import-url">{t('recipes.import.url')}</Label>
+			<IconField icon={Link2}>
+				<Input
+					id="recipe-import-url"
+					type="url"
+					bind:value={lien}
+					data-test-id="recipe-import-url"
+					placeholder={t('recipes.import.urlPlaceholder')}
+				/>
+			</IconField>
+		</div>
+
+		<Button
+			type="submit"
+			variant="outline"
+			disabled={importEnCours || !lien.trim()}
+			data-test-id="recipe-import-submit"
+			class="fl-press"
+		>
+			<Download size={18} aria-hidden="true" />
+			{importEnCours ? t('recipes.import.loading') : t('recipes.import.submit')}
+		</Button>
+
+		<!--
+			Le refus est annoncé, pas seulement affiché : la personne vient de coller une adresse et
+			regarde le champ, pas le bas du bloc.
+		-->
+		<p class="text-caption text-destructive" role="alert" data-test-id="recipe-import-error">
+			{#if importRefus}
+				{t(`recipes.import.error.${importRefus}`)}
+			{/if}
+		</p>
+
+		<p class="text-muted-foreground text-caption">{t('recipes.import.social')}</p>
+	</form>
 {:else}
 	<form onsubmit={avancer} class="bg-card mt-4 space-y-5 rounded-xl border p-4">
+		{#if importe}
+			<!--
+				Ce qui vient d'une page web est un brouillon, et l'écran doit le dire avant que la
+				personne n'enregistre. Les quantités sont découpées au mieux, les lignes qu'on n'a pas
+				su lire — « 2 cuillères à soupe d'huile » — sont revenues entières dans le champ du
+				nom, et rien de tout cela n'est écrit en base tant que le formulaire n'est pas validé.
+			-->
+			<p
+				class="text-label rounded-lg bg-[var(--fl-primary-tint)] p-3"
+				data-test-id="recipe-import-review"
+			>
+				{t('recipes.import.review')}
+			</p>
+		{/if}
+
 		<!--
 			Où l'on en est, dit en toutes lettres et pas seulement par une barre colorée : « étape 2
 			sur 3 » se lit au lecteur d'écran comme à l'œil, et une barre seule ne dit ni combien il

@@ -337,6 +337,27 @@
 		"goneShop": "Deleted shop"
 	},
 	"recipes": {
+		"import": {
+			"title": "Import from a link",
+			"privacy": "The address is sent to this instance’s server, which fetches the page for you and identifies itself to the site visited. Nothing is kept, and no other page is opened.",
+			"url": "Recipe address",
+			"urlPlaceholder": "https://example.com/my-recipe",
+			"submit": "Import the recipe",
+			"loading": "Reading the page…",
+			"review": "Recipe retrieved. Read it over before saving: any line that could not be split came back as written.",
+			"social": "Instagram and TikTok publish no readable recipe: their links cannot be imported.",
+			"error": {
+				"invalid": "This address cannot be read.",
+				"scheme": "Only https addresses are accepted.",
+				"credentials": "This address carries credentials: it is refused.",
+				"port": "This address targets a specific port: it is refused.",
+				"private_host": "This address points to a private network: it is refused.",
+				"unreachable": "The page could not be fetched. Try again later.",
+				"not_html": "This link does not lead to a web page.",
+				"too_large": "This page is too heavy to read.",
+				"no_recipe": "No readable recipe on this page. The site must publish its recipe as structured data."
+			}
+		},
 		"title": "Recipes",
 		"intro": "Your household’s recipes, and the shopping list that comes out of them.",
 		"empty": "No recipes yet. Write one and its ingredients will become a list.",

@@ -337,6 +337,27 @@
 		"goneShop": "Loja eliminada"
 	},
 	"recipes": {
+		"import": {
+			"title": "Importar a partir de uma ligação",
+			"privacy": "O endereço é enviado ao servidor desta instância, que vai buscar a página por si e identifica-se perante o site visitado. Nada é guardado e nenhuma outra página é aberta.",
+			"url": "Endereço da receita",
+			"urlPlaceholder": "https://exemplo.pt/a-minha-receita",
+			"submit": "Importar a receita",
+			"loading": "A ler a página…",
+			"review": "Receita recuperada. Releia tudo antes de guardar: as linhas que não foi possível separar voltaram tal como estavam.",
+			"social": "O Instagram e o TikTok não publicam nenhuma receita legível: as suas ligações não podem ser importadas.",
+			"error": {
+				"invalid": "Este endereço não é legível.",
+				"scheme": "Só são aceites endereços https.",
+				"credentials": "Este endereço contém credenciais: é recusado.",
+				"port": "Este endereço aponta para uma porta específica: é recusado.",
+				"private_host": "Este endereço aponta para uma rede privada: é recusado.",
+				"unreachable": "Não foi possível obter a página. Tente mais tarde.",
+				"not_html": "Esta ligação não leva a uma página web.",
+				"too_large": "Esta página é demasiado pesada para ser lida.",
+				"no_recipe": "Nenhuma receita legível nesta página. O site tem de publicar a receita em dados estruturados."
+			}
+		},
 		"title": "Receitas",
 		"intro": "As receitas da casa, e a lista de compras que sai delas.",
 		"empty": "Nenhuma receita. Escreva uma e os seus ingredientes virarão uma lista.",
