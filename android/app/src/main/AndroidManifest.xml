@@ -49,6 +49,18 @@
          refusable : la date reste enregistree et affichee, c'est le rappel seul qui manque. -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
+    <!-- Position, pour proposer la carte de fidelite a l approche d un magasin enregistre.
+         Demandee seulement quand on active le reglage, qui part eteint, et coupable a tout
+         moment. La precision grossiere suffit : le rayon de declenchement est de 300 m. -->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+
+    <!-- ACCESS_BACKGROUND_LOCATION n est volontairement pas declaree. La tenir demanderait un
+         service de premier plan, avec sa notification permanente et sa justification aupres du
+         Play Store, pour une fonctionnalite de confort. La veille vit donc avec l application :
+         ouverte ou recemment mise en arriere-plan, la position arrive ; une fois l application
+         fermee par le systeme, plus rien ne tourne. L interface annonce exactement cela. -->
+
     <!-- Le greffon de notifications locales la declare, l'application ne s'en sert pas : ses
          rappels sont programmes en alarme inexacte, a la minute pres, ce qui suffit largement
          pour des courses. La garder obligerait a la justifier aupres du Play Store pour une

@@ -81,6 +81,13 @@ export const DEFAULT_HAND: Hand = 'right';
 export const DEFAULT_SOUND = true;
 export const DEFAULT_HAPTICS = true;
 
+/**
+ * La proposition de carte à l'approche d'un magasin part éteinte, contrairement au son et aux
+ * vibrations : elle suppose de laisser l'appareil suivre sa position. Ce genre d'accord se donne,
+ * il ne se retire pas après coup.
+ */
+export const DEFAULT_NEARBY_CARDS = false;
+
 /** Couleurs de fond de :root et .dark, pour la barre de statut du système. */
 export const THEME_COLORS = { light: '#f1ede5', dark: '#0a0907' } as const;
 

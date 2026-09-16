@@ -2,7 +2,7 @@ import { supabase } from '$db/supabase';
 import { settings } from '$stores/settings.svelte';
 
 const COLUMNS =
-	'theme, accent_id, type_scale, font_id, motion, hand, sound, haptics, has_seen_tour';
+	'theme, accent_id, type_scale, font_id, motion, hand, sound, haptics, nearby_cards, has_seen_tour';
 
 /**
  * Compte dont l'arbitrage initial a déjà eu lieu sur cet appareil.

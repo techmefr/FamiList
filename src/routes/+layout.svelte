@@ -27,6 +27,7 @@
 	import { install } from '$stores/install.svelte';
 	import { reminderPlans } from '$domain/reminder';
 	import { applyReminders } from '$native/reminders';
+	import { applyNearbyWatch } from '$native/nearby';
 	import SyncStatus from '$components/app/SyncStatus.svelte';
 	import InstallBanner from '$components/app/InstallBanner.svelte';
 	import CreateMenu from '$components/app/CreateMenu.svelte';
@@ -98,6 +99,37 @@
 				)
 			})
 		}));
+	});
+
+	/**
+	 * La veille de proximité, reposée à chaque changement.
+	 *
+	 * Ici et pas sur la page des cartes : le magasin se croise en faisant autre chose, et la page
+	 * des cartes est justement celle qu'on n'ouvre pas quand on a oublié qu'on avait une carte.
+	 * L'effet ne fait que transmettre l'état courant — magasins, cartes, réglage — la couche native
+	 * décide seule s'il y a une veille à démarrer ou à couper.
+	 */
+	$effect(() => {
+		void applyNearbyWatch(settings.nearbyCards && session.isApproved, {
+			shops: data.shops.map((shop) => ({
+				shopId: shop.id,
+				name: shop.name,
+				brand: shop.brand,
+				lat: shop.lat,
+				lng: shop.lng
+			})),
+			cards: data.cards.map((card) => ({
+				cardId: card.id,
+				name: card.name,
+				shopId: card.shopId,
+				brand: card.brand
+			})),
+			texts: (alert) => ({
+				title: t('cards.nearbyTitle', { shop: alert.shopName }),
+				body: t('cards.nearbyBody', { card: alert.cardName })
+			}),
+			onOpen: (cardId) => goto(`/cards?card=${cardId}`)
+		});
 	});
 
 	// Comparaison exacte : /auth/pending parle d'un compte, il suppose donc une session.
