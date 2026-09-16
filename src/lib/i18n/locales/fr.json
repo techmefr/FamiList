@@ -337,6 +337,27 @@
 		"goneShop": "Magasin supprimé"
 	},
 	"recipes": {
+		"import": {
+			"title": "Importer depuis un lien",
+			"privacy": "L’adresse est envoyée au serveur de l’instance, qui ira chercher la page à votre place et se présentera au site visité. Rien n’est conservé, et aucune autre page n’est consultée.",
+			"url": "Adresse de la recette",
+			"urlPlaceholder": "https://exemple.fr/ma-recette",
+			"submit": "Importer la recette",
+			"loading": "Lecture de la page…",
+			"review": "Recette récupérée. Relisez tout avant d’enregistrer : les lignes qui n’ont pas pu être découpées sont revenues telles quelles.",
+			"social": "Instagram et TikTok ne publient pas de recette lisible : leurs liens ne peuvent pas être importés.",
+			"error": {
+				"invalid": "Cette adresse n’est pas lisible.",
+				"scheme": "Seules les adresses en https sont acceptées.",
+				"credentials": "Cette adresse contient des identifiants : elle est refusée.",
+				"port": "Cette adresse vise un port particulier : elle est refusée.",
+				"private_host": "Cette adresse pointe vers un réseau privé : elle est refusée.",
+				"unreachable": "La page n’a pas pu être récupérée. Réessayez plus tard.",
+				"not_html": "Ce lien ne mène pas à une page web.",
+				"too_large": "Cette page est trop lourde pour être lue.",
+				"no_recipe": "Aucune recette lisible sur cette page. Le site doit publier sa recette en données structurées."
+			}
+		},
 		"title": "Recettes",
 		"intro": "Les recettes du foyer, et de quoi en tirer la liste de courses.",
 		"empty": "Aucune recette. Écrivez-en une, ses ingrédients deviendront une liste.",

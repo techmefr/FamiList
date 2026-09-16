@@ -337,6 +337,27 @@
 		"goneShop": "Gelöschtes Geschäft"
 	},
 	"recipes": {
+		"import": {
+			"title": "Über einen Link importieren",
+			"privacy": "Die Adresse geht an den Server dieser Instanz, der die Seite für Sie abruft und sich der besuchten Website zu erkennen gibt. Nichts wird gespeichert, keine weitere Seite wird geöffnet.",
+			"url": "Adresse des Rezepts",
+			"urlPlaceholder": "https://beispiel.de/mein-rezept",
+			"submit": "Rezept importieren",
+			"loading": "Seite wird gelesen…",
+			"review": "Rezept übernommen. Lesen Sie alles vor dem Speichern durch: Zeilen, die sich nicht aufteilen ließen, stehen unverändert da.",
+			"social": "Instagram und TikTok veröffentlichen kein lesbares Rezept: Ihre Links lassen sich nicht importieren.",
+			"error": {
+				"invalid": "Diese Adresse ist nicht lesbar.",
+				"scheme": "Es werden nur https-Adressen angenommen.",
+				"credentials": "Diese Adresse enthält Zugangsdaten und wird abgelehnt.",
+				"port": "Diese Adresse zielt auf einen bestimmten Port und wird abgelehnt.",
+				"private_host": "Diese Adresse zeigt auf ein privates Netz und wird abgelehnt.",
+				"unreachable": "Die Seite konnte nicht abgerufen werden. Bitte später erneut versuchen.",
+				"not_html": "Dieser Link führt nicht zu einer Webseite.",
+				"too_large": "Diese Seite ist zu groß zum Lesen.",
+				"no_recipe": "Auf dieser Seite steht kein lesbares Rezept. Die Website muss ihr Rezept als strukturierte Daten veröffentlichen."
+			}
+		},
 		"title": "Rezepte",
 		"intro": "Die Rezepte des Haushalts – und die Einkaufsliste, die daraus entsteht.",
 		"empty": "Noch keine Rezepte. Schreiben Sie eines, die Zutaten werden zu einer Liste.",

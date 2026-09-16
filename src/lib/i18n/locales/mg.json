@@ -337,6 +337,27 @@
 		"goneShop": "Fivarotana voafafa"
 	},
 	"recipes": {
+		"import": {
+			"title": "Ampidiro avy amin'ny rohy",
+			"privacy": "Alefa any amin'ny lohamilina an'ity kopia ity ny adiresy, izy no haka ny pejy solonao ary hilaza ny anarany amin'ny tranonkala tsidihina. Tsy misy tehirizina, ary tsy misy pejy hafa sokafana.",
+			"url": "Adiresin'ny fomba fahandroana",
+			"urlPlaceholder": "https://ohatra.mg/fomba-fahandroako",
+			"submit": "Ampidiro ny fomba fahandroana",
+			"loading": "Mamaky ny pejy…",
+			"review": "Voaray ny fomba fahandroana. Vakio tsara alohan'ny hitahiry: ny andalana tsy vita zaraina dia niverina araka ny nanoratana azy.",
+			"social": "Tsy mamoaka fomba fahandroana azo vakiana ny Instagram sy ny TikTok: tsy azo ampidirina ny rohiny.",
+			"error": {
+				"invalid": "Tsy azo vakiana ity adiresy ity.",
+				"scheme": "Ny adiresy https ihany no ekena.",
+				"credentials": "Misy anaram-pidirana ity adiresy ity: lavina.",
+				"port": "Mikendry seranana manokana ity adiresy ity: lavina.",
+				"private_host": "Mitondra any amin'ny tambajotra tsy miankina ity adiresy ity: lavina.",
+				"unreachable": "Tsy voaray ny pejy. Andramo indray any aoriana.",
+				"not_html": "Tsy mitondra any amin'ny pejy tranonkala ity rohy ity.",
+				"too_large": "Lehibe loatra ity pejy ity ka tsy vakiana.",
+				"no_recipe": "Tsy misy fomba fahandroana azo vakiana ato amin'ity pejy ity. Tsy maintsy mamoaka azy amin'ny angona voalamina ny tranonkala."
+			}
+		},
 		"title": "Recettes",
 		"intro": "Ny recettes an ny fianakaviana, sy ny lisitry ny fividianana avy amin izy ireo.",
 		"empty": "Tsy misy recettes. Soraty iray, ny akora ao anatiny dia ho lasa lisitra.",
