@@ -290,6 +290,15 @@
 						if (result.codeType) codeType = result.codeType;
 					}}
 				>
+					{#snippet photo()}
+						<ImportCodeButton
+							mode="photo"
+							onScanned={(result) => {
+								code = result.value;
+								if (result.codeType) codeType = result.codeType;
+							}}
+						/>
+					{/snippet}
 					{#snippet actions()}
 						<ImportCodeButton
 							onScanned={(result) => {

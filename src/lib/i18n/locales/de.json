@@ -121,6 +121,10 @@
 	"scan": {
 		"start": "Code scannen",
 		"stop": "Anhalten",
+		"torch": "Licht",
+		"takePhoto": "Foto aufnehmen",
+		"stillSearching": "Klappt es nicht? Fotografieren Sie die Karte, das Bild wird ausgewertet.",
+		"givenUp": "Kein Code erkannt. Fotografieren Sie die Karte oder geben Sie den Code von Hand ein.",
 		"failed": "Scannen nicht möglich: Kamera erlauben oder den Code von Hand eingeben.",
 		"fromImage": "Aus einem Bild",
 		"noCodeInImage": "In diesem Bild wurde kein Code gefunden.",

@@ -121,6 +121,10 @@
 	"scan": {
 		"start": "Sikana ny kaody",
 		"stop": "Ajanony",
+		"torch": "Jiro",
+		"takePhoto": "Maka sary",
+		"stillSearching": "Mbola tsy misy? Alaivo sary ny karatra, hodinihina ilay sary.",
+		"givenUp": "Tsy nahitana kaody. Alaivo sary ny karatra, na soraty an-tanana ny kaody.",
 		"failed": "Tsy afaka misikana: avelao hiasa ny fakan-tsary, na soraty an-tanana ny kaody.",
 		"fromImage": "Avy amin'ny sary",
 		"noCodeInImage": "Tsy nahitana kaody tamin'ity sary ity.",
