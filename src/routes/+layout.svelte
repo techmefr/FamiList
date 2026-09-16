@@ -23,9 +23,11 @@
 	import { navDirection } from '$domain/motion';
 	import { pushAppearance, syncAppearance } from '$lib/sync/appearance';
 	import { registerServiceWorker } from '$native/pwa';
+	import { install } from '$stores/install.svelte';
 	import { reminderPlans } from '$domain/reminder';
 	import { applyReminders } from '$native/reminders';
 	import SyncStatus from '$components/app/SyncStatus.svelte';
+	import InstallBanner from '$components/app/InstallBanner.svelte';
 	import CreateMenu from '$components/app/CreateMenu.svelte';
 	import Logo from '$components/app/Logo.svelte';
 	import HelpButton from '$components/app/HelpButton.svelte';
@@ -48,6 +50,14 @@
 	i18n.init();
 	session.init();
 	registerServiceWorker();
+
+	/**
+	 * Le compteur d'ouvertures démarre ici, au lancement, et non quand le bandeau s'affiche : ce
+	 * qu'on veut mesurer est justement le fait de revenir. L'écoute de `beforeinstallprompt` doit
+	 * elle aussi être posée tout de suite — l'événement ne passe qu'une fois, et manqué, il est
+	 * perdu pour toute la session.
+	 */
+	install.init();
 
 	/**
 	 * Les rappels de date, reposés d'un bloc à chaque changement.
@@ -382,6 +392,7 @@
 
 		<div>
 			<SyncStatus />
+			<InstallBanner />
 
 			<!--
 				L'en-tête. L'aide y est à la même place sur tous les écrans et à toutes les tailles :

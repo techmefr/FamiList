@@ -87,6 +87,47 @@ test.describe('accessibilite', () => {
 	});
 
 	/**
+	 * La proposition d'installation, bandeau puis explication.
+	 *
+	 * Deux choses sont simulées, faute de pouvoir les obtenir d'un navigateur piloté : le compteur
+	 * d'ouvertures, posé avant le chargement, et `beforeinstallprompt`, que Chromium n'émet que sur
+	 * une vraie origine installable. L'événement est rejoué à la main une fois la page ouverte —
+	 * c'est exactement ce que le magasin écoute.
+	 */
+	test('proposition d installation', async ({ page }) => {
+		await presetAppearance(page);
+		await page.addInitScript(() => {
+			localStorage.setItem(
+				'familist:install',
+				JSON.stringify({ openings: 5, refusedAt: null })
+			);
+		});
+
+		await signIn(page, FIXTURE_EMAIL, FIXTURE_PASSWORD);
+
+		await page.evaluate(() => {
+			const event = Object.assign(new Event('beforeinstallprompt'), {
+				prompt: () => Promise.resolve(),
+				userChoice: Promise.resolve({ outcome: 'dismissed' })
+			});
+			window.dispatchEvent(event);
+		});
+
+		await expect(page.getByTestId('install-banner')).toBeVisible();
+		await expectNoNewViolations(page, 'installation');
+
+		// L'explication est un dialogue modal : elle se ferme par Échap et rend le focus au bandeau,
+		// ce qu'axe ne vérifie pas — d'où la fermeture au clavier, exercée ici.
+		await page.getByTestId('install-more').click();
+		await expect(page.getByTestId('install-details')).toBeVisible();
+		await expectNoNewViolations(page, 'installation-explication');
+
+		await page.keyboard.press('Escape');
+		await expect(page.getByTestId('install-details')).toBeHidden();
+		await expect(page.getByTestId('install-banner')).toBeVisible();
+	});
+
+	/**
 	 * Thème sombre et plus grand cran de police : c'est là que partent les régressions de contraste,
 	 * et un texte agrandi peut aussi faire se recouvrir deux éléments. Un seul écran chacun — le
 	 * reste des pages partage les mêmes jetons de couleur.

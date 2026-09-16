@@ -833,7 +833,26 @@
 	"helpMenu": {
 		"button": "帮助",
 		"tutorial": "查看教程",
+		"install": "安装到主屏幕",
 		"suggestion": "提出改进建议",
 		"bug": "报告问题"
+	},
+	"install": {
+		"title": "把 Familiste 放到主屏幕",
+		"body": "安装后，点一下图标就能打开，不用经过浏览器，没有网络也能启动。",
+		"action": "安装",
+		"how": "如何安装",
+		"more": "了解更多",
+		"later": "以后再说",
+		"detailsTitle": "安装能带来什么",
+		"benefit": {
+			"home": "主屏幕上有一个图标，和其他应用一样",
+			"browser": "全屏打开，没有地址栏和标签页",
+			"offline": "没有网络也能启动：你的清单仍然在那里"
+		},
+		"iosTitle": "在 iPhone 和 iPad 上",
+		"iosShare": "点按 Safari 底部的「分享」按钮",
+		"iosAdd": "选择「添加到主屏幕」",
+		"note": "不会从应用商店下载任何东西，你的账户和清单也原封不动。"
 	}
 }

@@ -839,7 +839,26 @@
 	"helpMenu": {
 		"button": "Help",
 		"tutorial": "Watch the tutorial",
+		"install": "Install on the home screen",
 		"suggestion": "Suggest an improvement",
 		"bug": "Report a bug"
+	},
+	"install": {
+		"title": "Familiste on your home screen",
+		"body": "Once installed, the app opens from an icon, without going through the browser, and starts even with no network.",
+		"action": "Install",
+		"how": "How to do it",
+		"more": "Learn more",
+		"later": "Later",
+		"detailsTitle": "What installing gives you",
+		"benefit": {
+			"home": "An icon on the home screen, like any other app",
+			"browser": "Opens full screen, with no address bar and no tabs",
+			"offline": "Starts even with no network: your lists are still there"
+		},
+		"iosTitle": "On iPhone and iPad",
+		"iosShare": "Tap the Share button, at the bottom of Safari",
+		"iosAdd": "Choose “Add to Home Screen”",
+		"note": "Nothing is downloaded from an app store, and you find your account and your lists exactly as they were."
 	}
 }
