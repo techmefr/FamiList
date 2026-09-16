@@ -14,7 +14,8 @@
 		"magnifier": "Magnifier",
 		"create": "Create",
 		"chat": "Chats",
-		"prices": "Prices"
+		"prices": "Prices",
+		"recipes": "Recipes"
 	},
 	"create": {
 		"title": "What would you like to create?",
@@ -22,7 +23,8 @@
 		"list": "New list",
 		"aisle": "New aisle",
 		"shop": "New shop",
-		"card": "New loyalty card"
+		"card": "New loyalty card",
+		"recipe": "New recipe"
 	},
 	"lists": {
 		"title": "My lists",
@@ -327,6 +329,48 @@
 		"recordedOn": "Recorded on {date}",
 		"cheapest": "Cheapest",
 		"goneShop": "Deleted shop"
+	},
+	"recipes": {
+		"title": "Recipes",
+		"intro": "Your household’s recipes, and the shopping list that comes out of them.",
+		"empty": "No recipes yet. Write one and its ingredients will become a list.",
+		"name": "Recipe name",
+		"namePlaceholder": "Courgette gratin",
+		"emoji": "Emoji",
+		"servings": "Servings",
+		"servingsHint": "The number of people the quantities are written for.",
+		"stepper": "Form steps",
+		"step": {
+			"recette": "The recipe",
+			"ingredients": "Ingredients",
+			"etapes": "Method"
+		},
+		"ingredientsHint": "One ingredient per row. Empty rows are ignored.",
+		"ingredientName": "Ingredient {rank}",
+		"ingredientPlaceholder": "Courgettes",
+		"qty": "Quantity",
+		"unit": "Unit",
+		"addIngredient": "Add an ingredient",
+		"removeIngredient": "Remove ingredient {rank}",
+		"stepsHint": "One step per row, in the order you cook them.",
+		"stepBody": "Step {rank}",
+		"addStep": "Add a step",
+		"removeStep": "Remove step {rank}",
+		"next": "Next",
+		"back": "Back",
+		"generate": "Generate the list",
+		"generateSubmit": "Create the items",
+		"people": "How many people?",
+		"peopleHint": "Quantities are written for {servings}. They will be scaled.",
+		"target": "Where to add the items",
+		"targetNew": "In a new list",
+		"delete": "Delete recipe {name}",
+		"deleteConfirm": "Delete {name}? Lists already generated will not change.",
+		"deleteYes": "Delete",
+		"servingsCount": {
+			"one": "Serves 1",
+			"other": "Serves {count}"
+		}
 	},
 	"aisles": {
 		"title": "Aisles",

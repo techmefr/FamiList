@@ -184,6 +184,44 @@ export interface PollVote {
 export const pollVoteKey = (optionId: string, userId: string) => `${optionId}::${userId}`;
 
 /**
+ * Une recette du foyer : ce qu'on cuisine, et de quoi tirer une liste de courses.
+ *
+ * `servings` porte le nombre de parts pour lequel les quantités sont écrites : c'est lui qui rend
+ * la mise à l'échelle possible au moment de générer.
+ */
+export interface Recipe {
+	id: string;
+	name: string;
+	emoji: string;
+	servings: number;
+	notes?: string;
+	createdBy?: string;
+	createdAt: number;
+}
+
+/**
+ * Une ligne d'ingrédient. À ne pas confondre avec `PollOption.ingredients`, qui dit ce que
+ * quelqu'un ramène à un repas partagé : ce sont deux choses sans rapport, et rien ne circule de
+ * l'une à l'autre.
+ */
+export interface RecipeIngredient {
+	id: string;
+	recipeId: string;
+	name: string;
+	/** Saisie au clavier, donc une chaîne, comme `Item.qty`. Vide quand la recette n'en donne pas. */
+	qty: string;
+	unit: string;
+	position: number;
+}
+
+export interface RecipeStep {
+	id: string;
+	recipeId: string;
+	body: string;
+	position: number;
+}
+
+/**
  * Écriture locale pas encore confirmée par le serveur. C'est ce qui permet de cocher un article
  * dans un magasin sans réseau : la modification part de la file dès que la connexion revient.
  */
@@ -223,6 +261,9 @@ class FamiListDatabase extends Dexie {
 	pollOptions!: EntityTable<PollOption, 'id'>;
 	pollVotes!: EntityTable<PollVote, 'key'>;
 	prices!: EntityTable<Price, 'id'>;
+	recipes!: EntityTable<Recipe, 'id'>;
+	recipeIngredients!: EntityTable<RecipeIngredient, 'id'>;
+	recipeSteps!: EntityTable<RecipeStep, 'id'>;
 
 	constructor() {
 		super('familist');
@@ -260,6 +301,14 @@ class FamiListDatabase extends Dexie {
 
 		// Indexé par slug : c'est par produit qu'on interroge l'historique, jamais par identifiant.
 		this.version(5).stores({ prices: 'id, productSlug, shopId' });
+
+		// Les deux tables filles s'interrogent toujours par recette, jamais par identifiant propre :
+		// c'est une recette entière qu'on affiche ou qu'on génère, pas une ligne isolée.
+		this.version(6).stores({
+			recipes: 'id',
+			recipeIngredients: 'id, recipeId',
+			recipeSteps: 'id, recipeId'
+		});
 	}
 }
 

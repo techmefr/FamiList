@@ -14,7 +14,8 @@
 		"magnifier": "Lupa",
 		"create": "Crear",
 		"chat": "Conversaciones",
-		"prices": "Precios"
+		"prices": "Precios",
+		"recipes": "Recetas"
 	},
 	"create": {
 		"title": "¿Qué quiere crear?",
@@ -22,7 +23,8 @@
 		"list": "Nueva lista",
 		"aisle": "Nueva sección",
 		"shop": "Nueva tienda",
-		"card": "Nueva tarjeta de fidelidad"
+		"card": "Nueva tarjeta de fidelidad",
+		"recipe": "Nueva receta"
 	},
 	"lists": {
 		"title": "Mis listas",
@@ -327,6 +329,48 @@
 		"recordedOn": "Anotado el {date}",
 		"cheapest": "El más barato",
 		"goneShop": "Tienda eliminada"
+	},
+	"recipes": {
+		"title": "Recetas",
+		"intro": "Las recetas del hogar, y la lista de la compra que sale de ellas.",
+		"empty": "Ninguna receta. Escribe una y sus ingredientes se convertirán en una lista.",
+		"name": "Nombre de la receta",
+		"namePlaceholder": "Gratinado de calabacín",
+		"emoji": "Emoji",
+		"servings": "Raciones",
+		"servingsHint": "El número de personas para el que están escritas las cantidades.",
+		"stepper": "Pasos del formulario",
+		"step": {
+			"recette": "La receta",
+			"ingredients": "Los ingredientes",
+			"etapes": "La preparación"
+		},
+		"ingredientsHint": "Un ingrediente por línea. Las líneas vacías se ignoran.",
+		"ingredientName": "Ingrediente {rank}",
+		"ingredientPlaceholder": "Calabacines",
+		"qty": "Cantidad",
+		"unit": "Unidad",
+		"addIngredient": "Añadir un ingrediente",
+		"removeIngredient": "Quitar el ingrediente {rank}",
+		"stepsHint": "Un paso por línea, en el orden de la preparación.",
+		"stepBody": "Paso {rank}",
+		"addStep": "Añadir un paso",
+		"removeStep": "Quitar el paso {rank}",
+		"next": "Siguiente",
+		"back": "Anterior",
+		"generate": "Generar la lista",
+		"generateSubmit": "Crear los artículos",
+		"people": "¿Para cuántas personas?",
+		"peopleHint": "Las cantidades están escritas para {servings}. Se ajustarán.",
+		"target": "Dónde añadir los artículos",
+		"targetNew": "En una lista nueva",
+		"delete": "Eliminar la receta {name}",
+		"deleteConfirm": "¿Eliminar {name}? Las listas ya generadas no cambiarán.",
+		"deleteYes": "Eliminar",
+		"servingsCount": {
+			"one": "Para 1 persona",
+			"other": "Para {count} personas"
+		}
 	},
 	"aisles": {
 		"title": "Secciones",

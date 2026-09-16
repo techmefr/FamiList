@@ -9,6 +9,7 @@ const ROUTES: Array<{ screen: string; path: string; ready: string }> = [
 	{ screen: 'accueil', path: '/', ready: 'nav-create' },
 	{ screen: 'magasins', path: '/shops', ready: 'nav-create' },
 	{ screen: 'cartes', path: '/cards', ready: 'nav-create' },
+	{ screen: 'recettes', path: '/recipes', ready: 'nav-create' },
 	{ screen: 'prix', path: '/prices', ready: 'nav-create' },
 	{ screen: 'foyer', path: '/household', ready: 'nav-create' },
 	{ screen: 'discussion', path: '/chat', ready: 'nav-create' },
@@ -62,6 +63,27 @@ test.describe('accessibilite', () => {
 		await expect(page.getByTestId('list-empty')).toBeVisible();
 
 		await expectNoNewViolations(page, 'detail-de-liste');
+	});
+
+	/**
+	 * Le formulaire de recette se saisit en trois temps, et chacun montre des champs que les deux
+	 * autres cachent : analyser l'écran replié ne dirait rien des rangées d'ingrédients ni de la
+	 * zone de texte des étapes. On les traverse donc tous les trois.
+	 */
+	test('formulaire de recette', async ({ signedInPage: page }) => {
+		await page.goto('/recipes');
+		await page.getByTestId('recipe-new').click();
+		await expect(page.getByTestId('recipe-name')).toBeVisible();
+
+		await page.getByTestId('recipe-name').fill(`A11y ${Date.now()}`);
+		await page.getByTestId('recipe-next').click();
+		await expect(page.getByTestId('recipe-ingredients')).toBeVisible();
+		await page.getByTestId('recipe-add-ingredient').click();
+
+		await page.getByTestId('recipe-next').click();
+		await expect(page.getByTestId('recipe-steps')).toBeVisible();
+
+		await expectNoNewViolations(page, 'creation-de-recette');
 	});
 
 	/**

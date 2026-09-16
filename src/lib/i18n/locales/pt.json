@@ -14,7 +14,8 @@
 		"magnifier": "Lupa",
 		"create": "Criar",
 		"chat": "Conversas",
-		"prices": "Preços"
+		"prices": "Preços",
+		"recipes": "Receitas"
 	},
 	"create": {
 		"title": "O que quer criar?",
@@ -22,7 +23,8 @@
 		"list": "Nova lista",
 		"aisle": "Nova secção",
 		"shop": "Nova loja",
-		"card": "Novo cartão de fidelização"
+		"card": "Novo cartão de fidelização",
+		"recipe": "Nova receita"
 	},
 	"lists": {
 		"title": "As minhas listas",
@@ -327,6 +329,48 @@
 		"recordedOn": "Registado a {date}",
 		"cheapest": "O mais barato",
 		"goneShop": "Loja eliminada"
+	},
+	"recipes": {
+		"title": "Receitas",
+		"intro": "As receitas da casa, e a lista de compras que sai delas.",
+		"empty": "Nenhuma receita. Escreva uma e os seus ingredientes virarão uma lista.",
+		"name": "Nome da receita",
+		"namePlaceholder": "Gratinado de courgette",
+		"emoji": "Emoji",
+		"servings": "Porções",
+		"servingsHint": "O número de pessoas para o qual as quantidades estão escritas.",
+		"stepper": "Etapas do formulário",
+		"step": {
+			"recette": "A receita",
+			"ingredients": "Os ingredientes",
+			"etapes": "O preparo"
+		},
+		"ingredientsHint": "Um ingrediente por linha. As linhas vazias são ignoradas.",
+		"ingredientName": "Ingrediente {rank}",
+		"ingredientPlaceholder": "Courgettes",
+		"qty": "Quantidade",
+		"unit": "Unidade",
+		"addIngredient": "Adicionar um ingrediente",
+		"removeIngredient": "Remover o ingrediente {rank}",
+		"stepsHint": "Uma etapa por linha, na ordem do preparo.",
+		"stepBody": "Etapa {rank}",
+		"addStep": "Adicionar uma etapa",
+		"removeStep": "Remover a etapa {rank}",
+		"next": "Seguinte",
+		"back": "Anterior",
+		"generate": "Gerar a lista",
+		"generateSubmit": "Criar os artigos",
+		"people": "Para quantas pessoas?",
+		"peopleHint": "As quantidades estão escritas para {servings}. Serão ajustadas.",
+		"target": "Onde adicionar os artigos",
+		"targetNew": "Numa lista nova",
+		"delete": "Eliminar a receita {name}",
+		"deleteConfirm": "Eliminar {name}? As listas já geradas não mudarão.",
+		"deleteYes": "Eliminar",
+		"servingsCount": {
+			"one": "Para 1 pessoa",
+			"other": "Para {count} pessoas"
+		}
 	},
 	"aisles": {
 		"title": "Secções",
