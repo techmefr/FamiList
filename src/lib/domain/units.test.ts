@@ -20,6 +20,12 @@ describe('resolveUnit', () => {
 		expect(resolveUnit('rouleaux')).toBe('roll');
 	});
 
+	it('reconnait aussi ce qui a ete saisi en anglais', () => {
+		expect(resolveUnit('bottles')).toBe('bottle');
+		expect(resolveUnit('grams')).toBe('g');
+		expect(resolveUnit('items')).toBe('piece');
+	});
+
 	it('ignore la casse et les espaces autour', () => {
 		expect(resolveUnit('  Litres ')).toBe('l');
 	});
