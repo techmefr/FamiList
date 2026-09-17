@@ -1002,5 +1002,62 @@
 			"shop": "商店",
 			"card": "卡片"
 		}
+	},
+	"ai": {
+		"title": "人工智能",
+		"subtitle": "你的服务商和你的密钥，用来获得菜谱灵感。",
+		"privacyTitle": "哪些内容会离开你的设备",
+		"privacyBody": "如果你填入密钥，请求会从你的浏览器直接发往你选择的服务商。这是应用中唯一会让你的采购内容离开设备的地方。",
+		"privacySent": "会发送的内容：你已经买过的商品名称。每次发送前都会把确切的清单展示给你。",
+		"privacyNotSent": "不会发送的内容：数量、价格、备注、商店、成员姓名，以及清单本身。",
+		"privacyBill": "密钥是你的：用的是你的额度和你的账单。家里其他人都读不到它，管理员也不行。",
+		"privacyTerms": "服务商会对收到的内容适用它自己的条款。填入密钥前请先阅读。",
+		"keyTitle": "你的密钥",
+		"stateOn": "此账号已保存一个密钥。",
+		"stateOff": "未保存密钥。菜谱建议不会出现。",
+		"provider": "服务商",
+		"providerHint": "只列出可以从浏览器直接调用的服务商。",
+		"whereKey": "前往 {provider} 获取密钥",
+		"key": "API 密钥",
+		"keyHint": "只有你能读到它，保存之后不会再显示。",
+		"keyPlaceholder": "粘贴你的密钥",
+		"keyPlaceholderSet": "粘贴新密钥以替换",
+		"model": "模型",
+		"modelHint": "如果不确定选哪个，保持原样即可。",
+		"save": "保存",
+		"saved": "密钥已保存。",
+		"saveFailed": "保存失败。",
+		"clear": "移除密钥",
+		"suggest": "菜谱灵感",
+		"suggestTitle": "根据你买过的东西想一道菜",
+		"noProducts": "还没有勾选任何商品。先去采购，灵感就从那里来。",
+		"willSend": {
+			"other": "将发送 {count} 件商品"
+		},
+		"willSendHint": "不会发送其他任何内容：没有数量、价格、姓名，也没有清单。",
+		"seeExact": "查看将要发送的确切文本",
+		"sendingTo": "接收方：{provider}。",
+		"sendConfirm": "发送并询问",
+		"asking": "正在询问…",
+		"added": "菜谱已加入家庭菜谱。",
+		"keep": "保留这道菜谱",
+		"retry": "再问一次",
+		"discard": "丢弃",
+		"error": {
+			"network": "请求未能发出。请检查网络连接后重试。",
+			"networkDetail": "请求未能发出：{detail}",
+			"provider": "服务商拒绝了这次请求。",
+			"providerDetail": "服务商拒绝了：{detail}",
+			"unreadable": "返回的内容无法使用。请再问一次。",
+			"unreadableDetail": "返回的内容无法使用：{detail}"
+		},
+		"providers": {
+			"anthropic": "Anthropic (Claude)",
+			"gemini": "Google Gemini",
+			"mistral": "Mistral AI",
+			"groq": "Groq",
+			"openrouter": "OpenRouter",
+			"deepseek": "DeepSeek"
+		}
 	}
 }

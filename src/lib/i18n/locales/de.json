@@ -1011,5 +1011,63 @@
 			"shop": "Geschäfte",
 			"card": "Karten"
 		}
+	},
+	"ai": {
+		"title": "Künstliche Intelligenz",
+		"subtitle": "Dein Anbieter und dein Schlüssel, für Rezeptideen.",
+		"privacyTitle": "Was dein Gerät verlässt",
+		"privacyBody": "Wenn du einen Schlüssel hinterlegst, gehen die Anfragen direkt von deinem Browser an den Anbieter, den du wählst. Das ist die einzige Stelle der App, an der die Inhalte deiner Einkäufe dein Gerät verlassen.",
+		"privacySent": "Was gesendet wird: die Namen der bereits gekauften Produkte. Die genaue Liste wird dir vor jedem Senden gezeigt.",
+		"privacyNotSent": "Was nicht gesendet wird: Mengen, Preise, Notizen, Geschäfte, Namen der Mitglieder und die Listen selbst.",
+		"privacyBill": "Der Schlüssel gehört dir: dein Kontingent und deine Rechnung. Niemand sonst im Haushalt kann ihn lesen, auch kein Administrator.",
+		"privacyTerms": "Der Anbieter wendet auf das Empfangene seine eigenen Bedingungen an. Lies sie, bevor du einen Schlüssel hinterlegst.",
+		"keyTitle": "Dein Schlüssel",
+		"stateOn": "Für dieses Konto ist ein Schlüssel gespeichert.",
+		"stateOff": "Kein Schlüssel gespeichert. Der Rezeptvorschlag erscheint nicht.",
+		"provider": "Anbieter",
+		"providerHint": "Angeboten werden nur Anbieter, die aus einem Browser erreichbar sind.",
+		"whereKey": "Einen Schlüssel bei {provider} holen",
+		"key": "API-Schlüssel",
+		"keyHint": "Nur du kannst ihn lesen, und nach dem Speichern wird er nicht mehr angezeigt.",
+		"keyPlaceholder": "Schlüssel einfügen",
+		"keyPlaceholderSet": "Neuen Schlüssel einfügen, um ihn zu ersetzen",
+		"model": "Modell",
+		"modelHint": "Lass es so, wenn du nicht weißt, welches du wählen sollst.",
+		"save": "Speichern",
+		"saved": "Schlüssel gespeichert.",
+		"saveFailed": "Das Speichern ist fehlgeschlagen.",
+		"clear": "Schlüssel entfernen",
+		"suggest": "Eine Rezeptidee",
+		"suggestTitle": "Eine Idee aus deinen Einkäufen",
+		"noProducts": "Noch nichts abgehakt. Geh einkaufen, daraus entstehen die Ideen.",
+		"willSend": {
+			"one": "1 Produkt wird gesendet",
+			"other": "{count} Produkte werden gesendet"
+		},
+		"willSendHint": "Sonst wird nichts gesendet: keine Mengen, keine Preise, keine Namen, keine Listen.",
+		"seeExact": "Den genauen gesendeten Text ansehen",
+		"sendingTo": "Empfänger: {provider}.",
+		"sendConfirm": "Senden und fragen",
+		"asking": "Anfrage läuft …",
+		"added": "Rezept zu denen des Haushalts hinzugefügt.",
+		"keep": "Dieses Rezept behalten",
+		"retry": "Noch einmal fragen",
+		"discard": "Verwerfen",
+		"error": {
+			"network": "Die Anfrage konnte nicht gesendet werden. Prüfe deine Verbindung und versuche es erneut.",
+			"networkDetail": "Die Anfrage konnte nicht gesendet werden: {detail}",
+			"provider": "Der Anbieter hat die Anfrage abgelehnt.",
+			"providerDetail": "Der Anbieter hat abgelehnt: {detail}",
+			"unreadable": "Die Antwort war nicht verwertbar. Frag noch einmal.",
+			"unreadableDetail": "Die Antwort war nicht verwertbar: {detail}"
+		},
+		"providers": {
+			"anthropic": "Anthropic (Claude)",
+			"gemini": "Google Gemini",
+			"mistral": "Mistral AI",
+			"groq": "Groq",
+			"openrouter": "OpenRouter",
+			"deepseek": "DeepSeek"
+		}
 	}
 }

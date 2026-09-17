@@ -66,7 +66,8 @@ describe('formes plurielles', () => {
 			'chat.votes',
 			'chat.pushed',
 			'security.backupLeft',
-			'search.count'
+			'search.count',
+			'ai.willSend'
 		]);
 	});
 

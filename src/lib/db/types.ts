@@ -61,6 +61,33 @@ export type Database = {
         }
         Relationships: []
       }
+      ai_credentials: {
+        Row: {
+          api_key: string
+          created_at: string
+          model: string
+          provider: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          api_key: string
+          created_at?: string
+          model?: string
+          provider: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          api_key?: string
+          created_at?: string
+          model?: string
+          provider?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       aisles: {
         Row: {
           created_at: string
@@ -1083,6 +1110,7 @@ export type Database = {
       export_account: { Args: never; Returns: Json }
       flush_admin_notifications: { Args: never; Returns: undefined }
       flush_bug_report_issues: { Args: never; Returns: undefined }
+      has_ai_credential: { Args: never; Returns: boolean }
       household_profiles: {
         Args: never
         Returns: {
