@@ -838,7 +838,22 @@
 		"sessionSeen": "Vista il {date}",
 		"revoke": "Chiudere",
 		"on": "su",
-		"unknownDevice": "Apparecchio sconosciuto"
+		"unknownDevice": "Apparecchio sconosciuto",
+		"dataTitle": "I miei dati",
+		"dataBody": "Un file JSON con tutto ciò che l'applicazione conserva su di lei: il suo profilo, le sue famiglie, ciò che ha scritto. Il contenuto di una famiglia è completo solo se ne è l'unico membro; altrove, le liste e i messaggi degli altri restano loro.",
+		"dataExport": "Scaricare i miei dati",
+		"dataError": "Non è stato possibile preparare il file. Riprovi tra un istante.",
+		"deleteTitle": "Eliminare il mio account",
+		"deleteBody": "Il suo account, il suo profilo e le sue preferenze vengono cancellati. Una famiglia di cui è l'unico membro sparisce con le sue liste. In una famiglia condivisa, la famiglia resta agli altri: i suoi messaggi restano leggibili ma non portano più il suo nome, e i suoi voti vengono ritirati.",
+		"deleteWarning": "Questa eliminazione è definitiva. Non si può tornare indietro.",
+		"deleteStart": "Eliminare il mio account",
+		"deleteConfirmLabel": "Per confermare, scriva il suo indirizzo email",
+		"deleteConfirmHint": "Lo richiediamo per essere certi che sia davvero lei.",
+		"deleteSubmit": "Eliminare definitivamente",
+		"deleteErrorLastAdmin": "Lei è l'unico amministratore. Ne nomini un altro prima di andarsene, altrimenti nessuno potrà più convalidare le iscrizioni.",
+		"deleteErrorDemo": "Il account di dimostrazione non si elimina.",
+		"deleteErrorSecondFactor": "Confermi il suo secondo fattore prima di eliminare il suo account.",
+		"deleteErrorUnknown": "Eliminazione non riuscita. Non è stato cancellato nulla."
 	},
 	"bugReport": {
 		"button": "Segnala un problema",
