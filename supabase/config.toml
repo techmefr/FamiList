@@ -254,10 +254,27 @@ otp_expiry = 3600
 # admin_email = "admin@email.com"
 # sender_name = "Admin"
 
-# Uncomment to customize email template
-# [auth.email.template.invite]
-# subject = "You have been invited"
-# content_path = "./supabase/templates/invite.html"
+# Gabarits de courriel : un seul jeu par projet, la langue du destinataire est inconnue
+# à l'envoi, d'où un corps bilingue français/anglais.
+[auth.email.template.confirmation]
+subject = "FamiList — confirmez votre adresse / confirm your address"
+content_path = "./supabase/templates/confirm.html"
+
+[auth.email.template.recovery]
+subject = "FamiList — réinitialiser votre mot de passe / reset your password"
+content_path = "./supabase/templates/recovery.html"
+
+[auth.email.template.invite]
+subject = "FamiList — vous êtes invité / you have been invited"
+content_path = "./supabase/templates/invite.html"
+
+[auth.email.template.email_change]
+subject = "FamiList — confirmez votre nouvelle adresse / confirm your new address"
+content_path = "./supabase/templates/email_change.html"
+
+[auth.email.template.magic_link]
+subject = "FamiList — votre code de connexion / your sign-in code"
+content_path = "./supabase/templates/magic_link.html"
 
 # Uncomment to customize notification email template
 # [auth.email.notification.password_changed]
