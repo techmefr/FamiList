@@ -21,6 +21,7 @@
 		ExternalLink
 	} from '@lucide/svelte';
 	import EmptyState from '$components/app/EmptyState.svelte';
+	import InstanceSettings from '$components/app/InstanceSettings.svelte';
 
 	interface PendingAccount {
 		id: string;
@@ -537,4 +538,12 @@
 			{/each}
 		</ul>
 	{/if}
+
+	<!--
+		Les réglages d'instance en dernier : on vient ici pour valider un compte ou lire un
+		signalement, pas pour reconfigurer l'envoi de courriel — ce dernier geste ne se fait qu'une
+		fois. Les refus remontent au même endroit que ceux du reste de l'écran, bouton d'élévation
+		compris.
+	-->
+	<InstanceSettings onRefused={(message) => refuser([message])} />
 {/if}

@@ -295,6 +295,48 @@ export type Database = {
         }
         Relationships: []
       }
+      instance_mail_quota: {
+        Row: {
+          day: string
+          sent: number
+        }
+        Insert: {
+          day: string
+          sent?: number
+        }
+        Update: {
+          day?: string
+          sent?: number
+        }
+        Relationships: []
+      }
+      instance_settings: {
+        Row: {
+          is_secret: boolean
+          is_set: boolean
+          key: string
+          updated_at: string | null
+          updated_by: string | null
+          value: string | null
+        }
+        Insert: {
+          is_secret?: boolean
+          is_set?: boolean
+          key: string
+          updated_at?: string | null
+          updated_by?: string | null
+          value?: string | null
+        }
+        Update: {
+          is_secret?: boolean
+          is_set?: boolean
+          key?: string
+          updated_at?: string | null
+          updated_by?: string | null
+          value?: string | null
+        }
+        Relationships: []
+      }
       invite_attempts: {
         Row: {
           attempted_at: string
@@ -1021,11 +1063,17 @@ export type Database = {
       admin_reset_mfa: { Args: { target: string }; Returns: undefined }
       assert_admin_write: { Args: never; Returns: undefined }
       backup_codes_left: { Args: never; Returns: number }
+      begin_instance_mail_test: { Args: never; Returns: string }
       can_access_list: { Args: { target: string }; Returns: boolean }
       can_access_recipe: { Args: { target: string }; Returns: boolean }
       can_access_shop: { Args: { target: string }; Returns: boolean }
       claim_admin_notifications: { Args: never; Returns: Json }
       claim_bug_report_issues: { Args: never; Returns: Json }
+      claim_instance_mail: { Args: { amount?: number }; Returns: boolean }
+      clear_instance_setting: {
+        Args: { setting_key: string }
+        Returns: undefined
+      }
       consume_backup_code: { Args: { code: string }; Returns: boolean }
       create_backup_codes: { Args: never; Returns: string[] }
       create_invite: { Args: never; Returns: string }
@@ -1044,6 +1092,18 @@ export type Database = {
           id: string
           initial: string
           last_name: string
+        }[]
+      }
+      instance_config: { Args: never; Returns: Json }
+      instance_secret_name: { Args: { setting_key: string }; Returns: string }
+      instance_settings_read: {
+        Args: never
+        Returns: {
+          is_secret: boolean
+          is_set: boolean
+          key: string
+          updated_at: string
+          value: string
         }[]
       }
       is_admin: { Args: never; Returns: boolean }
@@ -1131,7 +1191,6 @@ export type Database = {
         Returns: undefined
       }
       release_bug_report_issues: { Args: { ids: string[] }; Returns: undefined }
-      request_bug_report_issue: { Args: { target: string }; Returns: undefined }
       report_crash: {
         Args: {
           fingerprint: string
@@ -1143,6 +1202,7 @@ export type Database = {
         }
         Returns: Json
       }
+      request_bug_report_issue: { Args: { target: string }; Returns: undefined }
       reset_demo: { Args: never; Returns: undefined }
       resolve_bug_report: { Args: { target: string }; Returns: undefined }
       resolve_client_error: { Args: { target: string }; Returns: undefined }
@@ -1152,6 +1212,10 @@ export type Database = {
       }
       revoke_session: { Args: { target: string }; Returns: undefined }
       set_demo: { Args: { demo: boolean; target: string }; Returns: undefined }
+      set_instance_setting: {
+        Args: { setting_key: string; setting_value: string }
+        Returns: undefined
+      }
       slugify: { Args: { value: string }; Returns: string }
       submit_bug_report: {
         Args: {

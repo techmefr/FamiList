@@ -716,6 +716,59 @@
 		"errorSecondFactor": "Ihre Sitzung ist beim Passwort stehen geblieben. Schließen Sie die Zwei-Faktor-Prüfung ab, um hier zu handeln.",
 		"elevate": "Prüfung abschließen"
 	},
+	"instance": {
+		"title": "Instanz-Einstellungen",
+		"hint": "Was diese Instanz wissen muss, um mit der Außenwelt zu sprechen. Nichts davon ist für andere Konten sichtbar.",
+		"mailTitle": "E-Mail-Versand",
+		"mailIdle": "Es ist kein Versand eingerichtet. Anmeldungen und Meldungen sammeln sich zwar an, aber es geht keine E-Mail hinaus: Solange diese Felder leer sind, wird niemand benachrichtigt.",
+		"trackerTitle": "Repository-Tracker",
+		"trackerHint": "Erlaubt es, aus einer Meldung ein öffentliches Issue zu eröffnen. Das Token braucht nur das Recht, Issues in genau diesem Repository zu schreiben.",
+		"save": "Speichern",
+		"saved": "Einstellungen gespeichert.",
+		"clear": "Entfernen",
+		"cleared": "Einstellung entfernt.",
+		"test": "Test-E-Mail senden",
+		"testing": "Wird gesendet…",
+		"secretSet": "Gespeichert am {date}. Leer lassen, um es zu behalten, oder einen neuen Wert eingeben, um es zu ersetzen. Es kann nicht mehr angezeigt werden.",
+		"secretUnset": "Nichts gespeichert. Der Wert wird verschlüsselt und kann von diesem Bildschirm aus nie wieder gelesen werden.",
+		"field": {
+			"mail_smtp_host": "Versandserver",
+			"mail_smtp_port": "Port",
+			"mail_smtp_user": "Benutzername",
+			"mail_smtp_password": "Passwort",
+			"mail_from": "Absenderadresse",
+			"issue_tracker_repo": "Repository",
+			"issue_tracker_api": "API-Adresse",
+			"issue_tracker_token": "Zugriffstoken"
+		},
+		"placeholder": {
+			"mail_smtp_host": "smtp-relay.beispiel.com",
+			"mail_smtp_port": "587",
+			"mail_smtp_user": "apikey",
+			"mail_smtp_password": "",
+			"mail_from": "benachrichtigungen@ihredomain.de",
+			"issue_tracker_repo": "eigentuemer/repository",
+			"issue_tracker_api": "https://api.github.com",
+			"issue_tracker_token": ""
+		},
+		"help": {
+			"mail_smtp_host": "Der Servername, den Ihnen Ihr Versandanbieter nennt.",
+			"mail_smtp_port": "In den meisten Fällen 587, 465 für eine von Anfang an verschlüsselte Verbindung.",
+			"mail_smtp_user": "Oft Ihre Adresse, manchmal das Wort „apikey“. Leer lassen, wenn das Relais keinen verlangt.",
+			"mail_from": "Die Adresse, die als Absender erscheint. Ihr Anbieter muss sie bestätigt haben.",
+			"issue_tracker_repo": "Im Format eigentuemer/repository.",
+			"issue_tracker_api": "Nur bei einer selbst gehosteten Forge zu ändern."
+		},
+		"mailTest": {
+			"sent": "Nachricht unterwegs. Sehen Sie in Ihrem Posteingang nach, und im Spam-Ordner, falls sie dort nicht ist.",
+			"not_configured": "Nichts ist eingerichtet: Tragen Sie mindestens den Versandserver und die Absenderadresse ein.",
+			"auth_refused": "Der Server hat Benutzernamen oder Passwort abgelehnt. Prüfen Sie beides bei Ihrem Anbieter; viele verlangen einen eigenen Schlüssel statt des Kontopassworts.",
+			"unreachable": "Der Server hat nicht geantwortet. Prüfen Sie Namen und Port; manche Hoster sperren ausgehende Versandports.",
+			"sender_rejected": "Verbindung und Passwort wurden angenommen, aber der Anbieter hat die Absenderadresse abgelehnt: Sie müssen sie zuerst in dessen Oberfläche bestätigen lassen. Das ist die häufigste Ursache.",
+			"quota": "Das Versandlimit für heute ist erreicht. Versuchen Sie es morgen erneut.",
+			"failed": "Der Versand ist ohne erkennbare Ursache fehlgeschlagen. Einzelheiten stehen in den Protokollen der Funktion."
+		}
+	},
 	"sync": {
 		"offline": "Offline — Ihre Änderungen werden übertragen, sobald das Netz zurück ist",
 		"error": "Synchronisierung derzeit nicht möglich"

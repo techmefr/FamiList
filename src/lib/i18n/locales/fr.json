@@ -716,6 +716,59 @@
 		"errorSecondFactor": "Votre session s'est arrêtée au mot de passe. Terminez la vérification en deux étapes pour agir ici.",
 		"elevate": "Terminer la vérification"
 	},
+	"instance": {
+		"title": "Réglages de l'instance",
+		"hint": "Ce que cette instance a besoin de savoir pour parler au monde extérieur. Rien ici n'est visible des autres comptes.",
+		"mailTitle": "Envoi de courriel",
+		"mailIdle": "Aucun envoi n'est configuré. Les inscriptions et les signalements s'empilent bien, mais aucun courriel ne part : personne n'est prévenu tant que ces champs sont vides.",
+		"trackerTitle": "Suivi de dépôt",
+		"trackerHint": "Permet d'ouvrir une issue publique depuis un signalement. Le jeton n'a besoin que du droit d'écrire des issues sur ce seul dépôt.",
+		"save": "Enregistrer",
+		"saved": "Réglages enregistrés.",
+		"clear": "Retirer",
+		"cleared": "Réglage retiré.",
+		"test": "Envoyer un courriel de test",
+		"testing": "Envoi en cours…",
+		"secretSet": "Enregistré le {date}. Laissez vide pour le conserver, ou tapez une nouvelle valeur pour le remplacer. Il ne peut plus être affiché.",
+		"secretUnset": "Rien d'enregistré. La valeur sera chiffrée et ne pourra plus être relue depuis cet écran.",
+		"field": {
+			"mail_smtp_host": "Serveur d'envoi",
+			"mail_smtp_port": "Port",
+			"mail_smtp_user": "Identifiant",
+			"mail_smtp_password": "Mot de passe",
+			"mail_from": "Adresse d'expédition",
+			"issue_tracker_repo": "Dépôt",
+			"issue_tracker_api": "Adresse de l'API",
+			"issue_tracker_token": "Jeton d'accès"
+		},
+		"placeholder": {
+			"mail_smtp_host": "smtp-relay.exemple.com",
+			"mail_smtp_port": "587",
+			"mail_smtp_user": "apikey",
+			"mail_smtp_password": "",
+			"mail_from": "notifications@votredomaine.fr",
+			"issue_tracker_repo": "proprietaire/depot",
+			"issue_tracker_api": "https://api.github.com",
+			"issue_tracker_token": ""
+		},
+		"help": {
+			"mail_smtp_host": "Le nom du serveur donné par votre fournisseur d'envoi.",
+			"mail_smtp_port": "587 dans la plupart des cas, 465 pour une liaison chiffrée d'emblée.",
+			"mail_smtp_user": "Souvent votre adresse, parfois le mot « apikey ». Laissez vide si le relais n'en demande pas.",
+			"mail_from": "L'adresse qui apparaîtra comme expéditeur. Votre fournisseur doit l'avoir vérifiée.",
+			"issue_tracker_repo": "Au format propriétaire/dépôt.",
+			"issue_tracker_api": "À ne changer que pour une forge auto-hébergée."
+		},
+		"mailTest": {
+			"sent": "Message parti. Regardez votre boîte, et les indésirables s'il n'y est pas.",
+			"not_configured": "Rien n'est configuré : renseignez au minimum le serveur d'envoi et l'adresse d'expédition.",
+			"auth_refused": "Le serveur a refusé l'identifiant ou le mot de passe. Vérifiez-les chez votre fournisseur ; beaucoup demandent une clé dédiée plutôt que le mot de passe du compte.",
+			"unreachable": "Le serveur n'a pas répondu. Vérifiez son nom et le port ; certains hébergeurs bloquent les ports d'envoi sortants.",
+			"sender_rejected": "Connexion et mot de passe acceptés, mais le fournisseur a refusé l'adresse d'expédition : il faut d'abord la lui faire vérifier depuis son tableau de bord. C'est la cause la plus fréquente.",
+			"quota": "Le plafond d'envoi du jour est atteint. Réessayez demain.",
+			"failed": "L'envoi a échoué sans cause reconnue. Le détail est dans les journaux de la fonction."
+		}
+	},
 	"sync": {
 		"offline": "Hors connexion — vos modifications partiront au retour du réseau",
 		"error": "Synchronisation impossible pour le moment"

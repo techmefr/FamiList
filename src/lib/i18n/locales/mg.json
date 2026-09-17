@@ -716,6 +716,59 @@
 		"errorSecondFactor": "Nijanona teo amin'ny tenimiafina ny fidiranao. Vitao ny fanamarinana roa dingana vao afaka miasa eto.",
 		"elevate": "Vitao ny fanamarinana"
 	},
+	"instance": {
+		"title": "Kirakira ny instance",
+		"hint": "Izay ilain'ity instance ity fantatra mba hahafahany miresaka amin'ny any ivelany. Tsy hita amin'ny kaonty hafa ireto.",
+		"mailTitle": "Fandefasana mailaka",
+		"mailIdle": "Tsy misy fandefasana voaomana. Mitangorona ihany ny fisoratana anarana sy ny tatitra, fa tsy misy mailaka mivoaka: tsy misy olona ampahafantarina raha mbola foana ireo saha ireo.",
+		"trackerTitle": "Fanaraha-maso ny tahiry",
+		"trackerHint": "Ahafahana manokatra issue ampahibemaso avy amin'ny tatitra. Ny token dia mila fotsiny ny zo hanoratra issue amin'ity tahiry tokana ity.",
+		"save": "Tehirizo",
+		"saved": "Voatahiry ny kirakira.",
+		"clear": "Esory",
+		"cleared": "Voaesotra ny kirakira.",
+		"test": "Andefaso mailaka fitsapana",
+		"testing": "Andefa…",
+		"secretSet": "Voatahiry ny {date}. Avelao foana raha tianao hotehirizina, na soraty sanda vaovao raha tianao hosoloina. Tsy azo aseho intsony izy io.",
+		"secretUnset": "Tsy misy voatahiry. Hofonosina ny sanda ary tsy ho azo vakiana intsony avy eto amin'ity efijery ity.",
+		"field": {
+			"mail_smtp_host": "Mpizara fandefasana",
+			"mail_smtp_port": "Port",
+			"mail_smtp_user": "Anaram-pampiasa",
+			"mail_smtp_password": "Teny miafina",
+			"mail_from": "Adiresin'ny mpandefa",
+			"issue_tracker_repo": "Tahiry",
+			"issue_tracker_api": "Adiresin'ny API",
+			"issue_tracker_token": "Token fidirana"
+		},
+		"placeholder": {
+			"mail_smtp_host": "smtp-relay.ohatra.com",
+			"mail_smtp_port": "587",
+			"mail_smtp_user": "apikey",
+			"mail_smtp_password": "",
+			"mail_from": "fampandrenesana@nyseranankao.mg",
+			"issue_tracker_repo": "tompony/tahiry",
+			"issue_tracker_api": "https://api.github.com",
+			"issue_tracker_token": ""
+		},
+		"help": {
+			"mail_smtp_host": "Ny anaran'ny mpizara nomen'ny mpamatsy fandefasana anao.",
+			"mail_smtp_port": "587 matetika, 465 raha fifandraisana voafono hatrany am-boalohany.",
+			"mail_smtp_user": "Matetika ny adiresinao, indraindray ny teny hoe « apikey ». Avelao foana raha tsy mangataka izany ny relay.",
+			"mail_from": "Ny adiresy hiseho ho mpandefa. Tsy maintsy efa nohamarinin'ny mpamatsy anao izy io.",
+			"issue_tracker_repo": "Amin'ny endrika tompony/tahiry.",
+			"issue_tracker_api": "Ovaina raha forge an-tena ihany."
+		},
+		"mailTest": {
+			"sent": "Lasa ny hafatra. Jereo ny boaty fandraisanao, ary ny spam raha tsy ao izy.",
+			"not_configured": "Tsy misy voaomana: fenoy farafahakeliny ny mpizara fandefasana sy ny adiresin'ny mpandefa.",
+			"auth_refused": "Nolavin'ny mpizara ny anaram-pampiasa na ny teny miafina. Hamarino amin'ny mpamatsy anao; maro no mitaky lakile manokana fa tsy ny teny miafin'ny kaonty.",
+			"unreachable": "Tsy namaly ny mpizara. Hamarino ny anarany sy ny port; misy mpampiantrano manakana ny port fandefasana mivoaka.",
+			"sender_rejected": "Nekena ny fifandraisana sy ny teny miafina, fa nolavin'ny mpamatsy ny adiresin'ny mpandefa: tsy maintsy hamarinina any aminy aloha izany. Io no antony mahazatra indrindra.",
+			"quota": "Tratra ny fetran'ny fandefasana androany. Andramo rahampitso.",
+			"failed": "Tsy nahomby ny fandefasana ary tsy fantatra ny antony. Ao amin'ny rakitsoratry ny function ny antsipiriany."
+		}
+	},
 	"sync": {
 		"offline": "Tsy misy fifandraisana — halefa rehefa miverina ny aterineto ny fanovana",
 		"error": "Tsy afaka mampifanaraka izao"

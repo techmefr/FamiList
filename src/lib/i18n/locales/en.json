@@ -716,6 +716,59 @@
 		"errorSecondFactor": "Your session stopped at the password. Finish the two-step verification to act here.",
 		"elevate": "Finish verification"
 	},
+	"instance": {
+		"title": "Instance settings",
+		"hint": "What this instance needs to know in order to talk to the outside world. None of this is visible to other accounts.",
+		"mailTitle": "Email sending",
+		"mailIdle": "No sending is configured. Sign-ups and reports do pile up, but no email goes out: nobody is notified while these fields are empty.",
+		"trackerTitle": "Issue tracker",
+		"trackerHint": "Lets you open a public issue from a report. The token only needs permission to write issues on this one repository.",
+		"save": "Save",
+		"saved": "Settings saved.",
+		"clear": "Remove",
+		"cleared": "Setting removed.",
+		"test": "Send a test email",
+		"testing": "Sending…",
+		"secretSet": "Saved on {date}. Leave empty to keep it, or type a new value to replace it. It can no longer be shown.",
+		"secretUnset": "Nothing saved. The value will be encrypted and can never be read back from this screen.",
+		"field": {
+			"mail_smtp_host": "Sending server",
+			"mail_smtp_port": "Port",
+			"mail_smtp_user": "Username",
+			"mail_smtp_password": "Password",
+			"mail_from": "Sender address",
+			"issue_tracker_repo": "Repository",
+			"issue_tracker_api": "API address",
+			"issue_tracker_token": "Access token"
+		},
+		"placeholder": {
+			"mail_smtp_host": "smtp-relay.example.com",
+			"mail_smtp_port": "587",
+			"mail_smtp_user": "apikey",
+			"mail_smtp_password": "",
+			"mail_from": "notifications@yourdomain.com",
+			"issue_tracker_repo": "owner/repository",
+			"issue_tracker_api": "https://api.github.com",
+			"issue_tracker_token": ""
+		},
+		"help": {
+			"mail_smtp_host": "The server name given to you by your sending provider.",
+			"mail_smtp_port": "587 in most cases, 465 for a connection encrypted from the start.",
+			"mail_smtp_user": "Often your address, sometimes the word “apikey”. Leave empty if the relay asks for none.",
+			"mail_from": "The address that will appear as the sender. Your provider must have verified it.",
+			"issue_tracker_repo": "In owner/repository form.",
+			"issue_tracker_api": "Only change this for a self-hosted forge."
+		},
+		"mailTest": {
+			"sent": "Message on its way. Check your inbox, and your spam folder if it isn’t there.",
+			"not_configured": "Nothing is configured: fill in at least the sending server and the sender address.",
+			"auth_refused": "The server refused the username or the password. Check them with your provider; many require a dedicated key rather than your account password.",
+			"unreachable": "The server did not answer. Check its name and port; some hosts block outgoing mail ports.",
+			"sender_rejected": "Connection and password accepted, but the provider refused the sender address: you must first get it verified from their dashboard. This is the most common cause.",
+			"quota": "Today’s sending cap has been reached. Try again tomorrow.",
+			"failed": "Sending failed for no recognised reason. The details are in the function logs."
+		}
+	},
 	"sync": {
 		"offline": "Offline — your changes will sync when the network is back",
 		"error": "Cannot sync right now"
