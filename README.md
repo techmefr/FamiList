@@ -121,6 +121,12 @@ migrations sur ce seul nombre, pas sur le nom du fichier. Deux fichiers au même
 Le client ne peut écrire que les colonnes listées dans un `grant update (...)`. Une colonne ajoutée
 sans l'y inscrire se laisse lire, et refuse silencieusement les écritures.
 
+## Héberger une instance
+
+Pour faire tourner FamiList pour un foyer plutôt que pour y développer, voir
+[SELF-HOSTING.md](SELF-HOSTING.md) : mise en place de la base, publication de l'application, et
+configuration des courriels depuis l'administration.
+
 ## Premier compte
 
 **Le premier compte créé devient administrateur, approuvé d'office.** Les suivants arrivent en
