@@ -956,7 +956,18 @@ class DataStore {
 	get directCandidates() {
 		const dejaVus = new Set(this.directs.map((d) => d.otherId));
 
-		return this.members.filter((m) => m.id !== this.userId && !dejaVus.has(m.id));
+		// Une personne figure une fois par cercle partagé : sans ce tri, quelqu'un qu'on côtoie dans
+		// deux cercles apparaîtrait deux fois dans la liste. C'est précisément l'ambiguïté qu'une
+		// conversation directe écarte — elle n'appartient à aucun des deux — et la liste des gens à
+		// qui écrire doit la refléter : un compte, une entrée.
+		const vus = new Set<string>();
+
+		return this.cachedMembers.filter((m) => {
+			if (m.id === this.userId || dejaVus.has(m.id) || vus.has(m.id)) return false;
+
+			vus.add(m.id);
+			return true;
+		});
 	}
 
 	messagesOfConversation(conversationId: string) {
