@@ -9,44 +9,45 @@
  * Le jeton vit ici et nulle part ailleurs. Un jeton d ecriture sur un depot ne peut pas partir
  * dans le bundle client : le bundle est publie, le jeton le serait avec lui.
  *
- * Secrets attendus (`supabase secrets set`) : ISSUE_TRACKER_TOKEN, le jeton a portee minimale
- * (issues: write sur ce seul depot), et ISSUE_TRACKER_REPO au format `proprietaire/depot`.
- * ISSUE_TRACKER_API n est utile que pour une forge auto-hebergee. Tant qu ils manquent, la
- * fonction relache ce qu elle a reclame et rien n est publie.
+ * Configuration : les reglages d instance poses depuis `/admin` (#138), avec priorite aux secrets
+ * de fonction quand ils existent — ISSUE_TRACKER_TOKEN, le jeton a portee minimale (issues: write
+ * sur ce seul depot), et ISSUE_TRACKER_REPO au format `proprietaire/depot`. ISSUE_TRACKER_API n est
+ * utile que pour une forge auto-hebergee. Tant que ni l un ni l autre ne repond, la fonction
+ * relache ce qu elle a reclame et rien n est publie.
  */
 
+import { callRpc, serviceKey } from '../_shared/rpc.ts';
+import { type InstanceConfig, resolveSettings } from '../_shared/settings.ts';
 import { type ReportToPublish, buildIssue } from './issue.ts';
 
-const SUPABASE_URL = Deno.env.get('SUPABASE_URL') ?? '';
-const SERVICE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
+const TRACKER_KEYS = ['issue_tracker_token', 'issue_tracker_repo', 'issue_tracker_api'] as const;
 
-async function rpc<T>(name: string, args: Record<string, unknown>): Promise<T> {
-	const response = await fetch(`${SUPABASE_URL}/rest/v1/rpc/${name}`, {
-		method: 'POST',
-		headers: {
-			'Content-Type': 'application/json',
-			apikey: SERVICE_KEY,
-			Authorization: `Bearer ${SERVICE_KEY}`
-		},
-		body: JSON.stringify(args)
-	});
+const rpc = <T>(name: string, args: Record<string, unknown>): Promise<T> =>
+	callRpc<T>(name, args, serviceKey());
 
-	if (!response.ok) {
-		throw new Error(`${name}: ${response.status} ${await response.text()}`);
+async function loadTrackerSettings(): Promise<Record<string, string | undefined>> {
+	let stored: InstanceConfig = {};
+
+	try {
+		stored = (await rpc<InstanceConfig>('instance_config', {})) ?? {};
+	} catch (error) {
+		// Une fonction deployee en avance sur la base ne doit pas cesser de publier : on retombe sur
+		// l environnement seul, qui etait tout ce qui existait avant cette migration.
+		console.warn('instance_config indisponible', error);
 	}
 
-	// Une fonction `returns void` repond 204 sans corps : `response.json()` echouerait dessus.
-	const body = await response.text();
-
-	return (body === '' ? null : JSON.parse(body)) as T;
+	return resolveSettings(TRACKER_KEYS, Deno.env.toObject(), stored);
 }
 
-async function openIssue(report: ReportToPublish): Promise<{ number: number; url: string }> {
-	const token = Deno.env.get('ISSUE_TRACKER_TOKEN');
-	const repo = Deno.env.get('ISSUE_TRACKER_REPO');
+async function openIssue(
+	report: ReportToPublish,
+	settings: Record<string, string | undefined>
+): Promise<{ number: number; url: string }> {
+	const token = settings.issue_tracker_token;
+	const repo = settings.issue_tracker_repo;
 	if (!token || !repo) throw new Error('suivi du depot non configure');
 
-	const api = Deno.env.get('ISSUE_TRACKER_API') ?? 'https://api.github.com';
+	const api = settings.issue_tracker_api ?? 'https://api.github.com';
 
 	const response = await fetch(`${api}/repos/${repo}/issues`, {
 		method: 'POST',
@@ -82,10 +83,12 @@ Deno.serve(async () => {
 
 		claimed = reports.map((report) => report.id);
 
+		const settings = await loadTrackerSettings();
+
 		let published = 0;
 
 		for (const report of reports) {
-			const issue = await openIssue(report);
+			const issue = await openIssue(report, settings);
 
 			// Marquee une par une, et non en une fois a la fin : une coupure au milieu du lot ne doit
 			// pas faire rouvrir demain les issues deja creees. `mark_bug_report_issue` n ecrit que

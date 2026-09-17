@@ -716,6 +716,59 @@
 		"errorSecondFactor": "La tua sessione si è fermata alla password. Completa la verifica in due passaggi per agire qui.",
 		"elevate": "Completa la verifica"
 	},
+	"instance": {
+		"title": "Impostazioni dell'istanza",
+		"hint": "Ciò che questa istanza deve sapere per parlare con il mondo esterno. Nulla di tutto questo è visibile agli altri account.",
+		"mailTitle": "Invio di email",
+		"mailIdle": "Nessun invio è configurato. Le iscrizioni e le segnalazioni si accumulano, ma non parte alcuna email: finché questi campi restano vuoti nessuno viene avvisato.",
+		"trackerTitle": "Tracciamento del repository",
+		"trackerHint": "Permette di aprire una issue pubblica a partire da una segnalazione. Il token ha bisogno solo del permesso di scrivere issue su questo unico repository.",
+		"save": "Salva",
+		"saved": "Impostazioni salvate.",
+		"clear": "Rimuovi",
+		"cleared": "Impostazione rimossa.",
+		"test": "Invia un'email di prova",
+		"testing": "Invio in corso…",
+		"secretSet": "Salvato il {date}. Lascia vuoto per conservarlo, oppure scrivi un nuovo valore per sostituirlo. Non può più essere mostrato.",
+		"secretUnset": "Niente di salvato. Il valore sarà cifrato e non potrà più essere riletto da questa schermata.",
+		"field": {
+			"mail_smtp_host": "Server di invio",
+			"mail_smtp_port": "Porta",
+			"mail_smtp_user": "Nome utente",
+			"mail_smtp_password": "Password",
+			"mail_from": "Indirizzo del mittente",
+			"issue_tracker_repo": "Repository",
+			"issue_tracker_api": "Indirizzo dell'API",
+			"issue_tracker_token": "Token di accesso"
+		},
+		"placeholder": {
+			"mail_smtp_host": "smtp-relay.esempio.com",
+			"mail_smtp_port": "587",
+			"mail_smtp_user": "apikey",
+			"mail_smtp_password": "",
+			"mail_from": "notifiche@tuodominio.it",
+			"issue_tracker_repo": "proprietario/repository",
+			"issue_tracker_api": "https://api.github.com",
+			"issue_tracker_token": ""
+		},
+		"help": {
+			"mail_smtp_host": "Il nome del server fornito dal tuo provider di invio.",
+			"mail_smtp_port": "587 nella maggior parte dei casi, 465 per una connessione cifrata fin dall'inizio.",
+			"mail_smtp_user": "Spesso il tuo indirizzo, a volte la parola «apikey». Lascia vuoto se il relay non lo chiede.",
+			"mail_from": "L'indirizzo che comparirà come mittente. Il tuo provider deve averlo verificato.",
+			"issue_tracker_repo": "Nel formato proprietario/repository.",
+			"issue_tracker_api": "Da cambiare solo per una forge auto-ospitata."
+		},
+		"mailTest": {
+			"sent": "Messaggio partito. Controlla la posta in arrivo, e lo spam se non lo trovi.",
+			"not_configured": "Non è configurato nulla: indica almeno il server di invio e l'indirizzo del mittente.",
+			"auth_refused": "Il server ha rifiutato il nome utente o la password. Verificali presso il tuo provider; molti richiedono una chiave dedicata invece della password dell'account.",
+			"unreachable": "Il server non ha risposto. Verifica il nome e la porta; alcuni hosting bloccano le porte di invio in uscita.",
+			"sender_rejected": "Connessione e password accettate, ma il provider ha rifiutato l'indirizzo del mittente: va prima fatto verificare dal suo pannello. È la causa più frequente.",
+			"quota": "Il limite di invii di oggi è stato raggiunto. Riprova domani.",
+			"failed": "L'invio è fallito senza una causa riconosciuta. Il dettaglio è nei registri della funzione."
+		}
+	},
 	"sync": {
 		"offline": "Non in linea — le modifiche partiranno al ritorno della rete",
 		"error": "Sincronizzazione non possibile al momento"

@@ -711,6 +711,59 @@
 		"errorSecondFactor": "您的会话停在了密码这一步。请完成两步验证后再在此操作。",
 		"elevate": "完成验证"
 	},
+	"instance": {
+		"title": "实例设置",
+		"hint": "本实例与外界通信所需的信息。这些内容对其他账号都不可见。",
+		"mailTitle": "邮件发送",
+		"mailIdle": "尚未配置发送。注册和反馈确实会堆积，但不会发出任何邮件：只要这些字段是空的，就没有人会收到通知。",
+		"trackerTitle": "仓库工单",
+		"trackerHint": "可以根据一条反馈开一个公开工单。令牌只需要在这一个仓库中写入工单的权限。",
+		"save": "保存",
+		"saved": "设置已保存。",
+		"clear": "移除",
+		"cleared": "设置已移除。",
+		"test": "发送测试邮件",
+		"testing": "发送中…",
+		"secretSet": "已于 {date} 保存。留空即保留，输入新值即替换。它无法再被显示。",
+		"secretUnset": "尚未保存。该值将被加密，此后再也无法从这个页面读回。",
+		"field": {
+			"mail_smtp_host": "发送服务器",
+			"mail_smtp_port": "端口",
+			"mail_smtp_user": "用户名",
+			"mail_smtp_password": "密码",
+			"mail_from": "发件地址",
+			"issue_tracker_repo": "仓库",
+			"issue_tracker_api": "API 地址",
+			"issue_tracker_token": "访问令牌"
+		},
+		"placeholder": {
+			"mail_smtp_host": "smtp-relay.example.com",
+			"mail_smtp_port": "587",
+			"mail_smtp_user": "apikey",
+			"mail_smtp_password": "",
+			"mail_from": "notifications@yourdomain.com",
+			"issue_tracker_repo": "拥有者/仓库",
+			"issue_tracker_api": "https://api.github.com",
+			"issue_tracker_token": ""
+		},
+		"help": {
+			"mail_smtp_host": "发送服务商提供给你的服务器名称。",
+			"mail_smtp_port": "多数情况为 587，465 用于一开始就加密的连接。",
+			"mail_smtp_user": "通常是你的地址，有时是「apikey」这个词。若中继不要求，可以留空。",
+			"mail_from": "将显示为发件人的地址。你的服务商必须已经验证过它。",
+			"issue_tracker_repo": "格式为 拥有者/仓库。",
+			"issue_tracker_api": "仅在使用自建代码平台时才需要修改。"
+		},
+		"mailTest": {
+			"sent": "邮件已发出。请查看收件箱，若不在其中请查看垃圾邮件。",
+			"not_configured": "尚未配置：至少填写发送服务器和发件地址。",
+			"auth_refused": "服务器拒绝了用户名或密码。请向服务商核对；许多服务商要求使用专用密钥而非账号密码。",
+			"unreachable": "服务器没有响应。请检查名称和端口；有些主机会封锁对外的发信端口。",
+			"sender_rejected": "连接和密码都被接受，但服务商拒绝了发件地址：必须先在其控制台完成验证。这是最常见的原因。",
+			"quota": "已达到今天的发送上限。请明天再试。",
+			"failed": "发送失败，原因无法识别。详情见函数日志。"
+		}
+	},
 	"sync": {
 		"offline": "离线 — 网络恢复后将同步你的更改",
 		"error": "目前无法同步"

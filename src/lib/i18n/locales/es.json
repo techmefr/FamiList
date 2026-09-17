@@ -716,6 +716,59 @@
 		"errorSecondFactor": "Tu sesión se detuvo en la contraseña. Termina la verificación en dos pasos para actuar aquí.",
 		"elevate": "Terminar la verificación"
 	},
+	"instance": {
+		"title": "Ajustes de la instancia",
+		"hint": "Lo que esta instancia necesita saber para hablar con el mundo exterior. Nada de esto es visible para otras cuentas.",
+		"mailTitle": "Envío de correo",
+		"mailIdle": "No hay ningún envío configurado. Los registros y los informes se acumulan, pero no sale ningún correo: nadie recibe aviso mientras estos campos estén vacíos.",
+		"trackerTitle": "Seguimiento del repositorio",
+		"trackerHint": "Permite abrir una incidencia pública a partir de un informe. El token solo necesita permiso para escribir incidencias en este único repositorio.",
+		"save": "Guardar",
+		"saved": "Ajustes guardados.",
+		"clear": "Quitar",
+		"cleared": "Ajuste eliminado.",
+		"test": "Enviar un correo de prueba",
+		"testing": "Enviando…",
+		"secretSet": "Guardado el {date}. Déjalo vacío para conservarlo, o escribe un valor nuevo para sustituirlo. Ya no se puede mostrar.",
+		"secretUnset": "No hay nada guardado. El valor se cifrará y nunca podrá volver a leerse desde esta pantalla.",
+		"field": {
+			"mail_smtp_host": "Servidor de envío",
+			"mail_smtp_port": "Puerto",
+			"mail_smtp_user": "Usuario",
+			"mail_smtp_password": "Contraseña",
+			"mail_from": "Dirección del remitente",
+			"issue_tracker_repo": "Repositorio",
+			"issue_tracker_api": "Dirección de la API",
+			"issue_tracker_token": "Token de acceso"
+		},
+		"placeholder": {
+			"mail_smtp_host": "smtp-relay.ejemplo.com",
+			"mail_smtp_port": "587",
+			"mail_smtp_user": "apikey",
+			"mail_smtp_password": "",
+			"mail_from": "notificaciones@tudominio.es",
+			"issue_tracker_repo": "propietario/repositorio",
+			"issue_tracker_api": "https://api.github.com",
+			"issue_tracker_token": ""
+		},
+		"help": {
+			"mail_smtp_host": "El nombre del servidor que te da tu proveedor de envío.",
+			"mail_smtp_port": "587 en la mayoría de los casos, 465 para una conexión cifrada desde el principio.",
+			"mail_smtp_user": "A menudo tu dirección, a veces la palabra «apikey». Déjalo vacío si el relé no lo pide.",
+			"mail_from": "La dirección que aparecerá como remitente. Tu proveedor debe haberla verificado.",
+			"issue_tracker_repo": "Con el formato propietario/repositorio.",
+			"issue_tracker_api": "Cámbialo solo si usas una forja autoalojada."
+		},
+		"mailTest": {
+			"sent": "Mensaje enviado. Mira tu bandeja de entrada, y el correo no deseado si no está allí.",
+			"not_configured": "No hay nada configurado: indica al menos el servidor de envío y la dirección del remitente.",
+			"auth_refused": "El servidor rechazó el usuario o la contraseña. Compruébalos con tu proveedor; muchos exigen una clave dedicada en lugar de la contraseña de la cuenta.",
+			"unreachable": "El servidor no respondió. Comprueba su nombre y el puerto; algunos alojamientos bloquean los puertos de envío salientes.",
+			"sender_rejected": "Conexión y contraseña aceptadas, pero el proveedor rechazó la dirección del remitente: primero hay que verificarla desde su panel de control. Es la causa más frecuente.",
+			"quota": "Se ha alcanzado el límite de envíos de hoy. Inténtalo mañana.",
+			"failed": "El envío falló sin causa reconocida. El detalle está en los registros de la función."
+		}
+	},
 	"sync": {
 		"offline": "Sin conexión — tus cambios se enviarán al volver la red",
 		"error": "No se puede sincronizar ahora mismo"
