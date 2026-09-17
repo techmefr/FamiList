@@ -23,9 +23,9 @@ describe('buildIssue', () => {
 		expect(buildIssue({ id: 'a', number: 1, kind: 'autre' }).labels).toEqual(['bug']);
 	});
 
-	// Le test qui compte : le depot est public, et rien du signalement ne doit sortir. On vole ici
-	// un contenu qui ressemble a ce qu un signalement porte vraiment, et on verifie qu aucune de
-	// ses traces n apparait dans ce qui part.
+	// The test that counts: the repository is public, and nothing from the report must leave. We put in here
+	// content resembling what a report really carries, and check that none of its traces appears in what
+	// leaves.
 	it('ne publie que le numero, jamais le contenu du signalement', () => {
 		const issue = buildIssue({ id: 'e1f2-3456', number: 42, kind: 'bug' });
 		const publie = `${issue.title}\n${issue.body}`;

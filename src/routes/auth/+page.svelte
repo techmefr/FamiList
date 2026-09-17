@@ -4,9 +4,8 @@
 	import AuthForm from '$components/app/AuthForm.svelte';
 
 	/**
-	 * Le titre suit l'onglet choisi : la page annonçait « Connexion » au-dessus d'un formulaire
-	 * d'inscription, ce qui est exactement le genre de détail qui fait douter d'avoir cliqué au bon
-	 * endroit.
+	 * The title follows the chosen tab: the page announced "Sign in" above a sign-up form, which is exactly
+	 * the kind of detail that makes you doubt you clicked in the right place.
 	 */
 	let mode = $state<'signin' | 'signup'>('signin');
 
@@ -19,8 +18,8 @@
 </svelte:head>
 
 <!--
-	La marque avant tout le reste : c'est le premier écran de l'application, et jusqu'ici rien n'y
-	disait où l'on était. Décorative deux fois — le nom est écrit à côté, et le titre le redit.
+	The brand before everything else: this is the application's first screen, and until now nothing on it said
+	where you were. Decorative twice over — the name is written beside it, and the title says it again.
 -->
 <p class="text-h2 text-primary flex items-center justify-center gap-2.5 font-semibold">
 	<Logo />

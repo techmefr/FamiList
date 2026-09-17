@@ -83,8 +83,8 @@ describe('recipePrompt', () => {
 	});
 
 	/**
-	 * L'ecran montre cette consigne avant l'envoi. Si elle contenait autre chose que les produits
-	 * passes, ce qui est affiche et ce qui part cesseraient d'etre la meme chose.
+	 * The screen shows this instruction before sending. If it contained anything other than the products
+	 * passed in, what is shown and what leaves would stop being the same thing.
 	 */
 	it('ne contient rien d autre que ce qu on lui donne', () => {
 		const prompt = recipePrompt(['Courgettes'], { language: 'français', servings: 4 });
@@ -140,7 +140,7 @@ describe('parseRecipeSuggestion', () => {
 		expect(recette?.ingredients[0].unit).toBe('g');
 	});
 
-	/** `recipes.servings` porte un `check (servings between 1 and 99)` : hors bornes, rien ne s ecrit. */
+	/** `recipes.servings` carries a `check (servings between 1 and 99)`: out of bounds, nothing is written. */
 	it('ramene un nombre de parts hors bornes, qui ferait echouer l ecriture en base', () => {
 		const parts = (servings: unknown) =>
 			parseRecipeSuggestion(

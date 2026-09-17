@@ -1,8 +1,8 @@
--- Donne un sens a household_members.role.
+-- Gives household_members.role a meaning.
 --
--- Jusqu ici, la colonne etait decorative : les policies ne regardaient que l appartenance au
--- foyer. N importe quel membre pouvait donc ajouter n importe quel compte dans son foyer sans
--- passer par une invitation, et en exclure n importe quel autre, y compris le createur.
+-- Until now the column was decorative: the policies looked only at household membership. Any member could
+-- therefore add any account to their household without going through an invitation, and exclude any other,
+-- including the creator.
 
 create or replace function public.is_household_owner(target uuid)
 returns boolean
@@ -23,15 +23,14 @@ $$;
 comment on function public.is_household_owner(uuid) is
   'Vrai si l appelant est le proprietaire du foyer. Security definer pour ne pas relire household_members sous RLS depuis une policy de cette meme table.';
 
--- L entree dans un foyer passe par ensure_household (creation) ou redeem_invite (invitation),
--- deux fonctions security definer qui ne sont pas soumises a cette policy. Il ne reste donc
--- que l ajout direct par le proprietaire.
+-- Entering a household goes through ensure_household (creation) or redeem_invite (invitation), two security
+-- definer functions that are not subject to this policy. That leaves only direct addition by the owner.
 drop policy household_members_insert on public.household_members;
 create policy household_members_insert on public.household_members for insert
   with check (public.is_household_owner(household_id));
 
--- Chacun peut se retirer de son foyer ; seul le proprietaire peut en retirer quelqu un d autre,
--- et personne ne peut retirer un proprietaire a sa place.
+-- Anyone can remove themselves from their household; only the owner can remove somebody else, and nobody can
+-- remove an owner in their place.
 drop policy household_members_delete on public.household_members;
 create policy household_members_delete on public.household_members for delete
   using (

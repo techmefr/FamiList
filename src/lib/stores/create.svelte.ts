@@ -1,11 +1,10 @@
 /**
- * Ce que le bouton central vient de demander, le temps d'arriver sur l'écran concerné.
+ * What the central button has just asked for, for the time it takes to reach the screen concerned.
  *
- * Les formulaires de magasin, de rayon et de carte sont déjà posés en permanence sur leur page : il
- * suffit d'y aller et de placer le curseur dans le premier champ. Ceux d'une nouvelle liste et d'une
- * nouvelle recette, eux, sont repliés — l'écran doit savoir qu'on arrive pour les déplier. D'où ce relais, plutôt qu'un
- * paramètre d'URL qui resterait dans la barre d'adresse et rouvrirait le formulaire à chaque
- * rechargement.
+ * The shop, aisle and card forms are already sitting permanently on their page: you only have to go there
+ * and put the cursor in the first field. Those of a new list and a new recipe, for their part, are folded —
+ * the screen has to know we are coming in order to unfold them. Hence this relay, rather than a URL
+ * parameter that would stay in the address bar and reopen the form on every reload.
  */
 export type CreateKind = 'item' | 'list' | 'aisle' | 'shop' | 'card' | 'recipe';
 
@@ -21,8 +20,8 @@ class CreateIntent {
 	}
 
 	/**
-	 * Vrai une seule fois : le premier écran qui reconnaît l'intention la consomme. Sans cela, un
-	 * retour en arrière sur l'accueil rouvrirait le formulaire alors que personne ne l'a demandé.
+	 * True only once: the first screen recognising the intent consumes it. Without that, going back to the
+	 * home screen would reopen the form when nobody asked for it.
 	 */
 	take(kind: CreateKind) {
 		if (this.#kind !== kind) return false;

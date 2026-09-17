@@ -1,74 +1,67 @@
--- Un plantage silencieux laisse desormais une trace, et elle reste a la maison.
+-- A silent crash now leaves a trace, and it stays at home.
 --
--- Le seul signal de bug aujourd hui est volontaire : quelqu un ouvre le panneau de signalement et
--- ecrit. Une erreur JavaScript non rattrapee, elle, ne remonte nulle part — l ecran se fige, la
--- personne ferme l application, et le bug survit des mois.
+-- The only bug signal today is deliberate: somebody opens the report panel and writes. An uncaught
+-- JavaScript error, for its part, reaches nowhere — the screen freezes, the person closes the application,
+-- and the bug survives for months.
 --
--- POURQUOI PAS SENTRY, NI AUCUN SERVICE TIERS. Une pile d appels porte des chemins de route, des
--- messages d erreur rediges par nos propres fonctions, parfois le nom d une liste dans un refus
--- de contrainte. Envoyer cela chez un editeur exterieur reviendrait a lui confier, en continu et
--- sans que personne l ait demande, des fragments de la vie domestique de familles entieres. Ce
--- depot a deja refuse le geocodage inverse pour cette exacte raison (voir shop_place) : on ne
--- sort pas une donnee de la maison parce que c est pratique. Et il n y a rien a gagner ici — le
--- projet a deja un Postgres, un panneau d administration, une table de signalements et une
--- discipline RLS eprouvee. Un service tiers apporterait un tableau de bord et un contrat de
--- sous-traitance ; la table ci-dessous apporte le tableau de bord sans le contrat.
+-- WHY NOT SENTRY, NOR ANY THIRD-PARTY SERVICE. A stack trace carries route paths, error messages written by
+-- our own functions, sometimes the name of a list inside a constraint refusal. Sending that to an outside
+-- vendor would amount to entrusting them, continuously and without anybody having asked, with fragments of
+-- the domestic life of whole families. This repository has already refused reverse geocoding for that exact
+-- reason (see shop_place): we do not take data out of the house because it is convenient. And there is
+-- nothing to gain here — the project already has a Postgres, an administration panel, a reports table and a
+-- proven RLS discipline. A third-party service would bring a dashboard and a data-processing contract; the
+-- table below brings the dashboard without the contract.
 --
--- CE QUI EST STOCKE, ET CE QUI NE PEUT PAS L ETRE. Le client nettoie avant d envoyer : adresses
--- de courriel, identifiants UUID, chaines de requete, jetons, chemins de fichiers personnels et
--- longues suites de chiffres sont remplaces par des marqueurs (voir src/lib/domain/crash.ts). Ce
--- qu on ne peut PAS nettoyer, et il faut le dire franchement : le texte libre d une `Error`. Une
--- bibliotheque — ou notre propre code — peut y avoir recopie le nom d une liste, d un magasin ou
--- d un article. Aucune regle d expression reguliere ne distingue « Pique-nique de mamie » d un
--- mot technique. D ou le plafond de 500 caracteres sur le message, la retention courte, et le
--- fait que l ecran d administration ne montre JAMAIS qui a plante : seulement combien de comptes.
--- Un signalement est volontaire, son auteur accepte d etre nomme ; un plantage ne l est pas.
+-- WHAT IS STORED, AND WHAT CANNOT BE. The client cleans before sending: email addresses, UUID identifiers,
+-- query strings, tokens, personal file paths and long runs of digits are replaced by markers (see
+-- src/lib/domain/crash.ts). What CANNOT be cleaned, and it has to be said plainly: the free text of an
+-- `Error`. A library — or our own code — may have copied the name of a list, a shop or an item into it. No
+-- regular-expression rule tells "Granny's picnic" from a technical word. Hence the 500-character cap on the
+-- message, the short retention, and the fact that the administration screen NEVER shows who crashed: only
+-- how many accounts. A report is voluntary, and its author accepts being named; a crash is not.
 --
--- DEDUPLICATION. Une boucle qui leve cinq cents fois la meme erreur ne doit pas ecrire cinq cents
--- lignes. Le client calcule une empreinte stable (source, message normalise, premiere image de la
--- pile sans numero de ligne) et la base fait un upsert sur (compte, empreinte) : une ligne par
--- erreur distincte et par compte, avec un compteur. Par compte et non globalement, pour que
--- « combien de personnes sont touchees » reste lisible sans jamais stocker qui.
+-- DEDUPLICATION. A loop raising the same error five hundred times must not write five hundred rows. The
+-- client computes a stable fingerprint (source, normalised message, first stack frame without line number)
+-- and the database upserts on (account, fingerprint): one row per distinct error and per account, with a
+-- counter. Per account and not globally, so that "how many people are affected" stays readable without ever
+-- storing who.
 --
--- Une erreur resolue qui reparait rouvre sa ligne. Sans cela, un bug classe trop vite redeviendrait
--- invisible alors meme qu il continue de casser des ecrans tous les jours.
+-- A resolved error that reappears reopens its row. Without that, a bug filed away too quickly would become
+-- invisible again even as it goes on breaking screens every day.
 --
--- VOLUME. Deux plafonds sur la meme fenetre de vingt-quatre heures glissantes, comme pour les
--- signalements, mais ils ne ferment pas la meme chose. Cinquante empreintes NOUVELLES par compte
--- et par jour : c est le seul plafond qui borne le stockage, puisque seule une empreinte inedite
--- cree une ligne. Une application qui plante de cinquante facons differentes dans la meme journee
--- a des problemes que ce fichier ne reglera pas. Et trente secondes entre deux incrementations de
--- la meme empreinte : le client se retient deja, mais le client est du code qu on peut contourner,
--- et sans ce second garde-fou une boucle appellerait la fonction en continu. Le cout en stockage
--- reste modeste — 4,5 ko au pire par ligne, contre 1,5 Mo pour une capture d ecran de
--- signalement — donc c est le nombre d appels, pas les octets, qu on borne ici.
+-- VOLUME. Two caps on the same rolling twenty-four-hour window, as for the reports, but they do not close
+-- the same thing. Fifty NEW fingerprints per account per day: it is the only cap that bounds storage, since
+-- only an unseen fingerprint creates a row. An application crashing in fifty different ways in the same day
+-- has problems this file will not fix. And thirty seconds between two increments of the same fingerprint:
+-- the client already holds back, but the client is code that can be bypassed, and without this second
+-- guardrail a loop would call the function continuously. The storage cost stays modest — 4.5 kB at worst per
+-- row, against 1.5 MB for a report screenshot — so it is the number of calls, not the bytes, that is bounded
+-- here.
 --
--- RETENTION. Trente jours. Une erreur est un diagnostic, pas une archive : passe un mois, soit
--- elle a ete corrigee, soit elle s est reproduite et sa ligne a ete rafraichie. Le nettoyage se
--- fait a chaque appel de report_crash, comme redeem_invite nettoie ses tentatives — pas de tache
--- planifiee a surveiller, et rien ne grossit quand rien ne plante. La lecture d administration
--- filtre sur la meme fenetre, pour que l ecran ne montre jamais au-dela de la retention annoncee
--- meme si aucun nettoyage n a tourne depuis longtemps.
+-- RETENTION. Thirty days. An error is a diagnosis, not an archive: after a month, either it has been fixed,
+-- or it has happened again and its row has been refreshed. The clean-up happens on every call to
+-- report_crash, as redeem_invite cleans its attempts — no scheduled task to watch, and nothing grows when
+-- nothing crashes. The administration read filters on the same window, so that the screen never shows beyond
+-- the announced retention even if no clean-up has run for a long time.
 --
--- SESSION AUTHENTIFIEE, PAS COMPTE APPROUVE. Toutes les autres ecritures passent par
--- `is_approved()`. Pas celle-ci, et c est delibere : un compte en attente de validation voit
--- l ecran d attente, et si c est LUI qui plante, personne ne le saura jamais — cette personne n a
--- meme pas acces au formulaire de signalement. Le risque pris est nul en comparaison : la fonction
--- n est accordee qu a `authenticated`, elle ne rend aucune donnee, et les memes plafonds
--- s appliquent.
+-- AUTHENTICATED SESSION, NOT APPROVED ACCOUNT. Every other write goes through `is_approved()`. Not this one,
+-- and that is deliberate: an account awaiting validation sees the waiting screen, and if IT is what crashes,
+-- nobody will ever know — that person does not even have access to the report form. The risk taken is nil in
+-- comparison: the function is granted to `authenticated` only, it returns no data, and the same caps apply.
 --
--- La fonction ne leve pas quand un plafond est atteint, pour la meme raison que submit_bug_report :
--- une exception annulerait la transaction. Ici elle annulerait le nettoyage de retention et
--- l incrementation du compteur. Elle renvoie un objet decrivant l issue. Et de toute facon rien de
--- ce qu elle renvoie n arrive sous les yeux de qui que ce soit : le rapporteur cote client avale
--- tout. Une panne du rapporteur d erreurs ne doit jamais devenir, elle-meme, une erreur visible.
+-- The function does not raise when a cap is reached, for the same reason as submit_bug_report: an exception
+-- would roll the transaction back. Here it would roll back the retention clean-up and the counter increment.
+-- It returns an object describing the outcome. And in any case nothing it returns reaches anybody's eyes:
+-- the reporter on the client side swallows everything. A failure of the error reporter must never become, in
+-- itself, a visible error.
 
 create table public.client_errors (
   id uuid primary key default gen_random_uuid(),
   user_id uuid references auth.users on delete set null,
   fingerprint text not null check (char_length(fingerprint) between 1 and 64),
   source text not null check (source in ('window', 'promise', 'render', 'sync')),
-  -- 500 caracteres : de quoi lire un message d erreur entier, pas de quoi recevoir un document.
+  -- 500 characters: enough to read a whole error message, not enough to receive a document.
   message text not null check (char_length(message) between 1 and 500),
   stack text check (stack is null or char_length(stack) <= 4000),
   path text,
@@ -80,18 +73,17 @@ create table public.client_errors (
   resolved_at timestamptz
 );
 
--- La cle de deduplication. `user_id` peut devenir null si le compte est supprime : les null sont
--- distincts pour un index unique, donc ces lignes orphelines cessent simplement de se regrouper.
--- Elles ne sont plus jamais mises a jour et la retention les emporte.
+-- The deduplication key. `user_id` can become null if the account is deleted: nulls are distinct for a
+-- unique index, so those orphan rows simply stop grouping. They are never updated again and retention takes
+-- them away.
 create unique index client_errors_user_print on public.client_errors (user_id, fingerprint);
 
 create index client_errors_recent on public.client_errors (last_seen_at desc);
 
 alter table public.client_errors enable row level security;
 
--- Aucune policy : comme bug_reports, la table ne s ouvre que par les fonctions security definer
--- ci-dessous. Personne ne peut relire les plantages des autres, ni effacer les siens pour se
--- refaire un quota.
+-- No policy: like bug_reports, the table only opens through the security definer functions below. Nobody can
+-- read other people's crashes, nor erase their own to give themselves a fresh quota.
 revoke all on public.client_errors from public, anon, authenticated;
 
 create or replace function public.report_crash(
@@ -122,8 +114,8 @@ begin
     return jsonb_build_object('status', 'ignored');
   end if;
 
-  -- Un message vide ne renseigne personne et ne merite pas une ligne. Le client ne devrait jamais
-  -- en envoyer, mais la fonction est appelable sans passer par lui.
+  -- An empty message tells nobody anything and does not deserve a row. The client should never send one, but
+  -- the function can be called without going through it.
   if coalesce(trim(message), '') = '' or coalesce(trim(fingerprint), '') = '' then
     return jsonb_build_object('status', 'ignored');
   end if;
@@ -137,8 +129,8 @@ begin
   for update;
 
   if existing.id is not null then
-    -- Le meme plantage, revu trop vite : on ne reecrit pas la ligne. Trente secondes suffisent a
-    -- distinguer « ca recommence » d une boucle qui part en vrille.
+    -- The same crash, seen again too soon: we do not rewrite the row. Thirty seconds are enough to tell "it
+    -- is happening again" from a loop spinning out of control.
     if existing.last_seen_at > now() - interval '30 seconds' then
       return jsonb_build_object('status', 'throttled');
     end if;
@@ -147,8 +139,8 @@ begin
     set occurrences = e.occurrences + 1,
         last_seen_at = now(),
         path = coalesce(nullif(report_crash.path, ''), e.path),
-        -- Une erreur classee qui reparait se rouvre : sinon un bug resolu trop vite continue de
-        -- casser des ecrans sans jamais remonter a l ecran d administration.
+        -- A filed error that reappears reopens: otherwise a bug resolved too quickly goes on breaking screens
+        -- without ever reaching the administration screen.
         status = 'open',
         resolved_at = null
     where e.id = existing.id;
@@ -187,16 +179,16 @@ revoke all on function public.report_crash(text, text, text, text, text, text)
 grant execute on function public.report_crash(text, text, text, text, text, text) to authenticated;
 
 /*
- * La lecture d administration, groupee par empreinte.
+ * The administration read, grouped by fingerprint.
  *
- * Aucune adresse de courriel, contrairement a list_bug_reports, et c est la difference de fond
- * entre les deux ecrans : un signalement est ecrit volontairement par quelqu un qui accepte d etre
- * rappele, un plantage arrive sans qu on le decide. On rend donc le nombre de comptes touches, qui
- * est l information utile pour prioriser, et rien qui designe une personne.
+ * No email address, unlike list_bug_reports, and that is the fundamental difference between the two screens:
+ * a report is written deliberately by somebody who accepts being contacted back, a crash happens without
+ * anybody deciding it. So we return the number of accounts affected, which is the information useful for
+ * prioritising, and nothing that designates a person.
  *
- * Le message et la pile retenus sont ceux de l occurrence la plus recente : a empreinte egale ils
- * ne different que par des details deja nettoyes, et prendre le plus recent evite d afficher une
- * pile issue d une version du code qui n existe plus.
+ * The message and the stack kept are those of the most recent occurrence: at equal fingerprint they differ
+ * only in details already cleaned, and taking the most recent avoids showing a stack from a version of the
+ * code that no longer exists.
  */
 create or replace function public.list_client_errors()
 returns table (
@@ -241,8 +233,8 @@ $$;
 revoke all on function public.list_client_errors() from public, anon, authenticated;
 grant execute on function public.list_client_errors() to authenticated;
 
--- Le classement porte sur l empreinte, pas sur une ligne : c est le bug qu on declare corrige, et
--- il a une ligne par compte touche.
+-- Filing away applies to the fingerprint, not to a row: it is the bug that is declared fixed, and it has one
+-- row per account affected.
 create or replace function public.resolve_client_error(target text)
 returns void
 language plpgsql

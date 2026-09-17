@@ -1,18 +1,18 @@
 /**
- * Ce que la base répond quand on dépose un signalement.
+ * What the database answers when a report is filed.
  *
- * `submit_bug_report` plafonne désormais à vingt signalements et douze mégaoctets de captures par
- * compte sur vingt-quatre heures glissantes. Elle ne lève pas pour autant : une exception
- * remonterait au formulaire sous la forme d'un message Postgres en anglais, que personne ne peut
- * traduire. Elle renvoie un objet, et c'est ici qu'on décide ce qu'il devient à l'écran.
+ * `submit_bug_report` now caps at twenty reports and twelve megabytes of screenshots per account over a
+ * rolling twenty-four hours. It does not raise for that: an exception would reach the form as a Postgres
+ * message in English, which nobody can translate. It returns an object, and this is where we decide what
+ * that becomes on screen.
  *
- * Les deux plafonds se disent séparément parce qu'ils n'appellent pas le même geste : trop de
- * signalements, il faut attendre ; trop de captures, le texte seul passe encore et c'est utile de
- * le savoir avant de renoncer.
+ * The two caps are said separately because they do not call for the same gesture: too many reports means
+ * waiting; too many screenshots means the text alone still goes through, and that is useful to know before
+ * giving up.
  *
- * La forme renvoyée par un RPC n'est pas garantie côté client — une fonction mise à jour, un cache
- * de schéma en retard — donc tout ce qu'on ne reconnaît pas retombe sur l'échec générique plutôt
- * que sur un envoi qu'on n'a pas obtenu.
+ * The shape returned by an RPC is not guaranteed on the client side — an updated function, a schema cache
+ * lagging behind — so anything we do not recognise falls back on the generic failure rather than on a send
+ * we did not obtain.
  */
 export type ReportOutcomeKey =
 	| 'bugReport.errorTooMany'
@@ -37,9 +37,9 @@ export function readReportOutcome(payload: unknown): ReportOutcome {
 	}
 
 	if (answer.status === 'submitted') {
-		// Le numéro court est la seule référence que la personne pourra citer si elle nous réécrit.
-		// Un envoi reste un envoi s'il manque : on ne refuse pas un signalement déposé parce que la
-		// base n'a pas su nous dire son numéro.
+		// The short number is the only reference the person will be able to quote if they write back to us. A
+		// send stays a send if it is missing: we do not refuse a filed report because the database failed to
+		// tell us its number.
 		const number = typeof answer.number === 'number' ? answer.number : null;
 
 		return { sent: true, errorKey: null, number };

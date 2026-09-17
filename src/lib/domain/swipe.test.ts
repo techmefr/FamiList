@@ -14,7 +14,7 @@ describe('isHorizontalGesture', () => {
 		expect(isHorizontalGesture(8, 0)).toBe(false);
 	});
 
-	// Le cas qui compte : la même surface sert à faire défiler la liste.
+	// The case that counts: the same surface is used to scroll the list.
 	it('laisse passer un défilement vertical', () => {
 		expect(isHorizontalGesture(10, 60)).toBe(false);
 		expect(isHorizontalGesture(30, 40)).toBe(false);
@@ -49,7 +49,7 @@ describe('swipeOffset', () => {
 		expect(swipeOffset(-10_000)).toBe(-SWIPE_MAX);
 	});
 
-	// La suppression doit rester atteignable, sinon le geste ne sert à rien.
+	// Deleting must stay reachable, otherwise the gesture is useless.
 	it('laisse atteindre le seuil de suppression', () => {
 		expect(Math.abs(swipeOffset(-400))).toBeGreaterThanOrEqual(SWIPE_DESTRUCTIVE);
 	});
@@ -70,7 +70,7 @@ describe('swipeSide', () => {
 		expect(swipeSide(-SWIPE_THRESHOLD)).toBe('end');
 	});
 
-	// Supprimer se mérite : le même geste, plus loin.
+	// Deleting has to be earned: the same gesture, further.
 	it('respecte un seuil propre à chaque côté', () => {
 		const limites = { startAt: SWIPE_THRESHOLD, endAt: SWIPE_DESTRUCTIVE };
 

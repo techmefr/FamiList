@@ -2,11 +2,11 @@ import { Capacitor } from '@capacitor/core';
 import type { Haptic } from '$domain/cue';
 
 /**
- * Retour tactile. Sur l'application installée, le moteur du téléphone via Capacitor ; dans un
- * navigateur, `navigator.vibrate`, qui ne connaît que des durées et n'existe pas partout.
+ * Haptic feedback. On the installed application, the phone's motor through Capacitor; in a browser,
+ * `navigator.vibrate`, which only knows durations and does not exist everywhere.
  *
- * Rien de tout ça n'est essentiel : une plateforme sans vibreur, une permission refusée ou un
- * navigateur qui l'ignore ne doivent pas empêcher l'action qui vient de la déclencher.
+ * None of this is essential: a platform with no vibrator, a refused permission or a browser ignoring it
+ * must not prevent the action that has just triggered it.
  */
 const WEB_MS: Record<Haptic, number> = { light: 10, medium: 20, heavy: 35 };
 
@@ -27,6 +27,6 @@ export async function vibrate(haptic: Haptic) {
 
 		navigator.vibrate?.(WEB_MS[haptic]);
 	} catch {
-		// pas de vibreur, ou permission refusée : le geste a déjà eu son effet à l'écran
+		// no vibrator, or permission refused: the gesture has already had its effect on screen
 	}
 }

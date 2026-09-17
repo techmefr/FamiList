@@ -1,16 +1,16 @@
 /**
- * Génération de codes-barres linéaires. Rien n'est décoratif ici : la carte affichée à la caisse
- * doit scanner comme la carte en plastique, sinon la fonctionnalité ne sert à rien.
+ * Generating linear barcodes. Nothing here is decorative: the card shown at the till must scan like the
+ * plastic card, otherwise the feature is of no use.
  *
- * Une barre est décrite par sa largeur en modules et sa couleur. Le rendu SVG se contente
- * d'empiler ces largeurs, ce qui garde le tracé net quelle que soit la taille d'écran.
+ * A bar is described by its width in modules and its colour. The SVG rendering simply stacks those
+ * widths, which keeps the drawing sharp at any screen size.
  */
 export interface CodeElement {
 	width: number;
 	dark: boolean;
 }
 
-/** Code 39 : 9 éléments par caractère, alternance barre/espace, 1 = large. */
+/** Code 39: 9 elements per character, alternating bar/space, 1 = wide. */
 const CODE_39: Record<string, string> = {
 	'0': '000110100', '1': '100100001', '2': '001100001', '3': '101100000', '4': '000110001',
 	'5': '100110000', '6': '001110000', '7': '000100101', '8': '100100100', '9': '001100100',
@@ -31,8 +31,8 @@ export function code39(value: string): CodeElement[] {
 		.toUpperCase()
 		.replace(/[^0-9A-Z\-. $/+%]/g, '');
 
-	// Les astérisques encadrent la donnée : c'est le caractère de départ et d'arrêt de la norme,
-	// un lecteur refuse un code qui n'en a pas.
+	// The asterisks frame the data: it is the standard's start and stop character, and a reader refuses a
+	// code without them.
 	const chars = ['*', ...clean.split(''), '*'];
 	const out: CodeElement[] = [];
 
@@ -50,15 +50,15 @@ export function code39(value: string): CodeElement[] {
 }
 
 /**
- * EAN-13. Les six chiffres de gauche alternent entre deux jeux (L et G) selon un motif dicté par
- * le premier chiffre, qui n'est lui-même jamais dessiné — c'est cette alternance qui le code.
+ * EAN-13. The six left-hand digits alternate between two sets (L and G) following a pattern dictated by
+ * the first digit, which is itself never drawn — that alternation is what encodes it.
  */
 const EAN_L = ['0001101','0011001','0010011','0111101','0100011','0110001','0101111','0111011','0110111','0001011'];
 const EAN_G = ['0100111','0110011','0011011','0100001','0011101','0111001','0000101','0010001','0001001','0010111'];
 const EAN_R = ['1110010','1100110','1101100','1000010','1011100','1001110','1010000','1000100','1001000','1110100'];
 const EAN_PARITY = ['LLLLLL','LLGLGG','LLGGLG','LLGGGL','LGLLGG','LGGLLG','LGGGLL','LGLGLG','LGLGGL','LGGLGL'];
 
-/** Clé de contrôle EAN-13 : somme pondérée 1/3 des douze premiers chiffres. */
+/** EAN-13 check digit: 1/3 weighted sum of the first twelve digits. */
 export function ean13CheckDigit(twelve: string): number {
 	const sum = twelve
 		.slice(0, 12)
@@ -68,7 +68,7 @@ export function ean13CheckDigit(twelve: string): number {
 	return (10 - (sum % 10)) % 10;
 }
 
-/** Renvoie le code à 13 chiffres, ou null si la saisie ne peut pas en former un. */
+/** Returns the 13-digit code, or null if the input cannot form one. */
 export function normalizeEan13(value: string): string | null {
 	const digits = String(value).replace(/\D/g, '');
 
@@ -103,7 +103,7 @@ export function ean13(value: string): CodeElement[] | null {
 	return out;
 }
 
-/** EAN-8 : quatre chiffres à gauche en jeu L, quatre à droite en jeu R, pas d'alternance. */
+/** EAN-8: four digits on the left in set L, four on the right in set R, no alternation. */
 export function ean8CheckDigit(seven: string): number {
 	const sum = seven
 		.slice(0, 7)
@@ -141,9 +141,9 @@ export function ean8(value: string): CodeElement[] | null {
 }
 
 /**
- * UPC-E est un UPC-A comprimé : la position du dernier chiffre dit où réinsérer les zéros. On le
- * réétend plutôt que de l'encoder, parce qu'un lecteur rend la même donnée dans les deux cas et
- * qu'un EAN-13 se dessine déjà.
+ * UPC-E is a compressed UPC-A: the position of the last digit says where to reinsert the zeros. We expand
+ * it again rather than encode it, because a reader returns the same data in both cases and an EAN-13 is
+ * already drawn.
  */
 export function expandUpcE(value: string): string | null {
 	const digits = String(value).replace(/\D/g, '');
@@ -164,16 +164,16 @@ export function expandUpcE(value: string): string | null {
 
 	const upca = `${system}${body}`;
 
-	// La clé accompagne la forme comprimée sans être recalculée : si elle ne correspond pas à
-	// l'UPC-A obtenu, c'est la lecture qui est fausse, et il vaut mieux ne rien dessiner.
+	// The check digit comes with the compressed form without being recomputed: if it does not match the
+	// UPC-A obtained, it is the reading that is wrong, and better to draw nothing.
 	if (ean13CheckDigit(`0${upca}`) !== Number(check)) return null;
 
 	return `0${upca}${check}`;
 }
 
 /**
- * ITF : les chiffres vont par paires, le premier porté par les barres, le second par les espaces
- * qui les séparent. Un nombre impair de chiffres n'est donc pas représentable.
+ * ITF: digits go in pairs, the first carried by the bars, the second by the spaces between them. An odd
+ * number of digits is therefore not representable.
  */
 const ITF_DIGITS = [
 	'00110', '10001', '01001', '11000', '00101',
@@ -206,8 +206,8 @@ export function itf(value: string): CodeElement[] | null {
 }
 
 /**
- * Code 93. Les motifs tiennent sur neuf modules dont le premier est toujours une barre, et deux
- * caractères de contrôle — pondérations 20 puis 15 — ferment la donnée.
+ * Code 93. The patterns fit in nine modules of which the first is always a bar, and two check characters
+ * — weightings 20 then 15 — close the data.
  */
 const CODE_93_ALPHABET = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ-. $/+%';
 const CODE_93_PATTERNS = [
@@ -256,15 +256,15 @@ export function code93(value: string): CodeElement[] | null {
 	emit(CODE_93_START);
 	for (const index of values) emit(CODE_93_PATTERNS[index]);
 	emit(CODE_93_START);
-	// Barre de terminaison : sans elle le motif d'arrêt se confond avec le dernier espace.
+	// Termination bar: without it the stop pattern blends into the last space.
 	out.push({ width: 1, dark: true });
 
 	return out;
 }
 
 /**
- * Code 128, le format le plus répandu sur les cartes de fidélité. Chaque symbole vaut onze
- * modules répartis en six éléments, barre en premier.
+ * Code 128, the most widespread format on loyalty cards. Each symbol is eleven modules split into six
+ * elements, bar first.
  */
 const CODE_128_PATTERNS = [
 	'212222','222122','222221','121223','121322','131222','122213','122312','132212','221213',
@@ -284,8 +284,8 @@ const CODE_128_START_C = 105;
 const CODE_128_STOP = 106;
 
 /**
- * Le jeu C code deux chiffres par symbole : sur un numéro de carte, il divise la largeur du
- * tracé par deux, ce qui compte sur un écran de téléphone tenu devant une douchette.
+ * Set C encodes two digits per symbol: on a card number, it halves the width of the drawing, which
+ * matters on a phone screen held in front of a scanner.
  */
 function code128Values(value: string): number[] | null {
 	if (/^\d+$/.test(value) && value.length % 2 === 0) {
@@ -343,8 +343,8 @@ const ENCODERS: Record<string, (value: string) => CodeElement[] | null> = {
 };
 
 /**
- * Un code mal formé pour son format n'est pas rabattu sur un autre : le tracé scannerait, mais
- * renverrait une donnée qui n'est pas celle de la carte. On préfère ne rien afficher et le dire.
+ * A code malformed for its format is not fallen back onto another: the drawing would scan, but would
+ * return data that is not the card's. We prefer to show nothing and say so.
  */
 export function linearCode(value: string, codeType: string): CodeElement[] | null {
 	return (ENCODERS[codeType] ?? code39)(value);

@@ -4,12 +4,12 @@ import { vibrate } from '$native/haptics';
 import { settings } from './settings.svelte';
 
 /**
- * Son et vibration, à l'endroit du geste.
+ * Sound and vibration, at the place of the gesture.
  *
- * Un navigateur refuse de produire du son avant le premier geste de l'utilisateur : le contexte
- * audio naît donc au premier appel, jamais au chargement, et se contente d'être relancé s'il a été
- * suspendu (retour d'arrière-plan sur téléphone). Tout est enveloppé : un retour sonore qui échoue
- * ne doit pas emporter l'action qui l'a demandé.
+ * A browser refuses to produce sound before the user's first gesture: the audio context is therefore born
+ * on the first call, never on load, and merely resumes if it has been suspended (coming back from the
+ * background on a phone). Everything is wrapped: feedback that fails must not take down the action that
+ * asked for it.
  */
 class Feedback {
 	#context: AudioContext | null = null;
@@ -53,7 +53,7 @@ class Feedback {
 			oscillator.frequency.setValueAtTime(from, start);
 			if (to !== from) oscillator.frequency.exponentialRampToValueAtTime(to, end);
 
-			// Attaque brève et extinction progressive : un oscillateur coupé net claque.
+			// Short attack and gradual fade: an oscillator cut dead makes a click.
 			const envelope = context.createGain();
 			envelope.gain.setValueAtTime(0, start);
 			envelope.gain.linearRampToValueAtTime(gain, start + 0.012);
@@ -63,7 +63,7 @@ class Feedback {
 			oscillator.start(start);
 			oscillator.stop(end + 0.02);
 		} catch {
-			// audio indisponible (onglet en arrière-plan, politique du navigateur)
+			// audio unavailable (tab in the background, browser policy)
 		}
 	}
 }

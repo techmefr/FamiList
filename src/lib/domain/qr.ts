@@ -2,18 +2,18 @@ import QRCode from 'qrcode';
 
 export interface QrCode {
 	size: number;
-	/** true = module sombre. */
+	/** true = dark module. */
 	modules: boolean[][];
 }
 
 /**
- * Encodage QR délégué à `qrcode`.
+ * QR encoding delegated to `qrcode`.
  *
- * Le prototype embarquait un encodeur écrit à la main. Il produit une image d'allure correcte —
- * motifs de repérage, quadrillage — mais les codes ne se relisent pas : vérifié en le décodant
- * avec une implémentation indépendante. Une carte qui ne scanne pas à la caisse est pire
- * qu'absente, donc l'encodage passe par une bibliothèque éprouvée. Elle est empaquetée dans
- * l'application : rien n'est demandé au réseau au moment de montrer le code.
+ * The prototype carried an encoder written by hand. It produces an image that looks right — finder
+ * patterns, grid — but the codes cannot be read back: checked by decoding one with an independent
+ * implementation. A card that does not scan at the till is worse than no card, so encoding goes through a
+ * proven library. It is bundled into the application: nothing is asked of the network when showing the
+ * code.
  */
 export function qrEncode(text: string): QrCode {
 	const { modules } = QRCode.create(String(text) || ' ', { errorCorrectionLevel: 'L' });

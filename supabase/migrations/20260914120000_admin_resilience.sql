@@ -1,47 +1,46 @@
--- Ne plus dependre d un seul compte, ni d un seul telephone.
+-- No longer depending on a single account, nor on a single phone.
 --
--- Deux pannes se ressemblent et n avaient pas de reponse dans l app. Le seul administrateur perd
--- son second facteur : `is_approved()` exige aal2 des qu un facteur verifie existe, donc plus rien
--- ne s ouvre. Ou bien ce compte disparait tout court : plus personne ne peut valider une
--- inscription, et l instance se ferme toute seule. Les deux se reglaient jusqu ici avec un editeur
--- SQL sur la production, ce qui n est pas une procedure, c est un aveu.
+-- Two failures look alike and had no answer in the app. The only administrator loses their second factor:
+-- `is_approved()` requires aal2 as soon as a verified factor exists, so nothing opens any more. Or that
+-- account disappears altogether: nobody can validate a sign-up any more, and the instance closes itself
+-- down. Both were settled until now with a SQL editor on production, which is not a procedure, it is an
+-- admission.
 --
--- Ce qui existe deja et qu on ne refait pas : les codes de secours (`consume_backup_code`) couvrent
--- le cas courant du telephone perdu, y compris pour un administrateur, et depuis une session restee
--- en aal1. Ce fichier ne traite que ce qu ils ne couvrent pas.
+-- What already exists and is not redone: the backup codes (`consume_backup_code`) cover the common case of a
+-- lost phone, including for an administrator, and from a session left at aal1. This file only deals with
+-- what they do not cover.
 --
--- Le choix de fond : aucune de ces fonctions ne contourne la 2FA de celui qui l appelle. Une porte
--- de secours ouverte par son propre proprietaire n est pas une porte de secours, c est une serrure
--- en moins. Le garde-fou commun est donc `is_admin() and is_approved()` : administrateur valide,
--- et au niveau d authentification que son compte s est lui-meme impose. Un administrateur bloque en
--- aal1 ne peut donc rien deverrouiller, ni pour lui ni pour un autre — c est voulu.
+-- The fundamental choice: none of these functions bypasses the 2FA of whoever calls it. An emergency door
+-- opened by its own owner is not an emergency door, it is one lock fewer. The common guardrail is therefore
+-- `is_admin() and is_approved()`: a valid administrator, at the authentication level their account has
+-- imposed on itself. An administrator stuck at aal1 can therefore unlock nothing, neither for themselves nor
+-- for anybody else — that is intended.
 --
--- Reste un cas qu aucun code ne peut traiter honnetement : le dernier administrateur, sans codes de
--- secours, sans second facteur. Lui donner une sortie dans l app voudrait dire donner a quiconque
--- prend son mot de passe une sortie identique. Ce cas se traite hors de l app, avec la cle de
--- service, et la seule chose a faire est de nommer un second administrateur :
+-- That leaves one case no code can handle honestly: the last administrator, with no backup codes and no
+-- second factor. Giving them a way out in the app would mean giving whoever takes their password an
+-- identical way out. That case is handled outside the app, with the service key, and the only thing to do is
+-- to appoint a second administrator:
 --
 --   update public.profiles set role = 'admin', status = 'approved'
---   where id = (select id from auth.users where email = 'quelqu-un@exemple.fr');
+--   where id = (select id from auth.users where email = 'somebody@example.com');
 --
--- puis, depuis ce compte, d utiliser `admin_reset_mfa` sur le compte bloque. C est la procedure
--- documentee demandee, et elle n existe que parce que la seule alternative serait une porte
--- derobee.
+-- then, from that account, to use `admin_reset_mfa` on the blocked account. That is the documented procedure
+-- asked for, and it exists only because the sole alternative would be a back door.
 --
--- Le declencheur plus bas rend ce cas rare : le dernier administrateur ne peut plus etre retrograde
--- ni refuse, ni par l app ni par une ecriture directe.
+-- The trigger below makes that case rare: the last administrator can no longer be demoted or refused,
+-- neither by the app nor by a direct write.
 
 /*
- * Nommer un second administrateur.
+ * Appointing a second administrator.
  *
- * C est la reponse a la panne de fond : tant qu il n y a qu un compte capable de valider les
- * inscriptions et de debloquer les autres, tout le reste n est que du rafistolage autour de lui.
+ * It is the answer to the fundamental failure: while there is only one account able to validate sign-ups and
+ * unblock the others, all the rest is only patching around it.
  *
- * La cible doit deja etre approuvee. Promouvoir un compte en attente reviendrait a le valider au
- * passage, en sautant `review_account` et la trace qu elle laisse dans `reviewed_by`.
+ * The target must already be approved. Promoting a pending account would amount to validating it along the
+ * way, skipping `review_account` and the trace it leaves in `reviewed_by`.
  *
- * Aucune regle d acces n est ajoutee sur `profiles` : `role` reste hors du `grant update` accorde a
- * `authenticated`, et cette colonne ne se change que par ici.
+ * No access rule is added on `profiles`: `role` stays outside the `grant update` given to `authenticated`,
+ * and that column is only changed from here.
  */
 create or replace function public.promote_admin(target uuid)
 returns void
@@ -65,11 +64,11 @@ end;
 $$;
 
 /*
- * Retirer le role administrateur.
+ * Removing the administrator role.
  *
- * Se retrograder soi-meme est permis : c est le geste normal quand on passe la main apres avoir
- * nomme son successeur. Ce qui est interdit, c est d arriver a zero — le declencheur ci-dessous
- * s en charge, pour que l interdiction tienne aussi sur une ecriture qui ne passerait pas par ici.
+ * Demoting yourself is allowed: it is the normal gesture when handing over after appointing your successor.
+ * What is forbidden is reaching zero — the trigger below takes care of that, so that the ban also holds on a
+ * write that would not go through here.
  */
 create or replace function public.demote_admin(target uuid)
 returns void
@@ -87,21 +86,21 @@ end;
 $$;
 
 /*
- * Retirer le deuxieme facteur d un autre compte.
+ * Removing another account's second factor.
  *
- * C est la reponse au telephone perdu quand les dix codes de secours le sont aussi. La fonction
- * ramene le compte cible a l etat d avant sa 2FA, exactement comme le ferait un de ses propres
- * codes : les facteurs partent, les codes restants aussi. Garder des condensats orphelins n aurait
- * servi qu a laisser trainer des codes valides pour une 2FA qui n existe plus.
+ * It is the answer to the lost phone when the ten backup codes are lost too. The function brings the target
+ * account back to the state before its 2FA, exactly as one of its own codes would: the factors go, and so do
+ * the remaining codes. Keeping orphan hashes would only have left valid codes lying around for a 2FA that no
+ * longer exists.
  *
- * `target <> auth.uid()` est la ligne qui empeche cette fonction d etre un contournement de 2FA.
- * Le garde-fou aal2 l interdit deja — un administrateur bloque en aal1 n est pas `is_approved()` —
- * mais la condition est ecrite quand meme : elle ne depend pas de la definition d une autre
- * fonction, et c est le genre de dependance qu on ne veut pas sur ce chemin-la.
+ * `target <> auth.uid()` is the line that stops this function being a 2FA bypass. The aal2 guardrail already
+ * forbids it — an administrator stuck at aal1 is not `is_approved()` — but the condition is written all the
+ * same: it does not depend on another function's definition, and that is the kind of dependency we do not
+ * want on that path.
  *
- * Les sessions de la cible sont fermees. Une session deja elevee en aal2 le resterait dans son
- * jeton alors que le facteur qui l a justifiee vient d etre retire : c est justement la session de
- * celui qui a pris le telephone.
+ * The target's sessions are closed. A session already raised to aal2 would stay so in its token while the
+ * factor that justified it has just been removed: and that is precisely the session of whoever took the
+ * phone.
  */
 create or replace function public.admin_reset_mfa(target uuid)
 returns void
@@ -129,17 +128,17 @@ end;
 $$;
 
 /*
- * Le dernier administrateur ne part pas.
+ * The last administrator does not leave.
  *
- * Retrograder ou refuser le seul compte administrateur ferme l instance de facon definitive du
- * point de vue de l app : plus personne ne peut valider une inscription, donc plus personne ne peut
- * devenir administrateur. Le declencheur est pose sur la table plutot que dans `demote_admin` pour
- * qu il tienne aussi face a `review_account`, a une correction faite a la main, et a la cle de
- * service — c est-a-dire face aux trois chemins par lesquels l erreur arriverait vraiment.
+ * Demoting or refusing the only administrator account closes the instance for good from the app's point of
+ * view: nobody can validate a sign-up any more, so nobody can become an administrator. The trigger is put on
+ * the table rather than inside `demote_admin` so that it also holds against `review_account`, against a
+ * correction made by hand, and against the service key — that is, against the three paths by which the
+ * mistake would really arrive.
  *
- * Seul `update` est surveille. La suppression du profil suit celle du compte `auth.users` et
- * l empecher rendrait un compte impossible a supprimer ; ce cas-la se voit et se rattrape, alors
- * qu une retrogradation passe inapercue jusqu a la prochaine inscription.
+ * Only `update` is watched. Deleting the profile follows the deletion of the `auth.users` account and
+ * preventing it would make an account impossible to delete; that case is visible and can be recovered from,
+ * whereas a demotion goes unnoticed until the next sign-up.
  */
 create or replace function public.keep_one_admin()
 returns trigger
@@ -167,9 +166,8 @@ create trigger profiles_keep_one_admin
   for each row
   execute function public.keep_one_admin();
 
--- Le panneau admin doit pouvoir distinguer qui est administrateur et qui est bloque derriere un
--- facteur perdu. Deux colonnes de plus changent le type de retour : Postgres refuse un simple
--- remplacement.
+-- The admin panel must be able to tell who is an administrator and who is blocked behind a lost factor. Two
+-- more columns change the return type: Postgres refuses a plain replacement.
 drop function public.pending_accounts();
 
 create function public.pending_accounts()

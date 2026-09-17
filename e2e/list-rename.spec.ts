@@ -1,11 +1,11 @@
 import { test, expect } from './fixtures';
 
 /**
- * Le nom et l'emoji d'une liste étaient figés à la création : ni l'un ni l'autre ne se corrigeait,
- * alors que ce sont justement les deux choses qu'on pose à la va-vite en créant la liste.
+ * A list's name and emoji were frozen at creation: neither could be corrected, even though they are exactly
+ * the two things set in a hurry while creating the list.
  *
- * La liste porte un nom daté, comme les autres tests de listes : elle reste derrière sans jamais
- * rendre un sélecteur ambigu au passage suivant.
+ * The list carries a dated name, like the other list tests: it stays behind without ever making a selector
+ * ambiguous on the next run.
  */
 test('renommer une liste, au bouton comme à l appui long', async ({ signedInPage: page }) => {
 	const nom = `Courses e2e ${Date.now()}`;
@@ -20,7 +20,7 @@ test('renommer une liste, au bouton comme à l appui long', async ({ signedInPag
 	const carte = page.locator('[data-test-class="list-card"]').filter({ hasText: nom });
 	await expect(carte).toBeVisible();
 
-	// Le crayon : le chemin du clavier et du lecteur d'écran.
+	// The pencil: the path of the keyboard and the screen reader.
 	await carte.locator('[data-test-class="list-rename"]').click();
 	await expect(page.getByTestId('list-name')).toHaveValue(nom);
 
@@ -30,10 +30,10 @@ test('renommer une liste, au bouton comme à l appui long', async ({ signedInPag
 	const corrigee = page.locator('[data-test-class="list-card"]').filter({ hasText: renomme });
 	await expect(corrigee).toBeVisible();
 
-	// Le formulaire se referme, et il ne reste pas en mode renommage.
+	// The form closes again, and does not stay in renaming mode.
 	await expect(page.getByTestId('list-rename-cancel')).toHaveCount(0);
 
-	// L'appui long sur la carte : la même fiche, préremplie — et il ne suit pas le lien.
+	// The long press on the card: the same sheet, prefilled — and it does not follow the link.
 	const lien = corrigee.getByRole('link').first();
 	const boite = await lien.boundingBox();
 	await page.mouse.move(boite!.x + boite!.width / 2, boite!.y + boite!.height / 2);
@@ -44,7 +44,7 @@ test('renommer une liste, au bouton comme à l appui long', async ({ signedInPag
 	await expect(page).toHaveURL(/\/$/);
 	await expect(page.getByTestId('list-name')).toHaveValue(renomme);
 
-	// Renoncer laisse la liste telle quelle.
+	// Giving up leaves the list as it is.
 	await page.getByTestId('list-rename-cancel').click();
 	await expect(corrigee).toBeVisible();
 });

@@ -37,17 +37,17 @@
 	let picker = $state<EmojiPicker | null>(null);
 	let eventDate = $state('');
 
-	/** Posé seulement après un enregistrement, quand la personne a refusé les notifications. */
+	/** Set only after a save, when the person refused notifications. */
 	let reminderRefused = $state(false);
 
-	/** La liste en cours de renommage. Le même formulaire sert à créer et à corriger. */
+	/** The list being renamed. The same form serves to create and to correct. */
 	let renomme = $state<string | null>(null);
 
 	/**
-	 * Ouvrir le formulaire sur une liste existante, par appui long sur sa carte.
+	 * Opening the form on an existing list, by long-pressing its card.
 	 *
-	 * Le nom et l'emoji se corrigent au même endroit qu'ils se posent : un second formulaire
-	 * n'aurait fait que répéter les deux mêmes champs et la même palette.
+	 * The name and the emoji are corrected in the same place they are set: a second form would only have
+	 * repeated the same two fields and the same palette.
 	 */
 	function renommer(list: { id: string; name: string; emoji: string; eventDate?: string }) {
 		feedback.play('tap');
@@ -58,7 +58,7 @@
 		reminderRefused = false;
 		creating = true;
 
-		// Le formulaire est en haut de page, la carte peut être loin en dessous.
+		// The form is at the top of the page, the card can be far below.
 		window.scrollTo({ top: 0, behavior: settings.animates ? 'smooth' : 'auto' });
 	}
 
@@ -72,8 +72,8 @@
 	}
 
 	/**
-	 * Le bouton central annonce ce qu'il vient chercher. Ici, c'est le formulaire replié qu'il
-	 * faut ouvrir : sans cela, le curseur n'aurait aucun champ où se poser en arrivant.
+	 * The central button announces what it comes for. Here it is the folded form that has to open:
+	 * without that, the cursor would have no field to land in on arrival.
 	 */
 	$effect(() => {
 		if (createIntent.take('list')) creating = true;
@@ -85,11 +85,11 @@
 	};
 
 	/**
-	 * Qui voit cette liste.
+	 * Who sees this list.
 	 *
-	 * Les visages plutôt qu'un décompte : on reconnaît une pile de deux portraits sans la lire, là
-	 * où « 2 membres » demande de s'arrêter dessus. Et la distinction privée / partagée est ce qui
-	 * décide si on peut y écrire une surprise d'anniversaire.
+	 * Faces rather than a count: you recognise a stack of two avatars without reading it, where "2 members"
+	 * asks you to stop on it. And the private / shared distinction is what decides whether you can write a
+	 * birthday surprise in it.
 	 */
 	const membersOf = (list: { memberIds: string[] }) =>
 		list.memberIds
@@ -97,11 +97,11 @@
 			.filter((member): member is NonNullable<typeof member> => Boolean(member));
 
 	/**
-	 * La date d'un événement, écrite dans la langue de l'écran.
+	 * An event date, written in the screen's language.
 	 *
-	 * Elle est stockée en ISO — une date n'est pas une chaîne à traduire — et mise en forme ici :
-	 * « 14 février » en français, « February 14 » en anglais. Une date invalide est simplement
-	 * ignorée plutôt que de faire apparaître « Invalid Date » sur la carte.
+	 * It is stored as ISO — a date is not a string to translate — and formatted here: "14 février" in
+	 * French, "February 14" in English. An invalid date is simply ignored rather than making "Invalid Date"
+	 * appear on the card.
 	 */
 	function eventLabel(iso: string) {
 		const date = new Date(iso);
@@ -111,11 +111,11 @@
 	}
 
 	/**
-	 * Ce que le rappel fera vraiment, écrit sous le champ au moment où la date se saisit.
+	 * What the reminder will really do, written under the field at the moment the date is typed.
 	 *
-	 * L'application est un paquet statique sans serveur : le rappel est une alarme posée sur
-	 * l'appareil, et le navigateur ne sait pas en poser. Plutôt que de laisser croire à un rappel
-	 * qui ne partira jamais, on le dit à l'endroit exact où la promesse se formule.
+	 * The application is a static bundle with no server: the reminder is an alarm set on the device, and
+	 * the browser cannot set one. Rather than suggesting a reminder that will never fire, we say so at the
+	 * exact place the promise is made.
 	 */
 	const reminderNotice = $derived.by(() => {
 		if (!eventDate) return '';
@@ -134,11 +134,11 @@
 	});
 
 	/**
-	 * L'autorisation se demande ici, sur le geste qui pose la date, et pas au lancement.
+	 * The permission is asked for here, on the gesture that sets the date, and not at launch.
 	 *
-	 * Android 13 ne la propose que deux fois : la dépenser à l'ouverture, avant que qui que ce soit
-	 * ait exprimé le besoin d'un rappel, reviendrait à la perdre. Un refus ne bloque rien — la date
-	 * est déjà enregistrée, seule la notification manque, et on le dit.
+	 * Android 13 only offers it twice: spending it at startup, before anyone has expressed the need for a
+	 * reminder, would amount to losing it. A refusal blocks nothing — the date is already saved, only the
+	 * notification is missing, and we say so.
 	 */
 	async function demanderRappel() {
 		const permission = await requestReminderPermission();
@@ -164,8 +164,8 @@
 	}
 
 	/**
-	 * Les cartes entrent l'une après l'autre, de haut en bas. Le décalage est plafonné : à quinze
-	 * listes, une cascade complète ferait attendre la dernière carte une seconde entière.
+	 * The cards come in one after another, top to bottom. The delay is capped: at fifteen lists, a full
+	 * cascade would make the last card wait a whole second.
 	 */
 	const STAGGER_MS = 45;
 	const STAGGER_MAX = 6;
@@ -187,7 +187,7 @@
 		<div class="grid gap-3 sm:grid-cols-[auto_1fr]">
 			<div class="w-20">
 				<Label for="list-emoji">{t('lists.emoji')}</Label>
-	<!-- Même palette que pour les rayons : un emoji ne se tape pas au clavier d'un ordinateur. -->
+	<!-- Same palette as for aisles: an emoji is not typed on a computer keyboard. -->
 			<button
 				type="button"
 				id="list-emoji"
@@ -246,9 +246,9 @@
 {/if}
 
 <!--
-	Le refus arrive après la fermeture du formulaire : la réponse du système est asynchrone, et
-	l'afficher dans un champ déjà rangé ne se verrait pas. Il est annoncé, pas seulement affiché —
-	c'est la seule information de la page qu'on ne peut deviner en regardant.
+	The refusal arrives after the form closes: the system's answer is asynchronous, and showing it in a
+	field already put away would go unseen. It is announced, not only displayed — it is the only
+	information on the page that cannot be guessed by looking.
 -->
 {#if reminderRefused}
 	<p class="text-caption text-destructive mt-4" role="status" data-test-id="reminder-denied">
@@ -273,9 +273,9 @@
 				<Card.Root data-test-class="list-card" class="fl-press">
 					<Card.Content class="flex flex-wrap items-center gap-x-4 gap-y-3">
 						<!--
-							L'appui long ouvre le renommage : c'est le geste du pouce, et il évite d'ajouter
-							un troisième bouton sur une carte qui en porte déjà. Le clavier et le lecteur
-							d'écran passent par le crayon, à côté de la corbeille.
+							The long press opens renaming: it is the thumb's gesture, and it avoids adding a third button to a
+							card that already carries some. The keyboard and the screen reader go through the pencil, next to
+							the bin.
 						-->
 						<a
 							href="/l/{list.id}"
@@ -290,8 +290,8 @@
 								</span>
 								{#if list.eventDate && eventLabel(list.eventDate)}
 									<!--
-										La date d'un repas de famille ou d'un anniversaire : c'est elle qui dit
-										jusqu'à quand la liste sert, et elle était modélisée sans jamais s'afficher.
+										The date of a family meal or a birthday: it is what says how long the list is useful for, and it
+										was modelled without ever being displayed.
 									-->
 									<span
 										class="text-caption text-secondary mt-1.5 inline-flex items-center gap-1 rounded-full bg-[var(--fl-secondary-tint)] px-2 py-0.5 font-semibold"
@@ -310,9 +310,9 @@
 							</span>
 						</a>
 						<!--
-							Le décompte et la corbeille voyagent ensemble. Séparés, ils se disputaient la fin
-							de la première ligne et la corbeille retombait seule à la ligne suivante, à
-							gauche : l'action la plus destructive se retrouvait à la place la plus en vue.
+							The count and the bin travel together. Apart, they fought over the end of the first line and the bin
+							fell alone onto the next one, on the left: the most destructive action ended up in the most visible
+							place.
 						-->
 						<div class="ms-auto flex shrink-0 items-center gap-2">
 							<Badge variant="secondary">{t('lists.remaining', { count: total - done })}</Badge>
@@ -326,9 +326,9 @@
 								<Pencil size={18} aria-hidden="true" />
 							</button>
 							<!--
-								La duplication vit sur la carte, avec le crayon et la corbeille, et non dans la
-								liste ouverte : c'est ici qu'on voit ses listes côte à côte et qu'on reconnaît
-								celle qui revient chaque semaine. La barre du bas ne porte que la navigation.
+								Duplication lives on the card, with the pencil and the bin, and not inside the opened list: this is
+								where you see your lists side by side and recognise the one that comes back every week. The bottom
+								bar carries navigation only.
 							-->
 							<button
 								type="button"
@@ -358,9 +358,9 @@
 					</Card.Content>
 
 					<!--
-						Le pied de carte répond à « qui d'autre voit ça ». Les portraits se chevauchent parce
-						qu'un foyer en compte rarement plus de cinq et qu'une pile serrée se lit d'un coup ;
-						le mot à côté est là parce que la pile seule ne dit pas si on est seul.
+						The card footer answers "who else sees this". The avatars overlap because a household rarely has
+						more than five and a tight stack reads at a glance; the word beside it is there because the stack
+						alone does not say whether you are alone.
 					-->
 					<Card.Footer class="text-caption text-muted-foreground flex items-center gap-2">
 						{@const membres = membersOf(list)}
@@ -393,12 +393,11 @@
 {/if}
 
 <!--
-	Ajouter une liste depuis la fin de la pile.
+	Adding a list from the end of the stack.
 
-	Le bouton du haut existe toujours, mais on ne s'aperçoit qu'il manque une liste qu'après avoir
-	parcouru celles qu'on a. Le trait tireté la distingue des vraies sans en faire une commande de
-	plus à ignorer ; elle disparaît quand le formulaire est déjà ouvert, pour ne pas offrir deux
-	fois la même chose.
+	The button at the top still exists, but you only notice a list is missing after going through the ones
+	you have. The dashed outline tells it from the real ones without making it one more control to ignore;
+	it disappears when the form is already open, so as not to offer the same thing twice.
 -->
 {#if data.ready && !creating}
 	<button

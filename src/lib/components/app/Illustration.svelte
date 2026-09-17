@@ -7,14 +7,14 @@
 </script>
 
 <!--
-	Les dessins des écrans vides.
+	The drawings of the empty screens.
 
-	Du SVG écrit à la main plutôt qu'une bibliothèque d'animation ou des fichiers image : ils pèsent
-	quelques centaines d'octets, ils suivent le thème clair et sombre tout seuls puisqu'ils sont
-	peints avec les variables de couleur, et ils restent nets à n'importe quelle taille de texte.
+	SVG written by hand rather than an animation library or image files: they weigh a few hundred bytes, they
+	follow the light and dark theme on their own since they are painted with the colour variables, and they
+	stay sharp at any text size.
 
-	Ils sont décoratifs. La phrase en dessous dit tout ce qu'il y a à comprendre — un dessin qui
-	porterait l'information laisserait sur le carreau qui ne le voit pas.
+	They are decorative. The sentence underneath says everything there is to understand — a drawing carrying
+	the information would leave behind whoever does not see it.
 -->
 <svg
 	viewBox="0 0 160 160"

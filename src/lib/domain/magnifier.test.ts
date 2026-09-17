@@ -62,7 +62,7 @@ describe('viewFilter', () => {
 		expect(viewFilter({ contrast: true, brighten: false })).toBe('grayscale(1) contrast(1.9)');
 	});
 
-	// Le contraste fort remplace le léger de la torche : les cumuler bouchait les noirs.
+	// The strong contrast replaces the torch's light one: stacking them blocked up the blacks.
 	it('cumule les deux sans empiler deux contrastes', () => {
 		expect(viewFilter({ contrast: true, brighten: true })).toBe(
 			'brightness(1.35) grayscale(1) contrast(1.9)'

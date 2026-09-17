@@ -1,8 +1,8 @@
--- Quitter un foyer efface aussi ses rangements de magasin.
+-- Leaving a household also erases its shop layouts.
 --
--- leave_household_lists nettoie list_members au depart, mais shop_layouts et shop_item_orders
--- restaient : des lignes que la RLS rend inaccessibles, jamais supprimees, et qui reviendraient
--- telles quelles si la meme personne rejoignait le foyer plus tard.
+-- leave_household_lists cleans up list_members on departure, but shop_layouts and shop_item_orders stayed:
+-- rows that RLS makes unreachable, never deleted, and that would come back as they were if the same person
+-- rejoined the household later.
 
 create or replace function public.leave_household_layouts()
 returns trigger
@@ -31,7 +31,7 @@ drop trigger if exists household_members_leave_layouts on public.household_membe
 create trigger household_members_leave_layouts after delete on public.household_members
   for each row execute function public.leave_household_layouts();
 
--- Les lignes deja orphelines, laissees par les departs passes.
+-- The rows already orphaned, left behind by past departures.
 delete from public.shop_item_orders o
 using public.shops s
 where o.shop_id = s.id

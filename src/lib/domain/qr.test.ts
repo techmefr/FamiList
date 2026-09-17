@@ -3,9 +3,9 @@ import jsQR from 'jsqr';
 import { qrEncode } from './qr';
 
 /**
- * Un QR n'a d'intérêt que s'il se relit. On vérifie donc l'encodeur en le décodant avec une
- * implémentation indépendante, plutôt qu'en comparant sa sortie à elle-même. jsqr n'est utilisé
- * qu'ici : l'application, elle, ne dépend de rien pour afficher un code.
+ * A QR is only of interest if it can be read back. So we check the encoder by decoding it with an
+ * independent implementation, rather than by comparing its output to itself. jsqr is used only here: the
+ * application itself depends on nothing to show a code.
  */
 const SCALE = 4;
 const QUIET = 4;

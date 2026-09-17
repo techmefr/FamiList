@@ -1,12 +1,12 @@
 /**
- * Unités de quantité proposées à l'ajout d'un article.
+ * Quantity units offered when adding an item.
  *
- * On stocke un identifiant stable, pas le mot affiché : « pièce » écrit tel quel en base restait
- * en français pour quelqu'un qui lit l'app en arabe, et changer de langue n'y pouvait rien.
- * L'étiquette vient de la traduction, la base ne garde que la clef.
+ * We store a stable id, not the displayed word: "pièce" written as is in the database stayed French for
+ * somebody reading the app in Arabic, and changing language could do nothing about it. The label comes
+ * from the translation, the database only keeps the key.
  *
- * L'ordre est celui de la liste déroulante : la pièce d'abord parce que c'est le cas courant,
- * puis les poids, les volumes, et enfin les conditionnements.
+ * The order is that of the dropdown: pieces first because it is the common case, then weights, volumes,
+ * and finally packaging.
  */
 export const UNITS = [
 	'piece',
@@ -31,10 +31,9 @@ export type UnitId = (typeof UNITS)[number];
 export const DEFAULT_UNIT: UnitId = 'piece';
 
 /**
- * Ce qui a pu être saisi à la main avant que le champ devienne une liste, et les pluriels que
- * quelqu'un écrit naturellement. Sans cette table, un article créé hier afficherait « pièce » en
- * dur pendant que ses voisins se traduisent — l'incohérence se verrait plus que le problème
- * d'origine.
+ * What may have been typed by hand before the field became a list, and the plurals somebody writes
+ * naturally. Without this table, an item created yesterday would show "pièce" hard-coded while its
+ * neighbours translate — the inconsistency would show more than the original problem.
  */
 const ALIASES: Record<string, UnitId> = {
 	pièce: 'piece',
@@ -79,9 +78,9 @@ const ALIASES: Record<string, UnitId> = {
 const KNOWN = new Set<string>(UNITS);
 
 /**
- * Rend l'identifiant correspondant à une valeur stockée, ou null si personne ne la reconnaît.
- * Le null est utile : l'appelant réaffiche alors le texte d'origine plutôt que de le remplacer par
- * une unité approchante, ce qui trahirait ce que la personne avait écrit.
+ * Returns the id matching a stored value, or null if nobody recognises it. The null is useful: the caller
+ * then shows the original text again rather than replacing it with an approximate unit, which would
+ * betray what the person had written.
  */
 export function resolveUnit(raw: string | null | undefined): UnitId | null {
 	const value = (raw ?? '').trim().toLowerCase();
@@ -90,25 +89,24 @@ export function resolveUnit(raw: string | null | undefined): UnitId | null {
 	return ALIASES[value] ?? null;
 }
 
-/** Clef de traduction d'une unité reconnue, sinon null. */
+/** Translation key of a recognised unit, otherwise null. */
 export function unitKey(raw: string | null | undefined): string | null {
 	const id = resolveUnit(raw);
 	return id ? `units.${id}` : null;
 }
 
 /**
- * Les mêmes unités, rangées par famille, pour être choisies en deux temps.
+ * The same units, grouped by family, to be chosen in two steps.
  *
- * Quinze entrées dans une liste déroulante, c'est quinze mots à lire pour en garder un — et sur un
- * téléphone, la liste s'ouvre par-dessus le reste du formulaire. On demande donc d'abord de quoi
- * on parle (des pièces, un poids, un liquide, un conditionnement), et seulement ensuite laquelle :
- * jamais plus de dix choix à la fois, et deux la plupart du temps.
+ * Fifteen entries in a dropdown is fifteen words to read in order to keep one — and on a phone, the list
+ * opens over the rest of the form. So we first ask what we are talking about (pieces, a weight, a liquid,
+ * packaging), and only then which one: never more than ten choices at a time, and two most of the time.
  *
- * Une famille qui ne contient qu'une unité n'en demande pas une deuxième : choisir « Pièces » puis
- * « pièce » serait un pas pour rien.
+ * A family containing a single unit does not ask for a second choice: picking "Pieces" then "piece" would
+ * be a step for nothing.
  *
- * L'ordre à l'intérieur d'une famille va du plus petit au plus grand — g puis kg, ml puis L — et
- * non par fréquence : c'est celui qu'on lit sur un emballage, et il se retient.
+ * The order inside a family goes from smallest to largest — g then kg, ml then L — and not by frequency:
+ * it is the one you read on a package, and it sticks.
  */
 export const UNIT_GROUPS = [
 	{ id: 'count', units: ['piece'] },
@@ -122,10 +120,10 @@ export type UnitGroupId = (typeof UNIT_GROUPS)[number]['id'];
 export const DEFAULT_UNIT_GROUP: UnitGroupId = 'count';
 
 /**
- * La famille d'une unité déjà enregistrée, pour rouvrir le choix là où on l'avait laissé.
+ * The family of an already saved unit, to reopen the choice where it was left.
  *
- * Ce qui n'est pas reconnu retombe sur les pièces, pas sur une erreur : un article importé avec
- * une unité fantaisiste doit rester modifiable, et « pièce » est le cas de loin le plus courant.
+ * What is not recognised falls back on pieces, not on an error: an item imported with a fanciful unit must
+ * stay editable, and "piece" is by far the most common case.
  */
 export function unitGroupOf(raw: string | null | undefined): UnitGroupId {
 	const id = resolveUnit(raw);
@@ -135,8 +133,10 @@ export function unitGroupOf(raw: string | null | undefined): UnitGroupId {
 	return group ? group.id : DEFAULT_UNIT_GROUP;
 }
 
-/** Les unités d'une famille. Une famille inconnue rend la première : l'écran affiche toujours
- * quelque chose plutôt qu'une rangée vide. */
+/**
+ * The units of a family. An unknown family returns the first one: the screen always shows something
+ * rather than an empty row.
+ */
 export function unitsOf(group: UnitGroupId): readonly UnitId[] {
 	const found = UNIT_GROUPS.find((candidate) => candidate.id === group);
 	return found ? found.units : UNIT_GROUPS[0].units;

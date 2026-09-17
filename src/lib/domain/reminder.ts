@@ -1,19 +1,19 @@
 /**
- * Quand rappeler une liste datée, et laquelle mérite encore un rappel.
+ * When to remind about a dated list, and which one still deserves a reminder.
  *
- * Tout est pur et sans plateforme : c'est la seule partie de la fonctionnalité qui se teste, et
- * c'est aussi la seule qui décide. La couche native ne fait qu'exécuter ce qui est calculé ici.
+ * Everything is pure and platform-free: it is the only part of the feature that can be tested, and also
+ * the only one that decides. The native layer only carries out what is computed here.
  */
 
-/** Une date d'événement est un jour, pas un instant : « le 14 février », pas « 14h32 ». */
+/** An event date is a day, not an instant: "on 14 February", not "2.32pm". */
 const EVENT_DATE = /^(\d{4})-(\d{2})-(\d{2})$/;
 
 /**
- * Le rappel tombe la veille au soir, pas le jour même.
+ * The reminder falls the evening before, not on the day itself.
  *
- * Le besoin est de ne pas rater les ingrédients d'une recette *avant* la date : prévenir le matin
- * du repas arrive trop tard, il faudrait encore trouver le temps d'aller au magasin. 18h la veille
- * laisse la soirée pour y passer, et c'est l'heure où l'on rentre plutôt que celle où l'on dort.
+ * The need is not to miss a recipe's ingredients *before* the date: warning on the morning of the meal
+ * comes too late, you would still have to find time to get to the shop. 6pm the day before leaves the
+ * evening to drop by, and it is the hour you come home rather than the hour you sleep.
  */
 export const REMINDER_HOUR = 18;
 export const REMINDER_DAYS_BEFORE = 1;
@@ -28,7 +28,7 @@ export interface ReminderCandidate {
 
 export interface ReminderPlan {
 	listId: string;
-	/** Identifiant entier exigé par les notifications locales, dérivé de l'identifiant de liste. */
+	/** Integer id required by local notifications, derived from the list id. */
 	id: number;
 	name: string;
 	eventDate: string;
@@ -42,7 +42,7 @@ export function isEventDate(value: string | null | undefined): value is string {
 	const [, annee, mois, jour] = parts;
 	const date = new Date(Number(annee), Number(mois) - 1, Number(jour));
 
-	// Le constructeur accepte « 2026-02-31 » en le reportant sur mars : on le rejette en relisant.
+	// The constructor accepts "2026-02-31" by rolling it into March: we reject it by reading it back.
 	return (
 		date.getFullYear() === Number(annee) &&
 		date.getMonth() === Number(mois) - 1 &&
@@ -51,12 +51,12 @@ export function isEventDate(value: string | null | undefined): value is string {
 }
 
 /**
- * L'instant du rappel, dans le fuseau de l'appareil.
+ * The moment of the reminder, in the device timezone.
  *
- * Volontairement local et non UTC : « le 14 février » est un jour vécu, et un rappel programmé en
- * UTC sonnerait à une heure qui n'a de sens nulle part. Rien n'est rendu quand l'instant est déjà
- * passé — programmer une notification dans le passé ne fait rien du tout, et l'interface doit
- * pouvoir le dire au lieu de promettre un rappel qui ne viendra pas.
+ * Deliberately local and not UTC: "14 February" is a day as lived, and a reminder scheduled in UTC would
+ * ring at an hour that makes sense nowhere. Nothing is returned when the moment has already passed —
+ * scheduling a notification in the past does nothing at all, and the interface must be able to say so
+ * instead of promising a reminder that will not come.
  */
 export function reminderAt(eventDate: string | null | undefined, now: Date): Date | null {
 	if (!isEventDate(eventDate)) return null;
@@ -68,27 +68,27 @@ export function reminderAt(eventDate: string | null | undefined, now: Date): Dat
 }
 
 /**
- * Un entier stable pour une liste.
+ * A stable integer for a list.
  *
- * Les notifications locales s'identifient par un entier 32 bits, pas par un UUID. Le rendre stable
- * est ce qui permet de reprogrammer sans doublon : la même liste retombe toujours sur le même
- * numéro, qu'on vienne de changer sa date ou de réinstaller l'application.
+ * Local notifications are identified by a 32-bit integer, not by a UUID. Making it stable is what allows
+ * rescheduling without duplicates: the same list always falls on the same number, whether its date has
+ * just changed or the application has been reinstalled.
  */
 export function reminderId(listId: string): number {
 	let hash = 0;
 	for (const caractere of listId) hash = (hash * 31 + caractere.charCodeAt(0)) | 0;
 
-	// Le signe est retiré : l'implémentation Android refuse un identifiant négatif.
+	// The sign is removed: the Android implementation refuses a negative id.
 	return Math.abs(hash) % 2147483647;
 }
 
 /**
- * Les rappels que l'appareil doit porter, maintenant.
+ * The reminders the device must carry, now.
  *
- * Cette fonction répond d'un coup à « et si la date passe », « et si la liste est finie », « et si
- * la date change » : elle est rejouée en entier à chaque changement, et ce qu'elle ne rend plus
- * est annulé. Une liste vide garde son rappel — elle est justement celle qu'on n'a pas encore
- * remplie, et c'est le cas que l'issue décrit.
+ * This function answers at once "what if the date passes", "what if the list is finished", "what if the
+ * date changes": it is replayed in full on every change, and what it no longer returns is cancelled. An
+ * empty list keeps its reminder — it is precisely the one not filled in yet, and that is the case the
+ * outcome describes.
  */
 export function reminderPlans(candidates: ReminderCandidate[], now: Date): ReminderPlan[] {
 	const plans: ReminderPlan[] = [];
@@ -97,7 +97,7 @@ export function reminderPlans(candidates: ReminderCandidate[], now: Date): Remin
 		const at = reminderAt(candidate.eventDate, now);
 		if (!at) continue;
 
-		// Tout est pris : le rappel n'a plus rien à rappeler.
+		// Everything is picked up: the reminder has nothing left to remind about.
 		if (candidate.total > 0 && candidate.done === candidate.total) continue;
 
 		plans.push({
@@ -113,11 +113,11 @@ export function reminderPlans(candidates: ReminderCandidate[], now: Date): Remin
 }
 
 /**
- * Ce que l'interface a le droit d'annoncer à propos d'une date qu'on vient de saisir.
+ * What the interface is allowed to announce about a date just typed.
  *
- * `late` est le cas honnête et facile à oublier : la date est valide, elle est même encore devant
- * nous, mais la veille au soir est déjà passée. Aucun rappel ne partira, et il vaut mieux l'écrire
- * que laisser croire le contraire.
+ * `late` is the honest case and the easy one to forget: the date is valid, it is even still ahead of us,
+ * but the evening before has already passed. No reminder will fire, and it is better to write that than
+ * to let the opposite be believed.
  */
 export type ReminderStatus = 'none' | 'invalid' | 'late' | 'planned';
 

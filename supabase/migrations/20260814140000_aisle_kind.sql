@@ -1,9 +1,8 @@
--- Categorie d'un rayon, stable et independante de l'identifiant et du nom.
+-- An aisle's category, stable and independent of the identifier and the name.
 --
--- La detection automatique du rayon a partir du nom d'un article ("Tomates grappe" -> fruits)
--- raisonne sur des categories, pas sur des identifiants : ceux-ci sont des uuid propres a chaque
--- foyer. Sans cette colonne, la detection ne peut rien designer. Elle reste nulle pour les rayons
--- crees par l'utilisateur, qui n'entrent pas dans la detection.
+-- Automatic detection of the aisle from an item's name ("Vine tomatoes" -> fruit) reasons about categories,
+-- not about identifiers: those are uuids specific to each household. Without this column, detection has
+-- nothing to point at. It stays null for aisles created by the user, which are not part of detection.
 
 alter table public.aisles add column kind text;
 
@@ -45,8 +44,8 @@ begin
   insert into public.household_members (household_id, user_id, role)
   values (created, (select auth.uid()), 'owner');
 
-  -- Rayons de depart, dans l'ordre d'une grande surface classique. Sans eux, un nouveau compte
-  -- ouvre une application vide ou rien ne peut etre range.
+  -- Starting aisles, in the order of a classic supermarket. Without them, a new account opens an empty
+  -- application where nothing can be filed.
   insert into public.aisles (household_id, name, emoji, position, kind)
   values
     (created, 'Fruits & Légumes', '🥬', 0, 'fruits'),

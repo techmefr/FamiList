@@ -1,13 +1,12 @@
 @import 'tailwindcss';
 
 /*
- * Polices auto-hébergées : l'application tourne sous Capacitor et doit s'ouvrir sans réseau, donc
- * rien ne peut venir d'un CDN. Chaque fichier déclare ses plages Unicode, le navigateur ne
- * télécharge que la fonte réellement affichée — déclarer les deux familles ne coûte rien tant que
- * la personne reste sur « Système ».
+ * Self-hosted fonts: the application runs under Capacitor and must open with no network, so nothing can
+ * come from a CDN. Each file declares its Unicode ranges, and the browser only downloads the face actually
+ * shown — declaring both families costs nothing while the person stays on "System".
  *
- * Ni l'une ni l'autre ne couvre le cyrillique ou l'arabe : le russe et l'arabe retombent sur la
- * pile système, d'où l'importance de la garder complète dans --fl-font-system.
+ * Neither covers Cyrillic or Arabic: Russian and Arabic fall back on the system stack, hence the importance
+ * of keeping it complete in --fl-font-system.
  */
 @import '@fontsource/atkinson-hyperlegible/400.css';
 @import '@fontsource/atkinson-hyperlegible/700.css';
@@ -19,25 +18,23 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 /*
- * Les trois régimes de navigation, décidés par la largeur *et* l'orientation.
+ * The three navigation regimes, decided by width *and* orientation.
  *
- * `phone` — moins de 48rem : la barre en bas, au pouce.
- * `rail` — au moins 48rem et tenu en hauteur : une colonne étroite sur un bord, le jeu d'entrées
- *   du téléphone. Une tablette en portrait a la hauteur d'un grand écran et la largeur d'un
- *   téléphone ; la juger sur la seule largeur lui donnait une colonne de 16rem qui mangeait un
- *   cinquième de la page.
- * `full` — au moins 48rem et tenu en largeur : la colonne complète, toutes les destinations.
+ * `phone` — under 48rem: the bar at the bottom, for the thumb.
+ * `rail` — at least 48rem and taller than wide: a narrow column on one edge, with the phone's set of
+ *   entries. A tablet in portrait has the height of a large screen and the width of a phone; judging it on
+ *   width alone gave it a 16rem column eating a fifth of the page.
+ * `full` — at least 48rem and wider than tall: the complete column, every destination.
  *
- * `compact` est la réunion des deux premiers, écrite comme la négation de `full` plutôt qu'en
- * disjonction : Tailwind ne garde que la première requête d'une liste séparée par des virgules, et
- * le silence de cette perte — les entrées réservées à la colonne complète réapparaissaient dans le
- * rail — vaut mieux que l'élégance de la forme.
+ * `compact` is the union of the first two, written as the negation of `full` rather than as a disjunction:
+ * Tailwind keeps only the first query of a comma-separated list, and the silence of that loss — the entries
+ * reserved for the full column reappearing in the rail — is worse than the elegance of the form.
  *
- * L'orientation, et non un second seuil de largeur : une fenêtre de bureau de 900 px de large sur
- * 1200 de haut a exactement le problème de la tablette en portrait, et mérite la même réponse.
+ * Orientation, and not a second width threshold: a desktop window 900 px wide by 1200 tall has exactly the
+ * portrait tablet's problem, and deserves the same answer.
  *
- * Seules les variantes dont le balisage a besoin sont déclarées ici ; la charpente du rail et le
- * panneau des listes sont écrits en requêtes complètes, plus bas, là où ils vivent.
+ * Only the variants the markup needs are declared here; the rail's frame and the list panel are written as
+ * full queries, further down, where they live.
  */
 @custom-variant phone (@media (width < 48rem));
 @custom-variant full (@media (width >= 48rem) and (orientation: landscape));
@@ -51,16 +48,16 @@
 	--popover: #ffffff;
 	--popover-foreground: #1c1917;
 	/*
-	 * Terracotta assombrie pour le RGAA. La teinte d'origine, #c8532a, ne donnait que 3,81:1 sur
-	 * ce fond : tous les liens d'accent et le texte blanc des boutons principaux passaient sous
-	 * les 4,5:1 exigés, et c'est l'accent par défaut, donc le cas le plus courant.
+	 * Terracotta darkened for RGAA. The original hue, #c8532a, gave only 3.81:1 on this ground: every accent
+	 * link and the white text of the primary buttons fell under the 4.5:1 required, and it is the default
+	 * accent, so the most common case.
 	 *
-	 * Seule la clarté a bougé, de 0,565 à 0,51 en oklch — la teinte et la saturation sont
-	 * inchangées. Le cran est dicté par le cas le plus dur, l'accent posé sur son propre fond
-	 * teinté à 10 % (les pastilles, les bulles de discussion) : 4,56:1. Sur le fond simple on est
-	 * à 5,25:1, sur une carte à 6,13:1, et le blanc dessus à 6,13:1.
+	 * Only the lightness moved, from 0.565 to 0.51 in oklch — hue and saturation are unchanged. The step is
+	 * dictated by the hardest case, the accent set on its own ground tinted at 10% (the chips, the chat
+	 * bubbles): 4.56:1. On the plain ground we are at 5.25:1, on a card at 6.13:1, and the white over it at
+	 * 6.13:1.
 	 *
-	 * Les cinq autres accents et tout le thème sombre passaient déjà, avec de la marge.
+	 * The five other accents and the whole dark theme already passed, with room to spare.
 	 */
 	--primary: #a94008;
 	--primary-foreground: #ffffff;
@@ -136,12 +133,11 @@
 }
 
 /**
- * Couleur principale au choix. Terracotta est la valeur par défaut, déjà posée par :root et .dark
- * ci-dessus. Chaque autre teinte est en OKLCH à clarté fixée par thème, ce qui garde
- * --primary-foreground lisible sans calcul à l'exécution.
+ * Main colour of your choice. Terracotta is the default, already set by :root and .dark above. Every other
+ * hue is in OKLCH at a lightness fixed per theme, which keeps --primary-foreground readable with no
+ * computation at runtime.
  *
- * Ces valeurs ne vivent qu'ici : le script anti-flash et le store se contentent de poser
- * data-accent sur <html>.
+ * These values live only here: the anti-flash script and the store merely set data-accent on <html>.
  */
 [data-accent='forest'] {
 	--primary: oklch(0.45 0.11 155);
@@ -198,7 +194,7 @@
 	--fl-primary-tint: oklch(0.82 0.02 60 / 0.14);
 }
 
-/** Pastille de choix : montre la teinte du preset, y compris quand il n'est pas actif. */
+/** Choice chip: shows the preset's hue, including when it is not active. */
 .fl-swatch {
 	background: var(--primary);
 }
@@ -240,8 +236,8 @@
 }
 
 /**
- * Échelle typographique du prototype, exprimée en rem. Les cinq crans de taille agissent sur
- * --fl-font-scale, donc sur le font-size racine : tout grandit ensemble, proportions préservées.
+ * The prototype's type scale, expressed in rem. The five size steps act on --fl-font-scale, and therefore
+ * on the root font-size: everything grows together, proportions preserved.
  */
 :root {
 	--fl-font-scale: 1;
@@ -256,14 +252,13 @@
 }
 
 /**
- * Trois choix de police, « Système » par défaut.
+ * Three font choices, "System" by default.
  *
- * La pile système reprend la police de l'appareil : quelqu'un qui a installé une police adaptée à
- * sa dyslexie la retrouve sans rien régler ici. Les deux autres existent pour qui n'a rien
- * configuré — Atkinson Hyperlegible est dessinée pour la basse vision, elle distingue les formes
- * qui se confondent (I l 1, O 0).
+ * The system stack takes the device's font: somebody who has installed a font suited to their dyslexia
+ * finds it again without setting anything here. The other two exist for those who have configured nothing —
+ * Atkinson Hyperlegible is drawn for low vision, it tells apart the shapes that get confused (I l 1, O 0).
  *
- * Les deux préréglages gardent la pile système en repli : c'est elle qui rend l'arabe et le russe.
+ * Both presets keep the system stack as a fallback: it is what renders Arabic and Russian.
  */
 :root {
 	--fl-font-system:
@@ -354,10 +349,9 @@
 		background-color: var(--background);
 		color-scheme: light;
 		/*
-		 * 100 % et non 16px : sur l'élément racine, un pourcentage part de la taille de police
-		 * choisie dans le navigateur ou le système. Quelqu'un qui a déjà agrandi le texte au
-		 * niveau de son appareil garde son réglage, et les sept crans deviennent un
-		 * multiplicateur par-dessus. Avec 16px en dur, ce réglage était purement ignoré.
+		 * 100% and not 16px: on the root element, a percentage starts from the font size chosen in the browser
+		 * or the system. Somebody who has already enlarged the text at their device level keeps their setting,
+		 * and the seven steps become a multiplier on top. With a hard 16px, that setting was purely ignored.
 		 */
 		font-size: calc(100% * var(--fl-font-scale));
 	}
@@ -374,27 +368,25 @@
 		-webkit-font-smoothing: antialiased;
 
 		/*
-		 * Au cran Confort l'intérieur d'une carte fait 227 px, et un mot comme « Mouvement » en
-		 * mesure 250 : sans autorisation de coupure il sort de la carte, qui masque son
-		 * débordement — le mot est donc coupé net, à l'image près.
+		 * At the Comfort step the inside of a card is 227 px, and a word like "Mouvement" measures 250: with no
+		 * break allowed it leaves the card, which hides its overflow — so the word is cut dead, to the pixel.
 		 *
-		 * `anywhere` et non `break-word` : les deux coupent un mot trop long de la même façon, mais
-		 * seul `anywhere` compte ces coupures dans la largeur minimale de l'élément. Sans lui, un
-		 * bloc de texte dans une rangée flex réclame la largeur de son mot le plus long et déborde
-		 * quand même, ce qui était exactement le cas de l'adresse e-mail du profil.
+		 * `anywhere` and not `break-word`: both break an over-long word the same way, but only `anywhere`
+		 * counts those breaks in the element's minimum width. Without it, a block of text in a flex row demands
+		 * the width of its longest word and overflows all the same, which was exactly the case of the profile's
+		 * email address.
 		 *
-		 * Un mot qui tient sur sa ligne n'est jamais coupé : la règle ne se voit qu'aux crans où
-		 * l'alternative serait du texte tronqué.
+		 * A word that fits on its line is never broken: the rule only shows at the steps where the alternative
+		 * would be truncated text.
 		 */
 		overflow-wrap: anywhere;
 	}
 
 	/*
-	 * 44 px est une taille de doigt, pas une taille de texte : le plancher ne doit jamais
-	 * rétrécir. Écrit seul, 2,75rem tombe à 39,6 px au cran xs, où la racine vaut 14,4 px — toutes
-	 * les commandes de l'app passaient alors sous la cible d'un coup. Le max garde les deux
-	 * comportements : jamais moins que le doigt, et toujours plus grand quand quelqu'un agrandit
-	 * le texte. Même raisonnement pour une largeur imposée : min-w-[44px], jamais min-w-11.
+	 * 44 px is a finger size, not a text size: the floor must never shrink. Written alone, 2.75rem falls to
+	 * 39.6 px at the xs step, where the root is 14.4 px — every control in the app then went under the target
+	 * at once. The max keeps both behaviours: never less than the finger, and always bigger when somebody
+	 * enlarges the text. Same reasoning for an imposed width: min-w-[44px], never min-w-11.
 	 */
 	button,
 	[role='button'],
@@ -410,10 +402,9 @@
 	}
 
 	/*
-	 * Le navigateur donne à `fieldset` une largeur minimale égale à celle de son contenu : un
-	 * groupe qui contient un défilement horizontal refuse alors de se réduire, et c'est la page
-	 * entière qui s'élargit au lieu du contenu qui glisse. Le sélecteur de magasin de l'écran
-	 * d'une liste poussait ainsi la page à 786 px au cran Confort.
+	 * The browser gives `fieldset` a minimum width equal to that of its content: a group containing a
+	 * horizontal scroll then refuses to shrink, and it is the whole page that widens instead of the content
+	 * sliding. The shop selector of a list screen pushed the page to 786 px at the Comfort step this way.
 	 */
 	fieldset {
 		min-inline-size: 0;
@@ -425,11 +416,11 @@
 	}
 
 	/*
-	 * Un bouton radio masqué par `sr-only` garde le focus, mais son contour tombe sur un carré d'un
-	 * pixel : au clavier, plus rien n'indique où l'on est. Les choix d'apparence de l'accueil et du
-	 * profil étaient dans ce cas, et le sélecteur connexion / création aussi. Le contour passe donc
-	 * sur le libellé, qui est la surface qu'on voit et qu'on clique. Enfant direct seulement : une
-	 * commande visible dans un libellé garde le sien, sans en recevoir un second autour du texte.
+	 * A radio button hidden by `sr-only` keeps focus, but its outline falls on a one-pixel square: on the
+	 * keyboard, nothing indicates where you are any more. The appearance choices of the home screen and the
+	 * profile were in that case, and so was the sign-in / sign-up selector. The outline therefore moves to
+	 * the label, which is the surface you see and click. Direct child only: a visible control inside a label
+	 * keeps its own, without receiving a second one around the text.
 	 */
 	label:has(> .sr-only:focus-visible) {
 		outline: 2px solid var(--ring);
@@ -438,18 +429,17 @@
 }
 
 /**
- * Une carte découpée en blocs.
+ * A card cut into blocks.
  *
- * L'écran des réglages empile cinq questions dans une même carte — thème, couleur, taille,
- * police, langue. Séparées par du vide seul, elles se lisaient comme une seule longue liste :
- * on ne voyait plus où finissait un choix et où commençait le suivant.
+ * The settings screen stacks five questions in the same card — theme, colour, size, font, language.
+ * Separated by empty space alone, they read as a single long list: you could no longer see where one choice
+ * ended and the next began.
  *
- * Le trait est celui des bordures du thème, à 8 % de noir : assez pour découper, pas assez pour
- * faire un tableau. Il remplace l'écart vertical au lieu de s'y ajouter, sinon les blocs
- * s'éloigneraient les uns des autres au lieu de se distinguer.
+ * The rule is the theme's border one, at 8% black: enough to divide, not enough to make a table. It
+ * replaces the vertical gap instead of adding to it, otherwise the blocks would move apart instead of being
+ * told apart.
  *
- * Jamais avant le premier bloc : un trait sous le titre de la carte redirait ce que la carte dit
- * déjà.
+ * Never before the first block: a rule under the card title would say again what the card already says.
  */
 .fl-divided > * + * {
 	border-block-start: 1px solid var(--border);
@@ -458,19 +448,18 @@
 }
 
 /**
- * Le bouton principal réagit au survol et à l'appui.
+ * The primary button reacts to hover and press.
  *
- * shadcn ne prévoit ce changement que pour un lien (`[a]:hover`) : un vrai `<button>` en couleur
- * principale ne bougeait pas d'un pixel, alors que la variante discrète, elle, s'éclaircit au
- * survol. Sur l'écran des réglages, la commande la plus visible était donc la seule à ne pas
- * répondre.
+ * shadcn only plans that change for a link (`[a]:hover`): a real `<button>` in the primary colour did not
+ * move a pixel, while the quiet variant does lighten on hover. On the settings screen, the most visible
+ * control was therefore the only one not to respond.
  *
- * Les deux teintes existaient déjà dans le thème sans que rien ne s'en serve. Elles sont assez
- * contrastées pour le texte blanc qu'elles portent : 7,3:1 au survol, 8,7:1 à l'appui.
+ * Both shades already existed in the theme with nothing using them. They are contrasted enough for the
+ * white text they carry: 7.3:1 on hover, 8.7:1 on press.
  *
- * `.bg-primary` désigne la variante principale : c'est l'utilitaire que shadcn lui pose, et
- * `[data-slot='button']` limite la portée à un bouton. Hors `@layer`, comme les autres règles
- * de cette section, pour passer devant l'utilitaire sans toucher au composant.
+ * `.bg-primary` designates the primary variant: it is the utility shadcn puts on it, and
+ * `[data-slot='button']` limits the scope to a button. Outside `@layer`, like the other rules of this
+ * section, so as to come before the utility without touching the component.
  */
 [data-slot='button'].bg-primary:hover {
 	background-color: var(--fl-primary-hover);
@@ -481,16 +470,16 @@
 }
 
 /**
- * Un libellé de bouton se lit en entier. Le composant shadcn arrive avec `whitespace-nowrap`,
- * ce qui suffit tant que le texte est petit ; au cran Confort, « Ajouter un magasin » mesure
- * plus large que l'écran et sort de la page, en emmenant la barre de navigation avec lui.
+ * A button label is read in full. The shadcn component comes with `whitespace-nowrap`, which is fine while
+ * the text is small; at the Comfort step, "Ajouter un magasin" measures wider than the screen and leaves
+ * the page, taking the navigation bar with it.
  *
- * La hauteur suit : `h-8` est figée, donc un libellé sur trois lignes déborderait du fond arrondi.
- * Elle devient automatique, avec la hauteur de cible tactile de la règle de base en plancher —
- * aux crans courants c'est ce plancher qui décide, et rien ne change.
+ * The height follows: `h-8` is fixed, so a label on three lines would overflow the rounded ground. It
+ * becomes automatic, with the base rule's touch target height as a floor — at the usual steps it is that
+ * floor that decides, and nothing changes.
  *
- * Règle hors `@layer` volontairement : c'est le seul moyen de passer devant une utilitaire
- * Tailwind sans toucher au composant, qui est régénérable.
+ * Rule outside `@layer` on purpose: it is the only way to come before a Tailwind utility without touching
+ * the component, which is regenerable.
  */
 [data-slot='button'] {
 	height: auto;
@@ -499,18 +488,17 @@
 	white-space: normal;
 	text-align: center;
 	/*
-	 * shadcn interdit au bouton de se réduire, pour qu'il ne soit pas écrasé dans une rangée
-	 * chargée. À grande taille de texte, c'est ce qui le fait sortir de la carte. On lui rend le
-	 * droit de se réduire, sans plancher à zéro : `min-width` reste sur `auto`, donc il ne
-	 * descend jamais sous la largeur de son mot le plus long.
+	 * shadcn forbids the button to shrink, so that it is not squashed in a busy row. At a large text size,
+	 * that is what makes it leave the card. We give it back the right to shrink, with no floor at zero:
+	 * `min-width` stays on `auto`, so it never goes under the width of its longest word.
 	 */
 	flex-shrink: 1;
 }
 
 /**
- * Même raison pour la pastille, avec une nuance : sa hauteur est figée à 1,25 rem et son
- * débordement est masqué, donc un libellé sur deux lignes serait coupé net. On garde la hauteur
- * en plancher — la pastille reste ronde quand le texte est court — et on laisse la boîte grandir.
+ * Same reason for the chip, with one nuance: its height is fixed at 1.25 rem and its overflow is hidden, so
+ * a label on two lines would be cut dead. We keep the height as a floor — the chip stays round when the text
+ * is short — and let the box grow.
  */
 [data-slot='badge'] {
 	height: auto;
@@ -520,22 +508,21 @@
 }
 
 /**
- * Les écarts d'un champ de saisie, en un seul endroit.
+ * The gaps of an input field, in a single place.
  *
- * La règle tient en une phrase : le texte ne touche rien. Ni le bord du champ, ni le libellé
- * au-dessus, ni l'aide en dessous. Les composants shadcn arrivent sans aucun de ces écarts —
- * « Adresse e-mail » était posé à même le bord du champ, et la saisie collée au trait — et les
- * poser à la main à chaque formulaire, c'est en oublier un sur trois.
+ * The rule fits in one sentence: the text touches nothing. Neither the field's edge, nor the label above,
+ * nor the help below. The shadcn components come with none of those gaps — "Adresse e-mail" sat right on
+ * the field's edge, and the typing stuck to the rule — and setting them by hand on every form means
+ * forgetting one in three.
  *
- * Tout est en rem : les écarts grandissent avec la taille de texte choisie, comme le reste. Et
- * tout est en propriétés logiques : en arabe, la même règle se lit de droite à gauche sans qu'on
- * ait à l'écrire deux fois.
+ * Everything is in rem: the gaps grow with the chosen text size, like the rest. And everything is in
+ * logical properties: in Arabic, the same rule reads right to left with no need to write it twice.
  *
- * Hors `@layer` volontairement, comme les autres règles de cette section : c'est le seul moyen de
- * passer devant les utilitaires posés par les composants, qui sont régénérables.
+ * Outside `@layer` on purpose, like the other rules of this section: it is the only way to come before the
+ * utilities set by the components, which are regenerable.
  */
 
-/* Dedans. Les cases et les curseurs sont hors sujet : leur boîte est le dessin lui-même. */
+/* Inside. Checkboxes and sliders are out of scope: their box is the drawing itself. */
 input:not([type='checkbox']):not([type='radio']):not([type='range']),
 select,
 textarea {
@@ -544,12 +531,12 @@ textarea {
 }
 
 /*
- * Dedans encore, quand une icône occupe le début du champ. Le retrait est écrit ici plutôt qu'à
- * chaque appel : c'est une conséquence de l'icône, pas une décision de mise en page, et un champ
- * qui l'oublierait laisserait le dessin chevaucher la saisie.
+ * Inside again, when an icon takes the start of the field. The indent is written here rather than at every
+ * call: it is a consequence of the icon, not a layout decision, and a field forgetting it would let the
+ * drawing overlap the typing.
  *
- * `:has(> svg)` parce que l'icône est facultative : un champ qui n'a qu'une commande de fin — le
- * trigramme et son bouton de recalcul — ne doit pas payer un retrait pour un dessin absent.
+ * `:has(> svg)` because the icon is optional: a field with only a trailing control — the three-letter code
+ * and its recompute button — must not pay an indent for an absent drawing.
  */
 [data-slot='field']:has(> svg)
 	> :is(input, select, textarea):not([type='checkbox']):not([type='radio']) {
@@ -557,8 +544,8 @@ textarea {
 }
 
 /*
- * Et symétriquement quand une commande occupe la fin du champ : le retrait suit la commande, il
- * n'est pas à redemander. Sans lui, la fin de la saisie passe sous le bouton.
+ * And symmetrically when a control takes the end of the field: the indent follows the control, it is not to
+ * be asked for again. Without it, the end of the typing goes under the button.
  */
 [data-slot='field']:has(> [data-slot='field-action'])
 	> :is(input, select, textarea):not([type='checkbox']):not([type='radio']) {
@@ -566,42 +553,41 @@ textarea {
 }
 
 /*
- * Au-dessus : le libellé et sa commande. Le bouton est de la partie — c'est ce que sont devenus
- * les deux champs d'emoji —, et l'enveloppe à icône compte pour la commande qu'elle contient.
+ * Above: the label and its control. The button is part of it — that is what the two emoji fields became —
+ * and the icon wrapper counts as the control it contains.
  */
 [data-slot='label'] + :is(input, select, textarea, button, [data-slot='field']) {
 	margin-block-start: 0.5rem;
 }
 
 /*
- * L'icône prend la couleur d'accent tant que le champ a le focus. C'est le seul mouvement de la
- * série, et il sert : au clavier, il redit où l'on se trouve, en même temps que le contour.
+ * The icon takes the accent colour while the field has focus. It is the only movement of the series, and it
+ * serves: on the keyboard, it says again where you are, at the same time as the outline.
  *
- * Écrit ici et non en variante Tailwind : `group-focus-within:text-primary` pèse exactement autant
- * que `text-muted-foreground`, et c'est l'ordre de génération qui tranche — dans le mauvais sens.
+ * Written here and not as a Tailwind variant: `group-focus-within:text-primary` weighs exactly as much as
+ * `text-muted-foreground`, and it is the generation order that decides — the wrong way round.
  */
 [data-slot='field']:focus-within > svg {
 	color: var(--primary);
 }
 
-/* En dessous : le texte d'aide ou le message d'erreur qui suit immédiatement le champ. */
+/* Below: the help text or the error message immediately following the field. */
 :is(input, select, textarea, [data-slot='field']) + :is(p, small) {
 	margin-block-start: 0.5rem;
 }
 
 /**
- * Un choix parmi plusieurs, sous forme de pastille.
+ * One choice among several, as a chip.
  *
- * C'est un bouton radio déguisé, pas un bouton : le clavier circule dans le groupe aux flèches,
- * et le lecteur d'écran annonce « 2 sur 4 » au lieu de lire quatre boutons sans lien entre eux.
- * La case elle-même est en `sr-only` ; c'est la pastille qui porte la cible tactile, d'où le
- * plancher de 44 px.
+ * It is a radio button in disguise, not a button: the keyboard moves within the group with the arrows, and
+ * the screen reader announces "2 of 4" instead of reading four buttons with no link between them. The box
+ * itself is `sr-only`; it is the chip that carries the touch target, hence the 44 px floor.
  *
- * Le motif servait déjà aux réglages, écrit en toutes lettres dans une chaîne de classes recopiée.
- * Il sert maintenant aussi au choix d'unité : une seule écriture, un seul endroit à corriger.
+ * The pattern already served the settings, written out in a copied class string. It now also serves the
+ * unit choice: one writing, one place to fix.
  *
- * L'état retenu ne tient pas qu'à la couleur — la bordure change avec elle, et la case cochée
- * reste la vérité pour qui n'en voit aucune.
+ * The chosen state does not rest on colour alone — the border changes with it, and the ticked box stays the
+ * truth for whoever sees neither.
  */
 .fl-choice {
 	display: flex;
@@ -615,9 +601,8 @@ textarea {
 	padding-inline: 1rem;
 	padding-block: 0.5rem;
 	text-align: center;
-	/* Un mot long — « Conditionnement », « Verpackung » au cran Confort — se coupait en plein
-	   milieu, sans trait d'union. Il passe à la ligne entre les mots, et se césure proprement
-	   quand il n'y a pas d'autre choix. */
+	/* A long word — "Conditionnement", "Verpackung" at the Comfort step — was breaking in the middle, with
+	   no hyphen. It now wraps between words, and hyphenates properly when there is no other choice. */
 	text-wrap: balance;
 	hyphens: auto;
 	overflow-wrap: break-word;
@@ -638,14 +623,14 @@ textarea {
 }
 
 /*
- * Une ligne qui se glisse au doigt.
+ * A row that swipes under the finger.
  *
- * Le fond porte les deux actions, chacune de son côté ; la ligne coulisse par-dessus et les
- * découvre. `overflow: clip` plutôt que `hidden` : `hidden` créerait un conteneur de défilement,
- * et le contour de focus d'un bouton de la ligne s'y ferait rogner.
+ * The background carries both actions, each on its side; the row slides over it and uncovers them.
+ * `overflow: clip` rather than `hidden`: `hidden` would create a scroll container, and the focus outline of
+ * a button in the row would be clipped by it.
  *
- * `touch-action: pan-y` sur le contenu laisse le défilement vertical au navigateur et ne réserve
- * que l'horizontale au geste. Sans lui la page se bloque dès qu'un doigt se pose sur une ligne.
+ * `touch-action: pan-y` on the content leaves vertical scrolling to the browser and reserves only the
+ * horizontal for the gesture. Without it the page locks up as soon as a finger lands on a row.
  */
 .fl-swipe {
 	position: relative;
@@ -666,7 +651,7 @@ textarea {
 	align-items: center;
 	gap: 0.5rem;
 	padding-inline: 1rem;
-	/* Sans couleur tant que rien n'est déclenché : le fond doit se deviner, pas crier. */
+	/* No colour while nothing is triggered: the background should be sensed, not shouted. */
 	background: var(--muted);
 	color: var(--muted-foreground);
 	transition:
@@ -674,7 +659,7 @@ textarea {
 		color var(--fl-dur-tap) var(--fl-ease);
 }
 
-/* Allumée : le geste est allé assez loin, relâcher maintenant déclenche l'action. */
+/* Lit: the gesture has gone far enough, releasing now triggers the action. */
 .fl-swipe-action[data-armed='true'][data-tone='primary'] {
 	background: var(--primary);
 	color: var(--primary-foreground);
@@ -693,14 +678,14 @@ textarea {
 }
 
 /*
- * Réordonner à la poignée.
+ * Reordering by the handle.
  *
- * `touch-action: none` est ce qui fait exister le geste : sans lui, le navigateur décide dès le
- * premier pixel que le doigt vient faire défiler la page et ne nous envoie plus rien. Il ne vaut
- * que sur la poignée — ailleurs, on veut évidemment que la page défile.
+ * `touch-action: none` is what makes the gesture exist: without it, the browser decides from the first pixel
+ * that the finger has come to scroll the page and sends us nothing more. It holds only on the handle —
+ * elsewhere, we obviously want the page to scroll.
  *
- * Les autres lignes s'écartent avec une transition ; celle qu'on tient suit le doigt sans, et
- * c'est le script qui pose ce `transition: none` le temps du geste.
+ * The other rows move apart with a transition; the one being held follows the finger without one, and it is
+ * the script that sets that `transition: none` for the time of the gesture.
  */
 .fl-reorder-grip {
 	touch-action: none;
@@ -722,14 +707,14 @@ textarea {
 }
 
 /*
- * Une commande posée à portée du pouce, au-dessus de la barre de navigation.
+ * A control placed within thumb's reach, above the navigation bar.
  *
- * Sur téléphone la navigation vit en bas, et une commande qu'on utilise autant que les filtres n'a
- * rien à faire en haut de l'écran : il faut changer de prise pour l'atteindre. La hauteur de la
- * barre est mesurée par la mise en page — elle grandit avec la taille du texte, une valeur écrite
- * en dur ferait passer le bouton dessous au premier cran d'agrandissement.
+ * On a phone the navigation lives at the bottom, and a control used as much as the filters has no business
+ * at the top of the screen: you have to change grip to reach it. The bar's height is measured by the layout
+ * — it grows with the text size, and a hard-coded value would put the button underneath at the first
+ * enlargement step.
  *
- * Au-delà de 48rem la barre est une colonne : la commande reprend sa place dans le flux.
+ * Beyond 48rem the bar is a column: the control takes its place back in the flow.
  */
 @media (width < 48rem) {
 	.fl-above-nav {
@@ -737,7 +722,7 @@ textarea {
 		inset-block-end: calc(var(--fl-navbar-h, 4rem) + 0.75rem);
 		inset-inline: 1rem;
 		z-index: 10;
-		/* Elle s'arrête avant le bouton de création, qui fait 58 px et garde son coin. */
+		/* It stops before the create button, which is 58 px and keeps its corner. */
 		margin-right: calc(58px + 0.75rem);
 	}
 
@@ -748,21 +733,21 @@ textarea {
 }
 
 /*
- * Le côté des commandes qu'on atteint au pouce : le bouton de création, et la réserve que les
- * commandes flottantes lui laissent juste au-dessus.
+ * The side of the controls reached by the thumb: the create button, and the room the floating controls
+ * leave it just above.
  *
- * Ici, et dans le seul bloc du rail plus bas, on écrit `left` et `right` là où le reste de
- * l'application parle en `start` et `end`. Les propriétés logiques suivent le sens de lecture ; or
- * une main gauche reste une main gauche en arabe. Accrocher ce bouton à `end` le ferait basculer avec la
- * langue, et l'application le poserait du mauvais côté pour un droitier arabophone comme pour un
- * gaucher francophone — deux fois faux, pour la même raison.
+ * Here, and in the single rail block further down, we write `left` and `right` where the rest of the
+ * application speaks in `start` and `end`. Logical properties follow the reading direction; but a left hand
+ * stays a left hand in Arabic. Hooking this button to `end` would make it flip with the language, and the
+ * application would put it on the wrong side for a right-handed Arabic speaker as for a left-handed French
+ * one — wrong twice, for the same reason.
  *
- * Les deux réglages se composent donc au lieu de se disputer le même axe : le texte suit `dir`,
- * le pouce suit `data-hand`. Un gaucher arabophone lit de droite à gauche et garde son bouton à
- * gauche.
+ * The two settings therefore compose instead of fighting over the same axis: the text follows `dir`, the
+ * thumb follows `data-hand`. A left-handed Arabic speaker reads right to left and keeps their button on the
+ * left.
  *
- * Au-delà de 48rem la barre est une colonne et le bouton reprend sa place dans le flux : plus
- * rien ne flotte, il n'y a plus de côté à choisir.
+ * Beyond 48rem the bar is a column and the button takes its place back in the flow: nothing floats any
+ * more, there is no side left to choose.
  */
 @media (width < 48rem) {
 	.fl-thumb-side {
@@ -777,11 +762,11 @@ textarea {
 }
 
 /*
- * Le fond des commandes flottantes.
+ * The ground of the floating controls.
  *
- * Posées à plat, elles avaient la valeur des cartes qui défilent dessous et l'œil ne savait plus ce
- * qui bouge de ce qui reste. Ce qui les détache, c'est le flou de ce qui passe derrière — la même
- * recette que la barre de navigation, pour que les deux se lisent comme un seul plancher.
+ * Laid flat, they had the same weight as the cards scrolling underneath and the eye could no longer tell
+ * what moves from what stays. What detaches them is the blur of what passes behind — the same recipe as the
+ * navigation bar, so that the two read as a single floor.
  */
 .fl-dock {
 	background: color-mix(in srgb, var(--card) 82%, transparent);
@@ -796,21 +781,20 @@ textarea {
 		backdrop-filter: blur(16px) saturate(1.6);
 	}
 }
-
 /*
- * La barre de navigation du bas, sur téléphone.
+ * The bottom navigation bar, on a phone.
  *
- * `env(safe-area-inset-bottom)` d'abord, et c'est le point qui n'est pas cosmétique : la page
- * déclare `viewport-fit=cover`, donc sur un téléphone à encoche la barre descend jusqu'au bord
- * physique et les libellés passaient sous la barre d'accueil. Personne ne le voit au bureau.
+ * `env(safe-area-inset-bottom)` first, and that is the point that is not cosmetic: the page declares
+ * `viewport-fit=cover`, so on a notched phone the bar goes down to the physical edge and the labels were
+ * passing under the home bar. Nobody sees it at a desk.
  *
- * Le fond est translucide et flouté : posée à plat, la barre avait la même valeur que la carte
- * juste au-dessus et l'écran finissait en un seul aplat. Ce qui la détache maintenant, c'est ce
- * qui défile derrière elle, plus une ombre montante — le trait de séparation seul ne suffisait pas.
+ * The ground is translucent and blurred: laid flat, the bar had the same weight as the card just above and
+ * the screen ended up a single flat field. What detaches it now is what scrolls behind it, plus a rising
+ * shadow — the separating rule alone was not enough.
  *
- * L'ombre est vers le haut, à l'inverse des jetons d'élévation : la barre est au bas de l'écran,
- * la lumière ne peut venir que de l'autre côté. En thème sombre une ombre ne se voit pas, c'est
- * la bordure qui reprend le travail.
+ * The shadow points upwards, unlike the elevation tokens: the bar is at the bottom of the screen, and the
+ * light can only come from the other side. In dark theme a shadow does not show, and the border takes over
+ * the work.
  */
 @media (width < 48rem) {
 	.fl-navbar {
@@ -825,18 +809,17 @@ textarea {
 		}
 	}
 }
-
 /*
- * La charpente de l'application, et la place de la navigation dans chacun des trois régimes.
+ * The application's frame, and the place of the navigation in each of the three regimes.
  *
- * Écrite ici plutôt qu'en utilitaires sur l'élément : trois régimes font trois jeux de positions
- * qui se contredisent, et la pile de préfixes correspondante sur une seule ligne de classes
- * n'était plus relisible.
+ * Written here rather than as utilities on the element: three regimes make three sets of positions that
+ * contradict each other, and the matching stack of prefixes on a single line of classes was no longer
+ * readable.
  *
- * `--fl-navbar-h` reste ce qu'elle a toujours dit : la hauteur que la barre du bas mange en bas de
- * l'écran. Il n'y a de barre du bas que sur téléphone, donc la variable vaut zéro partout ailleurs,
- * et les commandes flottantes qui s'en servent se posent au bord. La mise en page ne publie que la
- * mesure brute, `--fl-navbar-measured` ; c'est ici qu'on décide si elle compte.
+ * `--fl-navbar-h` stays what it has always said: the height the bottom bar eats at the bottom of the screen.
+ * There is only a bottom bar on a phone, so the variable is zero everywhere else, and the floating controls
+ * using it sit at the edge. The layout only publishes the raw measurement, `--fl-navbar-measured`; this is
+ * where we decide whether it counts.
  */
 .fl-shell {
 	--fl-navbar-h: 0px;
@@ -864,7 +847,7 @@ textarea {
 	}
 }
 
-/* Régime `full` : la colonne complète, puis le panneau des listes quand la largeur le permet. */
+/* `full` regime: the complete column, then the list panel when the width allows. */
 @media (width >= 48rem) and (orientation: landscape) {
 	.fl-shell {
 		display: grid;
@@ -884,21 +867,20 @@ textarea {
 		grid-template-columns: 16rem 20rem 1fr;
 	}
 }
-
 /*
- * Régime `rail` : tablette tenue en hauteur.
+ * `rail` regime: tablet held taller than wide.
  *
- * La colonne est étroite et posée sur un bord, et ses entrées sont centrées verticalement — une
- * tablette se tient à deux mains, le pouce se repose au milieu du bord, ni en haut ni en bas.
+ * The column is narrow and set on one edge, and its entries are vertically centred — a tablet is held in
+ * two hands, and the thumb rests in the middle of the edge, neither at the top nor at the bottom.
  *
- * Le bord est celui de la main directrice, comme le bouton de création sur téléphone, et pour la
- * même raison : c'est la deuxième et dernière place de l'application où l'on écrit `left` et
- * `right` au lieu de `start` et `end`. Un gaucher arabophone lit de droite à gauche et garde
- * quand même son rail à gauche ; accrocher la colonne à `end` la ferait basculer avec la langue et
- * la poserait du mauvais côté pour lui comme pour un droitier francophone.
+ * The edge is that of the dominant hand, like the create button on a phone, and for the same reason: it is
+ * the second and last place in the application where we write `left` and `right` instead of `start` and
+ * `end`. A left-handed Arabic speaker reads right to left and still keeps their rail on the left; hooking
+ * the column to `end` would make it flip with the language and put it on the wrong side for them as for a
+ * right-handed French speaker.
  *
- * La réserve laissée au contenu suit le même côté physique, sinon le rail recouvrirait la page en
- * arabe.
+ * The room left to the content follows the same physical side, otherwise the rail would cover the page in
+ * Arabic.
  */
 @media (width >= 48rem) and (orientation: portrait) {
 	.fl-shell {
@@ -934,12 +916,11 @@ textarea {
 		overflow-y: auto;
 	}
 }
-
 /*
- * Le panneau des listes, façon boîte mail : il ne vit que dans le régime le plus large et n'existe
- * pas du tout ailleurs. `display: none` et non un attribut masqué côté script : ainsi il ne coûte
- * rien en tablette portrait ni sur téléphone, et surtout il ne double aucun lien pour les lecteurs
- * d'écran, qui l'ignorent comme tout le monde.
+ * The list panel, mail-client style: it lives only in the widest regime and does not exist at all
+ * elsewhere. `display: none` and not an attribute hidden on the script side: that way it costs nothing on a
+ * portrait tablet or a phone, and above all it doubles no link for screen readers, which ignore it like
+ * everybody else.
  */
 .fl-list-panel {
 	display: none;
@@ -958,20 +939,20 @@ textarea {
 }
 
 /*
- * La pastille de l'onglet actif.
+/*
+ * The active tab's pill.
  *
- * Partout où l'icône est seule au-dessus de son libellé — téléphone et rail — c'est une capsule
- * derrière elle, pas un rectangle qui prend toute la hauteur de la barre : c'est ce que font les
- * barres d'aujourd'hui, et surtout un rectangle à bords vifs collé aux voisins ne se lisait pas
- * comme un état mais comme un défaut de rendu.
+ * Everywhere the icon is alone above its label — phone and rail — it is a capsule behind it, not a rectangle
+ * taking the bar's full height: that is what today's bars do, and above all a sharp-cornered rectangle stuck
+ * to its neighbours did not read as a state but as a rendering fault.
  *
- * Elle vit dans l'enveloppe de l'icône, et cette enveloppe redevient `static` en régime `full` :
- * la pastille reprend alors le lien entier pour bloc conteneur, et la colonne garde sa ligne
- * sélectionnée pleine largeur. Un seul élément, deux formes, aucune duplication à tenir à jour.
+ * It lives in the icon's wrapper, and that wrapper becomes `static` again in the `full` regime: the pill
+ * then takes the whole link as its containing block, and the column keeps its selected row full width. One
+ * element, two shapes, no duplication to keep up to date.
  *
- * Le fond est plus soutenu que `--fl-primary-tint` : à surface égale une petite capsule paraît
- * plus pâle qu'un grand panneau, et à 10 % elle disparaissait. Elle reste décorative — c'est
- * `aria-current`, la couleur du texte et sa graisse qui portent l'information.
+ * The ground is stronger than `--fl-primary-tint`: at equal area a small capsule looks paler than a large
+ * panel, and at 10% it disappeared. It stays decorative — it is `aria-current`, the text colour and its
+ * weight that carry the information.
  */
 .fl-nav-icon {
 	position: relative;
@@ -1000,15 +981,15 @@ textarea {
 }
 
 /*
- * Commandes de la loupe : un disque, et son nom écrit dessous.
+ * Magnifier controls: a disc, and its name written underneath.
  *
- * Le disque est en pixels — c'est une cible tactile, pas du texte, et le cran de réglage n'a rien
- * à y changer. Le libellé, lui, est du texte : il suit la taille choisie, et la largeur du bouton
- * suit avec, sans jamais couper un mot. Trois boutons nommés tiennent dans 375 px au cran normal,
- * et passent à la ligne au-delà plutôt que de déborder.
+ * The disc is in pixels — it is a touch target, not text, and the size step has nothing to change about it.
+ * The label, for its part, is text: it follows the chosen size, and the button's width follows with it,
+ * without ever breaking a word. Three named buttons fit in 375 px at the normal step, and wrap beyond that
+ * rather than overflow.
  *
- * Écrit ici et non en utilitaires : le même bouton se répète trois fois, et la version en classes
- * Tailwind faisait quatre lignes illisibles recopiées à l'identique.
+ * Written here and not as utilities: the same button is repeated three times, and the Tailwind class
+ * version was four unreadable lines copied identically.
  */
 .fl-magnifier-control {
 	display: flex;
@@ -1051,22 +1032,22 @@ textarea {
 	background: rgb(255 255 255 / 0.3);
 }
 
-/* Actif : le disque se remplit. C'est un changement de luminosité, pas de teinte — il tient sans
-   la couleur, et `aria-pressed` le dit à qui ne le voit pas. */
+/* Active: the disc fills in. It is a change of brightness, not of hue — it holds without colour, and
+   `aria-pressed` says it to whoever does not see it. */
 .fl-magnifier-disc.is-on {
 	background: #fff;
 	color: #1c1917;
 }
 
 /*
- * Curseur vertical, pour la loupe. `writing-mode` et pas `appearance: slider-vertical` : cette
- * dernière est retirée des navigateurs, la première est la façon standard depuis.
+ * Vertical slider, for the magnifier. `writing-mode` and not `appearance: slider-vertical`: the latter is
+ * being removed from browsers, the former has been the standard way since.
  *
- * `direction: rtl` remet le maximum en haut. Sans elle, monter le curseur réduit le
- * grossissement, ce que personne n'attend d'une loupe.
+ * `direction: rtl` puts the maximum back at the top. Without it, pushing the slider up reduces the
+ * magnification, which nobody expects from a magnifier.
  *
- * La largeur est la cible tactile, donc 44 px fixes : en rem, elle tomberait à 39,6 px au plus
- * petit cran de texte. La hauteur est bornée pour ne pas dépasser sur un écran court.
+ * The width is the touch target, so a fixed 44 px: in rem, it would fall to 39.6 px at the smallest text
+ * step. The height is bounded so as not to overflow on a short screen.
  */
 .fl-range-vertical {
 	writing-mode: vertical-lr;
@@ -1078,18 +1059,18 @@ textarea {
 }
 
 /**
- * Mouvement.
+ * Motion.
  *
- * Le vocabulaire vient du prototype — même courbe partout, entrées `fl-rise` élément par élément,
- * `fl-pop-in` pour ce qui vient d'être validé, glissement directionnel entre deux écrans. Le
- * prototype avait aussi laissé un avertissement dans `app.jsx` : animer un conteneur plein écran
- * crée un contexte d'empilement qui piège les calques par-dessus (loupe, carte plein écran). D'où
- * le choix de l'API View Transitions, qui anime des captures et ne laisse aucune transformation
- * derrière elle, plutôt qu'un enrobage animé autour de la page.
+ * The vocabulary comes from the prototype — the same curve everywhere, `fl-rise` entrances element by
+ * element, `fl-pop-in` for what has just been confirmed, directional sliding between two screens. The
+ * prototype had also left a warning in `app.jsx`: animating a full-screen container creates a stacking
+ * context that traps the layers above it (magnifier, full-screen card). Hence the choice of the View
+ * Transitions API, which animates snapshots and leaves no transform behind it, rather than an animated
+ * wrapper around the page.
  *
- * Deux garde-fous, qui doivent dire la même chose :
- * - ici, sur `data-motion`, posé par le store et par le script anti-flash ;
- * - en JavaScript, via `settings.animates`, pour les transitions Svelte et les View Transitions.
+ * Two guardrails, which must say the same thing:
+ * - here, on `data-motion`, set by the store and by the anti-flash script;
+ * - in JavaScript, through `settings.animates`, for the Svelte transitions and the View Transitions.
  */
 :root {
 	--fl-ease: cubic-bezier(0.2, 0.8, 0.2, 1);
@@ -1192,15 +1173,15 @@ textarea {
 }
 
 /**
- * Invitation à pousser le curseur plus loin.
+ * An invitation to push the slider further.
  *
- * Le premier écran demande une taille de texte, et le réflexe est de valider ce qui s'affiche.
- * Cette flèche part vers les grandes tailles jusqu'au premier geste : elle ne dit pas quoi choisir,
- * elle dit qu'il y a quelque chose à choisir. Elle disparaît dès que le curseur bouge, elle n'a
- * plus rien à apprendre à personne ensuite.
+ * The first screen asks for a text size, and the reflex is to confirm what is shown. This arrow points
+ * towards the large sizes until the first gesture: it does not say what to choose, it says there is
+ * something to choose. It disappears as soon as the slider moves, it has nothing left to teach anybody
+ * afterwards.
  *
- * Le refus du mouvement est déjà couvert plus bas, qui ramène toute animation à 1 ms : la flèche
- * reste alors immobile et lisible, ce qui suffit.
+ * Refused motion is already covered further down, which brings every animation back to 1 ms: the arrow then
+ * stays still and readable, which is enough.
  */
 .fl-nudge {
 	animation: fl-nudge 1.4s var(--fl-ease) infinite;
@@ -1211,8 +1192,8 @@ textarea {
 }
 
 /**
- * Enfoncement. Sur un écran tactile c'est le seul retour visuel du toucher, et il tient dans une
- * transformation : pas de repeinte, pas de calcul de mise en page.
+ * Press. On a touch screen it is the only visual feedback of the touch, and it fits in a transform: no
+ * repaint, no layout computation.
  */
 .fl-press {
 	transition:
@@ -1229,21 +1210,19 @@ textarea {
 	transform: none;
 }
 
-/** Barres d'avancement et pastille d'onglet : la valeur bouge, l'élément reste en place. */
+/** Progress bars and the tab pill: the value moves, the element stays in place. */
 .fl-grow {
 	transition: width var(--fl-dur-rise) var(--fl-ease);
 }
 
 /**
- * Transition de page. C'est la capture racine qui glisse : elle contient tout l'écran, sauf ce qui
- * porte son propre nom de transition. La barre de navigation en porte un, elle est donc
- * photographiée à part et ne bouge pas ; la pastille de l'onglet actif aussi, elle glisse d'un
- * onglet à l'autre.
+ * Page transition. It is the root snapshot that slides: it contains the whole screen, except what carries
+ * its own transition name. The navigation bar carries one, so it is photographed separately and does not
+ * move; so does the active tab's pill, which slides from one tab to the next.
  *
- * Rien n'est nommé sur `<main>` : un nom de transition fait de l'élément un contexte d'empilement,
- * et la carte plein écran comme la loupe, rendues depuis une page, se retrouveraient sous la barre
- * de navigation. C'est le piège relevé dans le `app.jsx` du prototype — il se referme aussi bien
- * sur un nom de transition que sur une transformation.
+ * Nothing is named on `<main>`: a transition name makes the element a stacking context, and the full-screen
+ * card as well as the magnifier, rendered from a page, would end up under the navigation bar. It is the trap
+ * noted in the prototype's `app.jsx` — it closes just as well on a transition name as on a transform.
  */
 ::view-transition-old(nav),
 ::view-transition-new(nav) {
@@ -1275,15 +1254,15 @@ html[data-nav='none']::view-transition-new(root) {
 }
 
 /**
- * Tour guidé.
+ * Guided tour.
  *
- * driver.js arrive avec sa propre feuille : fond blanc, encre grise, et surtout des tailles en
- * pixels — titre à 19, texte à 14, boutons à 12 dans 3 px de rembourrage. Rien de tout cela ne
- * suivait le thème ni le cran de texte, et ces boutons faisaient une vingtaine de pixels de haut,
- * loin des 44 exigés. Tout est donc repris ici, sur les mêmes variables que le reste.
+ * driver.js comes with its own stylesheet: white ground, grey ink, and above all sizes in pixels — title at
+ * 19, text at 14, buttons at 12 in 3 px of padding. None of that followed the theme or the text step, and
+ * those buttons were about twenty pixels high, far from the 44 required. So everything is taken over here,
+ * on the same variables as the rest.
  *
- * `all: unset` sur la bulle et ses boutons coupe l'héritage des règles de base : chaque propriété
- * doit être redonnée, y compris celles qu'un bouton de l'application tient déjà.
+ * `all: unset` on the bubble and its buttons cuts the inheritance from the base rules: every property has to
+ * be given back, including those a button of the application already holds.
  */
 .driver-popover.fl-tour {
 	--driver-popover-font-family: var(--fl-font);
@@ -1339,7 +1318,7 @@ html[data-nav='none']::view-transition-new(root) {
 	border-radius: var(--radius);
 }
 
-/* Le dernier bouton de la paire est « Suivant » puis « Terminer » : c'est l'action attendue. */
+/* The last button of the pair is "Next" then "Finish": it is the expected action. */
 .fl-tour .driver-popover-navigation-btns button + button {
 	color: var(--primary-foreground);
 	background-color: var(--primary);
@@ -1359,20 +1338,18 @@ html[data-nav='none']::view-transition-new(root) {
 }
 
 /*
- * Pendant la visite, seule la bulle répond.
+ * During the tour, only the bubble responds.
  *
- * driver.js pose `driver-active-element` sur chaque cible et ne la retire jamais de la
- * précédente : au sixième écran, les six la portent. Or c'est cette classe qui rétablit
- * `pointer-events` à travers le voile — tous les onglets déjà présentés restaient cliquables, et
- * un doigt qui dérape quittait la page en laissant la visite ouverte sur un écran qui n'est plus
- * le sien.
+ * driver.js sets `driver-active-element` on each target and never removes it from the previous one: by the
+ * sixth screen, all six carry it. And it is that class which restores `pointer-events` through the veil —
+ * every tab already shown stayed clickable, and a slipping finger left the page with the tour open on a
+ * screen that is no longer its own.
  *
- * Son crochet `onHighlighted` ne sert à rien ici : la version 1.8 ne l'appelle jamais. On règle
- * donc la chose où elle se produit. Ces étapes se lisent, elles ne se manipulent pas : rien ne
- * justifie que l'élément désigné reste actionnable, et le rendre inerte supprime le problème sans
- * dépendre d'un état interne de la bibliothèque.
+ * Its `onHighlighted` hook is of no use here: version 1.8 never calls it. So we settle the thing where it
+ * happens. These steps are read, they are not operated: nothing justifies the designated element staying
+ * actionable, and making it inert removes the problem without depending on an internal state of the library.
  *
- * `body` en tête ne fait qu'ajouter le poids nécessaire pour passer devant la règle d'origine.
+ * `body` in front only adds the weight needed to come before the original rule.
  */
 body.driver-active .driver-active-element,
 body.driver-active .driver-active-element * {
@@ -1380,9 +1357,9 @@ body.driver-active .driver-active-element * {
 }
 
 /*
- * La flèche est un carré de bordures dont trois côtés sont transparents. On ne peut donc pas
- * repeindre `border-color` d'un bloc : cela rendrait les quatre côtés et donnerait un losange.
- * Chaque orientation reçoit son seul côté visible.
+ * The arrow is a square of borders three of whose sides are transparent. So `border-color` cannot be
+ * repainted as a block: that would render all four sides and give a diamond. Each orientation gets its one
+ * visible side.
  */
 .fl-tour .driver-popover-arrow-side-left {
 	border-left-color: var(--popover);
@@ -1401,8 +1378,8 @@ body.driver-active .driver-active-element * {
 }
 
 /**
- * Refus du mouvement : on ne retire pas les animations, on leur donne une durée nulle. Une entrée
- * `both` supprimée laisserait l'élément à son image de départ, donc invisible.
+ * Refused motion: we do not remove the animations, we give them a zero duration. A removed `both` entrance
+ * would leave the element at its starting frame, and therefore invisible.
  */
 html[data-motion='none'] *,
 html[data-motion='none'] *::before,
@@ -1427,13 +1404,13 @@ html[data-motion='none'] *::after {
 }
 
 /**
- * Interrupteur. Piste et bouton sont pilotés par `data-state`, l'attribut que pose réellement
- * bits-ui. Le déplacement est donné en pixels par taille : la piste et le bouton ont des tailles
- * fixes, une valeur calculée n'apporterait qu'une indirection.
+ * Switch. Track and knob are driven by `data-state`, the attribute bits-ui actually sets. The travel is given
+ * in pixels per size: the track and the knob have fixed sizes, and a computed value would only add an
+ * indirection.
  *
- * `min-height` est neutralisé pour garder la pastille ronde — la règle de base l'imposerait à
- * 2,75 rem comme tout bouton. La zone tactile, elle, reste large : le pseudo-élément de la piste
- * déborde de 8 px en haut et en bas, et de 12 px sur les côtés.
+ * `min-height` is neutralised to keep the knob round — the base rule would impose 2.75 rem on it like any
+ * button. The touch area, for its part, stays large: the track's pseudo-element overflows by 8 px top and
+ * bottom, and by 12 px on the sides.
  */
 button[data-slot='switch'] {
 	min-height: 0;
@@ -1478,15 +1455,14 @@ button[data-slot='switch'][data-state='checked'] {
 }
 
 /*
- * La feuille de création, ouverte par le bouton central.
+ * The creation sheet, opened by the central button.
  *
- * `<dialog>` arrive avec ses propres styles de navigateur — marge automatique, bordure, fond opaque,
- * largeur ajustée au contenu — qu'il faut défaire avant de poser les nôtres. On le vide donc, et
- * c'est la carte à l'intérieur qui porte la peinture : le dialogue lui-même n'est plus qu'un cadre
- * de positionnement.
+ * `<dialog>` comes with its own browser styles — automatic margin, border, opaque ground, width fitted to
+ * the content — which must be undone before setting ours. So we empty it, and it is the card inside that
+ * carries the paint: the dialog itself is no more than a positioning frame.
  *
- * En bas sur téléphone, là où se trouve le pouce et là où se trouve le bouton qui vient de l'ouvrir.
- * Centré sur grand écran, où le bas de la fenêtre est loin du regard.
+ * At the bottom on a phone, where the thumb is and where the button that has just opened it is. Centred on a
+ * large screen, where the bottom of the window is far from the eye.
  */
 .fl-sheet {
 	margin: auto auto 0;

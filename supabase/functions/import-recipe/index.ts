@@ -1,16 +1,15 @@
 /**
- * Recupere une page de recette et rend ce qu elle declare en schema.org `Recipe`.
+ * Fetches a recipe page and returns what it declares as schema.org `Recipe`.
  *
- * L application est servie en statique : le navigateur ne peut pas aller chercher une page tierce,
- * CORS l en empeche. Cette fonction est le seul endroit du projet qui sorte vers un tiers, et elle
- * ne sort que la ou une personne connectee le demande explicitement, une URL a la fois.
+ * The application is served statically: the browser cannot go and fetch a third-party page, CORS prevents
+ * it. This function is the only place in the project that goes out to a third party, and it only goes out
+ * where a signed-in person explicitly asks, one URL at a time.
  *
- * Elle ne rend rien d autre que des champs : aucune ecriture en base. Ce qui revient est un
- * brouillon a relire, pas une recette. C est l ecran qui pre-remplit le formulaire, et la personne
- * qui enregistre.
+ * It returns nothing but fields: no database write. What comes back is a draft to review, not a recipe. It
+ * is the screen that prefills the form, and the person who saves.
  *
- * Les gardes contre le detournement en proxy ouvert vivent dans `url.ts` et sont rejouees a chaque
- * redirection : une URL publique qui redirige vers `169.254.169.254` est l attaque evidente.
+ * The guards against being turned into an open proxy live in `url.ts` and are replayed at every redirect: a
+ * public URL redirecting to `169.254.169.254` is the obvious attack.
  */
 
 import { checkUrl } from './url.ts';
@@ -22,7 +21,7 @@ const CORS = {
 	'Access-Control-Allow-Methods': 'POST, OPTIONS'
 };
 
-/** Un million d octets suffit tres largement a une page de recette, entetes JSON-LD compris. */
+/** A million bytes is amply enough for a recipe page, JSON-LD headers included. */
 const MAX_BYTES = 1_000_000;
 const TIMEOUT_MS = 8_000;
 const MAX_REDIRECTS = 3;
@@ -30,7 +29,7 @@ const MAX_REDIRECTS = 3;
 const json = (body: unknown, status = 200): Response =>
 	Response.json(body, { status, headers: CORS });
 
-/** Lit au plus MAX_BYTES : un `Content-Length` annonce ne prouve rien, on compte ce qui arrive. */
+/** Reads at most MAX_BYTES: an announced `Content-Length` proves nothing, we count what arrives. */
 async function readCapped(response: Response): Promise<string | null> {
 	const body = response.body;
 	if (!body) return null;
@@ -58,8 +57,8 @@ async function readCapped(response: Response): Promise<string | null> {
 }
 
 /**
- * Suit les redirections a la main. `redirect: 'follow'` les suivrait sans nous les montrer, et la
- * garde ne s appliquerait alors qu au premier maillon — ce qui ne garde rien.
+ * Follows redirects by hand. `redirect: 'follow'` would follow them without showing them to us, and the
+ * guard would then apply only to the first link — which guards nothing.
  */
 async function fetchPage(start: URL): Promise<Response | null> {
 	let target = start;
@@ -69,8 +68,8 @@ async function fetchPage(start: URL): Promise<Response | null> {
 			redirect: 'manual',
 			signal: AbortSignal.timeout(TIMEOUT_MS),
 			headers: {
-				// Se presenter plutot que se deguiser : un site qui ne veut pas de nous doit pouvoir
-				// nous refuser, et nous devons pouvoir l accepter.
+				// Introducing ourselves rather than disguising ourselves: a site that does not want us must be able to
+				// refuse us, and we must be able to accept that.
 				'User-Agent': 'FamiListeRecipeImport/1.0 (+https://familiste.app)',
 				Accept: 'text/html,application/xhtml+xml'
 			}
@@ -108,8 +107,8 @@ Deno.serve(async (request) => {
 	try {
 		response = await fetchPage(checked.url);
 	} catch (error) {
-		// L URL demandee n apparait pas dans les journaux : c est une adresse que quelqu un a
-		// choisi de nous confier pour une seule requete, pas une trace a conserver.
+		// The requested URL does not appear in the logs: it is an address somebody chose to entrust to us for a
+		// single request, not a trace to keep.
 		console.error('import-recipe: echec reseau', String(error instanceof Error ? error.name : error));
 		return json({ error: 'unreachable' }, 502);
 	}

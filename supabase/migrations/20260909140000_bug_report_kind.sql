@@ -32,15 +32,15 @@ begin
 end;
 $$;
 
--- L'ancienne fonction a quatre arguments : sans ce drop, elle coexisterait avec la nouvelle en tant
--- que surcharge distincte, et l'appel du client, qui nomme ses arguments, resterait ambigu.
+-- The old function has four arguments: without this drop, it would coexist with the new one as a distinct
+-- overload, and the client's call, which names its arguments, would stay ambiguous.
 drop function if exists public.submit_bug_report(text, text, text, text);
 
 revoke all on function public.submit_bug_report(text, text, text, text, text) from public;
 grant execute on function public.submit_bug_report(text, text, text, text, text) to authenticated;
 
--- Changement du type de retour (colonne "kind" ajoutee) : un simple create or replace le refuse,
--- la fonction doit disparaitre avant d'etre reposee.
+-- Return type changed ("kind" column added): a plain create or replace refuses it, the function must
+-- disappear before being laid down again.
 drop function if exists public.list_bug_reports();
 
 create or replace function public.list_bug_reports()

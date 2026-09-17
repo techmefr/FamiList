@@ -1,21 +1,19 @@
--- Deuxieme facteur, codes de secours, et sessions visibles.
+-- Second factor, backup codes, and visible sessions.
 --
--- Supabase sait poser un facteur TOTP et elever une session en aal2, mais il ne le rend obligatoire
--- nulle part : sans regle cote base, une session restee en aal1 lit tout, et la 2FA n'est qu'un
--- ecran de plus a l'ouverture. Le verrou est donc mis ici, une fois, dans la fonction que toutes
--- les regles d'acces appellent deja.
+-- Supabase can set a TOTP factor and raise a session to aal2, but it makes it compulsory nowhere: with no
+-- rule on the database side, a session left at aal1 reads everything, and the 2FA is only one more screen at
+-- opening time. So the lock is put here, once, in the function every access rule already calls.
 
 /*
- * Un compte est valide s'il est approuve, et — s'il a choisi un deuxieme facteur — si la session
- * courante l'a effectivement presente.
+ * An account is valid if it is approved, and — if it has chosen a second factor — if the current session has
+ * actually presented it.
  *
- * La condition est ecrite dans ce sens precis : quelqu'un qui n'a pas de facteur verifie n'est
- * jamais gene, et quelqu'un qui en a un ne peut plus lire ses listes depuis une session qui s'est
- * arretee au mot de passe. C'est ce qui fait la difference entre une 2FA reelle et une 2FA
- * decorative, que n'importe quel appel direct a l'API contournerait.
+ * The condition is written in this precise direction: somebody with no verified factor is never hindered,
+ * and somebody with one can no longer read their lists from a session that stopped at the password. That is
+ * what makes the difference between a real 2FA and a decorative one, which any direct API call would bypass.
  *
- * `auth.jwt()` est lu plutot que la table des sessions : le niveau atteint est dans le jeton, et
- * une session elevee entre-temps le porte des son rafraichissement.
+ * `auth.jwt()` is read rather than the sessions table: the level reached is in the token, and a session
+ * raised in the meantime carries it from its next refresh.
  */
 create or replace function public.is_approved()
 returns boolean
@@ -41,16 +39,15 @@ comment on function public.is_approved() is
   'Approuve, et au niveau d authentification que le compte s est lui-meme impose. Toutes les regles d acces passent par elle.';
 
 /*
- * Les codes de secours.
+ * The backup codes.
  *
- * Perdre son telephone ne doit pas vouloir dire perdre ses listes. Ces codes sont la porte de
- * sortie : chacun ne sert qu'une fois, et l'utiliser desactive le deuxieme facteur au lieu de
- * remplacer sa saisie. C'est volontaire — un code note sur un papier qui vaudrait indefiniment
- * comme second facteur serait un second facteur en moins bien. Il ramene le compte a l'etat d'avant
- * la 2FA, a charge de la reactiver depuis un appareil qu'on a encore.
+ * Losing your phone must not mean losing your lists. These codes are the way out: each serves only once, and
+ * using one disables the second factor instead of replacing its entry. That is intended — a code noted on a
+ * piece of paper that would count indefinitely as a second factor would be a worse second factor. It brings
+ * the account back to the state before the 2FA, leaving it to be enabled again from a device you still have.
  *
- * Seul le condensat est garde. La table n'a aucune regle d'acces et personne n'a le droit de la
- * lire : on n'y touche que par les trois fonctions ci-dessous.
+ * Only the hash is kept. The table has no access rule and nobody has the right to read it: it is touched
+ * only through the three functions below.
  */
 create table public.mfa_backup_codes (
   user_id uuid not null references auth.users on delete cascade,
@@ -68,8 +65,8 @@ create index mfa_backup_codes_unused_idx
   where used_at is null;
 
 /*
- * Combien de codes restent. Le nombre suffit a l'ecran de securite ; les codes eux-memes ne
- * ressortent jamais apres leur creation, c'est tout l'interet de ne stocker que des condensats.
+ * How many codes are left. The number is enough for the security screen; the codes themselves never come
+ * out again after their creation, which is the whole point of storing only hashes.
  */
 create or replace function public.backup_codes_left()
 returns integer
@@ -84,14 +81,14 @@ as $$
 $$;
 
 /*
- * Fabrique dix codes neufs et rend les codes en clair, une seule fois.
+ * Makes ten fresh codes and returns them in the clear, once only.
  *
- * Les anciens disparaissent : en avoir deux series valides en meme temps voudrait dire qu'une
- * feuille imprimee il y a un an ouvre encore le compte, alors qu'on croit l'avoir remplacee.
+ * The old ones disappear: having two valid sets at the same time would mean a sheet printed a year ago still
+ * opens the account, when you believe you have replaced it.
  *
- * Le format est dix caracteres pris dans un alphabet sans les lettres qui se confondent a la
- * lecture : ni O ni I ni L ni U, qu on lirait 0, 1, 1 et V. Ces codes se recopient a la main,
- * souvent depuis un papier, souvent mal.
+ * The format is ten characters drawn from an alphabet without the letters that get confused when read:
+ * neither O nor I nor L nor U, which would be read as 0, 1, 1 and V. These codes are copied by hand, often
+ * from paper, often badly.
  */
 create or replace function public.create_backup_codes()
 returns setof text
@@ -130,15 +127,14 @@ end;
 $$;
 
 /*
- * Consomme un code de secours et retire le deuxieme facteur.
+ * Consumes a backup code and removes the second factor.
  *
- * Appelable depuis une session restee en aal1 : c'est precisement la situation ou l'on s'en sert,
- * le telephone perdu et la session bloquee a la porte. Le code est marque utilise avant que le
- * facteur ne parte, pour qu'un appel interrompu ne laisse pas un code encore valide sur un compte
- * deja ouvert.
+ * Callable from a session left at aal1: that is precisely the situation where it is used, the phone lost and
+ * the session stuck at the door. The code is marked used before the factor goes, so that an interrupted call
+ * does not leave a still-valid code on an already open account.
  *
- * La comparaison passe par `crypt`, donc a temps a peu pres constant pour un condensat donne ; la
- * limitation du nombre d'essais est celle de l'API, comme pour un mot de passe.
+ * The comparison goes through `crypt`, so in roughly constant time for a given hash; limiting the number of
+ * attempts is the API's job, as for a password.
  */
 create or replace function public.consume_backup_code(code text)
 returns boolean
@@ -184,16 +180,15 @@ grant execute on function public.create_backup_codes() to authenticated;
 grant execute on function public.consume_backup_code(text) to authenticated;
 
 /*
- * Les sessions ouvertes du compte, et de quoi en fermer une.
+ * The account's open sessions, and a way to close one.
  *
- * « Se deconnecter partout » existe deja cote Supabase, mais c'est une massue : on veut pouvoir
- * fermer la tablette pretee sans se deconnecter soi-meme du telephone qu'on tient. La table
- * `auth.sessions` porte deja ce qu'il faut pour reconnaitre un appareil — la date, le navigateur,
- * l'adresse — et rien d'autre n'est expose.
+ * "Sign out everywhere" already exists on the Supabase side, but it is a sledgehammer: we want to be able to
+ * close the lent tablet without signing ourselves out of the phone in our hand. The `auth.sessions` table
+ * already carries what is needed to recognise a device — the date, the browser, the address — and nothing
+ * else is exposed.
  *
- * `is_approved()` n'est deliberement pas exige : consulter et fermer ses propres sessions doit
- * rester possible depuis une session en aal1, sinon quelqu'un qui a perdu son second facteur ne
- * peut meme plus faire le menage.
+ * `is_approved()` is deliberately not required: consulting and closing your own sessions must stay possible
+ * from an aal1 session, otherwise somebody who has lost their second factor cannot even tidy up.
  */
 create or replace function public.my_sessions()
 returns table (
@@ -225,8 +220,8 @@ as $$
 $$;
 
 /*
- * Ferme une session. La sienne comprise — c'est une deconnexion, et il n'y a pas de raison de
- * l'interdire depuis la liste ou on la voit.
+ * Closes a session. Your own included — it is a sign-out, and there is no reason to forbid it from the list
+ * where you see it.
  */
 create or replace function public.revoke_session(target uuid)
 returns void
@@ -257,16 +252,15 @@ comment on function public.my_sessions() is
   'Les sessions ouvertes du compte appelant, sans passer par la cle de service.';
 
 /*
- * Les listes repassent par la porte commune.
+ * The lists go back through the common door.
  *
- * `can_access_list` avait perdu l appel a `is_approved()` en devenant une regle d appartenance a la
- * liste : depuis, un compte rejete gardait ses lignes dans `list_members` et continuait donc de
- * lire ses listes, alors que ses magasins et son foyer lui etaient bien fermes. Le remettre repare
- * cet ecart et, du meme coup, etend le verrou du deuxieme facteur aux listes, aux articles, aux
- * messages et aux sondages, qui passent tous par ici.
+ * `can_access_list` had lost the call to `is_approved()` when it became a list-membership rule: since then,
+ * a rejected account kept its rows in `list_members` and therefore went on reading its lists, while its
+ * shops and its household were indeed closed to it. Putting it back repairs that gap and, at the same time,
+ * extends the second-factor lock to the lists, the items, the messages and the polls, which all go through
+ * here.
  *
- * L appartenance reste la regle : etre approuve ne suffit pas a ouvrir la liste de quelqu un
- * d autre.
+ * Membership stays the rule: being approved is not enough to open somebody else's list.
  */
 create or replace function public.can_access_list(target uuid)
 returns boolean
@@ -282,8 +276,8 @@ as $$
   )
 $$;
 
--- Retirer son propre vote etait la derniere ecriture qui ne demandait rien : ni compte approuve,
--- ni deuxieme facteur. Elle s aligne sur le reste.
+-- Removing your own vote was the last write that required nothing: neither an approved account nor a second
+-- factor. It falls in line with the rest.
 drop policy poll_votes_delete on public.poll_votes;
 create policy poll_votes_delete on public.poll_votes for delete
   using (public.is_approved() and user_id = (select auth.uid()));

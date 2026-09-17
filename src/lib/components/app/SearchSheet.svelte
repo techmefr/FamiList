@@ -17,17 +17,16 @@
 	let query = $state('');
 
 	/**
-	 * Le résultat désigné au clavier. Les flèches le déplacent, Entrée l'ouvre ; la souris n'y
-	 * touche pas — survoler une ligne en cherchant du regard déplacerait la cible de la touche
-	 * Entrée sous les doigts de quelqu'un qui ne regarde pas la souris.
+	 * The result pointed at by the keyboard. The arrows move it, Enter opens it; the mouse does not touch it
+	 * — hovering a row while scanning with your eyes would move the Enter key's target under the fingers of
+	 * somebody not looking at the mouse.
 	 */
 	let actif = $state(0);
 
 	/**
-	 * Tout se joue sur le cache local : les listes, les articles, les magasins et les cartes sont
-	 * déjà en mémoire, et le foyer d'une famille se compte en centaines de lignes. Interroger le
-	 * serveur rendrait la recherche inutilisable là où elle sert le plus — debout dans un rayon,
-	 * avec une barre de réseau.
+	 * Everything happens on the local cache: the lists, the items, the shops and the cards are already in
+	 * memory, and a family's household comes to hundreds of rows. Querying the server would make the search
+	 * unusable where it serves most — standing in an aisle, with one bar of signal.
 	 */
 	const groups = $derived(
 		searchAll(query, {
@@ -53,7 +52,7 @@
 		actif = 0;
 		dialog?.showModal();
 
-		// Comme la palette d'emoji : `showModal` pose le focus lui-même, on ne le déplace qu'après.
+		// Like the emoji palette: `showModal` places focus itself, we only move it afterwards.
 		await tick();
 		field?.focus();
 	}
@@ -69,9 +68,9 @@
 	}
 
 	/**
-	 * Les flèches parcourent la suite des résultats sans quitter le champ : on continue à corriger
-	 * sa frappe pendant qu'on regarde descendre la sélection. Le tour est bouclé — arrivé en bas,
-	 * la flèche suivante revient en haut, ce qui évite d'avoir à compter les lignes pour remonter.
+	 * The arrows travel the sequence of results without leaving the field: you go on correcting your typing
+	 * while watching the selection move down. It wraps — at the bottom, the next arrow comes back to the top,
+	 * which avoids having to count rows to go back up.
 	 */
 	function surTouche(event: KeyboardEvent) {
 		if (hits.length === 0) return;
@@ -89,8 +88,8 @@
 		}
 	}
 
-	// Une frappe de plus refait la liste : la sélection doit repartir du premier résultat, sinon
-	// Entrée ouvrirait la troisième ligne d'une liste qui n'existe plus.
+	// One more keystroke rebuilds the list: the selection must start again from the first result, otherwise
+	// Enter would open the third row of a list that no longer exists.
 	$effect(() => {
 		void query;
 		actif = 0;
@@ -134,14 +133,14 @@
 			</IconField>
 		</div>
 
-		<!-- Le décompte est dit par la synthèse vocale, pas affiché : la liste le montre déjà. -->
+		<!-- The count is spoken by the screen reader, not displayed: the list already shows it. -->
 		<p class="sr-only" aria-live="polite" data-test-id="search-count">
 			{tapeAssez ? t('search.count', { count: hits.length }) : ''}
 		</p>
 
 		<!--
-			Hauteur bornée et défilement interne, comme la palette : sans cela, une douzaine de
-			résultats pousserait le champ de recherche hors de l'écran, sur téléphone, clavier ouvert.
+			Bounded height and internal scrolling, like the palette: without it, a dozen results would push the
+			search field off the screen, on a phone, with the keyboard open.
 		-->
 		<div class="mt-3 max-h-[55vh] overflow-y-auto pe-1">
 			{#if !tapeAssez}
@@ -166,11 +165,10 @@
 									{@const index = hits.indexOf(hit)}
 									<li role="presentation" data-test-class="search-hit">
 										<!--
-											Un bouton, pas un lien : la feuille doit se refermer avant la navigation,
-											sinon on revient sur une page recouverte d'un panneau de résultats périmés.
-											Le clavier passe par le champ et les flèches, jamais par la tabulation d'une
-											ligne à l'autre — d'où `tabindex="-1"`, qui laisse Échap et Entrée là où le
-											doigt est déjà.
+											A button, not a link: the sheet must close before the navigation, otherwise you come back to a page
+											covered by a panel of stale results. The keyboard goes through the field and the arrows, never
+											through tabbing from one row to the next — hence `tabindex="-1"`, which leaves Escape and Enter
+											where the finger already is.
 										-->
 										<button
 											type="button"
@@ -215,7 +213,7 @@
 			{/if}
 		</div>
 
-		<!-- La fermeture après les résultats : le premier focus doit tomber sur le champ. -->
+		<!-- The close button after the results: first focus must land on the field. -->
 		<button
 			type="button"
 			onclick={hide}

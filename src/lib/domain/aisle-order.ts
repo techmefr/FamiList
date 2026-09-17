@@ -13,15 +13,14 @@ export interface AisleGroup<T extends OrderableItem> {
 }
 
 /**
- * Le cœur du produit : présenter une liste dans l'ordre de marche d'un magasin donné.
+ * The heart of the product: presenting a list in the walking order of a given shop.
  *
- * - Les rayons suivent `aisleOrder`, l'ordre appris pour ce magasin.
- * - Un rayon absent de `aisleOrder` (rayon créé après l'apprentissage) est placé à la fin plutôt que
- *   masqué : perdre un article coûte plus cher qu'un ordre imparfait.
- * - À l'intérieur d'un rayon, les produits suivent `itemOrder`, indexé par slug et non par id : un
- *   article acheté puis racheté la semaine suivante garde sa place.
- * - Les produits inconnus de l'ordre appris passent après ceux qui y figurent, dans leur ordre
- *   d'origine.
+ * - Aisles follow `aisleOrder`, the order learned for this shop.
+ * - An aisle missing from `aisleOrder` (an aisle created after the learning) is placed at the end rather
+ *   than hidden: losing an item costs more than an imperfect order.
+ * - Inside an aisle, products follow `itemOrder`, indexed by slug and not by id: an item bought then bought
+ *   again the following week keeps its place.
+ * - Products unknown to the learned order come after those in it, in their original order.
  */
 export function groupByAisle<T extends OrderableItem>(
 	items: T[],
@@ -60,7 +59,7 @@ function sortWithinAisle<T extends OrderableItem>(items: T[], slugOrder: string[
 		.map(({ item }) => item);
 }
 
-/** Ordre appris à retenir après un glisser-déposer : des slugs, pas des identifiants d'articles. */
+/** Learned order to keep after a drag-and-drop: slugs, not item identifiers. */
 export function learnedItemOrder(items: OrderableItem[]): string[] {
 	return items.map((item) => slugify(item.name));
 }

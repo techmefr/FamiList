@@ -1,92 +1,87 @@
--- Partir avec ses donnees, et partir tout court.
+-- Leaving with your data, and leaving altogether.
 --
--- L app tourne avec de vraies personnes et n offre aujourd hui ni l un ni l autre : supprimer un
--- compte demande une session psql sur la production, et recuperer ses donnees n a aucun chemin du
--- tout. Deux fonctions ici, et rien d autre — pas d Edge Function. Le patron `notify-admins` existe
--- parce qu un courriel demande un relais SMTP, c est-a-dire quelque chose que Postgres ne sait pas
--- faire. Lire ses propres lignes et effacer son propre compte, Postgres sait faire : passer par une
--- fonction Deno n ajouterait qu une cle de service a proteger et un etage a debugger.
---
---
--- CE QUE LA SUPPRESSION NE PEUT PAS ETRE
---
--- Les donnees sont partagees. Un foyer, ses listes, ses messages, ses prix releves appartiennent a
--- plusieurs personnes a la fois. « Supprimer mon compte » ne peut donc pas vouloir dire « supprimer
--- tout ce que j ai touche » : ce serait vider les listes des autres au nom de mon droit a moi.
--- La regle retenue tient en une phrase : ce qui n existe que pour moi disparait, ce qui existe pour
--- les autres reste mais cesse de porter mon nom.
---
--- Ce qui disparait vraiment :
---   * le compte `auth.users` et, par cascade, `profiles`, `household_members`, `list_members`,
---     `shop_layouts`, `shop_item_orders`, `mfa_backup_codes`, `invite_attempts`, `poll_votes` ;
---   * les foyers dont j etais le dernier membre, avec tout leur contenu — personne d autre ne les
---     ouvrira jamais, les garder reviendrait a conserver des donnees sans titulaire ;
---   * mes signalements de bogue. C est le seul contenu « adresse a quelqu un » que je supprime :
---     un signalement est un echange de support entre une personne et l administrateur, il decrit
---     souvent ce qu elle faisait a l ecran et peut porter une capture de ses propres listes.
---     L anonymiser ne le nettoierait pas — le texte, lui, reste bavard.
---   * mes votes de sondage (`poll_votes` casse deja en cascade). Un vote est une opinion attachee a
---     une identite et a rien d autre : sans nom il ne veut plus rien dire, et le retirer ne fait
---     que baisser un compteur. Rien ne s est construit dessus.
---
--- Ce qui reste, anonymise — toutes ces colonnes sont deja en `on delete set null`, le schema avait
--- donc deja tranche ; ce fichier ne fait qu assumer le choix :
---   * `messages.user_id`. Un fil de discussion est une oeuvre commune. Retirer un message auquel
---     trois personnes ont repondu laisse un trou dans leur conversation a elles, et c est leur
---     donnee, pas la mienne. Le texte reste, le lien vers le compte part : l ecran de discussion
---     affiche alors `chat.unknownAuthor`, exactement comme pour un message dont l auteur est
---     inconnu — aucun code client a changer. Garder le message avec le nom ne serait pas une
---     suppression ; le retirer serait effacer chez les autres.
---   * `item_prices.recorded_by`. Le prix d un produit dans un magasin est un fait sur le magasin.
---     Seule l attribution est personnelle.
---   * `recipes.created_by`. La recette est entree dans la cuisine du foyer, elle y reste.
---   * `items.assigned_to` et `poll_options.claimed_by` : la tache n est plus assignee a personne,
---     le plat n est plus apporte par personne. C est exact, et c est ce qu il faut afficher.
+-- The app runs with real people and today offers neither: deleting an account takes a psql session on
+-- production, and getting your data back has no path at all. Two functions here, and nothing else — no Edge
+-- Function. The `notify-admins` pattern exists because an email needs an SMTP relay, that is, something
+-- Postgres cannot do. Reading your own rows and erasing your own account, Postgres can do: going through a
+-- Deno function would only add a service key to protect and a floor to debug.
 --
 --
--- LES QUATRE REFUS
+-- WHAT DELETION CANNOT BE
 --
--- 1. Le deuxieme facteur. La suppression est irreversible : elle demande le niveau
---    d authentification que le compte s est lui-meme impose, comme tout le reste de l app. Un
---    compte en attente ou refuse peut en revanche se supprimer — c est meme le cas ou le droit est
---    le plus evident, `is_approved()` serait donc une mauvaise garde ici.
--- 2. Le compte de demonstration. Il est partage et remis a zero par `reset_demo` ; il n appartient
---    a personne et ne represente personne.
--- 3. Le dernier administrateur valide. `profiles_keep_one_admin` ne surveille que `update` — et sa
---    propre documentation dit pourquoi : empecher la suppression du profil rendrait un compte
---    impossible a supprimer. Ce refus-la vit donc ici, dans la fonction, et pas dans un declencheur
---    de plus : la sortie existe, elle s appelle `promote_admin`, et elle est nommee dans le
---    message. On ne contourne rien, on complete au seul endroit qui pouvait le faire.
--- 4. Rien au sujet du dernier membre d un foyer. `leave_household` refuse ce depart parce qu il
---    laisserait un foyer vivant et vide, invisible a tous. Ici le foyer n est pas laisse vide : il
---    est supprime avec la personne. La regle de `leave_household` est respectee, pas contournee —
---    et cette fonction n est pas appelee, justement pour ne pas avoir a la faire mentir.
+-- The data is shared. A household, its lists, its messages, its recorded prices belong to several people at
+-- once. "Delete my account" therefore cannot mean "delete everything I have touched": that would empty other
+-- people's lists in the name of my own right.
+-- The rule kept fits in one sentence: what exists only for me disappears, what exists for others stays but
+-- stops carrying my name.
+--
+-- What really disappears:
+--   * the `auth.users` account and, by cascade, `profiles`, `household_members`, `list_members`,
+--     `shop_layouts`, `shop_item_orders`, `mfa_backup_codes`, `invite_attempts`, `poll_votes`;
+--   * the households where I was the last member, with all their content — nobody else will ever open them,
+--     and keeping them would amount to keeping data with no holder;
+--   * my bug reports. It is the only content "addressed to somebody" that I delete: a report is a support
+--     exchange between a person and the administrator, it often describes what they were doing on screen and
+--     may carry a capture of their own lists. Anonymising it would not clean it — the text stays talkative.
+--   * my poll votes (`poll_votes` already cascades). A vote is an opinion attached to an identity and to
+--     nothing else: with no name it means nothing any more, and removing it only lowers a counter. Nothing
+--     has been built on it.
+--
+-- What stays, anonymised — all these columns are already `on delete set null`, so the schema had already
+-- decided; this file only owns the choice:
+--   * `messages.user_id`. A discussion thread is a common work. Removing a message three people have replied
+--     to leaves a hole in their conversation, and that is their data, not mine. The text stays, the link to
+--     the account goes: the chat screen then shows `chat.unknownAuthor`, exactly as for a message whose
+--     author is unknown — no client code to change. Keeping the message with the name would not be a
+--     deletion; removing it would be erasing from other people.
+--   * `item_prices.recorded_by`. The price of a product in a shop is a fact about the shop. Only the
+--     attribution is personal.
+--   * `recipes.created_by`. The recipe has entered the household's kitchen, and it stays there.
+--   * `items.assigned_to` and `poll_options.claimed_by`: the task is no longer assigned to anybody, the dish
+--     is no longer brought by anybody. That is accurate, and it is what should be shown.
 --
 --
--- LE CAS DU PROPRIETAIRE QUI PART
+-- THE FOUR REFUSALS
 --
--- `households.created_by` est en `on delete restrict` : sans reprise, la suppression du compte
--- echouerait sur une contrainte, ce qui est exactement le bon comportement par defaut — mieux vaut
--- un refus qu un foyer orphelin. La reprise est donc explicite : le foyer passe au plus ancien
--- membre restant, en preferant un proprietaire deja en place, et ce membre devient `owner` si le
--- foyer n en avait plus. Un foyer sans proprietaire est un foyer ou plus personne ne peut inviter
--- ni exclure : la reprise n est pas une politesse, c est ce qui empeche de bloquer les autres.
+-- 1. The second factor. Deletion is irreversible: it asks for the authentication level the account has
+--    imposed on itself, like everything else in the app. A pending or refused account can however delete
+--    itself — that is even the case where the right is most obvious, so `is_approved()` would be a bad guard
+--    here.
+-- 2. The demonstration account. It is shared and reset by `reset_demo`; it belongs to nobody and represents
+--    nobody.
+-- 3. The last valid administrator. `profiles_keep_one_admin` only watches `update` — and its own
+--    documentation says why: preventing the deletion of the profile would make an account impossible to
+--    delete. So that refusal lives here, in the function, and not in yet another trigger: the way out
+--    exists, it is called `promote_admin`, and it is named in the message. We bypass nothing, we complete at
+--    the only place that could.
+-- 4. Nothing about the last member of a household. `leave_household` refuses that departure because it would
+--    leave a household alive and empty, invisible to everybody. Here the household is not left empty: it is
+--    deleted with the person. `leave_household`'s rule is honoured, not bypassed — and that function is not
+--    called, precisely so as not to have to make it lie.
+--
+--
+-- THE CASE OF THE OWNER WHO LEAVES
+--
+-- `households.created_by` is `on delete restrict`: with no handover, deleting the account would fail on a
+-- constraint, which is exactly the right default behaviour — better a refusal than an orphan household. So
+-- the handover is explicit: the household passes to the oldest remaining member, preferring an owner already
+-- in place, and that member becomes `owner` if the household had none left. A household with no owner is a
+-- household where nobody can invite or remove any more: the handover is not a courtesy, it is what stops the
+-- others being blocked.
 
 /*
- * L export.
+ * The export.
  *
- * `returns jsonb` plutot qu un fichier : l app est un bundle statique, c est le navigateur qui
- * fabrique le fichier a telecharger. Rien ne transite par un stockage intermediaire, donc rien
- * n est a purger ensuite.
+ * `returns jsonb` rather than a file: the app is a static bundle, and it is the browser that makes the file
+ * to download. Nothing passes through intermediate storage, so nothing has to be purged afterwards.
  *
- * La regle de perimetre, unique et volontairement lisible : le contenu d un foyer n est exporte en
- * entier que si j en suis le seul membre. Partout ailleurs je ne recois que les lignes qui portent
- * mon identifiant. Mes messages sont mes donnees personnelles — ils me designent, le RGPD me les
- * doit — mais les reponses des autres autour ne le sont pas, et un export n est pas une porte
- * derobee vers la conversation du foyer.
+ * The scope rule, single and deliberately readable: a household's content is exported in full only if I am
+ * its only member. Everywhere else I receive only the rows carrying my identifier. My messages are my
+ * personal data — they designate me, the GDPR owes them to me — but the others' replies around them are not,
+ * and an export is not a back door into the household's conversation.
  *
- * Les condensats des codes de secours ne sont pas exportes : ce sont des secrets d authentification,
- * pas des donnees personnelles a restituer, et les rendre lisibles n aiderait personne.
+ * The backup codes' hashes are not exported: they are authentication secrets, not personal data to be
+ * returned, and making them readable would help nobody.
  */
 create or replace function public.export_account()
 returns jsonb
@@ -134,8 +129,8 @@ begin
           'joinedAt', m.joined_at,
           'createdByMe', h.created_by = me,
           'soleMember', h.id = any(sole),
-          -- Non nul seulement pour un foyer dont je suis le seul membre. Ailleurs, la cle reste a
-          -- `null` plutot que d etre absente : l absence se lirait comme un oubli de l export.
+          -- Non-null only for a household where I am the only member. Elsewhere, the key stays at `null`
+          -- rather than being absent: absence would read as an omission from the export.
           'content', case when h.id = any(sole) then jsonb_build_object(
             'shops', (select coalesce(jsonb_agg(to_jsonb(s)), '[]'::jsonb)
                       from public.shops s where s.household_id = h.id),
@@ -170,8 +165,8 @@ begin
       join public.households h on h.id = m.household_id
       where m.user_id = me
     ),
-    -- Ce que j ai ecrit ailleurs que chez moi. Le contexte se limite au nom de la liste : sans lui
-    -- l export est une suite de phrases sans fil, avec plus que lui il devient l archive des autres.
+    -- What I have written outside my own place. The context is limited to the list name: without it the
+    -- export is a string of sentences with no thread, with more than it it becomes the others' archive.
     'authored', jsonb_build_object(
       'messages', (
         select coalesce(jsonb_agg(
@@ -233,8 +228,8 @@ begin
         from public.household_invites iv
         where iv.created_by = me
       ),
-      -- Le rangement des rayons magasin par magasin : c est un apprentissage de mes habitudes, donc
-      -- une donnee sur moi, meme si aucune de ses colonnes ne ressemble a un contenu.
+      -- The aisle arrangement shop by shop: it is a learning of my habits, and therefore data about me, even
+      -- if none of its columns looks like content.
       'shopLayouts', (
         select coalesce(jsonb_agg(to_jsonb(sl)), '[]'::jsonb)
         from public.shop_layouts sl where sl.user_id = me
@@ -262,10 +257,10 @@ comment on function public.export_account() is
   'Rend en JSON tout ce que l app retient de l appelant. Le contenu d un foyer n est entier que si l appelant en est le seul membre ; ailleurs, seules les lignes qui portent son identifiant sortent.';
 
 /*
- * La suppression.
+ * The deletion.
  *
- * Tout tient dans une transaction : si la reprise d un foyer echoue, rien n est supprime, et la
- * personne reessaie au lieu de se retrouver a moitie partie.
+ * Everything is in one transaction: if handing a household over fails, nothing is deleted, and the person
+ * tries again instead of ending up half gone.
  */
 create or replace function public.delete_account()
 returns void
@@ -303,8 +298,8 @@ begin
     raise exception 'nommez un autre administrateur avant de partir' using errcode = '23514';
   end if;
 
-  -- Le meme verrou que `redeem_invite` : sans lui, quelqu un qui rejoint un de mes foyers pendant
-  -- que je le supprime se retrouve membre d un foyer qui n existe plus.
+  -- The same lock as `redeem_invite`: without it, somebody joining one of my households while I am deleting
+  -- it ends up a member of a household that no longer exists.
   perform public.lock_household_membership();
 
   for membership in
@@ -314,7 +309,7 @@ begin
       select 1 from public.household_members o
       where o.household_id = membership.household_id and o.user_id <> me
     ) then
-      -- Dernier membre : le foyer part avec moi, en cascade. Aucune autre personne n y a d acces.
+      -- Last member: the household goes with me, by cascade. No other person has access to it.
       delete from public.households where id = membership.household_id;
       continue;
     end if;
@@ -339,13 +334,13 @@ begin
     set created_by = successor
     where id = membership.household_id and created_by = me;
 
-    -- Les declencheurs de depart font le reste : listes partagees quittees, rangements effaces.
+    -- The departure triggers do the rest: shared lists left, arrangements erased.
     delete from public.household_members
     where household_id = membership.household_id and user_id = me;
   end loop;
 
-  -- Les foyers que j ai crees et quittes depuis. `created_by` est en `on delete restrict` : sans
-  -- cette reprise, la suppression echouerait sur un foyer que je ne vois meme plus.
+  -- The households I created and have since left. `created_by` is `on delete restrict`: without this
+  -- handover, the deletion would fail on a household I cannot even see any more.
   for orphan in select h.id from public.households h where h.created_by = me
   loop
     select o.user_id
@@ -364,8 +359,8 @@ begin
 
   delete from public.bug_reports where user_id = me;
 
-  -- Le reste suit les cles etrangeres posees par le schema : cascade pour ce qui n existait que
-  -- pour moi, `set null` pour ce que je laisse aux autres.
+  -- The rest follows the foreign keys set by the schema: cascade for what existed only for me, `set null`
+  -- for what I leave to the others.
   delete from auth.users where id = me;
 end;
 $$;

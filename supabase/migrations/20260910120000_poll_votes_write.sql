@@ -1,8 +1,8 @@
--- On ne vote que sur un sondage qu on peut lire.
+-- You only vote on a poll you can read.
 --
--- poll_votes_write ne verifiait que l identite du votant, jamais l acces au sondage, alors que
--- poll_votes_select remonte jusqu a can_access_list. Un compte approuve pouvait donc voter dans
--- le sondage de n importe quel foyer en devinant un option_id.
+-- poll_votes_write checked only the voter's identity, never access to the poll, whereas poll_votes_select goes
+-- all the way up to can_access_list. An approved account could therefore vote in any household's poll by
+-- guessing an option_id.
 
 drop policy poll_votes_write on public.poll_votes;
 create policy poll_votes_write on public.poll_votes for insert

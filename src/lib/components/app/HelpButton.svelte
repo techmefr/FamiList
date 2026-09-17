@@ -19,11 +19,11 @@
 	}
 
 	/**
-	 * Le tour raconte l'écran ouvert, pas l'application en général : il est choisi à partir du
-	 * chemin courant.
+	 * The tour tells of the open screen, not of the application in general: it is chosen from the current
+	 * path.
 	 *
-	 * driver.js et sa feuille de style ne descendent qu'ici, à la demande. Ils pèsent une centaine
-	 * de kilo-octets pour un besoin qui, chez la plupart des gens, se présente une fois.
+	 * driver.js and its stylesheet only come down here, on demand. They weigh a hundred kilobytes or so for a
+	 * need that, for most people, comes up once.
 	 */
 	async function tutoriel() {
 		hide();
@@ -32,11 +32,11 @@
 	}
 
 	/**
-	 * Le signalement s'ouvre par-dessus l'écran, sans le quitter.
+	 * The report opens over the screen, without leaving it.
 	 *
-	 * Le formulaire demande une capture de ce qui ne va pas : une navigation ferait disparaître
-	 * exactement ce qu'il faut photographier. Le panneau, lui, se réduit et laisse revoir l'écran.
-	 * L'endroit d'où l'on part est noté au passage, pour ne pas avoir à le redécrire.
+	 * The form asks for a capture of what is wrong: navigating would make exactly what needs photographing
+	 * disappear. The panel, for its part, shrinks and lets the screen be seen again. Where you started from
+	 * is noted in passing, so it does not have to be described.
 	 */
 	function signaler(kind: 'bug' | 'suggestion') {
 		hide();
@@ -44,10 +44,9 @@
 	}
 
 	/**
-	 * L'installation ne figure ici que là où elle veut dire quelque chose : ni dans l'application
-	 * Capacitor, ni une fois posée sur l'écran d'accueil, ni dans un navigateur qui n'offre aucun
-	 * chemin. Elle y reste en revanche après un « plus tard » — le bandeau se tait six mois, mais
-	 * revenir de soi-même doit rester possible le lendemain.
+	 * Installing only appears here where it means something: not in the Capacitor application, not once put
+	 * on the home screen, and not in a browser offering no path. It does however stay after a "later" — the
+	 * banner keeps quiet for six months, but coming back of your own accord must stay possible the next day.
 	 */
 	const ACTIONS = $derived([
 		{ key: 'tutorial', icon: GraduationCap, action: tutoriel },
@@ -65,12 +64,12 @@
 </script>
 
 <!--
-	Une aide qu'on trouve sans la chercher.
+	Help you find without looking for it.
 
-	Elle est au même endroit sur tous les écrans, en haut à droite du contenu : c'est la place où on
-	la cherche, et elle ne prend pas un sixième onglet dans une barre qui en supporte cinq. Le
-	libellé est visible et non seulement lu par la synthèse vocale — un point d'interrogation seul
-	se confond avec une décoration, et c'est précisément la personne qui hésite qui a besoin du mot.
+	It is in the same place on every screen, at the top right of the content: that is where you look for it,
+	and it does not take a sixth tab in a bar that holds five. The label is visible and not only read out by
+	the screen reader — a question mark on its own is mistaken for decoration, and it is precisely the person
+	who hesitates who needs the word.
 -->
 <button
 	type="button"

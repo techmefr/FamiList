@@ -1,20 +1,17 @@
 /**
- * Ce que la base répond quand on lui dépose un plantage.
+ * What the database answers when a crash is filed with it.
  *
- * `report_crash` ne lève pas : une exception annulerait la transaction, donc le nettoyage de
- * rétention et l'incrémentation du compteur avec elle. Elle renvoie un objet, comme
- * `submit_bug_report` et `redeem_invite`.
+ * `report_crash` does not raise: an exception would roll the transaction back, and with it the retention
+ * clean-up and the counter increment. It returns an object, like `submit_bug_report` and `redeem_invite`.
  *
- * Rien de tout cela n'arrive sous les yeux de qui que ce soit — un rapporteur d'erreurs qui
- * afficherait ses propres échecs serait pire que pas de rapporteur du tout. La seule chose qu'on
- * lit ici, c'est s'il faut cesser d'appeler.
+ * None of this happens in front of anybody's eyes — an error reporter showing its own failures would be
+ * worse than no reporter at all. The only thing read here is whether to stop calling.
  *
- * Tout ce qu'on ne reconnaît pas est traité comme un simple échec et non comme un plafond : une
- * fonction mise à jour ou un cache de schéma en retard ne doivent pas éteindre le rapporteur pour
- * le reste de la session.
+ * Anything we do not recognise is treated as a plain failure and not as a cap: an updated function or a
+ * schema cache lagging behind must not switch the reporter off for the rest of the session.
  */
 export interface CrashOutcome {
-	/** Le compte a épuisé son quota du jour : inutile de rappeler avant le prochain chargement. */
+	/** The account has used up its quota for the day: no point calling again before the next load. */
 	exhausted: boolean;
 }
 

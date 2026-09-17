@@ -1,26 +1,25 @@
 /**
- * Ce qui décide qu'un plantage vaut un appel réseau.
+ * What decides that a crash is worth a network call.
  *
- * Une boucle de rendu qui échoue ne lève pas une fois : elle lève à chaque image, des centaines de
- * fois par seconde. La base sait déjà se défendre — elle ne réécrit pas la même empreinte deux fois
- * en trente secondes — mais elle ne se défend qu'après avoir reçu l'appel. Un appareil qui part en
- * boucle enverrait alors des centaines de requêtes par seconde depuis un navigateur déjà en
- * difficulté, ce qui est exactement le moment où il ne faut rien lui demander de plus.
+ * A failing render loop does not throw once: it throws on every frame, hundreds of times a second. The
+ * database already knows how to defend itself — it does not rewrite the same fingerprint twice in thirty
+ * seconds — but it only defends itself after receiving the call. A device in a loop would then send
+ * hundreds of requests a second from a browser already in difficulty, which is exactly the moment not to
+ * ask anything more of it.
  *
- * D'où ce filtre, en mémoire, avant le réseau. Il est volontairement pur et sans horloge : le temps
- * lui est passé, ce qui le rend testable sans attendre.
+ * Hence this filter, in memory, before the network. It is deliberately pure and clockless: time is passed
+ * to it, which makes it testable without waiting.
  *
- * Il ne survit pas au rechargement de la page, et c'est voulu. Le persister demanderait d'écrire
- * dans le stockage local depuis un chemin de plantage, c'est-à-dire d'ajouter une écriture qui peut
- * elle-même échouer là où plus rien ne doit échouer.
+ * It does not survive a page reload, and that is intended. Persisting it would mean writing to local
+ * storage from a crash path, that is, adding a write that can itself fail where nothing must fail.
  */
 
-/** Deux occurrences de la même empreinte envoyées au plus une fois par minute. */
+/** Two occurrences of the same fingerprint sent at most once a minute. */
 export const CRASH_REPEAT_DELAY_MS = 60_000;
 
 /**
- * Plafond d'envois sur la durée de vie de l'onglet. Vingt plantages distincts, c'est déjà une
- * session inutilisable : au-delà, on n'apprend plus rien et on n'ajoute que du bruit.
+ * Cap on sends over the life of the tab. Twenty distinct crashes is already an unusable session: beyond
+ * that, we learn nothing more and only add noise.
  */
 export const CRASH_SESSION_LIMIT = 20;
 
@@ -30,9 +29,8 @@ export class CrashThrottle {
 	#stopped = false;
 
 	/**
-	 * Vrai si ce plantage doit partir maintenant. Un appel qui répond vrai compte comme envoyé :
-	 * l'appelant n'a pas à le signaler ensuite, et un chemin d'erreur avec deux étapes à ne pas
-	 * oublier est un chemin d'erreur qu'on oublie.
+	 * True if this crash must go now. A call answering true counts as sent: the caller does not have to
+	 * report it afterwards, and an error path with two steps not to forget is an error path you forget.
 	 */
 	allow(fingerprint: string, now: number): boolean {
 		if (this.#stopped) return false;
@@ -48,11 +46,10 @@ export class CrashThrottle {
 	}
 
 	/**
-	 * Arrête tout jusqu'au prochain chargement.
+	 * Stops everything until the next load.
 	 *
-	 * Appelé quand la base répond qu'un plafond quotidien est atteint : continuer d'appeler une
-	 * fonction qui a déjà dit non est du bruit pur, et cet appareil-là a manifestement autre chose
-	 * à faire.
+	 * Called when the database answers that a daily cap is reached: going on calling a function that has
+	 * already said no is pure noise, and that device clearly has something else to deal with.
 	 */
 	stop() {
 		this.#stopped = true;

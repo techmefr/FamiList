@@ -3,9 +3,8 @@ import { createHmac } from 'node:crypto';
 import { base32Decode, counterBytes, totpCounter, truncate } from './totp';
 
 /**
- * Les vecteurs de la RFC 6238, secret « 12345678901234567890 » en SHA-1. Sans eux, un calcul faux
- * rendrait simplement un code refusé, et on croirait la deuxième étape cassée alors que c'est le
- * test qui l'est.
+ * The RFC 6238 vectors, secret "12345678901234567890" in SHA-1. Without them, a wrong computation would
+ * simply return a refused code, and we would think the second step broken when it is the test that is.
  */
 const SECRET_RFC = 'GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ';
 

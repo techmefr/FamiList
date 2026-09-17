@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { move, dropIndex, slotShifts, edgeScrollStep, BORD, VITESSE } from './reorder';
 
-/** Trois lignes de 100 px collées les unes aux autres, la première à 0. */
+/** Three 100 px rows stuck to each other, the first at 0. */
 const tops = [0, 108, 216];
 const hauteurs = [100, 100, 100];
 const ecart = 8;
@@ -24,7 +24,7 @@ describe('move', () => {
 
 describe('dropIndex', () => {
 	it('reste en place tant que la moitie du voisin n est pas franchie', () => {
-		// La ligne 0 descend de 40 px : son centre est a 90, la moitie de la ligne 1 est a 158.
+		// Row 0 goes down by 40 px: its centre is at 90, the middle of row 1 is at 158.
 		expect(dropIndex(50 + 40, tops, hauteurs, 0)).toBe(0);
 	});
 
@@ -52,7 +52,7 @@ describe('slotShifts', () => {
 	});
 
 	it('remonte les lignes survolees quand on descend', () => {
-		// 0 va en 2 : les lignes 1 et 2 remontent d une hauteur de ligne plus l ecart.
+		// 0 goes to 2: rows 1 and 2 come up by one row height plus the gap.
 		expect(slotShifts(tops, hauteurs, ecart, 0, 2)).toEqual([216, -108, -108]);
 	});
 
@@ -61,7 +61,7 @@ describe('slotShifts', () => {
 	});
 
 	it('tient compte des hauteurs inegales', () => {
-		// Une ligne haute au milieu : la premiere doit descendre de sa hauteur, pas de la sienne.
+		// A tall row in the middle: the first must go down by its height, not by its own.
 		const inegaux = [0, 108, 266];
 		const grandes = [100, 150, 100];
 		expect(slotShifts(inegaux, grandes, ecart, 0, 1)).toEqual([158, -108, 0]);

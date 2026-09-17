@@ -1,19 +1,18 @@
 import type { Locale } from './index.svelte';
 
 /**
- * Le drapeau qui accompagne le nom natif dans le choix de la langue.
+ * The flag standing beside the native name in the language picker.
  *
- * Un drapeau désigne un pays, jamais une langue : il ne peut donc être qu'une décoration posée à
- * côté du nom, et le nom reste seul porteur de l'information. La règle retenue est le pays
- * d'origine de la langue — l'Espagne pour l'espagnol, le Portugal pour le portugais — et non le
- * pays qui compte le plus de locuteurs, sans quoi il faudrait arbitrer entre Madrid et Mexico,
- * Lisbonne et Brasilia, pour une simple vignette.
+ * A flag stands for a country, never for a language: it can therefore only be decoration set next to the
+ * name, and the name stays the sole carrier of the information. The rule kept is the language's country of
+ * origin — Spain for Spanish, Portugal for Portuguese — and not the country with the most speakers, failing
+ * which we would have to choose between Madrid and Mexico City, Lisbon and Brasilia, for a mere thumbnail.
  *
- * Deux langues n'ont pas de drapeau et n'en auront pas : l'anglais, qui n'appartient ni au
- * Royaume-Uni ni aux États-Unis et dont le choix vexerait l'un des deux sans rien apporter, et
- * l'arabe, parlé dans une vingtaine de pays dont aucun ne le représente. Leur entrée garde son
- * seul nom natif, ce qui est aussi ce qu'affichent Android et Windows quand un drapeau manque à
- * leur police : l'absence est un cas normal de la liste, pas une anomalie.
+ * Two languages have no flag and will not get one: English, which belongs to neither the United Kingdom nor
+ * the United States and where choosing would offend one of the two without adding anything, and Arabic,
+ * spoken in some twenty countries none of which represents it. Their entry keeps its native name alone,
+ * which is also what Android and Windows show when a flag is missing from their font: absence is a normal
+ * case of the list, not an anomaly.
  */
 const FLAGS: Partial<Record<Locale, string>> = {
 	fr: '🇫🇷',

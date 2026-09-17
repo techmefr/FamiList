@@ -1,7 +1,7 @@
 /**
- * Heuristique volontairement simple, reprise du prototype (flGuessAisle). Elle propose un rayon à
- * l'ajout d'un article, l'utilisateur peut toujours le changer. Pas d'appel réseau, pas de modèle :
- * une erreur de devinette coûte un clic, une latence coûte l'usage.
+ * A deliberately simple heuristic, taken from the prototype (flGuessAisle). It suggests an aisle when an
+ * item is added, and the user can always change it. No network call, no model: a wrong guess costs a click,
+ * latency costs the usage.
  */
 const RULES: [RegExp, string][] = [
 	[
@@ -10,7 +10,7 @@ const RULES: [RegExp, string][] = [
 	],
 	[/pain|baguette|croissant|brioche|tarte|pâte feuillet|pate feuillet|viennoiser/, 'boulangerie'],
 	[
-		// « œuf » doit être un début de mot, sinon « bœuf » tombe dans les produits laitiers.
+		// "œuf" must be the start of a word, otherwise "bœuf" falls into the dairy aisle.
 		/lait|yaourt|crème|creme|beurre|fromage|comté|comte|camembert|mozzarella|parmesan|(?<![a-zà-ÿ])(œuf|oeuf)/,
 		'laitier'
 	],

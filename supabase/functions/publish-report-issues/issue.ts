@@ -1,17 +1,17 @@
 /**
- * Redaction de l issue publique ouverte pour un signalement.
+ * Writing the public issue opened for a report.
  *
- * Tout l interet du fichier tient dans ce qu il n ecrit pas. Le depot est public : la description,
- * la capture, le chemin, l appareil et `user_id` restent en base. L issue ne porte qu un numero,
- * et ce numero ne dit rien a qui n a pas acces a /admin. C est volontaire — l issue est une trace
- * dans le backlog, pas une description ; l administrateur l enrichit a la main au tri, avec les
- * mots qu il choisit, ce qui reste le seul filtre d anonymisation fiable.
+ * The whole point of the file is in what it does not write. The repository is public: the description, the
+ * capture, the path, the device and `user_id` stay in the database. The issue carries only a number, and
+ * that number says nothing to whoever has no access to /admin. That is intended — the issue is a trace in
+ * the backlog, not a description; the administrator enriches it by hand while triaging, with the words they
+ * choose, which remains the only reliable anonymisation filter.
  *
- * Le texte produit est en anglais, comme les issues et les pull requests du depot depuis le
- * changement de langue du suivi — et contrairement au courriel de `notify-admins`, qui reste
- * francais parce qu il ne quitte pas la boite de l administrateur.
+ * The text produced is in English, like the repository's issues and pull requests since the tracker changed
+ * language — and unlike the `notify-admins` email, which stays French because it does not leave the
+ * administrator's inbox.
  *
- * Aucune dependance Deno ici, pour que la mise en forme reste testable par vitest.
+ * No Deno dependency here, so that the formatting stays testable by vitest.
  */
 
 export type ReportToPublish = {
@@ -27,8 +27,8 @@ export type IssuePayload = {
 };
 
 /**
- * `kind` distingue deja un bug d une suggestion : c est la seule information du signalement qui
- * puisse sortir sans rien dire du foyer, et elle suffit a ranger l issue.
+ * `kind` already tells a bug from a suggestion: it is the only piece of information from the report that can
+ * leave without saying anything about the household, and it is enough to file the issue.
  */
 const LABELS: Record<string, string> = {
 	bug: 'bug',

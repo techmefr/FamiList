@@ -26,12 +26,12 @@
 	let copied = $state(false);
 
 	/**
-	 * Un refus de la base, dit dans la langue de la personne — et, quand la cause est une session
-	 * restée au mot de passe, avec la porte pour en sortir.
+	 * A refusal from the database, said in the person's language — and, when the cause is a session left at
+	 * the password stage, with the door to get out of it.
 	 *
-	 * Le niveau d'authentification est relu avant de conclure : « compte non valide » recouvre
-	 * aussi bien un compte en attente qu'un deuxième facteur pas encore présenté, et ce que le
-	 * client croit savoir de la session peut dater d'une lecture qui a échoué.
+	 * The authentication level is read again before concluding: "invalid account" covers both an account
+	 * awaiting approval and a second factor not yet presented, and what the client believes about the
+	 * session may come from a read that failed.
 	 */
 	async function montrerRefus(message: string) {
 		await session.refreshLevels();
@@ -81,8 +81,8 @@
 			return;
 		}
 
-		// Un code refusé n'arrive plus par une exception : la base doit pouvoir retenir la tentative,
-		// ce qu'une transaction annulée lui interdirait.
+		// A refused code no longer arrives as an exception: the database must be able to record the attempt,
+		// which a rolled-back transaction would forbid.
 		const issue = readInviteOutcome(reponse);
 
 		if (issue.errorKey) {
@@ -91,19 +91,20 @@
 			return;
 		}
 
-		// On reste membre du foyer précédent — rejoindre n'en fait plus quitter un. C'est donc ici
-		// qu'on dit lequel regarder, sinon la relecture reprendrait le plus ancien.
+		// We stay a member of the previous household — joining one no longer means leaving one. So this is
+		// where we say which to look at, otherwise the reload would take the oldest again.
 		if (issue.householdId) sync.adopt(issue.householdId);
 
-		// Le foyer affiché a changé : tout le cache local appartient à l'autre, on repart du serveur.
+		// The displayed household has changed: the whole local cache belongs to the other one, we start again
+		// from the server.
 		await data.reload();
 		busy = false;
 		joinCode = '';
 	}
 
 	/**
-	 * Le nom du cercle, que le sélecteur est le premier à rendre nécessaire : deux cercles créés à
-	 * l'inscription portent le même nom par défaut, et une liste de doublons ne se choisit pas.
+	 * The circle name, which the selector is the first to make necessary: two circles created at sign-up
+	 * carry the same default name, and a list of duplicates cannot be chosen from.
 	 */
 	async function rename(event: SubmitEvent) {
 		event.preventDefault();
@@ -159,8 +160,8 @@
 		<p class="text-destructive">{error}</p>
 
 		<!--
-			Le seul refus qui a une sortie immédiate : la personne a bien son code de vérification,
-			il ne lui manque que l'écran où le taper.
+			The only refusal with an immediate way out: the person does have their verification code, all they are
+			missing is the screen to type it on.
 		-->
 		{#if secondFacteurRequis}
 			<Button
@@ -176,14 +177,14 @@
 {/if}
 
 <!--
-	Les cercles, et celui qu'on regarde.
+	The circles, and the one being looked at.
 
-	Un seul cercle est actif à la fois : c'est lui qui décide des listes, des magasins, des rayons et
-	des cartes affichés, et c'est dans lui qu'atterrit ce qu'on crée. Les autres restent lus et en
-	cache — basculer ne relit rien et marche sans réseau.
+	Only one circle is active at a time: it is the one deciding which lists, shops, aisles and cards are
+	shown, and it is where what you create lands. The others stay read and cached — switching reads nothing
+	again and works with no network.
 
-	La carte disparaît quand il n'y a qu'un cercle : il n'y a alors rien à choisir, et une liste d'un
-	seul élément ne ferait que demander à quoi elle sert.
+	The card disappears when there is only one circle: there is then nothing to choose, and a one-item list
+	would only invite the question of what it is for.
 -->
 {#if data.circles.length > 1}
 	<Card.Root class="mt-6">
@@ -232,8 +233,8 @@
 	</Card.Header>
 	<Card.Content>
 		<!--
-			Le nom du cercle affiché. Il ne servait à rien tant qu'on n'en voyait qu'un ; il devient ce
-			qui distingue deux cercles dans le sélecteur, et tous naissent avec le même nom par défaut.
+			The name of the displayed circle. It served no purpose while only one was visible; it becomes what
+			tells two circles apart in the selector, and all are born with the same default name.
 		-->
 		<form onsubmit={rename} class="mb-6">
 			<Label for="circle-name">{t('household.nameLabel')}</Label>

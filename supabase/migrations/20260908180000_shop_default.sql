@@ -1,20 +1,19 @@
--- Le magasin que le foyer n'a pas cree lui-meme.
+-- The shop the household did not create itself.
 --
--- Un parcours appartient toujours a un magasin : `shop_layouts` a pour cle primaire
--- (shop_id, user_id) et une cle etrangere vers `shops`. Un foyer sans magasin n'avait donc nulle
--- part ou ecrire l'ordre de ses rayons, et les fleches comme le glisser-deposer ne faisaient rien
--- du tout, sans le moindre message. Chaque foyer recoit desormais un magasin vide a sa premiere
--- ouverture, ce qui donne au rangement un endroit ou vivre des le depart.
+-- A layout always belongs to a shop: `shop_layouts` has (shop_id, user_id) as its primary key and a foreign
+-- key to `shops`. A household with no shop therefore had nowhere to write the order of its aisles, and the
+-- arrows as well as drag-and-drop did nothing at all, without the slightest message. Every household now
+-- receives an empty shop on its first opening, which gives tidying somewhere to live from the start.
 --
--- Le premier vrai magasin le remplace plutot que de s'ajouter a cote : le rangement deja fait
--- change de nom, il n'est pas perdu. Ce drapeau dit lequel est remplacable.
+-- The first real shop replaces it rather than being added next to it: the tidying already done changes name,
+-- it is not lost. This flag says which one is replaceable.
 alter table public.shops
 	add column if not exists is_default boolean not null default false;
 
--- Un seul magasin par defaut par foyer. La contrainte est ici et pas seulement dans le code :
--- deux appareils qui ouvrent l'application en meme temps sur un foyer neuf tenteraient tous les
--- deux de le creer. L'identifiant est deja derive du foyer pour que les deux ecritures visent la
--- meme ligne ; cet index est la ceinture, au cas ou.
+-- A single default shop per household. The constraint is here and not only in the code: two devices opening
+-- the application at the same time on a fresh household would both try to create it. The identifier is
+-- already derived from the household so that both writes aim at the same row; this index is the belt, just in
+-- case.
 create unique index if not exists shops_one_default_per_household
 	on public.shops (household_id)
 	where is_default;

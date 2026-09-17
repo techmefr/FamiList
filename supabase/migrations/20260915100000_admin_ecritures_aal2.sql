@@ -1,56 +1,53 @@
--- Le panneau d administration passe derriere la deuxieme etape, comme le reste.
+-- The administration panel goes behind the second step, like the rest.
 --
--- `is_approved()` a ete redefinie par la migration MFA : des qu un compte a un facteur verifie,
--- elle exige que la session l ait effectivement presente. Toutes les regles d acces aux donnees
--- d un foyer passent par elle. `is_admin()`, elle, n a jamais bouge : role `admin` et statut
--- `approved`, sans un mot sur le niveau d authentification.
+-- `is_approved()` was redefined by the MFA migration: as soon as an account has a verified factor, it
+-- requires the session to have actually presented it. Every access rule to a household's data goes through
+-- it. `is_admin()`, for its part, has never moved: `admin` role and `approved` status, with not a word about
+-- the authentication level.
 --
--- L asymetrie se lit simplement : quelqu un qui obtient le mot de passe d un administrateur sans
--- son second facteur ne voit aucune liste de courses, mais peut appeler `review_account`,
--- `set_demo` et `reset_demo` directement sur l API. Il valide son propre compte en attente, le
--- marque en demonstration, et il est entre. La 2FA de l administrateur ne protegeait que ses
--- courses, pas l instance.
+-- The asymmetry reads simply: somebody obtaining an administrator's password without their second factor
+-- sees no shopping list, but can call `review_account`, `set_demo` and `reset_demo` directly on the API.
+-- They validate their own pending account, mark it as demonstration, and they are in. The administrator's
+-- 2FA protected only their shopping, not the instance.
 --
--- Ce qui est verrouille ici, et ce qui ne l est pas. Les ecritures, toutes. Les lectures
--- (`pending_accounts`, `list_bug_reports`), non : elles gardent `is_admin()` seule. Un
--- administrateur bloque doit pouvoir voir l ecran et comprendre pourquoi il est refuse, plutot que
--- de tomber sur un « reserve aux administrateurs » qui lui ferait croire qu il a perdu son role.
--- Et cela n ouvre rien de neuf : la regle `profiles_select` laisse deja lire tous les profils a
--- `is_admin()`, et ces deux fonctions existaient deja avec ce meme garde-fou.
+-- What is locked here, and what is not. The writes, all of them. The reads (`pending_accounts`,
+-- `list_bug_reports`), no: they keep `is_admin()` alone. A blocked administrator must be able to see the
+-- screen and understand why they are refused, rather than meet a "reserved for administrators" that would
+-- make them think they had lost their role. And that opens nothing new: the `profiles_select` rule already
+-- lets `is_admin()` read every profile, and those two functions already existed with that same guardrail.
 --
--- Le piege a eviter etait l enfermement : exiger aal2 pour atteindre `/admin` enfermerait dehors
--- l administrateur qui perd son telephone. Il n y a pas d enfermement, parce que le chemin de
--- retour ne passe pas par `/admin` et existait avant ce fichier :
+-- The trap to avoid was lockout: requiring aal2 to reach `/admin` would lock out the administrator who loses
+-- their phone. There is no lockout, because the way back does not go through `/admin` and existed before
+-- this file:
 --
---   1. les codes de secours — `consume_backup_code` s appelle depuis une session restee en aal1,
---      retire le facteur, et l ecran `/auth/mfa` les propose des la premiere vue ;
---   2. a defaut, un second administrateur et `admin_reset_mfa`, pose par la migration precedente ;
---   3. en dernier recours, la procedure hors application documentee dans cette meme migration.
+--   1. the backup codes — `consume_backup_code` is called from a session left at aal1, removes the factor,
+--      and the `/auth/mfa` screen offers them from the first view;
+--   2. failing that, a second administrator and `admin_reset_mfa`, set by the previous migration;
+--   3. as a last resort, the out-of-application procedure documented in that same migration.
 --
--- Un compte administrateur sans facteur verifie n est gene par rien : `is_approved()` ne reclame
--- aal2 qu a ceux qui se le sont impose. Le verrou pose ici suit ce compte, il ne l invente pas.
+-- An administrator account with no verified factor is hindered by nothing: `is_approved()` only demands aal2
+-- from those who have imposed it on themselves. The lock set here follows that account, it does not invent
+-- it.
 --
--- Deux refus, deux messages. « reserve aux administrateurs » veut dire « ce n est pas votre role »
--- et n a pas de suite ; « elevation requise » veut dire « c est bien votre role, finissez de vous
--- connecter » et a une sortie. Les confondre sous un seul texte enverrait la moitie des gens
--- chercher au mauvais endroit.
+-- Two refusals, two messages. "reserved for administrators" means "this is not your role" and has no
+-- follow-up; "elevation required" means "it is indeed your role, finish signing in" and has a way out.
+-- Merging them under a single text would send half of people looking in the wrong place.
 
 /*
- * Le garde-fou commun a toutes les ecritures du panneau.
+ * The guardrail common to every write of the panel.
  *
- * Ecrit une fois plutot que recopie sept fois : c est le genre de condition qu on oublie de
- * reporter sur la huitieme fonction, et l oubli ne se voit pas — la fonction marche, elle marche
- * juste aussi pour qui ne devrait pas.
+ * Written once rather than copied seven times: it is the kind of condition people forget to carry over to
+ * the eighth function, and the omission does not show — the function works, it just also works for whoever
+ * should not.
  *
- * L ordre des deux tests fait le message : `is_admin()` ne dit rien du niveau d authentification,
- * `is_approved()` ne dit rien du role. Teste dans ce sens, le refus qui sort designe la bonne
- * cause.
+ * The order of the two tests makes the message: `is_admin()` says nothing about the authentication level,
+ * `is_approved()` says nothing about the role. Tested in this order, the refusal that comes out names the
+ * right cause.
  *
- * Le `revoke` nomme `anon` et `authenticated` en plus de `public` : les privileges par defaut du
- * projet accordent l execution de toute fonction neuve a ces deux roles, et un `revoke ... from
- * public` seul les laisse en place. Seules les fonctions `security definer` ci-dessous appellent
- * celle-ci, sous le compte proprietaire. Rien de ce qui est ajoute ici n est joignable par une
- * regle d acces.
+ * The `revoke` names `anon` and `authenticated` on top of `public`: the project's default privileges grant
+ * execution of any new function to those two roles, and a `revoke ... from public` alone leaves them in
+ * place. Only the `security definer` functions below call this one, under the owner account. Nothing added
+ * here is reachable through an access rule.
  */
 create or replace function public.assert_admin_write()
 returns void
@@ -74,7 +71,7 @@ revoke all on function public.assert_admin_write() from public, anon, authentica
 comment on function public.assert_admin_write() is
   'Refuse une ecriture d administration, en distinguant le role manquant de la session non elevee. Appelee par les fonctions du panneau, jamais accordee a authenticated.';
 
--- Valider ou refuser une inscription. Le corps ne change pas : seul le garde-fou s ouvre moins.
+-- Validating or refusing a sign-up. The body does not change: only the guardrail opens less.
 create or replace function public.review_account(target uuid, decision text)
 returns void
 language plpgsql
@@ -100,8 +97,8 @@ begin
 end;
 $$;
 
--- Marquer un compte en demonstration, ce qui le valide au passage : c est une ecriture de plus
--- qui ouvrait l instance sans second facteur.
+-- Marking an account as demonstration, which validates it along the way: one more write that opened the
+-- instance with no second factor.
 create or replace function public.set_demo(target uuid, demo boolean)
 returns void
 language plpgsql
@@ -111,7 +108,7 @@ as $$
 begin
   perform public.assert_admin_write();
 
-  -- Un compte de demonstration est ouvert par definition : le marquer le valide.
+  -- A demonstration account is open by definition: marking it validates it.
   update public.profiles
   set is_demo = demo,
       status = case when demo then 'approved' else status end,
@@ -121,7 +118,7 @@ begin
 end;
 $$;
 
--- La plus destructrice des trois : elle vide le foyer de demonstration.
+-- The most destructive of the three: it empties the demonstration household.
 create or replace function public.reset_demo()
 returns void
 language plpgsql
@@ -162,9 +159,8 @@ begin
 end;
 $$;
 
--- Absente de l enonce du probleme, mais c est la meme porte : une ecriture d administration
--- gardee par `is_admin()` seule. La laisser dehors aurait fait de ce fichier une correction a
--- trous.
+-- Absent from the statement of the problem, but it is the same door: an administration write guarded by
+-- `is_admin()` alone. Leaving it out would have made this file a fix with holes.
 create or replace function public.resolve_bug_report(target uuid)
 returns void
 language plpgsql
@@ -180,10 +176,9 @@ begin
 end;
 $$;
 
--- Les trois fonctions de la migration precedente exigeaient deja aal2, par un
--- `is_admin() and is_approved()` qui ne rendait qu un message pour deux causes. Elles passent par
--- le garde-fou commun : meme verrou qu avant, message juste, et une seule definition a relire le
--- jour ou cette regle changera.
+-- The three functions of the previous migration already required aal2, through an `is_admin() and
+-- is_approved()` that returned only one message for two causes. They go through the common guardrail: the
+-- same lock as before, the right message, and a single definition to read again the day this rule changes.
 create or replace function public.promote_admin(target uuid)
 returns void
 language plpgsql
@@ -217,9 +212,9 @@ end;
 $$;
 
 /*
- * `target <> auth.uid()` reste ecrit, et pour la meme raison qu avant : cette fonction ne doit pas
- * pouvoir servir a son appelant a se deverrouiller lui-meme, et cette interdiction ne doit pas
- * dependre de la definition d une autre fonction. Le garde-fou aal2 l interdit deja deux fois.
+ * `target <> auth.uid()` stays written, and for the same reason as before: this function must not be usable
+ * by its caller to unlock themselves, and that ban must not depend on another function's definition. The
+ * aal2 guardrail already forbids it twice.
  */
 create or replace function public.admin_reset_mfa(target uuid)
 returns void

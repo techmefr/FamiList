@@ -1,9 +1,9 @@
 /**
- * Loupe : agrandir une étiquette de produit à l'écran.
+ * Magnifier: enlarging a product label on screen.
  *
- * Deux grossissements se combinent. Celui de l'objectif, quand l'appareil photo l'accepte, donne
- * une image nette ; celui du navigateur, un simple agrandissement de l'image reçue, dépanne au-delà
- * mais devient vite flou. On demande donc à l'objectif tout ce qu'il sait faire, et on complète.
+ * Two magnifications combine. The lens's, when the camera accepts it, gives a sharp image; the
+ * browser's, a plain enlargement of the image received, helps beyond that but blurs quickly. So we ask
+ * the lens for everything it can do, and make up the rest.
  */
 export const ZOOM_MIN = 1;
 export const ZOOM_MAX = 5;
@@ -14,8 +14,8 @@ export interface ZoomRange {
 }
 
 /**
- * Garde-fou commun aux deux calculs. Interne : le curseur borne déjà la valeur par ses attributs
- * min et max, plus rien à l'extérieur n'a de raison de reborner.
+ * Guard shared by both computations. Internal: the slider already bounds the value through its min and
+ * max attributes, nothing outside has any reason to bound it again.
  */
 function clampZoom(value: number): number {
 	if (!Number.isFinite(value)) return ZOOM_MIN;
@@ -23,7 +23,7 @@ function clampZoom(value: number): number {
 	return Math.min(ZOOM_MAX, Math.max(ZOOM_MIN, Math.round(value * 10) / 10));
 }
 
-/** Ce que l'objectif peut réellement appliquer, sans jamais sortir de ce qu'il déclare accepter. */
+/** What the lens can really apply, never going outside what it declares it accepts. */
 export function opticalZoom(requested: number, range: ZoomRange | null): number {
 	if (!range || !(range.max > range.min)) return 1;
 
@@ -31,11 +31,11 @@ export function opticalZoom(requested: number, range: ZoomRange | null): number 
 }
 
 /**
- * Le reste du chemin, à la charge du navigateur.
+ * The rest of the way, left to the browser.
  *
- * Le prototype ajoutait ici un supplément fixe, indépendant de ce que l'objectif avait accordé :
- * sur un appareil dont le zoom s'arrête à 2×, demander 5× n'agrandissait presque plus rien. Le
- * rapport entre les deux donne à l'inverse le grossissement demandé, quel que soit l'appareil.
+ * The prototype added a fixed supplement here, independent of what the lens had granted: on a device
+ * whose zoom stops at 2x, asking for 5x barely enlarged anything. The ratio between the two gives the
+ * requested magnification instead, whatever the device.
  */
 export function digitalZoom(requested: number, applied: number): number {
 	const target = clampZoom(requested);
@@ -44,11 +44,11 @@ export function digitalZoom(requested: number, applied: number): number {
 }
 
 /**
- * Le pincement : deux doigts qui s'écartent grossissent dans le même rapport que leur écartement.
+ * The pinch: two fingers moving apart magnify in the same ratio as their spread.
  *
- * On repart de l'écartement et du grossissement relevés au moment où le deuxième doigt s'est
- * posé, et non du précédent mouvement. Cumuler des rapports successifs fait dériver le résultat
- * dès qu'un doigt saute d'un événement à l'autre, et la loupe se met alors à grossir toute seule.
+ * We start again from the spread and the magnification recorded when the second finger landed, and not
+ * from the previous movement. Accumulating successive ratios makes the result drift as soon as a finger
+ * jumps from one event to the next, and the magnifier then starts magnifying on its own.
  */
 export function pinchDistance(a: Point, b: Point): number {
 	return Math.hypot(b.x - a.x, b.y - a.y);
@@ -71,19 +71,19 @@ export interface Size {
 }
 
 /**
- * Le point de l'image qu'on regarde, en fractions de ce qui était visible avant de grossir :
- * 0,5 / 0,5 est le centre, 0 / 0 le coin où commence la lecture.
+ * The point of the image being looked at, in fractions of what was visible before magnifying: 0.5 / 0.5
+ * is the centre, 0 / 0 the corner where reading starts.
  */
 export type Focus = Point;
 
 export const CENTER: Focus = { x: 0.5, y: 0.5 };
 
 /**
- * Le déplacement est borné à ce qui était déjà à l'écran au moment où l'image a été figée.
+ * Panning is bounded to what was already on screen at the moment the image was frozen.
  *
- * C'est la contrainte qui compte le plus ici : quelqu'un qui voit mal ne peut pas se repérer sur
- * une bande noire. Tant que la fenêtre agrandie reste entièrement dans l'image, il n'y a aucun
- * bord vide à atteindre, et lâcher le doigt trop loin ne fait rien plutôt que de tout perdre.
+ * That is the constraint that matters most here: someone who sees badly cannot orient themselves on a
+ * black band. As long as the magnified window stays entirely inside the image, there is no empty edge to
+ * reach, and releasing the finger too far does nothing rather than losing everything.
  */
 export function clampFocus(focus: Focus, scale: number): Focus {
 	if (!(scale > 1)) return CENTER;
@@ -100,11 +100,11 @@ function clampAxis(value: number, half: number): number {
 }
 
 /**
- * Où l'on regarde après avoir traîné le doigt de `drag` pixels.
+ * Where we are looking after dragging the finger by `drag` pixels.
  *
- * L'image suit le doigt, donc le point regardé va à l'inverse. La course est divisée par le
- * grossissement : à 5×, un centimètre de doigt ne parcourt qu'un cinquième de l'étiquette, sinon
- * le moindre tremblement envoie à l'autre bout.
+ * The image follows the finger, so the point being looked at goes the other way. The travel is divided by
+ * the magnification: at 5x, a centimetre of finger only crosses a fifth of the label, otherwise the
+ * slightest tremble sends you to the other end.
  */
 export function panFocus(focus: Focus, drag: Point, view: Size, scale: number): Focus {
 	if (!(view.width > 0) || !(view.height > 0)) return clampFocus(focus, scale);
@@ -119,15 +119,15 @@ export function panFocus(focus: Focus, drag: Point, view: Size, scale: number): 
 }
 
 /**
- * La portion de la trame capturée à redessiner pour remplir l'écran.
+ * The portion of the captured frame to redraw in order to fill the screen.
  *
- * C'est le cœur de l'affaire : agrandir une image déjà dessinée ne fait qu'étaler ses pixels,
- * alors que la trame capturée est bien plus fine que l'écran. En redécoupant dedans, on gagne du
- * détail au lieu d'en perdre, tant que la caméra en a à donner.
+ * This is the heart of it: enlarging an already drawn image only stretches its pixels, whereas the
+ * captured frame is far finer than the screen. By re-cropping inside it, we gain detail instead of losing
+ * it, as long as the camera has some to give.
  *
- * Le repère est la zone visible au repos, pas la trame entière : l'image est affichée en
- * `object-cover`, donc rognée sur un côté. Se déplacer ne doit pas révéler ce qu'on n'avait
- * jamais vu — on retrouve exactement ce qu'on avait sous les yeux en figeant.
+ * The reference is the area visible at rest, not the whole frame: the image is displayed with
+ * `object-cover`, so cropped on one side. Panning must not reveal what was never seen — you find exactly
+ * what you had in front of you when freezing.
  */
 export function visibleSource(source: Size, view: Size, focus: Focus, scale: number) {
 	const cover = coverSize(source, view);
@@ -159,19 +159,19 @@ function coverSize(source: Size, view: Size): Size {
 }
 
 /**
- * Ce qu'on applique à l'image pour la rendre lisible, en un seul filtre CSS.
+ * What we apply to the image to make it readable, as a single CSS filter.
  *
- * Deux besoins différents, et qui se cumulent. Sans torche matérielle, on éclaircit l'image
- * reçue : ce n'est pas un vrai éclairage, mais sur une étiquette mate un peu grise, cela suffit
- * souvent à décoller le texte du fond. Le mode contraste, lui, sert quand le texte est imprimé
- * en gris clair sur fond blanc, ou en couleur sur une photo : on retire la couleur, qui ne porte
- * ici aucune information, et on écarte les gris restants.
+ * Two different needs, and they add up. Without a hardware torch, we brighten the image received: it is
+ * not real lighting, but on a matt, slightly grey label it is often enough to lift the text off the
+ * background. Contrast mode, on the other hand, serves when the text is printed in light grey on white,
+ * or in colour on a photo: we remove the colour, which carries no information here, and push the
+ * remaining greys apart.
  *
- * Les deux contrastes ne s'empilent pas — celui de la torche est écrasé par celui du mode, qui
- * est plus fort. Cumulés, ils bouchaient les noirs et mangeaient les jambages.
+ * The two contrasts do not stack — the torch's is overridden by the mode's, which is stronger. Together
+ * they filled in the blacks and ate the descenders.
  *
- * Assemblé ici plutôt que dans le balisage : deux états qui se combinent, c'est exactement ce
- * qu'on finit par écrire de travers dans une interpolation de chaîne.
+ * Assembled here rather than in the markup: two states that combine are exactly what ends up written
+ * wrong in a string interpolation.
  */
 export interface ReadingAids {
 	contrast: boolean;

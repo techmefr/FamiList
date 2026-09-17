@@ -1,20 +1,19 @@
 /**
- * Les reglages d instance vus d une fonction edge : l environnement d abord, la base ensuite.
+ * The instance settings as seen from an edge function: the environment first, the database second.
  *
- * L ordre n est pas arbitraire. Une instance deja configuree par `supabase secrets set` — celle du
- * depot, entre autres — tournait bien avant que `/admin` sache ecrire quoi que ce soit, et une
- * migration ne doit pas la casser. Cle par cle, un secret de fonction pose l emporte donc sur la
- * base ; une cle absente de l environnement retombe sur ce que l ecran a ecrit. Rien a migrer pour
- * qui n a rien a changer, et rien a installer pour qui part de zero.
+ * The order is not arbitrary. An instance already configured by `supabase secrets set` — the repository's,
+ * among others — was running well before `/admin` could write anything, and a migration must not break it.
+ * Key by key, a function secret that is set therefore wins over the database; a key absent from the
+ * environment falls back on what the screen has written. Nothing to migrate for whoever has nothing to
+ * change, and nothing to install for whoever starts from scratch.
  *
- * Le choix se fait cle par cle et non par bloc : un bloc « tout l environnement ou tout la base »
- * ferait disparaitre silencieusement un port pose a l ecran des qu un hote traine dans
- * l environnement.
+ * The choice is made key by key and not as a block: an "all environment or all database" block would
+ * silently make a port set on screen disappear as soon as a host was lying around in the environment.
  */
 
 export type InstanceConfig = Record<string, string>;
 
-/** Le nom de la variable d environnement historique, en face de la cle du catalogue. */
+/** The name of the historical environment variable, opposite the catalogue key. */
 export const SETTING_ENV: Record<string, string> = {
 	mail_smtp_host: 'ADMIN_MAIL_SMTP_HOST',
 	mail_smtp_port: 'ADMIN_MAIL_SMTP_PORT',
@@ -27,10 +26,10 @@ export const SETTING_ENV: Record<string, string> = {
 };
 
 /**
- * La valeur retenue pour une cle.
+ * The value kept for a key.
  *
- * Une variable posee mais vide ne compte pas : `supabase secrets set X=` laisse une chaine vide, et
- * la prendre pour une configuration ferait echouer l envoi au lieu de retomber sur la base.
+ * A variable that is set but empty does not count: `supabase secrets set X=` leaves an empty string, and
+ * taking it for a configuration would make sending fail instead of falling back on the database.
  */
 export function pickSetting(
 	key: string,
@@ -45,7 +44,7 @@ export function pickSetting(
 	return fromStore !== undefined && fromStore.trim() !== '' ? fromStore : undefined;
 }
 
-/** Toutes les cles connues resolues d un coup, pour un appelant qui en lit plusieurs. */
+/** Every known key resolved at once, for a caller reading several of them. */
 export function resolveSettings(
 	keys: readonly string[],
 	env: Record<string, string | undefined>,

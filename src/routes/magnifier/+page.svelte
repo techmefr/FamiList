@@ -35,31 +35,31 @@
 	let hasTorch = $state(false);
 
 	/**
-	 * Le conseil d'usage ne s'affiche que tant qu'on n'a touché à rien. Il répond à la seule
-	 * question qu'on se pose en arrivant devant une image noire, et disparaît au premier geste :
-	 * laissé en place, il masquerait justement la ligne qu'on essaie de lire.
+	 * The usage hint only shows while nothing has been touched. It answers the one question you ask on
+	 * arriving in front of a black image, and disappears on the first gesture: left in place, it would
+	 * cover the very line you are trying to read.
 	 */
 	let touched = $state(false);
 
 	/**
-	 * Le point de l'image figée qu'on regarde. Il ne sert qu'une fois l'image posée : tant que la
-	 * caméra tourne, on se déplace en bougeant le téléphone, ce qui est plus direct qu'un doigt.
+	 * The point of the frozen image being looked at. It only matters once the image is frozen: while the
+	 * camera runs, you move by moving the phone, which is more direct than a finger.
 	 */
 	let focus = $state<Focus>(CENTER);
 
-	/** La trame capturée, à sa résolution d'origine : c'est la réserve de détail où l'on découpe. */
+	/** The captured frame, at its original resolution: it is the reserve of detail we crop into. */
 	let frame: HTMLCanvasElement | null = null;
 
-	/** Le conseil sur les gestes s'efface au premier pincement ou déplacement, comme l'autre. */
+	/** The hint about gestures fades on the first pinch or pan, like the other one. */
 	let gestured = $state(false);
 
 	const applied = $derived(opticalZoom(zoom, range));
 	const scale = $derived(digitalZoom(zoom, applied));
 
 	/**
-	 * Sans torche matérielle, on éclaircit l'image reçue. Ce n'est pas un vrai éclairage — cela ne
-	 * révèle rien qui soit dans l'ombre — mais sur une étiquette mate un peu grise, cela suffit
-	 * souvent à décoller le texte du fond.
+	 * Without a hardware torch, we brighten the image received. It is not real lighting — it reveals
+	 * nothing that is in shadow — but on a matt, slightly grey label it is often enough to lift the text
+	 * off the background.
 	 */
 	const brighten = $derived(torch && !hasTorch);
 	const filter = $derived(viewFilter({ contrast, brighten }));
@@ -70,15 +70,15 @@
 	}
 
 	function applyAdvanced(constraint: AdvancedConstraint) {
-		// Un pilote qui refuse la contrainte laisse simplement l'image en l'état : rien à signaler,
-		// le repli logiciel a déjà fait le travail.
+		// A driver refusing the constraint simply leaves the image as it is: nothing to report, the software
+		// fallback has already done the work.
 		void track?.applyConstraints({ advanced: [constraint] } as MediaTrackConstraints).catch(() => {});
 	}
 
 	/**
-	 * Le gabarit affiche la page avant que la redirection vers l'écran de connexion n'ait eu lieu.
-	 * Sans cette garde, arriver sur l'adresse de la loupe sans être connecté ouvrait l'appareil photo
-	 * le temps de la bascule — une demande d'autorisation surgie de nulle part.
+	 * The layout shows the page before the redirect to the sign-in screen has happened. Without this
+	 * guard, landing on the magnifier address while signed out opened the camera for the duration of the
+	 * switch — a permission prompt out of nowhere.
 	 */
 	async function start() {
 		if (!browser || !session.isApproved) return;
@@ -108,8 +108,8 @@
 		hasTorch = caps.torch === true;
 
 		status = 'live';
-		// L'élément vidéo n'est rendu qu'une fois l'état passé à « live » : sans cette attente, on
-		// poserait le flux sur un élément qui n'existe pas encore.
+		// The video element is only rendered once the state has moved to "live": without this wait, we would
+		// attach the stream to an element that does not exist yet.
 		await tick();
 
 		if (video) {
@@ -135,13 +135,13 @@
 	}
 
 	/**
-	 * Figer l'image, c'est pouvoir reposer le bras et lire tranquillement — le geste qui manque le
-	 * plus quand on tient un bocal d'une main et le téléphone de l'autre.
+	 * Freezing the image means being able to lower your arm and read calmly — the gesture missed most
+	 * when holding a jar in one hand and the phone in the other.
 	 *
-	 * On capture la trame entière, sans grossissement. C'est ce qui permet de continuer à zoomer
-	 * dans l'image figée : le grossissement est appliqué à l'affichage, pas gravé dans la capture.
-	 * L'inverse — capturer déjà zoomé — rendait le curseur inerte une fois l'image posée, et
-	 * obligeait à dégeler pour regarder un détail de plus près.
+	 * We capture the whole frame, with no magnification. That is what makes it possible to keep zooming
+	 * inside the frozen image: magnification is applied to the display, not burned into the capture. The
+	 * opposite — capturing already zoomed — made the slider inert once the image was frozen, and forced
+	 * you to unfreeze to look at a detail more closely.
 	 */
 	function toggleFreeze() {
 		touched = true;
@@ -170,14 +170,14 @@
 	}
 
 	/**
-	 * Le rendu de l'image figée, redessiné à chaque changement de grossissement ou de position.
+	 * The rendering of the frozen image, redrawn on every change of magnification or position.
 	 *
-	 * L'ancienne version agrandissait en CSS une image déjà dessinée : à 3×, on regardait des
-	 * pixels étalés, pas des caractères. Ici on redécoupe dans la trame d'origine, qui est bien
-	 * plus fine que l'écran, et le texte reste net tant que la caméra avait le détail à donner.
+	 * The old version enlarged an already drawn image in CSS: at 3x you were looking at stretched pixels,
+	 * not at characters. Here we re-crop from the original frame, which is far finer than the screen, and
+	 * the text stays sharp as long as the camera had the detail to give.
 	 *
-	 * Le rapport de pixels est plafonné à 2 : au-delà on quadruple la surface à peindre à chaque
-	 * mouvement de doigt pour un gain que personne ne voit, et le déplacement se met à saccader.
+	 * The pixel ratio is capped at 2: beyond that we quadruple the surface to paint on every finger
+	 * movement for a gain nobody sees, and panning starts to stutter.
 	 */
 	function renderFrozen() {
 		if (!frozen || !frame || !canvas) return;
@@ -211,8 +211,8 @@
 	$effect(renderFrozen);
 
 	/**
-	 * Les gestes, en doublure du curseur et jamais à sa place : pincer demande deux doigts et de
-	 * la précision, ce que tout le monde n'a pas. Le curseur reste la façon sûre de grossir.
+	 * The gestures, doubling the slider and never replacing it: pinching needs two fingers and precision,
+	 * which not everybody has. The slider stays the safe way to magnify.
 	 */
 	const pointers = new Map<number, { x: number; y: number }>();
 	let pinch: { distance: number; zoom: number } | null = null;
@@ -226,8 +226,8 @@
 	function onPointerDown(event: PointerEvent) {
 		if (status !== 'live') return;
 
-		// Sans capture, passer le doigt au-dessus d'un bouton pendant le geste sort du calque et
-		// interrompt le déplacement en plein milieu — l'image s'arrête sans raison visible.
+		// Without capture, moving the finger over a button during the gesture leaves the layer and interrupts
+		// the pan mid-way — the image stops for no visible reason.
 		(event.currentTarget as HTMLElement).setPointerCapture?.(event.pointerId);
 
 		pointers.set(event.pointerId, { x: event.clientX, y: event.clientY });
@@ -249,8 +249,8 @@
 			return;
 		}
 
-		// Sur l'image vivante, un doigt qui traîne ne doit rien faire : on se déplace en bougeant
-		// le téléphone, et un décalage figé sur un flux qui, lui, continue de bouger désoriente.
+		// On the live image, a finger dragging must do nothing: you move by moving the phone, and a frozen
+		// offset on a stream that keeps moving is disorienting.
 		if (!frozen || !canvas) return;
 
 		touched = true;
@@ -268,7 +268,7 @@
 		if (pointers.size < 2) pinch = null;
 	}
 
-	// La session n'est pas toujours connue au montage : on attend qu'elle le soit, une seule fois.
+	// The session is not always known at mount: we wait for it to be, once.
 	let started = false;
 	$effect(() => {
 		if (session.isApproved && !started) {
@@ -282,24 +282,24 @@
 
 <svelte:head><title>{t('magnifier.title')} — {t('app.name')}</title></svelte:head>
 
-<!-- La découpe dépend du format de l'écran : tourner le téléphone change ce qu'il faut redessiner. -->
+<!-- The crop depends on the screen shape: turning the phone changes what has to be redrawn. -->
 <svelte:window onresize={renderFrozen} />
 
 <!--
-	Plein écran, mais sous la barre de navigation : au-dessus, l'image de la caméra recouvrirait les
-	onglets et il n'y aurait plus aucun moyen de quitter la loupe.
+	Full screen, but under the navigation bar: above it, the camera image would cover the tabs and there
+	would be no way left to leave the magnifier.
 -->
 <div class="fixed inset-0 z-0 overflow-hidden bg-black" data-test-id="magnifier">
 	<!--
-		La surface qui reçoit les gestes couvre l'image et rien d'autre : les commandes viennent
-		après dans le balisage, donc au-dessus, et gardent leurs appuis.
+		The surface receiving the gestures covers the image and nothing else: the controls come after it in
+		the markup, therefore above it, and keep their taps.
 
-		`touch-none` est indispensable — sans elle le navigateur prend le pincement pour lui et
-		zoome la page entière, commandes comprises, ce dont on ne peut plus rien faire.
+		`touch-none` is essential — without it the browser takes the pinch for itself and zooms the whole
+		page, controls included, which leaves nothing to work with.
 	-->
 	<!--
-		Le rôle et le nom nomment la surface pour qui ne la voit pas : sinon c'est un rectangle muet
-		qui réagit au doigt sans jamais dire ce qu'on peut y faire.
+		The role and the name give the surface an identity for those who do not see it: otherwise it is a
+		mute rectangle reacting to a finger without ever saying what can be done on it.
 	-->
 	<div
 		role="group"
@@ -324,9 +324,8 @@
 		{/if}
 
 		<!--
-			Plus de `transform: scale()` ici : l'agrandissement est désormais dans le dessin lui-même,
-			redécoupé dans la trame d'origine. L'étirer une seconde fois en CSS le rendrait flou,
-			ce qui était précisément le défaut.
+			No more `transform: scale()` here: the magnification is now in the drawing itself, re-cropped from
+			the original frame. Stretching it a second time in CSS would blur it, which was exactly the defect.
 		-->
 		<canvas
 			bind:this={canvas}
@@ -358,13 +357,13 @@
 	{/if}
 
 	<!--
-		Le bandeau du haut dit une chose à la fois. L'image figée d'abord — c'est un état, et ne pas
-		le signaler laisse croire que la caméra a planté. Sinon, tant qu'on n'a touché à rien, la
-		phrase qui explique quoi faire : approcher, puis figer. Elle s'efface au premier geste.
+		The top banner says one thing at a time. The frozen image first — it is a state, and not signalling
+		it suggests the camera has crashed. Otherwise, while nothing has been touched, the sentence saying
+		what to do: come closer, then freeze. It fades on the first gesture.
 
-		Le cadre en pointillés qui délimitait une « zone de lecture » a disparu. Il ne cadrait rien —
-		l'image occupe tout l'écran — et laissait croire que le reste ne comptait pas, alors que
-		c'est justement en promenant le téléphone qu'on trouve la ligne à lire.
+		The dotted frame marking out a "reading zone" is gone. It framed nothing — the image fills the whole
+		screen — and suggested the rest did not count, when moving the phone around is precisely how you
+		find the line to read.
 	-->
 	{#if frozen}
 		<div class="pointer-events-none absolute inset-x-3 top-3 flex flex-col items-center gap-2">
@@ -377,8 +376,8 @@
 			</p>
 
 			<!--
-				Une fois l'image posée, le geste n'est deviné par personne : la phrase le dit une
-				fois, puis s'efface dès qu'il a servi, pour ne pas couvrir la ligne à lire.
+				Once the image is frozen, the gesture is guessed by nobody: the sentence says it once, then fades
+				as soon as it has served, so as not to cover the line to read.
 			-->
 			{#if !gestured}
 				<p
@@ -401,20 +400,20 @@
 	{/if}
 
 	<!--
-		Trois commandes, pas une de plus : éclairer, figer, grossir. Les boutons plus et moins ont
-		disparu — le curseur fait déjà les deux, et deux cibles de 44 px en moins, c'est autant
-		d'image rendue à ce qu'on essaie de lire.
+		Three controls, not one more: light, freeze, magnify. The plus and minus buttons are gone — the
+		slider already does both, and two fewer 44px targets is that much image given back to what you are
+		trying to read.
 
-		Le curseur est vertical et collé au bord : à l'horizontale il occupait toute la largeur
-		au-dessus des boutons, soit une bande de l'écran perdue là où l'étiquette se trouve. Vertical,
-		il ne prend qu'une colonne, et le geste — monter pour grossir — dit ce qu'il fait.
+		The slider is vertical and against the edge: horizontal it took the full width above the buttons, a
+		band of screen lost where the label is. Vertical, it takes only one column, and the gesture — up to
+		magnify — says what it does.
 
-		`end` et pas `right` : en arabe, l'interface est en miroir et le curseur passe à gauche.
+		`end` and not `right`: in Arabic the interface is mirrored and the slider moves to the left.
 	-->
 	<!--
-		Le niveau est passé au-dessus du curseur, et l'icône de loupe qui s'y trouvait a sauté : elle
-		répétait ce que le chiffre dit mieux. Lu à voix haute, un curseur annonce « 2,5 » ; le
-		`aria-valuetext` en fait « 2,5 × », qui est l'unité réelle.
+		The level moved above the slider, and the magnifier icon that was there is gone: it repeated what the
+		number says better. Read aloud, a slider announces "2.5"; `aria-valuetext` makes it "2.5x", which is
+		the real unit.
 	-->
 	<div
 		class="absolute end-[16px] top-1/2 flex -translate-y-1/2 flex-col items-center gap-3
@@ -443,20 +442,19 @@
 	</div>
 
 	<!--
-		Les commandes portent leur nom en toutes lettres. Une icône seule se devine — un éclair, un
-		flocon —, et c'est précisément ce qu'on ne veut pas demander à quelqu'un qui ouvre la loupe
-		parce qu'il ne déchiffre pas une étiquette. Le mot est aussi le nom lu par un lecteur
-		d'écran : plus d'`aria-label` qui dirait autre chose que ce qui est écrit.
+		The controls carry their name in full. An icon alone has to be guessed — a lightning bolt, a
+		snowflake — and that is precisely what we do not want to ask of someone opening the magnifier
+		because they cannot make out a label. The word is also the name read by a screen reader: no more
+		`aria-label` saying something other than what is written.
 
-		Le disque reste en pixels, pas en rem : c'est une cible, pas du texte, et en `size-16` il
-		atteignait 140 px au cran Confort. Le libellé, lui, suit la taille de texte choisie — c'est
-		du texte, il doit grandir — et la rangée passe à la ligne plutôt que de déborder.
+		The disc stays in pixels, not rem: it is a target, not text, and at `size-16` it reached 140px at the
+		Comfort step. The label, on the other hand, follows the chosen text size — it is text, it must grow —
+		and the row wraps rather than overflow.
 	-->
 	<!--
-		Le dégradé sous la rangée n'est pas une décoration : les libellés sont blancs, et l'image
-		derrière est justement une étiquette de produit, donc claire une fois sur deux. Sans lui,
-		« Éclairer » et « Contraste » s'effaçaient sur fond crème. Il descend jusqu'au bas de l'écran
-		pour couvrir aussi ce qui dépasse sous les boutons.
+		The gradient under the row is not decoration: the labels are white, and the image behind is precisely
+		a product label, so light half the time. Without it, "Light" and "Contrast" faded out on a cream
+		background. It goes down to the bottom of the screen to cover what sticks out under the buttons too.
 	-->
 	<div
 		class="absolute inset-x-0 bottom-0 flex flex-wrap items-start justify-center gap-x-4 gap-y-3
@@ -493,9 +491,9 @@
 		</button>
 
 		<!--
-			Le contraste sert quand le texte est imprimé en gris pâle, ou posé sur une photo : on
-			retire la couleur, qui ne dit rien ici, et on écarte les gris. C'est souvent ce qui fait
-			la différence entre une ligne devinée et une ligne lue.
+			Contrast serves when the text is printed in pale grey, or sits on a photo: we remove the colour,
+			which says nothing here, and push the greys apart. That is often what makes the difference between a
+			line guessed and a line read.
 		-->
 		<button
 			type="button"

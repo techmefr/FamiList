@@ -32,9 +32,9 @@
 	let depart = { x: 0, y: 0 };
 
 	/**
-	 * Un clic naît de tout relâchement de pointeur. Après un glissement, il tomberait sur ce qui
-	 * se trouve sous le doigt — l'étiquette qui coche l'article — et on aurait fait deux choses
-	 * pour un seul geste. Ce drapeau l'avale, le temps que le clic passe.
+	 * A click is born of any pointer release. After a swipe, it would land on whatever is under the finger —
+	 * the label that ticks the item — and we would have done two things for one gesture. This flag swallows
+	 * it, for the time the click goes by.
 	 */
 	let avale = false;
 
@@ -44,13 +44,13 @@
 	const rtl = $derived(i18n.dir === 'rtl');
 	const limites = $derived({ rtl, startAt: SWIPE_THRESHOLD, endAt: SWIPE_DESTRUCTIVE });
 
-	/** Le côté qui partirait si on relâchait maintenant. Sert à allumer la bonne moitié du fond. */
+	/** The side that would leave if you released now. Used to light the right half of the background. */
 	const arme = $derived<SwipeSide | null>(engage ? swipeSide(course, limites) : null);
 
 	function debut(event: PointerEvent) {
-		// La souris a déjà le glisser-déposer et les quatre boutons de la ligne ; lui prendre le
-		// bouton gauche casserait le premier sans rien apporter. Le glissement est un geste de
-		// doigt, on ne le lui impose pas.
+		// The mouse already has drag-and-drop and the row's four buttons; taking the left button from it would
+		// break the first without adding anything. Swiping is a finger gesture, we do not impose it on the
+		// mouse.
 		if (event.pointerType === 'mouse') return;
 		if ((event.target as HTMLElement).closest('button, a, select, textarea, [data-no-swipe]')) {
 			return;
@@ -68,8 +68,8 @@
 		const dy = event.clientY - depart.y;
 
 		if (!engage) {
-			// Le doigt descend : c'est un défilement, on lâche prise pour de bon plutôt que de
-			// guetter un virage horizontal au milieu du geste.
+			// The finger is going down: this is a scroll, we let go for good rather than watch for a horizontal
+			// turn in the middle of the gesture.
 			if (Math.abs(dy) > Math.abs(dx) && Math.abs(dy) > 12) {
 				pointeur = null;
 				return;
@@ -110,18 +110,17 @@
 </script>
 
 <!--
-	Une ligne qui se glisse : cocher d'un côté, supprimer de l'autre.
+	A row that swipes: tick on one side, delete on the other.
 
-	Le fond ne bouge pas, c'est la ligne qui coulisse par-dessus et le découvre. Les deux actions
-	sont dessinées en permanence, chacune de son côté, et s'allument quand le geste est allé assez
-	loin pour les déclencher — on voit ce qui va se passer avant de relâcher, et on peut revenir en
-	arrière tant qu'on n'a pas lâché.
+	The background does not move, it is the row that slides over it and uncovers it. Both actions are drawn
+	permanently, each on its side, and light up when the gesture has gone far enough to trigger them — you see
+	what is about to happen before releasing, and can come back as long as you have not let go.
 
-	Rien de tout cela n'est le seul chemin : les mêmes actions ont leur bouton dans la ligne, et le
-	fond est masqué aux lecteurs d'écran pour ne pas annoncer deux fois la même chose.
+	None of this is the only path: the same actions have their button in the row, and the background is hidden
+	from screen readers so as not to announce the same thing twice.
 
-	`touch-action: pan-y` laisse le défilement vertical au navigateur et ne garde que l'horizontale :
-	sans lui, la page se bloquerait dès qu'un doigt se pose sur une ligne.
+	`touch-action: pan-y` leaves vertical scrolling to the browser and keeps only the horizontal: without it,
+	the page would lock up as soon as a finger landed on a row.
 -->
 <div class="fl-swipe">
 	<div class="fl-swipe-track" aria-hidden="true">
@@ -136,11 +135,10 @@
 	</div>
 
 	<!--
-		Pas de rôle ARIA sur cette enveloppe, et l'avertissement est levé sciemment. La règle
-		existe pour rattraper les div rendues interactives sans équivalent au clavier ; ici les
-		deux actions ont chacune leur vrai bouton à l'intérieur de la ligne, annoncé et
-		atteignable. Donner un rôle à l'enveloppe ferait annoncer la ligne entière comme une
-		commande, ce qui serait faux et gênerait la lecture.
+		No ARIA role on this wrapper, and the warning is silenced knowingly. The rule exists to catch divs made
+		interactive with no keyboard equivalent; here both actions each have their real button inside the row,
+		announced and reachable. Giving the wrapper a role would make the whole row be announced as a control,
+		which would be wrong and would get in the way of reading.
 	-->
 	<!-- svelte-ignore a11y_no_static_element_interactions -->
 	<div

@@ -1,18 +1,17 @@
--- Nommer correctement un compte arrive par un fournisseur externe.
+-- Naming an account arriving from an external provider correctly.
 --
--- Le formulaire de l application pose display_name dans les metadonnees, mais Google, Microsoft et
--- Apple n en savent rien : ils renvoient full_name ou name. Sans ces deux clefs, une inscription
--- Google s appelait par le debut de son adresse, ce qui donne des membres nommes « prenom.nom42 »
--- dans un foyer ou tout le monde se connait.
+-- The application's form puts display_name in the metadata, but Google, Microsoft and Apple know nothing
+-- about it: they return full_name or name. Without those two keys, a Google sign-up was called by the start
+-- of its address, which gives members named "first.last42" in a household where everybody knows each other.
 --
--- Apple peut aussi ne renvoyer aucune adresse quand la personne masque la sienne et qu on ne
--- demande pas le relais prive. split_part sur null rend null, et display_name est non nul : le
--- compte etait alors refuse a la creation. D ou le dernier repli en dur.
+-- Apple may also return no address at all when the person hides theirs and we do not ask for the private
+-- relay. split_part on null gives null, and display_name is not null: the account was then refused at
+-- creation. Hence the last hard-coded fallback.
 --
--- nullif partout : une metadonnee presente mais vide est plus courante qu absente, et coalesce
--- seul l aurait acceptee comme un nom.
+-- nullif everywhere: a metadata key present but empty is more common than absent, and coalesce alone would
+-- have accepted it as a name.
 --
--- Le reste ne bouge pas : le premier compte est toujours administrateur et deja valide.
+-- The rest does not move: the first account is still an administrator and already valid.
 
 create or replace function public.handle_new_user()
 returns trigger

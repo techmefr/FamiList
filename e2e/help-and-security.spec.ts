@@ -8,7 +8,7 @@ test('le bouton d’aide ouvre un tour guidé propre à l’écran ouvert', asyn
 	await page.getByTestId('help-menu-tutorial').click();
 
 	await expect(page.locator('.driver-popover')).toBeVisible();
-	// Sur /shops, la cible est le formulaire de rayon : le tour d'ensemble ne doit pas s'y substituer.
+	// On /shops, the target is the aisle form: the overall tour must not take its place.
 	await expect(page.locator('.driver-active-element')).toHaveAttribute(
 		'data-test-id',
 		'add-aisle'
@@ -24,7 +24,7 @@ test("l'écran Sécurité liste le mot de passe, la 2FA et les appareils connect
 	await expect(page.getByTestId('totp-switch')).toBeVisible();
 	await expect(page.getByTestId('sessions')).toBeVisible();
 
-	// La session courante, ouverte à l'instant par ce test, doit apparaître dans sa propre liste.
+	// The current session, opened a moment ago by this test, must appear in its own list.
 	await expect(page.locator('[data-test-class="session-device"]').first()).toBeVisible();
 });
 

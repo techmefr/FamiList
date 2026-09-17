@@ -2,27 +2,25 @@ import type { Locator, Page } from '@playwright/test';
 import { test, expect } from './fixtures';
 
 /**
- * Les seuls tests joués sur un téléphone émulé, et le projet `mobile` de `playwright.config.ts` ne
- * joue qu'eux. Rejouer toute la suite deux fois doublerait la durée du travail d'intégration pour
- * revérifier des parcours qui ne dépendent pas de la taille de l'écran ; ce qui en dépend
- * vraiment — la barre du bas, le côté du pouce, le glissement au doigt — n'existe nulle part
- * ailleurs et tient ici.
+ * The only tests played on an emulated phone, and the `mobile` project of `playwright.config.ts` plays
+ * only these. Replaying the whole suite twice would double the integration time to re-verify journeys that
+ * do not depend on the screen size; what really does depend on it — the bottom bar, the thumb side, the
+ * finger swipe — exists nowhere else and lives here.
  *
- * Ce qui reste hors de portée : les greffons natifs de Capacitor. Le lecteur de code-barres, le
- * retour haptique, la barre d'état et l'écran d'accueil sont du code natif Android et iOS ; un
- * navigateur émulé n'en exécute pas une ligne, et les piloter demanderait un émulateur de
- * système complet. L'émulation Playwright donne le gabarit, le tactile et l'agent utilisateur,
- * pas le téléphone.
+ * What stays out of reach: Capacitor's native plugins. The barcode reader, haptic feedback, the status bar
+ * and the splash screen are native Android and iOS code; an emulated browser runs none of it, and driving
+ * them would need a full system emulator. Playwright emulation gives the viewport, touch and the user
+ * agent, not the phone.
  */
 
 const MOBILE_BREAKPOINT = 768;
 
 /**
- * Un glissement au doigt, en vrais évènements tactiles.
+ * A finger swipe, with real touch events.
  *
- * `page.touchscreen` ne sait que taper, et des `PointerEvent` fabriqués en JavaScript ne passent
- * pas : la ligne capture le pointeur, ce qu'un identifiant inventé ne permet pas. On descend donc
- * au protocole du navigateur, qui produit la même séquence qu'un vrai doigt.
+ * `page.touchscreen` can only tap, and `PointerEvent`s made in JavaScript do not pass: the row captures
+ * the pointer, which an invented id does not allow. So we go down to the browser protocol, which produces
+ * the same sequence as a real finger.
  */
 async function glisser(page: Page, cible: Locator, distance: number) {
 	const boite = await cible.boundingBox();
@@ -37,8 +35,8 @@ async function glisser(page: Page, cible: Locator, distance: number) {
 		touchPoints: [{ x: depart, y }]
 	});
 
-	// Par paliers, et non d'un bond : la ligne ne s'engage qu'après avoir reconnu une direction
-	// horizontale, ce qu'un seul saut ne lui laisse pas le temps de faire.
+	// In steps, and not in one jump: the row only commits after recognising a horizontal direction, which a
+	// single jump does not give it time to do.
 	for (let pas = 1; pas <= 6; pas += 1) {
 		await session.send('Input.dispatchTouchEvent', {
 			type: 'touchMove',
@@ -55,8 +53,8 @@ async function glisser(page: Page, cible: Locator, distance: number) {
 }
 
 /**
- * La case elle-même n'est lue que par les lecteurs d'écran ; ce qu'on touche, c'est l'étiquette
- * qui l'enveloppe, comme dans l'application.
+ * The checkbox itself is only read by screen readers; what you touch is the label wrapping it, as in the
+ * application.
  */
 async function choisirMain(page: Page, main: 'left' | 'right') {
 	await page.locator(`label:has([data-test-id="hand-${main}"])`).click();
@@ -76,24 +74,24 @@ test('sur téléphone, la navigation est une barre en bas et non une colonne', a
 	const hauteur = page.viewportSize()!.height;
 	expect(hauteur).toBeLessThan(MOBILE_BREAKPOINT * 2);
 
-	// Collée au bas de l'écran : c'est ce qui la distingue de la colonne latérale du grand écran.
+	// Stuck to the bottom of the screen: that is what tells it from the large screen's side column.
 	expect(boite!.y + boite!.height).toBeGreaterThan(hauteur - 2);
 	expect(boite!.height).toBeLessThan(hauteur / 3);
 
-	// La loupe n'a d'onglet que sur téléphone, le foyer et les magasins n'en ont que sur grand
-	// écran : cinq cibles est le maximum tenable pour un pouce.
+	// The magnifier only has a tab on a phone, the household and the shops only on a large screen: five
+	// targets is the most a thumb can hold.
 	await expect(page.getByTestId('nav-/magnifier')).toBeVisible();
 	await expect(page.getByTestId('nav-/household')).toBeHidden();
 	await expect(page.getByTestId('nav-/shops')).toBeHidden();
 
-	// Ce que la barre ne porte plus, l'en-tête le porte : sans quoi le profil serait inatteignable.
+	// What the bar no longer carries, the header carries: otherwise the profile would be unreachable.
 	await expect(page.getByTestId('header-profile')).toBeVisible();
 });
 
 /**
- * Tout se joue sans quitter le profil. Le réglage est poussé sur le compte avec un délai, et une
- * navigation entre-temps ramène l'apparence encore enregistrée en base : on mesurerait alors le
- * bouton d'avant le geste. Le bouton étant présent sur toutes les pages, rester ici ne coûte rien.
+ * Everything plays out without leaving the profile. The setting is pushed to the account with a delay, and
+ * a navigation in between brings back the appearance still saved in the database: we would then measure
+ * the button from before the gesture. The button being present on every page, staying here costs nothing.
  */
 test('le bouton de création change de côté avec la main déclarée', async ({ signedInPage: page }) => {
 	await page.goto('/profile');
@@ -109,7 +107,7 @@ test('le bouton de création change de côté avec la main déclarée', async ({
 	const gaucher = await bouton.boundingBox();
 	expect(gaucher!.x + gaucher!.width).toBeLessThan(milieu);
 
-	// Remise en état : le réglage est enregistré sur le compte fixe, partagé par toute la suite.
+	// Putting things back: the setting is saved on the fixed account, shared by the whole suite.
 	await choisirMain(page, 'right');
 });
 
@@ -118,7 +116,7 @@ test('la loupe rend sa place au bouton de création quand on la quitte', async (
 }) => {
 	await page.goto('/magnifier');
 
-	// Sur téléphone seulement : le disque flotterait au milieu de l'étiquette qu'on essaie de lire.
+	// On a phone only: the disc would float in the middle of the label you are trying to read.
 	await expect(page.getByTestId('nav-create')).toBeHidden();
 
 	await page.getByTestId('nav-/').click();

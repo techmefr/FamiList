@@ -13,12 +13,12 @@
 	import { isCompleteOtp, normalizeOtp } from '$domain/otp';
 
 	/**
-	 * Le même bloc sert à l'écran de connexion et à la dernière étape de l'accueil. Là-bas on arrive
-	 * pour créer un compte, ici pour en retrouver un.
+	 * The same block serves the sign-in screen and the last step of the welcome. There you arrive to create
+	 * an account, here to find one again.
 	 *
-	 * Le mode est `$bindable` pour que la page qui l'accueille puisse titrer juste : sans ça, le
-	 * titre annonçait « Connexion » alors qu'on remplissait un formulaire d'inscription. L'accueil,
-	 * lui, passe la valeur sans la lier — il a son propre titre et n'a rien à en faire.
+	 * The mode is `$bindable` so the page hosting it can title itself correctly: without that, the title
+	 * announced "Sign in" while you were filling in a sign-up form. The welcome passes the value without
+	 * binding it — it has its own title and has no use for it.
 	 */
 	let { mode = $bindable<'signin' | 'signup'>('signin') }: { mode?: 'signin' | 'signup' } =
 		$props();
@@ -31,15 +31,15 @@
 	let signedUp = $state(false);
 
 	/**
-	 * Le chemin sans mot de passe.
+	 * The passwordless path.
 	 *
-	 * Un mot de passe de plus est un mot de passe de plus à retenir, et c'est celui-là qu'on oublie
-	 * — l'application ne s'ouvre pas tous les jours. Le code reçu par courriel évite la question
-	 * entière, et le même envoi porte aussi un lien : cliquer marche, recopier les six chiffres
-	 * marche, on ne demande pas laquelle des deux méthodes la personne préfère.
+	 * One more password is one more password to remember, and it is that one you forget — the application is
+	 * not opened every day. The code received by email avoids the whole question, and the same message also
+	 * carries a link: clicking works, copying the six digits works, we do not ask which of the two methods
+	 * the person prefers.
 	 *
-	 * Réservé à la connexion : pour créer un compte il faut un nom, et une adresse mal tapée
-	 * fabriquerait un compte fantôme à trier.
+	 * Limited to signing in: creating an account needs a name, and a mistyped address would make a ghost
+	 * account to sort out.
 	 */
 	let sansMotDePasse = $state(false);
 	let codeEnvoye = $state(false);
@@ -74,7 +74,7 @@
 		goto('/');
 	}
 
-	/** Créer un compte demande un nom : le chemin sans mot de passe n'y mène pas. */
+	/** Creating an account needs a name: the passwordless path does not lead there. */
 	function revenirAuMotDePasse() {
 		sansMotDePasse = false;
 		codeEnvoye = false;
@@ -104,9 +104,9 @@
 		else goto('/');
 	}
 
-	// Pas de goto derriere : signInWithProvider quitte le site pour le fournisseur, et c'est lui qui
-	// nous ramene. On garde busy a true pendant la redirection pour ne pas rendre les boutons
-	// cliquables une seconde fois.
+	// No goto behind: signInWithProvider leaves the site for the provider, and it is the provider that brings
+	// us back. We keep busy at true during the redirect so as not to make the buttons clickable a second
+	// time.
 	async function continueWith(id: ProviderId) {
 		busy = true;
 		const ok = await session.signInWithProvider(id);
@@ -114,9 +114,9 @@
 	}
 
 	/*
-	 * Un segment est un bouton radio déguisé, et non deux boutons : le clavier y circule aux
-	 * flèches, la sélection est annoncée comme un choix parmi deux, et le bouton d'envoi reste le
-	 * seul élément plein de l'écran. Avec deux boutons pleins, on ne savait plus lequel validait.
+	 * A segment is a radio button in disguise, and not two buttons: the keyboard moves through it with the
+	 * arrows, the selection is announced as a choice between two, and the submit button stays the only solid
+	 * element on screen. With two solid buttons, you could no longer tell which one submitted.
 	 */
 	const segmentClass =
 		'has-checked:bg-card has-checked:text-primary has-checked:shadow-fl-1 ' +
@@ -291,8 +291,8 @@
 		<div>
 			<Label for="auth-password">{t('auth.password')}</Label>
 			<!--
-				Le type change, pas le champ : réécrire l'élément lui ferait perdre le focus et le
-				curseur en plein milieu d'une saisie.
+				The type changes, not the field: rewriting the element would make it lose focus and the cursor in the
+				middle of typing.
 			-->
 			<IconField icon={Lock}>
 				<Input
@@ -308,9 +308,9 @@
 
 				{#snippet action()}
 					<!--
-						Un bouton bascule, pas une case : `aria-pressed` dit l'état, et le libellé ne
-						change pas sous le curseur du lecteur d'écran. `tabindex={-1}` serait plus
-						reposant à la tabulation, mais priverait du geste ceux qui n'ont que le clavier.
+						A toggle button, not a checkbox: `aria-pressed` says the state, and the label does not change under
+						the screen reader's cursor. `tabindex={-1}` would be more restful when tabbing, but would deprive
+						keyboard-only users of the gesture.
 					-->
 					<button
 						type="button"

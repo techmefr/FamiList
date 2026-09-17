@@ -1,20 +1,19 @@
 /**
- * Retours d'action : un son court, et la vibration qui l'accompagne.
+ * Action feedback: a short sound, and the vibration going with it.
  *
- * Les sons sont synthétisés à l'exécution, pas chargés. Un fichier par action, ce serait du réseau
- * au premier geste dans un magasin sans couverture, et du poids dans l'application, pour cent
- * millisecondes de bip. Les timbres sont donc décrits ici en clair : c'est aussi ce qui les rend
- * vérifiables sans navigateur.
+ * The sounds are synthesised at runtime, not loaded. One file per action would mean network on the first
+ * gesture in a shop with no coverage, and weight in the application, for a hundred milliseconds of beep. So
+ * the timbres are described here in plain terms: that is also what makes them checkable without a browser.
  */
 export type Cue = 'check' | 'uncheck' | 'add' | 'remove' | 'success' | 'error' | 'tap';
 
 export interface Tone {
-	/** Fréquence de départ, en hertz. */
+	/** Starting frequency, in hertz. */
 	from: number;
-	/** Fréquence d'arrivée : un glissement dit « pris » ou « remis » mieux qu'une note tenue. */
+	/** Ending frequency: a glide says "taken" or "put back" better than a held note. */
 	to: number;
 	ms: number;
-	/** Volume de crête, de 0 à 1. Bas volontairement : ça sert en magasin, à côté de quelqu'un. */
+	/** Peak volume, from 0 to 1. Deliberately low: this is used in a shop, next to somebody. */
 	gain: number;
 	wave: 'sine' | 'triangle' | 'square';
 }
@@ -22,8 +21,8 @@ export interface Tone {
 export type Haptic = 'light' | 'medium' | 'heavy';
 
 /**
- * Aucun son ne dure plus d'un tiers de seconde : au-dessus, cocher dix articles d'affilée
- * transforme la liste en carillon. Les bornes sont tenues par un test.
+ * No sound lasts longer than a third of a second: above that, ticking ten items in a row turns the list into
+ * a chime. The bounds are held by a test.
  */
 export const TONE_MAX_MS = 300;
 export const TONE_MAX_GAIN = 0.2;

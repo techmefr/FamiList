@@ -1,24 +1,24 @@
--- Rejoindre un foyer redevient possible.
+-- Joining a household becomes possible again.
 --
--- redeem_invite supprime le foyer cree a l inscription, mais seulement s il est reste vierge, et
--- il exigeait pour cela qu il n ait aucun magasin. Or l application pose elle-meme un magasin par
--- defaut des la premiere ouverture : la condition etait donc toujours fausse, et l invitation
--- echouait systematiquement sur « quittez d abord votre foyer actuel ».
+-- redeem_invite deletes the household created at sign-up, but only if it has stayed untouched, and for that
+-- it required it to have no shop at all. Yet the application itself lays down a default shop from the very
+-- first opening: the condition was therefore always false, and the invitation failed systematically on
+-- "leave your current household first".
 --
--- Le remede que ce message indique n existe pas : leave_household refuse de retirer le dernier
--- membre, et un foyer d inscription n en compte qu un. La personne n avait aucune sortie.
+-- The remedy that message points to does not exist: leave_household refuses to remove the last member, and a
+-- sign-up household has only one. The person had no way out.
 --
--- Les branches items et lists toleraient deja ce qui est cree automatiquement ; la branche shops
--- n avait pas suivi quand le magasin par defaut est apparu. Elle ne compte plus que les magasins
--- que quelqu un a vraiment ajoutes, et un magasin par defaut vide de rayonnage n en est pas un.
+-- The items and lists branches already tolerated what is created automatically; the shops branch had not
+-- followed when the default shop appeared. It now only counts shops somebody has really added, and a default
+-- shop with no aisles is not one.
 
--- « Un compte, un foyer » n est tenu par aucune contrainte : la cle primaire de household_members
--- porte sur le couple (foyer, personne). L invariant ne vit que dans ces deux fonctions, et il
--- suffit qu elles se croisent pour qu il tombe — rejoindre une famille supprime le foyer
--- d inscription pendant qu un ensure_household en vol, ne le voyant plus, en recree un aussitot.
--- La personne se retrouve alors dans deux foyers, et l application lui montre le mauvais.
+-- "One account, one household" is held by no constraint: household_members's primary key is on the pair
+-- (household, person). The invariant lives only in these two functions, and they only have to cross for it to
+-- fall — joining a family deletes the sign-up household while an ensure_household in flight, no longer seeing
+-- it, immediately recreates one. The person then finds themselves in two households, and the application
+-- shows them the wrong one.
 --
--- Un verrou par compte, pris par les deux fonctions, les met a la queue leu leu.
+-- One lock per account, taken by both functions, puts them in single file.
 create or replace function public.lock_household_membership()
 returns void
 language sql
@@ -63,9 +63,9 @@ begin
     return invite.household_id;
   end if;
 
-  -- Un compte appartient a un seul foyer : celui qu on lui a cree a l inscription n a plus lieu
-  -- d etre s il rejoint une famille. On ne le supprime que s il est reste vide, sinon on refuse
-  -- plutot que d effacer des courses que quelqu un a saisies.
+  -- An account belongs to a single household: the one created for it at sign-up has no reason to exist any
+  -- more if it joins a family. We only delete it if it has stayed empty, otherwise we refuse rather than
+  -- erase shopping somebody has entered.
   select household_id into previous
   from public.household_members
   where user_id = (select auth.uid())
@@ -110,8 +110,8 @@ $$;
 revoke all on function public.redeem_invite(text) from public;
 grant execute on function public.redeem_invite(text) to authenticated;
 
--- ensure_household prend le meme verrou, et relit l appartenance une fois qu il le tient : sans
--- cela, il decide sur un etat qui a pu changer entre-temps.
+-- ensure_household takes the same lock, and rereads membership once it holds it: without that, it decides on
+-- a state that may have changed in the meantime.
 create or replace function public.ensure_household(household_name text default 'Ma maison')
 returns uuid
 language plpgsql
@@ -145,8 +145,8 @@ begin
   insert into public.household_members (household_id, user_id, role)
   values (created, (select auth.uid()), 'owner');
 
-  -- Rayons de depart, dans l'ordre d'une grande surface classique. Sans eux, un nouveau compte
-  -- ouvre une application vide ou rien ne peut etre range.
+  -- Starting aisles, in the order of a classic supermarket. Without them, a new account opens an empty
+  -- application where nothing can be filed.
   insert into public.aisles (household_id, name, emoji, position, kind)
   values
     (created, 'Fruits & Légumes', '🥬', 0, 'fruits'),
@@ -166,8 +166,8 @@ $$;
 revoke all on function public.ensure_household(text) from public;
 grant execute on function public.ensure_household(text) to authenticated;
 
--- create_invite prenait le foyer de l appelant avec un limit 1 sans ordre : sur un compte qui en
--- aurait deux, il en choisissait un au hasard. Meme ordre que partout ailleurs, le plus ancien.
+-- create_invite took the caller's household with a limit 1 and no order: on an account with two, it picked
+-- one at random. Same order as everywhere else, the oldest.
 create or replace function public.create_invite()
 returns text
 language plpgsql
@@ -188,7 +188,7 @@ begin
     raise exception 'aucun foyer' using errcode = '42501';
   end if;
 
-  -- Alphabet sans I, O, 0 ni 1 : le code est souvent dicte a l oral ou recopie a la main.
+  -- Alphabet with no I, O, 0 or 1: the code is often dictated aloud or copied by hand.
   loop
     generated := (
       select string_agg(substr('ABCDEFGHJKLMNPQRSTUVWXYZ23456789',

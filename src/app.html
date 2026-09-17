@@ -13,9 +13,9 @@
 		<meta name="mobile-web-app-capable" content="yes" />
 		<meta name="apple-mobile-web-app-status-bar-style" content="default" />
 		<script>
-			// Applique les préférences avant le premier rendu : sans ça, un rechargement en thème
-			// sombre, en grande police ou en arabe provoque un flash dans les réglages par défaut.
-			// Aucune valeur de style ici : les couleurs et les crans vivent dans app.css.
+			// Applies the preferences before the first render: without this, a reload in dark theme, in large
+			// type or in Arabic causes a flash in the default settings.
+			// No style value here: the colours and the steps live in app.css.
 			(() => {
 				const root = document.documentElement;
 
@@ -30,11 +30,11 @@
 					root.dataset.accent = saved.accentId ?? 'terracotta';
 					root.dataset.scale = saved.fontScaleId ?? 'sm';
 					root.dataset.font = saved.fontId ?? 'system';
-					// Le mouvement est refusé avant la première image, sinon les entrées de la
-					// première page jouent quand même.
+					// Motion is refused before the first frame, otherwise the first page's entrances play all the
+					// same.
 					root.dataset.motion = saved.motion ?? 'system';
-					// Le côté du pouce est posé ici aussi : appliqué après coup, le bouton de
-					// création traverserait l'écran sous les yeux de la personne.
+					// The thumb's side is set here too: applied afterwards, the create button would cross the screen
+					// under the person's eyes.
 					root.dataset.hand = saved.hand ?? 'right';
 
 					if (dark) {

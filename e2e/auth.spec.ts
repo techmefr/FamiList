@@ -38,8 +38,8 @@ test.describe('session', () => {
 		await page.goto('/profile');
 		await page.getByTestId('sign-out').click();
 
-		// /welcome sur un navigateur qui n'a encore rien vu, /auth sinon : les deux sont publics,
-		// et c'est justement ce détour par l'accueil qu'on veut voir se produire ici.
+		// /welcome on a browser that has seen nothing yet, /auth otherwise: both are public, and it is precisely
+		// this detour through the welcome screen that we want to see happen here.
 		await expect(page).toHaveURL(/\/auth|\/welcome/);
 	});
 

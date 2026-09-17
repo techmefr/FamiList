@@ -14,14 +14,13 @@
 </script>
 
 <!--
-	Le modèle shadcn stylait l'état sur des variantes data-checked:, que bits-ui n'émet pas — il pose
-	data-state="checked". Fond de la piste et déplacement du bouton vivent donc dans app.css, sous
-	[data-slot='switch'] : deux règles claires plutôt que des variantes enchaînées dont l'ordre de
-	génération faisait gagner « coché » dans les deux états.
+	The shadcn template styled the state on data-checked: variants, which bits-ui does not emit — it sets
+	data-state="checked". The track background and the knob movement therefore live in app.css, under
+	[data-slot='switch']: two clear rules rather than chained variants whose generation order made "checked"
+	win in both states.
 
-	La taille lg reprend les proportions du prototype (52 × 31). C'est celle des réglages :
-	l'application vise aussi des personnes qui grossissent le texte, un interrupteur de 18 px de haut
-	y est un obstacle.
+	The lg size takes the prototype's proportions (52 × 31). It is the settings one: the application also aims
+	at people who enlarge the text, and an 18 px high switch is an obstacle for them.
 -->
 
 <SwitchPrimitive.Root

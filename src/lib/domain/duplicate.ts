@@ -14,14 +14,14 @@ export type ItemCopy = Omit<DuplicableItem, 'checked' | 'assignedTo'> & { checke
 const NUMBERED = /^(.*?)\s\((\d+)\)$/;
 
 /**
- * Le nom de la copie : « Courses » devient « Courses (2) », puis « Courses (3) ».
+ * The name of the copy: "Shopping" becomes "Shopping (2)", then "Shopping (3)".
  *
- * Le suffixe est un nombre et non un mot traduit : la liste est nommée par le foyer, qui peut
- * écrire dans une langue différente de celle de l'écran, et un « (copie) » figé dans le nom
- * resterait faux le jour où quelqu'un change de langue. Un rang se lit dans les dix langues.
+ * The suffix is a number and not a translated word: the list is named by the household, which may write in
+ * a language other than the screen's, and a "(copy)" frozen into the name would stay wrong the day
+ * somebody changes language. A rank reads in all ten languages.
  *
- * Dupliquer une copie repart du nom d'origine plutôt que d'empiler les parenthèses : on veut
- * « Courses (3) », pas « Courses (2) (2) ».
+ * Duplicating a copy starts again from the original name rather than stacking brackets: we want
+ * "Shopping (3)", not "Shopping (2) (2)".
  */
 export function copyName(name: string, existing: string[]): string {
 	const source = name.trim();
@@ -36,15 +36,14 @@ export function copyName(name: string, existing: string[]): string {
 }
 
 /**
- * Ce qu'un article emporte dans la copie.
+ * What an item carries into the copy.
  *
- * Le rayon, la quantité, l'unité, la note et l'urgence décrivent le produit voulu : ce sont eux
- * qui font gagner du temps, et les retaper serait recréer la liste à la main.
+ * The aisle, the quantity, the unit, the note and the urgency describe the wanted product: they are what
+ * saves time, and typing them again would mean recreating the list by hand.
  *
- * Deux champs restent en arrière, parce qu'ils décrivent la course passée et non le besoin :
- * l'état coché — une liste dupliquée est une liste à faire, pas une liste déjà faite — et
- * l'attribution à une personne, qui a été décidée pour cette sortie-là et que rien ne dit
- * reconduite la semaine suivante.
+ * Two fields stay behind, because they describe the past shopping trip and not the need: the ticked state —
+ * a duplicated list is a list to do, not one already done — and the assignment to a person, which was
+ * decided for that trip and which nothing says carries over to the following week.
  */
 export function copiedItem(item: DuplicableItem): ItemCopy {
 	return {

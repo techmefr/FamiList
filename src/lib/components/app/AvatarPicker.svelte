@@ -14,14 +14,14 @@
 	const moi = $derived(data.members.find((m) => m.id === data.me));
 
 	/**
-	 * La photo est réduite ici, dans le navigateur, avant de partir.
+	 * The photo is shrunk here, in the browser, before leaving.
 	 *
-	 * Une photo de téléphone pèse quelques mégaoctets ; on n'en garde qu'un carré de 128 px, ce qui
-	 * tombe à une poignée de kilo-octets. Le rognage est centré et non déformant : un visage écrasé
-	 * pour tenir dans un carré se remarque immédiatement.
+	 * A phone photo weighs a few megabytes; we keep only a 128 px square of it, which comes down to a handful
+	 * of kilobytes. The crop is centred and not distorting: a face squashed to fit a square is noticed
+	 * immediately.
 	 *
-	 * `createImageBitmap` plutôt qu'un `<img>` : il ne dépend pas du cycle de chargement du DOM, et
-	 * il applique l'orientation EXIF, sans quoi une photo prise en portrait ressort couchée.
+	 * `createImageBitmap` rather than an `<img>`: it does not depend on the DOM loading cycle, and it applies
+	 * the EXIF orientation, without which a photo taken in portrait comes out lying down.
 	 */
 	async function vignette(fichier: File): Promise<string> {
 		const source = await createImageBitmap(fichier, { imageOrientation: 'from-image' });
@@ -70,11 +70,11 @@
 </script>
 
 <!--
-	Le portrait, et la façon d'en changer.
+	The portrait, and how to change it.
 
-	Par défaut ce sont les initiales sur la couleur du membre : beaucoup de gens ne mettront jamais
-	de photo, et deux lettres sur un fond coloré se distinguent mieux dans une pile qu'une
-	silhouette générique répétée quatre fois. La photo est une option, pas une case à remplir.
+	By default it is the initials on the member's colour: many people will never set a photo, and two letters
+	on a coloured ground stand out better in a stack than a generic silhouette repeated four times. The photo
+	is an option, not a box to fill.
 -->
 {#if moi}
 	<div class="flex flex-wrap items-center gap-4">
@@ -111,8 +111,8 @@
 	</div>
 
 	<!--
-		Le champ est masqué mais reste dans le DOM et gardé accessible : c'est lui que le bouton
-		déclenche, et c'est lui que voit un pilote de test ou un lecteur d'écran qui l'atteindrait.
+		The field is hidden but stays in the DOM and kept accessible: it is what the button triggers, and what a
+		test driver or a screen reader reaching it sees.
 	-->
 	<input
 		bind:this={input}

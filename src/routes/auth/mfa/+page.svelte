@@ -16,13 +16,13 @@
 	let erreur = $state('');
 
 	/**
-	 * Le premier facteur vérifié suffit : l'écran de sécurité n'en laisse poser qu'un. En chercher
-	 * plusieurs ici demanderait de faire choisir entre deux lignes identiques.
+	 * The first verified factor is enough: the security screen only lets one be set. Looking for several here
+	 * would mean making people choose between two identical rows.
 	 */
 	$effect(() => {
 		session.listFactors().then((facteurs) => {
-			// Une lecture en échec laissait le facteur à null : le bouton restait actif et ne faisait
-			// rien du tout au clic, sans un mot d'explication.
+			// A failed read left the factor at null: the button stayed active and did nothing at all on click,
+			// without a word of explanation.
 			if (facteurs === null) {
 				erreur = session.error ?? '';
 				return;
@@ -107,9 +107,9 @@
 			</form>
 
 			<!--
-				La porte de sortie est visible dès le premier écran, pas cachée derrière un lien en petit.
-				Quelqu'un qui a perdu son téléphone est déjà en train de paniquer ; lui faire chercher la
-				sortie est exactement le moment où l'on perd un compte pour de bon.
+				The way out is visible from the first screen, not hidden behind a link in small type. Somebody who has
+				lost their phone is already panicking; making them hunt for the exit is exactly how an account is lost
+				for good.
 			-->
 			<Button
 				variant="ghost"

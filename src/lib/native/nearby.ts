@@ -9,18 +9,16 @@ import {
 } from '$domain/nearby';
 
 /**
- * Proposer la carte de fidélité quand on arrive devant un magasin.
+ * Offering the loyalty card on arriving at a shop.
  *
- * C'est natif et rien d'autre. Un navigateur ne surveille pas une position : l'onglet est suspendu
- * dès qu'on le quitte, et fermé il n'exécute plus rien. Sur le web on ne démarre donc aucune
- * surveillance, et l'interface le dit au lieu de laisser croire à une notification qui ne viendra
- * jamais.
+ * It is native and nothing else. A browser does not watch a position: the tab is suspended as soon as you
+ * leave it, and closed it runs nothing at all. On the web we therefore start no watch, and the interface
+ * says so instead of suggesting a notification that will never come.
  *
- * Même en natif, la promesse est bornée et il vaut mieux l'écrire : la surveillance vit avec
- * l'application. Tant qu'elle est ouverte ou récemment mise en arrière-plan, la position arrive ;
- * une fois l'application tuée par le système, plus rien ne tourne — tenir cette promesse-là
- * demanderait un service de premier plan avec sa notification permanente, ce qui coûte plus cher
- * en batterie et en attention que ce que la fonctionnalité rapporte.
+ * Even natively, the promise is bounded and it is better written down: the watch lives with the
+ * application. While it is open or recently backgrounded, positions arrive; once the application is
+ * killed by the system, nothing runs any more — keeping that promise would need a foreground service with
+ * its permanent notification, which costs more in battery and attention than the feature brings.
  */
 export type NearbyPermission = 'granted' | 'denied' | 'unsupported';
 
@@ -38,10 +36,10 @@ export function nearbySupported(): boolean {
 }
 
 /**
- * Le journal des magasins déjà annoncés, gardé sur l'appareil.
+ * The log of shops already announced, kept on the device.
  *
- * Volontairement local et non synchronisé : c'est ce téléphone-là qui est passé devant ce
- * magasin-là. Quelqu'un d'autre du foyer qui y va le même jour a droit à sa propre notification.
+ * Deliberately local and not synced: it is this phone that passed this shop. Somebody else in the
+ * household going there the same day is entitled to their own notification.
  */
 function lireJournal(): Record<string, string> {
 	try {
@@ -56,16 +54,16 @@ function ecrireJournal(journal: Record<string, string>) {
 	try {
 		localStorage.setItem(JOURNAL_KEY, JSON.stringify(journal));
 	} catch {
-		// Stockage plein ou refusé : au pire une notification de trop, rien de cassé.
+		// Storage full or refused: at worst one notification too many, nothing broken.
 	}
 }
 
 /**
- * Demander les deux autorisations, et seulement sur un geste de la personne.
+ * Asking for both permissions, and only on a gesture from the person.
  *
- * La position et les notifications sont demandées ensemble parce que l'une sans l'autre ne sert à
- * rien ici. Un refus n'est pas une erreur : le réglage reste refusable, et l'interface annonce ce
- * qui manque plutôt que de rester muette.
+ * Position and notifications are asked for together because one without the other is of no use here. A
+ * refusal is not an error: the setting stays refusable, and the interface announces what is missing
+ * rather than staying silent.
  */
 export async function requestNearbyPermission(): Promise<NearbyPermission> {
 	if (!nearbySupported()) return 'unsupported';
@@ -96,7 +94,7 @@ async function annoncer(latitude: number, longitude: number) {
 	if (!contexte) return;
 
 	const maintenant = new Date();
-	// La position peut arriver à la seconde ; on n'en regarde qu'une de temps en temps.
+	// The position can arrive every second; we only look at one now and then.
 	if (maintenant.getTime() - dernierControle < NEARBY_CHECK_MS) return;
 	dernierControle = maintenant.getTime();
 
@@ -117,8 +115,8 @@ async function annoncer(latitude: number, longitude: number) {
 
 		const { title, body } = contexte.texts(alerte);
 
-		// Le journal est inscrit avant l'envoi : si l'affichage échoue, mieux vaut une notification
-		// manquée qu'une boucle qui réessaie à chaque position.
+		// The log is written before sending: if the display fails, better a missed notification than a loop
+		// retrying on every position.
 		ecrireJournal(rememberNotified(lireJournal(), alerte.shopId, maintenant));
 
 		await LocalNotifications.schedule({
@@ -127,24 +125,24 @@ async function annoncer(latitude: number, longitude: number) {
 					id: alerte.id,
 					title,
 					body,
-					// Aucune programmation : on est devant le magasin maintenant, pas plus tard.
+					// No scheduling: we are in front of the shop now, not later.
 					extra: { cardId: alerte.cardId }
 				}
 			]
 		});
 	} catch {
-		// Greffon absent ou canal refusé : les cartes restent accessibles à la main.
+		// Plugin absent or channel refused: the cards stay reachable by hand.
 	}
 }
 
 /**
- * Le robinet de la surveillance, rejoué à chaque changement.
+ * The tap of the watch, replayed on every change.
  *
- * Une seule veille tourne à la fois, et le contexte est remplacé à chaud : un magasin créé, une
- * carte rattachée ou une position relevée sont pris en compte sans redémarrer le GPS.
+ * A single watch runs at a time, and the context is replaced live: a shop created, a card attached or a
+ * position taken are taken into account without restarting the GPS.
  *
- * Précision basse assumée : à trois cents mètres de rayon, le réseau et les bornes wifi suffisent,
- * et c'est ce qui permet de laisser la veille tourner sans vider la batterie.
+ * Low accuracy is accepted: at a three-hundred-metre radius, the network and wifi access points are
+ * enough, and that is what lets the watch run without draining the battery.
  */
 export async function applyNearbyWatch(enabled: boolean, next: NearbyContext): Promise<void> {
 	contexte = next;
@@ -163,7 +161,7 @@ export async function applyNearbyWatch(enabled: boolean, next: NearbyContext): P
 		if (!ecoute) {
 			const { LocalNotifications } = await import('@capacitor/local-notifications');
 
-			// Toucher la notification ouvre la carte : c'est tout l'intérêt de la proposer.
+			// Tapping the notification opens the card: that is the whole point of offering it.
 			await LocalNotifications.addListener('localNotificationActionPerformed', (action) => {
 				const cardId = action.notification.extra?.cardId;
 				if (typeof cardId === 'string') contexte?.onOpen(cardId);
@@ -184,6 +182,6 @@ export async function applyNearbyWatch(enabled: boolean, next: NearbyContext): P
 			}
 		);
 	} catch {
-		// Greffon absent ou position indisponible : rien ne se déclenche, rien ne casse.
+		// Plugin absent or position unavailable: nothing fires, nothing breaks.
 	}
 }

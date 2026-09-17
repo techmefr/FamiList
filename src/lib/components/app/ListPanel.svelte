@@ -4,20 +4,19 @@
 	import { data } from '$stores/data.svelte';
 
 	/**
-	 * L'inventaire des listes, posé à demeure entre la navigation et le contenu.
+	 * The inventory of lists, sitting permanently between the navigation and the content.
 	 *
-	 * Il n'ouvre rien de neuf : chaque entrée est un lien vers `/l/[id]`, la même route qu'ailleurs.
-	 * Un lien partagé entre membres du foyer continue donc de s'ouvrir directement, et se retrouve
-	 * simplement accompagné du panneau sur un grand écran.
+	 * It opens nothing new: each entry is a link to `/l/[id]`, the same route as anywhere else. A link shared
+	 * between household members therefore goes on opening directly, and is simply accompanied by the panel on
+	 * a large screen.
 	 *
-	 * Sur l'accueil, l'inventaire est affiché deux fois : ici, et dans la page. Ce n'est pas un
-	 * oubli — les deux ne servent pas à la même chose. La page est l'écran de gestion, avec le
-	 * formulaire, le renommage, la duplication et la corbeille ; le panneau est l'aiguillage, et il
-	 * doit rester identique d'une page à l'autre pour qu'on sache où cliquer sans regarder.
+	 * On the home screen, the inventory is shown twice: here, and in the page. That is not an oversight — the
+	 * two do not serve the same purpose. The page is the management screen, with the form, renaming,
+	 * duplication and the bin; the panel is the switchboard, and it must stay identical from one page to the
+	 * next so you know where to click without looking.
 	 *
-	 * Sa visibilité est décidée en CSS seul (`.fl-list-panel`) : hors du régime le plus large il
-	 * n'est pas masqué, il n'est pas rendu du tout aux lecteurs d'écran, qui n'ont donc jamais deux
-	 * chemins vers la même liste.
+	 * Its visibility is decided in CSS alone (`.fl-list-panel`): outside the widest regime it is not hidden,
+	 * it is not rendered at all for screen readers, which therefore never have two paths to the same list.
 	 */
 	const stats = (listId: string) => {
 		const items = data.itemsOf(listId);

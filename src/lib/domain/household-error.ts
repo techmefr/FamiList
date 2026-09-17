@@ -1,14 +1,14 @@
 /**
- * Les refus de la base, dits dans la langue de la personne.
+ * The database's refusals, said in the person's language.
  *
- * Les fonctions du foyer lèvent des exceptions écrites pour un journal, en français sans accents
- * et jamais traduites : « code invalide ou expire », « compte non valide ». Affichées telles
- * quelles, elles se ressemblent toutes — on ne sait pas si le code est mauvais, s'il faut d'abord
- * quitter son foyer, ou s'il manque un code de vérification.
+ * The household functions raise exceptions written for a log, in French without accents and never
+ * translated: "code invalide ou expire", "compte non valide". Shown as they are, they all look alike — you
+ * cannot tell whether the code is wrong, whether you have to leave your household first, or whether a
+ * verification code is missing.
  *
- * Le code SQLSTATE ne suffit pas à les séparer : deux refus très différents partagent `22023`.
- * On lit donc le message, et on retombe sur un texte générique pour ce qu'on ne reconnaît pas —
- * jamais sur le message brut, qui ne veut rien dire pour qui n'a pas écrit la base.
+ * The SQLSTATE code is not enough to tell them apart: two very different refusals share `22023`. So we read
+ * the message, and fall back on a generic text for what we do not recognise — never on the raw message,
+ * which means nothing to somebody who did not write the database.
  */
 export type HouseholdErrorKey =
 	| 'household.errorCode'
@@ -27,9 +27,9 @@ export function householdErrorKey(message: string, needsSecondFactor = false): H
 
 	if (said.includes('sans membre')) return 'household.errorLastMember';
 
-	// « compte non valide » recouvre deux situations très différentes : un compte que
-	// l'administrateur n'a pas encore approuvé, et une session qui s'est arrêtée au mot de passe
-	// alors que le compte exige un deuxième facteur. La seconde a une sortie, il faut la dire.
+	// "compte non valide" covers two very different situations: an account the administrator has not approved
+	// yet, and a session that stopped at the password while the account requires a second factor. The second
+	// has a way out, and it must be said.
 	if (said.includes('compte non valide') || said.includes('foyer inconnu') || said.includes('aucun foyer')) {
 		return needsSecondFactor ? 'household.errorSecondFactor' : 'household.errorNotApproved';
 	}

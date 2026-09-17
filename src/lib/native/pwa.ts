@@ -4,12 +4,11 @@ import { dev } from '$app/environment';
 const UPDATE_CHECK_MS = 60 * 60 * 1000;
 
 /**
- * Enregistre la coquille hors-ligne, côté web uniquement.
+ * Registers the offline shell, on the web only.
  *
- * L'application installée par Capacitor embarque déjà tous ses fichiers : un service worker n'y
- * apporterait rien et pourrait faire du mal, en resservant la version d'avant après une mise à
- * jour du .apk. D'où l'enregistrement à la main plutôt que celui de SvelteKit, qui ne sait pas
- * distinguer les deux.
+ * The application installed by Capacitor already carries all its files: a service worker would add nothing
+ * there and could do harm, by serving the previous version again after an .apk update. Hence registering by
+ * hand rather than SvelteKit's, which cannot tell the two apart.
  */
 export function registerServiceWorker() {
 	if (dev) return;
@@ -17,16 +16,16 @@ export function registerServiceWorker() {
 	if (!('serviceWorker' in navigator)) return;
 
 	navigator.serviceWorker
-		// `updateViaCache: 'none'` : le fichier lui-même ne doit jamais venir du cache HTTP, sinon
-		// une version cassée resterait en place jusqu'à expiration de son en-tête.
+		// `updateViaCache: 'none'`: the file itself must never come from the HTTP cache, otherwise a broken
+		// version would stay in place until its header expired.
 		.register('/service-worker.js', { updateViaCache: 'none' })
 		.then(registration => {
-			// Un onglet laissé ouvert des jours ne redemanderait jamais le fichier de sa propre
-			// initiative : sans ce rappel, le nouveau worker n'est même pas téléchargé.
+			// A tab left open for days would never ask for the file again of its own accord: without this
+			// reminder, the new worker is not even downloaded.
 			setInterval(() => registration.update(), UPDATE_CHECK_MS);
 		})
 		.catch(() => {
-			// Navigateur en navigation privée, stockage refusé : l'application marche quand même,
-			// simplement sans premier lancement hors-ligne.
+			// Browser in private mode, storage refused: the application works all the same, simply without a
+			// first offline launch.
 		});
 }

@@ -1,9 +1,9 @@
--- Noms des membres du foyer.
+-- Names of the household's members.
 --
--- La policy de lecture des profils est volontairement etroite : chacun ne lit que le sien. Mais un
--- foyer sans noms n'est pas utilisable, on ne sait plus qui a pris quoi. Plutot que d'elargir la
--- policy — ce qui exposerait aussi le theme et la taille de texte de chacun — on expose par une
--- fonction les seules colonnes utiles, et seulement pour les personnes du meme foyer.
+-- The profiles read policy is deliberately narrow: each person reads only their own. But a household with no
+-- names is unusable, you no longer know who took what. Rather than widening the policy — which would also
+-- expose everyone's theme and text size — we expose through a function the only useful columns, and only for
+-- people of the same household.
 
 create or replace function public.household_profiles()
 returns table (id uuid, display_name text, initial text)

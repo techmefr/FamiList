@@ -4,32 +4,30 @@ import AxeBuilder from '@axe-core/playwright';
 import { expect, type Page } from '@playwright/test';
 
 /**
- * Les règles retenues sont celles qui correspondent aux critères RGAA vérifiables par une machine :
- * contrastes, libellés de champs, noms accessibles, structure de titres, rôles ARIA. Le RGAA ne
- * s'arrête pas là — ce garde-fou ne prouve rien d'autre que l'absence de régression sur ce sous-
- * ensemble.
+ * The rules kept are those matching the RGAA criteria a machine can verify: contrast, field labels,
+ * accessible names, heading structure, ARIA roles. RGAA does not stop there — this guardrail proves nothing
+ * beyond the absence of regression on that subset.
  */
 const TAGS = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'];
 
 const BASELINE_PATH = fileURLToPath(new URL('./a11y-baseline.json', import.meta.url));
 
-/** Nombre de violations tolérées par écran et par règle, tel qu'observé au moment de l'ajout. */
+/** Number of violations tolerated per screen and per rule, as observed at the time of adding it. */
 type Baseline = Record<string, Record<string, number>>;
 
 /**
- * `A11Y_UPDATE_BASELINE=1 pnpm exec playwright test a11y --workers=1` réécrit la ligne de base à
- * partir de l'état courant. Un seul worker : les tests écrivent tous dans le même fichier. À ne
- * lancer que pour enregistrer un écran nouveau ou entériner une correction — jamais pour faire
- * taire une régression.
+ * `A11Y_UPDATE_BASELINE=1 pnpm exec playwright test a11y --workers=1` rewrites the baseline from the
+ * current state. A single worker: the tests all write to the same file. Only to be run to record a new
+ * screen or to accept a fix — never to silence a regression.
  */
 const isUpdating = process.env.A11Y_UPDATE_BASELINE === '1';
 
 const readBaseline = (): Baseline => JSON.parse(readFileSync(BASELINE_PATH, 'utf8')) as Baseline;
 
 /**
- * Le tour guidé et l'écran de bienvenue s'ouvrent à la première visite et recouvrent la page : axe
- * n'analyserait alors que leur overlay. `changedAt` est indispensable, sinon la synchronisation
- * d'apparence qui suit la connexion réécrase ce réglage.
+ * The guided tour and the welcome screen open on the first visit and cover the page: axe would then only
+ * analyse their overlay. `changedAt` is essential, otherwise the appearance sync that follows sign-in
+ * overwrites this setting.
  */
 export async function presetAppearance(
 	page: Page,
@@ -63,10 +61,10 @@ async function scan(page: Page): Promise<ScanResult> {
 }
 
 /**
- * Compare l'écran à sa ligne de base plutôt qu'à zéro. L'application a déjà des manquements le jour
- * où ce garde-fou arrive ; échouer dessus rendrait la CI rouge en permanence, et une CI rouge en
- * permanence est désactivée en une semaine. Ce qui doit échouer, c'est une régression : une règle
- * qui n'était pas violée, ou qui l'est désormais plus souvent.
+ * Compares the screen to its baseline rather than to zero. The application already has shortcomings on the
+ * day this guardrail arrives; failing on them would make CI permanently red, and a permanently red CI is
+ * switched off within a week. What must fail is a regression: a rule that was not violated, or that now is
+ * more often.
  */
 export async function expectNoNewViolations(page: Page, screen: string): Promise<void> {
 	const { counts, details } = await scan(page);

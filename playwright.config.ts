@@ -1,10 +1,10 @@
 import { defineConfig, devices } from '@playwright/test';
 
 /**
- * Les E2E tournent contre la pile Supabase locale, jamais contre le projet en ligne : on écrit des
- * comptes, des listes, des cartes, et rien de cela n'a sa place dans les données réelles d'un
- * foyer. `supabase/seed.sql` y pose un compte fixe (`e2e@familist.test`), confirmé et approuvé dès
- * `supabase db reset` — pas d'inscription à rejouer, pas de courriel à attendre.
+ * The E2E tests run against the local Supabase stack, never against the online project: we write accounts,
+ * lists and cards, and none of that has any place in a household's real data. `supabase/seed.sql` sets a
+ * fixed account there (`e2e@familist.test`), confirmed and approved from `supabase db reset` onwards — no
+ * sign-up to replay, no email to wait for.
  */
 const PORT = 4173;
 const SUPABASE_URL = process.env.E2E_SUPABASE_URL ?? 'http://127.0.0.1:54321';
@@ -17,26 +17,25 @@ export default defineConfig({
 	fullyParallel: true,
 	forbidOnly: !!process.env.CI,
 	retries: process.env.CI ? 1 : 0,
-	// Un seul worker en CI : les tests partagent le même compte fixe et la même base, un deuxième
-	// worker verrait parfois les écritures de l'autre au milieu d'une assertion.
+	// A single worker in CI: the tests share the same fixed account and the same database, and a second
+	// worker would sometimes see the other's writes in the middle of an assertion.
 	workers: process.env.CI ? 1 : undefined,
 	reporter: process.env.CI ? [['github'], ['html', { open: 'never' }]] : 'html',
 	use: {
 		baseURL: `http://127.0.0.1:${PORT}`,
 		trace: 'on-first-retry',
 		screenshot: 'only-on-failure',
-		// Convention du dépôt : `data-test-id`, pas le `data-testid` par défaut de Playwright.
+		// Repository convention: `data-test-id`, not Playwright's default `data-testid`.
 		testIdAttribute: 'data-test-id'
 	},
 	/**
-	 * Deux projets qui ne jouent pas les mêmes fichiers, plutôt que la même suite deux fois.
+	 * Two projects that do not play the same files, rather than the same suite twice.
 	 *
-	 * L'application change vraiment de forme sous 48rem — barre du bas au lieu de la colonne,
-	 * onglets différents, bouton de création flottant du côté du pouce, glissement au doigt — et
-	 * rien de tout cela n'était exercé. Mais rejouer aussi les listes, les magasins ou la 2FA en
-	 * gabarit téléphone doublerait la durée du travail d'intégration pour revérifier des parcours
-	 * qui ne dépendent pas de l'écran. `e2e/mobile.spec.ts` porte donc ce qui en dépend, et lui
-	 * seul tourne sur le téléphone émulé.
+	 * The application really changes shape under 48rem — bottom bar instead of the column, different tabs,
+	 * floating create button on the thumb's side, swiping with the finger — and none of that was exercised.
+	 * But replaying the lists, the shops or the 2FA in a phone viewport as well would double the integration
+	 * time to recheck journeys that do not depend on the screen. `e2e/mobile.spec.ts` therefore carries what
+	 * does depend on it, and it alone runs on the emulated phone.
 	 */
 	projects: [
 		{
@@ -51,8 +50,8 @@ export default defineConfig({
 		}
 	],
 	webServer: {
-		// `--host 127.0.0.1` explicite : sur un runner CI, `localhost` ne résout parfois que vers ::1,
-		// le port est alors vu en écoute mais la connexion sur 127.0.0.1 est refusée.
+		// `--host 127.0.0.1` explicitly: on a CI runner, `localhost` sometimes resolves only to ::1, the port is
+		// then seen as listening but the connection on 127.0.0.1 is refused.
 		command: 'pnpm exec vite dev --host 127.0.0.1 --port 4173 --strictPort',
 		port: PORT,
 		reuseExistingServer: !process.env.CI,

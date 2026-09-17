@@ -1,4 +1,4 @@
-/** Un signalement décrit soit un dysfonctionnement, soit une idée d'amélioration. */
+/** A report describes either a malfunction or an idea for an improvement. */
 export const REPORT_KINDS = ['bug', 'suggestion'] as const;
 export type ReportKind = (typeof REPORT_KINDS)[number];
 

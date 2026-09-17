@@ -20,9 +20,9 @@
 	const choisi = $derived(providerById(fournisseur));
 
 	/**
-	 * Le champ du modèle suit le fournisseur tant qu'on ne l'a pas écrit soi-même. Sans cela,
-	 * changer de fournisseur laisserait le nom de modèle du précédent dans le champ — une valeur
-	 * qu'aucun des deux ne connaît, et un refus incompréhensible au premier appel.
+	 * The model field follows the provider while it has not been written by hand. Without that, changing
+	 * provider would leave the previous one's model name in the field — a value neither of them knows, and an
+	 * incomprehensible refusal on the first call.
 	 */
 	let modeleTouche = $state(false);
 	const modeleAffiche = $derived(modeleTouche ? modele : ai.model || (choisi?.defaultModel ?? ''));
@@ -46,8 +46,8 @@
 			return;
 		}
 
-		// La clé quitte l'écran dès qu'elle est enregistrée : elle n'a plus rien à faire dans un
-		// champ, et le formulaire ne sert plus qu'à la remplacer.
+		// The key leaves the screen as soon as it is saved: it has no business in a field any more, and the form
+		// now only serves to replace it.
 		cle = '';
 		enregistre = true;
 		feedback.play('success');
@@ -74,14 +74,14 @@
 </script>
 
 <!--
-	La clé d'IA de la personne, et rien qu'à elle.
+	The person's AI key, and theirs alone.
 
-	Cet écran est le seul endroit de l'application d'où part un appel vers un tiers, et c'est
-	pourquoi il dit ce qui part avant de proposer quoi que ce soit. Le dépôt a refusé le géocodage
-	pour ne pas faire sortir une adresse ; ici on fait sortir quelque chose, donc on l'écrit.
+	This screen is the only place in the application from which a call leaves for a third party, and that is
+	why it says what leaves before offering anything. The repository refused geocoding so as not to let an
+	address out; here we do let something out, so we write it down.
 
-	Ce qui n'est volontairement pas proposé : une clé fournie par l'hébergeur. Il n'y en a pas. Sans
-	clé posée ici, la suggestion de recette n'apparaît nulle part — elle ne promet rien.
+	What is deliberately not offered: a key supplied by the host. There is none. With no key set here, the
+	recipe suggestion appears nowhere — it promises nothing.
 -->
 <svelte:head>
 	<title>{t('ai.title')} — {t('app.name')}</title>
@@ -134,9 +134,8 @@
 				<div>
 					<Label for="ai-provider">{t('ai.provider')}</Label>
 					<!--
-						Une liste déroulante native : elle est courte, elle n'a besoin d'aucun ornement, et
-						c'est le seul contrôle dont le lecteur d'écran et le clavier physique connaissent
-						déjà le fonctionnement sans qu'on ait à le réécrire.
+						A native dropdown: it is short, it needs no ornament, and it is the only control whose workings the
+						screen reader and the physical keyboard already know without our having to rewrite them.
 					-->
 					<select
 						id="ai-provider"
@@ -170,9 +169,9 @@
 				<div>
 					<Label for="ai-key">{t('ai.key')}</Label>
 					<!--
-						`type="password"` et non un champ à révéler : contrairement à un mot de passe, une
-						clé d'API se colle depuis un gestionnaire et ne se relit jamais. La montrer
-						n'aiderait personne et la laisserait sur l'écran d'un téléphone posé sur la table.
+						`type="password"` and not a field to reveal: unlike a password, an API key is pasted from a manager
+						and never read back. Showing it would help nobody and would leave it on the screen of a phone lying
+						on the table.
 					-->
 					<IconField icon={KeyRound}>
 						<Input

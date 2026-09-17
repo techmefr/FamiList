@@ -9,8 +9,8 @@ describe('ofCircle', () => {
 	});
 
 	it('ne montre rien tant qu’aucun cercle n’est actif', () => {
-		// Le cache est plein avant que le cercle soit connu — première ouverture, changement de
-		// compte. Tout montrer à ce moment-là afficherait les cercles mélangés le temps d'un rendu.
+		// The cache is full before the circle is known — first opening, account change. Showing everything at
+		// that point would display the circles mixed together for the time of one render.
 		expect(ofCircle([{ householdId: 'a' }], '')).toEqual([]);
 	});
 
@@ -32,8 +32,7 @@ describe('visibleLists', () => {
 	});
 
 	it('garde la liste personnelle même sans cercle actif', () => {
-		// Elle n'appartient à personne d'autre qu'à son auteur : aucun cercle ne peut la cacher, et
-		// surtout pas l'absence de cercle.
+		// It belongs to nobody but its author: no circle can hide it, and least of all the absence of a circle.
 		expect(visibleLists([{ id: 'cadeaux' }, { id: 'famille', householdId: 'a' }], '')).toEqual([
 			{ id: 'cadeaux' }
 		]);
@@ -63,8 +62,8 @@ describe('defaultCircle', () => {
 	});
 
 	it('retombe sur le plus ancien quand le cercle retenu n’est plus à nous', () => {
-		// On a pu en être sorti depuis un autre appareil : l'afficher quand même donnerait un écran
-		// vide décrivant un cercle auquel on n'appartient plus.
+		// We may have been removed from it from another device: showing it anyway would give an empty screen
+		// describing a circle we no longer belong to.
 		expect(defaultCircle(circles, 'c')).toBe('a');
 		expect(defaultCircle(circles, null)).toBe('a');
 	});

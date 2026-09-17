@@ -2,18 +2,16 @@ import { Capacitor } from '@capacitor/core';
 import type { ReminderPlan } from '$domain/reminder';
 
 /**
- * Les rappels de date, portés par l'appareil lui-même.
+ * The date reminders, carried by the device itself.
  *
- * Il n'y a pas de serveur ici : l'application est un paquet statique et une base Supabase, sans
- * tâche planifiée ni service de push. Une notification envoyée depuis le serveur supposerait une
- * infrastructure qui n'existe pas. Restent les notifications locales de Capacitor : le système
- * d'exploitation garde l'alarme et la déclenche même application fermée, sans réseau. C'est la
- * seule option qui tienne la promesse.
+ * There is no server here: the application is a static bundle and a Supabase database, with no scheduled
+ * task and no push service. A notification sent from the server would assume infrastructure that does not
+ * exist. That leaves Capacitor's local notifications: the operating system keeps the alarm and fires it
+ * even with the application closed, without network. It is the only option that keeps the promise.
  *
- * Côté web, il n'y en a aucune. L'API Notification du navigateur ne se déclenche que si une page
- * est vivante pour appeler `new Notification(...)` ; réveiller un onglet fermé demande un service
- * de push, donc un serveur. On ne fait donc rien du tout sur le web, et l'interface le dit — mieux
- * vaut une promesse absente qu'une promesse non tenue.
+ * On the web there is none. The browser's Notification API only fires if a page is alive to call
+ * `new Notification(...)`; waking a closed tab needs a push service, so a server. So we do nothing at all
+ * on the web, and the interface says so — better an absent promise than a broken one.
  */
 export type ReminderPermission = 'granted' | 'denied' | 'unsupported';
 
@@ -22,12 +20,11 @@ export function remindersSupported(): boolean {
 }
 
 /**
- * Demander l'autorisation, et seulement sur un geste de la personne.
+ * Asking for permission, and only on a gesture from the person.
  *
- * Android 13 la réclame à l'exécution, et un refus est définitif au bout de deux fois : la
- * demander au lancement, avant que quiconque ait posé une date, gaspillerait la seule occasion de
- * l'obtenir. Un refus n'est pas une erreur — la date reste posée et affichée, c'est le rappel
- * seul qui disparaît.
+ * Android 13 asks for it at runtime, and a refusal is final after twice: asking at launch, before anyone
+ * has set a date, would waste the only chance of getting it. A refusal is not an error — the date stays
+ * set and displayed, it is the reminder alone that disappears.
  */
 export async function requestReminderPermission(): Promise<ReminderPermission> {
 	if (!remindersSupported()) return 'unsupported';
@@ -46,17 +43,17 @@ export async function requestReminderPermission(): Promise<ReminderPermission> {
 }
 
 /**
- * Reposer d'un bloc tous les rappels de l'appareil.
+ * Re-setting all the device's reminders as a whole.
  *
- * On annule tout puis on reprogramme, plutôt que de tenir un journal des différences. C'est ce qui
- * rend le reste simple : une date changée, une date effacée, une liste terminée ou supprimée, une
- * date passée — aucun de ces cas n'a de code à lui, il suffit que le plan ne le contienne plus.
+ * We cancel everything then reschedule, rather than keep a log of differences. That is what keeps the
+ * rest simple: a changed date, a cleared date, a finished or deleted list, a past date — none of these
+ * cases has code of its own, it is enough that the plan no longer contains it.
  *
- * Et comme c'est rejoué à chaque ouverture, une réinstallation ou un redémarrage du téléphone, qui
- * vident les alarmes du système, se rattrapent au lancement suivant sans rien demander.
+ * And since it is replayed on every opening, a reinstall or a phone restart, which empty the system's
+ * alarms, are caught up at the next launch without asking anything.
  *
- * L'annulation ne vise que nos propres identifiants : l'application n'a pas d'autre notification
- * aujourd'hui, mais effacer celles d'un futur voisin serait un piège discret.
+ * The cancellation only targets our own ids: the application has no other notification today, but erasing
+ * those of a future neighbour would be a quiet trap.
  */
 export async function applyReminders(
 	plans: ReminderPlan[],
@@ -67,7 +64,7 @@ export async function applyReminders(
 	try {
 		const { LocalNotifications } = await import('@capacitor/local-notifications');
 
-		// Pas de demande ici : sans autorisation on ne programme rien, en silence.
+		// No request here: with no permission we schedule nothing, silently.
 		const permission = await LocalNotifications.checkPermissions();
 		if (permission.display !== 'granted') return;
 
@@ -88,19 +85,17 @@ export async function applyReminders(
 					id: plan.id,
 					title,
 					body,
-					// Pas d'alarme exacte, et c'est délibéré. Elle est la valeur par défaut du
-					// plugin, mais sur Android 12+ elle ouvre l'écran système « Alarmes et
-					// rappels » dès qu'elle manque — ici, à chaque ouverture de l'application,
-					// sans que personne ne l'ait demandé. Un rappel de courses se contente
-					// largement de la minute près, et `allowWhileIdle` suffit à le sortir de
-					// l'économie de batterie : décalé de deux heures, il arriverait après la
-					// fermeture du magasin.
+					// No exact alarm, and that is deliberate. It is the plugin's default, but on Android 12+ it opens
+					// the system "Alarms and reminders" screen as soon as it is missing — here, on every opening of
+					// the application, without anyone asking. A shopping reminder is quite happy to the nearest
+					// minute, and `allowWhileIdle` is enough to get it out of battery saving: delayed by two hours, it
+					// would arrive after the shop closed.
 					isExactNotification: false,
 					schedule: { at: plan.at, allowWhileIdle: true }
 				};
 			})
 		});
 	} catch {
-		// Plugin absent, canal refusé, alarme impossible : la liste et sa date restent utilisables.
+		// Plugin absent, channel refused, alarm impossible: the list and its date stay usable.
 	}
 }

@@ -9,9 +9,9 @@ export interface ScanResult {
 }
 
 /**
- * `onTrack` remonte la piste vidéo tant qu'elle vit, et `null` dès qu'elle est rendue. C'est le
- * seul moyen pour l'écran d'allumer la lampe : les capacités de torche appartiennent à la piste,
- * que le lecteur ouvre et ferme lui-même.
+ * `onTrack` reports the video track while it lives, and `null` as soon as it is released. It is the only
+ * way for the screen to switch the light on: torch capabilities belong to the track, which the reader
+ * opens and closes itself.
  */
 export interface ScanOptions {
 	timeoutMs?: number;
@@ -19,23 +19,23 @@ export interface ScanOptions {
 }
 
 /**
- * Trois façons de lire un code-barres, de la meilleure à la moins bonne :
+ * Three ways to read a barcode, from best to worst:
  *
- * - sur l'application installée, l'appareil photo natif via ML Kit ;
- * - dans un navigateur qui expose BarcodeDetector (Chrome Android, Chrome de bureau) ;
- * - partout ailleurs, un décodeur en JavaScript chargé à la demande.
+ * - in the installed application, the native camera through ML Kit;
+ * - in a browser exposing BarcodeDetector (Chrome Android, desktop Chrome);
+ * - everywhere else, a JavaScript decoder loaded on demand.
  *
- * Le troisième existe parce que le deuxième manque là où on s'y attendrait le moins : Chrome sur
- * Windows n'expose pas BarcodeDetector, et c'est précisément la machine devant laquelle on
- * s'installe pour enregistrer une pile de cartes d'un coup. Il ne se charge que si on scanne —
- * une centaine de kilo-octets qu'il n'y a aucune raison de faire payer aux autres écrans.
+ * The third exists because the second is missing where you would least expect it: Chrome on Windows does
+ * not expose BarcodeDetector, and that is precisely the machine you sit at to register a stack of cards
+ * in one go. It only loads if you scan — a hundred or so kilobytes there is no reason to charge the other
+ * screens for.
  *
- * La saisie manuelle reste, et n'est pas un pis-aller honteux : c'est aussi ce qui permet
- * d'enregistrer une carte dont le code est illisible ou abîmé.
+ * Typing it by hand stays, and is no shameful last resort: it is also what makes it possible to register
+ * a card whose code is unreadable or damaged.
  */
 export type ScanSupport = 'native' | 'browser' | 'none';
 
-/** Le résultat d'un décodeur, quel qu'il soit, ramené au modèle de la carte. */
+/** The result of any decoder, brought back to the card's model. */
 const resultatDe = (value: string, format: string): ScanResult => ({
 	value: normalizeValue(value, format),
 	codeType: normalizeFormat(format)
@@ -48,7 +48,7 @@ export function scanSupport(): ScanSupport {
 	return 'none';
 }
 
-/** Vrai quand le navigateur sait décoder lui-même, sans qu'on charge le décodeur de secours. */
+/** True when the browser can decode by itself, without us loading the fallback decoder. */
 const aBarcodeDetector = () => typeof window !== 'undefined' && 'BarcodeDetector' in window;
 
 interface DetectedBarcode {
@@ -67,9 +67,8 @@ const constructeurDetecteur = () =>
 	(window as unknown as { BarcodeDetector: DetectorConstructor }).BarcodeDetector;
 
 /**
- * Demander un format que l'implémentation ne connaît pas la fait refuser en bloc. On croise donc
- * notre liste avec la sienne, une seule fois — et si elle ne sait pas répondre, on s'en tient aux
- * trois formats que tout le monde gère.
+ * Asking for a format the implementation does not know makes it refuse outright. So we intersect our
+ * list with its own, once — and if it cannot answer, we stick to the three formats everybody handles.
  */
 let formatsUtilisables: Promise<string[]> | null = null;
 
@@ -89,7 +88,7 @@ async function nouveauDetecteur() {
 	return new (constructeurDetecteur())({ formats: await formatsDemandes() });
 }
 
-/** Le décodeur de secours, chargé une seule fois et gardé. */
+/** The fallback decoder, loaded once and kept. */
 let secours: Promise<import('@zxing/browser').BrowserMultiFormatReader> | null = null;
 
 function lecteurDeSecours() {
@@ -107,8 +106,8 @@ async function scanNative(): Promise<ScanResult | null> {
 	if (camera !== 'granted' && camera !== 'limited') return null;
 
 	const { barcodes } = await BarcodeScanner.scan();
-	// Un code sans valeur textuelle (image seule, format non décodé) n'est pas exploitable :
-	// mieux vaut ne rien remplir que de remplir avec du vide.
+	// A code with no text value (image only, undecoded format) cannot be used: better to fill nothing than
+	// to fill with emptiness.
 	const first = barcodes.find((barcode) => barcode.rawValue);
 	if (!first?.rawValue) return null;
 
@@ -116,13 +115,13 @@ async function scanNative(): Promise<ScanResult | null> {
 }
 
 /**
- * Lecture par le navigateur : on ouvre le flux vidéo, on regarde chaque image jusqu'à trouver un
- * code, et on rend la caméra dans tous les cas — y compris en cas d'erreur, sinon le voyant reste
- * allumé et l'appareil photo reste pris.
+ * Reading through the browser: we open the video stream, look at each frame until we find a code, and
+ * give the camera back in every case — errors included, otherwise the light stays on and the camera stays
+ * taken.
  *
- * La recherche a une fin. Devant une carte que le décodeur ne saura jamais lire — écran trop
- * brillant, code effacé — la boucle sans fin ne laissait que « Arrêter » : aucun message, aucune
- * autre voie proposée, et la caméra allumée aussi longtemps qu'on voulait bien y croire.
+ * The search has an end. In front of a card the decoder will never read — a screen too glossy, a code
+ * worn away — the endless loop left only "Stop": no message, no other route offered, and the camera on
+ * for as long as you were willing to believe in it.
  */
 async function scanBrowser(
 	video: HTMLVideoElement,
@@ -148,8 +147,8 @@ async function scanBrowser(
 				const [found] = await detector.detect(video);
 				if (found) return resultatDe(found.rawValue, found.format);
 			} else if (lecteur) {
-				// Une image à la fois, plutôt que `decodeOnce` : celui-ci prendrait la caméra lui-même
-				// et ne rendrait la main qu'au premier code trouvé, donc jamais sur un arrêt voulu.
+				// One frame at a time, rather than `decodeOnce`: that one would take the camera itself and only hand
+				// back at the first code found, so never on a deliberate stop.
 				const resultat = await decoderUneImage(lecteur, video);
 				if (resultat) return resultat;
 			}
@@ -165,7 +164,7 @@ async function scanBrowser(
 	}
 }
 
-/** Une image du flux, décodée par le lecteur de secours. Rend null quand il n'y a rien à lire. */
+/** One frame of the stream, decoded by the fallback reader. Returns null when there is nothing to read. */
 async function decoderUneImage(
 	lecteur: import('@zxing/browser').BrowserMultiFormatReader,
 	source: HTMLVideoElement
@@ -180,7 +179,7 @@ async function decoderUneImage(
 	return decoderLaToile(lecteur, toile);
 }
 
-/** Le décodage lui-même, commun au flux vidéo et à l'image importée. */
+/** The decoding itself, shared by the video stream and the imported image. */
 function decoderLaToile(
 	lecteur: import('@zxing/browser').BrowserMultiFormatReader,
 	toile: HTMLCanvasElement
@@ -189,33 +188,31 @@ function decoderLaToile(
 		const resultat = lecteur.decodeFromCanvas(toile);
 		return resultatDe(resultat.getText(), resultat.getBarcodeFormat().toString());
 	} catch {
-		// Pas de code sur cette image : c'est le cas courant, pas une panne.
+		// No code on this frame: that is the common case, not a failure.
 		return null;
 	}
 }
 
 /**
- * Lire le code sur une photo ou une capture d'écran.
+ * Reading the code on a photo or a screenshot.
  *
- * C'est souvent la seule façon d'enregistrer une carte devant un ordinateur : la carte est dans un
- * courriel, dans une photo prise il y a un mois, ou dans l'application de l'enseigne. Demander de
- * la présenter à une webcam de portable, à l'envers et à bout de bras, ne marche pas.
+ * This is often the only way to register a card in front of a computer: the card is in an email, in a
+ * photo taken a month ago, or in the retailer's app. Asking to hold it up to a laptop webcam, upside down
+ * and at arm's length, does not work.
  */
 export async function scanImage(file: File): Promise<ScanResult | null> {
 	const image = await createImageBitmap(file);
 
 	try {
-		// Le détecteur du navigateur d'abord, parce qu'il est rapide et qu'il ne coûte aucun
-		// téléchargement. Mais on ne s'arrête pas à son silence : il ignore des formats courants
-		// sur les cartes de fidélité, et le décodeur de secours, lui, les lit. Rendre `null` ici
-		// laissait ce dernier inutilisé sur tout Chrome, c'est-à-dire sur presque tout Android.
+		// The browser detector first, because it is fast and costs no download. But we do not stop at its
+		// silence: it ignores formats common on loyalty cards, which the fallback decoder does read. Returning
+		// `null` here left the latter unused on all of Chrome, that is, on almost all of Android.
 		if (aBarcodeDetector()) {
 			const [found] = await (await nouveauDetecteur()).detect(image).catch(() => []);
 			if (found) return resultatDe(found.rawValue, found.format);
 		}
 
-		// Une photo de téléphone en pleine résolution échoue souvent sur un code à barres, là où
-		// la même image réduite passe.
+		// A full-resolution phone photo often fails on a barcode, where the same image scaled down passes.
 		const scale = scanScale(image.width, image.height);
 		const toile = document.createElement('canvas');
 		toile.width = Math.max(1, Math.round(image.width * scale));
@@ -226,8 +223,8 @@ export async function scanImage(file: File): Promise<ScanResult | null> {
 		const reduit = decoderLaToile(lecteur, toile);
 		if (reduit || scale === 1) return reduit;
 
-		// Un code déjà petit dans l'image peut au contraire souffrir de la réduction : on redonne
-		// sa chance à la taille d'origine avant d'abandonner.
+		// A code already small in the image can conversely suffer from the downscaling: we give the original
+		// size one more chance before giving up.
 		const entiere = document.createElement('canvas');
 		entiere.width = image.width;
 		entiere.height = image.height;

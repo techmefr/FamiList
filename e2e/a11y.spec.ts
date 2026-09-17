@@ -2,8 +2,8 @@ import { expectNoNewViolations, presetAppearance } from './a11y';
 import { test, expect, signIn, FIXTURE_EMAIL, FIXTURE_PASSWORD } from './fixtures';
 
 /**
- * Les écrans atteignables directement une fois connecté. Le reste (détail de liste, palette
- * d'émojis) demande un parcours et a son propre test.
+ * The screens reachable directly once signed in. The rest (list detail, emoji palette) needs a journey and
+ * has its own test.
  */
 const ROUTES: Array<{ screen: string; path: string; ready: string }> = [
 	{ screen: 'accueil', path: '/', ready: 'nav-create' },
@@ -17,14 +17,14 @@ const ROUTES: Array<{ screen: string; path: string; ready: string }> = [
 	{ screen: 'securite', path: '/profile/security', ready: 'nav-create' },
 	{ screen: 'intelligence-artificielle', path: '/profile/ai', ready: 'ai-form' },
 	{ screen: 'signalement', path: '/report', ready: 'nav-create' },
-	// Le compte fixe est le premier créé, donc administrateur : l'écran s'ouvre pour de bon et
-	// porte ses trois sections, dont celle des plantages.
+	// The fixed account is the first created, therefore an administrator: the screen really opens and carries
+	// its three sections, including the crashes one.
 	{ screen: 'administration', path: '/admin', ready: 'nav-create' }
 ];
 
 test.describe('accessibilite', () => {
-	// Sans ça, axe analyse parfois un écran au milieu de son animation d'entrée : un élément encore
-	// transparent est ignoré, et le même écran remonte tantôt deux violations, tantôt aucune.
+	// Without this, axe sometimes analyses a screen in the middle of its entry animation: an element still
+	// transparent is ignored, and the same screen reports sometimes two violations, sometimes none.
 	test.use({ reducedMotion: 'reduce' });
 
 	test('connexion', async ({ page }) => {
@@ -45,9 +45,9 @@ test.describe('accessibilite', () => {
 	}
 
 	/**
-	 * Le formulaire de suppression de compte n'existe qu'après un premier geste : l'écran replié ne
-	 * dirait rien du champ de confirmation ni de l'avertissement qui l'accompagne. On l'ouvre, et on
-	 * s'arrête là — le compte de fixture sert à tous les autres tests.
+	 * The account deletion form only exists after a first gesture: the folded screen would say nothing about
+	 * the confirmation field or the warning that comes with it. We open it, and stop there — the fixture
+	 * account serves every other test.
 	 */
 	test('suppression de compte', async ({ signedInPage: page }) => {
 		await page.goto('/profile/security');
@@ -58,8 +58,8 @@ test.describe('accessibilite', () => {
 	});
 
 	/**
-	 * Le choix de la personne à qui écrire n'existe qu'une fois le panneau ouvert : l'écran replié
-	 * ne dirait rien des boutons de la liste ni du titre qui les annonce.
+	 * The choice of who to write to only exists once the panel is open: the folded screen would say nothing
+	 * about the list's buttons or the heading announcing them.
 	 */
 	test('messages prives', async ({ signedInPage: page }) => {
 		await page.goto('/chat');
@@ -77,8 +77,8 @@ test.describe('accessibilite', () => {
 		await page.getByTestId('create-list').click();
 		await page.getByTestId('list-name').fill(nom);
 
-		// La palette d'émojis porte les libellés traduits lus par les lecteurs d'écran : elle est
-		// analysée ouverte, sur le formulaire de création, là où elle vit.
+		// The emoji palette carries the translated labels read by screen readers: it is analysed open, on the
+		// creation form, where it lives.
 		await expectNoNewViolations(page, 'creation-de-liste');
 
 		await page.getByTestId('list-create').click();
@@ -95,9 +95,9 @@ test.describe('accessibilite', () => {
 	});
 
 	/**
-	 * Le formulaire de recette se saisit en trois temps, et chacun montre des champs que les deux
-	 * autres cachent : analyser l'écran replié ne dirait rien des rangées d'ingrédients ni de la
-	 * zone de texte des étapes. On les traverse donc tous les trois.
+	 * The recipe form is typed in three stages, and each shows fields the other two hide: analysing the
+	 * folded screen would say nothing about the ingredient rows or the steps text area. So we go through all
+	 * three.
 	 */
 	test('formulaire de recette', async ({ signedInPage: page }) => {
 		await page.goto('/recipes');
@@ -116,12 +116,12 @@ test.describe('accessibilite', () => {
 	});
 
 	/**
-	 * La proposition d'installation, bandeau puis explication.
+	 * The install offer, banner then explanation.
 	 *
-	 * Deux choses sont simulées, faute de pouvoir les obtenir d'un navigateur piloté : le compteur
-	 * d'ouvertures, posé avant le chargement, et `beforeinstallprompt`, que Chromium n'émet que sur
-	 * une vraie origine installable. L'événement est rejoué à la main une fois la page ouverte —
-	 * c'est exactement ce que le magasin écoute.
+	 * Two things are simulated, for want of being able to get them from a driven browser: the opening
+	 * counter, set before loading, and `beforeinstallprompt`, which Chromium only emits on a real installable
+	 * origin. The event is replayed by hand once the page is open — which is exactly what the store listens
+	 * to.
 	 */
 	test('proposition d installation', async ({ page }) => {
 		await presetAppearance(page);
@@ -145,8 +145,8 @@ test.describe('accessibilite', () => {
 		await expect(page.getByTestId('install-banner')).toBeVisible();
 		await expectNoNewViolations(page, 'installation');
 
-		// L'explication est un dialogue modal : elle se ferme par Échap et rend le focus au bandeau,
-		// ce qu'axe ne vérifie pas — d'où la fermeture au clavier, exercée ici.
+		// The explanation is a modal dialog: it closes with Escape and gives focus back to the banner, which axe
+		// does not check — hence the keyboard close, exercised here.
 		await page.getByTestId('install-more').click();
 		await expect(page.getByTestId('install-details')).toBeVisible();
 		await expectNoNewViolations(page, 'installation-explication');
@@ -157,9 +157,9 @@ test.describe('accessibilite', () => {
 	});
 
 	/**
-	 * Thème sombre et plus grand cran de police : c'est là que partent les régressions de contraste,
-	 * et un texte agrandi peut aussi faire se recouvrir deux éléments. Un seul écran chacun — le
-	 * reste des pages partage les mêmes jetons de couleur.
+	 * Dark theme and the largest font step: that is where contrast regressions come from, and enlarged text
+	 * can also make two elements overlap. One screen each — the rest of the pages share the same colour
+	 * tokens.
 	 */
 	test('accueil en theme sombre', async ({ page }) => {
 		await presetAppearance(page, { theme: 'dark' });

@@ -15,9 +15,9 @@
 	let occupe = $state(false);
 
 	/**
-	 * Réduite ici, dans le navigateur, avant de partir : une capture de téléphone pèse plusieurs
-	 * mégaoctets, la colonne en base plafonne à 1,5 Mo de texte. `createImageBitmap` applique aussi
-	 * l'orientation EXIF, sans quoi une capture prise en portrait ressort couchée.
+	 * Shrunk here, in the browser, before leaving: a phone capture weighs several megabytes, and the database
+	 * column caps at 1.5 MB of text. `createImageBitmap` also applies the EXIF orientation, without which a
+	 * capture taken in portrait comes out lying down.
 	 */
 	async function reduire(fichier: File): Promise<string> {
 		const source = await createImageBitmap(fichier, { imageOrientation: 'from-image' });
@@ -79,8 +79,8 @@
 			return;
 		}
 
-		// Un plafond atteint n'arrive pas par une exception : Postgres ne parlerait qu'anglais, et
-		// la personne a besoin de savoir si elle doit attendre ou retirer sa capture.
+		// A cap reached does not arrive as an exception: Postgres would only speak English, and the person needs
+		// to know whether to wait or to remove their capture.
 		const issue = readReportOutcome(data);
 
 		if (issue.errorKey) {
@@ -101,9 +101,9 @@
 	</p>
 
 	<!--
-		Le numéro court est la seule référence que la personne puisse citer si elle nous réécrit :
-		l'identifiant de la ligne est un UUID, illisible et inutilisable à l'oral. Il n'apparaît que
-		si la base a su le rendre — un envoi abouti ne se transforme pas en échec pour si peu.
+		The short number is the only reference the person can quote if they write back to us: the row identifier
+		is a UUID, unreadable and unusable out loud. It only appears if the database managed to return it — a
+		successful send does not turn into a failure over so little.
 	-->
 	{#if report.number !== null}
 		<p class="text-muted-foreground text-label mt-2" data-test-id="bug-reference">

@@ -1,11 +1,11 @@
--- Les préférences d'apparence suivent la personne, pas l'appareil.
+-- Appearance preferences follow the person, not the device.
 --
--- Jusqu'ici `theme` et `type_scale` existaient en base mais n'étaient ni lus ni écrits : tout
--- vivait dans le localStorage. Quelqu'un qui avait réglé « Confort » sur son téléphone repartait
--- de zéro sur la tablette — exactement la personne pour qui ce réglage compte le plus.
+-- Until now `theme` and `type_scale` existed in the database but were neither read nor written: everything
+-- lived in localStorage. Somebody who had set "Comfort" on their phone started from scratch on the tablet —
+-- exactly the person for whom that setting matters most.
 --
--- `type_scale` n'acceptait que trois valeurs alors que l'application en propose sept. On remappe
--- l'existant sur les crans les plus proches avant d'élargir la contrainte.
+-- `type_scale` accepted only three values while the application offers seven. We remap the existing ones onto
+-- the nearest notches before widening the constraint.
 
 alter table public.profiles drop constraint if exists profiles_type_scale_check;
 
@@ -21,8 +21,8 @@ alter table public.profiles alter column type_scale set default 'sm';
 alter table public.profiles add constraint profiles_type_scale_check
   check (type_scale in ('xs', 'sm', 'md', 'lg', 'xl', 'xxl', 'comfort'));
 
--- La valeur par défaut du thème passe à « system » : suivre l'appareil est le bon point de
--- départ, et c'est déjà ce que fait le client quand aucune préférence n'est enregistrée.
+-- The theme's default value becomes "system": following the device is the right starting point, and it is
+-- already what the client does when no preference is stored.
 alter table public.profiles alter column theme set default 'system';
 
 alter table public.profiles
@@ -36,9 +36,9 @@ alter table public.profiles
   add column haptics boolean not null default true,
   add column has_seen_tour boolean not null default false;
 
--- Sans cette ligne, les écritures partiraient sans erreur visible et ne changeraient rien : les
--- droits sur profiles sont accordés colonne par colonne depuis la migration d'approbation, pour
--- que personne ne puisse se promouvoir administrateur en modifiant son propre profil.
+-- Without this line, the writes would go off with no visible error and change nothing: privileges on profiles
+-- are granted column by column since the approval migration, so that nobody can promote themselves to
+-- administrator by modifying their own profile.
 grant update (
   display_name,
   initial,

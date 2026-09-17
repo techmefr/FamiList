@@ -9,7 +9,7 @@
 
 	let dialog = $state<HTMLDialogElement | null>(null);
 
-	/** Même contrat que les autres feuilles : c'est le navigateur qui tient l'état ouvert. */
+	/** Same contract as the other sheets: it is the browser that holds the open state. */
 	export function show() {
 		dialog?.showModal();
 	}
@@ -20,10 +20,10 @@
 </script>
 
 <!--
-	Créer un magasin sans quitter ce qu'on était en train de faire.
+	Creating a shop without leaving what you were doing.
 
-	On s'aperçoit qu'un magasin manque au moment de rattacher une carte de fidélité, pas en allant
-	visiter l'écran des magasins. Renvoyer là-bas ferait perdre la saisie en cours.
+	You notice a shop is missing at the moment of attaching a loyalty card, not while visiting the shops
+	screen. Sending people there would lose what they were typing.
 -->
 <dialog
 	bind:this={dialog}

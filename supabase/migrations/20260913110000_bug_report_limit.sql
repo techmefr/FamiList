@@ -1,35 +1,32 @@
--- Un signalement ne se depose plus en boucle.
+-- A report can no longer be filed over and over.
 --
--- submit_bug_report n avait aucun plafond : un compte approuve pouvait poster sans fin. Le
--- volume de lignes n est pas le vrai danger — l ecran d administration les liste toutes, et
--- quelques milliers de lignes noient le seul signalement qui comptait. Le stockage l est
--- davantage : chaque signalement peut porter une capture jusqu a 1,5 Mo de texte en base, et
--- deux cents captures suffisent a peser plus lourd que tout le reste des donnees de
--- l application reunies.
+-- submit_bug_report had no ceiling at all: an approved account could post endlessly. The volume of rows is
+-- not the real danger — the administration screen lists them all, and a few thousand rows drown the one
+-- report that mattered. Storage is more so: each report can carry a capture of up to 1.5 MB of text in the
+-- database, and two hundred captures are enough to weigh more than all the rest of the application's data put
+-- together.
 --
--- D ou deux plafonds sur la meme fenetre de vingt-quatre heures glissantes, et non un seul.
--- Vingt signalements par jour : personne n en ecrit autant de bonne foi, et quelqu un qui
--- traverse une mauvaise journee de bugs n est pas coupe. Douze megaoctets de captures sur la
--- meme fenetre : c est une dizaine de captures pleines, bien au-dela de l usage honnete, et
--- cela borne ce qu un compte peut faire grossir la base en une journee. Sans le second plafond,
--- vingt captures pleines par jour et par compte passeraient encore.
+-- Hence two ceilings on the same rolling twenty-four-hour window, and not just one. Twenty reports a day:
+-- nobody writes that many in good faith, and somebody going through a bad day of bugs is not cut off. Twelve
+-- megabytes of captures over the same window: that is about ten full captures, well beyond honest use, and it
+-- bounds what an account can make the database grow by in a day. Without the second ceiling, twenty full
+-- captures a day per account would still get through.
 --
--- Pas de table de tentatives ici, contrairement a redeem_invite : ce qu on compte, ce sont des
--- signalements reussis, et chacun laisse deja sa ligne dans bug_reports avec son horodatage et
--- son auteur. Une table parallele repeterait la meme information. bug_reports offre les memes
--- garanties : row level security active, aucune policy, tous les droits revoques — elle n est
--- atteignable que par les fonctions security definer, donc personne ne peut effacer ses propres
--- lignes pour se refaire un quota.
+-- No attempts table here, unlike redeem_invite: what we count are successful reports, and each already leaves
+-- its row in bug_reports with its timestamp and its author. A parallel table would repeat the same
+-- information. bug_reports offers the same guarantees: row level security enabled, no policy, every privilege
+-- revoked — it is only reachable through the security definer functions, so nobody can erase their own rows
+-- to give themselves a fresh quota.
 --
--- La fonction ne leve pas d exception quand le plafond est atteint. Une exception annulerait la
--- transaction ; ici elle n effacerait pas de compteur, mais elle laisserait l ecran avec un
--- message technique en anglais venu de Postgres, intraduisible. Elle renvoie donc, comme
--- redeem_invite, un objet qui dit ce qui s est passe, et l interface choisit les mots. Les refus
--- qui ne sont pas des plafonds — compte non approuve, type invalide — continuent de lever.
+-- The function does not raise an exception when the ceiling is reached. An exception would cancel the
+-- transaction; here it would erase no counter, but it would leave the screen with a technical English message
+-- coming from Postgres, untranslatable. So it returns, like redeem_invite, an object saying what happened,
+-- and the interface chooses the words. Refusals that are not ceilings — unapproved account, invalid kind —
+-- go on raising.
 
 create index if not exists bug_reports_user_time on public.bug_reports (user_id, created_at desc);
 
--- Changement du type de retour (uuid vers jsonb) : create or replace le refuse.
+-- Return type changed (uuid to jsonb): create or replace refuses it.
 drop function if exists public.submit_bug_report(text, text, text, text, text);
 
 create or replace function public.submit_bug_report(
@@ -67,9 +64,9 @@ begin
     return jsonb_build_object('status', 'rate_limited');
   end if;
 
-  -- Le plafond d octets ne ferme que la piece jointe, jamais le signalement : un texte seul ne
-  -- coute rien et reste la seule facon de nous joindre. La capture en cours compte dans le
-  -- plafond qu elle ferait franchir, sinon le dernier envoi accepte le depasserait de 1,5 Mo.
+  -- The byte ceiling only closes the attachment, never the report: text alone costs nothing and stays the
+  -- only way to reach us. The capture in progress counts towards the ceiling it would cross, otherwise the
+  -- last accepted send would exceed it by 1.5 MB.
   if nullif(screenshot, '') is not null
     and recent_bytes + char_length(screenshot) > 12000000
   then

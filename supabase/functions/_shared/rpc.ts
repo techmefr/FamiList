@@ -1,10 +1,9 @@
 /**
- * L appel d une fonction de la base depuis une fonction edge.
+ * Calling a database function from an edge function.
  *
- * Ecrit une fois ici parce que trois fonctions l avaient recopie, et que le detail qui compte — une
- * fonction `returns void` repond 204 sans corps, et `response.json()` echoue dessus — se perd a la
- * troisieme copie. L echec tomberait alors apres l envoi du courriel, en relachant des lignes deja
- * parties.
+ * Written once here because three functions had copied it, and because the detail that matters — a `returns
+ * void` function answers 204 with no body, and `response.json()` fails on it — gets lost by the third copy.
+ * The failure would then come after the email was sent, releasing rows that had already left.
  */
 export async function callRpc<T>(
 	name: string,
@@ -32,7 +31,7 @@ export async function callRpc<T>(
 	return (body === '' ? null : JSON.parse(body)) as T;
 }
 
-/** La cle de service, celle qui ouvre les fonctions reservees a `service_role`. */
+/** The service key, the one that opens the functions reserved for `service_role`. */
 export function serviceKey(): string {
 	return Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
 }

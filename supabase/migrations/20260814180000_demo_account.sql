@@ -1,9 +1,9 @@
--- Compte de demonstration.
+-- Demonstration account.
 --
--- Il sert a faire visiter l'application sans attendre une validation. Il est donc utilise par des
--- inconnus, qui cochent, renomment et suppriment : son foyer doit pouvoir revenir a son etat de
--- depart. Le compte lui-meme est cree comme n'importe quel autre — une inscription normale — puis
--- marque ici : creer un utilisateur demande la cle de service, qui n'a rien a faire dans ce depot.
+-- It serves to show the application around without waiting for a validation. It is therefore used by
+-- strangers, who tick, rename and delete: its household must be able to come back to its starting state. The
+-- account itself is created like any other — a normal sign-up — then marked here: creating a user requires
+-- the service key, which has no business in this repository.
 
 create or replace function public.set_demo(target uuid, demo boolean)
 returns void
@@ -16,7 +16,7 @@ begin
     raise exception 'reserve aux administrateurs' using errcode = '42501';
   end if;
 
-  -- Un compte de demonstration est ouvert par definition : le marquer le valide.
+  -- A demonstration account is open by definition: marking it validates it.
   update public.profiles
   set is_demo = demo,
       status = case when demo then 'approved' else status end,
@@ -30,11 +30,11 @@ revoke all on function public.set_demo(uuid, boolean) from public;
 grant execute on function public.set_demo(uuid, boolean) to authenticated;
 
 /*
- * Remet le foyer de demonstration dans son etat de depart : listes, articles, magasins, cartes,
- * messages et parcours appris disparaissent, les rayons reviennent.
+ * Puts the demonstration household back into its starting state: lists, items, shops, cards, messages and
+ * learnt layouts disappear, the aisles come back.
  *
- * Volontairement destructeur et volontairement limite au foyer d'un compte marque `is_demo` : rien
- * ici ne peut atteindre le foyer d'une vraie famille, meme appele par erreur.
+ * Deliberately destructive and deliberately limited to the household of an account marked `is_demo`: nothing
+ * here can reach a real family's household, even if called by mistake.
  */
 create or replace function public.reset_demo()
 returns void
@@ -81,8 +81,8 @@ $$;
 revoke all on function public.reset_demo() from public;
 grant execute on function public.reset_demo() to authenticated;
 
--- Les comptes listes dans le panneau admin portent desormais leur drapeau de demonstration.
--- La colonne ajoutee change le type de retour : Postgres refuse un simple remplacement.
+-- The accounts listed in the admin panel now carry their demonstration flag.
+-- The added column changes the return type: Postgres refuses a plain replacement.
 drop function public.pending_accounts();
 
 create function public.pending_accounts()

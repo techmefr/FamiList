@@ -3,9 +3,8 @@ import { PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY } from '$env/static/publi
 import type { Database } from './types';
 
 /**
- * Client unique, côté navigateur seulement (l'app est en SPA statique, il n'y a pas de serveur).
- * La clé publiable est faite pour être livrée au client : c'est la RLS qui protège les données,
- * pas le secret de la clé.
+ * Single client, browser side only (the app is a static SPA, there is no server). The publishable key is
+ * made to be delivered to the client: it is RLS that protects the data, not the secrecy of the key.
  */
 export const supabase = createClient<Database>(PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY, {
 	auth: {

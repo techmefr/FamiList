@@ -1,41 +1,40 @@
--- Un signalement porte un numero court, et peut etre publie dans le suivi du depot.
+-- A report carries a short number, and can be published in the repository's tracker.
 --
--- Deux manques se repondent. D un cote `bug_reports.id` est un uuid : on ne le lit pas, on ne le
--- dit pas au telephone, on ne le met pas dans un titre. De l autre les signalements n existent que
--- dans /admin, alors que le travail, lui, se suit dans les issues du depot.
+-- Two gaps answer each other. On one side `bug_reports.id` is a uuid: it is not read, not said over the
+-- phone, not put in a title. On the other side the reports exist only in /admin, while the work itself is
+-- tracked in the repository's issues.
 --
--- Ce que l issue contient, et surtout ce qu elle ne contient pas.
+-- What the issue contains, and above all what it does not contain.
 --
--- Le depot est public. `description` fait jusqu a quatre mille caracteres de texte libre ou
--- quelqu un peut ecrire son nom ou celui d un proche ; `screenshot` jusqu a un megaoctet et demi
--- de JPEG montrant les vraies listes du foyer, les prenoms des membres et leurs avatars ; `path`
--- peut porter l identifiant d une liste et `user_agent` une empreinte d appareil. Recopier tout
--- cela demanderait un filtre d anonymisation, et aucun filtre automatique ne rattrape un prenom
--- ecrit au milieu d une phrase. L issue ne porte donc qu un numero : « Signalement 42 — a traiter
--- dans /admin ». Il n y a plus rien a anonymiser, parce qu il n y a plus rien qui sorte. Le
--- contenu reste en base, derriere l ecran d administration.
+-- The repository is public. `description` runs to four thousand characters of free text where somebody may
+-- write their name or a relative's; `screenshot` up to one and a half megabytes of JPEG showing the
+-- household's real lists, the members' first names and their avatars; `path` may carry a list's identifier
+-- and `user_agent` a device fingerprint. Copying all that would require an anonymisation filter, and no
+-- automatic filter catches a first name written in the middle of a sentence. So the issue carries only a
+-- number: "Report 42 — to be handled in /admin". There is nothing left to anonymise, because there is
+-- nothing left going out. The content stays in the database, behind the administration screen.
 --
--- La publication est demandee a la main depuis /admin, jamais automatique.
+-- Publication is requested by hand from /admin, never automatically.
 --
--- Automatique, le suivi refleterait la realite sans effort — mais tout compte approuve pourrait
--- alors ecrire dans un depot public. Le plafond pose par la migration 20260913110000 borne a vingt
--- signalements par jour et par compte : c est vingt issues publiques par jour et par compte, et le
--- depot n a aucun moyen de les retirer. Une issue qui ne dit qu un numero n est de toute facon
--- actionnable que par un administrateur, qui a deja ete prevenu par le courriel de la migration
--- 20260914100000 : la publier automatiquement ne lui apprendrait rien qu il ne sache. Elle sert de
--- trace dans le backlog, et c est au tri qu on decide si un signalement merite cette trace.
+-- Automatic, the tracker would reflect reality with no effort — but every approved account could then write
+-- into a public repository. The cap set by migration 20260913110000 bounds this at twenty reports per day
+-- per account: that is twenty public issues per day per account, and the repository has no way of removing
+-- them. An issue saying only a number is in any case actionable only by an administrator, who has already
+-- been told by the email of migration 20260914100000: publishing it automatically would teach them nothing
+-- they do not know. It serves as a trace in the backlog, and it is while triaging that we decide whether a
+-- report deserves that trace.
 --
--- Le chemin d appel reprend celui de `notify-admins`, sans en inventer un second : le jeton GitHub
--- est un jeton d ecriture, il ne peut pas partir dans un bundle client. L administrateur pose une
--- demande (un simple update local, qui ne peut pas echouer sur une panne de GitHub), pg_cron
--- reveille chaque minute la fonction edge via pg_net, et la fonction edge rappelle la base avec le
--- numero d issue obtenu. Sans secrets Vault — c est le cas en CI et sur une base neuve — le reveil
--- ne poste rien et n ecrit aucune erreur : `db reset` passe sans le moindre identifiant.
-
--- Le numero est porte par une sequence et non par un `count(*)` : deux signalements simultanes
--- recevraient le meme numero, et un signalement efface decalerait tous les suivants. Une sequence
--- ne recule jamais, meme si la transaction qui l a consommee est annulee — un trou dans la suite
--- coute moins qu un numero reattribue a un autre signalement.
+-- The call path reuses `notify-admins`'s, without inventing a second one: the GitHub token is a write token,
+-- and it cannot travel in a client bundle. The administrator files a request (a simple local update, which
+-- cannot fail on a GitHub outage), pg_cron wakes the edge function every minute through pg_net, and the edge
+-- function calls the database back with the issue number obtained. With no Vault secrets — which is the case
+-- in CI and on a fresh database — the wake-up posts nothing and writes no error: `db reset` passes without a
+-- single credential.
+--
+-- The number is carried by a sequence and not by a `count(*)`: two simultaneous reports would get the same
+-- number, and a deleted report would shift all the following ones. A sequence never goes back, even if the
+-- transaction that consumed it is rolled back — a gap in the run costs less than a number reassigned to
+-- another report.
 create sequence public.bug_report_number_seq;
 
 alter table public.bug_reports
@@ -46,8 +45,8 @@ alter table public.bug_reports
   add column issue_claimed_at timestamptz,
   add column issue_published_at timestamptz;
 
--- Les signalements deja deposes sont numerotes dans leur ordre d arrivee, pour que le numero dise
--- quelque chose d une lecture chronologique et ne soit pas un ordre de reecriture de table.
+-- The reports already filed are numbered in their order of arrival, so that the number says something on a
+-- chronological reading and is not an order for rewriting the table.
 with ordonnes as (
   select id, row_number() over (order by created_at, id) as rang
   from public.bug_reports
@@ -81,8 +80,8 @@ comment on column public.bug_reports.issue_number is
 comment on column public.bug_reports.issue_requested_at is
   'Pose par un administrateur depuis /admin. Une demande en attente est reprise a chaque reveil du cron.';
 
--- Le numero revient a la personne qui vient de signaler : c est la seule reference qu elle pourra
--- citer si elle nous reecrit, et elle n a acces a rien d autre de sa propre ligne.
+-- The number goes back to the person who has just reported: it is the only reference they will be able to
+-- quote if they write back to us, and they have access to nothing else of their own row.
 create or replace function public.submit_bug_report(
   description text,
   screenshot text,
@@ -125,8 +124,8 @@ begin
     return jsonb_build_object('status', 'storage_limited');
   end if;
 
-  -- L alias evite que `number` du RETURNING soit lu comme une variable du bloc plutot que comme la
-  -- colonne : la table s y nomme `inserted`, et la colonne se qualifie.
+  -- The alias stops `number` from the RETURNING being read as a variable of the block rather than as the
+  -- column: the table is named `inserted` there, and the column is qualified.
   insert into public.bug_reports as inserted
     (user_id, description, screenshot, path, user_agent, kind)
   values ((select auth.uid()), description, nullif(screenshot, ''), nullif(path, ''), user_agent, kind)
@@ -139,7 +138,7 @@ $$;
 comment on function public.submit_bug_report(text, text, text, text, text) is
   'Depose un signalement sous deux plafonds par compte sur vingt-quatre heures glissantes : vingt signalements et douze megaoctets de captures. Renvoie un objet decrivant l issue, numero court compris, plutot que de lever.';
 
--- Changement du type de retour (colonnes ajoutees) : create or replace le refuse.
+-- Return type changed (columns added): create or replace refuses it.
 drop function if exists public.list_bug_reports();
 
 create or replace function public.list_bug_reports()
@@ -174,8 +173,8 @@ $$;
 revoke all on function public.list_bug_reports() from public;
 grant execute on function public.list_bug_reports() to authenticated;
 
--- La demande ne fait qu un update local. Rien ici ne parle a GitHub : un depot injoignable doit
--- laisser le bouton repondre, et la demande sera reprise au reveil suivant.
+-- The request only does a local update. Nothing here speaks to GitHub: an unreachable repository must let
+-- the button answer, and the request will be taken again at the next wake-up.
 create or replace function public.request_bug_report_issue(target uuid)
 returns void
 language plpgsql
@@ -198,8 +197,8 @@ $$;
 revoke all on function public.request_bug_report_issue(uuid) from public;
 grant execute on function public.request_bug_report_issue(uuid) to authenticated;
 
--- Ce que la fonction edge recoit : un numero et une sorte, rien d autre. Le jour ou quelqu un se
--- tromperait de destination, il n y aurait toujours rien a y lire.
+-- What the edge function receives: a number and a kind, nothing else. The day somebody got the destination
+-- wrong, there would still be nothing to read in it.
 create or replace function public.claim_bug_report_issues()
 returns jsonb
 language sql
@@ -284,9 +283,9 @@ begin
     return;
   end if;
 
-  -- Les memes deux secrets que le reveil de `notify-admins` : ils designent l URL des fonctions du
-  -- projet et sa cle de service, pas un usage particulier. En redemander une copie sous un autre
-  -- nom ne ferait qu ajouter un endroit ou se tromper.
+  -- The same two secrets as `notify-admins`'s wake-up: they name the project's functions URL and its service
+  -- key, not a particular use. Asking for a copy of them under another name would only add one more place to
+  -- get wrong.
   select s.decrypted_secret into functions_url
   from vault.decrypted_secrets s
   where s.name = 'admin_notifications_functions_url';
@@ -316,9 +315,8 @@ revoke all on function public.flush_bug_report_issues() from public, anon, authe
 comment on function public.flush_bug_report_issues() is
   'Reveille l Edge Function publish-report-issues s il reste une demande de publication et si les secrets Vault sont poses. Ne leve jamais et ne parle a personne elle-meme.';
 
--- Chaque minute, et non toutes les cinq comme le courriel : ici quelqu un vient de cliquer et
--- regarde l ecran. Le travail est nul tant qu aucune demande n attend, la requete ne partant que
--- derriere le `exists` ci-dessus.
+-- Every minute, and not every five like the email: here somebody has just clicked and is watching the
+-- screen. The work is nil while no request is waiting, the request only leaving behind the `exists` above.
 do $$
 begin
   perform cron.unschedule('familist-bug-report-issues')

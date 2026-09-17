@@ -1,8 +1,8 @@
 /**
- * Quelle carte de fidélité sortir quand on arrive devant un magasin.
+ * Which loyalty card to bring out on arriving at a shop.
  *
- * Tout est pur et sans plateforme : la géométrie, le choix du magasin, la règle qui évite de
- * renotifier. La couche native ne fait que lire une position et afficher ce qui est décidé ici.
+ * Everything is pure and platform-free: the geometry, the choice of shop, the rule that avoids notifying
+ * again. The native layer only reads a position and shows what is decided here.
  */
 
 export interface NearbyShop {
@@ -16,7 +16,7 @@ export interface NearbyShop {
 export interface NearbyCard {
 	cardId: string;
 	name: string;
-	/** Rattachement à un magasin précis, vide quand la carte vaut pour toute une enseigne. */
+	/** Attachment to a specific shop, empty when the card is valid for a whole brand. */
 	shopId: string;
 	brand: string;
 }
@@ -31,27 +31,27 @@ export interface NearbyAlert {
 	shopName: string;
 	cardId: string;
 	cardName: string;
-	/** Identifiant entier exigé par les notifications locales, dérivé de l'identifiant magasin. */
+	/** Integer id required by local notifications, derived from the shop id. */
 	id: number;
 	meters: number;
 }
 
 /**
- * Le rayon de déclenchement, volontairement large.
+ * The trigger radius, deliberately wide.
  *
- * Trois cents mètres, c'est le parking et la rue d'en face : on est encore dehors, la carte est
- * prête avant la caisse. Plus serré, il faudrait une position au mètre près, donc le GPS à pleine
- * puissance en permanence — la batterie n'y survivrait pas, et une position à cinquante mètres
- * d'erreur, ce qui est courant en ville, raterait purement et simplement le magasin.
+ * Three hundred metres is the car park and the street opposite: you are still outside, the card is ready
+ * before the till. Tighter, it would take a position accurate to the metre, so the GPS at full power all
+ * the time — the battery would not survive it, and a position fifty metres off, which is common in town,
+ * would simply miss the shop.
  */
 export const NEARBY_RADIUS_M = 300;
 
 /**
- * Le délai minimum entre deux vérifications.
+ * The minimum delay between two checks.
  *
- * L'appareil peut rendre une position toutes les secondes ; on n'en a aucun besoin. À pied comme
- * en voiture, trois minutes ne font pas traverser un rayon de trois cents mètres sans qu'aucune
- * mesure ne tombe dedans, et c'est autant de calculs et de réveils économisés.
+ * The device can return a position every second; we have no need of that. On foot as in a car, three
+ * minutes do not cross a three-hundred-metre radius without a single measurement falling inside it, and
+ * that is so many computations and wake-ups saved.
  */
 export const NEARBY_CHECK_MS = 3 * 60 * 1000;
 
@@ -60,11 +60,10 @@ const EARTH_RADIUS_M = 6_371_000;
 const radians = (degres: number) => (degres * Math.PI) / 180;
 
 /**
- * La distance entre deux points, à vol d'oiseau.
+ * The distance between two points, as the crow flies.
  *
- * Formule de haversine : la Terre est traitée comme une sphère, ce qui laisse une erreur de
- * quelques mètres sur les distances qui nous intéressent. Largement sous le rayon de
- * déclenchement, et sans aucune dépendance.
+ * Haversine formula: the Earth is treated as a sphere, which leaves an error of a few metres over the
+ * distances we care about. Well under the trigger radius, and with no dependency at all.
  */
 export function distanceMeters(a: NearbyPosition, b: NearbyPosition): number {
 	const dLat = radians(b.lat - a.lat);
@@ -79,14 +78,14 @@ export function distanceMeters(a: NearbyPosition, b: NearbyPosition): number {
 const normalise = (texte: string) => texte.trim().toLowerCase();
 
 /**
- * La carte à sortir pour ce magasin, s'il y en a une.
+ * The card to bring out for this shop, if there is one.
  *
- * Le rattachement direct gagne sur l'enseigne : une carte posée sur le Carrefour de Meximieux est
- * plus précise qu'une carte Carrefour valable partout. À défaut, l'enseigne suffit — c'est le cas
- * courant, et c'est exactement ce que la migration qui a ajouté `brand` avait en tête.
+ * A direct attachment wins over the brand: a card set on the Carrefour in Meximieux is more precise than
+ * a Carrefour card valid everywhere. Failing that, the brand is enough — that is the common case, and it
+ * is exactly what the migration that added `brand` had in mind.
  *
- * Rien n'est rendu quand aucune carte ne correspond : il n'y a alors rien à proposer, et une
- * notification vide serait pire que le silence.
+ * Nothing is returned when no card matches: there is then nothing to offer, and an empty notification
+ * would be worse than silence.
  */
 export function cardForShop(shop: NearbyShop, cards: NearbyCard[]): NearbyCard | null {
 	const parMagasin = cards.find((card) => card.shopId === shop.shopId);
@@ -98,7 +97,7 @@ export function cardForShop(shop: NearbyShop, cards: NearbyCard[]): NearbyCard |
 	return cards.find((card) => normalise(card.brand) === enseigne) ?? null;
 }
 
-/** Le jour vécu, dans le fuseau de l'appareil : c'est l'unité de la règle anti-répétition. */
+/** The day as lived, in the device timezone: it is the unit of the anti-repeat rule. */
 export function nearbyDay(now: Date): string {
 	const mois = `${now.getMonth() + 1}`.padStart(2, '0');
 	const jour = `${now.getDate()}`.padStart(2, '0');
@@ -107,11 +106,11 @@ export function nearbyDay(now: Date): string {
 }
 
 /**
- * Un entier stable pour un magasin, dans une plage réservée.
+ * A stable integer for a shop, in a reserved range.
  *
- * Les notifications locales s'identifient par un entier. Le décalage évite de retomber sur un
- * identifiant de rappel de liste, calculé de la même façon mais à partir d'un autre UUID : deux
- * notifications qui partagent un numéro se remplacent l'une l'autre dans le volet.
+ * Local notifications are identified by an integer. The offset avoids landing on a list reminder id,
+ * computed the same way but from another UUID: two notifications sharing a number replace each other in
+ * the tray.
  */
 export const NEARBY_ID_OFFSET = 1_000_000_000;
 
@@ -123,17 +122,17 @@ export function nearbyId(shopId: string): number {
 }
 
 /**
- * Le magasin à annoncer, maintenant, ou rien.
+ * The shop to announce, now, or nothing.
  *
- * Un seul à la fois, et c'est le plus proche : dans une zone commerciale, trois enseignes se
- * chevauchent, et trois notifications d'un coup sont trois fois plus faciles à balayer sans les
- * lire. Celui devant lequel on est vraiment est celui dont on est le plus près.
+ * One at a time, and it is the nearest: in a retail park three brands overlap, and three notifications at
+ * once are three times easier to swipe away unread. The one you are really in front of is the one you are
+ * nearest to.
  *
- * `notified` porte le dernier jour annoncé par magasin. Repasser devant le même magasin le même
- * jour ne redit rien : on y va rarement deux fois, et l'oubli de la carte ne se produit qu'à la
- * première visite. Le lendemain, la question se repose d'elle-même.
+ * `notified` carries the last announced day per shop. Passing the same shop again on the same day says
+ * nothing more: you rarely go twice, and forgetting the card only happens on the first visit. The next
+ * day, the question arises again on its own.
  *
- * Un magasin sans position est ignoré : « pas encore relevée » n'est pas une position.
+ * A shop with no position is ignored: "not taken yet" is not a position.
  */
 export function nearbyAlert(
 	position: NearbyPosition,
@@ -172,10 +171,10 @@ export function nearbyAlert(
 }
 
 /**
- * Le journal des annonces, réduit au strict nécessaire.
+ * The log of announcements, cut down to the strict minimum.
  *
- * Seul le jour courant est conservé : la règle ne regarde pas plus loin, et garder l'historique
- * d'un magasin supprimé il y a six mois ne sert personne.
+ * Only the current day is kept: the rule looks no further, and keeping the history of a shop deleted six
+ * months ago serves nobody.
  */
 export function rememberNotified(
 	notified: Record<string, string>,

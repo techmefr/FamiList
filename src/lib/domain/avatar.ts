@@ -1,23 +1,23 @@
 /**
- * Le portrait d'une personne dans le foyer : une photo si elle en a posé une, ses initiales sinon.
+ * A person's portrait in the household: a photo if they set one, their initials otherwise.
  *
- * Les initiales ne sont pas un pis-aller en attendant la photo. Beaucoup de gens n'en mettront
- * jamais, et une pastille de couleur avec deux lettres se distingue d'un coup d'œil dans une pile
- * d'avatars — mieux qu'une silhouette générique répétée quatre fois.
+ * The initials are not a stopgap while waiting for the photo. Many people will never set one, and a
+ * coloured badge with two letters stands out at a glance in a stack of avatars — better than a generic
+ * silhouette repeated four times.
  */
 
-/** Le côté du carré enregistré, en pixels. */
+/** The side of the saved square, in pixels. */
 export const AVATAR_SIZE = 128;
 
-/** Au-delà, on refuse le fichier avant même de le lire : ce n'est pas une photo de profil. */
+/** Beyond this, we refuse the file before even reading it: that is not a profile photo. */
 export const AVATAR_MAX_BYTES = 12 * 1024 * 1024;
 
 /**
- * Une ou deux lettres tirées du nom.
+ * One or two letters drawn from the name.
  *
- * Deux mots donnent deux initiales, un seul donne sa première lettre. On ignore les particules
- * (« de », « van », « el ») : « Jean de La Fontaine » se lit JL, pas JD. Les accents restent —
- * « Élise » donne « É », qui est la bonne lettre, et la pastille a la place de l'afficher.
+ * Two words give two initials, one gives its first letter. We ignore particles ("de", "van", "el"): "Jean
+ * de La Fontaine" reads JL, not JD. Accents stay — "Élise" gives "É", which is the right letter, and the
+ * badge has room to show it.
  */
 const PARTICULES = new Set(['de', 'du', 'des', 'da', 'di', 'del', 'la', 'le', 'van', 'von', 'el']);
 
@@ -34,12 +34,12 @@ export function initialsOf(name: string): string {
 }
 
 /**
- * Les initiales d'un membre, tirées de ce qu'on sait de lui.
+ * A member's initials, drawn from what we know of them.
  *
- * Le prénom et le nom priment quand ils sont renseignés : le nom affiché est libre, il peut être
- * « Mamie » ou « Lulu », et découper un surnom d'un seul mot rendrait une lettre là où l'identité
- * complète en donne deux. Tant qu'ils sont vides — c'est le cas de tous les comptes créés avant
- * qu'ils existent — on retombe sur le nom affiché, qui est souvent « Prénom Nom » de toute façon.
+ * First and last name take priority when they are filled in: the display name is free text, it can be
+ * "Granny" or "Lulu", and splitting a one-word nickname would give one letter where the full identity
+ * gives two. As long as they are empty — which is the case of every account created before they existed —
+ * we fall back on the display name, which is often "First Last" anyway.
  */
 export function initialsFor(firstName: string, lastName: string, displayName: string): string {
 	const complet = `${firstName.trim()} ${lastName.trim()}`.trim();
@@ -51,11 +51,11 @@ function premiere(mot: string): string {
 }
 
 /**
- * Le carré à découper dans une image pour en faire un portrait, sans la déformer.
+ * The square to crop out of an image to make a portrait, without distorting it.
  *
- * On prend le plus grand carré possible et on le centre : redimensionner une photo rectangulaire
- * à un carré l'écrase, et un visage écrasé se remarque immédiatement. Le centre est le bon défaut
- * — c'est là que les gens se placent quand ils se photographient.
+ * We take the largest possible square and centre it: resizing a rectangular photo to a square squashes it,
+ * and a squashed face is noticed immediately. The centre is the right default — that is where people place
+ * themselves when they photograph themselves.
  */
 export function coverSquare(width: number, height: number) {
 	const cote = Math.min(width, height);

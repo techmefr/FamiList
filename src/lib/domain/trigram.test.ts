@@ -3,8 +3,8 @@ import { trigram } from './trigram';
 
 describe('trigram', () => {
 	/**
-	 * Le cas qui a dicté la règle : un magasin porte l'enseigne et la commune, et c'est la commune
-	 * qui distingue. Trois lettres prises au début donneraient CAR à tous les Carrefour du coin.
+	 * The case that dictated the rule: a shop carries the brand and the town, and it is the town that tells
+	 * them apart. Three letters taken from the start would give CAR to every Carrefour around.
 	 */
 	it.each([
 		['Carrefour Meximieux', 'CMX'],
@@ -38,7 +38,7 @@ describe('trigram', () => {
 		['E.Leclerc', 'ELC'],
 		['Éco Marché', 'EME'],
 		['Cœur de Ville', 'CDV'],
-		// La dernière lettre d'« Épicerie » est un E, qui doublerait celui de la base : on passe au P.
+		// The last letter of "Épicerie" is an E, which would double the one from the base: we move to the P.
 		["L'Épicerie", 'LEP'],
 		['  lidl  ', 'LID']
 	])('ignore la ponctuation, les accents et les espaces — %j donne %j', (nom, attendu) => {
@@ -46,8 +46,8 @@ describe('trigram', () => {
 	});
 
 	/**
-	 * « U » n'a pas de dernière lettre distincte de son initiale : SUU ne se lit pas. On complète
-	 * alors depuis le nom, ce qui redonne la lecture attendue.
+	 * "U" has no last letter distinct from its initial: SUU does not read. So we complete from the name,
+	 * which gives back the expected reading.
 	 */
 	it('ne double pas une lettre : Super U donne SUP', () => {
 		expect(trigram('Super U')).toBe('SUP');
@@ -80,8 +80,8 @@ describe('trigram — unicité', () => {
 	});
 
 	/**
-	 * Les lettres de repli viennent de la commune, pas de l'enseigne : c'est elle qui distingue,
-	 * et un CMA pris dans « Carrefour » n'apprendrait rien.
+	 * The fallback letters come from the town, not from the brand: the town is what tells them apart, and a
+	 * CMA taken from "Carrefour" would teach nothing.
 	 */
 	it('tire les lettres de repli du dernier mot', () => {
 		expect(trigram('Carrefour Miribel', ['CML'])).toBe('CMI');
@@ -124,7 +124,7 @@ describe('trigram — unicité', () => {
 		const tout = new Set<string>();
 		for (let i = 0; i < 40; i += 1) tout.add(trigram('Bio', [...tout]));
 
-		// Une pastille en doublon dit encore de quelle enseigne il s'agit ; une pastille vide, non.
+		// A duplicate chip still says which brand it is; an empty chip does not.
 		expect(trigram('Bio', [...tout])).toBe('BIO');
 	});
 });

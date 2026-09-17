@@ -51,11 +51,11 @@
 	}
 
 	/**
-	 * Un plantage, regroupé par empreinte et non par ligne.
+	 * A crash, grouped by fingerprint and not by row.
 	 *
-	 * Pas d'adresse de courriel ici, contrairement à un signalement, et c'est délibéré : un
-	 * signalement est écrit par quelqu'un qui accepte d'être rappelé, un plantage arrive sans qu'on
-	 * le décide. `people` dit combien de comptes sont touchés, ce qui suffit à prioriser.
+	 * No email address here, unlike a report, and that is deliberate: a report is written by somebody
+	 * accepting to be contacted back, a crash arrives without anyone deciding. `people` says how many
+	 * accounts are affected, which is enough to prioritise.
 	 */
 	interface ClientError {
 		fingerprint: string;
@@ -79,11 +79,11 @@
 	let elevationRequise = $state(false);
 
 	/**
-	 * Un refus de la base, dit à l'écran.
+	 * A refusal from the database, said on screen.
 	 *
-	 * La cause se lit dans le message plutôt que dans l'état du client : la session a pu être
-	 * élevée, ou cesser de l'être, depuis la dernière fois qu'on l'a regardée — un deuxième facteur
-	 * posé sur un autre appareil laisse justement cet onglet-ci en arrière.
+	 * The cause is read in the message rather than in the client's state: the session may have been
+	 * elevated, or ceased to be, since the last time we looked at it — a second factor set on another
+	 * device leaves precisely this tab behind.
 	 */
 	function refuser(messages: (string | undefined)[]) {
 		const bruts = messages.filter((message): message is string => !!message);
@@ -106,11 +106,11 @@
 			supabase.rpc('list_client_errors')
 		]);
 
-		// Un non-admin reçoit une erreur, pas une liste vide : la distinction évite de croire
-		// qu'il n'y a personne en attente alors qu'on n'a simplement pas le droit de regarder.
+		// A non-admin gets an error, not an empty list: the distinction avoids believing nobody is waiting when
+		// we simply have no right to look.
 		//
-		// Les lectures sont indépendantes et peuvent échouer chacune pour sa raison : n'en montrer
-		// qu'une laisserait croire que les autres ont répondu.
+		// The reads are independent and can each fail for their own reason: showing only one would suggest the
+		// others answered.
 		refuser([rpcError?.message, reportError?.message, crashError?.message]);
 		accounts = (data as PendingAccount[]) ?? [];
 		reports = (reportData as BugReport[]) ?? [];
@@ -139,14 +139,14 @@
 	}
 
 	/**
-	 * Demande l'ouverture d'une issue publique portant le seul numéro du signalement.
+	 * Asks for a public issue to be opened carrying only the report's number.
 	 *
-	 * Le geste est explicite, et non déclenché par le dépôt : n'importe quel compte approuvé peut
-	 * déposer vingt signalements par jour, et les publier d'office donnerait à chacun d'eux une
-	 * issue dans un dépôt public que personne ne pourrait retirer. Le tri est le filtre.
+	 * The gesture is explicit, and not triggered by the submission: any approved account can file twenty
+	 * reports a day, and publishing them on sight would give every one of them an issue in a public
+	 * repository nobody could take back. Triage is the filter.
 	 *
-	 * L'issue n'est pas ouverte ici : la base note la demande, et une fonction edge qui détient le
-	 * jeton s'en charge dans la minute. L'écran montre donc d'abord une demande en attente.
+	 * The issue is not opened here: the database records the request, and an edge function holding the
+	 * token takes care of it within the minute. The screen therefore first shows a pending request.
 	 */
 	async function publishReport(id: string) {
 		const { error: rpcError } = await supabase.rpc('request_bug_report_issue', { target: id });
@@ -174,8 +174,8 @@
 		await load();
 	}
 
-	// Le facteur retiré, la personne se reconnecte avec son seul mot de passe : le dire ici évite
-	// qu'on croie l'action sans effet parce que la ligne, elle, ne change presque pas.
+	// With the factor removed, the person signs in with their password alone: saying it here avoids the
+	// action looking ineffective because the row itself barely changes.
 	async function resetMfa(id: string) {
 		const { error: rpcError } = await supabase.rpc('admin_reset_mfa', { target: id });
 		refuser([rpcError?.message]);
@@ -194,15 +194,15 @@
 		refuser([rpcError?.message]);
 		notice = rpcError ? null : t('admin.demoReset');
 
-		// La réinitialisation refait le foyer de démonstration : sans relecture, l'écran garde les
-		// comptes et les badges d'avant, et laisse croire qu'il ne s'est rien passé.
+		// The reset rebuilds the demonstration household: without a re-read, the screen keeps the accounts and
+		// the badges from before, and suggests nothing happened.
 		if (!rpcError) await load();
 	}
 
 	let notice = $state<string | null>(null);
 
-	// Le dernier administrateur ne peut pas se retirer : la base le refuse déjà, l'écran se contente
-	// de ne pas proposer un bouton qui n'aboutirait qu'à un message d'erreur.
+	// The last administrator cannot remove themselves: the database already refuses it, the screen merely
+	// refrains from offering a button that would only lead to an error message.
 	const adminCount = $derived(
 		accounts.filter((account) => account.role === 'admin' && account.status === 'approved').length
 	);
@@ -237,9 +237,8 @@
 	{/if}
 
 	<!--
-		« Élevez votre session » a une suite, « vous n'êtes pas administrateur » n'en a pas : seul le
-		premier des deux refus mérite un bouton, et il mène à l'écran qui porte aussi les codes de
-		secours.
+		"Raise your session" has a follow-up, "you are not an administrator" has none: only the first of the
+		two refusals deserves a button, and it leads to the screen that also carries the backup codes.
 	-->
 	{#if elevationRequise}
 		<Button href="/auth/mfa" class="fl-press mt-3" data-test-id="admin-elevate">
@@ -296,9 +295,8 @@
 							{/if}
 
 							<!--
-								Les actions sont désactivées plutôt que masquées : une ligne garde la même largeur
-								quel que soit son état, et un administrateur voit que l'action existe mais qu'elle
-								ne s'applique pas ici.
+								The actions are disabled rather than hidden: a row keeps the same width whatever its state, and an
+								administrator sees that the action exists but does not apply here.
 							-->
 							{#if self}
 								<div class="ms-auto flex shrink-0 flex-wrap items-center gap-3">
@@ -311,8 +309,8 @@
 									</p>
 
 									<!--
-										Passer la main fait partie du parcours : on nomme son successeur, puis on se
-										retire. Sans ce bouton, la seule façon de se retirer serait la base.
+										Handing over is part of the journey: you name your successor, then step down. Without this button,
+										the only way to step down would be the database.
 									-->
 									{#if account.role === 'admin' && adminCount > 1}
 										<Button
@@ -439,9 +437,9 @@
 								{/if}
 
 								<!--
-									Trois états, et un seul bouton : sans issue on peut en ouvrir une, la demande
-									posée on attend le prochain réveil, et une fois publiée le lien remplace le
-									bouton — republier le même signalement n'aurait aucun sens.
+									Three states, and a single button: with no issue you can open one, with the request filed you wait
+									for the next wake-up, and once published the link replaces the button — republishing the same report
+									would make no sense.
 								-->
 								{#if report.issue_number !== null}
 									<a
@@ -511,9 +509,9 @@
 							</div>
 
 							<!--
-								La pile est repliée : elle fait quarante lignes et ce n'est pas ce qu'on lit en
-								premier. `details` plutôt qu'un bouton maison — il s'ouvre au clavier, s'annonce
-								tout seul aux lecteurs d'écran, et fonctionne sans script.
+								The stack is folded: it is forty lines long and not what you read first. `details` rather than a
+								hand-made button — it opens with the keyboard, announces itself to screen readers, and works without
+								script.
 							-->
 							{#if crash.stack}
 								<details class="text-caption">
@@ -540,10 +538,9 @@
 	{/if}
 
 	<!--
-		Les réglages d'instance en dernier : on vient ici pour valider un compte ou lire un
-		signalement, pas pour reconfigurer l'envoi de courriel — ce dernier geste ne se fait qu'une
-		fois. Les refus remontent au même endroit que ceux du reste de l'écran, bouton d'élévation
-		compris.
+		The instance settings last: you come here to approve an account or read a report, not to reconfigure
+		email sending — that last gesture is done once. Refusals surface in the same place as those of the rest
+		of the screen, elevation button included.
 	-->
 	<InstanceSettings onRefused={(message) => refuser([message])} />
 {/if}

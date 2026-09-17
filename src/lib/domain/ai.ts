@@ -1,42 +1,38 @@
 /**
- * Les fournisseurs d'intelligence artificielle appelables depuis un navigateur.
+ * The artificial intelligence providers callable from a browser.
  *
- * Toute cette application est une page statique : il n'y a pas de serveur a nous, et aucune cle
- * n'est posee par l'hebergeur. L'appel part donc du navigateur de la personne, avec sa cle a elle.
- * Cela restreint la liste bien plus que le catalogue du marche ne le laisse croire, et c'est la
- * seule raison pour laquelle certains noms attendus manquent ici.
+ * This whole application is a static page: there is no server of ours, and no key is set by the host. The
+ * call therefore leaves from the person's browser, with their own key. That restricts the list far more than
+ * the market's catalogue would suggest, and it is the only reason some expected names are missing here.
  *
- * Ce qui a ete verifie, fournisseur par fournisseur, en envoyant une vraie requete avec un
- * en-tete `Origin` : le prevol `OPTIONS` passe, **et** la reponse du `POST` porte elle aussi
- * `access-control-allow-origin`. Les deux sont necessaires — un navigateur qui obtient le prevol
- * mais lit une reponse sans en-tete jette quand meme le resultat, et le code appelant ne recoit
- * qu'un echec reseau sans explication.
+ * What was checked, provider by provider, by sending a real request with an `Origin` header: the `OPTIONS`
+ * preflight passes, **and** the `POST` response also carries `access-control-allow-origin`. Both are needed
+ * — a browser that gets the preflight but reads a response with no header throws the result away all the
+ * same, and the calling code only receives a network failure with no explanation.
  *
- * OpenAI echoue precisement a la deuxieme condition et n'est donc pas propose. Son prevol repond
- * `access-control-allow-origin`, mais la reponse du `POST` ne le fait pas : depuis une page, la
- * requete part et le resultat est inaccessible. `dangerouslyAllowBrowser` du SDK officiel ne
- * change rien a cela — cette option leve un garde-fou du SDK, pas la regle du navigateur. Le
- * proposer dans la liste donnerait une case a cocher qui ne peut pas fonctionner, ce qui est pire
- * que son absence.
+ * OpenAI fails precisely the second condition and is therefore not offered. Its preflight answers
+ * `access-control-allow-origin`, but the `POST` response does not: from a page, the request leaves and the
+ * result is unreachable. The official SDK's `dangerouslyAllowBrowser` changes nothing about that — that
+ * option lifts a guardrail of the SDK, not the browser's rule. Offering it in the list would give a box to
+ * tick that cannot work, which is worse than its absence.
  *
- * Aucune cle ne voyage dans une adresse. Gemini accepte la sienne en parametre de requete
- * (`?key=`), et c'est la forme que montre sa documentation ; on utilise l'en-tete
- * `x-goog-api-key`, qu'il accepte tout autant. Une adresse se retrouve dans les journaux des
- * serveurs traverses, dans l'historique du navigateur et dans l'en-tete de provenance de la
- * requete suivante — trois endroits ou une cle de paiement n'a rien a faire.
+ * No key travels in an address. Gemini accepts its own as a query parameter (`?key=`), and that is the form
+ * its documentation shows; we use the `x-goog-api-key` header, which it accepts just as well. An address
+ * ends up in the logs of the servers crossed, in the browser history and in the referrer header of the next
+ * request — three places where a billing key has no business.
  */
 
-/** Les formes de requete. Quatre fournisseurs sur six parlent le dialecte d'OpenAI. */
+/** The request shapes. Four providers out of six speak OpenAI's dialect. */
 type Dialect = 'openai' | 'anthropic' | 'gemini';
 
 export interface Provider {
 	id: string;
 	dialect: Dialect;
-	/** Racine de l'API, sans barre oblique finale. */
+	/** API root, with no trailing slash. */
 	base: string;
-	/** Le modele appele quand la personne n'en a pas choisi un autre. */
+	/** The model called when the person has not chosen another. */
 	defaultModel: string;
-	/** Ou la personne va chercher sa cle. Affiche tel quel, jamais traduit. */
+	/** Where the person goes to get their key. Shown as it is, never translated. */
 	keysUrl: string;
 }
 
@@ -93,7 +89,7 @@ export const providerById = (id: string): Provider | null =>
 export const isProvider = (value: unknown): value is string =>
 	typeof value === 'string' && PROVIDERS.some(p => p.id === value);
 
-/** Le modele reellement appele : celui qu'on a choisi, sinon celui du fournisseur. */
+/** The model actually called: the one chosen, otherwise the provider's. */
 export function modelFor(provider: Provider, chosen: string): string {
 	return chosen.trim() || provider.defaultModel;
 }
@@ -105,10 +101,10 @@ export interface ProviderRequest {
 }
 
 /**
- * La requete a envoyer, sous une forme que `fetch` prend telle quelle.
+ * The request to send, in a shape `fetch` takes as it is.
  *
- * Fonction pure, et c'est voulu : c'est ici que la cle est posee dans un en-tete plutot que dans
- * une adresse, et c'est la seule chose de tout ce fichier qu'un test peut verifier sans reseau.
+ * A pure function, and that is intended: this is where the key is put in a header rather than in an address,
+ * and it is the only thing in this whole file a test can check with no network.
  */
 export function buildRequest(
 	provider: Provider,
@@ -125,9 +121,9 @@ export function buildRequest(
 				'content-type': 'application/json',
 				'x-api-key': apiKey,
 				'anthropic-version': '2023-06-01',
-				// Sans cet en-tete, le SDK comme l'API refusent une requete venue d'une page. Il vaut
-				// reconnaissance du risque : la cle est dans le navigateur, elle appartient a la
-				// personne qui l'a posee, et c'est precisement le choix que cette fonctionnalite acte.
+				// Without this header, both the SDK and the API refuse a request coming from a page. It amounts to an
+				// acknowledgement of the risk: the key is in the browser, it belongs to the person who set it, and that
+				// is precisely the choice this feature makes.
 				'anthropic-dangerous-direct-browser-access': 'true'
 			},
 			body: JSON.stringify({
@@ -157,7 +153,7 @@ export function buildRequest(
 	};
 }
 
-/** De quoi ecrire une recette complete, et rien de plus : on ne paie pas une dissertation. */
+/** Enough to write a complete recipe, and no more: we are not paying for an essay. */
 const MAX_TOKENS = 1200;
 
 const asRecord = (value: unknown): Record<string, unknown> | null =>
@@ -166,12 +162,11 @@ const asRecord = (value: unknown): Record<string, unknown> | null =>
 const firstOf = (value: unknown): unknown => (Array.isArray(value) ? value[0] : undefined);
 
 /**
- * Le texte rendu par le fournisseur, ou null si la reponse n'a pas la forme attendue.
+ * The text returned by the provider, or null if the response does not have the expected shape.
  *
- * On descend champ par champ plutot qu'en chainant les points d'interrogation : une reponse
- * d'erreur a la meme enveloppe qu'une reponse valide chez plusieurs fournisseurs, et un acces
- * optionnel non garde rendrait `undefined` la ou il faut distinguer « rien a lire » de « chaine
- * vide ».
+ * We go down field by field rather than chaining question marks: an error response has the same envelope as
+ * a valid one at several providers, and an unguarded optional access would return `undefined` where
+ * "nothing to read" has to be told from "empty string".
  */
 export function parseReply(provider: Provider, payload: unknown): string | null {
 	const root = asRecord(payload);
@@ -195,12 +190,12 @@ export function parseReply(provider: Provider, payload: unknown): string | null 
 }
 
 /**
- * Ce que le fournisseur reproche, en une phrase, ou null s'il ne dit rien d'exploitable.
+ * What the provider objects to, in one sentence, or null if it says nothing usable.
  *
- * Les six n'ecrivent pas leurs erreurs au meme endroit : `error.message` chez la plupart, `detail`
- * chez Mistral. Rendre le message du fournisseur plutot qu'un texte a nous est ici le bon choix —
- * « credit epuise » et « modele inconnu » demandent deux gestes differents, et seule la personne
- * qui possede le compte peut agir sur l'un comme sur l'autre.
+ * The six do not write their errors in the same place: `error.message` at most of them, `detail` at Mistral.
+ * Returning the provider's message rather than a text of ours is the right choice here — "credit exhausted"
+ * and "unknown model" call for two different gestures, and only the person who owns the account can act on
+ * either.
  */
 export function parseError(payload: unknown): string | null {
 	const root = asRecord(payload);

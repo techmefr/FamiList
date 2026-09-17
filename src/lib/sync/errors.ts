@@ -1,10 +1,10 @@
 /**
- * Ce qu'on retient d'une panne pour l'afficher.
+ * What we keep of an outage in order to show it.
  *
- * Les chemins détachés de la synchronisation attrapent tout ce qui passe, et ce qui passe n'est
- * pas toujours une `Error` : Dexie et le client Supabase rejettent parfois un objet nu, une
- * chaîne, et un `throw` mal placé peut même rejeter `undefined`. Le bandeau doit dire quelque
- * chose dans tous les cas — « [object Object] » ou une case vide ne renseignent personne.
+ * The sync's detached paths catch whatever comes, and what comes is not always an `Error`: Dexie and the
+ * Supabase client sometimes reject a bare object or a string, and a misplaced `throw` can even reject
+ * `undefined`. The banner must say something in every case — "[object Object]" or an empty box tells nobody
+ * anything.
  */
 export function describeError(cause: unknown): string {
 	if (cause instanceof Error) return cause.message || cause.name;

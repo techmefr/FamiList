@@ -1,24 +1,24 @@
--- Prenom, nom, et nom affiche.
+-- First name, last name, and displayed name.
 --
--- Le profil n'avait qu'un `display_name`, et les initiales de la pastille se devinaient en
--- decoupant cette chaine. Ca marche pour « Helene Moreau », pas pour « Mamie » : un surnom d'un
--- seul mot ne donne qu'une lettre alors que la personne a bien un prenom et un nom.
+-- The profile had only a `display_name`, and the badge's initials were guessed by cutting up that string.
+-- That works for "Helene Moreau", not for "Granny": a one-word nickname gives only one letter when the person
+-- does have a first and a last name.
 --
--- Les deux colonnes arrivent vides et le restent tant que personne ne les remplit : l'inscription
--- ne les demande pas, elle garde son champ unique. `display_name` reste donc la seule source sure
--- du nom affiche, et le seul champ obligatoire.
+-- Both columns arrive empty and stay so as long as nobody fills them: sign-up does not ask for them, it keeps
+-- its single field. `display_name` therefore stays the only reliable source of the displayed name, and the
+-- only compulsory field.
 
 alter table public.profiles
   add column if not exists first_name text not null default '',
   add column if not exists last_name text not null default '';
 
--- Les droits sur profiles sont accordes colonne par colonne depuis la migration d'approbation :
--- sans cette ligne, l'ecriture partirait sans erreur visible et ne changerait rien.
+-- Privileges on profiles are granted column by column since the approval migration: without this line, the
+-- write would go off with no visible error and change nothing.
 grant update (first_name, last_name) on public.profiles to authenticated;
 
--- Le foyer lit les deux nouvelles colonnes au meme titre que le nom : c'est de la que se tirent
--- les initiales d'un membre, et elles doivent etre justes pour tout le monde, pas seulement pour
--- soi. La policy de lecture reste etroite — seules les colonnes utiles au foyer sortent d'ici.
+-- The household reads the two new columns just as it reads the name: that is where a member's initials come
+-- from, and they must be right for everybody, not only for oneself. The read policy stays narrow — only the
+-- columns the household needs come out of here.
 drop function if exists public.household_profiles();
 
 create function public.household_profiles()

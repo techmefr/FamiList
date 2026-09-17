@@ -12,14 +12,14 @@
 	import { ScanLine, X, Zap } from '@lucide/svelte';
 
 	/**
-	 * `actions` reçoit les autres façons d'obtenir le même code — aujourd'hui l'import d'une image.
-	 * Elles sont rendues ici, et pas côté appelant, parce que c'est ce composant qui décide de la
-	 * rangée : il en disparaît quand la caméra manque, et il la remplace entièrement par l'aperçu
-	 * vidéo pendant le scan. Les laisser dehors les mettrait à côté de la vidéo.
+	 * `actions` receives the other ways of getting the same code — today, importing an image. They are
+	 * rendered here, and not on the caller's side, because this component is what decides the row: it
+	 * disappears from it when the camera is missing, and it replaces it entirely with the video preview
+	 * while scanning. Leaving them outside would put them next to the video.
 	 *
-	 * `photo` est la voie de secours du scan lui-même. Elle n'a de sens qu'avec un appareil photo,
-	 * et elle réapparaît sous l'aperçu dès que la lecture traîne : c'est là, devant la ligne qui
-	 * balaie sans rien trouver, qu'on a besoin qu'on nous la propose.
+	 * `photo` is the fallback route of the scan itself. It only makes sense with a camera, and it reappears
+	 * under the preview as soon as the reading drags on: it is there, in front of the line sweeping and
+	 * finding nothing, that you need it offered.
 	 */
 	let {
 		onScanned,
@@ -46,8 +46,8 @@
 	function applyTorch(on: boolean) {
 		const contrainte: TorchConstraint = { torch: on };
 
-		// Un pilote qui refuse la contrainte laisse simplement la lampe éteinte : l'aperçu reste
-		// lisible, il n'y a rien à signaler à l'utilisateur.
+		// A driver refusing the constraint simply leaves the light off: the preview stays readable, there is
+		// nothing to report to the user.
 		void track
 			?.applyConstraints({ advanced: [contrainte] } as MediaTrackConstraints)
 			.catch(() => {});
@@ -71,14 +71,14 @@
 		controller = new AbortController();
 		suggestTimer = setTimeout(() => (suggest = true), SCAN_SUGGEST_MS);
 
-		// L'élément vidéo n'existe qu'une fois `scanning` rendu : sans cette attente, on passerait
-		// un élément absent au lecteur et rien ne s'afficherait.
+		// The video element only exists once `scanning` is rendered: without this wait, we would pass a missing
+		// element to the reader and nothing would show.
 		await tick();
 
 		try {
 			const result = await scan(video, controller.signal, { onTrack: prendreLaPiste });
-			// Un code se lit à bout de bras, l'œil sur l'étiquette : le son dit que c'est pris sans
-			// qu'on ait à retourner l'écran.
+			// A code is read at arm's length, eye on the label: the sound says it is taken without having to turn
+			// the screen round.
 			if (result) {
 				feedback.play('success');
 				onScanned(result);
@@ -87,8 +87,8 @@
 				error = t('scan.givenUp');
 			}
 		} catch {
-			// Caméra refusée, absente, ou déjà prise par une autre application : on le dit et on
-			// laisse la saisie manuelle faire le travail.
+			// Camera refused, absent, or already taken by another application: we say so and let manual entry do
+			// the work.
 			feedback.play('error');
 			error = t('scan.failed');
 		} finally {
@@ -99,8 +99,8 @@
 	}
 
 	/**
-	 * La lampe ne survit pas au scan : la piste est rendue avec la caméra, et garder l'état allumé
-	 * ferait rouvrir la caméra torche allumée au scan suivant, sans qu'on l'ait demandé.
+	 * The light does not survive the scan: the track is released with the camera, and keeping the state on
+	 * would reopen the camera with the torch on at the next scan, without anyone asking.
 	 */
 	function arreterLesTemoins() {
 		if (suggestTimer) clearTimeout(suggestTimer);
@@ -121,11 +121,11 @@
 </script>
 
 <!--
-	La rangée des façons d'attraper un code.
+	The row of ways to catch a code.
 
-	Les boutons sont étirés à la même hauteur plutôt qu'alignés en haut : sur écran étroit, l'un des
-	libellés passe sur deux lignes et l'autre non, et deux boutons de hauteurs différentes côte à
-	côte se voient tout de suite.
+	The buttons are stretched to the same height rather than aligned to the top: on a narrow screen, one of
+	the labels wraps onto two lines and the other does not, and two buttons of different heights side by side
+	show at once.
 -->
 <div class="mt-2 flex flex-wrap items-stretch gap-2">
 	{#if scanning}
@@ -139,7 +139,7 @@
 					class="w-full rounded-md bg-black"
 					data-test-id="scan-video"
 				></video>
-				<!-- La ligne qui balaie dit que la caméra tourne, là où une image figée ne dit rien. -->
+				<!-- The sweeping line says the camera is running, where a frozen image says nothing. -->
 				<span
 					class="fl-scanline bg-primary absolute inset-x-4 h-0.5 rounded-full opacity-80"
 					aria-hidden="true"

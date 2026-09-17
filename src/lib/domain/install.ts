@@ -1,70 +1,68 @@
 /**
- * Quand proposer d'installer l'application, et à qui.
+ * When to offer to install the application, and to whom.
  *
- * Rien ici ne touche au navigateur : la capture de `beforeinstallprompt`, la détection du mode
- * autonome et le stockage vivent dans `$stores/install`. Ce qui se décide ici — est-ce le bon
- * moment, le refus est-il encore valable, quel chemin d'installation existe sur cet appareil — se
- * vérifie sans navigateur, et c'est précisément la partie qu'on ne veut pas voir dériver.
+ * Nothing here touches the browser: capturing `beforeinstallprompt`, detecting standalone mode and the
+ * storage live in `$stores/install`. What is decided here — is this the right moment, is the refusal
+ * still valid, which installation path exists on this device — can be verified without a browser, and
+ * that is precisely the part we do not want to see drift.
  */
 
 /**
- * Le nombre d'ouvertures avant de proposer quoi que ce soit.
+ * The number of openings before offering anything.
  *
- * À la première visite, personne ne sait encore si l'application lui plaît ; lui demander de la
- * poser sur son écran d'accueil revient à demander un engagement avant le premier service rendu.
- * Trois ouvertures, ce n'est pas une mesure d'enthousiasme, mais c'est déjà quelqu'un qui est
- * revenu de lui-même — deux fois.
+ * On the first visit, nobody yet knows whether they like the application; asking them to put it on their
+ * home screen amounts to asking for a commitment before the first service rendered. Three openings is not
+ * a measure of enthusiasm, but it is already somebody who came back on their own — twice.
  */
 export const MIN_OPENINGS = 3;
 
 /**
- * La durée pendant laquelle un refus est tenu pour acquis : six mois.
+ * How long a refusal is held as given: six months.
  *
- * Une invite qui revient à chaque visite est une nuisance, et une nuisance finit par faire fermer
- * l'onglet plutôt qu'installer l'application. Six mois laissent la place à un vrai changement
- * d'avis — une nouvelle saison d'usage, un nouveau téléphone — sans jamais ressembler à du
- * harcèlement.
+ * A prompt that comes back on every visit is a nuisance, and a nuisance ends up making you close the tab
+ * rather than install the application. Six months leave room for a real change of mind — a new season of
+ * use, a new phone — without ever looking like harassment.
  */
 export const REFUSAL_MS = 180 * 24 * 60 * 60 * 1000;
 
 /**
- * Par où passe l'installation sur cet appareil.
+ * Which way installation goes on this device.
  *
- * `prompt` : le navigateur a proposé `beforeinstallprompt`, on peut ouvrir l'invite système.
- * `ios` : rien à déclencher, le geste appartient à Safari — on l'explique avec des mots.
- * `none` : aucun chemin honnête, on se tait plutôt que de promettre un bouton qui ne fera rien.
+ * `prompt`: the browser offered `beforeinstallprompt`, we can open the system prompt.
+ * `ios`: nothing to trigger, the gesture belongs to Safari — we explain it in words.
+ * `none`: no honest path, we stay quiet rather than promise a button that will do nothing.
  */
 export type InstallRoute = 'prompt' | 'ios' | 'none';
 
 export interface InstallContext {
-	/** La coquille Capacitor : l'application est déjà installée, il n'y a rien à proposer. */
+	/** The Capacitor shell: the application is already installed, there is nothing to offer. */
 	isNative: boolean;
-	/** Déjà lancée depuis l'écran d'accueil — `display-mode: standalone`. */
+	/** Already launched from the home screen — `display-mode: standalone`. */
 	isInstalled: boolean;
 	route: InstallRoute;
 	openings: number;
-	/** Date du dernier refus, en millisecondes, ou `null` si on n'a jamais rien demandé. */
+	/** Date of the last refusal, in milliseconds, or `null` if we never asked anything. */
 	refusedAt: number | null;
 	now: number;
 }
 
 /**
- * iOS n'émet jamais `beforeinstallprompt`, et ne le fera pas : sur iPhone et iPad, l'ajout à
- * l'écran d'accueil est un geste de Safari, pas une API.
+ * iOS never emits `beforeinstallprompt`, and will not: on iPhone and iPad, adding to the home screen is
+ * a Safari gesture, not an API.
  *
- * Depuis iPadOS 13, un iPad se présente comme un Macintosh ; le nombre de points de contact est le
- * seul moyen restant de le distinguer d'un vrai Mac, où le menu Partager ne propose pas ce geste.
+ * Since iPadOS 13, an iPad presents itself as a Macintosh; the number of touch points is the only
+ * remaining way to tell it from a real Mac, where the Share menu does not offer that gesture.
  *
- * Les navigateurs tiers sur iOS sont écartés : ils empruntent bien WebKit, mais leur menu de
- * partage ne porte pas « Sur l'écran d'accueil ». Leur donner la marche à suivre de Safari serait
- * les envoyer chercher un bouton qui n'existe pas.
+ * Third-party browsers on iOS are left out: they do borrow WebKit, but their share menu does not carry
+ * "Add to Home Screen". Giving them Safari's steps would send them looking for a button that does not
+ * exist.
  */
 export function isIosSafari(userAgent: string, maxTouchPoints: number): boolean {
 	const isApple = /iPhone|iPod|iPad/.test(userAgent);
 	const isIpadOnDesktopUa = /Macintosh/.test(userAgent) && maxTouchPoints > 1;
 	if (!isApple && !isIpadOnDesktopUa) return false;
 
-	// Chrome, Firefox, Edge et Opera sur iOS, reconnaissables à leur suffixe.
+	// Chrome, Firefox, Edge and Opera on iOS, recognisable by their suffix.
 	return !/CriOS|FxiOS|EdgiOS|OPiOS|OPT\//.test(userAgent);
 }
 
@@ -74,12 +72,12 @@ export function installRoute(hasPrompt: boolean, isIos: boolean): InstallRoute {
 	return 'none';
 }
 
-/** Un refus périmé redevient une question qu'on a le droit de poser. */
+/** An expired refusal becomes a question we are allowed to ask again. */
 export function isRefusalExpired(refusedAt: number | null, now: number): boolean {
 	if (refusedAt === null) return true;
 
-	// Une horloge remise en arrière rendrait la date de refus éternellement « dans le futur » :
-	// on la traite alors comme un refus tout frais plutôt que comme un refus périmé.
+	// A clock set back would make the refusal date eternally "in the future": we then treat it as a brand
+	// new refusal rather than an expired one.
 	if (refusedAt > now) return false;
 
 	return now - refusedAt >= REFUSAL_MS;
@@ -94,10 +92,10 @@ export function shouldOffer(context: InstallContext): boolean {
 }
 
 /**
- * L'explication reste accessible depuis le menu d'aide même quand le bandeau se tait : quelqu'un
- * qui a dit « plus tard » il y a un mois doit pouvoir revenir de lui-même, sans attendre six mois.
- * Seul le cas « aucun chemin » disparaît vraiment — et l'application déjà installée, qui n'a plus
- * rien à apprendre là-dessus.
+ * The explanation stays reachable from the help menu even when the banner stays quiet: somebody who said
+ * "later" a month ago must be able to come back on their own, without waiting six months. Only the "no
+ * path" case really disappears — and the already-installed application, which has nothing left to learn
+ * about it.
  */
 export function canExplain(context: Pick<InstallContext, 'isNative' | 'isInstalled' | 'route'>) {
 	return !context.isNative && !context.isInstalled && context.route !== 'none';

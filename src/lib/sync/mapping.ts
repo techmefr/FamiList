@@ -26,8 +26,8 @@ import { DEFAULT_SERVINGS } from '$domain/recipe';
 import { initialsFor } from '$domain/avatar';
 
 /**
- * Traduction entre le modèle local, écrit pour l'écran, et les colonnes Postgres. Tout passe par
- * ici : c'est le seul endroit à relire quand une colonne change de nom ou de type.
+ * Translation between the local model, written for the screen, and the Postgres columns. Everything goes
+ * through here: it is the only place to re-read when a column changes name or type.
  */
 
 type Row = Record<string, unknown>;
@@ -92,8 +92,8 @@ export const toList = (row: Row, memberIds: string[]): List => ({
 });
 
 /**
- * Le cercle vient de la liste elle-même, pas du cercle affiché : une liste personnelle n'en a pas,
- * et une liste partagée garde le sien même si on regarde ailleurs.
+ * The circle comes from the list itself, not from the displayed circle: a personal list has none, and a
+ * shared list keeps its own even if you are looking elsewhere.
  */
 export const fromList = (list: List) => ({
 	id: list.id,
@@ -105,17 +105,17 @@ export const fromList = (list: List) => ({
 });
 
 /**
- * La quantité est saisie au clavier ("500", "1,5") et stockée en numeric. Une saisie qui n'est pas
- * un nombre part à null plutôt que de faire échouer l'insertion : l'article reste dans la liste.
+ * The quantity is typed on a keyboard ("500", "1,5") and stored as numeric. An entry that is not a number
+ * goes to null rather than making the insert fail: the item stays in the list.
  */
 const toNumber = (value: string) => {
-	// Number('') vaut 0, pas NaN : sans ce départ, vider le champ quantité dans l'interface
-	// enregistrait une quantité de zéro au lieu d'aucune quantité.
+	// Number('') is 0, not NaN: without this start, clearing the quantity field in the interface saved a
+	// quantity of zero instead of no quantity.
 	const written = value.trim();
 	if (written === '') return null;
 
-	// Toutes les virgules, pas seulement la première : « 1,234,5 » n'est pas un nombre, et une
-	// seule virgule remplacée laissait passer une chaîne à moitié convertie.
+	// Every comma, not only the first: "1,234,5" is not a number, and replacing a single comma let a
+	// half-converted string through.
 	const parsed = Number(written.replace(/,/g, '.'));
 	return Number.isFinite(parsed) ? parsed : null;
 };
@@ -148,8 +148,8 @@ export const fromItem = (item: Item) => ({
 });
 
 /**
- * Un appareil plus récent peut avoir enregistré un format que celui-ci ne connaît pas encore :
- * on le ramène au Code 39 plutôt que de laisser un type mensonger traverser l'application.
+ * A newer device may have saved a format this one does not know yet: we bring it back to Code 39 rather
+ * than let a lying type travel through the application.
  */
 const toCodeType = (raw: string): CodeType =>
 	(CODE_TYPES as readonly string[]).includes(raw) ? (raw as CodeType) : 'code_39';
@@ -185,11 +185,11 @@ export const fromCard = (card: LoyaltyCard, householdId: string) => ({
 });
 
 /**
- * Un membre est la jonction du rattachement au foyer et du profil qui porte le nom affiché.
+ * A member is the junction of the household membership and the profile carrying the display name.
  *
- * La clé porte le couple (cercle, personne) et non la seule personne : depuis qu'on lit tous ses
- * cercles d'un coup, quelqu'un présent dans deux d'entre eux donne deux lignes, et le rôle comme la
- * couleur appartiennent au rattachement, pas au compte.
+ * The key carries the (circle, person) pair and not the person alone: since we read every circle at once,
+ * somebody present in two of them gives two rows, and the role as well as the colour belong to the
+ * membership, not to the account.
  */
 export const toMember = (row: Row, profile: Row | undefined, currentUserId: string): Member => {
 	const id = text(row.user_id);
@@ -198,8 +198,8 @@ export const toMember = (row: Row, profile: Row | undefined, currentUserId: stri
 	const firstName = text(profile?.first_name);
 	const lastName = text(profile?.last_name);
 
-	// Le rôle est stocké tel quel et traduit à l'affichage : la base ne parle pas la langue de
-	// l'utilisateur, et un foyer peut mêler plusieurs langues.
+	// The role is stored as is and translated at display time: the database does not speak the user's
+	// language, and a household can mix several.
 	return {
 		key: memberKey(householdId, id),
 		id,
@@ -207,12 +207,12 @@ export const toMember = (row: Row, profile: Row | undefined, currentUserId: stri
 		name,
 		firstName,
 		lastName,
-		// Un rôle vide en base est une valeur manquante, pas un rôle : il retombe sur 'member'
-		// comme une colonne absente, sinon la traduction chercherait une clé vide.
+		// An empty role in the database is a missing value, not a role: it falls back to 'member' like an absent
+		// column, otherwise the translation would look for an empty key.
 		role: id === currentUserId ? 'self' : text(row.role) || 'member',
-		// Les initiales se calculent, elles ne se lisent pas : la colonne `profiles.initial` est
-		// remplie par un trigger à l'inscription, avec une seule lettre, et plus rien ne la met à
-		// jour ensuite — un changement de nom la laisserait périmée en plus d'être tronquée.
+		// The initials are computed, not read: the `profiles.initial` column is filled by a trigger at sign-up,
+		// with a single letter, and nothing updates it afterwards — a name change would leave it stale on top of
+		// being truncated.
 		initial: initialsFor(firstName, lastName, name),
 		tint: text(row.tint, DEFAULT_MEMBER_TINT),
 		avatar: text(profile?.avatar) || undefined
@@ -245,9 +245,8 @@ export const toItemOrder = (row: Row): ShopItemOrder => {
 };
 
 /**
- * Les deux colonnes de portée sont lues telles quelles, sans en inventer une quand l'autre manque :
- * une chaîne vide posée à la place d'un null ferait échouer la contrainte de la base, qui exige
- * exactement une des deux.
+ * The two scope columns are read as they are, without inventing one when the other is missing: an empty
+ * string put in place of a null would fail the database constraint, which requires exactly one of the two.
  */
 export const toMessage = (row: Row): Message => ({
 	id: text(row.id),
@@ -269,9 +268,9 @@ export const fromMessage = (message: Message) => ({
 });
 
 /**
- * Les participants ne viennent pas de la ligne : ils vivent dans leur propre table, comme les
- * membres d'une liste. La colonne `pair` existe côté base mais c'est un détail d'unicité — on lit
- * la table qui fait foi pour l'accès.
+ * The participants do not come from the row: they live in their own table, like a list's members. The
+ * `pair` column exists in the database but it is a uniqueness detail — we read the table that is the
+ * authority for access.
  */
 export const toConversation = (row: Row, participantIds: string[]): Conversation => ({
 	id: text(row.id),
@@ -331,9 +330,9 @@ export const fromItemOrder = (order: ShopItemOrder, userId: string) => ({
 });
 
 /**
- * Un prix relevé. `amount` arrive en `numeric`, que le client rend tantôt en nombre tantôt en
- * chaîne selon la précision : on repasse par Number plutôt que de faire confiance au type reçu.
- * Un montant illisible vaut zéro, ce que la comparaison écarte d'elle-même.
+ * A recorded price. `amount` arrives as `numeric`, which the client returns sometimes as a number and
+ * sometimes as a string depending on the precision: we go back through Number rather than trust the type
+ * received. An unreadable amount is zero, which the comparison discards by itself.
  */
 export const toPrice = (row: Row): Price => ({
 	id: text(row.id),
@@ -355,7 +354,7 @@ export const fromPrice = (price: Price, householdId: string) => ({
 	product_name: price.productName,
 	amount: price.amount,
 	currency: price.currency,
-	// L'heure du relevé, pas celle de l'envoi : la file peut attendre la sortie du magasin.
+	// The time of the record, not the time of sending: the queue may wait until you leave the shop.
 	recorded_at: new Date(price.recordedAt).toISOString(),
 	recorded_by: price.recordedBy || null
 });
@@ -365,8 +364,8 @@ export const toRecipe = (row: Row): Recipe => ({
 	householdId: text(row.household_id),
 	name: text(row.name),
 	emoji: text(row.emoji, '🍲'),
-	// Un nombre de parts absent ou illisible retombe sur la valeur de départ : zéro part rendrait la
-	// mise à l'échelle absurde, et la recette resterait pourtant affichée.
+	// A missing or unreadable number of servings falls back to the default: zero servings would make scaling
+	// absurd, and the recipe would still be displayed.
 	servings: typeof row.servings === 'number' && row.servings > 0 ? row.servings : DEFAULT_SERVINGS,
 	notes: typeof row.notes === 'string' ? row.notes : undefined,
 	createdBy: typeof row.created_by === 'string' ? row.created_by : undefined,
@@ -387,8 +386,8 @@ export const toRecipeIngredient = (row: Row): RecipeIngredient => ({
 	id: text(row.id),
 	recipeId: text(row.recipe_id),
 	name: text(row.name),
-	// Comme pour un article : la quantité voyage en numeric et se saisit au clavier. Une quantité
-	// absente redevient un champ vide, pas « null » écrit en toutes lettres dans le formulaire.
+	// As for an item: the quantity travels as numeric and is typed on a keyboard. A missing quantity becomes
+	// an empty field again, not "null" written out in the form.
 	qty: row.qty === null || row.qty === undefined ? '' : String(row.qty),
 	unit: text(row.unit, DEFAULT_UNIT),
 	position: typeof row.position === 'number' ? row.position : 0

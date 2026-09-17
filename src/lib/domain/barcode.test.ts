@@ -28,9 +28,9 @@ const pattern = (elements: { width: number; dark: boolean }[]) =>
 	elements.map((el) => (el.dark ? '1' : '0').repeat(el.width)).join('');
 
 /**
- * Un code-barres faux se dessine très bien et ne scanne pas : comparer le tracé à lui-même ne
- * prouverait rien. On le relit donc avec zxing, le décodeur que l'application embarque déjà en
- * secours, sur une image en noir et blanc construite à partir des barres produites.
+ * A wrong barcode draws perfectly well and does not scan: comparing the drawing to itself would prove
+ * nothing. So we read it back with zxing, the decoder the application already carries as a fallback, on a
+ * black and white image built from the bars produced.
  */
 const SCALE = 3;
 const QUIET = 12;
@@ -75,7 +75,7 @@ function decode(elements: CodeElement[] | null, format: BarcodeFormat): string |
 }
 
 describe('ean13CheckDigit', () => {
-	// Codes réels, clé vérifiable à la main.
+	// Real codes, check digit verifiable by hand.
 	it.each([
 		['400638133393', 1],
 		['978020137962', 4],
@@ -121,8 +121,8 @@ describe('ean13', () => {
 	});
 
 	it('code le premier chiffre par l alternance des jeux, sans le dessiner', () => {
-		// Deux codes qui ne diffèrent que par leur premier chiffre doivent donner des tracés
-		// différents, sinon le lecteur lirait le même produit.
+		// Two codes differing only in their first digit must give different drawings, otherwise the reader would
+		// read the same product.
 		expect(pattern(ean13('400638133393')!)).not.toBe(pattern(ean13('500638133393')!));
 	});
 
@@ -133,7 +133,7 @@ describe('ean13', () => {
 
 describe('code39', () => {
 	it('encadre la donnée du caractère de départ et d arrêt', () => {
-		// « * » occupe 15 modules : six étroits et trois larges.
+		// "*" takes 15 modules: six narrow and three wide.
 		const STAR = 15;
 		const bits = pattern(code39('A'));
 		const star = pattern(code39('')).slice(0, STAR);
@@ -195,7 +195,7 @@ describe('itf', () => {
 
 describe('code93', () => {
 	it('ajoute deux caractères de contrôle et la barre de terminaison', () => {
-		// Départ, six caractères, deux contrôles, arrêt : dix motifs de neuf modules, plus la barre.
+		// Start, six characters, two checks, stop: ten patterns of nine modules, plus the bar.
 		expect(pattern(code93('AB1234')!)).toHaveLength(10 * 9 + 1);
 	});
 
@@ -206,7 +206,7 @@ describe('code93', () => {
 
 describe('code128', () => {
 	it('code deux chiffres par symbole quand la donnée est numérique et de longueur paire', () => {
-		// Huit chiffres : départ, quatre symboles, contrôle, arrêt — soit 6 x 11 + 13 modules.
+		// Eight digits: start, four symbols, check, stop — that is 6 x 11 + 13 modules.
 		expect(pattern(code128('12345678')!)).toHaveLength(6 * 11 + 13);
 	});
 
@@ -248,8 +248,8 @@ const RELECTURE: [string, BarcodeFormat, string][] = [
 
 describe('relecture par un décodeur indépendant', () => {
 	it('couvre tous les formats en barres proposés à la saisie', () => {
-		// Un format proposé sans vecteur de relecture serait un format dessiné sans preuve qu'il
-		// scanne : c'est exactement ce qu'on cherche à éviter.
+		// A format offered with no read-back vector would be a format drawn with no proof that it scans: that is
+		// exactly what we are trying to avoid.
 		const couverts = new Set(RELECTURE.map(([codeType]) => codeType));
 
 		expect(CODE_TYPES.filter((type) => !isMatrixFormat(type)).every((type) => couverts.has(type)))
@@ -261,8 +261,8 @@ describe('relecture par un décodeur indépendant', () => {
 	});
 
 	it('relit un UPC-E réétendu comme l UPC-A dont il est la forme comprimée', () => {
-		// Un EAN-13 qui commence par zéro est un UPC-A : le décodeur le rend sous cette forme, sans
-		// le zéro de tête. C'est la même donnée, et c'est celle qu'imprime la carte en plastique.
+		// An EAN-13 starting with zero is a UPC-A: the decoder returns it in that form, without the leading
+		// zero. It is the same data, and it is what the plastic card prints.
 		const expanded = expandUpcE('01234565')!;
 
 		expect(decode(linearCode(expanded, 'ean_13'), BarcodeFormat.EAN_13)).toBe(expanded.slice(1));
@@ -271,7 +271,7 @@ describe('relecture par un décodeur indépendant', () => {
 
 describe('linearCode', () => {
 	it('refuse de dessiner un EAN-13 invalide en Code 39', () => {
-		// Sinon le code scannerait, mais renverrait une donnée qui n est pas celle de la carte.
+		// Otherwise the code would scan, but would return data that is not the card's.
 		expect(linearCode('12345', 'ean_13')).toBeNull();
 	});
 

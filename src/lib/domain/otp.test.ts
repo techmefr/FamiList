@@ -52,7 +52,7 @@ describe('normalizeBackupCode', () => {
 	});
 
 	it("laisse tomber ce que l'alphabet ne connaît pas", () => {
-		// Ni O ni 1 ne sont dans l'alphabet : ce sont justement les caractères qu'on a exclus.
+		// Neither O nor 1 is in the alphabet: they are precisely the characters we excluded.
 		expect(normalizeBackupCode('O1ABCDEFGHJK')).toBe('ABCDEFGHJK');
 	});
 

@@ -8,16 +8,16 @@
 		ring = false
 	}: { member: Member; size?: number; ring?: boolean } = $props();
 
-	/** La photo remplit la pastille ; sans photo, ce sont les initiales sur la couleur du membre. */
+	/** The photo fills the badge; with no photo, it is the initials on the member's colour. */
 	const fond = $derived(tintForWhiteText(member.tint));
 </script>
 
 <!--
-	Le portrait est décoratif : le nom de la personne est toujours écrit à côté, ou porté par le
-	texte qui entoure la pile. Le doubler d'un `alt` ferait dire deux fois le même prénom.
+	The portrait is decorative: the person's name is always written beside it, or carried by the text around
+	the stack. Doubling it with an `alt` would say the same first name twice.
 
-	La bordure n'est là que pour les piles qui se chevauchent — sans elle, quatre disques accolés
-	forment une tache continue où on ne compte plus les têtes.
+	The border is only there for overlapping stacks — without it, four touching discs form a continuous blob
+	where the heads can no longer be counted.
 -->
 <span
 	class="grid shrink-0 place-items-center overflow-hidden rounded-full font-semibold text-white {ring

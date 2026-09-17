@@ -10,9 +10,9 @@
 	let dialog = $state<HTMLDialogElement | null>(null);
 
 	/**
-	 * Le dialogue natif est piloté depuis le magasin : l'explication s'ouvre aussi bien depuis le
-	 * bandeau que depuis le menu d'aide, qui vit ailleurs dans la page. `showModal()` apporte au
-	 * passage la fermeture par Échap et le renvoi du focus, qu'une div n'aurait pas.
+	 * The native dialog is driven from the store: the explanation opens as readily from the banner as from the
+	 * help menu, which lives elsewhere in the page. `showModal()` brings closing on Escape and focus return
+	 * along the way, which a div would not have.
 	 */
 	$effect(() => {
 		if (!dialog) return;
@@ -40,18 +40,16 @@
 </script>
 
 <!--
-	Le bandeau d'installation, à la place des bandeaux de l'application — au-dessus du contenu, sous
-	la barre du haut, là où `SyncStatus` parle déjà.
+	The install banner, in the place of the application's banners — above the content, under the top bar,
+	where `SyncStatus` already speaks.
 
-	Il ne se montre qu'à la troisième ouverture, et jamais dans la coquille Capacitor : la règle est
-	dans `$domain/install`, ce composant ne fait que la rendre. Le texte dit ce que l'installation
-	apporte — une icône, un lancement sans réseau — parce que « installer l'application » ne répond
-	pas à la seule question que la personne se pose : pourquoi.
+	It only shows on the third opening, and never in the Capacitor shell: the rule is in `$domain/install`,
+	this component only renders it. The text says what installing brings — an icon, a launch with no network —
+	because "install the application" does not answer the only question the person is asking: why.
 
-	`aria-live="polite"` et non `role="alert"` : ce n'est pas une urgence, l'annonce doit attendre
-	la fin de ce que le lecteur d'écran est en train de dire. Rien ne capte le focus, et « Plus
-	tard » est au clavier comme au doigt : une proposition dont on ne peut pas sortir serait pire
-	que pas de proposition du tout.
+	`aria-live="polite"` and not `role="alert"`: this is not an emergency, the announcement must wait for the
+	end of what the screen reader is saying. Nothing grabs focus, and "Later" is there for the keyboard as for
+	the finger: an offer you cannot get out of would be worse than no offer at all.
 -->
 {#if install.offers}
 	<section
@@ -132,9 +130,9 @@
 		</ul>
 
 		<!--
-			La marche à suivre de Safari, et seulement là : sur iPhone et iPad, aucun code ne peut
-			ouvrir l'invite du système. Les deux libellés cités sont ceux du menu de partage, mot pour
-			mot — une paraphrase ferait chercher un bouton qui n'existe pas sous ce nom.
+			Safari's steps, and only there: on iPhone and iPad, no code can open the system prompt. The two labels
+			quoted are those of the share menu, word for word — a paraphrase would send people looking for a button
+			that does not exist under that name.
 		-->
 		{#if install.isManual}
 			<div class="bg-muted mt-4 rounded-lg p-3">

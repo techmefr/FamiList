@@ -2,17 +2,16 @@ import type { Item, Message } from '$db/schema';
 import { toItem, toMessage } from './mapping';
 
 /**
- * Ce qu'un évènement `postgres_changes` permet de faire sans relire le foyer entier.
+ * What a `postgres_changes` event allows us to do without re-reading the whole household.
  *
- * La relecture complète reste la référence : elle est la seule à pouvoir corriger une divergence,
- * et tout ce qui n'entre pas exactement dans les cas ci-dessous y retombe. Appliquer un payload
- * n'est qu'un raccourci pour les deux tables qui parlent sans arrêt — les articles qu'on coche et
- * les messages qu'on écrit. Une divergence silencieuse coûterait bien plus cher que la lenteur
- * qu'on évite ici.
+ * The full re-read stays the reference: it is the only thing that can fix a divergence, and everything
+ * that does not fall exactly into the cases below goes back to it. Applying a payload is only a shortcut
+ * for the two tables that talk constantly — the items we tick and the messages we write. A silent
+ * divergence would cost far more than the slowness avoided here.
  *
- * Les autres tables publiées (listes, prix, recettes, sondages) gardent la relecture. Une liste ne
- * se reconstruit pas depuis sa seule ligne — `toList` a besoin de `list_members`, que le payload ne
- * porte pas — et les autres changent trop rarement pour valoir le risque.
+ * The other published tables (lists, prices, recipes, polls) keep the re-read. A list cannot be rebuilt
+ * from its own row — `toList` needs `list_members`, which the payload does not carry — and the others
+ * change too rarely to be worth the risk.
  */
 
 type Row = Record<string, unknown>;
@@ -24,7 +23,7 @@ const APPLIED_TABLES = new Set<string>(['items', 'messages']);
 export interface RealtimeEvent {
 	table: string;
 	eventType: string;
-	/** Horodatage du commit Postgres, seul ordre fiable dont dispose le client. */
+	/** Timestamp of the Postgres commit, the only reliable ordering the client has. */
 	commitTimestamp: string;
 	new?: Row;
 	old?: Row;
@@ -32,21 +31,20 @@ export interface RealtimeEvent {
 
 export interface RealtimeContext {
 	/**
-	 * Les listes présentes dans le cache. Un article ou un message qui pointe ailleurs vient d'une
-	 * liste qu'on n'a pas encore lue : le poser laisserait une ligne orpheline, invisible à
-	 * l'écran et jamais nettoyée.
+	 * The lists present in the cache. An item or a message pointing elsewhere comes from a list we have not
+	 * read yet: applying it would leave an orphan row, invisible on screen and never cleaned up.
 	 */
 	knownListIds: ReadonlySet<string>;
 	/**
-	 * Les conversations directes présentes dans le cache. Même raison que pour les listes : un
-	 * message qui pointe vers une conversation qu'on n'a pas encore lue laisserait une ligne
-	 * orpheline. La conversation elle-même n'est pas dans le chemin rapide — elle naît rarement, et
-	 * sa naissance retombe sur la relecture complète, qui la posera avec ses participants.
+	 * The direct conversations present in the cache. Same reason as for lists: a message pointing at a
+	 * conversation we have not read yet would leave an orphan row. The conversation itself is not on the
+	 * fast path — it is rarely born, and its birth falls back on the full re-read, which will lay it down
+	 * with its participants.
 	 */
 	knownConversationIds: ReadonlySet<string>;
-	/** Horodatage du dernier évènement appliqué, par ligne. Sert de pierre tombale après un DELETE. */
+	/** Timestamp of the last event applied, per row. Acts as a tombstone after a DELETE. */
 	applied: ReadonlyMap<string, string>;
-	/** Vrai tant qu'une écriture locale n'a pas atteint le serveur, ou qu'une relecture est en vol. */
+	/** True while a local write has not reached the server, or a re-read is in flight. */
 	busy: boolean;
 }
 
@@ -65,11 +63,11 @@ const identifier = (row: Row | undefined) => {
 };
 
 /**
- * Traduit un évènement en une écriture locale, ou renvoie à la relecture complète.
+ * Translates an event into a local write, or hands back to the full re-read.
  *
- * Fonction pure : l'appelant lui donne ce qu'il sait du cache et décide ensuite quoi en faire. Tout
- * ce qui sort de l'ordinaire — table inconnue, identifiant absent, horodatage illisible, type
- * d'évènement inattendu — rend `pull` plutôt que de deviner.
+ * A pure function: the caller gives it what it knows of the cache and then decides what to do with the
+ * result. Anything out of the ordinary — unknown table, missing id, unreadable timestamp, unexpected
+ * event type — returns `pull` rather than guessing.
  */
 export const planRealtime = (event: RealtimeEvent, context: RealtimeContext): RealtimePlan => {
 	if (context.busy) return { kind: 'pull' };
@@ -77,22 +75,22 @@ export const planRealtime = (event: RealtimeEvent, context: RealtimeContext): Re
 
 	const removing = event.eventType === 'DELETE';
 
-	// Sous `replica identity default`, un DELETE ne porte que la clé primaire : c'est `old` qu'il
-	// faut lire, et rien d'autre n'y sera.
+	// Under `replica identity default`, a DELETE only carries the primary key: it is `old` that has to be
+	// read, and nothing else will be there.
 	const id = identifier(removing ? event.old : event.new);
 	if (!id) return { kind: 'pull' };
 
 	const commit = Date.parse(event.commitTimestamp);
 	if (!Number.isFinite(commit)) return { kind: 'pull' };
 
-	// Un évènement plus ancien que ce qu'on a déjà posé sur cette ligne est un doublon ou un
-	// retardataire. L'appliquer ressusciterait une ligne supprimée ou rétablirait une valeur
-	// périmée. À horodatage égal on applique : deux écritures du même commit décrivent le même état.
+	// An event older than what we have already applied to this row is a duplicate or a straggler. Applying
+	// it would resurrect a deleted row or restore a stale value. On equal timestamps we apply: two writes
+	// from the same commit describe the same state.
 	const seen = context.applied.get(rowKey(event.table, id));
 	if (seen !== undefined && commit < Date.parse(seen)) return { kind: 'skip' };
 
-	// La table est déjà restreinte à `items` et `messages`, mais TypeScript ne le sait pas d'un
-	// `Set<string>` : on refait le tri ici, où il porte le type.
+	// The table is already restricted to `items` and `messages`, but TypeScript does not know that from a
+	// `Set<string>`: we sort it again here, where it carries the type.
 	const table: AppliedTable = event.table === 'items' ? 'items' : 'messages';
 
 	if (removing) return { kind: 'delete', table, id };
@@ -102,9 +100,9 @@ export const planRealtime = (event: RealtimeEvent, context: RealtimeContext): Re
 	const row = event.new;
 	if (!row) return { kind: 'pull' };
 
-	// Un message porte une portée parmi deux : une liste, ou une conversation directe. Un article
-	// n'en a qu'une. Chacune se vérifie contre ce que le cache connaît déjà, et tout le reste —
-	// portée absente, portée inconnue — retombe sur la relecture complète.
+	// A message carries one scope out of two: a list, or a direct conversation. An item has only one. Each
+	// is checked against what the cache already knows, and everything else — missing scope, unknown scope —
+	// falls back on the full re-read.
 	const conversationId = row.conversation_id;
 	if (table === 'messages' && typeof conversationId === 'string') {
 		return context.knownConversationIds.has(conversationId)

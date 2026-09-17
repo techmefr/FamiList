@@ -1,54 +1,49 @@
--- Les reglages d instance, poses depuis /admin plutot que depuis un terminal.
+-- The instance settings, set from /admin rather than from a terminal.
 --
--- Pourquoi ce fichier existe. Faire partir un courriel demandait jusqu ici `supabase secrets set`,
--- donc une ligne de commande, un projet lie et une CLI installee. Personne qui n est pas
--- developpeur ne franchit ces trois marches, et c est pourtant cette personne-la qui heberge son
--- instance. Tant que l envoi n est pas configure, `admin_notifications` se remplit et rien ne part :
--- le silence est total et ressemble a une panne. La configuration doit donc se poser depuis
--- l ecran, et l ecran doit dire ou elle en est.
+-- Why this file exists. Getting an email out required `supabase secrets set` until now, so a command line, a
+-- linked project and an installed CLI. Nobody who is not a developer climbs those three steps, and yet it is
+-- that person who hosts their instance. While sending is not configured, `admin_notifications` fills up and
+-- nothing leaves: the silence is total and looks like a breakdown. The configuration must therefore be set
+-- from the screen, and the screen must say where it stands.
 --
--- Pourquoi une table de reglages et non une table de courriel. #137 vient de poser le meme besoin
--- pour son jeton de suivi de depot, et la migration suivante inventerait la meme mecanique sous un
--- autre nom. Ce qui est pose ici est donc un porte-reglages : un catalogue de cles connues, deux
--- ecritures, une lecture. Le courriel n en est que le premier occupant.
+-- Why a settings table and not an email table. #137 has just raised the same need for its repository tracker
+-- token, and the next migration would invent the same mechanism under another name. So what is set here is a
+-- settings holder: a catalogue of known keys, two writes, one read. Email is only its first occupant.
 --
--- Pourquoi le secret ne vit pas dans une colonne. Un mot de passe SMTP en clair dans une table,
--- modifiable depuis une page web, c est un relais de courriel offert a qui prend la main sur un
--- compte administrateur. Vault chiffre au repos et ne rend la valeur qu a une fonction
--- `security definer` tournant sous le compte proprietaire. Le depot s en sert deja pour les
--- secrets de reveil de `notify-admins` : rien de neuf, seulement un usage de plus.
+-- Why the secret does not live in a column. An SMTP password in the clear in a table, editable from a web
+-- page, is an email relay offered to whoever takes over an administrator account. Vault encrypts at rest and
+-- only returns the value to a `security definer` function running under the owner account. The repository
+-- already uses it for `notify-admins`'s wake-up secrets: nothing new, only one more use.
 --
--- Pourquoi aucune fonction ne relit le secret. `instance_settings_read()` est la seule lecture
--- joignable par un client, et elle ne rend jamais la valeur d une cle secrete — seulement le fait
--- qu elle soit posee et la date. Meme l administrateur qui vient de taper son mot de passe ne peut
--- plus le relire : l ecran propose de le remplacer, jamais de l afficher. Un onglet oublie ouvert
--- ne livre donc rien.
+-- Why no function reads the secret back. `instance_settings_read()` is the only read reachable by a client,
+-- and it never returns the value of a secret key — only the fact that it is set and the date. Even the
+-- administrator who has just typed their password cannot read it back: the screen offers to replace it,
+-- never to show it. A tab left open therefore gives nothing away.
 --
--- Pourquoi les ecritures passent par `assert_admin_write()`. Depuis #128, toute ecriture du
--- panneau exige `aal2`. Une politique RLS permissive sur `instance_settings` aurait ouvert la porte
--- a une session restee au mot de passe seul — exactement le scenario ou quelqu un vient de voler
--- un mot de passe d administrateur et cherche un relais de spam.
+-- Why the writes go through `assert_admin_write()`. Since #128, every write of the panel requires `aal2`. A
+-- permissive RLS policy on `instance_settings` would have opened the door to a session left at the password
+-- alone — exactly the scenario where somebody has just stolen an administrator password and is looking for a
+-- spam relay.
 --
--- Pourquoi les variables d environnement gardent la priorite. Une instance deja configuree par
--- `supabase secrets set` — celle du depot, notamment — ne doit pas casser parce que cette
--- migration passe. Les fonctions edge lisent donc l environnement d abord, la base ensuite, cle
--- par cle. Rien a migrer pour qui n a rien a changer.
+-- Why environment variables keep priority. An instance already configured by `supabase secrets set` — the
+-- repository's, in particular — must not break because this migration goes through. So the edge functions
+-- read the environment first, the database second, key by key. Nothing to migrate for whoever has nothing to
+-- change.
 --
--- Pourquoi un plafond d envoi et un expediteur epingle. Un compte administrateur compromis ne doit
--- pas devenir une passerelle a spam. L expediteur ne se choisit pas au coup par coup : il vient du
--- reglage, et le courriel de test part vers la seule adresse du compte qui clique. Le plafond
--- journalier, lui, borne les degats meme si tout le reste tombe.
+-- Why a sending cap and a pinned sender. A compromised administrator account must not become a spam gateway.
+-- The sender is not chosen case by case: it comes from the setting, and the test email leaves for the sole
+-- address of the account that clicks. The daily cap, for its part, bounds the damage even if everything else
+-- falls.
 
 /*
- * Le catalogue des cles connues, et leur valeur en clair quand elles n ont rien de secret.
+ * The catalogue of known keys, and their value in the clear when they hold nothing secret.
  *
- * Les lignes sont posees par cette migration et par elle seule : `set_instance_setting` refuse une
- * cle absente. Sans ce garde-fou, un administrateur pourrait ecrire dans Vault autant de secrets
- * qu il veut, sous les noms qu il veut — un coffre que personne ne relit n est plus un coffre,
- * c est une decharge.
+ * The rows are set by this migration and by it alone: `set_instance_setting` refuses an absent key. Without
+ * that guardrail, an administrator could write as many secrets into Vault as they like, under whatever names
+ * they like — a vault nobody reads back is no longer a vault, it is a tip.
  *
- * `value` reste toujours `null` sur une ligne secrete. La ligne existe quand meme : elle porte la
- * date de pose, qui est ce que l ecran affiche a la place de la valeur.
+ * `value` always stays `null` on a secret row. The row exists all the same: it carries the date it was set,
+ * which is what the screen shows in place of the value.
  */
 create table if not exists public.instance_settings (
   key text primary key,
@@ -62,8 +57,8 @@ create table if not exists public.instance_settings (
 comment on table public.instance_settings is
   'Reglages d instance poses depuis /admin. Les valeurs secretes vivent dans Vault, jamais dans `value`.';
 
--- Aucune politique : la table n est jointe que par les fonctions `security definer` ci-dessous.
--- RLS activee sans politique veut dire « personne », ce qui est exactement l intention.
+-- No policy: the table is only joined by the `security definer` functions below. RLS enabled with no policy
+-- means "nobody", which is exactly the intention.
 alter table public.instance_settings enable row level security;
 
 revoke all on table public.instance_settings from public, anon, authenticated;
@@ -81,11 +76,10 @@ values
 on conflict (key) do nothing;
 
 /*
- * Le compteur d envois, un seau par jour.
+ * The sending counter, one bucket per day.
  *
- * Une seule ligne par journee, creee au premier envoi : rien a purger, rien a planifier, et la
- * table reste lisible a l oeil. Le plafond est volontairement haut pour une instance familiale et
- * bas pour une campagne de spam.
+ * A single row per day, created on the first send: nothing to purge, nothing to schedule, and the table stays
+ * readable by eye. The cap is deliberately high for a family instance and low for a spam campaign.
  */
 create table if not exists public.instance_mail_quota (
   day date primary key,
@@ -100,11 +94,11 @@ alter table public.instance_mail_quota enable row level security;
 revoke all on table public.instance_mail_quota from public, anon, authenticated;
 
 /*
- * Le nom du secret dans Vault, deduit de la cle.
+ * The secret's name in Vault, derived from the key.
  *
- * Nomme une fois plutot que recopie dans trois fonctions : le jour ou l une des trois ecrit
- * `instance-setting-...` au lieu de `instance_setting_...`, le secret est pose et jamais relu, et
- * l ecran affiche « configure » sur un coffre vide.
+ * Named once rather than copied into three functions: the day one of the three writes `instance-setting-...`
+ * instead of `instance_setting_...`, the secret is set and never read back, and the screen shows "configured"
+ * over an empty vault.
  */
 create or replace function public.instance_secret_name(setting_key text)
 returns text
@@ -118,15 +112,14 @@ $$;
 revoke all on function public.instance_secret_name(text) from public, anon, authenticated;
 
 /*
- * Ce que l ecran a le droit de savoir.
+ * What the screen is allowed to know.
  *
- * `value` sort en clair pour une cle ordinaire et vaut toujours `null` pour une cle secrete — la
- * distinction est faite ici, dans la base, et non dans le client : un client se remplace par une
- * requete `curl`.
+ * `value` comes out in the clear for an ordinary key and is always `null` for a secret key — the distinction
+ * is made here, in the database, and not in the client: a client can be replaced by a `curl` request.
  *
- * Lecture reservee a `is_admin()` seul, sans `aal2`, comme les autres lectures du panneau depuis
- * #128 : un administrateur bloque au premier facteur doit pouvoir ouvrir l ecran et comprendre
- * pourquoi il est refuse, plutot que de croire qu il a perdu son role.
+ * Reading is reserved for `is_admin()` alone, with no `aal2`, like the panel's other reads since #128: an
+ * administrator stuck at the first factor must be able to open the screen and understand why they are
+ * refused, rather than believe they have lost their role.
  */
 create or replace function public.instance_settings_read()
 returns table (
@@ -159,15 +152,14 @@ comment on function public.instance_settings_read() is
   'Etat des reglages pour /admin. Ne rend jamais la valeur d une cle secrete, seulement le fait qu elle soit posee.';
 
 /*
- * Poser une valeur.
+ * Setting a value.
  *
- * Les verifications de forme sont ici et pas seulement dans l ecran, parce qu elles servent a
- * quelque chose : un port a 0 ou une adresse d expediteur sans arobase produiraient un echec
- * d envoi asynchrone et muet, deux jours plus tard, sans que personne ne fasse le lien avec la
- * frappe du mardi.
+ * The format checks are here and not only in the screen, because they serve a purpose: a port of 0 or a
+ * sender address with no at-sign would produce a silent asynchronous sending failure, two days later, with
+ * nobody connecting it to Tuesday's typing.
  *
- * Une valeur vide efface : c est le geste naturel pour retirer un reglage, et il n a pas besoin
- * d un second bouton.
+ * An empty value erases: it is the natural gesture for removing a setting, and it does not need a second
+ * button.
  */
 create or replace function public.set_instance_setting(setting_key text, setting_value text)
 returns void
@@ -220,7 +212,7 @@ begin
       perform vault.update_secret(existing, cleaned);
     end if;
 
-    -- `value` reste vide : la table ne doit jamais porter une copie de ce que Vault chiffre.
+    -- `value` stays empty: the table must never carry a copy of what Vault encrypts.
     update public.instance_settings
     set value = null,
         is_set = true,
@@ -245,11 +237,10 @@ comment on function public.set_instance_setting(text, text) is
   'Pose un reglage d instance. Refuse une cle hors catalogue, range les secrets dans Vault, exige aal2.';
 
 /*
- * Retirer une valeur.
+ * Removing a value.
  *
- * Le secret est supprime de Vault et pas seulement oublie de la table : un secret orphelin dans le
- * coffre serait toujours lisible par la fonction edge, et un reglage « efface » continuerait a
- * servir.
+ * The secret is deleted from Vault and not merely forgotten from the table: an orphan secret in the vault
+ * would still be readable by the edge function, and an "erased" setting would go on serving.
  */
 create or replace function public.clear_instance_setting(setting_key text)
 returns void
@@ -282,11 +273,10 @@ comment on function public.clear_instance_setting(text) is
   'Efface un reglage d instance, y compris le secret correspondant dans Vault. Exige aal2.';
 
 /*
- * Ce que les fonctions edge lisent, secrets compris.
+ * What the edge functions read, secrets included.
  *
- * Accordee au seul `service_role`, qui ne vit que dans les secrets du projet et jamais dans le
- * bundle publie. C est la seule sortie des valeurs secretes, et elle ne va nulle part ou un
- * navigateur puisse l atteindre.
+ * Granted to `service_role` alone, which lives only in the project's secrets and never in the published
+ * bundle. It is the only way out for the secret values, and it goes nowhere a browser can reach.
  */
 create or replace function public.instance_config()
 returns jsonb
@@ -324,11 +314,10 @@ comment on function public.instance_config() is
   'Reglages d instance destines aux fonctions edge, secrets Vault resolus. Accordee au seul service_role.';
 
 /*
- * Le seau journalier, reclame avant d ouvrir la session SMTP.
+ * The daily bucket, claimed before opening the SMTP session.
  *
- * Rend `false` quand le plafond est atteint, et l appelant s arrete la. Compte avant d envoyer et
- * non apres : un envoi qui echoue a mi-parcours a quand meme sollicite le relais, et c est ce que
- * le plafond borne.
+ * Returns `false` when the cap is reached, and the caller stops there. It counts before sending and not after:
+ * a send that fails halfway has still called on the relay, and that is what the cap bounds.
  */
 create or replace function public.claim_instance_mail(amount integer default 1)
 returns boolean
@@ -358,14 +347,14 @@ comment on function public.claim_instance_mail(integer) is
   'Reserve des envois dans le plafond journalier. Rend false quand le plafond est atteint.';
 
 /*
- * L autorisation du courriel de test, et son destinataire.
+ * The authorisation for the test email, and its recipient.
  *
- * Le destinataire ne se saisit pas : c est l adresse du compte qui clique. Un champ libre aurait
- * fait de ce bouton un formulaire d envoi anonyme, ce que le plafond seul n aurait pas suffi a
- * rendre inoffensif. L expediteur, lui, vient du reglage et de nulle part ailleurs.
+ * The recipient is not typed in: it is the address of the account that clicks. A free field would have made
+ * this button an anonymous sending form, which the cap alone would not have been enough to make harmless. The
+ * sender, for its part, comes from the setting and from nowhere else.
  *
- * `assert_admin_write()` plutot que `is_admin()` : ce bouton fait sortir un message de l instance,
- * c est une action et non une lecture.
+ * `assert_admin_write()` rather than `is_admin()`: this button gets a message out of the instance, which is
+ * an action and not a read.
  */
 create or replace function public.begin_instance_mail_test()
 returns text

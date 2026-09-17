@@ -31,8 +31,8 @@
 	const themes: Theme[] = ['light', 'dark', 'system'];
 
 	/**
-	 * Le son se juge à l'oreille, pas dans un libellé : l'aperçu joue le retour de fin de courses,
-	 * celui qui porte le plus loin. Il sert aussi à vérifier que l'appareil n'est pas en silencieux.
+	 * Sound is judged by ear, not in a label: the preview plays the end-of-shopping feedback, the one that
+	 * carries furthest. It also serves to check the device is not on silent.
 	 */
 	function preview() {
 		feedback.play('success');
@@ -41,12 +41,11 @@
 	let nearbyRefused = $state(false);
 
 	/**
-	 * L'autorisation de position est demandée au moment de l'activation, jamais avant.
+	 * Location permission is asked for at the moment it is switched on, never before.
 	 *
-	 * La demander au lancement gaspillerait la seule occasion de l'obtenir, et personne ne comprend
-	 * pourquoi une liste de courses veut savoir où l'on est tant qu'on ne l'a pas décidé ici. Un
-	 * refus laisse le réglage éteint : il vaut mieux un interrupteur honnête qu'un interrupteur
-	 * allumé qui ne déclenche rien.
+	 * Asking at launch would waste the only chance of getting it, and nobody understands why a shopping list
+	 * wants to know where they are until they have decided it here. A refusal leaves the setting off: better
+	 * an honest switch than one that is on and triggers nothing.
 	 */
 	async function toggleNearby(enabled: boolean) {
 		nearbyRefused = false;
@@ -62,9 +61,9 @@
 	}
 
 	/**
-	 * Relancer le tour, c'est effacer le témoin et repasser par l'accueil : le gabarit s'occupe du
-	 * reste. Le déclencher d'ici demanderait de dupliquer la même condition à deux endroits, avec
-	 * le risque qu'ils cessent un jour de dire la même chose.
+	 * Restarting the tour means clearing the marker and going back through the home screen: the layout deals
+	 * with the rest. Triggering it from here would mean duplicating the same condition in two places, with
+	 * the risk that they one day stop saying the same thing.
 	 */
 	function replayTour() {
 		settings.setTourSeen(false);
@@ -112,8 +111,8 @@
 	</Card.Header>
 	<Card.Content class="fl-divided">
 		<!--
-			Les personnes du foyer sont affichées ici, et pas seulement derrière le lien : « avec qui on
-			peut partager » est une question à laquelle l'écran des réglages doit répondre tout seul.
+			The people of the household are shown here, and not only behind the link: "who can we share with" is a
+			question the settings screen must answer on its own.
 		-->
 		{#if data.members.length > 0}
 			<ul class="flex flex-wrap gap-2" data-test-id="sharing-members">
@@ -235,8 +234,8 @@
 		</fieldset>
 
 		<!--
-			Chaque option s'affiche dans sa propre police : un choix de typographie qu'on ne voit pas
-			ne se choisit pas, il se devine.
+			Each option is shown in its own typeface: a typography choice you cannot see is not chosen, it is
+			guessed.
 		-->
 		<fieldset>
 			<legend class="text-label mb-2 font-medium">{t('profile.font')}</legend>
@@ -261,8 +260,8 @@
 		</fieldset>
 
 		<!--
-			La main dominante est un réglage d'apparence : elle ne change rien à ce que fait
-			l'application, seulement le côté où se posent les commandes qu'on atteint au pouce.
+			The dominant hand is an appearance setting: it changes nothing about what the application does, only
+			the side the thumb-reachable controls sit on.
 		-->
 		<fieldset>
 			<legend class="text-label mb-2 font-medium">{t('profile.hand')}</legend>

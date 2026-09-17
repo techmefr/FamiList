@@ -1,12 +1,11 @@
 /**
- * Main dominante : de quel côté de l'écran se posent les commandes qu'on atteint au pouce.
+ * Dominant hand: which side of the screen the thumb-reachable controls sit on.
  *
- * Deux valeurs seulement, et droitier par défaut : c'est le placement d'origine du bouton de
- * création, et la main la plus répandue. Un « système » n'aurait aucun sens ici — aucune plateforme
- * ne publie cette information.
+ * Only two values, and right-handed by default: that is the original placement of the create button, and
+ * the more common hand. A "system" value would make no sense here — no platform publishes this information.
  *
- * Attention, ce réglage n'est pas une propriété logique. Une main gauche reste une main gauche
- * quand l'interface se lit de droite à gauche : le côté visé est physique, il ne suit pas `dir`.
+ * Careful, this setting is not a logical property. A left hand stays a left hand when the interface reads
+ * right to left: the side aimed at is physical, it does not follow `dir`.
  */
 export type Hand = 'right' | 'left';
 

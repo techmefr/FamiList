@@ -9,11 +9,11 @@
 	const titre = $derived(t(`bugReport.title.${report.kind}`));
 
 	/**
-	 * Échap réduit, il ne ferme pas.
+	 * Escape shrinks, it does not close.
 	 *
-	 * C'est l'inverse de la convention des boîtes de dialogue, et c'est voulu : ici le geste
-	 * attendu est « laisse-moi revoir mon écran », pas « jette ce que je viens d'écrire ». Fermer
-	 * reste possible, par un bouton qu'on ne presse pas par réflexe.
+	 * That is the opposite of the dialog convention, and it is intended: here the expected gesture is "let me
+	 * see my screen again", not "throw away what I have just written". Closing stays possible, through a
+	 * button nobody presses by reflex.
 	 */
 	function auClavier(event: KeyboardEvent) {
 		if (event.key === 'Escape' && report.open && !report.minimized) {
@@ -27,16 +27,15 @@
 
 {#if report.open}
 	<!--
-		Un panneau, pas une page, et surtout pas un dialogue modal.
+		A panel, not a page, and above all not a modal dialog.
 
-		Le formulaire demande une capture de l'écran où le problème s'est produit. Une page le
-		remplace, un modal le rend inerte derrière un voile : dans les deux cas, ce qu'il faut
-		photographier a disparu au moment précis où on veut le montrer. D'où `aria-modal="false"`
-		et l'absence de voile — le reste de l'écran continue de vivre, on peut faire défiler,
-		rouvrir un menu, reproduire le bug pendant que le panneau attend.
+		The form asks for a capture of the screen where the problem happened. A page replaces it, a modal makes
+		it inert behind a veil: in both cases, what needs photographing has disappeared at the precise moment we
+		want to show it. Hence `aria-modal="false"` and the absence of a veil — the rest of the screen goes on
+		living, you can scroll, reopen a menu, reproduce the bug while the panel waits.
 
-		Il se pose au-dessus de la barre de navigation (`--fl-navbar-h`), qui est fixée en bas sur
-		téléphone : sans ça, le bouton d'envoi tomberait sous les onglets.
+		It sits above the navigation bar (`--fl-navbar-h`), which is fixed at the bottom on a phone: without
+		that, the send button would fall under the tabs.
 	-->
 	<div
 		role="dialog"
@@ -61,9 +60,8 @@
 				>
 					<ChevronUp size={18} aria-hidden="true" />
 					<!--
-						Sur téléphone, le mot cède la place au titre, qui se faisait couper. La flèche
-						suffit à ce moment-là : le panneau réduit ne propose que ce geste-là. Le libellé
-						reste lu par la synthèse vocale.
+						On a phone, the word gives way to the title, which was being cut off. The arrow is enough at that
+						point: a shrunk panel offers only that gesture. The label stays read out by the screen reader.
 					-->
 					<span class="max-md:sr-only">{t('bugReport.resume')}</span>
 				</Button>
@@ -92,9 +90,8 @@
 
 		{#if report.minimized}
 			<!--
-				Réduit, le panneau ne garde qu'une ligne : de quoi savoir qu'un signalement est en
-				cours, et de quoi le rouvrir. Le brouillon n'est pas affiché mais il est là — c'est
-				l'état, pas le composant, qui le tient.
+				Shrunk, the panel keeps only one line: enough to know a report is in progress, and enough to reopen
+				it. The draft is not shown but it is there — it is the state, not the component, that holds it.
 			-->
 			<p class="text-muted-foreground text-caption px-4 pb-3" data-test-id="report-minimized-hint">
 				{t('bugReport.minimizedHint')}

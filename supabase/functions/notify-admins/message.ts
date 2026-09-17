@@ -1,15 +1,14 @@
 /**
- * Redaction du courriel groupe envoye aux administrateurs.
+ * Writing the grouped email sent to the administrators.
  *
- * En francais, alors que l application parle dix langues : ce texte ne s adresse pas aux personnes
- * qui utilisent l application mais a celles qui l administrent, et rien en base ne dit dans quelle
- * langue elles la lisent — `profiles` ne porte aucune colonne de langue, le choix vit dans le
- * `localStorage` du navigateur. Traduire a l aveugle demanderait d inventer une preference; ecrire
- * en francais suit le reste de ce qui ne sort pas de l ecran : les commentaires, les messages de
- * commit et les libelles d administration. Le jour ou une langue d administrateur est stockee,
- * c est ce fichier, et lui seul, qui change.
+ * In French, while the application speaks ten languages: this text is not addressed to the people who use
+ * the application but to those who administer it, and nothing in the database says which language they read
+ * it in — `profiles` carries no language column, and the choice lives in the browser's `localStorage`.
+ * Translating blind would mean inventing a preference; writing in French follows the rest of what does not
+ * leave the screen: the comments, the commit messages and the administration labels. The day an
+ * administrator's language is stored, this file, and it alone, changes.
  *
- * Aucune dependance Deno ici, pour que la mise en forme reste testable par vitest.
+ * No Deno dependency here, so that the formatting stays testable by vitest.
  */
 
 export const NOTIFICATION_KINDS = ['signup', 'bug_report'] as const;
@@ -61,8 +60,8 @@ function describeBugReport(notification: AdminNotification): string {
 }
 
 /**
- * Un seul courriel pour tout ce que le tampon contenait, meme quand les deux sortes s y melangent :
- * deux courriels simultanes couteraient a l administrateur la meme attention qu un seul.
+ * A single email for everything the buffer held, even when both kinds are mixed in it: two simultaneous
+ * emails would cost the administrator the same attention as one.
  */
 export function buildAdminMail(notifications: AdminNotification[], adminUrl: string): AdminMail {
 	const signups = notifications.filter((n) => n.kind === 'signup');

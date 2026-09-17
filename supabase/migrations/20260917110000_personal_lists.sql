@@ -1,45 +1,44 @@
--- Une liste reste personnelle tant qu on ne la partage pas.
+-- A list stays personal as long as it is not shared.
 --
--- Un foyer n est qu un cercle de partage : la famille, le conjoint, les collegues. Appartenir a
--- plusieurs est le but, et des lors une liste n appartient plus forcement a un cercle. Celle qu on
--- tient pour soi — les cadeaux, la pharmacie, la liste de courses qu on ne veut pas commenter —
--- n avait jusqu ici aucune place : lists.household_id etait not null, donc toute liste naissait
--- dans un cercle.
+-- A household is only a sharing circle: the family, a partner, colleagues. Belonging to several is the
+-- point, and from then on a list no longer necessarily belongs to a circle. The one kept to yourself — the
+-- presents, the medicine cabinet, the shopping list you do not want commented on — had no place until now:
+-- lists.household_id was not null, so every list was born in a circle.
 --
--- Deux voies existaient. Un cercle solo implicite par compte n aurait rien change aux requetes,
--- mais ce cercle fantome serait apparu dans tous les selecteurs, toutes les invitations, tous les
--- compteurs, et il aurait fallu le masquer partout, a chaque ecran, indefiniment. La colonne
--- nullable se paie une fois, ici, dans les politiques — et elle se couvre par des tests.
+-- Two routes existed. An implicit solo circle per account would have changed nothing in the queries, but
+-- that ghost circle would have appeared in every selector, every invitation, every counter, and it would
+-- have had to be hidden everywhere, on every screen, indefinitely. The nullable column is paid for once,
+-- here, in the policies — and it is covered by tests.
 --
--- Le piege est le null oublie dans un where : il fait soit disparaitre une liste, soit fuiter.
--- Chaque politique touchant lists, list_members et items est donc reprise explicitement plus bas,
--- meme celles qui n avaient pas besoin de changer, avec la raison ecrite.
+-- The trap is the null forgotten in a where: it either makes a list disappear or leaks it. So every policy
+-- touching lists, list_members and items is rewritten explicitly below, even those that did not need to
+-- change, with the reason written out.
 
--- 1. La colonne devient nullable.
+-- 1. The column becomes nullable.
 --
--- Aucune liste existante n est touchee : elles gardent toutes leur cercle. Le null est reserve a ce
--- qui naitra prive.
+-- No existing list is touched: they all keep their circle. The null is reserved for what will be born
+-- private.
 alter table public.lists alter column household_id drop not null;
 
 comment on column public.lists.household_id is
   'Le cercle avec lequel la liste est partagee, ou null si elle est personnelle. Partager une liste consiste a lui designer un cercle.';
 
--- 2. Le declencheur de partage est inverse.
+-- 2. The sharing trigger is reversed.
 --
--- Il inscrivait d office tous les membres du foyer sur toute liste inseree : exactement le contraire
--- du modele retenu. La duplication de liste (#6) avait deja du supprimer les membres juste apres
--- l insertion pour ne pas fuiter la copie d une liste restreinte ; ce contournement disparait ici.
+-- It automatically enrolled every household member on every inserted list: exactly the opposite of the
+-- settled model. Duplicating a list (#6) had already had to delete the members right after the insertion so
+-- as not to leak the copy of a restricted list; that workaround disappears here.
 --
--- Une liste naît donc ouverte a son seul auteur. Reste le cas ou l auteur n a rien a y faire : les
--- listes de demonstration sont inserees par un administrateur qui n est pas membre du foyer de
--- demonstration, et personne ne les lirait jamais. On distingue par l appartenance : si celui qui
--- insere n est pas membre du cercle vise, la liste est posee pour ce cercle, pas pour lui.
+-- A list is therefore born open to its author alone. That leaves the case where the author has no business
+-- on it: the demonstration lists are inserted by an administrator who is not a member of the demonstration
+-- household, and nobody would ever read them. We tell them apart by membership: if whoever inserts is not a
+-- member of the circle aimed at, the list is set for that circle, not for them.
 --
--- ensure_household, lui, provisionne le foyer du compte qui l appelle : l auteur est membre, il est
--- donc le seul inscrit, ce qui est bien le defaut voulu.
+-- ensure_household, for its part, provisions the household of the account calling it: the author is a
+-- member, and so is the only one enrolled, which is indeed the wanted default.
 --
--- A retenir : household_id dit la portee, list_members dit l acces. Poser un cercle a l insertion
--- ne partage donc rien a soi seul — inscrire les membres reste un geste, celui du partage.
+-- To remember: household_id says the scope, list_members says the access. Setting a circle at insertion time
+-- therefore shares nothing on its own — enrolling the members stays a gesture, the gesture of sharing.
 create or replace function public.share_list_with_household()
 returns trigger
 language plpgsql
@@ -75,11 +74,11 @@ begin
 end;
 $$;
 
--- 3. Les politiques de lists, relues une par une pour le null.
+-- 3. lists's policies, read again one by one for the null.
 --
--- select, update et delete passent par can_access_list, qui ne regarde que list_members : le null
--- ne les concerne pas, une liste personnelle n a qu un membre et c est son auteur. Elles sont
--- reecrites a l identique pour que la relecture soit tracee ici plutot que supposee.
+-- select, update and delete go through can_access_list, which only looks at list_members: the null does not
+-- concern them, a personal list has only one member and that is its author. They are rewritten identically
+-- so that the review is recorded here rather than assumed.
 drop policy if exists lists_select on public.lists;
 create policy lists_select on public.lists for select
   using (public.can_access_list(id));
@@ -88,17 +87,16 @@ drop policy if exists lists_delete on public.lists;
 create policy lists_delete on public.lists for delete
   using (public.can_access_list(id));
 
--- L insertion, elle, changeait de sens : is_household_member(null) est faux, donc la policy telle
--- quelle refusait toute liste personnelle. Le null devient la porte ouverte — sans cercle, il n y a
--- rien a verifier ; avec un cercle, il faut y appartenir, comme avant.
+-- The insertion, for its part, changed meaning: is_household_member(null) is false, so the policy as it
+-- stood refused every personal list. The null becomes the open door — with no circle, there is nothing to
+-- check; with a circle, you have to belong to it, as before.
 drop policy if exists lists_insert on public.lists;
 create policy lists_insert on public.lists for insert
   with check (household_id is null or public.is_household_member(household_id));
 
--- La mise a jour est le trou que la colonne nullable ouvrait : partager consiste desormais a ecrire
--- household_id, et l ancienne policy ne verifiait que l acces a la liste. N importe quel membre
--- pouvait donc pousser une liste dans un cercle dont il n est pas membre, et l y rendre lisible par
--- des inconnus. Le with check regarde maintenant les deux cotes.
+-- The update is the hole the nullable column opened: sharing now consists in writing household_id, and the
+-- old policy only checked access to the list. Any member could therefore push a list into a circle they are
+-- not a member of, and make it readable there by strangers. The with check now looks at both sides.
 drop policy if exists lists_update on public.lists;
 create policy lists_update on public.lists for update
   using (public.can_access_list(id))
@@ -107,16 +105,16 @@ create policy lists_update on public.lists for update
     and (household_id is null or public.is_household_member(household_id))
   );
 
--- 4. list_members : a qui une liste peut s ouvrir.
+-- 4. list_members: who a list can open to.
 --
--- La fonction verifiait que la personne inscrite appartient au foyer proprietaire de la liste. Avec
--- un household_id null elle rendait faux, donc le declencheur mis a part, plus personne — pas meme
--- l auteur — n aurait pu figurer sur sa propre liste personnelle.
+-- The function checked that the person enrolled belongs to the household owning the list. With a null
+-- household_id it returned false, so apart from the trigger, nobody — not even the author — could have
+-- appeared on their own personal list.
 --
--- Le null ne se traite pas en l ouvrant a tous : une liste sans cercle ne se partage pas, c est la
--- regle. Seul l appelant peut y figurer, et la policy exige deja par ailleurs qu il y ait acces —
--- autrement dit, sur une liste personnelle, on ne peut que se reinscrire soi-meme. Partager exige
--- de lui designer un cercle d abord.
+-- The null is not handled by opening it to everybody: a list with no circle is not shared, that is the rule.
+-- Only the caller can appear on it, and the policy already requires elsewhere that they have access —
+-- in other words, on a personal list, you can only re-enrol yourself. Sharing requires giving it a circle
+-- first.
 create or replace function public.list_belongs_to_household_of(target uuid, member uuid)
 returns boolean
 language sql
@@ -150,20 +148,19 @@ create policy list_members_all on public.list_members for all
     and public.list_belongs_to_household_of(list_id, user_id)
   );
 
--- 5. items, messages, sondages : rien a changer, et c est verifie.
+-- 5. items, messages, polls: nothing to change, and that is verified.
 --
--- Tout le contenu d une liste passe par can_access_list(list_id), qui ne lit que list_members.
--- Aucune de ces politiques ne mentionne household_id, donc aucune ne pouvait perdre une liste
--- personnelle ni la laisser fuiter. La policy des articles est reecrite a l identique pour que la
--- relecture soit tracee.
+-- All of a list's content goes through can_access_list(list_id), which only reads list_members. None of
+-- these policies mentions household_id, so none of them could lose a personal list or let it leak. The items
+-- policy is rewritten identically so that the review is recorded.
 drop policy if exists items_all on public.items;
 create policy items_all on public.items for all
   using (public.can_access_list(list_id))
   with check (public.can_access_list(list_id));
 
--- 6. Les declencheurs d arrivee et de depart, relus eux aussi.
+-- 6. The arrival and departure triggers, read again as well.
 --
--- join_open_lists filtre l.household_id = new.household_id : un null ne rejoint jamais une egalite,
--- donc arriver dans un cercle n a jamais donne acces aux listes personnelles de ses membres.
--- leave_household_lists filtre de la meme facon : quitter un cercle ne retire pas de ses propres
--- listes personnelles. Les deux tombent juste sans modification ; ils sont couverts par les tests.
+-- join_open_lists filters on l.household_id = new.household_id: a null never satisfies an equality, so
+-- arriving in a circle has never given access to its members' personal lists. leave_household_lists filters
+-- the same way: leaving a circle does not remove you from your own personal lists. Both come out right with
+-- no change; they are covered by the tests.

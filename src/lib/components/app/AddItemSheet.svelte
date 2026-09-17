@@ -31,21 +31,20 @@
 	let aisleId = $state('');
 	let note = $state('');
 
-	/** L'article en cours de modification, ou rien du tout quand on en ajoute un. */
+	/** The item being edited, or nothing at all when adding one. */
 	let edite = $state<Item | null>(null);
 
 	/**
-	 * Même contrat que les autres feuilles : `showModal()` et rien d'autre, jamais de booléen en
-	 * parallèle. Échap ferme sans passer par nous, et un miroir de l'état finit toujours par mentir.
+	 * Same contract as the other sheets: `showModal()` and nothing else, never a boolean alongside. Escape
+	 * closes without going through us, and a mirror of the state always ends up lying.
 	 *
-	 * Le focus après `await tick()` : `showModal()` place lui-même le focus sur le premier élément
-	 * atteignable, et le déplacer avant qu'il ait fini revient à le lui rendre aussitôt.
+	 * Focus after `await tick()`: `showModal()` places focus on the first reachable element itself, and
+	 * moving it before it has finished amounts to handing it straight back.
 	 *
-	 * Puis une seconde fois, un peu plus tard. La feuille s'ouvre au bout d'une navigation, et
-	 * SvelteKit remet le focus sur le corps du document une fois celle-ci terminée, pour annoncer
-	 * la nouvelle page : sans ce rattrapage, le curseur atterrissait nulle part. La reprise ne se
-	 * fait que si personne n'a bougé entre-temps — on ne vole pas le focus de quelqu'un qui a déjà
-	 * tabulé ailleurs.
+	 * Then a second time, a little later. The sheet opens at the end of a navigation, and SvelteKit puts
+	 * focus back on the document body once that is done, to announce the new page: without this catch-up,
+	 * the cursor landed nowhere. The retry only happens if nobody moved in the meantime — we do not steal
+	 * focus from somebody who has already tabbed elsewhere.
 	 */
 	export async function show(item?: Item) {
 		edite = item ?? null;
@@ -55,8 +54,8 @@
 			qty = item.qty;
 			aisleId = item.aisleId;
 			note = item.note ?? '';
-			// La famille se déduit de l'unité enregistrée : l'écran s'ouvre sur la rangée où se
-			// trouve cette unité, pas sur celle de départ.
+			// The family is derived from the saved unit: the screen opens on the row where that unit is, not on the
+			// starting one.
 			group = unitGroupOf(item.unit);
 			unit = unitsOf(group).find((id) => id === item.unit) ?? unitsOf(group)[0];
 		} else {
@@ -77,15 +76,15 @@
 		dialog?.close();
 	}
 
-	/** Le rayon deviné suit la saisie tant que personne n'en a choisi un. */
+	/** The guessed aisle follows what is typed until somebody chooses one. */
 	const suggested = $derived(name.trim() ? data.suggestAisleId(name) : '');
 	const effectiveAisle = $derived(aisleId || suggested);
 
 	const choices = $derived(unitsOf(group));
 
 	/**
-	 * Changer de famille change l'unité : rester sur « kg » après être passé aux liquides
-	 * enregistrerait une unité qui n'est plus proposée à l'écran.
+	 * Changing family changes the unit: staying on "kg" after moving to liquids would save a unit no longer
+	 * offered on screen.
 	 */
 	function chooseGroup(id: UnitGroupId) {
 		group = id;
@@ -119,13 +118,12 @@
 </script>
 
 <!--
-	L'ajout d'un article est passé de la carte posée sous la liste à cette feuille, ouverte par le
-	bouton de création. La carte occupait le bas de chaque liste en permanence, pour un geste qui
-	n'arrive qu'entre deux courses : on lisait sa liste avec un formulaire vide sous les yeux.
+	Adding an item moved from the card sitting under the list to this sheet, opened by the create button. The
+	card took up the bottom of every list permanently, for a gesture that only happens between two shopping
+	trips: you read your list with an empty form in front of you.
 
-	Le voile, l'enfermement du clavier, l'inertie du reste de la page et la fermeture sur Échap
-	viennent du `<dialog>` natif. Ce sont les quatre comportements qu'une <div> obligerait à
-	réécrire, et à rater.
+	The scrim, the keyboard trapping, the inertness of the rest of the page and closing on Escape come from
+	the native `<dialog>`. Those are the four behaviours a <div> would force us to rewrite, and to get wrong.
 -->
 <dialog
 	bind:this={dialog}
@@ -160,10 +158,9 @@
 			</div>
 
 			<!--
-				L'unité se choisit avant la quantité, et en deux temps. « Combien ? » n'a pas de sens
-				tant qu'on ne sait pas de quoi on compte : trois cents, c'est trois cents grammes ou
-				trois cents pièces. Quinze unités dans une liste déroulante demandaient de lire quinze
-				mots pour en garder un ; par famille, c'est deux choix la plupart du temps.
+				The unit is chosen before the quantity, and in two steps. "How many?" means nothing until you know
+				what is being counted: three hundred is three hundred grams or three hundred pieces. Fifteen units in
+				a dropdown meant reading fifteen words to keep one; by family, it is two choices most of the time.
 			-->
 			<fieldset>
 				<legend class="text-label font-medium">{t('add.unitKind')}</legend>
@@ -184,8 +181,8 @@
 				</div>
 			</fieldset>
 
-			<!-- Une famille à une seule unité ne demande pas de deuxième choix : « Pièces » puis
-				« pièce » serait un pas pour rien. -->
+			<!-- A family with a single unit does not ask for a second choice: "Pieces" then "piece" would be a step
+				for nothing. -->
 			{#if choices.length > 1}
 				<fieldset data-test-id="add-unit">
 					<legend class="text-label font-medium">{t('add.unit')}</legend>
@@ -208,11 +205,10 @@
 			{/if}
 
 			<!--
-				L'unité choisie est rappelée dans le libellé. Sans elle, « 500 » ne dit plus rien une
-				fois la rangée de pastilles sortie du champ de vision — ce qui arrive dès que le
-				clavier logiciel s'ouvre. Dans le libellé et pas au bout du champ : « bouteille » y
-				passerait par-dessus la saisie, et un retrait taillé pour le mot le plus long
-				laisserait un trou béant pour « g ».
+				The chosen unit is repeated in the label. Without it, "500" says nothing once the row of badges has
+				left the field of view — which happens as soon as the software keyboard opens. In the label and not at
+				the end of the field: "bottle" would sit over what is being typed there, and padding cut for the
+				longest word would leave a gaping hole for "g".
 			-->
 			<div>
 				<Label for="item-qty" data-test-id="add-qty-label">
@@ -251,9 +247,9 @@
 			</div>
 
 			<!--
-				La note existait en base et s'affichait déjà sous l'article, sans qu'aucun écran ne
-				permette de l'écrire. C'est là qu'elle se remplit : « la grande bouteille », « sans
-				sucre », ce qu'on dirait à voix haute à qui fait les courses à sa place.
+				The note existed in the database and was already shown under the item, without any screen allowing it
+				to be written. This is where it gets filled in: "the big bottle", "sugar free", what you would say out
+				loud to whoever is shopping for you.
 			-->
 			<div>
 				<Label for="item-note">{t('add.note')}</Label>
@@ -285,9 +281,9 @@
 		</form>
 
 		<!--
-			La fermeture vient après le formulaire dans le document, même si elle s'affiche en haut à
-			droite : le navigateur donne le premier focus au premier élément atteignable, et mieux vaut
-			que ce soit le champ que la sortie.
+			The close button comes after the form in the document, even though it shows at the top right: the
+			browser gives first focus to the first reachable element, and better that it is the field than the way
+			out.
 		-->
 		<button
 			type="button"

@@ -1,24 +1,24 @@
 /**
- * Ce qu on sait lire dans une page de recette : le schema.org `Recipe` que la quasi-totalite des
- * sites de cuisine publie en JSON-LD, parce que c est ce que Google leur demande pour afficher
- * leurs fiches. C est une donnee structuree, deposee la exprès pour etre lue par une machine :
- * l extraction est donc deterministe, et non un devinage sur du HTML de mise en page.
+ * What we can read in a recipe page: the schema.org `Recipe` that nearly every cooking site publishes as
+ * JSON-LD, because that is what Google asks of them to show their cards. It is structured data, put there on
+ * purpose to be read by a machine: the extraction is therefore deterministic, and not guesswork on layout
+ * HTML.
  *
- * On ne regarde rien d autre. Pas de microdonnees, pas de repli sur les balises de titre, pas
- * d heuristique sur les listes a puces : une page sans JSON-LD rend null, et la personne saisit sa
- * recette a la main comme avant. Un a-peu-pres tire du corps de la page ressemblerait a une
- * recette sans en etre une, et le tri coute plus cher que la saisie.
+ * We look at nothing else. No microdata, no fallback on heading tags, no heuristics on bulleted lists: a
+ * page with no JSON-LD returns null, and the person types their recipe by hand as before. An approximation
+ * pulled from the body of the page would look like a recipe without being one, and sorting it out costs more
+ * than typing it.
  *
- * Aucune dependance Deno, aucun analyseur HTML : la reconnaissance des blocs `<script>` se fait a
- * l expression reguliere, ce qui rend tout ce fichier testable par vitest.
+ * No Deno dependency, no HTML parser: `<script>` blocks are recognised with a regular expression, which
+ * makes this whole file testable by vitest.
  */
 
 export type ImportedRecipe = {
 	name: string | null;
-	/** Lignes d ingredients telles qu ecrites par le site, non decoupees : « 2 c. a soupe d huile ». */
+	/** Ingredient lines as written by the site, not split up: "2 tbsp of oil". */
 	ingredients: string[];
 	steps: string[];
-	/** Le nombre de parts tel qu ecrit : « 4 personnes », « 6 ». L interpretation est cliente. */
+	/** The number of servings as written: "4 people", "6". Interpretation is the client's. */
 	servings: string | null;
 };
 
@@ -28,7 +28,7 @@ const text = (value: unknown): string | null => {
 	if (typeof value === 'number' && Number.isFinite(value)) return String(value);
 	if (typeof value !== 'string') return null;
 
-	// Les sites laissent passer des entites et des balises dans leurs champs JSON-LD.
+	// Sites let entities and tags through in their JSON-LD fields.
 	const cleaned = value
 		.replace(/<[^>]*>/g, ' ')
 		.replace(/&nbsp;/gi, ' ')
@@ -49,7 +49,7 @@ function hasRecipeType(node: Record<string, unknown>): boolean {
 	return types.some((entry) => typeof entry === 'string' && entry.toLowerCase() === 'recipe');
 }
 
-/** Descend dans les tableaux, les `@graph` et les enveloppes pour trouver le premier `Recipe`. */
+/** Goes down through arrays, `@graph` and wrappers to find the first `Recipe`. */
 function findRecipe(node: unknown, depth = 0): Record<string, unknown> | null {
 	if (depth > 6) return null;
 
@@ -79,8 +79,8 @@ function flatten(value: unknown, depth = 0): string[] {
 	if (Array.isArray(value)) return value.flatMap((entry) => flatten(entry, depth + 1));
 
 	if (isRecord(value)) {
-		// Une `HowToSection` regroupe ses etapes dans `itemListElement`; une `HowToStep` porte son
-		// texte dans `text`, et parfois seulement dans `name`.
+		// A `HowToSection` groups its steps in `itemListElement`; a `HowToStep` carries its text in `text`, and
+		// sometimes only in `name`.
 		if (value.itemListElement !== undefined) return flatten(value.itemListElement, depth + 1);
 		const body = text(value.text) ?? text(value.name);
 		return body ? [body] : [];
@@ -90,7 +90,7 @@ function flatten(value: unknown, depth = 0): string[] {
 	return single ? [single] : [];
 }
 
-/** La recette portee par une page, ou null si elle n en publie pas. */
+/** The recipe carried by a page, or null if it publishes none. */
 export function extractRecipe(html: string): ImportedRecipe | null {
 	SCRIPT.lastIndex = 0;
 
@@ -99,7 +99,7 @@ export function extractRecipe(html: string): ImportedRecipe | null {
 		try {
 			parsed = JSON.parse(match[1].trim());
 		} catch {
-			// Un bloc illisible n empeche pas les suivants : une page en porte souvent plusieurs.
+			// An unreadable block does not stop the following ones: a page often carries several.
 			continue;
 		}
 
@@ -110,8 +110,8 @@ export function extractRecipe(html: string): ImportedRecipe | null {
 		const steps = flatten(recipe.recipeInstructions);
 		const name = text(recipe.name);
 
-		// Un `Recipe` sans nom ni ingredient n a rien a pre-remplir : autant dire qu on n a rien
-		// trouve plutot que d ouvrir un formulaire vide en pretendant l avoir importe.
+		// A `Recipe` with neither name nor ingredient has nothing to prefill: better say we found nothing than
+		// open an empty form claiming to have imported it.
 		if (!name && ingredients.length === 0) continue;
 
 		return {

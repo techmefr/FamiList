@@ -1,32 +1,31 @@
 /**
- * Le glissement latéral d'une ligne : de quel côté, à partir de quand, et de combien elle suit
- * le doigt.
+ * A row's sideways swipe: from which side, from when, and by how much it follows the finger.
  *
- * Tout est ici plutôt que dans le composant parce que c'est là que se cachent les décisions —
- * quand un geste cesse d'être un défilement, quand il compte comme déclenché — et qu'elles se
- * vérifient bien mieux avec des nombres qu'avec un doigt sur un écran.
+ * Everything is here rather than in the component because this is where the decisions hide — when a
+ * gesture stops being a scroll, when it counts as triggered — and they are checked far better with
+ * numbers than with a finger on a screen.
  */
 
-/** En deçà, on ne sait pas encore si l'intention est de faire défiler la page ou de glisser. */
+/** Below this, we do not yet know whether the intent is to scroll the page or to swipe. */
 export const SWIPE_SLOP = 12;
 
-/** La distance qui déclenche l'action ordinaire — cocher. */
+/** The distance that triggers the ordinary action — ticking. */
 export const SWIPE_THRESHOLD = 72;
 
 /**
- * Celle qui déclenche la suppression. Plus loin, exprès : le bouton corbeille demande de viser
- * une cible de 44 px, un glissement part tout seul d'un pouce posé de travers. Supprimer un
- * article par mégarde coûte plus cher que d'avoir à glisser un centimètre de plus.
+ * The one that triggers deletion. Further, on purpose: the bin button asks you to aim at a 44px target, a
+ * swipe starts on its own from a thumb resting crooked. Deleting an item by accident costs more than
+ * having to swipe one more centimetre.
  */
 export const SWIPE_DESTRUCTIVE = 110;
 
-/** La course maximale : au-delà la ligne ne bouge plus, elle a dit tout ce qu'elle avait à dire. */
+/** The maximum travel: beyond it the row stops moving, it has said all it had to say. */
 export const SWIPE_MAX = 140;
 
 /**
- * Le côté d'où vient l'action, en propriétés logiques : `start` est révélé en glissant vers la
- * fin de la ligne, `end` en glissant vers son début. En arabe, la ligne se lit dans l'autre sens
- * et les deux gestes s'inversent d'eux-mêmes.
+ * The side the action comes from, in logical properties: `start` is revealed by swiping towards the end
+ * of the row, `end` by swiping towards its start. In Arabic, the row reads the other way and the two
+ * gestures swap by themselves.
  */
 export type SwipeSide = 'start' | 'end';
 
@@ -37,22 +36,21 @@ export interface SwipeLimits {
 }
 
 /**
- * Un geste horizontal, ou un défilement vertical ?
+ * A horizontal gesture, or a vertical scroll?
  *
- * On ne prend la main que si le mouvement est franchement horizontal : sur un téléphone, la même
- * surface sert à faire défiler la liste, et un défilement qui se transforme en suppression est
- * la pire chose qu'on puisse faire ici.
+ * We only take over if the movement is clearly horizontal: on a phone, the same surface is used to scroll
+ * the list, and a scroll turning into a deletion is the worst thing that could happen here.
  */
 export function isHorizontalGesture(dx: number, dy: number, slop = SWIPE_SLOP): boolean {
 	return Math.abs(dx) > slop && Math.abs(dx) > Math.abs(dy);
 }
 
 /**
- * De combien la ligne se décale.
+ * By how much the row shifts.
  *
- * Elle suit le doigt tant qu'on n'a rien déclenché, puis résiste : la course se comprime au-delà
- * du seuil et s'arrête net au maximum. C'est ce ralentissement qui fait sentir qu'on est allé
- * assez loin, sans avoir à lire quoi que ce soit.
+ * It follows the finger while nothing is triggered, then resists: the travel is compressed beyond the
+ * threshold and stops dead at the maximum. That slowdown is what makes you feel you have gone far enough,
+ * without having to read anything.
  */
 export function swipeOffset(dx: number, threshold = SWIPE_THRESHOLD, max = SWIPE_MAX): number {
 	const distance = Math.abs(dx);
@@ -65,8 +63,8 @@ export function swipeOffset(dx: number, threshold = SWIPE_THRESHOLD, max = SWIPE
 }
 
 /**
- * Le côté déclenché au relâchement, ou rien si on n'est pas allé assez loin — auquel cas la ligne
- * revient à sa place et il ne s'est rien passé.
+ * The side triggered on release, or nothing if you did not go far enough — in which case the row goes
+ * back into place and nothing happened.
  */
 export function swipeSide(offset: number, limits: SwipeLimits = {}): SwipeSide | null {
 	const { rtl = false, startAt = SWIPE_THRESHOLD, endAt = SWIPE_THRESHOLD } = limits;

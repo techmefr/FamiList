@@ -21,8 +21,8 @@
 	let heading = $state<HTMLHeadingElement | null>(null);
 
 	/**
-	 * L'invite ne sert qu'une fois : dès que le curseur a bougé, la personne a compris qu'il bouge.
-	 * La laisser tourner ensuite ne fait que réclamer l'attention pour rien.
+	 * The hint only serves once: as soon as the slider has moved, the person has understood that it moves.
+	 * Leaving it running afterwards only asks for attention for nothing.
 	 */
 	let sizeTouched = $state(false);
 
@@ -42,15 +42,15 @@
 	}
 
 	/**
-	 * Le titre reçoit le focus à chaque étape : sans cela, un lecteur d'écran reste sur le bouton
-	 * « Continuer » et n'annonce jamais l'écran qui vient de s'ouvrir.
+	 * The heading takes focus at every step: without that, a screen reader stays on the "Continue" button and
+	 * never announces the screen that has just opened.
 	 */
 	function go(next: number) {
 		step = next;
 		heading?.focus();
 
-		// Arriver jusqu'au compte suffit : on ne repropose pas le parcours à quelqu'un qui l'a
-		// traversé, même s'il quitte l'application avant de s'inscrire.
+		// Getting as far as the account is enough: we do not offer the walkthrough again to somebody who has
+		// been through it, even if they leave the application before signing up.
 		if (next === STEPS) settings.setWelcomeSeen(true);
 	}
 
@@ -74,10 +74,10 @@
 </p>
 
 <!--
-	La jauge redit en image ce que la ligne au-dessus dit en mots : combien il en reste. Quatre
-	écrans sans repère visuel donnent l'impression d'un formulaire qui ne finit pas, et c'est à ce
-	moment-là qu'on abandonne. Elle est décorative au sens strict — le texte porte déjà
-	l'information, la doubler dans la synthèse vocale ne ferait que la ralentir.
+	The gauge says again in a picture what the line above says in words: how many are left. Four screens with
+	no visual landmark give the impression of a form that never ends, and that is the moment people give up.
+	It is decorative in the strict sense — the text already carries the information, and doubling it in the
+	screen reader would only slow it down.
 -->
 <div class="bg-muted mt-2 h-1 overflow-hidden rounded-full" aria-hidden="true">
 	<div
@@ -88,8 +88,8 @@
 </div>
 
 <!--
-	Le titre change à chaque étape et porte le focus : c'est lui qui annonce où l'on est. `tabindex`
-	à -1 le rend focalisable sans l'insérer dans l'ordre de tabulation.
+	The heading changes at every step and takes focus: it is what announces where you are. `tabindex` at -1
+	makes it focusable without inserting it into the tab order.
 -->
 <h1 bind:this={heading} tabindex="-1" class="text-h1 mt-3 font-semibold outline-none">
 	{#if step === 1}
@@ -105,10 +105,10 @@
 
 {#if step === 1}
 	<!--
-		La langue vient avant tout le reste, et c'est la seule étape dont le contenu ne dépend pas de
-		la langue en cours : chaque nom est écrit dans sa propre langue. Quelqu'un qui ouvre
-		l'application dans une langue qu'il ne lit pas ne peut pas comprendre « Réglages » pour aller
-		la changer — mais il reconnaît « Malagasy » dans une liste, et cela suffit.
+		Language comes before everything else, and it is the only step whose content does not depend on the
+		current language: each name is written in its own language. Somebody opening the application in a
+		language they cannot read cannot understand "Settings" in order to go and change it — but they
+		recognise "Malagasy" in a list, and that is enough.
 	-->
 	<p class="text-muted-foreground mt-2">{t('welcome.langBody')}</p>
 
@@ -223,10 +223,10 @@
 	</fieldset>
 
 	<!--
-		Le mouvement se règle ici et non dans un écran d'accessibilité à part. Une personne que les
-		glissements écœurent n'a pas à traverser l'application entière pour trouver l'interrupteur :
-		le réglage système est déjà respecté par défaut, ce choix-ci sert à celles dont l'appareil ne
-		le porte pas, ou qui veulent le contraire ici précisément.
+		Motion is set here and not in a separate accessibility screen. Somebody who is made queasy by sliding
+		does not have to cross the whole application to find the switch: the system setting is already honoured
+		by default, and this choice serves those whose device does not carry it, or who want the opposite here
+		precisely.
 	-->
 	<fieldset class="mt-6">
 		<legend class="text-label mb-2 font-medium">{t('profile.motion')}</legend>
@@ -273,8 +273,8 @@
 </div>
 
 <!--
-	Sortie de secours, présente à toutes les étapes : quelqu'un qui a déjà un compte n'a rien à
-	régler ici, ses préférences l'attendent dans son profil.
+	Emergency exit, present at every step: somebody who already has an account has nothing to set here, their
+	preferences are waiting for them in their profile.
 -->
 <Button variant="ghost" class="mt-4 w-full" onclick={finish} data-test-id="welcome-skip">
 	{step === STEPS ? t('welcome.skip') : t('welcome.haveAccount')}

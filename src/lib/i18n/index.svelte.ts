@@ -5,7 +5,7 @@ export type Locale = 'fr' | 'en' | 'es' | 'de' | 'it' | 'ru' | 'ar' | 'zh' | 'mg
 
 export interface LocaleMeta {
 	code: Locale;
-	/** Nom de la langue dans la langue elle-même, jamais traduit. */
+	/** Name of the language in the language itself, never translated. */
 	native: string;
 	dir: 'ltr' | 'rtl';
 }
@@ -30,7 +30,7 @@ type PluralForms = Partial<Record<Intl.LDMLPluralRule, string>>;
 type MessageNode = string | PluralForms | { [key: string]: MessageNode };
 export type Messages = typeof fr;
 
-/** `fr` est empaqueté comme repli, il n'a pas de chargeur : le charger le sortirait de son chunk. */
+/** `fr` is bundled as the fallback, it has no loader: loading it would take it out of its chunk. */
 const loaders: Record<Exclude<Locale, 'fr'>, () => Promise<{ default: unknown }>> = {
 	en: () => import('./locales/en.json'),
 	es: () => import('./locales/es.json'),
@@ -91,7 +91,7 @@ class I18n {
 				const module = await loaders[locale as Exclude<Locale, 'fr'>]();
 				this.#messages = module.default as MessageNode;
 			} catch {
-				// traduction manquante ou illisible : on reste sur la langue de repli
+				// missing or unreadable translation: we stay on the fallback language
 				this.#messages = this.#fallback;
 				return;
 			}

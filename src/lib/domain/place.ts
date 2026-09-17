@@ -1,15 +1,15 @@
 import { slugify } from './slug';
 
 /**
- * Ce qui identifie un magasin : une enseigne, un nom, une adresse.
+ * What identifies a shop: a brand, a name, an address.
  *
- * Les trois ne servent pas la même chose. L'enseigne dit à quelle chaîne on a affaire — c'est elle
- * qui portera la carte de fidélité, valable dans n'importe quel Carrefour. Le nom est celui qu'on
- * lit sur la devanture, et il suffit à lui seul pour un commerce indépendant. L'adresse distingue
- * deux magasins de la même enseigne, et c'est d'elle qu'on tire la commune.
+ * The three do not serve the same purpose. The brand says which chain you are dealing with — it is what
+ * will carry the loyalty card, valid in any Carrefour. The name is the one you read on the front, and it
+ * is enough on its own for an independent shop. The address tells two shops of the same brand apart, and
+ * it is what the town is taken from.
  *
- * L'enseigne est facultative, et c'est le cas le plus intéressant : un salon de coiffure, une
- * boucherie de quartier n'en ont pas. Tout ce qui suit doit donc marcher sans elle.
+ * The brand is optional, and that is the most interesting case: a hairdresser, a local butcher have none.
+ * Everything that follows must therefore work without it.
  */
 export interface Place {
 	brand?: string;
@@ -18,18 +18,18 @@ export interface Place {
 }
 
 /**
- * La commune d'une adresse française, sans appeler personne.
+ * The town of a French address, without calling anybody.
  *
- * Le repère est le code postal : cinq chiffres, puis la commune jusqu'à la fin ou jusqu'à la
- * virgule suivante. C'est la seule règle stable d'une adresse écrite à la main — l'ordre des
- * lignes, les abréviations et la ponctuation, eux, varient d'une personne à l'autre.
+ * The landmark is the postcode: five digits, then the town up to the end or up to the next comma. It is
+ * the only stable rule of a hand-written address — the order of the lines, the abbreviations and the
+ * punctuation vary from one person to another.
  *
- * Sans code postal, on prend le dernier morceau séparé par une virgule : « 12 rue des Lilas,
- * Meximieux » se lit encore. Et s'il n'y a ni l'un ni l'autre, on rend une chaîne vide plutôt que
- * de deviner — un mauvais trigramme est pire que pas de trigramme du tout.
+ * With no postcode, we take the last comma-separated part: "12 rue des Lilas, Meximieux" still reads. And
+ * if there is neither, we return an empty string rather than guess — a wrong three-letter code is worse
+ * than no code at all.
  *
- * Aucun géocodage : l'adresse ne sort pas de l'appareil, il n'y a ni clé d'API ni service tiers à
- * tenir en vie, et l'application continue de fonctionner sans réseau.
+ * No geocoding: the address does not leave the device, there is no API key and no third-party service to
+ * keep alive, and the application keeps working without network.
  */
 export function communeFromAddress(address: string | null | undefined): string {
 	const texte = (address ?? '').trim();
@@ -43,12 +43,12 @@ export function communeFromAddress(address: string | null | undefined): string {
 		.map((morceau) => morceau.trim())
 		.filter(Boolean);
 
-	// Un seul morceau, c'est la rue ou le nom du lieu, pas une commune : on ne l'invente pas.
+	// A single part is the street or the place name, not a town: we do not invent it.
 	if (morceaux.length < 2) return '';
 
 	const dernier = morceaux.at(-1) ?? '';
-	// Un pays en fin d'adresse n'est pas une commune. La liste reste courte volontairement : elle
-	// couvre ce qu'on écrit vraiment, pas le monde entier.
+	// A country at the end of an address is not a town. The list stays short deliberately: it covers what
+	// people really write, not the whole world.
 	const PAYS = new Set(['france', 'belgique', 'suisse', 'luxembourg', 'canada', 'madagascar']);
 
 	if (PAYS.has(slugify(dernier))) return morceaux.at(-2) ?? '';
@@ -56,17 +56,16 @@ export function communeFromAddress(address: string | null | undefined): string {
 }
 
 /**
- * Ce qu'on donne à lire au générateur de trigramme.
+ * What we give the three-letter code generator to read.
  *
- * Une chaîne : l'enseigne et la commune, parce que c'est ce qui distingue deux magasins entre eux
- * — « Carrefour Meximieux » donne CMX, « Carrefour Miribel » donne CMI. Le nom du magasin, lui,
- * répète souvent l'enseigne et n'apporte rien.
+ * A chain: the brand and the town, because that is what tells two shops apart — "Carrefour Meximieux"
+ * gives CMX, "Carrefour Miribel" gives CMI. The shop's name often repeats the brand and adds nothing.
  *
- * Un indépendant : son nom, tout simplement, éventuellement suivi de la commune s'il en a une —
- * « Salon Émilie » donne SEM, et deux salons dans deux villes se départagent d'eux-mêmes.
+ * An independent: its name, simply, possibly followed by the town if it has one — "Salon Émilie" gives
+ * SEM, and two salons in two towns separate themselves.
  *
- * Le résultat n'est jamais vide tant qu'il y a un nom : c'est le minimum dont le générateur a
- * besoin pour rendre trois caractères.
+ * The result is never empty as long as there is a name: it is the minimum the generator needs to return
+ * three characters.
  */
 export function trigramSource({ brand, name, address }: Place): string {
 	const enseigne = (brand ?? '').trim();

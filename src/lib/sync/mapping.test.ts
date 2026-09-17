@@ -293,8 +293,8 @@ describe('toMember', () => {
 		expect(member.initial).toBe('JD');
 	});
 
-	// La colonne est remplie par un trigger avec une seule lettre, et jamais remise à jour : la
-	// suivre donnerait une initiale tronquée, et périmée dès le premier changement de nom.
+	// The column is filled by a trigger with a single letter, and never updated again: following it would
+	// give a truncated initial, and a stale one from the first name change.
 	it("ignore l'initiale stockée en base", () => {
 		const member = toMember(
 			{ user_id: 'u1' },
@@ -304,8 +304,8 @@ describe('toMember', () => {
 		expect(member.initial).toBe('JD');
 	});
 
-	// Le nom affiché est libre : un surnom d'un seul mot ne doit pas réduire la pastille à une
-	// lettre alors que le profil porte un prénom et un nom.
+	// The display name is free text: a one-word nickname must not reduce the badge to a single letter when
+	// the profile carries a first and a last name.
 	it("tire les initiales du prénom et du nom quand ils sont là, pas du nom affiché", () => {
 		const member = toMember(
 			{ user_id: 'u1' },

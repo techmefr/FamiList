@@ -106,9 +106,9 @@ openai_api_key = "env(OPENAI_API_KEY)"
 enabled = true
 # Port to use for the email testing server web interface.
 port = 54324
-# Exposé parce que l'application envoie désormais du courriel elle-même, hors de Supabase Auth :
-# la fonction `notify-admins` a besoin d'un vrai relais SMTP pour être vérifiée en local, et c'est
-# celui-ci. Les courriels restent capturés par Mailpit, rien ne sort de la machine.
+# Exposed because the application now sends email itself, outside Supabase Auth: the `notify-admins`
+# function needs a real SMTP relay to be checked locally, and this is it. The emails stay captured by
+# Mailpit, nothing leaves the machine.
 smtp_port = 54325
 # pop3_port = 54326
 # admin_email = "admin@email.com"
@@ -158,14 +158,14 @@ max_indexes = 5
 enabled = true
 # The base URL of your website. Used as an allow-list for redirects and for constructing URLs used
 # in emails.
-# Le port de `vite dev`. Rien n'ecoute sur 3000 : un lien de confirmation recu dans Inbucket
-# renvoyait sur une page morte.
+# The `vite dev` port. Nothing listens on 3000: a confirmation link received in Inbucket sent you back to a
+# dead page.
 site_url = "http://127.0.0.1:5173"
 # The public URL that Auth serves on. Defaults to the API external URL with `/auth/v1` appended.
 # external_url = ""
 # A list of *exact* URLs that auth providers are permitted to redirect to post authentication.
-# Le serveur de developpement et celui des E2E (`playwright.config.ts`), en clair : la pile locale
-# ne sert pas de TLS, une entree en `https` ne pouvait correspondre a aucune redirection reelle.
+# The development server and the E2E one (`playwright.config.ts`), in clear: the local stack serves no TLS, so
+# an `https` entry could not match any real redirect.
 additional_redirect_urls = [
   "http://127.0.0.1:5173",
   "http://127.0.0.1:5173/",
@@ -254,8 +254,8 @@ otp_expiry = 3600
 # admin_email = "admin@email.com"
 # sender_name = "Admin"
 
-# Gabarits de courriel : un seul jeu par projet, la langue du destinataire est inconnue
-# à l'envoi, d'où un corps bilingue français/anglais.
+# Email templates: a single set per project, the recipient's language is unknown at sending time, hence a
+# bilingual French/English body.
 [auth.email.template.confirmation]
 subject = "FamiList — confirmez votre adresse / confirm your address"
 content_path = "./supabase/templates/confirm.html"

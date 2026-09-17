@@ -1,9 +1,9 @@
 /**
- * Réglage du mouvement, et sens des transitions de page.
+ * Motion setting, and the direction of page transitions.
  *
- * Trois valeurs comme pour le thème : « système » suit `prefers-reduced-motion`, les deux autres
- * tranchent. Système est la valeur par défaut — une personne qui a déjà demandé moins d'animations
- * à son téléphone n'a pas à le redemander ici.
+ * Three values as for the theme: "system" follows `prefers-reduced-motion`, the other two decide. System is
+ * the default — somebody who has already asked their phone for fewer animations does not have to ask again
+ * here.
  */
 export type MotionPreference = 'system' | 'full' | 'none';
 
@@ -24,13 +24,12 @@ export type NavDirection = 'forward' | 'back' | 'none';
 const depth = (path: string) => path.split('/').filter(Boolean).length;
 
 /**
- * De quel côté la page suivante entre.
+ * Which side the next page comes in from.
  *
- * Entre deux onglets, c'est l'ordre de la barre de navigation qui décide : aller vers la droite de
- * la barre fait entrer par la droite. Ailleurs, c'est la profondeur du chemin — `/l/xyz` est un
- * cran plus loin que `/`, donc en avant, et le retour ressort par la gauche. Un aller-retour donne
- * ainsi deux mouvements opposés, ce qui est la seule chose que l'utilisateur lit vraiment dans une
- * transition de page.
+ * Between two tabs, the navigation bar's order decides: going right along the bar makes the page come in
+ * from the right. Elsewhere it is the depth of the path — `/l/xyz` is one step further than `/`, so
+ * forwards, and the way back leaves through the left. A round trip thus gives two opposite movements, which
+ * is the only thing a user really reads in a page transition.
  */
 export function navDirection(from: string, to: string, order: string[] = []): NavDirection {
 	if (from === to) return 'none';

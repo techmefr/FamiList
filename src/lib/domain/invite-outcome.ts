@@ -1,17 +1,17 @@
 /**
- * Ce que la base répond quand on tente une invitation.
+ * What the database answers when an invitation is attempted.
  *
- * `redeem_invite` ne lève plus d'exception sur un code refusé : une exception annulerait la
- * transaction, et avec elle le compteur de tentatives qu'on vient d'incrémenter. Elle renvoie donc
- * un objet, et c'est ici qu'on décide ce qu'il devient à l'écran.
+ * `redeem_invite` no longer raises an exception on a refused code: an exception would roll the transaction
+ * back, and with it the attempt counter just incremented. So it returns an object, and this is where we
+ * decide what that becomes on screen.
  *
- * Trop de tentatives se dit autrement qu'un mauvais code : sans cela, la personne qui vient de se
- * tromper trois fois relit son code, le retape correctement, et l'application lui répète qu'il est
- * invalide. Elle n'a aucun moyen de comprendre qu'il faut simplement attendre.
+ * Too many attempts is said differently from a wrong code: without that, the person who has just got it
+ * wrong three times reads their code again, types it correctly, and the application repeats that it is
+ * invalid. They have no way of understanding that they simply have to wait.
  *
- * La forme renvoyée par un RPC n'est pas garantie côté client — une fonction mise à jour, un cache
- * de schéma en retard — donc tout ce qu'on ne reconnaît pas retombe sur le refus générique plutôt
- * que sur une adhésion qu'on n'a pas obtenue.
+ * The shape returned by an RPC is not guaranteed on the client side — an updated function, a schema cache
+ * lagging behind — so anything we do not recognise falls back on the generic refusal rather than on a
+ * joining we did not obtain.
  */
 export type InviteOutcomeKey =
 	| 'household.errorCode'

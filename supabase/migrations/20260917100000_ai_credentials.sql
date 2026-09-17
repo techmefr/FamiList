@@ -1,41 +1,39 @@
--- La cle d'API d'intelligence artificielle que chacun apporte, et personne d'autre.
+-- The artificial-intelligence API key each person brings, and nobody else.
 --
--- Cette table est l'exception du schema, et c'est tout son interet. Partout ailleurs ici,
--- appartenir au foyer c'est lire et ecrire : listes, articles, recettes, magasins, cartes de
--- fidelite, tout est partage par `is_household_member`. Le reflexe, en ajoutant une table, est
--- donc de la rattacher a un foyer. Ce serait faux ici. Une cle d'API est un moyen de paiement :
--- elle engage le quota et la facture d'une seule personne. La partager avec le foyer, ce serait
--- laisser un adolescent vider le credit de sa mere sans qu'elle le sache.
+-- This table is the schema's exception, and that is its whole point. Everywhere else here, belonging to the
+-- household means reading and writing: lists, items, recipes, shops, loyalty cards, everything is shared by
+-- `is_household_member`. The reflex, when adding a table, is therefore to attach it to a household. That
+-- would be wrong here. An API key is a means of payment: it commits one person's quota and bill. Sharing it
+-- with the household would be letting a teenager empty their mother's credit without her knowing.
 --
--- Trois failles ont deja porte sur ce perimetre (#15, #16, #17). Les deux erreurs a ne pas
--- commettre sont nommees ici pour qu'une relecture puisse verifier qu'elles sont absentes :
+-- Three holes have already been found in this area (#15, #16, #17). The two mistakes not to make are named
+-- here so that a review can check that they are absent:
 --
---   1. Aucune clause `is_household_member`. Le foyer n'a rien a voir avec cette table, et elle ne
---      porte volontairement pas de colonne `household_id` — une colonne qui n'existe pas ne peut
---      pas etre jointe par erreur dans une policy ecrite six mois plus tard.
---   2. Aucune clause `is_admin`. C'est le point le plus contre-intuitif : `profiles_select`
---      autorise l'administrateur a lire tous les profils, et recopier ce motif ici donnerait au
---      proprietaire de l'instance la cle de paiement de ses proches. Un administrateur administre
---      des comptes, il n'herite pas de leurs moyens de paiement. C'est aussi pour cela que la cle
---      ne vit pas dans une colonne de `profiles` : elle y serait lisible par cette policy-la.
+--   1. No `is_household_member` clause. The household has nothing to do with this table, and it deliberately
+--      carries no `household_id` column — a column that does not exist cannot be joined by mistake in a
+--      policy written six months later.
+--   2. No `is_admin` clause. It is the most counter-intuitive point: `profiles_select` lets the
+--      administrator read every profile, and copying that pattern here would give the instance's owner their
+--      relatives' payment key. An administrator administers accounts, they do not inherit their means of
+--      payment. That is also why the key does not live in a `profiles` column: it would be readable there by
+--      that policy.
 --
--- Une ligne par compte, d'ou `user_id` en cle primaire plutot qu'un `id` separe : personne n'a
--- besoin de deux fournisseurs a la fois, et la cle primaire rend le doublon impossible sans
--- contrainte supplementaire.
+-- One row per account, hence `user_id` as the primary key rather than a separate `id`: nobody needs two
+-- providers at once, and the primary key makes duplicates impossible with no extra constraint.
 create table public.ai_credentials (
   user_id uuid primary key references auth.users on delete cascade,
-  -- La liste est fermee cote base parce qu'elle determine l'adresse appelee par le navigateur.
-  -- Elle ne contient que des fournisseurs dont on a verifie qu'ils repondent a une requete
-  -- d'origine navigateur, en-tetes CORS compris sur la reponse elle-meme et pas seulement sur le
-  -- prevol. OpenAI en est absent pour cette raison precise : son prevol passe, mais ses reponses
-  -- ne portent pas `access-control-allow-origin`, donc le navigateur refuse de les lire.
+  -- The list is closed on the database side because it determines the address the browser calls. It contains
+  -- only providers verified to answer a request of browser origin, CORS headers included on the response
+  -- itself and not only on the preflight. OpenAI is absent from it for that precise reason: its preflight
+  -- passes, but its responses do not carry `access-control-allow-origin`, so the browser refuses to read
+  -- them.
   provider text not null check (
     provider in ('anthropic', 'gemini', 'mistral', 'groq', 'openrouter', 'deepseek')
   ),
   api_key text not null check (length(api_key) between 1 and 512),
-  -- Le modele est libre : les noms changent plus vite que les migrations, et une contrainte ici
-  -- rendrait l'application inutilisable le jour ou un fournisseur renomme sa gamme. Vide = celui
-  -- que le client propose par defaut pour ce fournisseur.
+  -- The model is free: names change faster than migrations, and a constraint here would make the application
+  -- unusable the day a provider renames its range. Empty = the one the client offers by default for this
+  -- provider.
   model text not null default '',
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
@@ -43,29 +41,28 @@ create table public.ai_credentials (
 
 alter table public.ai_credentials enable row level security;
 
--- Une seule policy, pour toutes les commandes, avec la meme condition des deux cotes. `for all`
--- plutot que quatre policies separees : quatre endroits ou ecrire la meme condition, c'est quatre
--- occasions d'en oublier une, et c'est exactement ainsi que naissent les trous de ce genre.
+-- A single policy, for every command, with the same condition on both sides. `for all` rather than four
+-- separate policies: four places to write the same condition is four chances to forget one, and that is
+-- exactly how holes of this kind are born.
 --
--- `(select auth.uid())` et non `auth.uid()` : c'est la forme retenue partout dans ce schema, elle
--- laisse le planificateur evaluer l'appel une fois pour la requete au lieu d'une fois par ligne.
+-- `(select auth.uid())` and not `auth.uid()`: it is the form kept everywhere in this schema, it lets the
+-- planner evaluate the call once for the query instead of once per row.
 create policy ai_credentials_own on public.ai_credentials for all
   using (user_id = (select auth.uid()))
   with check (user_id = (select auth.uid()));
 
 grant select, insert, update, delete on public.ai_credentials to authenticated;
 
--- Aucune publication temps reel sur cette table, et c'est volontaire. Les tables du foyer y sont
--- toutes ajoutees pour que deux telephones restent d'accord ; ici il n'y a rien a accorder — une
--- cle ne concerne qu'un compte — et la diffuser sur un canal websocket ferait voyager le secret
--- une fois de plus sans que cela serve a quoi que ce soit.
+-- No realtime publication on this table, and that is intentional. The household's tables are all added to it
+-- so that two phones stay in agreement; here there is nothing to agree on — a key concerns only one account —
+-- and broadcasting it over a websocket channel would make the secret travel once more for no purpose
+-- whatsoever.
 
--- Savoir qui a une cle sans jamais lire laquelle.
+-- Knowing who has a key without ever reading which.
 --
--- L'ecran des recettes doit pouvoir demander « est-ce que je propose la suggestion » sans que la
--- reponse fasse transiter le secret. La question ne porte que sur le compte appelant, donc cette
--- fonction ne divulgue rien de plus que ce que la policy autorise deja ; elle evite simplement de
--- descendre la cle dans la page pour repondre a un booleen.
+-- The recipes screen must be able to ask "do I offer the suggestion" without the answer making the secret
+-- travel. The question concerns only the calling account, so this function discloses nothing more than the
+-- policy already allows; it simply avoids bringing the key down into the page to answer a boolean.
 create or replace function public.has_ai_credential()
 returns boolean
 language sql

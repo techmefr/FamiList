@@ -26,8 +26,8 @@ describe('cue', () => {
 	});
 
 	/**
-	 * Une fréquence nulle interdirait la rampe exponentielle du lecteur, et au-delà de 4 kHz un bip
-	 * devient strident — ce que la personne qui coche cinquante articles subit en premier.
+	 * A frequency of zero would forbid the player's exponential ramp, and above 4 kHz a beep becomes shrill —
+	 * which the person ticking fifty items suffers first.
 	 */
 	it('reste dans une plage audible et supportable', () => {
 		for (const cue of CUES) {

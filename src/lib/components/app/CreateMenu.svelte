@@ -20,14 +20,14 @@
 	let dialog = $state<HTMLDialogElement | null>(null);
 
 	/**
-	 * `<dialog>` natif plutôt qu'une surcouche : le navigateur pose le voile, enferme le clavier dans
-	 * la feuille, rend le reste de la page inerte pour les lecteurs d'écran et ferme sur Échap. Ce
-	 * sont exactement les quatre comportements qu'une <div> obligerait à réécrire, et à rater.
+	 * Native `<dialog>` rather than a wrapper: the browser lays the scrim, traps the keyboard in the sheet,
+	 * makes the rest of the page inert for screen readers and closes on Escape. Those are exactly the four
+	 * behaviours a <div> would force us to rewrite, and to get wrong.
 	 *
-	 * Ouverture et fermeture passent par ces deux fonctions, sans booléen en parallèle. Un miroir de
-	 * l'état aurait fini par mentir : Échap ferme la feuille sans passer par nous, et il suffit d'un
-	 * évènement `close` manqué pour que le bouton reste convaincu qu'elle est déjà ouverte et cesse
-	 * de répondre. Ici la seule vérité est celle du navigateur.
+	 * Opening and closing go through these two functions, with no boolean alongside. A mirror of the state
+	 * would have ended up lying: Escape closes the sheet without going through us, and a single missed
+	 * `close` event is enough for the button to stay convinced it is already open and stop responding. Here
+	 * the only truth is the browser's.
 	 */
 	export function show() {
 		dialog?.showModal();
@@ -38,9 +38,8 @@
 	}
 
 	/**
-	 * Un article se range dans une liste : celle qui est ouverte, sinon la dernière créée. Sans
-	 * aucune liste, la proposition n'a pas de sens et disparaît — c'est « Nouvelle liste » qui
-	 * devient alors le premier geste.
+	 * An item is filed in a list: the one that is open, otherwise the last created. With no list at all, the
+	 * offer makes no sense and disappears — "New list" then becomes the first gesture.
 	 */
 	function itemTarget() {
 		const current = page.url.pathname.match(/^\/l\/([^/]+)/)?.[1];
@@ -67,13 +66,11 @@
 	const available = $derived(ACTIONS.filter((action) => action.target() !== null));
 
 	/**
-	 * Le champ n'existe pas toujours quand la navigation se termine : l'accueil et les cartes
-	 * déplient leur formulaire à l'effet suivant. On réessaie quelques fois plutôt que de parier sur
-	 * un délai unique.
+	 * The field does not always exist when the navigation ends: the home and cards screens unfold their form
+	 * on the next effect. We retry a few times rather than bet on a single delay.
 	 *
-	 * `setTimeout` et non `requestAnimationFrame` : le second ne se déclenche pas dans un onglet
-	 * caché, et une création lancée juste avant un changement d'application laisserait le curseur
-	 * nulle part.
+	 * `setTimeout` and not `requestAnimationFrame`: the second does not fire in a hidden tab, and a creation
+	 * started just before switching app would leave the cursor nowhere.
 	 */
 	function focusField(selector: string, tries = 12) {
 		const field = document.querySelector<HTMLElement>(selector);
@@ -98,8 +95,8 @@
 		await goto(href);
 		await tick();
 
-		// L'article ouvre une feuille, qui place elle-même son focus. Les autres déplient un
-		// formulaire déjà dans la page : là, il faut aller y poser le curseur.
+		// The item opens a sheet, which places its own focus. The others unfold a form already in the page:
+		// there, we have to go and put the cursor in it.
 		if (action.field) focusField(action.field);
 	}
 </script>
@@ -107,8 +104,8 @@
 <dialog
 	bind:this={dialog}
 	onclick={(event) => {
-		// La feuille est transparente et ne fait que la taille de la carte : un clic qui l'atteint
-		// elle-même vient du voile, donc d'à côté. On ferme, comme le ferait n'importe quelle feuille.
+		// The sheet is transparent and only the size of the card: a click reaching the sheet itself comes from
+		// the scrim, so from beside it. We close, as any sheet would.
 		if (event.target === dialog) hide();
 	}}
 	class="fl-sheet"
@@ -143,9 +140,9 @@
 		</ul>
 
 		<!--
-			La fermeture vient après la liste dans le document, même si elle s'affiche en haut à droite.
-			Le navigateur donne le premier focus au premier élément atteignable : mieux vaut que ce soit
-			un choix que la sortie, sinon une entrée au clavier referme la feuille aussitôt ouverte.
+			The close button comes after the list in the document, even though it shows at the top right. The
+			browser gives first focus to the first reachable element: better that it is a choice than the way out,
+			otherwise pressing Enter closes the sheet as soon as it opens.
 		-->
 		<button
 			type="button"

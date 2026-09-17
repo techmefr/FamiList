@@ -1,15 +1,15 @@
--- Proposer la carte de fidélité à l'approche d'un magasin, ou pas du tout.
+-- Offering the loyalty card when approaching a shop, or not at all.
 --
--- Le réglage suit la personne et non l'appareil, comme le reste des préférences : quelqu'un qui a
--- refusé qu'on suive sa position sur son téléphone n'a pas à le refuser une deuxième fois sur la
--- tablette. Il part à faux, contrairement au son et aux vibrations — laisser un appareil suivre
--- sa position est un accord qui se donne, pas un défaut qu'on découvre après coup.
+-- The setting follows the person and not the device, like the rest of the preferences: somebody who has
+-- refused to have their position followed on their phone does not have to refuse it a second time on the
+-- tablet. It starts off false, unlike sound and vibration — letting a device follow your position is an
+-- agreement you give, not a default you discover afterwards.
 --
--- L'autorisation système reste maîtresse : ce booléen n'ouvre rien tout seul, il dit seulement que
--- la surveillance a le droit de démarrer quand l'appareil, lui, l'autorise.
+-- The system permission stays in charge: this boolean opens nothing on its own, it only says that the
+-- monitoring is allowed to start when the device, for its part, permits it.
 alter table public.profiles
   add column nearby_cards boolean not null default false;
 
--- Les droits sur profiles sont accordés colonne par colonne depuis la migration d'approbation :
--- sans cette ligne l'écriture partirait sans erreur visible et ne changerait rien.
+-- Privileges on profiles are granted column by column since the approval migration: without this line the
+-- write would go off with no visible error and change nothing.
 grant update (nearby_cards) on public.profiles to authenticated;

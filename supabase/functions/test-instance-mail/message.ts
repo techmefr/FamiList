@@ -1,14 +1,14 @@
 /**
- * Le texte du courriel de test.
+ * The text of the test email.
  *
- * En francais, pour la meme raison que le courriel groupe : il s adresse a qui administre
- * l instance, et rien en base ne dit dans quelle langue cette personne la lit.
+ * In French, for the same reason as the grouped email: it is addressed to whoever administers the instance,
+ * and nothing in the database says which language that person reads it in.
  *
- * Le message dit ce qu il prouve, et pas seulement « ceci est un test ». Quelqu un qui recoit ce
- * courriel trois jours plus tard, dans un dossier indesirables, doit comprendre d ou il vient et ce
- * que sa presence signifie — qu une inscription en attente lui arrivera par le meme chemin.
+ * The message says what it proves, and not merely "this is a test". Somebody receiving this email three days
+ * later, in a junk folder, must understand where it comes from and what its presence means — that a pending
+ * sign-up will reach them by the same path.
  *
- * Aucune dependance Deno ici, pour que la redaction reste testable par vitest.
+ * No Deno dependency here, so that the writing stays testable by vitest.
  */
 
 export type TestMail = {
