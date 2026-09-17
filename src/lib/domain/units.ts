@@ -34,6 +34,12 @@ export const DEFAULT_UNIT: UnitId = 'piece';
  * What may have been typed by hand before the field became a list, and the plurals somebody writes
  * naturally. Without this table, an item created yesterday would show "pièce" hard-coded while its
  * neighbours translate — the inconsistency would show more than the original problem.
+ *
+ * Both languages, and not only French. The old free-text field was filled in whatever language the person
+ * reads the app in, and an import — a recipe, a list shared as text — carries the words of wherever it
+ * comes from. A table that only knew "bouteille" would leave "bottles" as raw text right next to a
+ * translated unit, which is the very inconsistency this table exists to remove. The ids themselves
+ * (bottle, bag, g) need no entry: they are recognised before we get here.
  */
 const ALIASES: Record<string, UnitId> = {
 	pièce: 'piece',
@@ -43,36 +49,59 @@ const ALIASES: Record<string, UnitId> = {
 	pcs: 'piece',
 	unité: 'piece',
 	unit: 'piece',
+	units: 'piece',
+	item: 'piece',
+	items: 'piece',
 	gr: 'g',
 	gramme: 'g',
 	grammes: 'g',
+	gram: 'g',
+	grams: 'g',
 	kilo: 'kg',
 	kilos: 'kg',
 	kilogramme: 'kg',
+	kilogram: 'kg',
+	kilograms: 'kg',
+	millilitre: 'ml',
+	millilitres: 'ml',
+	milliliter: 'ml',
+	milliliters: 'ml',
 	litre: 'l',
 	litres: 'l',
+	liter: 'l',
+	liters: 'l',
 	paquet: 'pack',
 	paquets: 'pack',
+	packs: 'pack',
+	packet: 'pack',
+	packets: 'pack',
 	boîte: 'box',
-	box: 'box',
 	boîtes: 'box',
 	boxes: 'box',
 	bouteille: 'bottle',
 	bouteilles: 'bottle',
+	bottles: 'bottle',
 	pot: 'jar',
 	pots: 'jar',
+	jars: 'jar',
 	sachet: 'bag',
 	sachets: 'bag',
+	bags: 'bag',
 	botte: 'bunch',
 	bottes: 'bunch',
+	bunches: 'bunch',
 	tranche: 'slice',
 	tranches: 'slice',
+	slices: 'slice',
 	barquette: 'tray',
 	barquettes: 'tray',
+	trays: 'tray',
 	rouleau: 'roll',
 	rouleaux: 'roll',
+	rolls: 'roll',
 	brique: 'brick',
-	briques: 'brick'
+	briques: 'brick',
+	bricks: 'brick'
 };
 
 const KNOWN = new Set<string>(UNITS);
