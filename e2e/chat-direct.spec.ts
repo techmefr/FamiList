@@ -33,8 +33,28 @@ test('écrire en privé à quelqu’un d’un cercle commun', async ({ signedInP
 	await expect(page).toHaveURL(/\/chat\/d\//, { timeout: 15_000 });
 
 	await page.getByTestId('direct-input').fill(corps);
+
+	/**
+	 * L'écran affiche le message avant que le serveur ne le connaisse : l'envoi passe par la file
+	 * d'écritures, et c'est ce qui rend l'application utilisable sans réseau. Se déconnecter dans
+	 * cet intervalle coupe la requête en vol — le message est bien parti côté écran, jamais côté
+	 * base, et la relecture depuis l'autre compte ne trouve rien.
+	 *
+	 * La promesse est armée AVANT le clic : armée après, la réponse serait déjà passée. On attend
+	 * donc le vrai aller-retour, avec sa propre limite de temps, plutôt qu'une temporisation fixe
+	 * qui serait soit trop courte sur une machine lente, soit du temps perdu sur toutes les autres.
+	 */
+	const enregistre = page.waitForResponse(
+		(reponse) =>
+			reponse.url().includes('/rest/v1/messages') &&
+			reponse.request().method() === 'POST' &&
+			reponse.ok(),
+		{ timeout: 15_000 }
+	);
+
 	await page.getByTestId('direct-send').click();
 	await expect(page.locator('[data-test-class="direct-message"]')).toContainText(corps);
+	await enregistre;
 
 	// L'autre bout de la conversation : le message doit être là, et l'entrée doit porter son nom.
 	await signOut(page);

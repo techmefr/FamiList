@@ -36,6 +36,8 @@ const PERMANENT_CODES = new Set(['22P02', '23502', '23503', '23505', '23514', '4
 
 const isPermanent = (code: string | undefined) => code !== undefined && PERMANENT_CODES.has(code);
 
+const noop = () => undefined;
+
 export type SyncState = 'idle' | 'syncing' | 'offline' | 'error';
 
 /** Un cercle dont le compte est membre, tel que le sélecteur le nomme. */
@@ -84,6 +86,16 @@ class SyncStore {
 	private onPulled: (() => void) | null = null;
 	private pullTimer: ReturnType<typeof setTimeout> | null = null;
 	private watchingNetwork = false;
+
+	/**
+	 * Les mises en file encore en cours d'écriture.
+	 *
+	 * `enqueue` est appelé depuis des méthodes synchrones : au retour du clic, l'entrée n'est pas
+	 * encore posée dans la file. Une purge lancée dans cet intervalle — celle de la déconnexion —
+	 * lisait une file vide et laissait l'écriture derrière elle. `flush` les attend donc avant de
+	 * lire ce qu'il a à envoyer.
+	 */
+	private writing: Promise<unknown> = Promise.resolve();
 
 	/**
 	 * Horodatage du dernier évènement temps réel posé, par ligne. C'est la seule mémoire d'ordre
@@ -593,7 +605,9 @@ class SyncStore {
 		// méthodes synchrones. Un stockage local plein doit donc se voir sur le bandeau plutôt que
 		// disparaître : sans cela, l'écriture n'est ni partie ni signalée.
 		try {
-			await db.outbox.add(entry);
+			const added = db.outbox.add(entry);
+			this.writing = this.writing.then(() => added.then(noop, noop));
+			await added;
 		} catch (cause) {
 			this.state = 'error';
 			this.lastError = describeError(cause);
@@ -618,6 +632,8 @@ class SyncStore {
 			this.state = 'offline';
 			return;
 		}
+
+		await this.writing;
 
 		const pending = await db.outbox.orderBy('seq').toArray();
 

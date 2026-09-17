@@ -15,12 +15,13 @@
 
 	let body = $state('');
 
-	function send(event: SubmitEvent) {
+	async function send(event: SubmitEvent) {
 		event.preventDefault();
 		if (!body.trim()) return;
 
-		data.sendDirectMessage(conversationId, body);
+		const envoi = data.sendDirectMessage(conversationId, body);
 		body = '';
+		await envoi;
 	}
 
 	const time = (at: number) =>

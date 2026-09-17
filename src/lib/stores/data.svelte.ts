@@ -1166,7 +1166,7 @@ class DataStore {
 	 * Un message direct ne porte pas de liste : c'est l'autre colonne de portée qui le rattache, et
 	 * la base refuse qu'il en porte deux.
 	 */
-	sendDirectMessage(conversationId: string, body: string) {
+	async sendDirectMessage(conversationId: string, body: string) {
 		const message: Message = {
 			id: crypto.randomUUID(),
 			conversationId,
@@ -1178,7 +1178,22 @@ class DataStore {
 
 		this.messages = [...this.messages, message];
 		db.messages.add(message);
-		this.push('messages', message, fromMessage);
+
+		// `push` estampille l'écriture avec le cercle de la ligne, et attend qu'un cercle existe
+		// avant d'enfiler quoi que ce soit. Une conversation directe n'en a aucun, par construction :
+		// l'attente allait donc jusqu'à son terme, cinq secondes plus tard, et une déconnexion dans
+		// cet intervalle emportait le message. Il n'a rien à attendre, il part directement.
+		//
+		// L'attente porte sur la mise en file, pas sur le serveur : l'écran a déjà le message, mais
+		// une déconnexion juste après le clic doit trouver l'écriture dans la file plutôt qu'une
+		// file encore vide.
+		await sync.enqueue({
+			table: 'messages',
+			op: 'upsert',
+			match: { id: message.id },
+			payload: fromMessage(message)
+		});
+
 		return message;
 	}
 
@@ -1534,9 +1549,17 @@ class DataStore {
 		await sync.start(() => void this.hydrate());
 	}
 
-	/** À la déconnexion il n'y a plus de compte : on vide sans rien redemander au serveur. */
+	/**
+	 * À la déconnexion il n'y a plus de compte : on vide sans rien redemander au serveur.
+	 *
+	 * La file part avec le compte qui l'a remplie. `signOut` la vide d'abord ; ce qui reste ici n'a
+	 * pas pu partir — hors ligne, ou serveur injoignable. Le garder ne la sauverait pas : la
+	 * prochaine tentative se ferait avec le jeton du compte suivant, et la base refuse qu'on écrive
+	 * au nom de quelqu'un d'autre.
+	 */
 	async forget() {
 		sync.stop();
+		await db.outbox.clear();
 		this.ready = false;
 		this.userId = '';
 		this.userIdKnown = false;
