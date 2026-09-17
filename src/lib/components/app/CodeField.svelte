@@ -39,11 +39,11 @@
 	{id}
 	{value}
 	oninput={(event) => {
-		const champ = event.currentTarget as HTMLInputElement;
-		value = normalize(champ.value);
+		const field = event.currentTarget as HTMLInputElement;
+		value = normalize(field.value);
 		// Write the value back: without that a refused character would stay displayed, the state and the screen
 		// would no longer say the same thing, and the person would believe they typed what we threw away.
-		champ.value = value;
+		field.value = value;
 	}}
 	inputmode={numeric ? 'numeric' : 'text'}
 	autocomplete="one-time-code"

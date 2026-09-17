@@ -475,18 +475,18 @@ class DataStore {
 			? [...new Set([...list.memberIds, userId])]
 			: list.memberIds.filter((id) => id !== userId);
 
-		const partage = member && !list.householdId && userId !== this.userId;
-		const cercle = partage ? (circleId ?? this.circle) : list.householdId;
+		const shared = member && !list.householdId && userId !== this.userId;
+		const cercle = shared ? (circleId ?? this.circle) : list.householdId;
 
 		// Sharing into a circle you are not a member of is refused by RLS: we do not even queue it, rather
 		// than let the queue discard it silently.
-		if (partage && !this.circles.some((candidate) => candidate.id === cercle)) return;
+		if (shared && !this.circles.some((candidate) => candidate.id === cercle)) return;
 
 		const next = { ...list, memberIds, householdId: cercle || undefined };
 		this.cachedLists = this.cachedLists.map((l) => (l.id === listId ? next : l));
 		db.lists.put(next);
 
-		if (partage && cercle) this.push('lists', next, fromList);
+		if (shared && cercle) this.push('lists', next, fromList);
 
 		sync.enqueue(
 			member
@@ -521,7 +521,7 @@ class DataStore {
 		const source = this.cachedLists.find((candidate) => candidate.id === id);
 		if (!source) return;
 
-		const copie: List = {
+		const copied: List = {
 			id: crypto.randomUUID(),
 			name: copyName(
 				source.name,
@@ -533,36 +533,36 @@ class DataStore {
 			householdId: source.householdId
 		};
 
-		const articles: Item[] = this.itemsOf(id).map((item, rang) => ({
+		const articles: Item[] = this.itemsOf(id).map((item, rank) => ({
 			...copiedItem(item),
 			id: crypto.randomUUID(),
-			listId: copie.id,
+			listId: copied.id,
 			// The rank preserves the original's entry order: two items created in the same millisecond were
 			// otherwise separated at random on re-read.
-			createdAt: Date.now() + rang
+			createdAt: Date.now() + rank
 		}));
 
-		this.cachedLists = [...this.cachedLists, copie];
+		this.cachedLists = [...this.cachedLists, copied];
 		this.items = [...this.items, ...articles];
-		db.lists.add(copie);
+		db.lists.add(copied);
 		db.items.bulkAdd(articles);
 
-		this.push('lists', copie, fromList);
+		this.push('lists', copied, fromList);
 		for (const article of articles) this.push('items', article, fromItem);
 
 		// The original's sharing is replayed row by row. A list is now born open to its author alone: there is
 		// nothing left to close behind the insert, only to reopen to the people the source knew.
-		for (const membre of copie.memberIds) {
-			if (membre === this.userId) continue;
+		for (const member of copied.memberIds) {
+			if (member === this.userId) continue;
 			sync.enqueue({
 				table: 'list_members',
 				op: 'upsert',
-				match: { list_id: copie.id, user_id: membre },
-				payload: { list_id: copie.id, user_id: membre }
+				match: { list_id: copied.id, user_id: member },
+				payload: { list_id: copied.id, user_id: member }
 			});
 		}
 
-		return copie;
+		return copied;
 	}
 
 	removeList(id: string) {
@@ -658,7 +658,7 @@ class DataStore {
 	}) {
 		const brand = (input.brand ?? '').trim();
 		const address = (input.address ?? '').trim();
-		const remplace = !input.isDefault ? this.defaultShop : undefined;
+		const replacement = !input.isDefault ? this.defaultShop : undefined;
 
 		// An absent position stays absent: writing `lat: undefined` would erase the one a replaced shop
 		// already had, and would give the key to a shop that has none.
@@ -667,12 +667,12 @@ class DataStore {
 				? { lat: input.lat, lng: input.lng }
 				: {};
 
-		if (remplace) {
-			this.updateShop(remplace.id, {
+		if (replacement) {
+			this.updateShop(replacement.id, {
 				name: input.name.trim(),
 				short: this.proposedShort(
 					{ brand, name: input.name, address },
-					remplace.id,
+					replacement.id,
 					input.short
 				),
 				tint: input.tint,
@@ -682,8 +682,8 @@ class DataStore {
 				...position
 			});
 
-			this.setActiveShop(remplace.id);
-			return this.shops.find((shop) => shop.id === remplace.id)!;
+			this.setActiveShop(replacement.id);
+			return this.shops.find((shop) => shop.id === replacement.id)!;
 		}
 
 		const shop: Shop = {
@@ -695,7 +695,7 @@ class DataStore {
 			// than from the name — see $domain/place.
 			short: trigram(
 				input.short.trim() || trigramSource({ brand, name: input.name, address }),
-				this.shops.map((existant) => existant.short)
+				this.shops.map((existing) => existing.short)
 			),
 			tint: input.tint,
 			brand,
@@ -780,13 +780,13 @@ class DataStore {
 	proposedShort(
 		place: { brand?: string; name: string; address?: string },
 		exceptId?: string,
-		saisi = ''
+		typed = ''
 	) {
 		return trigram(
-			saisi.trim() || trigramSource(place),
+			typed.trim() || trigramSource(place),
 			this.shops
-				.filter((existant) => existant.id !== exceptId)
-				.map((existant) => existant.short)
+				.filter((existing) => existing.id !== exceptId)
+				.map((existing) => existing.short)
 		);
 	}
 
@@ -879,15 +879,15 @@ class DataStore {
 
 		const amount = parseAmount(raw);
 		const existing = latestAt(this.prices, slug, shopId);
-		const dujour = existing && sameDay(existing.recordedAt, Date.now()) ? existing : null;
+		const ofToday = existing && sameDay(existing.recordedAt, Date.now()) ? existing : null;
 
 		if (amount === null) {
-			if (dujour) this.removePrice(dujour.id);
+			if (ofToday) this.removePrice(ofToday.id);
 			return;
 		}
 
 		const price: Price = {
-			id: dujour?.id ?? crypto.randomUUID(),
+			id: ofToday?.id ?? crypto.randomUUID(),
 			householdId: this.circle,
 			shopId,
 			productSlug: slug,
@@ -895,7 +895,7 @@ class DataStore {
 			amount,
 			// The currency never changes on an existing record: yesterday's stays yesterday's, even if the
 			// application has changed language since.
-			currency: dujour?.currency ?? currencyForLocale(i18n.locale),
+			currency: ofToday?.currency ?? currencyForLocale(i18n.locale),
 			recordedAt: Date.now(),
 			recordedBy: this.userId
 		};
@@ -947,17 +947,17 @@ class DataStore {
 	 * will not depend on it.
 	 */
 	get directCandidates() {
-		const dejaVus = new Set(this.directs.map((d) => d.otherId));
+		const alreadySeen = new Set(this.directs.map((d) => d.otherId));
 
 		// A person appears once per shared circle: without this pass, someone met in two circles would show up
 		// twice. That is precisely the ambiguity a direct conversation sidesteps — it belongs to neither — and
 		// the list of people to write to should say so: one account, one entry.
-		const vus = new Set<string>();
+		const seen = new Set<string>();
 
 		return this.cachedMembers.filter((m) => {
-			if (m.id === this.me || dejaVus.has(m.id) || vus.has(m.id)) return false;
+			if (m.id === this.me || alreadySeen.has(m.id) || seen.has(m.id)) return false;
 
-			vus.add(m.id);
+			seen.add(m.id);
 			return true;
 		});
 	}
@@ -1007,14 +1007,14 @@ class DataStore {
 
 		// The avatar belongs to the profile, not to the membership: it changes in every circle the person
 		// appears in, and the cache holds one row per circle.
-		const miennes = this.cachedMembers.filter((m) => m.id === id);
-		if (miennes.length === 0) return;
+		const mine = this.cachedMembers.filter((m) => m.id === id);
+		if (mine.length === 0) return;
 
-		const suivants = miennes.map((membre) => ({ ...membre, avatar }));
+		const updated = mine.map((member) => ({ ...member, avatar }));
 		this.cachedMembers = this.cachedMembers.map(
-			(m) => suivants.find((suivant) => suivant.key === m.key) ?? m
+			(m) => updated.find((next) => next.key === m.key) ?? m
 		);
-		db.members.bulkPut(suivants);
+		db.members.bulkPut(updated);
 
 		await supabase
 			.from('profiles')
@@ -1032,26 +1032,26 @@ class DataStore {
 	 * being looked at. The display name is also written into the account metadata, where sign-up put it, so
 	 * the two do not drift apart.
 	 */
-	async setMyName(identite: { name: string; firstName: string; lastName: string }) {
+	async setMyName(identity: { name: string; firstName: string; lastName: string }) {
 		const id = this.me;
 		if (!id) return;
 
-		const miennes = this.cachedMembers.filter((m) => m.id === id);
-		if (miennes.length === 0) return;
+		const mine = this.cachedMembers.filter((m) => m.id === id);
+		if (mine.length === 0) return;
 
-		const { name, firstName, lastName } = identite;
-		const suivants: Member[] = miennes.map((membre) => ({
-			...membre,
+		const { name, firstName, lastName } = identity;
+		const updated: Member[] = mine.map((member) => ({
+			...member,
 			name,
 			firstName,
 			lastName,
 			initial: initialsFor(firstName, lastName, name)
 		}));
-		const remplace = (rows: Member[]) =>
+		const replacement = (rows: Member[]) =>
 			this.cachedMembers.map((m) => rows.find((row) => row.key === m.key) ?? m);
 
-		this.cachedMembers = remplace(suivants);
-		db.members.bulkPut(suivants);
+		this.cachedMembers = replacement(updated);
+		db.members.bulkPut(updated);
 
 		const { error } = await supabase
 			.from('profiles')
@@ -1060,8 +1060,8 @@ class DataStore {
 		if (error) {
 			// The display name goes back to what the database knows: leaving it on screen would suggest a save that
 			// did not happen, until the next sync.
-			this.cachedMembers = remplace(miennes);
-			db.members.bulkPut(miennes);
+			this.cachedMembers = replacement(mine);
+			db.members.bulkPut(mine);
 			return error.message;
 		}
 
@@ -1126,8 +1126,8 @@ class DataStore {
 	 * for sending an avatar.
 	 */
 	async startDirect(otherId: string) {
-		const moi = this.me;
-		if (!moi || otherId === moi) return null;
+		const me = this.me;
+		if (!me || otherId === me) return null;
 
 		const { data: conversationId, error } = await supabase.rpc('start_direct_conversation', {
 			other: otherId
@@ -1139,7 +1139,7 @@ class DataStore {
 		const conversation: Conversation = {
 			id: conversationId,
 			scope: 'direct',
-			participantIds: [moi, otherId],
+			participantIds: [me, otherId],
 			createdAt: Date.now()
 		};
 
@@ -1378,7 +1378,7 @@ class DataStore {
 			createdAt: Date.now()
 		};
 
-		const lignes: RecipeIngredient[] = input.ingredients
+		const rows: RecipeIngredient[] = input.ingredients
 			.filter((line) => line.name.trim())
 			.map((line, position) => ({
 				id: crypto.randomUUID(),
@@ -1389,7 +1389,7 @@ class DataStore {
 				position
 			}));
 
-		const etapes: RecipeStep[] = input.steps
+		const steps: RecipeStep[] = input.steps
 			.filter((body) => body.trim())
 			.map((body, position) => ({
 				id: crypto.randomUUID(),
@@ -1399,16 +1399,16 @@ class DataStore {
 			}));
 
 		this.cachedRecipes = [...this.cachedRecipes, recipe];
-		this.recipeIngredients = [...this.recipeIngredients, ...lignes];
-		this.recipeSteps = [...this.recipeSteps, ...etapes];
+		this.recipeIngredients = [...this.recipeIngredients, ...rows];
+		this.recipeSteps = [...this.recipeSteps, ...steps];
 
 		db.recipes.add(recipe);
-		db.recipeIngredients.bulkAdd(lignes);
-		db.recipeSteps.bulkAdd(etapes);
+		db.recipeIngredients.bulkAdd(rows);
+		db.recipeSteps.bulkAdd(steps);
 
 		this.push('recipes', recipe, fromRecipe);
-		for (const ligne of lignes) this.push('recipe_ingredients', ligne, fromRecipeIngredient);
-		for (const etape of etapes) this.push('recipe_steps', etape, fromRecipeStep);
+		for (const row of rows) this.push('recipe_ingredients', row, fromRecipeIngredient);
+		for (const step of steps) this.push('recipe_steps', step, fromRecipeStep);
 
 		return recipe;
 	}
@@ -1419,16 +1419,16 @@ class DataStore {
 	 * re-read.
 	 */
 	removeRecipe(id: string) {
-		const lignes = this.recipeIngredients.filter((line) => line.recipeId === id).map((l) => l.id);
-		const etapes = this.recipeSteps.filter((step) => step.recipeId === id).map((s) => s.id);
+		const rows = this.recipeIngredients.filter((line) => line.recipeId === id).map((l) => l.id);
+		const steps = this.recipeSteps.filter((step) => step.recipeId === id).map((s) => s.id);
 
 		this.cachedRecipes = this.cachedRecipes.filter((r) => r.id !== id);
 		this.recipeIngredients = this.recipeIngredients.filter((line) => line.recipeId !== id);
 		this.recipeSteps = this.recipeSteps.filter((step) => step.recipeId !== id);
 
 		db.recipes.delete(id);
-		db.recipeIngredients.bulkDelete(lignes);
-		db.recipeSteps.bulkDelete(etapes);
+		db.recipeIngredients.bulkDelete(rows);
+		db.recipeSteps.bulkDelete(steps);
 		sync.enqueue({ table: 'recipes', op: 'delete', match: { id } });
 	}
 
@@ -1451,9 +1451,9 @@ class DataStore {
 		const recipe = this.recipe(recipeId);
 		if (!recipe) return null;
 
-		const cible = targetListId ? this.list(targetListId) : null;
-		const liste =
-			cible ??
+		const target = targetListId ? this.list(targetListId) : null;
+		const list =
+			target ??
 			this.addList({
 				name: recipe.name,
 				emoji: recipe.emoji,
@@ -1463,12 +1463,12 @@ class DataStore {
 		const articles = generatedItems(
 			this.ingredientsOf(recipeId),
 			scalingFactor(recipe.servings, people),
-			this.itemsOf(liste.id).map((item) => item.name)
+			this.itemsOf(list.id).map((item) => item.name)
 		);
 
-		for (const article of articles) this.addItem(liste.id, article);
+		for (const article of articles) this.addItem(list.id, article);
 
-		return { listId: liste.id, added: articles.length };
+		return { listId: list.id, added: articles.length };
 	}
 
 	/**
@@ -1480,7 +1480,7 @@ class DataStore {
 		record: T,
 		map: (record: T, householdId: string) => Record<string, unknown>
 	) {
-		const enfiler = (householdId: string) =>
+		const enqueue = (householdId: string) =>
 			sync.enqueue({
 				table,
 				op: 'upsert',
@@ -1491,9 +1491,9 @@ class DataStore {
 		// The row's own circle comes before the displayed circle: a card or a price being edited belongs to the
 		// circle it was born in, and rewriting it with the one being looked at would move it at the first
 		// correction.
-		const connu = record.householdId || this.circle;
-		if (connu) {
-			enfiler(connu);
+		const known = record.householdId || this.circle;
+		if (known) {
+			enqueue(known);
 			return;
 		}
 
@@ -1507,7 +1507,7 @@ class DataStore {
 		 * banner are better than a write leaving to be refused.
 		 */
 		void sync.whenHousehold().then((householdId) => {
-			if (householdId) enfiler(householdId);
+			if (householdId) enqueue(householdId);
 		});
 	}
 

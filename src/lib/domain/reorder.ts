@@ -23,20 +23,20 @@ export function move<T>(items: T[], from: number, to: number): T[] {
  * between two positions at the slightest tremble of the hand.
  */
 export function dropIndex(
-	centre: number,
+	center: number,
 	tops: number[],
-	hauteurs: number[],
-	depart: number
+	heights: number[],
+	origin: number
 ): number {
-	let cible = depart;
+	let target = origin;
 
 	for (let i = 0; i < tops.length; i++) {
-		const milieu = tops[i] + hauteurs[i] / 2;
-		if (i < depart && centre < milieu) cible = Math.min(cible, i);
-		else if (i > depart && centre > milieu) cible = Math.max(cible, i);
+		const middle = tops[i] + heights[i] / 2;
+		if (i < origin && center < middle) target = Math.min(target, i);
+		else if (i > origin && center > middle) target = Math.max(target, i);
 	}
 
-	return cible;
+	return target;
 }
 
 /**
@@ -49,33 +49,33 @@ export function dropIndex(
  */
 export function slotShifts(
 	tops: number[],
-	hauteurs: number[],
-	ecart: number,
-	depart: number,
-	cible: number
+	heights: number[],
+	gap: number,
+	origin: number,
+	target: number
 ): number[] {
-	const ordre = move(
+	const order = move(
 		tops.map((_, i) => i),
-		depart,
-		cible
+		origin,
+		target
 	);
 
-	const decalages = new Array<number>(tops.length).fill(0);
+	const shifts = new Array<number>(tops.length).fill(0);
 	let y = tops[0] ?? 0;
 
-	for (const index of ordre) {
-		decalages[index] = y - tops[index];
-		y += hauteurs[index] + ecart;
+	for (const index of order) {
+		shifts[index] = y - tops[index];
+		y += heights[index] + gap;
 	}
 
-	return decalages;
+	return shifts;
 }
 
 /** How close to the screen edge the page starts scrolling by itself. */
-export const BORD = 88;
+export const EDGE = 88;
 
 /** The maximum step of an automatic scroll, per frame. */
-export const VITESSE = 14;
+export const SPEED = 14;
 
 /**
  * By how much the page must scroll when the finger holds a row near an edge.
@@ -86,15 +86,15 @@ export const VITESSE = 14;
  */
 export function edgeScrollStep(
 	y: number,
-	hauteur: number,
-	bord = BORD,
-	vitesse = VITESSE
+	height: number,
+	edge = EDGE,
+	speed = SPEED
 ): number {
-	const dessus = y - bord;
-	if (dessus < 0) return Math.max(-vitesse, dessus / 6);
+	const above = y - edge;
+	if (above < 0) return Math.max(-speed, above / 6);
 
-	const dessous = hauteur - bord - y;
-	if (dessous < 0) return Math.min(vitesse, -dessous / 6);
+	const below = height - edge - y;
+	if (below < 0) return Math.min(speed, -below / 6);
 
 	return 0;
 }

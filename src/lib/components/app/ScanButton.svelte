@@ -44,12 +44,12 @@
 	}
 
 	function applyTorch(on: boolean) {
-		const contrainte: TorchConstraint = { torch: on };
+		const constraint: TorchConstraint = { torch: on };
 
 		// A driver refusing the constraint simply leaves the light off: the preview stays readable, there is
 		// nothing to report to the user.
 		void track
-			?.applyConstraints({ advanced: [contrainte] } as MediaTrackConstraints)
+			?.applyConstraints({ advanced: [constraint] } as MediaTrackConstraints)
 			.catch(() => {});
 	}
 
@@ -58,10 +58,10 @@
 		applyTorch(torch);
 	}
 
-	function prendreLaPiste(piste: MediaStreamTrack | null) {
-		track = piste;
-		hasTorch = ((piste?.getCapabilities?.() ?? {}) as { torch?: boolean }).torch === true;
-		if (piste && torch) applyTorch(true);
+	function useTrack(track: MediaStreamTrack | null) {
+		track = track;
+		hasTorch = ((track?.getCapabilities?.() ?? {}) as { torch?: boolean }).torch === true;
+		if (track && torch) applyTorch(true);
 	}
 
 	async function start() {
@@ -76,7 +76,7 @@
 		await tick();
 
 		try {
-			const result = await scan(video, controller.signal, { onTrack: prendreLaPiste });
+			const result = await scan(video, controller.signal, { onTrack: useTrack });
 			// A code is read at arm's length, eye on the label: the sound says it is taken without having to turn
 			// the screen round.
 			if (result) {
@@ -92,7 +92,7 @@
 			feedback.play('error');
 			error = t('scan.failed');
 		} finally {
-			arreterLesTemoins();
+			stopIndicators();
 			scanning = false;
 			controller = null;
 		}
@@ -102,7 +102,7 @@
 	 * The light does not survive the scan: the track is released with the camera, and keeping the state on
 	 * would reopen the camera with the torch on at the next scan, without anyone asking.
 	 */
-	function arreterLesTemoins() {
+	function stopIndicators() {
 		if (suggestTimer) clearTimeout(suggestTimer);
 		suggestTimer = null;
 		track = null;
@@ -116,7 +116,7 @@
 
 	onDestroy(() => {
 		controller?.abort();
-		arreterLesTemoins();
+		stopIndicators();
 	});
 </script>
 

@@ -249,7 +249,7 @@ class SyncStore {
 	 * Better to wait for the id than to write beside it. Returning an empty string stays possible —
 	 * offline, server in error — and the caller must then give up rather than queue something invalid.
 	 */
-	async whenHousehold(delaiMs = 5000): Promise<string> {
+	async whenHousehold(delayMs = 5000): Promise<string> {
 		if (this.householdId) return this.householdId;
 		if (!browser) return '';
 
@@ -261,8 +261,8 @@ class SyncStore {
 		 * of which only one will be read. Provisioning here, in parallel with startup, produced exactly that —
 		 * and the household's lists disappeared.
 		 */
-		const fin = Date.now() + delaiMs;
-		while (!this.householdId && Date.now() < fin) {
+		const end = Date.now() + delayMs;
+		while (!this.householdId && Date.now() < end) {
 			await new Promise((resolve) => setTimeout(resolve, 50));
 		}
 
@@ -297,13 +297,13 @@ class SyncStore {
 	 */
 	async households(): Promise<Circle[]> {
 		const { data: session } = await supabase.auth.getUser();
-		const moi = session.user?.id;
-		if (!moi) return [];
+		const me = session.user?.id;
+		if (!me) return [];
 
 		const { data, error } = await supabase
 			.from('household_members')
 			.select('household_id, joined_at, households(name)')
-			.eq('user_id', moi)
+			.eq('user_id', me)
 			.order('joined_at');
 
 		if (error) return [];
@@ -319,14 +319,14 @@ class SyncStore {
 	}
 
 	private async provision() {
-		const connus = await this.households();
+		const known = await this.households();
 
 		// The circle remembered last time comes first: without that, an account belonging to several circles
 		// would go back to the oldest on every opening, whichever one it was looking at. Membership is
 		// checked — we may have been removed from another device.
-		const choisi = defaultCircle(connus, localStorage.getItem(HOUSEHOLD_KEY));
-		if (choisi) {
-			this.adopt(choisi);
+		const selected = defaultCircle(known, localStorage.getItem(HOUSEHOLD_KEY));
+		if (selected) {
+			this.adopt(selected);
 			return true;
 		}
 
@@ -619,7 +619,7 @@ class SyncStore {
 	 * `depuisRelecture` says the call comes from the re-read itself, which drains the queue before reading: it
 	 * does not need a second one scheduled behind it.
 	 */
-	async flush(depuisRelecture = false) {
+	async flush(sinceReview = false) {
 		if (!browser || !navigator.onLine) {
 			this.state = 'offline';
 			return;
@@ -671,7 +671,7 @@ class SyncStore {
 		// A re-read that left before this send read a server that did not know these writes yet, and it
 		// replaces the cache with what it read: the shop just created disappears from the screen although it
 		// is properly saved. So we re-read once that one is done, with a server that knows everything.
-		if (sent > 0 && !depuisRelecture) {
+		if (sent > 0 && !sinceReview) {
 			this.detach(Promise.resolve(this.pulling).then(() => this.pull()));
 		}
 	}

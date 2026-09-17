@@ -43,10 +43,10 @@
 	 * does not reopen the card in a loop.
 	 */
 	$effect(() => {
-		const demandee = page.url.searchParams.get('card');
-		if (!demandee) return;
+		const requested = page.url.searchParams.get('card');
+		if (!requested) return;
 
-		if (data.cards.some((card) => card.id === demandee)) openCardId = demandee;
+		if (data.cards.some((card) => card.id === requested)) openCardId = requested;
 		replaceState('/cards', page.state);
 	});
 
@@ -74,19 +74,19 @@
 	 *
 	 * A `<select>` cannot open a dialog during its own change: we put the previous value back, then open.
 	 */
-	const NOUVEAU = '__new__';
-	let nouveauMagasin = $state<NewShopSheet | null>(null);
-	let avantNouveau = '';
+	const NEW = '__new__';
+	let newShop = $state<NewShopSheet | null>(null);
+	let beforeNew = '';
 
 	function surChangementRattachement(event: Event) {
 		const select = event.currentTarget as HTMLSelectElement;
-		if (select.value !== NOUVEAU) {
-			avantNouveau = select.value;
+		if (select.value !== NEW) {
+			beforeNew = select.value;
 			return;
 		}
 
-		attach = avantNouveau;
-		nouveauMagasin?.show();
+		attach = beforeNew;
+		newShop?.show();
 	}
 
 	const openCard = $derived(data.cards.find((c) => c.id === openCardId) ?? null);
@@ -102,19 +102,19 @@
 		!isMatrixFormat(effectiveType) && code.trim() !== '' && !linearCode(code, effectiveType)
 	);
 
-	const enseignes = $derived([
+	const brands = $derived([
 		...new Set(data.shops.map((shop) => shop.brand.trim()).filter(Boolean))
 	]);
 
-	const magasin = $derived(
+	const shop = $derived(
 		attach.startsWith('shop:')
 			? (data.shops.find((shop) => shop.id === attach.slice(5)) ?? null)
 			: null
 	);
 
 	/** An attached shop brings its brand with it: the card is then valid for the chain. */
-	const enseigne = $derived(
-		attach.startsWith('brand:') ? attach.slice(6) : (magasin?.brand.trim() ?? '')
+	const brand = $derived(
+		attach.startsWith('brand:') ? attach.slice(6) : (shop?.brand.trim() ?? '')
 	);
 
 	/**
@@ -122,15 +122,15 @@
 	 * look alike, and that is what you are looking for at the till.
 	 */
 	const tint = $derived(
-		magasin?.tint ??
-			(enseigne
-				? (data.shops.find((shop) => shop.brand.trim() === enseigne)?.tint ?? DEFAULT_TINT)
+		shop?.tint ??
+			(brand
+				? (data.shops.find((shop) => shop.brand.trim() === brand)?.tint ?? DEFAULT_TINT)
 				: DEFAULT_TINT)
 	);
 
 	/** The attachment names the card until it is given another name. */
-	const suggestion = $derived(magasin?.name ?? enseigne);
-	const libelle = $derived(name.trim() || suggestion);
+	const suggestion = $derived(shop?.name ?? brand);
+	const label = $derived(name.trim() || suggestion);
 
 	function reset() {
 		adding = false;
@@ -144,13 +144,13 @@
 
 	function submit(event: SubmitEvent) {
 		event.preventDefault();
-		if (!libelle || !code.trim() || invalidCode) return;
+		if (!label || !code.trim() || invalidCode) return;
 
 		feedback.play('add');
 		data.addCard({
-			shopId: magasin?.id ?? '',
-			brand: enseigne,
-			name: libelle,
+			shopId: shop?.id ?? '',
+			brand: brand,
+			name: label,
 			num: `•••• •••• ${code.trim().slice(-4)}`,
 			code: code.trim(),
 			codeType: effectiveType,
@@ -243,10 +243,10 @@
 						class="border-input bg-background min-h-[max(2.75rem,44px)] w-full rounded-md border"
 					>
 						<option value="">{t('cards.attachNone')}</option>
-						{#if enseignes.length > 0}
+						{#if brands.length > 0}
 							<optgroup label={t('cards.attachBrands')}>
-								{#each enseignes as marque (marque)}
-									<option value={`brand:${marque}`}>{marque}</option>
+								{#each brands as brand (brand)}
+									<option value={`brand:${brand}`}>{brand}</option>
 								{/each}
 							</optgroup>
 						{/if}
@@ -257,7 +257,7 @@
 								{/each}
 							</optgroup>
 						{/if}
-						<option value={NOUVEAU}>{t('cards.attachNew')}</option>
+						<option value={NEW}>{t('cards.attachNew')}</option>
 					</select>
 				</IconField>
 				<p id="card-attach-hint" class="text-muted-foreground text-caption">
@@ -406,9 +406,9 @@
 
 <!-- The missing shop is created here, and immediately becomes the card's attachment. -->
 <NewShopSheet
-	bind:this={nouveauMagasin}
+	bind:this={newShop}
 	oncreated={(shop) => {
 		attach = `shop:${shop.id}`;
-		avantNouveau = attach;
+		beforeNew = attach;
 	}}
 />

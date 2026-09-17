@@ -15,13 +15,13 @@ import { LONGPRESS_MS, movedTooFar } from '$domain/longpress';
  */
 export function longpress(node: HTMLElement, action: () => void) {
 	let timer: ReturnType<typeof setTimeout> | null = null;
-	let depart: { x: number; y: number } | null = null;
-	let parti = false;
+	let origin: { x: number; y: number } | null = null;
+	let moved = false;
 
-	function annuler() {
+	function cancel() {
 		if (timer) clearTimeout(timer);
 		timer = null;
-		depart = null;
+		origin = null;
 	}
 
 	function down(event: PointerEvent) {
@@ -29,47 +29,47 @@ export function longpress(node: HTMLElement, action: () => void) {
 		// a single press.
 		if (event.button !== 0) return;
 
-		parti = false;
-		depart = { x: event.clientX, y: event.clientY };
+		moved = false;
+		origin = { x: event.clientX, y: event.clientY };
 		timer = setTimeout(() => {
-			parti = true;
-			annuler();
+			moved = true;
+			cancel();
 			action();
 		}, LONGPRESS_MS);
 	}
 
 	function move(event: PointerEvent) {
-		if (depart && movedTooFar(depart, { x: event.clientX, y: event.clientY })) annuler();
+		if (origin && movedTooFar(origin, { x: event.clientX, y: event.clientY })) cancel();
 	}
 
 	function click(event: MouseEvent) {
-		if (!parti) return;
+		if (!moved) return;
 
-		parti = false;
+		moved = false;
 		event.preventDefault();
 		event.stopPropagation();
 	}
 
 	function menu(event: Event) {
-		if (timer || parti) event.preventDefault();
+		if (timer || moved) event.preventDefault();
 	}
 
 	node.addEventListener('pointerdown', down);
 	node.addEventListener('pointermove', move);
-	node.addEventListener('pointerup', annuler);
-	node.addEventListener('pointercancel', annuler);
-	node.addEventListener('pointerleave', annuler);
+	node.addEventListener('pointerup', cancel);
+	node.addEventListener('pointercancel', cancel);
+	node.addEventListener('pointerleave', cancel);
 	node.addEventListener('click', click, true);
 	node.addEventListener('contextmenu', menu);
 
 	return {
 		destroy() {
-			annuler();
+			cancel();
 			node.removeEventListener('pointerdown', down);
 			node.removeEventListener('pointermove', move);
-			node.removeEventListener('pointerup', annuler);
-			node.removeEventListener('pointercancel', annuler);
-			node.removeEventListener('pointerleave', annuler);
+			node.removeEventListener('pointerup', cancel);
+			node.removeEventListener('pointercancel', cancel);
+			node.removeEventListener('pointerleave', cancel);
 			node.removeEventListener('click', click, true);
 			node.removeEventListener('contextmenu', menu);
 		}

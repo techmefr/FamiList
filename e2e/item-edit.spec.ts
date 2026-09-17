@@ -8,32 +8,32 @@ import { test, expect } from './fixtures';
  * The list carries a dated name, like the other list tests: it stays behind, without ever making a selector
  * ambiguous on the next run.
  */
-async function nouvelleListe(page: Page, nom: string) {
+async function newList(page: Page, name: string) {
 	await page.goto('/');
 	await page.getByTestId('nav-create').click();
 	await page.getByTestId('create-list').click();
-	await page.getByTestId('list-name').fill(nom);
+	await page.getByTestId('list-name').fill(name);
 	await page.getByTestId('list-create').click();
 
-	const carte = page.locator('[data-test-class="list-card"]').filter({ hasText: nom });
-	await expect(carte).toBeVisible();
-	await carte.getByRole('link').first().click();
+	const card = page.locator('[data-test-class="list-card"]').filter({ hasText: name });
+	await expect(card).toBeVisible();
+	await card.getByRole('link').first().click();
 	await expect(page).toHaveURL(/\/l\//);
 }
 
 test('modifier un article, au bouton comme à l appui long', async ({ signedInPage: page }) => {
-	const nom = `Courses e2e ${Date.now()}`;
-	await nouvelleListe(page, nom);
+	const name = `Courses e2e ${Date.now()}`;
+	await newList(page, name);
 
 	await page.getByTestId('empty-add-item').click();
 	await page.getByTestId('add-name').fill('Pommes');
 	await page.getByTestId('add-submit').click();
 
-	const ligne = page.locator('[data-test-class="item-row"]').filter({ hasText: 'Pommes' });
-	await expect(ligne).toBeVisible();
+	const row = page.locator('[data-test-class="item-row"]').filter({ hasText: 'Pommes' });
+	await expect(row).toBeVisible();
 
 	// The pencil button: the announced path, that of the keyboard and the screen reader.
-	await ligne.locator('[data-test-class="item-edit"]').click();
+	await row.locator('[data-test-class="item-edit"]').click();
 	await expect(page.getByTestId('add-name')).toHaveValue('Pommes');
 
 	await page.getByTestId('add-name').fill('Poires');
@@ -41,14 +41,14 @@ test('modifier un article, au bouton comme à l appui long', async ({ signedInPa
 	await page.getByTestId('add-note').fill('les bien mûres');
 	await page.getByTestId('add-submit').click();
 
-	const modifiee = page.locator('[data-test-class="item-row"]').filter({ hasText: 'Poires' });
-	await expect(modifiee).toContainText('les bien mûres');
-	await expect(modifiee).toContainText('3');
+	const updated = page.locator('[data-test-class="item-row"]').filter({ hasText: 'Poires' });
+	await expect(updated).toContainText('les bien mûres');
+	await expect(updated).toContainText('3');
 
 	// The long press, the thumb's gesture: the same sheet, prefilled.
-	const etiquette = modifiee.locator('label').first();
-	const boite = await etiquette.boundingBox();
-	await page.mouse.move(boite!.x + boite!.width / 2, boite!.y + boite!.height / 2);
+	const label = updated.locator('label').first();
+	const box = await label.boundingBox();
+	await page.mouse.move(box!.x + box!.width / 2, box!.y + box!.height / 2);
 	await page.mouse.down();
 	await page.waitForTimeout(700);
 	await page.mouse.up();
@@ -58,9 +58,9 @@ test('modifier un article, au bouton comme à l appui long', async ({ signedInPa
 
 	// Releasing the finger must not tick the item whose sheet has just been opened.
 	await page.getByTestId('add-close').click();
-	await expect(modifiee.locator('[data-test-class="item-check"]')).not.toBeChecked();
+	await expect(updated.locator('[data-test-class="item-check"]')).not.toBeChecked();
 
-	await modifiee.locator('[data-test-class="item-remove"]').click();
-	await expect(modifiee).toHaveCount(0);
+	await updated.locator('[data-test-class="item-remove"]').click();
+	await expect(updated).toHaveCount(0);
 
 });

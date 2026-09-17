@@ -49,10 +49,10 @@ export function isCompleteBackupCode(input: string): boolean {
 
 /** Split in two for reading: ten characters in a row are copied badly. */
 export function formatBackupCode(code: string): string {
-	const propre = normalizeBackupCode(code);
-	if (propre.length !== BACKUP_LENGTH) return propre;
+	const clean = normalizeBackupCode(code);
+	if (clean.length !== BACKUP_LENGTH) return clean;
 
-	return `${propre.slice(0, 5)}-${propre.slice(5)}`;
+	return `${clean.slice(0, 5)}-${clean.slice(5)}`;
 }
 
 /**

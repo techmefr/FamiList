@@ -42,7 +42,7 @@
 	let { children } = $props();
 
 	let menu = $state<CreateMenu | null>(null);
-	let recherche = $state<SearchSheet | null>(null);
+	let search = $state<SearchSheet | null>(null);
 
 	/**
 	 * The measured height of the navigation element, published as a CSS variable.
@@ -318,7 +318,7 @@
 		if (!session.isApproved) return;
 
 		event.preventDefault();
-		void recherche?.show();
+		void search?.show();
 	}
 
 	/** The magnifier takes the whole surface to enlarge a label: nothing floats over it. */
@@ -504,7 +504,7 @@
 						type="button"
 						onclick={() => {
 							feedback.play('tap');
-							void recherche?.show();
+							void search?.show();
 						}}
 						data-test-id="header-search"
 						aria-label={t('search.open')}
@@ -541,5 +541,5 @@
 	</div>
 
 	<CreateMenu bind:this={menu} />
-	<SearchSheet bind:this={recherche} />
+	<SearchSheet bind:this={search} />
 {/if}

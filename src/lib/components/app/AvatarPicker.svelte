@@ -8,10 +8,10 @@
 	import { Camera, Trash2 } from '@lucide/svelte';
 
 	let input = $state<HTMLInputElement | null>(null);
-	let erreur = $state('');
-	let occupe = $state(false);
+	let error = $state('');
+	let busy = $state(false);
 
-	const moi = $derived(data.members.find((m) => m.id === data.me));
+	const me = $derived(data.members.find((m) => m.id === data.me));
 
 	/**
 	 * The photo is shrunk here, in the browser, before leaving.
@@ -23,47 +23,47 @@
 	 * `createImageBitmap` rather than an `<img>`: it does not depend on the DOM loading cycle, and it applies
 	 * the EXIF orientation, without which a photo taken in portrait comes out lying down.
 	 */
-	async function vignette(fichier: File): Promise<string> {
-		const source = await createImageBitmap(fichier, { imageOrientation: 'from-image' });
-		const { sx, sy, taille } = coverSquare(source.width, source.height);
+	async function thumbnail(file: File): Promise<string> {
+		const source = await createImageBitmap(file, { imageOrientation: 'from-image' });
+		const { sx, sy, size } = coverSquare(source.width, source.height);
 
-		const toile = document.createElement('canvas');
-		toile.width = AVATAR_SIZE;
-		toile.height = AVATAR_SIZE;
+		const canvas = document.createElement('canvas');
+		canvas.width = AVATAR_SIZE;
+		canvas.height = AVATAR_SIZE;
 
-		const pinceau = toile.getContext('2d');
+		const pinceau = canvas.getContext('2d');
 		if (!pinceau) throw new Error('canvas indisponible');
 
-		pinceau.drawImage(source, sx, sy, taille, taille, 0, 0, AVATAR_SIZE, AVATAR_SIZE);
+		pinceau.drawImage(source, sx, sy, size, size, 0, 0, AVATAR_SIZE, AVATAR_SIZE);
 		source.close();
 
-		return toile.toDataURL('image/jpeg', 0.82);
+		return canvas.toDataURL('image/jpeg', 0.82);
 	}
 
-	async function choisir(event: Event) {
-		const fichier = (event.currentTarget as HTMLInputElement).files?.[0];
-		if (!fichier) return;
+	async function choose(event: Event) {
+		const file = (event.currentTarget as HTMLInputElement).files?.[0];
+		if (!file) return;
 
-		erreur = '';
+		error = '';
 
-		if (fichier.size > AVATAR_MAX_BYTES) {
-			erreur = t('profile.avatarTooBig');
+		if (file.size > AVATAR_MAX_BYTES) {
+			error = t('profile.avatarTooBig');
 			return;
 		}
 
-		occupe = true;
+		busy = true;
 		try {
-			await data.setMyAvatar(await vignette(fichier));
+			await data.setMyAvatar(await thumbnail(file));
 			feedback.play('success');
 		} catch {
-			erreur = t('profile.avatarFailed');
+			error = t('profile.avatarFailed');
 		} finally {
-			occupe = false;
+			busy = false;
 			if (input) input.value = '';
 		}
 	}
 
-	async function retirer() {
+	async function remove() {
 		feedback.play('remove');
 		await data.setMyAvatar(undefined);
 	}
@@ -76,9 +76,9 @@
 	on a coloured ground stand out better in a stack than a generic silhouette repeated four times. The photo
 	is an option, not a box to fill.
 -->
-{#if moi}
+{#if me}
 	<div class="flex flex-wrap items-center gap-4">
-		<Avatar member={moi} size={72} />
+		<Avatar member={me} size={72} />
 
 		<div class="flex min-w-0 flex-1 basis-48 flex-col gap-2">
 			<p class="text-muted-foreground text-caption">{t('profile.avatarHint')}</p>
@@ -87,18 +87,18 @@
 				<Button
 					variant="outline"
 					onclick={() => input?.click()}
-					disabled={occupe}
+					disabled={busy}
 					data-test-id="avatar-choose"
 					class="fl-press"
 				>
 					<Camera size={18} aria-hidden="true" />
-					{moi.avatar ? t('profile.avatarChange') : t('profile.avatarAdd')}
+					{me.avatar ? t('profile.avatarChange') : t('profile.avatarAdd')}
 				</Button>
 
-				{#if moi.avatar}
+				{#if me.avatar}
 					<Button
 						variant="outline"
-						onclick={retirer}
+						onclick={remove}
 						data-test-id="avatar-remove"
 						class="fl-press"
 					>
@@ -118,13 +118,13 @@
 		bind:this={input}
 		type="file"
 		accept="image/*"
-		onchange={choisir}
+		onchange={choose}
 		aria-label={t('profile.avatarAdd')}
 		data-test-id="avatar-input"
 		class="sr-only"
 	/>
 
-	{#if erreur}
-		<p class="text-destructive text-caption" role="alert" data-test-id="avatar-error">{erreur}</p>
+	{#if error}
+		<p class="text-destructive text-caption" role="alert" data-test-id="avatar-error">{error}</p>
 	{/if}
 {/if}

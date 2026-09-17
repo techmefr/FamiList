@@ -38,8 +38,8 @@ test('les deux boutons de code sont alignés sur mobile', async ({ signedInPage:
 				const b = await image.boundingBox();
 				if (!a || !b) return 'boîtes absentes';
 
-				const cote = Math.abs(a.y - b.y) < 4;
-				if (cote) {
+				const side = Math.abs(a.y - b.y) < 4;
+				if (side) {
 					return Math.abs(a.height - b.height) < 1 ? 'aligné' : `hauteurs ${a.height}/${b.height}`;
 				}
 

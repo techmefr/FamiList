@@ -88,9 +88,9 @@ describe('formatBackupCode', () => {
 
 describe('backupCodesText', () => {
 	it('met un code par ligne sous le titre', () => {
-		const texte = backupCodesText(['ABCDEFGHJK', 'MNPQRSTVWX'], 'Codes de secours');
+		const text = backupCodesText(['ABCDEFGHJK', 'MNPQRSTVWX'], 'Codes de secours');
 
-		expect(texte.split('\n')).toEqual([
+		expect(text.split('\n')).toEqual([
 			'Codes de secours',
 			'',
 			'ABCDE-FGHJK',
@@ -102,8 +102,8 @@ describe('backupCodesText', () => {
 
 describe("l'alphabet", () => {
 	it("n'a aucune lettre qui se confond à la lecture", () => {
-		for (const interdit of ['O', 'I', 'L', 'U', '0', '1']) {
-			expect(BACKUP_ALPHABET).not.toContain(interdit);
+		for (const banned of ['O', 'I', 'L', 'U', '0', '1']) {
+			expect(BACKUP_ALPHABET).not.toContain(banned);
 		}
 	});
 

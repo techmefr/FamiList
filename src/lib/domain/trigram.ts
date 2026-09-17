@@ -17,84 +17,84 @@ import { slugify } from './slug';
  * letter: Carrefour Meximieux gives CMX, the next CME, then CMI. The candidates are drawn from the name,
  * in its order, so the code stays recognisable even when it is no longer the first choice.
  */
-const LONGUEUR = 3;
+const LENGTH = 3;
 
 export function trigram(name: string, taken: Iterable<string> = []): string {
-	const pris = new Set(
-		[...taken].map((court) => court.trim().toUpperCase()).filter((court) => court.length > 0)
+	const takenShorts = new Set(
+		[...taken].map((short) => short.trim().toUpperCase()).filter((short) => short.length > 0)
 	);
 
-	let premier = '';
+	let first = '';
 
-	for (const candidat of candidats(name)) {
-		premier ||= candidat;
-		if (!pris.has(candidat)) return candidat;
+	for (const candidate of candidates(name)) {
+		first ||= candidate;
+		if (!takenShorts.has(candidate)) return candidate;
 	}
 
 	// Everything is taken, down to the numbered suffixes. Returning an empty badge would be worse than
 	// returning a duplicate: at least the duplicate says which brand it is.
-	return premier;
+	return first;
 }
 
 /** The possible codes for this name, from the most telling to the most remote. */
-function* candidats(name: string): Generator<string> {
-	const mots = slugify(name)
+function* candidates(name: string): Generator<string> {
+	const words = slugify(name)
 		.split('-')
 		.filter(Boolean)
-		.map((mot) => mot.toUpperCase());
+		.map((word) => word.toUpperCase());
 
-	if (mots.length === 0) {
+	if (words.length === 0) {
 		// A name with no letter or digit — a lone emoji, "###". slugify empties it completely; rather than a
 		// blank badge, we keep what was typed. The splitting goes through code points, otherwise an emoji would
 		// be cut into two halves of a surrogate pair.
-		const brut = [...name.trim().replaceAll(/\s+/g, '')].slice(0, LONGUEUR).join('').toUpperCase();
-		if (brut) yield* avecSuffixes(brut);
+		const raw = [...name.trim().replaceAll(/\s+/g, '')].slice(0, LENGTH).join('').toUpperCase();
+		if (raw) yield* withSuffixes(raw);
 		return;
 	}
 
-	const lettres = mots.join('');
+	const letters = words.join('');
 
 	// A name shorter than the code is not shortened: "U", "Bio".
-	if (lettres.length <= LONGUEUR) {
-		yield* avecSuffixes(lettres);
+	if (letters.length <= LENGTH) {
+		yield* withSuffixes(letters);
 		return;
 	}
 
-	const dernier = mots.at(-1)!;
+	const last = words.at(-1)!;
 	let base: string;
-	let preferees: (string | undefined)[];
+	let preferred: (string | undefined)[];
 
-	if (mots.length === 1) {
-		base = lettres.slice(0, 2);
-		preferees = [lettres[2]];
-	} else if (mots.length === 2) {
-		base = mots[0][0] + mots[1][0];
+	if (words.length === 1) {
+		base = letters.slice(0, 2);
+		preferred = [letters[2]];
+	} else if (words.length === 2) {
+		base = words[0][0] + words[1][0];
 		// A one-letter word — the "U" of Super U — has no last letter distinct from its initial. The filter
 		// below takes care of it, and we then complete from the whole name.
-		preferees = [dernier.at(-1)];
+		preferred = [last.at(-1)];
 	} else {
-		base = mots[0][0] + mots[1][0];
-		preferees = [mots[2][0], dernier.at(-1)];
+		base = words[0][0] + words[1][0];
+		preferred = [words[2][0], last.at(-1)];
 	}
 
 	// The sequence of candidates comes first from the last word — it is the town that tells two shops of the
 	// same brand apart, not the brand — then from the whole name. We skip the first letter, already taken as
 	// the initial, and any letter that would double the one before: "SUU" does not read.
-	const suite = [...preferees, ...dernier.slice(1), ...lettres.slice(1)].filter(
-		(lettre): lettre is string => Boolean(lettre) && lettre !== base.at(-1)
+	const suite = [...preferred, ...last.slice(1), ...letters.slice(1)].filter(
+		(letter): letter is string => Boolean(letter) && letter !== base.at(-1)
 	);
 
-	for (const lettre of new Set(suite)) yield base + lettre;
+	for (const letter of new Set(suite)) yield base + letter;
 
 	yield* suffixes(base);
 }
 
 /** Last resort: the same start, numbered. */
 function* suffixes(base: string): Generator<string> {
-	for (const chiffre of '23456789') yield base + chiffre;
+	for (const digit of '23456789') yield base + digit;
 }
 
-function* avecSuffixes(court: string): Generator<string> {
-	yield court;
-	yield* suffixes(court.slice(0, 2));
+function* withSuffixes(short: string): Generator<string> {
+	yield short;
+	yield* suffixes(short.slice(0, 2));
 }

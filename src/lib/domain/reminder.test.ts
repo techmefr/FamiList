@@ -8,7 +8,7 @@ import {
 	REMINDER_HOUR
 } from './reminder';
 
-const le = (texte: string) => new Date(texte);
+const le = (text: string) => new Date(text);
 
 describe('isEventDate', () => {
 	it('accepte un jour écrit en ISO', () => {
@@ -82,18 +82,18 @@ describe('reminderId', () => {
 
 	it('reste un entier positif tenant sur 32 bits', () => {
 		for (const id of ['', 'x', crypto.randomUUID(), crypto.randomUUID()]) {
-			const numero = reminderId(id);
-			expect(Number.isInteger(numero)).toBe(true);
-			expect(numero).toBeGreaterThanOrEqual(0);
-			expect(numero).toBeLessThan(2147483647);
+			const number = reminderId(id);
+			expect(Number.isInteger(number)).toBe(true);
+			expect(number).toBeGreaterThanOrEqual(0);
+			expect(number).toBeLessThan(2147483647);
 		}
 	});
 });
 
 describe('reminderPlans', () => {
-	const maintenant = le('2026-02-01T09:00:00');
+	const now = le('2026-02-01T09:00:00');
 
-	const liste = (extra: Partial<Parameters<typeof reminderPlans>[0][number]> = {}) => ({
+	const list = (extra: Partial<Parameters<typeof reminderPlans>[0][number]> = {}) => ({
 		listId: 'liste-1',
 		name: 'Crêpes',
 		eventDate: '2026-02-14',
@@ -103,7 +103,7 @@ describe('reminderPlans', () => {
 	});
 
 	it('retient une liste datée et inachevée', () => {
-		const plans = reminderPlans([liste()], maintenant);
+		const plans = reminderPlans([list()], now);
 
 		expect(plans).toHaveLength(1);
 		expect(plans[0].listId).toBe('liste-1');
@@ -112,26 +112,26 @@ describe('reminderPlans', () => {
 	});
 
 	it('ignore une liste sans date', () => {
-		expect(reminderPlans([liste({ eventDate: undefined })], maintenant)).toHaveLength(0);
+		expect(reminderPlans([list({ eventDate: undefined })], now)).toHaveLength(0);
 	});
 
 	it('ignore une date déjà passée', () => {
-		expect(reminderPlans([liste()], le('2026-03-01T09:00:00'))).toHaveLength(0);
+		expect(reminderPlans([list()], le('2026-03-01T09:00:00'))).toHaveLength(0);
 	});
 
 	it('ignore une liste entièrement cochée', () => {
-		expect(reminderPlans([liste({ total: 3, done: 3 })], maintenant)).toHaveLength(0);
+		expect(reminderPlans([list({ total: 3, done: 3 })], now)).toHaveLength(0);
 	});
 
 	// It is precisely the list not filled in yet that has to be a reminder.
 	it('garde une liste vide', () => {
-		expect(reminderPlans([liste({ total: 0, done: 0 })], maintenant)).toHaveLength(1);
+		expect(reminderPlans([list({ total: 0, done: 0 })], now)).toHaveLength(1);
 	});
 
 	it('trie rien et garde l’ordre reçu', () => {
 		const plans = reminderPlans(
-			[liste(), liste({ listId: 'liste-2', name: 'Anniversaire', eventDate: '2026-02-20' })],
-			maintenant
+			[list(), list({ listId: 'liste-2', name: 'Anniversaire', eventDate: '2026-02-20' })],
+			now
 		);
 
 		expect(plans.map((plan) => plan.listId)).toEqual(['liste-1', 'liste-2']);
@@ -139,19 +139,19 @@ describe('reminderPlans', () => {
 });
 
 describe('reminderStatus', () => {
-	const maintenant = le('2026-02-01T09:00:00');
+	const now = le('2026-02-01T09:00:00');
 
 	it('ne dit rien sans date', () => {
-		expect(reminderStatus('', maintenant).status).toBe('none');
-		expect(reminderStatus(undefined, maintenant).status).toBe('none');
+		expect(reminderStatus('', now).status).toBe('none');
+		expect(reminderStatus(undefined, now).status).toBe('none');
 	});
 
 	it('signale une date illisible', () => {
-		expect(reminderStatus('samedi', maintenant).status).toBe('invalid');
+		expect(reminderStatus('samedi', now).status).toBe('invalid');
 	});
 
 	it('annonce le rappel quand il partira', () => {
-		const { status, at } = reminderStatus('2026-02-14', maintenant);
+		const { status, at } = reminderStatus('2026-02-14', now);
 
 		expect(status).toBe('planned');
 		expect(at?.getDate()).toBe(13);

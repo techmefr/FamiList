@@ -24,30 +24,30 @@
 		children
 	}: { start: SwipeAction; end: SwipeAction; children: Snippet } = $props();
 
-	let contenu = $state<HTMLDivElement | null>(null);
+	let content = $state<HTMLDivElement | null>(null);
 
-	let course = $state(0);
-	let engage = $state(false);
-	let pointeur: number | null = null;
-	let depart = { x: 0, y: 0 };
+	let offset = $state(0);
+	let engaged = $state(false);
+	let pointerId: number | null = null;
+	let origin = { x: 0, y: 0 };
 
 	/**
 	 * A click is born of any pointer release. After a swipe, it would land on whatever is under the finger —
 	 * the label that ticks the item — and we would have done two things for one gesture. This flag swallows
 	 * it, for the time the click goes by.
 	 */
-	let avale = false;
+	let swallowed = false;
 
-	const IconeDebut = $derived(start.icon);
-	const IconeFin = $derived(end.icon);
+	const StartIcon = $derived(start.icon);
+	const EndIcon = $derived(end.icon);
 
 	const rtl = $derived(i18n.dir === 'rtl');
-	const limites = $derived({ rtl, startAt: SWIPE_THRESHOLD, endAt: SWIPE_DESTRUCTIVE });
+	const bounds = $derived({ rtl, startAt: SWIPE_THRESHOLD, endAt: SWIPE_DESTRUCTIVE });
 
 	/** The side that would leave if you released now. Used to light the right half of the background. */
-	const arme = $derived<SwipeSide | null>(engage ? swipeSide(course, limites) : null);
+	const armed = $derived<SwipeSide | null>(engaged ? swipeSide(offset, bounds) : null);
 
-	function debut(event: PointerEvent) {
+	function onPointerStart(event: PointerEvent) {
 		// The mouse already has drag-and-drop and the row's four buttons; taking the left button from it would
 		// break the first without adding anything. Swiping is a finger gesture, we do not impose it on the
 		// mouse.
@@ -56,54 +56,54 @@
 			return;
 		}
 
-		pointeur = event.pointerId;
-		depart = { x: event.clientX, y: event.clientY };
-		engage = false;
+		pointerId = event.pointerId;
+		origin = { x: event.clientX, y: event.clientY };
+		engaged = false;
 	}
 
-	function pendant(event: PointerEvent) {
-		if (pointeur !== event.pointerId) return;
+	function onPointerMove(event: PointerEvent) {
+		if (pointerId !== event.pointerId) return;
 
-		const dx = event.clientX - depart.x;
-		const dy = event.clientY - depart.y;
+		const dx = event.clientX - origin.x;
+		const dy = event.clientY - origin.y;
 
-		if (!engage) {
+		if (!engaged) {
 			// The finger is going down: this is a scroll, we let go for good rather than watch for a horizontal
 			// turn in the middle of the gesture.
 			if (Math.abs(dy) > Math.abs(dx) && Math.abs(dy) > 12) {
-				pointeur = null;
+				pointerId = null;
 				return;
 			}
 
 			if (!isHorizontalGesture(dx, dy)) return;
 
-			engage = true;
-			contenu?.setPointerCapture(event.pointerId);
+			engaged = true;
+			content?.setPointerCapture(event.pointerId);
 		}
 
-		course = swipeOffset(dx);
+		offset = swipeOffset(dx);
 	}
 
-	function fin(event: PointerEvent) {
-		if (pointeur !== event.pointerId) return;
+	function onPointerEnd(event: PointerEvent) {
+		if (pointerId !== event.pointerId) return;
 
-		const cote = engage ? swipeSide(course, limites) : null;
+		const side = engaged ? swipeSide(offset, bounds) : null;
 
-		pointeur = null;
-		course = 0;
+		pointerId = null;
+		offset = 0;
 
-		if (engage) {
-			avale = true;
-			setTimeout(() => (avale = false), 0);
+		if (engaged) {
+			swallowed = true;
+			setTimeout(() => (swallowed = false), 0);
 		}
-		engage = false;
+		engaged = false;
 
-		if (cote === 'start') start.run();
-		else if (cote === 'end') end.run();
+		if (side === 'start') start.run();
+		else if (side === 'end') end.run();
 	}
 
-	function clic(event: MouseEvent) {
-		if (!avale) return;
+	function onClick(event: MouseEvent) {
+		if (!swallowed) return;
 		event.preventDefault();
 		event.stopPropagation();
 	}
@@ -124,13 +124,13 @@
 -->
 <div class="fl-swipe">
 	<div class="fl-swipe-track" aria-hidden="true">
-		<span class="fl-swipe-action fl-swipe-start" data-tone={start.tone} data-armed={arme === 'start'}>
-			<IconeDebut size={20} aria-hidden="true" />
+		<span class="fl-swipe-action fl-swipe-start" data-tone={start.tone} data-armed={armed === 'start'}>
+			<StartIcon size={20} aria-hidden="true" />
 			<span class="text-caption">{start.label}</span>
 		</span>
-		<span class="fl-swipe-action fl-swipe-end" data-tone={end.tone} data-armed={arme === 'end'}>
+		<span class="fl-swipe-action fl-swipe-end" data-tone={end.tone} data-armed={armed === 'end'}>
 			<span class="text-caption">{end.label}</span>
-			<IconeFin size={20} aria-hidden="true" />
+			<EndIcon size={20} aria-hidden="true" />
 		</span>
 	</div>
 
@@ -142,14 +142,14 @@
 	-->
 	<!-- svelte-ignore a11y_no_static_element_interactions -->
 	<div
-		bind:this={contenu}
+		bind:this={content}
 		class="fl-swipe-content"
-		style="translate: {course}px 0; transition-duration: {engage ? 0 : motionMs(220)}ms"
-		onpointerdown={debut}
-		onpointermove={pendant}
-		onpointerup={fin}
-		onpointercancel={fin}
-		onclickcapture={clic}
+		style="translate: {offset}px 0; transition-duration: {engaged ? 0 : motionMs(220)}ms"
+		onpointerdown={onPointerStart}
+		onpointermove={onPointerMove}
+		onpointerup={onPointerEnd}
+		onpointercancel={onPointerEnd}
+		onclickcapture={onClick}
 	>
 		{@render children()}
 	</div>

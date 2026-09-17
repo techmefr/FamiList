@@ -372,9 +372,9 @@
 		"servingsHint": "Für wie viele Personen die Mengen notiert sind.",
 		"stepper": "Schritte des Formulars",
 		"step": {
-			"recette": "Das Rezept",
+			"recipe": "Das Rezept",
 			"ingredients": "Die Zutaten",
-			"etapes": "Die Zubereitung"
+			"steps": "Die Zubereitung"
 		},
 		"ingredientsHint": "Eine Zutat pro Zeile. Leere Zeilen werden übergangen.",
 		"ingredientName": "Zutat {rank}",

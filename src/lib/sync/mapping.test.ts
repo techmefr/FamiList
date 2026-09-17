@@ -412,9 +412,9 @@ describe('toMessage / fromMessage', () => {
 		expect(direct.list_id).toBeNull();
 		expect(direct.conversation_id).toBe('c1');
 
-		const liste = fromMessage(toMessage({ id: 'm2', list_id: 'l1', body: 'pain' }));
-		expect(liste.list_id).toBe('l1');
-		expect(liste.conversation_id).toBeNull();
+		const list = fromMessage(toMessage({ id: 'm2', list_id: 'l1', body: 'pain' }));
+		expect(list.list_id).toBe('l1');
+		expect(list.conversation_id).toBeNull();
 	});
 });
 

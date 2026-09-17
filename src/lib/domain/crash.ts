@@ -49,7 +49,7 @@ const REPLACEMENTS: Array<[RegExp, string]> = [
 ];
 
 export function scrub(text: string): string {
-	return REPLACEMENTS.reduce((said, [motif, jeton]) => said.replace(motif, jeton), text);
+	return REPLACEMENTS.reduce((said, [pattern, token]) => said.replace(pattern, token), text);
 }
 
 /**

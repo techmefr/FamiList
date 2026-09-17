@@ -11,57 +11,57 @@
 	import { Camera, ImageOff, MessageSquareWarning } from '@lucide/svelte';
 
 	let input = $state<HTMLInputElement | null>(null);
-	let erreur = $state('');
-	let occupe = $state(false);
+	let errorText = $state('');
+	let busy = $state(false);
 
 	/**
 	 * Shrunk here, in the browser, before leaving: a phone capture weighs several megabytes, and the database
 	 * column caps at 1.5 MB of text. `createImageBitmap` also applies the EXIF orientation, without which a
 	 * capture taken in portrait comes out lying down.
 	 */
-	async function reduire(fichier: File): Promise<string> {
-		const source = await createImageBitmap(fichier, { imageOrientation: 'from-image' });
+	async function shrink(file: File): Promise<string> {
+		const source = await createImageBitmap(file, { imageOrientation: 'from-image' });
 		const { width, height } = fitWithin(source.width, source.height, SCREENSHOT_MAX_DIM);
 
-		const toile = document.createElement('canvas');
-		toile.width = width;
-		toile.height = height;
+		const canvas = document.createElement('canvas');
+		canvas.width = width;
+		canvas.height = height;
 
-		const pinceau = toile.getContext('2d');
+		const pinceau = canvas.getContext('2d');
 		if (!pinceau) throw new Error('canvas indisponible');
 
 		pinceau.drawImage(source, 0, 0, width, height);
 		source.close();
 
-		return toile.toDataURL('image/jpeg', 0.75);
+		return canvas.toDataURL('image/jpeg', 0.75);
 	}
 
-	async function choisir(event: Event) {
-		const fichier = (event.currentTarget as HTMLInputElement).files?.[0];
-		if (!fichier) return;
+	async function choose(event: Event) {
+		const file = (event.currentTarget as HTMLInputElement).files?.[0];
+		if (!file) return;
 
-		erreur = '';
+		errorText = '';
 
-		if (fichier.size > SCREENSHOT_MAX_BYTES) {
-			erreur = t('bugReport.tooBig');
+		if (file.size > SCREENSHOT_MAX_BYTES) {
+			errorText = t('bugReport.tooBig');
 			return;
 		}
 
 		try {
-			report.screenshot = await reduire(fichier);
+			report.screenshot = await shrink(file);
 		} catch {
-			erreur = t('bugReport.captureFailed');
+			errorText = t('bugReport.captureFailed');
 		} finally {
 			if (input) input.value = '';
 		}
 	}
 
-	async function envoyer(event: SubmitEvent) {
+	async function send(event: SubmitEvent) {
 		event.preventDefault();
 		if (!report.description.trim()) return;
 
-		erreur = '';
-		occupe = true;
+		errorText = '';
+		busy = true;
 
 		const { data, error } = await supabase.rpc('submit_bug_report', {
 			description: report.description.trim(),
@@ -71,10 +71,10 @@
 			kind: report.kind
 		});
 
-		occupe = false;
+		busy = false;
 
 		if (error) {
-			erreur = error.message;
+			errorText = error.message;
 			feedback.play('error');
 			return;
 		}
@@ -84,7 +84,7 @@
 		const issue = readReportOutcome(data);
 
 		if (issue.errorKey) {
-			erreur = t(issue.errorKey);
+			errorText = t(issue.errorKey);
 			feedback.play('error');
 			return;
 		}
@@ -111,7 +111,7 @@
 		</p>
 	{/if}
 {:else}
-	<form onsubmit={envoyer} class="space-y-4" data-test-id="bug-form">
+	<form onsubmit={send} class="space-y-4" data-test-id="bug-form">
 		<div>
 			<Label for="bug-description">{t('bugReport.description')}</Label>
 			<IconField icon={MessageSquareWarning} align="top">
@@ -163,17 +163,17 @@
 			bind:this={input}
 			type="file"
 			accept="image/*"
-			onchange={choisir}
+			onchange={choose}
 			aria-label={t('bugReport.screenshotAdd')}
 			data-test-id="bug-screenshot-input"
 			class="sr-only"
 		/>
 
-		{#if erreur}
-			<p class="text-destructive" role="alert" data-test-id="bug-error">{erreur}</p>
+		{#if errorText}
+			<p class="text-destructive" role="alert" data-test-id="bug-error">{errorText}</p>
 		{/if}
 
-		<Button type="submit" disabled={occupe} data-test-id="bug-submit" class="fl-press">
+		<Button type="submit" disabled={busy} data-test-id="bug-submit" class="fl-press">
 			{t('bugReport.submit')}
 		</Button>
 	</form>

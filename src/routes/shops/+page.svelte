@@ -20,18 +20,18 @@
 	let picker = $state<EmojiPicker | null>(null);
 
 	/** The shop open for editing, and the one whose deletion is waiting to be confirmed. */
-	let modifie = $state<string | null>(null);
-	let aSupprimer = $state<string | null>(null);
+	let changed = $state<string | null>(null);
+	let toDelete = $state<string | null>(null);
 
 	/**
 	 * Deleting a shop asks for a confirmation, where deleting a card does not: the learned route goes with
 	 * it, and it is not found again — redoing it means doing the shopping once more while tidying the aisles.
 	 */
-	function supprimer(shop: Shop) {
+	function remove(shop: Shop) {
 		feedback.play('remove');
 		data.removeShop(shop.id);
-		aSupprimer = null;
-		if (modifie === shop.id) modifie = null;
+		toDelete = null;
+		if (changed === shop.id) changed = null;
 	}
 
 	function addAisle(event: SubmitEvent) {
@@ -92,8 +92,8 @@
 							<Button
 								variant="outline"
 								onclick={() => {
-									aSupprimer = null;
-									modifie = modifie === shop.id ? null : shop.id;
+									toDelete = null;
+									changed = changed === shop.id ? null : shop.id;
 								}}
 								data-test-class="shop-edit"
 							>
@@ -103,7 +103,7 @@
 
 							<Button
 								variant="outline"
-								onclick={() => (aSupprimer = aSupprimer === shop.id ? null : shop.id)}
+								onclick={() => (toDelete = toDelete === shop.id ? null : shop.id)}
 								aria-label={t('shops.delete', { name: shop.name })}
 								data-test-class="shop-delete"
 							>
@@ -115,7 +115,7 @@
 							The confirmation is placed where the click happened, not in a window covering the screen: the
 							question stays next to the shop it is about.
 						-->
-						{#if aSupprimer === shop.id}
+						{#if toDelete === shop.id}
 							<div
 								class="border-destructive/40 mt-3 flex flex-wrap items-center gap-3 rounded-lg border p-3"
 								data-test-class="shop-delete-confirm"
@@ -125,14 +125,14 @@
 								</p>
 								<Button
 									variant="destructive"
-									onclick={() => supprimer(shop)}
+									onclick={() => remove(shop)}
 									data-test-class="shop-delete-yes"
 								>
 									{t('shops.deleteYes')}
 								</Button>
 								<Button
 									variant="outline"
-									onclick={() => (aSupprimer = null)}
+									onclick={() => (toDelete = null)}
 									data-test-class="shop-delete-no"
 								>
 									{t('shops.cancel')}
@@ -140,13 +140,13 @@
 							</div>
 						{/if}
 
-						{#if modifie === shop.id}
+						{#if changed === shop.id}
 							<div class="mt-3 border-t pt-3">
 								<ShopForm
 									prefix="edit-{shop.id}"
 									{shop}
-									onsaved={() => (modifie = null)}
-									oncancel={() => (modifie = null)}
+									onsaved={() => (changed = null)}
+									oncancel={() => (changed = null)}
 								/>
 							</div>
 						{/if}
@@ -208,4 +208,4 @@
 	{/each}
 </ul>
 
-<EmojiPicker bind:this={picker} value={aisleEmoji} onpick={(choix) => (aisleEmoji = choix)} />
+<EmojiPicker bind:this={picker} value={aisleEmoji} onpick={(choices) => (aisleEmoji = choices)} />

@@ -10,65 +10,65 @@
 	import IconField from '$components/app/IconField.svelte';
 	import { KeyRound, Cpu, Check, ExternalLink, TriangleAlert } from '@lucide/svelte';
 
-	let fournisseur = $state(ai.provider);
-	let cle = $state('');
-	let modele = $state(ai.model);
+	let provider = $state(ai.provider);
+	let key = $state('');
+	let model = $state(ai.model);
 	let busy = $state(false);
-	let enregistre = $state(false);
-	let erreur = $state('');
+	let saved = $state(false);
+	let error = $state('');
 
-	const choisi = $derived(providerById(fournisseur));
+	const selected = $derived(providerById(provider));
 
 	/**
 	 * The model field follows the provider while it has not been written by hand. Without that, changing
 	 * provider would leave the previous one's model name in the field — a value neither of them knows, and an
 	 * incomprehensible refusal on the first call.
 	 */
-	let modeleTouche = $state(false);
-	const modeleAffiche = $derived(modeleTouche ? modele : ai.model || (choisi?.defaultModel ?? ''));
+	let modelTouched = $state(false);
+	const shownModel = $derived(modelTouched ? model : ai.model || (selected?.defaultModel ?? ''));
 
 	$effect(() => {
-		if (!ai.loading) fournisseur = ai.provider;
+		if (!ai.loading) provider = ai.provider;
 	});
 
-	async function enregistrer(event: SubmitEvent) {
+	async function save(event: SubmitEvent) {
 		event.preventDefault();
 
 		busy = true;
-		erreur = '';
-		enregistre = false;
+		error = '';
+		saved = false;
 
-		const ok = await ai.save(fournisseur, cle, modeleTouche ? modele : '');
+		const ok = await ai.save(provider, key, modelTouched ? model : '');
 		busy = false;
 
 		if (!ok) {
-			erreur = ai.error ?? t('ai.saveFailed');
+			error = ai.error ?? t('ai.saveFailed');
 			return;
 		}
 
 		// The key leaves the screen as soon as it is saved: it has no business in a field any more, and the form
 		// now only serves to replace it.
-		cle = '';
-		enregistre = true;
+		key = '';
+		saved = true;
 		feedback.play('success');
 	}
 
-	async function retirer() {
+	async function remove() {
 		busy = true;
-		erreur = '';
+		error = '';
 
 		const ok = await ai.clear();
 		busy = false;
 
 		if (!ok) {
-			erreur = ai.error ?? t('ai.saveFailed');
+			error = ai.error ?? t('ai.saveFailed');
 			return;
 		}
 
-		cle = '';
-		modele = '';
-		modeleTouche = false;
-		enregistre = false;
+		key = '';
+		model = '';
+		modelTouched = false;
+		saved = false;
 		feedback.play('remove');
 	}
 </script>
@@ -130,7 +130,7 @@
 				{ai.configured ? t('ai.stateOn') : t('ai.stateOff')}
 			</p>
 
-			<form onsubmit={enregistrer} class="space-y-4" data-test-id="ai-form">
+			<form onsubmit={save} class="space-y-4" data-test-id="ai-form">
 				<div>
 					<Label for="ai-provider">{t('ai.provider')}</Label>
 					<!--
@@ -139,7 +139,7 @@
 					-->
 					<select
 						id="ai-provider"
-						bind:value={fournisseur}
+						bind:value={provider}
 						data-test-id="ai-provider"
 						class="border-input bg-background focus-visible:ring-ring text-label min-h-[max(2.75rem,44px)]
 							w-full rounded-lg border px-3 focus-visible:ring-2 focus-visible:outline-none"
@@ -151,16 +151,16 @@
 					<p class="text-muted-foreground text-caption mt-2">{t('ai.providerHint')}</p>
 				</div>
 
-				{#if choisi}
+				{#if selected}
 					<p class="text-caption">
 						<a
-							href={choisi.keysUrl}
+							href={selected.keysUrl}
 							target="_blank"
 							rel="noreferrer noopener"
 							class="text-primary inline-flex items-center gap-1 underline"
 							data-test-id="ai-keys-link"
 						>
-							{t('ai.whereKey', { provider: t(`ai.providers.${choisi.id}`) })}
+							{t('ai.whereKey', { provider: t(`ai.providers.${selected.id}`) })}
 							<ExternalLink size={14} aria-hidden="true" />
 						</a>
 					</p>
@@ -177,7 +177,7 @@
 						<Input
 							id="ai-key"
 							type="password"
-							bind:value={cle}
+							bind:value={key}
 							autocomplete="off"
 							spellcheck="false"
 							aria-describedby="ai-key-hint"
@@ -195,10 +195,10 @@
 					<IconField icon={Cpu}>
 						<Input
 							id="ai-model"
-							value={modeleAffiche}
+							value={shownModel}
 							oninput={event => {
-								modeleTouche = true;
-								modele = event.currentTarget.value;
+								modelTouched = true;
+								model = event.currentTarget.value;
 							}}
 							autocomplete="off"
 							spellcheck="false"
@@ -211,11 +211,11 @@
 					</p>
 				</div>
 
-				{#if erreur}
-					<p class="text-destructive text-label" role="alert" data-test-id="ai-error">{erreur}</p>
+				{#if error}
+					<p class="text-destructive text-label" role="alert" data-test-id="ai-error">{error}</p>
 				{/if}
 
-				{#if enregistre}
+				{#if saved}
 					<p
 						class="text-secondary text-label flex items-center gap-2"
 						role="status"
@@ -230,14 +230,14 @@
 					<Button
 						type="submit"
 						class="fl-press"
-						disabled={busy || cle.trim() === ''}
+						disabled={busy || key.trim() === ''}
 						data-test-id="ai-save"
 					>
 						{busy ? t('common.loading') : t('ai.save')}
 					</Button>
 
 					{#if ai.configured}
-						<Button variant="outline" disabled={busy} onclick={retirer} data-test-id="ai-clear">
+						<Button variant="outline" disabled={busy} onclick={remove} data-test-id="ai-clear">
 							{t('ai.clear')}
 						</Button>
 					{/if}

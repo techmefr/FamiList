@@ -14,7 +14,7 @@ import {
 
 const MEXIMIEUX = { lat: 45.9075, lng: 5.1944 };
 
-const magasin = (patch: Partial<NearbyShop> = {}): NearbyShop => ({
+const shop = (patch: Partial<NearbyShop> = {}): NearbyShop => ({
 	shopId: 'shop-1',
 	name: 'Carrefour Meximieux',
 	brand: 'Carrefour',
@@ -23,7 +23,7 @@ const magasin = (patch: Partial<NearbyShop> = {}): NearbyShop => ({
 	...patch
 });
 
-const carte = (patch: Partial<NearbyCard> = {}): NearbyCard => ({
+const card = (patch: Partial<NearbyCard> = {}): NearbyCard => ({
 	cardId: 'card-1',
 	name: 'Carrefour',
 	shopId: '',
@@ -32,7 +32,7 @@ const carte = (patch: Partial<NearbyCard> = {}): NearbyCard => ({
 });
 
 /** An offset in latitude, converted to metres: one degree is about 111,320 m. */
-const aMetres = (metres: number) => ({
+const atMeters = (metres: number) => ({
 	lat: MEXIMIEUX.lat + metres / 111_320,
 	lng: MEXIMIEUX.lng
 });
@@ -43,14 +43,14 @@ describe('distanceMeters', () => {
 	});
 
 	it('mesure un déplacement court à quelques mètres près', () => {
-		expect(distanceMeters(MEXIMIEUX, aMetres(500))).toBeCloseTo(500, -1);
+		expect(distanceMeters(MEXIMIEUX, atMeters(500))).toBeCloseTo(500, -1);
 	});
 
 	it('est symétrique', () => {
-		const aller = distanceMeters(MEXIMIEUX, aMetres(1200));
-		const retour = distanceMeters(aMetres(1200), MEXIMIEUX);
+		const there = distanceMeters(MEXIMIEUX, atMeters(1200));
+		const back = distanceMeters(atMeters(1200), MEXIMIEUX);
 
-		expect(aller).toBeCloseTo(retour, 6);
+		expect(there).toBeCloseTo(back, 6);
 	});
 
 	// Paris–Lyon, about 392 km: enough to see that latitude and longitude are not being confused.
@@ -64,26 +64,26 @@ describe('distanceMeters', () => {
 
 describe('cardForShop', () => {
 	it('préfère la carte rattachée au magasin précis', () => {
-		const cartes = [carte(), carte({ cardId: 'card-2', shopId: 'shop-1', name: 'Meximieux' })];
+		const cards = [card(), card({ cardId: 'card-2', shopId: 'shop-1', name: 'Meximieux' })];
 
-		expect(cardForShop(magasin(), cartes)?.cardId).toBe('card-2');
+		expect(cardForShop(shop(), cards)?.cardId).toBe('card-2');
 	});
 
 	it('retombe sur la carte de l’enseigne, à la casse près', () => {
-		const cartes = [carte({ brand: 'CARREFOUR' })];
+		const cards = [card({ brand: 'CARREFOUR' })];
 
-		expect(cardForShop(magasin(), cartes)?.cardId).toBe('card-1');
+		expect(cardForShop(shop(), cards)?.cardId).toBe('card-1');
 	});
 
 	it('ne rend rien quand aucune carte ne correspond', () => {
-		expect(cardForShop(magasin(), [carte({ brand: 'Intermarché' })])).toBeNull();
+		expect(cardForShop(shop(), [card({ brand: 'Intermarché' })])).toBeNull();
 	});
 
 	// An independent shop has no brand: with no direct attachment, there is nothing to return.
 	it('ne rattrape pas un magasin sans enseigne par une carte sans enseigne', () => {
-		const boucherie = magasin({ brand: '', name: 'Boucherie Émile' });
+		const boucherie = shop({ brand: '', name: 'Boucherie Émile' });
 
-		expect(cardForShop(boucherie, [carte({ brand: '' })])).toBeNull();
+		expect(cardForShop(boucherie, [card({ brand: '' })])).toBeNull();
 	});
 });
 
@@ -105,88 +105,88 @@ describe('nearbyId', () => {
 });
 
 describe('nearbyAlert', () => {
-	const maintenant = new Date(2026, 1, 4, 10, 0);
+	const now = new Date(2026, 1, 4, 10, 0);
 
 	it('annonce un magasin dans le rayon quand une carte existe', () => {
-		const alerte = nearbyAlert(aMetres(100), [magasin()], [carte()], {}, maintenant);
+		const alert = nearbyAlert(atMeters(100), [shop()], [card()], {}, now);
 
-		expect(alerte?.shopId).toBe('shop-1');
-		expect(alerte?.cardId).toBe('card-1');
+		expect(alert?.shopId).toBe('shop-1');
+		expect(alert?.cardId).toBe('card-1');
 	});
 
 	it('ne dit rien au-delà du rayon', () => {
-		const alerte = nearbyAlert(
-			aMetres(NEARBY_RADIUS_M + 50),
-			[magasin()],
-			[carte()],
+		const alert = nearbyAlert(
+			atMeters(NEARBY_RADIUS_M + 50),
+			[shop()],
+			[card()],
 			{},
-			maintenant
+			now
 		);
 
-		expect(alerte).toBeNull();
+		expect(alert).toBeNull();
 	});
 
 	it('ne dit rien quand aucune carte n’est enregistrée', () => {
-		expect(nearbyAlert(aMetres(50), [magasin()], [], {}, maintenant)).toBeNull();
+		expect(nearbyAlert(atMeters(50), [shop()], [], {}, now)).toBeNull();
 	});
 
 	it('ignore un magasin sans position relevée', () => {
-		const sansPoint = magasin({ lat: undefined, lng: undefined });
+		const withoutPoint = shop({ lat: undefined, lng: undefined });
 
-		expect(nearbyAlert(MEXIMIEUX, [sansPoint], [carte()], {}, maintenant)).toBeNull();
+		expect(nearbyAlert(MEXIMIEUX, [withoutPoint], [card()], {}, now)).toBeNull();
 	});
 
 	it('garde le plus proche quand plusieurs magasins se chevauchent', () => {
-		const voisin = magasin({
+		const neighbour = shop({
 			shopId: 'shop-2',
 			name: 'Lidl Meximieux',
 			brand: 'Lidl',
-			...aMetres(250)
+			...atMeters(250)
 		});
-		const cartes = [carte(), carte({ cardId: 'card-2', brand: 'Lidl', name: 'Lidl' })];
+		const cards = [card(), card({ cardId: 'card-2', brand: 'Lidl', name: 'Lidl' })];
 
-		const alerte = nearbyAlert(aMetres(20), [voisin, magasin()], cartes, {}, maintenant);
+		const alert = nearbyAlert(atMeters(20), [neighbour, shop()], cards, {}, now);
 
-		expect(alerte?.shopId).toBe('shop-1');
+		expect(alert?.shopId).toBe('shop-1');
 	});
 
 	it('ne répète pas le même magasin le même jour', () => {
-		const journal = { 'shop-1': '2026-02-04' };
+		const log = { 'shop-1': '2026-02-04' };
 
-		expect(nearbyAlert(aMetres(20), [magasin()], [carte()], journal, maintenant)).toBeNull();
+		expect(nearbyAlert(atMeters(20), [shop()], [card()], log, now)).toBeNull();
 	});
 
 	it('repose la question le lendemain', () => {
-		const journal = { 'shop-1': '2026-02-03' };
+		const log = { 'shop-1': '2026-02-03' };
 
-		expect(nearbyAlert(aMetres(20), [magasin()], [carte()], journal, maintenant)?.shopId).toBe(
+		expect(nearbyAlert(atMeters(20), [shop()], [card()], log, now)?.shopId).toBe(
 			'shop-1'
 		);
 	});
 
 	// The shop already announced does not hide its neighbour: the retail park stays usable.
 	it('passe au suivant quand le plus proche a déjà été annoncé', () => {
-		const voisin = magasin({ shopId: 'shop-2', name: 'Lidl', brand: 'Lidl', ...aMetres(200) });
-		const cartes = [carte(), carte({ cardId: 'card-2', brand: 'Lidl', name: 'Lidl' })];
-		const journal = { 'shop-1': '2026-02-04' };
+		const neighbour = shop({ shopId: 'shop-2', name: 'Lidl', brand: 'Lidl', ...atMeters(200) });
+		const cards = [card(), card({ cardId: 'card-2', brand: 'Lidl', name: 'Lidl' })];
+		const log = { 'shop-1': '2026-02-04' };
 
-		const alerte = nearbyAlert(aMetres(20), [magasin(), voisin], cartes, journal, maintenant);
+		const alert = nearbyAlert(atMeters(20), [shop(), neighbour], cards, log, now);
 
-		expect(alerte?.shopId).toBe('shop-2');
+		expect(alert?.shopId).toBe('shop-2');
 	});
 });
 
 describe('rememberNotified', () => {
-	const maintenant = new Date(2026, 1, 4, 10, 0);
+	const now = new Date(2026, 1, 4, 10, 0);
 
 	it('inscrit le magasin annoncé', () => {
-		expect(rememberNotified({}, 'shop-1', maintenant)).toEqual({ 'shop-1': '2026-02-04' });
+		expect(rememberNotified({}, 'shop-1', now)).toEqual({ 'shop-1': '2026-02-04' });
 	});
 
 	it('oublie les jours passés', () => {
-		const journal = { 'shop-2': '2026-01-30', 'shop-3': '2026-02-04' };
+		const log = { 'shop-2': '2026-01-30', 'shop-3': '2026-02-04' };
 
-		expect(rememberNotified(journal, 'shop-1', maintenant)).toEqual({
+		expect(rememberNotified(log, 'shop-1', now)).toEqual({
 			'shop-1': '2026-02-04',
 			'shop-3': '2026-02-04'
 		});

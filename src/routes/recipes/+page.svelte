@@ -44,56 +44,56 @@
 	 * The steps are an array and not three booleans: the indicator at the top is then derived from the same
 	 * state as the content, and neither can drift from the other.
 	 */
-	const ETAPES = ['recette', 'ingredients', 'etapes'] as const;
-	type Etape = (typeof ETAPES)[number];
+	const STEPS = ['recipe', 'ingredients', 'steps'] as const;
+	type Step = (typeof STEPS)[number];
 
-	const EMOJI_PAR_DEFAUT = '🍲';
+	const DEFAULT_EMOJI = '🍲';
 
 	let creating = $state(false);
-	let etape = $state<Etape>('recette');
+	let step = $state<Step>('recipe');
 	let picker = $state<EmojiPicker | null>(null);
 
 	let name = $state('');
-	let emoji = $state(EMOJI_PAR_DEFAUT);
+	let emoji = $state(DEFAULT_EMOJI);
 	let servings = $state(DEFAULT_SERVINGS);
 	let lines = $state<RecipeLine[]>([{ name: '', qty: '', unit: DEFAULT_UNIT }]);
 	let steps = $state<string[]>(['']);
 
 	/** The recipe whose generation is unfolded, and what is being asked of it. */
-	let genere = $state<string | null>(null);
-	let convives = $state(DEFAULT_SERVINGS);
-	let cible = $state('');
-	let aSupprimer = $state<string | null>(null);
+	let generatingFor = $state<string | null>(null);
+	let guestCount = $state(DEFAULT_SERVINGS);
+	let target = $state('');
+	let toDelete = $state<string | null>(null);
 
 	/** The import from a link: the address typed, the wait, the refusal, and the fact of having served. */
-	let lien = $state('');
-	let importEnCours = $state(false);
-	let importRefus = $state<ImportError | null>(null);
-	let importe = $state(false);
+	let link = $state('');
+	let importing = $state(false);
+	let importRefusal = $state<ImportError | null>(null);
+	let fromImport = $state(false);
 
-	const rang = $derived(ETAPES.indexOf(etape));
-	const derniere = $derived(rang === ETAPES.length - 1);
+	const rank = $derived(STEPS.indexOf(step));
+	const isLast = $derived(rank === STEPS.length - 1);
 
 	// The central button brings you here to create: the form must already be unfolded on arrival.
 	$effect(() => {
-		if (createIntent.take('recipe')) ouvrir();
+		if (createIntent.take('recipe')) open();
 	});
 
-	function ouvrir() {
+	function open() {
 		creating = true;
-		etape = 'recette';
+		step = 'recipe';
 	}
 
 	function reset() {
 		creating = false;
-		etape = 'recette';
+		step = 'recipe';
 		name = '';
-		emoji = EMOJI_PAR_DEFAUT;
+		emoji = DEFAULT_EMOJI;
 		servings = DEFAULT_SERVINGS;
 		lines = [{ name: '', qty: '', unit: DEFAULT_UNIT }];
 		steps = [''];
-		importe = false;
-		importRefus = null;
+		fromImport = false;
+		importRefusal = null;
 	}
 
 	/**
@@ -103,13 +103,13 @@
 	 * `context`. Without re-reading it, every refusal would look alike — "unreadable address" and "no
 	 * recipe on this page" call for two opposite gestures.
 	 */
-	async function motifDuRefus(erreur: unknown): Promise<ImportError> {
-		const contexte = (erreur as { context?: unknown } | null)?.context;
-		if (!(contexte instanceof Response)) return 'unreachable';
+	async function refusalReason(error: unknown): Promise<ImportError> {
+		const context = (error as { context?: unknown } | null)?.context;
+		if (!(context instanceof Response)) return 'unreachable';
 
 		try {
-			const corps = await contexte.json();
-			return importErrorOf(corps?.error);
+			const body = await context.json();
+			return importErrorOf(body?.error);
 		} catch {
 			return 'unreachable';
 		}
@@ -123,48 +123,48 @@
 	 * sometimes missing. The person reads it, corrects it, then saves — as if they had typed the recipe
 	 * themselves, but without having typed it.
 	 */
-	function preRemplir(recette: ImportedRecipe) {
-		const importees = importedLines(recette.ingredients);
+	function prefill(recipe: ImportedRecipe) {
+		const imported = importedLines(recipe.ingredients);
 
-		name = recette.name ?? '';
-		emoji = EMOJI_PAR_DEFAUT;
-		servings = parseImportedServings(recette.servings) ?? DEFAULT_SERVINGS;
-		lines = importees.length ? importees : [{ name: '', qty: '', unit: DEFAULT_UNIT }];
-		steps = recette.steps.length ? recette.steps : [''];
+		name = recipe.name ?? '';
+		emoji = DEFAULT_EMOJI;
+		servings = parseImportedServings(recipe.servings) ?? DEFAULT_SERVINGS;
+		lines = imported.length ? imported : [{ name: '', qty: '', unit: DEFAULT_UNIT }];
+		steps = recipe.steps.length ? recipe.steps : [''];
 
 		creating = true;
-		etape = 'recette';
-		importe = true;
-		lien = '';
+		step = 'recipe';
+		fromImport = true;
+		link = '';
 	}
 
-	async function importer(event: SubmitEvent) {
+	async function importUrl(event: SubmitEvent) {
 		event.preventDefault();
 
-		const url = lien.trim();
-		if (!url || importEnCours) return;
+		const url = link.trim();
+		if (!url || importing) return;
 
-		importEnCours = true;
-		importRefus = null;
+		importing = true;
+		importRefusal = null;
 
 		try {
-			const { data: recette, error } = await supabase.functions.invoke<ImportedRecipe>(
+			const { data: recipe, error } = await supabase.functions.invoke<ImportedRecipe>(
 				'import-recipe',
 				{ body: { url } }
 			);
 
-			if (error || !recette) {
-				importRefus = await motifDuRefus(error);
+			if (error || !recipe) {
+				importRefusal = await refusalReason(error);
 				return;
 			}
 
 			feedback.play('add');
-			preRemplir(recette);
+			prefill(recipe);
 		} catch {
 			// Offline, or function unavailable: for whoever is looking at the screen, it is the same thing.
-			importRefus = 'unreachable';
+			importRefusal = 'unreachable';
 		} finally {
-			importEnCours = false;
+			importing = false;
 		}
 	}
 
@@ -176,24 +176,24 @@
 	 * The last row cannot be removed: an ingredient form with no field can no longer be filled, and it
 	 * would take a second button to make one reappear.
 	 */
-	function ajouterLigne() {
+	function addRow() {
 		lines = [...lines, { name: '', qty: '', unit: DEFAULT_UNIT }];
 	}
 
-	function retirerLigne(index: number) {
+	function removeRow(index: number) {
 		lines = lines.length > 1 ? lines.filter((_, i) => i !== index) : lines;
 	}
 
-	function ajouterEtape() {
+	function addStep() {
 		steps = [...steps, ''];
 	}
 
-	function retirerEtape(index: number) {
+	function removeStep(index: number) {
 		steps = steps.length > 1 ? steps.filter((_, i) => i !== index) : steps;
 	}
 
-	function reculer() {
-		if (rang > 0) etape = ETAPES[rang - 1];
+	function goBack() {
+		if (rank > 0) step = STEPS[rank - 1];
 	}
 
 	/**
@@ -201,11 +201,11 @@
 	 * the Enter key then does what you expect of it at each step, which a "next" button outside the form
 	 * would not give.
 	 */
-	function avancer(event: SubmitEvent) {
+	function goNext(event: SubmitEvent) {
 		event.preventDefault();
 
-		if (!derniere) {
-			etape = ETAPES[rang + 1];
+		if (!isLast) {
+			step = STEPS[rank + 1];
 			return;
 		}
 
@@ -216,32 +216,32 @@
 		reset();
 	}
 
-	function supprimer(id: string) {
+	function remove(id: string) {
 		feedback.play('remove');
 		data.removeRecipe(id);
-		aSupprimer = null;
-		if (genere === id) genere = null;
+		toDelete = null;
+		if (generatingFor === id) generatingFor = null;
 	}
 
-	function deplierGeneration(recipeId: string) {
-		if (genere === recipeId) {
-			genere = null;
+	function toggleGeneration(recipeId: string) {
+		if (generatingFor === recipeId) {
+			generatingFor = null;
 			return;
 		}
 
-		genere = recipeId;
+		generatingFor = recipeId;
 		// We start from the recipe's own number of servings: most of the time you cook for that number, and the
 		// field is then already right.
-		convives = data.recipe(recipeId)?.servings ?? DEFAULT_SERVINGS;
-		cible = '';
+		guestCount = data.recipe(recipeId)?.servings ?? DEFAULT_SERVINGS;
+		target = '';
 	}
 
-	async function generer(recipeId: string) {
-		const issue = data.generateList(recipeId, convives, cible || undefined);
+	async function generate(recipeId: string) {
+		const issue = data.generateList(recipeId, guestCount, target || undefined);
 		if (!issue) return;
 
 		feedback.play('add');
-		genere = null;
+		generatingFor = null;
 		await goto(`/l/${issue.listId}`);
 	}
 </script>
@@ -263,7 +263,7 @@
 <p class="text-muted-foreground text-label mt-1">{t('recipes.intro')}</p>
 
 {#if !creating}
-	<Button onclick={ouvrir} data-test-id="recipe-new" class="fl-press mt-4">
+	<Button onclick={open} data-test-id="recipe-new" class="fl-press mt-4">
 		<Plus size={18} aria-hidden="true" />
 		{t('create.recipe')}
 	</Button>
@@ -281,7 +281,7 @@
 		first way out to the network, it only leaves on an explicit gesture, and saying so costs less than
 		letting it be discovered.
 	-->
-	<form onsubmit={importer} class="bg-card mt-4 space-y-3 rounded-xl border p-4">
+	<form onsubmit={importUrl} class="bg-card mt-4 space-y-3 rounded-xl border p-4">
 		<h2 class="text-h2 font-semibold">{t('recipes.import.title')}</h2>
 		<p class="text-muted-foreground text-caption">{t('recipes.import.privacy')}</p>
 
@@ -291,7 +291,7 @@
 				<Input
 					id="recipe-import-url"
 					type="url"
-					bind:value={lien}
+					bind:value={link}
 					data-test-id="recipe-import-url"
 					placeholder={t('recipes.import.urlPlaceholder')}
 				/>
@@ -301,12 +301,12 @@
 		<Button
 			type="submit"
 			variant="outline"
-			disabled={importEnCours || !lien.trim()}
+			disabled={importing || !link.trim()}
 			data-test-id="recipe-import-submit"
 			class="fl-press"
 		>
 			<Download size={18} aria-hidden="true" />
-			{importEnCours ? t('recipes.import.loading') : t('recipes.import.submit')}
+			{importing ? t('recipes.import.loading') : t('recipes.import.submit')}
 		</Button>
 
 		<!--
@@ -314,16 +314,16 @@
 			the field, not at the bottom of the block.
 		-->
 		<p class="text-caption text-destructive" role="alert" data-test-id="recipe-import-error">
-			{#if importRefus}
-				{t(`recipes.import.error.${importRefus}`)}
+			{#if importRefusal}
+				{t(`recipes.import.error.${importRefusal}`)}
 			{/if}
 		</p>
 
 		<p class="text-muted-foreground text-caption">{t('recipes.import.social')}</p>
 	</form>
 {:else}
-	<form onsubmit={avancer} class="bg-card mt-4 space-y-5 rounded-xl border p-4">
-		{#if importe}
+	<form onsubmit={goNext} class="bg-card mt-4 space-y-5 rounded-xl border p-4">
+		{#if fromImport}
 			<!--
 				What comes from a web page is a draft, and the screen must say so before the person saves. The
 				quantities are split as best we can, the lines we could not read — "2 tablespoons of oil" — have come
@@ -342,21 +342,21 @@
 			much as to the eye, and a bar alone says neither how many are left nor what they contain.
 		-->
 		<ol class="flex flex-wrap gap-2" aria-label={t('recipes.stepper')}>
-			{#each ETAPES as id, index (id)}
+			{#each STEPS as id, index (id)}
 				<li
-					class="text-caption rounded-full border px-3 py-1 {etape === id
+					class="text-caption rounded-full border px-3 py-1 {step === id
 						? 'bg-[var(--fl-primary-tint)] text-primary border-transparent font-semibold'
 						: 'text-muted-foreground'}"
-					aria-current={etape === id ? 'step' : undefined}
+					aria-current={step === id ? 'step' : undefined}
 				>
 					{index + 1}. {t(`recipes.step.${id}`)}
 				</li>
 			{/each}
 		</ol>
 
-		{#if etape === 'recette'}
+		{#if step === 'recipe'}
 			<div class="space-y-4">
-				<h2 class="text-h2 font-semibold">{t('recipes.step.recette')}</h2>
+				<h2 class="text-h2 font-semibold">{t('recipes.step.recipe')}</h2>
 
 				<div class="grid gap-3 sm:grid-cols-[auto_1fr]">
 					<div class="w-20">
@@ -408,7 +408,7 @@
 					<p class="text-muted-foreground text-caption">{t('recipes.servingsHint')}</p>
 				</div>
 			</div>
-		{:else if etape === 'ingredients'}
+		{:else if step === 'ingredients'}
 			<div class="space-y-4">
 				<h2 class="text-h2 font-semibold">{t('recipes.step.ingredients')}</h2>
 				<p class="text-muted-foreground text-caption">{t('recipes.ingredientsHint')}</p>
@@ -458,7 +458,7 @@
 								<Button
 									type="button"
 									variant="outline"
-									onclick={() => retirerLigne(index)}
+									onclick={() => removeRow(index)}
 									disabled={lines.length === 1}
 									aria-label={t('recipes.removeIngredient', { rank: index + 1 })}
 									data-test-class="ingredient-remove"
@@ -474,7 +474,7 @@
 				<Button
 					type="button"
 					variant="outline"
-					onclick={ajouterLigne}
+					onclick={addRow}
 					data-test-id="recipe-add-ingredient"
 					class="fl-press"
 				>
@@ -484,7 +484,7 @@
 			</div>
 		{:else}
 			<div class="space-y-4">
-				<h2 class="text-h2 font-semibold">{t('recipes.step.etapes')}</h2>
+				<h2 class="text-h2 font-semibold">{t('recipes.step.steps')}</h2>
 				<p class="text-muted-foreground text-caption">{t('recipes.stepsHint')}</p>
 
 				<ol class="space-y-3" data-test-id="recipe-steps">
@@ -503,7 +503,7 @@
 							<Button
 								type="button"
 								variant="outline"
-								onclick={() => retirerEtape(index)}
+								onclick={() => removeStep(index)}
 								disabled={steps.length === 1}
 								aria-label={t('recipes.removeStep', { rank: index + 1 })}
 								data-test-class="recipe-step-remove"
@@ -518,7 +518,7 @@
 				<Button
 					type="button"
 					variant="outline"
-					onclick={ajouterEtape}
+					onclick={addStep}
 					data-test-id="recipe-add-step"
 					class="fl-press"
 				>
@@ -529,11 +529,11 @@
 		{/if}
 
 		<div class="flex flex-wrap items-stretch gap-2">
-			{#if rang > 0}
+			{#if rank > 0}
 				<Button
 					type="button"
 					variant="outline"
-					onclick={reculer}
+					onclick={goBack}
 					data-test-id="recipe-back"
 					class="fl-press"
 				>
@@ -543,7 +543,7 @@
 			{/if}
 
 			<Button type="submit" data-test-id="recipe-next" class="fl-press">
-				{#if derniere}
+				{#if isLast}
 					<Check size={18} aria-hidden="true" />
 					{t('common.save')}
 				{:else}
@@ -571,7 +571,7 @@
 	<ul class="mt-6 space-y-3">
 		{#each data.recipes as recipe (recipe.id)}
 			{@const ingredients = data.ingredientsOf(recipe.id)}
-			{@const etapesRecette = data.stepsOf(recipe.id)}
+			{@const recipeSteps = data.stepsOf(recipe.id)}
 			<li>
 				<Card.Root data-test-class="recipe-card">
 					<Card.Header>
@@ -600,10 +600,10 @@
 							</ul>
 						{/if}
 
-						{#if etapesRecette.length}
-							<h3 class="text-label mt-4 font-medium">{t('recipes.step.etapes')}</h3>
+						{#if recipeSteps.length}
+							<h3 class="text-label mt-4 font-medium">{t('recipes.step.steps')}</h3>
 							<ol class="text-label text-muted-foreground mt-1 list-decimal space-y-1 ps-5">
-								{#each etapesRecette as step (step.id)}
+								{#each recipeSteps as step (step.id)}
 									<li data-test-class="recipe-step-body">{step.body}</li>
 								{/each}
 							</ol>
@@ -612,7 +612,7 @@
 						<div class="mt-4 flex flex-wrap items-center gap-3">
 							<Button
 								variant="outline"
-								onclick={() => deplierGeneration(recipe.id)}
+								onclick={() => toggleGeneration(recipe.id)}
 								disabled={ingredients.length === 0}
 								data-test-class="recipe-generate"
 								class="fl-press"
@@ -623,7 +623,7 @@
 
 							<Button
 								variant="outline"
-								onclick={() => (aSupprimer = aSupprimer === recipe.id ? null : recipe.id)}
+								onclick={() => (toDelete = toDelete === recipe.id ? null : recipe.id)}
 								aria-label={t('recipes.delete', { name: recipe.name })}
 								data-test-class="recipe-delete"
 								class="fl-press"
@@ -636,7 +636,7 @@
 							Generation sits under the recipe it is about, not in a dialog: you read the ingredients again while
 							deciding how many people you are cooking for.
 						-->
-						{#if genere === recipe.id}
+						{#if generatingFor === recipe.id}
 							<div class="mt-4 space-y-3 border-t pt-4" data-test-class="recipe-generate-form">
 								<div>
 									<Label for="generate-people-{recipe.id}">{t('recipes.people')}</Label>
@@ -644,7 +644,7 @@
 										<Input
 											id="generate-people-{recipe.id}"
 											type="number"
-											bind:value={convives}
+											bind:value={guestCount}
 											min={MIN_SERVINGS}
 											max={MAX_SERVINGS}
 											data-test-class="generate-people"
@@ -660,7 +660,7 @@
 									<IconField icon={Hash}>
 										<select
 											id="generate-target-{recipe.id}"
-											bind:value={cible}
+											bind:value={target}
 											data-test-class="generate-target"
 											class="border-input bg-background min-h-[max(2.75rem,44px)] w-full rounded-md border"
 										>
@@ -673,7 +673,7 @@
 								</div>
 
 								<Button
-									onclick={() => generer(recipe.id)}
+									onclick={() => generate(recipe.id)}
 									data-test-class="generate-submit"
 									class="fl-press"
 								>
@@ -683,19 +683,19 @@
 							</div>
 						{/if}
 
-						{#if aSupprimer === recipe.id}
+						{#if toDelete === recipe.id}
 							<div class="mt-4 space-y-3 border-t pt-4">
 								<p class="text-label">{t('recipes.deleteConfirm', { name: recipe.name })}</p>
 								<div class="flex flex-wrap gap-2">
 									<Button
 										variant="outline"
-										onclick={() => supprimer(recipe.id)}
+										onclick={() => remove(recipe.id)}
 										data-test-class="recipe-delete-confirm"
 										class="fl-press"
 									>
 										{t('recipes.deleteYes')}
 									</Button>
-									<Button variant="outline" onclick={() => (aSupprimer = null)} class="fl-press">
+									<Button variant="outline" onclick={() => (toDelete = null)} class="fl-press">
 										{t('common.cancel')}
 									</Button>
 								</div>

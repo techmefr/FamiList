@@ -22,17 +22,17 @@ const MOBILE_BREAKPOINT = 768;
  * the pointer, which an invented id does not allow. So we go down to the browser protocol, which produces
  * the same sequence as a real finger.
  */
-async function glisser(page: Page, cible: Locator, distance: number) {
-	const boite = await cible.boundingBox();
-	if (!boite) throw new Error('La ligne à glisser n’est pas affichée.');
+async function swipe(page: Page, target: Locator, distance: number) {
+	const box = await target.boundingBox();
+	if (!box) throw new Error('La ligne à glisser n’est pas affichée.');
 
-	const y = boite.y + boite.height / 2;
-	const depart = boite.x + boite.width / 2;
+	const y = box.y + box.height / 2;
+	const origin = box.x + box.width / 2;
 	const session = await page.context().newCDPSession(page);
 
 	await session.send('Input.dispatchTouchEvent', {
 		type: 'touchStart',
-		touchPoints: [{ x: depart, y }]
+		touchPoints: [{ x: origin, y }]
 	});
 
 	// In steps, and not in one jump: the row only commits after recognising a horizontal direction, which a
@@ -40,7 +40,7 @@ async function glisser(page: Page, cible: Locator, distance: number) {
 	for (let pas = 1; pas <= 6; pas += 1) {
 		await session.send('Input.dispatchTouchEvent', {
 			type: 'touchMove',
-			touchPoints: [{ x: depart + (distance * pas) / 6, y }]
+			touchPoints: [{ x: origin + (distance * pas) / 6, y }]
 		});
 	}
 
@@ -56,7 +56,7 @@ async function glisser(page: Page, cible: Locator, distance: number) {
  * The checkbox itself is only read by screen readers; what you touch is the label wrapping it, as in the
  * application.
  */
-async function choisirMain(page: Page, main: 'left' | 'right') {
+async function chooseHand(page: Page, main: 'left' | 'right') {
 	await page.locator(`label:has([data-test-id="hand-${main}"])`).click();
 	await expect(page.getByTestId(`hand-${main}`)).toBeChecked();
 	await expect(page.locator('html')).toHaveAttribute('data-hand', main);
@@ -67,16 +67,16 @@ test('sur téléphone, la navigation est une barre en bas et non une colonne', a
 }) => {
 	await page.goto('/');
 
-	const barre = page.getByRole('navigation');
-	const boite = await barre.boundingBox();
-	expect(boite).not.toBeNull();
+	const bar = page.getByRole('navigation');
+	const box = await bar.boundingBox();
+	expect(box).not.toBeNull();
 
-	const hauteur = page.viewportSize()!.height;
-	expect(hauteur).toBeLessThan(MOBILE_BREAKPOINT * 2);
+	const height = page.viewportSize()!.height;
+	expect(height).toBeLessThan(MOBILE_BREAKPOINT * 2);
 
 	// Stuck to the bottom of the screen: that is what tells it from the large screen's side column.
-	expect(boite!.y + boite!.height).toBeGreaterThan(hauteur - 2);
-	expect(boite!.height).toBeLessThan(hauteur / 3);
+	expect(box!.y + box!.height).toBeGreaterThan(height - 2);
+	expect(box!.height).toBeLessThan(height / 3);
 
 	// The magnifier only has a tab on a phone, the household and the shops only on a large screen: five
 	// targets is the most a thumb can hold.
@@ -96,19 +96,19 @@ test('sur téléphone, la navigation est une barre en bas et non une colonne', a
 test('le bouton de création change de côté avec la main déclarée', async ({ signedInPage: page }) => {
 	await page.goto('/profile');
 
-	const milieu = page.viewportSize()!.width / 2;
-	const bouton = page.getByTestId('nav-create');
+	const middle = page.viewportSize()!.width / 2;
+	const button = page.getByTestId('nav-create');
 
-	await choisirMain(page, 'right');
-	const droitier = await bouton.boundingBox();
-	expect(droitier!.x).toBeGreaterThan(milieu);
+	await chooseHand(page, 'right');
+	const droitier = await button.boundingBox();
+	expect(droitier!.x).toBeGreaterThan(middle);
 
-	await choisirMain(page, 'left');
-	const gaucher = await bouton.boundingBox();
-	expect(gaucher!.x + gaucher!.width).toBeLessThan(milieu);
+	await chooseHand(page, 'left');
+	const leftHanded = await button.boundingBox();
+	expect(leftHanded!.x + leftHanded!.width).toBeLessThan(middle);
 
 	// Putting things back: the setting is saved on the fixed account, shared by the whole suite.
-	await choisirMain(page, 'right');
+	await chooseHand(page, 'right');
 });
 
 test('la loupe rend sa place au bouton de création quand on la quitte', async ({
@@ -126,17 +126,17 @@ test('la loupe rend sa place au bouton de création quand on la quitte', async (
 test('glisser une ligne du doigt la coche, sans passer par son bouton', async ({
 	signedInPage: page
 }) => {
-	const nom = `Tactile ${Date.now()}`;
+	const name = `Tactile ${Date.now()}`;
 
 	await page.goto('/');
 	await page.getByTestId('nav-create').click();
 	await page.getByTestId('create-list').click();
-	await page.getByTestId('list-name').fill(nom);
+	await page.getByTestId('list-name').fill(name);
 	await page.getByTestId('list-create').click();
 
 	await page
 		.locator('[data-test-class="list-card"]')
-		.filter({ hasText: nom })
+		.filter({ hasText: name })
 		.getByRole('link')
 		.first()
 		.click();
@@ -145,11 +145,11 @@ test('glisser une ligne du doigt la coche, sans passer par son bouton', async ({
 	await page.getByTestId('add-name').fill('Pain');
 	await page.getByTestId('add-submit').click();
 
-	const ligne = page.locator('[data-test-class="item-row"]').filter({ hasText: 'Pain' });
-	await expect(ligne).toBeVisible();
-	await expect(ligne.locator('[data-test-class="item-check"]')).not.toBeChecked();
+	const row = page.locator('[data-test-class="item-row"]').filter({ hasText: 'Pain' });
+	await expect(row).toBeVisible();
+	await expect(row.locator('[data-test-class="item-check"]')).not.toBeChecked();
 
-	await glisser(page, ligne, 160);
+	await swipe(page, row, 160);
 
-	await expect(ligne.locator('[data-test-class="item-check"]')).toBeChecked({ timeout: 15_000 });
+	await expect(row.locator('[data-test-class="item-check"]')).toBeChecked({ timeout: 15_000 });
 });

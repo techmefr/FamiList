@@ -12,25 +12,25 @@ const ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
 
 /** Decodes the secret as it is shown on screen: base32, no padding, any case. */
 export function base32Decode(secret: string): Uint8Array {
-	const propre = secret.replace(/[\s=-]/g, '').toUpperCase();
-	const octets: number[] = [];
-	let tampon = 0;
+	const clean = secret.replace(/[\s=-]/g, '').toUpperCase();
+	const bytes: number[] = [];
+	let buffer = 0;
 	let bits = 0;
 
-	for (const lettre of propre) {
-		const valeur = ALPHABET.indexOf(lettre);
-		if (valeur === -1) throw new Error(`caractere hors base32 : ${lettre}`);
+	for (const letter of clean) {
+		const value = ALPHABET.indexOf(letter);
+		if (value === -1) throw new Error(`caractere hors base32 : ${letter}`);
 
-		tampon = (tampon << 5) | valeur;
+		buffer = (buffer << 5) | value;
 		bits += 5;
 
 		if (bits >= 8) {
 			bits -= 8;
-			octets.push((tampon >> bits) & 0xff);
+			bytes.push((buffer >> bits) & 0xff);
 		}
 	}
 
-	return Uint8Array.from(octets);
+	return Uint8Array.from(bytes);
 }
 
 /** The RFC counter: the number of thirty-second windows elapsed since the epoch. */
@@ -40,15 +40,15 @@ export function totpCounter(atMs: number, stepSeconds = 30): bigint {
 
 /** The counter, written on eight bytes big-endian, as it goes into the HMAC. */
 export function counterBytes(counter: bigint): Uint8Array {
-	const octets = new Uint8Array(8);
-	let reste = counter;
+	const bytes = new Uint8Array(8);
+	let rest = counter;
 
 	for (let i = 7; i >= 0; i--) {
-		octets[i] = Number(reste & 0xffn);
-		reste >>= 8n;
+		bytes[i] = Number(rest & 0xffn);
+		rest >>= 8n;
 	}
 
-	return octets;
+	return bytes;
 }
 
 /**
@@ -56,12 +56,12 @@ export function counterBytes(counter: bigint): Uint8Array {
  * decimal digits.
  */
 export function truncate(digest: Uint8Array, digits = 6): string {
-	const decalage = digest[digest.length - 1] & 0x0f;
-	const binaire =
-		((digest[decalage] & 0x7f) << 24) |
-		((digest[decalage + 1] & 0xff) << 16) |
-		((digest[decalage + 2] & 0xff) << 8) |
-		(digest[decalage + 3] & 0xff);
+	const shift = digest[digest.length - 1] & 0x0f;
+	const binary =
+		((digest[shift] & 0x7f) << 24) |
+		((digest[shift + 1] & 0xff) << 16) |
+		((digest[shift + 2] & 0xff) << 8) |
+		(digest[shift + 3] & 0xff);
 
-	return String(binaire % 10 ** digits).padStart(digits, '0');
+	return String(binary % 10 ** digits).padStart(digits, '0');
 }

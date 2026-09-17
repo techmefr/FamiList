@@ -39,14 +39,14 @@ export function isEventDate(value: string | null | undefined): value is string {
 	const parts = (value ?? '').match(EVENT_DATE);
 	if (!parts) return false;
 
-	const [, annee, mois, jour] = parts;
-	const date = new Date(Number(annee), Number(mois) - 1, Number(jour));
+	const [, year, month, day] = parts;
+	const date = new Date(Number(year), Number(month) - 1, Number(day));
 
 	// The constructor accepts "2026-02-31" by rolling it into March: we reject it by reading it back.
 	return (
-		date.getFullYear() === Number(annee) &&
-		date.getMonth() === Number(mois) - 1 &&
-		date.getDate() === Number(jour)
+		date.getFullYear() === Number(year) &&
+		date.getMonth() === Number(month) - 1 &&
+		date.getDate() === Number(day)
 	);
 }
 
@@ -61,8 +61,8 @@ export function isEventDate(value: string | null | undefined): value is string {
 export function reminderAt(eventDate: string | null | undefined, now: Date): Date | null {
 	if (!isEventDate(eventDate)) return null;
 
-	const [annee, mois, jour] = eventDate.split('-').map(Number);
-	const at = new Date(annee, mois - 1, jour - REMINDER_DAYS_BEFORE, REMINDER_HOUR, 0, 0, 0);
+	const [year, month, day] = eventDate.split('-').map(Number);
+	const at = new Date(year, month - 1, day - REMINDER_DAYS_BEFORE, REMINDER_HOUR, 0, 0, 0);
 
 	return at.getTime() > now.getTime() ? at : null;
 }
@@ -76,7 +76,7 @@ export function reminderAt(eventDate: string | null | undefined, now: Date): Dat
  */
 export function reminderId(listId: string): number {
 	let hash = 0;
-	for (const caractere of listId) hash = (hash * 31 + caractere.charCodeAt(0)) | 0;
+	for (const character of listId) hash = (hash * 31 + character.charCodeAt(0)) | 0;
 
 	// The sign is removed: the Android implementation refuses a negative id.
 	return Math.abs(hash) % 2147483647;

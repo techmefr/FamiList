@@ -17,59 +17,59 @@ test('changer son nom, et voir les initiales suivre', async ({ signedInPage: pag
 
 	// The fields are only filled once the account is identified: reading their content before would give an
 	// empty string, and the end-of-test restore would write an empty name.
-	const champ = page.getByTestId('name-input');
-	await expect(champ).toBeEnabled({ timeout: 15_000 });
-	const origine = await champ.inputValue();
-	expect(origine).not.toBe('');
+	const field = page.getByTestId('name-input');
+	await expect(field).toBeEnabled({ timeout: 15_000 });
+	const originalValue = await field.inputValue();
+	expect(originalValue).not.toBe('');
 
-	const prenomOrigine = await page.getByTestId('first-name-input').inputValue();
-	const nomOrigine = await page.getByTestId('last-name-input').inputValue();
+	const originalFirstName = await page.getByTestId('first-name-input').inputValue();
+	const originalName = await page.getByTestId('last-name-input').inputValue();
 
 	// The name aimed at is the one the account does not already carry: an interrupted previous run may have
 	// left the first in place, and renaming to the current name would change nothing.
-	const premier = prenomOrigine === 'Amandine' ? 'Basile' : 'Amandine';
-	const dernier = premier === 'Amandine' ? 'Ferrand' : 'Nguyen';
-	const initiales = premier === 'Amandine' ? 'AF' : 'BN';
+	const first = originalFirstName === 'Amandine' ? 'Basile' : 'Amandine';
+	const last = first === 'Amandine' ? 'Ferrand' : 'Nguyen';
+	const initials = first === 'Amandine' ? 'AF' : 'BN';
 
 	// A display name already set is a choice: typing the first name does not overwrite it.
-	await page.getByTestId('first-name-input').fill(premier);
-	await expect(champ).toHaveValue(origine);
+	await page.getByTestId('first-name-input').fill(first);
+	await expect(field).toHaveValue(originalValue);
 
 	// Cleared, it becomes a draft again and follows "First Last" — that is the common case, we do not make
 	// people type the same thing three times.
-	await champ.fill('');
-	await page.getByTestId('last-name-input').fill(dernier);
-	await expect(champ).toHaveValue(`${premier} ${dernier}`);
+	await field.fill('');
+	await page.getByTestId('last-name-input').fill(last);
+	await expect(field).toHaveValue(`${first} ${last}`);
 
 	// Finally we put a one-word nickname in it: that is the case where reading the display name would give
 	// only one letter, while the profile knows a first and a last name.
-	const surnom = premier === 'Amandine' ? 'Mamie' : 'Papi';
-	await champ.fill(surnom);
-	await page.getByTestId('first-name-input').fill(premier);
-	await expect(champ).toHaveValue(surnom);
+	const nickname = first === 'Amandine' ? 'Mamie' : 'Papi';
+	await field.fill(nickname);
+	await page.getByTestId('first-name-input').fill(first);
+	await expect(field).toHaveValue(nickname);
 
 	await page.getByTestId('name-save').click();
 
 	// Two letters, those of the first and last name — not the single letter of the nickname, nor the one
 	// stored in the database.
-	const pastille = page.locator('[data-test-class="avatar"]').first();
-	await expect(pastille).toHaveText(initiales, { timeout: 15_000 });
+	const avatar = page.locator('[data-test-class="avatar"]').first();
+	await expect(avatar).toHaveText(initials, { timeout: 15_000 });
 
 	// The save marker says the write left and came back: reloading before would cut the request in flight,
 	// and the page would come back to the old name.
 	await expect(page.getByTestId('name-saved')).toBeVisible({ timeout: 15_000 });
 
 	await page.reload();
-	await expect(page.getByTestId('name-input')).toHaveValue(surnom, { timeout: 15_000 });
-	await expect(page.getByTestId('first-name-input')).toHaveValue(premier);
-	await expect(page.getByTestId('last-name-input')).toHaveValue(dernier);
+	await expect(page.getByTestId('name-input')).toHaveValue(nickname, { timeout: 15_000 });
+	await expect(page.getByTestId('first-name-input')).toHaveValue(first);
+	await expect(page.getByTestId('last-name-input')).toHaveValue(last);
 
-	const retour = page.getByTestId('name-input');
-	await expect(retour).toBeEnabled({ timeout: 15_000 });
-	await page.getByTestId('first-name-input').fill(prenomOrigine);
-	await page.getByTestId('last-name-input').fill(nomOrigine);
-	await retour.fill(origine);
+	const back = page.getByTestId('name-input');
+	await expect(back).toBeEnabled({ timeout: 15_000 });
+	await page.getByTestId('first-name-input').fill(originalFirstName);
+	await page.getByTestId('last-name-input').fill(originalName);
+	await back.fill(originalValue);
 	await page.getByTestId('name-save').click();
 	await expect(page.getByTestId('name-saved')).toBeVisible({ timeout: 15_000 });
-	await expect(retour).toHaveValue(origine);
+	await expect(back).toHaveValue(originalValue);
 });

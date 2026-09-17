@@ -36,8 +36,8 @@
 		children: Snippet;
 	} = $props();
 
-	const panneau = $derived(`aisle-panel-${rank}`);
-	const pourcent = $derived(total ? Math.round((done / total) * 100) : 0);
+	const panel = $derived(`aisle-panel-${rank}`);
+	const percent = $derived(total ? Math.round((done / total) * 100) : 0);
 </script>
 
 <!--
@@ -70,7 +70,7 @@
 			type="button"
 			onclick={onToggle}
 			aria-expanded={open}
-			aria-controls={panneau}
+			aria-controls={panel}
 			data-test-class="aisle-toggle"
 			class="flex min-w-0 flex-1 items-center gap-3 py-3 pe-2 ps-1 text-start"
 		>
@@ -89,7 +89,7 @@
 				<span class="text-label block font-medium break-words">{name}</span>
 				<span class="mt-1 flex items-center gap-2">
 					<span class="bg-muted h-1 w-full max-w-24 overflow-hidden rounded-full" aria-hidden="true">
-						<span class="bg-secondary block h-full rounded-full" style="width: {pourcent}%"></span>
+						<span class="bg-secondary block h-full rounded-full" style="width: {percent}%"></span>
 					</span>
 					<span class="text-muted-foreground text-caption tabular-nums">{done}/{total}</span>
 				</span>
@@ -128,7 +128,7 @@
 
 	{#if open}
 		<div
-			id={panneau}
+			id={panel}
 			transition:slide={{ duration: motionMs(260), easing: cubicOut }}
 			class="space-y-2 border-t p-2"
 		>

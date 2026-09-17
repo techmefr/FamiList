@@ -18,7 +18,7 @@ describe('enabledProviders', () => {
 	});
 
 	it('n active que des fournisseurs presents au catalogue', () => {
-		const connus = OAUTH_PROVIDERS.map((provider) => provider.id);
-		expect(ENABLED_PROVIDERS.every((id) => connus.includes(id))).toBe(true);
+		const known = OAUTH_PROVIDERS.map((provider) => provider.id);
+		expect(ENABLED_PROVIDERS.every((id) => known.includes(id))).toBe(true);
 	});
 });

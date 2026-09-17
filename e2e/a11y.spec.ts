@@ -70,12 +70,12 @@ test.describe('accessibilite', () => {
 	});
 
 	test('detail de liste et palette d emojis', async ({ signedInPage: page }) => {
-		const nom = `A11y ${Date.now()}`;
+		const name = `A11y ${Date.now()}`;
 
 		await page.goto('/');
 		await page.getByTestId('nav-create').click();
 		await page.getByTestId('create-list').click();
-		await page.getByTestId('list-name').fill(nom);
+		await page.getByTestId('list-name').fill(name);
 
 		// The emoji palette carries the translated labels read by screen readers: it is analysed open, on the
 		// creation form, where it lives.
@@ -84,7 +84,7 @@ test.describe('accessibilite', () => {
 		await page.getByTestId('list-create').click();
 		await page
 			.locator('[data-test-class="list-card"]')
-			.filter({ hasText: nom })
+			.filter({ hasText: name })
 			.getByRole('link')
 			.first()
 			.click();

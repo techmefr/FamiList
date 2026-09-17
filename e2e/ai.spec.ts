@@ -20,8 +20,8 @@ test.describe('intelligence artificielle', () => {
 		await page.goto('/profile/ai');
 		await expect(page.getByTestId('ai-state')).toBeVisible();
 
-		const retirer = page.getByTestId('ai-clear');
-		if ((await retirer.count()) > 0) await retirer.click();
+		const remove = page.getByTestId('ai-clear');
+		if ((await remove.count()) > 0) await remove.click();
 
 		await expect(page.getByTestId('ai-state')).toHaveAttribute('data-test-state', 'off');
 	});
@@ -76,8 +76,8 @@ test.describe('intelligence artificielle', () => {
 	test('avant l envoi, l écran montre le texte exact et rien de plus', async ({
 		signedInPage: page
 	}) => {
-		const produit = `Courgettes ${Date.now()}`;
-		const nomDeListe = `SecretDeListe ${Date.now()}`;
+		const product = `Courgettes ${Date.now()}`;
+		const listName = `SecretDeListe ${Date.now()}`;
 
 		await page.goto('/profile/ai');
 		await page.getByTestId('ai-key').fill('cle-de-test-sans-valeur');
@@ -87,32 +87,32 @@ test.describe('intelligence artificielle', () => {
 		await page.goto('/');
 		await page.getByTestId('nav-create').click();
 		await page.getByTestId('create-list').click();
-		await page.getByTestId('list-name').fill(nomDeListe);
+		await page.getByTestId('list-name').fill(listName);
 		await page.getByTestId('list-create').click();
 
-		const carte = page.locator('[data-test-class="list-card"]').filter({ hasText: nomDeListe });
-		await expect(carte).toBeVisible();
-		await carte.getByRole('link').first().click();
+		const card = page.locator('[data-test-class="list-card"]').filter({ hasText: listName });
+		await expect(card).toBeVisible();
+		await card.getByRole('link').first().click();
 		await expect(page).toHaveURL(/\/l\//);
 
 		await page.getByTestId('empty-add-item').click();
-		await page.getByTestId('add-name').fill(produit);
+		await page.getByTestId('add-name').fill(product);
 		await page.getByTestId('add-submit').click();
 
-		const ligne = page.locator('[data-test-class="item-row"]').filter({ hasText: produit });
-		await expect(ligne).toBeVisible();
-		await ligne.locator('[data-test-class="item-check"]').check();
+		const row = page.locator('[data-test-class="item-row"]').filter({ hasText: product });
+		await expect(row).toBeVisible();
+		await row.locator('[data-test-class="item-check"]').check();
 
 		await page.locator('a[href="/recipes"]').first().click();
 		await expect(page).toHaveURL(/\/recipes$/);
 
 		await page.getByTestId('ai-suggest-open').click();
-		await expect(page.getByTestId('ai-products')).toContainText(produit);
+		await expect(page.getByTestId('ai-products')).toContainText(product);
 
 		await page.getByTestId('ai-prompt-toggle').click();
-		const consigne = page.getByTestId('ai-prompt');
-		await expect(consigne).toContainText(produit);
-		await expect(consigne).not.toContainText(nomDeListe);
+		const prompt = page.getByTestId('ai-prompt');
+		await expect(prompt).toContainText(product);
+		await expect(prompt).not.toContainText(listName);
 
 		await page.goto('/profile/ai');
 		await page.getByTestId('ai-clear').click();

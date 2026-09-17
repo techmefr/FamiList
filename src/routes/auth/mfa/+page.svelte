@@ -8,42 +8,42 @@
 	import CodeField from '$components/app/CodeField.svelte';
 	import { ShieldCheck, LifeBuoy } from '@lucide/svelte';
 
-	let facteur = $state<Factor | null>(null);
+	let factor = $state<Factor | null>(null);
 	let code = $state('');
-	let secours = $state('');
+	let backup = $state('');
 	let mode = $state<'totp' | 'backup'>('totp');
 	let busy = $state(false);
-	let erreur = $state('');
+	let error = $state('');
 
 	/**
 	 * The first verified factor is enough: the security screen only lets one be set. Looking for several here
 	 * would mean making people choose between two identical rows.
 	 */
 	$effect(() => {
-		session.listFactors().then((facteurs) => {
+		session.listFactors().then((factors) => {
 			// A failed read left the factor at null: the button stayed active and did nothing at all on click,
 			// without a word of explanation.
-			if (facteurs === null) {
-				erreur = session.error ?? '';
+			if (factors === null) {
+				error = session.error ?? '';
 				return;
 			}
 
-			facteur = facteurs[0] ?? null;
+			factor = factors[0] ?? null;
 		});
 	});
 
-	async function valider(event: SubmitEvent) {
+	async function submit(event: SubmitEvent) {
 		event.preventDefault();
-		if (!facteur) return;
+		if (!factor) return;
 
 		busy = true;
-		erreur = '';
+		error = '';
 
-		const ok = await session.challengeTotp(facteur.id, code);
+		const ok = await session.challengeTotp(factor.id, code);
 		busy = false;
 
 		if (!ok) {
-			erreur = session.error ?? t('mfa.wrong');
+			error = session.error ?? t('mfa.wrong');
 			code = '';
 			return;
 		}
@@ -51,17 +51,17 @@
 		goto('/');
 	}
 
-	async function utiliserSecours(event: SubmitEvent) {
+	async function useBackupCode(event: SubmitEvent) {
 		event.preventDefault();
 		busy = true;
-		erreur = '';
+		error = '';
 
-		const ok = await session.useBackupCode(secours);
+		const ok = await session.useBackupCode(backup);
 		busy = false;
 
 		if (!ok) {
-			erreur = session.error ?? t('mfa.backupWrong');
-			secours = '';
+			error = session.error ?? t('mfa.backupWrong');
+			backup = '';
 			return;
 		}
 
@@ -80,7 +80,7 @@
 			<h1 class="text-h1 text-center font-semibold">{t('mfa.title')}</h1>
 			<p class="text-muted-foreground text-center">{t('mfa.body')}</p>
 
-			<form onsubmit={valider} class="space-y-4" data-test-id="mfa-form">
+			<form onsubmit={submit} class="space-y-4" data-test-id="mfa-form">
 				<div>
 					<CodeField
 						id="mfa-code"
@@ -92,14 +92,14 @@
 					/>
 				</div>
 
-				{#if erreur}
-					<p class="text-destructive text-label" role="alert" data-test-id="mfa-error">{erreur}</p>
+				{#if error}
+					<p class="text-destructive text-label" role="alert" data-test-id="mfa-error">{error}</p>
 				{/if}
 
 				<Button
 					type="submit"
 					class="fl-press w-full"
-					disabled={busy || !facteur || !isCompleteOtp(code)}
+					disabled={busy || !factor || !isCompleteOtp(code)}
 					data-test-id="mfa-submit"
 				>
 					{busy ? t('common.loading') : t('mfa.submit')}
@@ -116,7 +116,7 @@
 				class="w-full"
 				onclick={() => {
 					mode = 'backup';
-					erreur = '';
+					error = '';
 				}}
 				data-test-id="mfa-lost"
 			>
@@ -128,13 +128,13 @@
 			<h1 class="text-h1 text-center font-semibold">{t('mfa.backupTitle')}</h1>
 			<p class="text-muted-foreground">{t('mfa.backupBody')}</p>
 
-			<form onsubmit={utiliserSecours} class="space-y-4" data-test-id="mfa-backup-form">
+			<form onsubmit={useBackupCode} class="space-y-4" data-test-id="mfa-backup-form">
 				<div>
 					<CodeField
 						id="mfa-backup"
 						label={t('mfa.backupCode')}
 						hint={t('mfa.backupHint')}
-						bind:value={secours}
+						bind:value={backup}
 						normalize={normalizeBackupCode}
 						length={10}
 						numeric={false}
@@ -142,16 +142,16 @@
 					/>
 				</div>
 
-				{#if erreur}
+				{#if error}
 					<p class="text-destructive text-label" role="alert" data-test-id="mfa-backup-error">
-						{erreur}
+						{error}
 					</p>
 				{/if}
 
 				<Button
 					type="submit"
 					class="fl-press w-full"
-					disabled={busy || !isCompleteBackupCode(secours)}
+					disabled={busy || !isCompleteBackupCode(backup)}
 					data-test-id="mfa-backup-submit"
 				>
 					{busy ? t('common.loading') : t('mfa.backupSubmit')}
@@ -163,7 +163,7 @@
 				class="w-full"
 				onclick={() => {
 					mode = 'totp';
-					erreur = '';
+					error = '';
 				}}
 				data-test-id="mfa-back"
 			>

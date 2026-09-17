@@ -32,11 +32,11 @@ export async function requestReminderPermission(): Promise<ReminderPermission> {
 	try {
 		const { LocalNotifications } = await import('@capacitor/local-notifications');
 
-		const actuelle = await LocalNotifications.checkPermissions();
-		if (actuelle.display === 'granted') return 'granted';
+		const current = await LocalNotifications.checkPermissions();
+		if (current.display === 'granted') return 'granted';
 
-		const demandee = await LocalNotifications.requestPermissions();
-		return demandee.display === 'granted' ? 'granted' : 'denied';
+		const requested = await LocalNotifications.requestPermissions();
+		return requested.display === 'granted' ? 'granted' : 'denied';
 	} catch {
 		return 'unsupported';
 	}
@@ -68,12 +68,12 @@ export async function applyReminders(
 		const permission = await LocalNotifications.checkPermissions();
 		if (permission.display !== 'granted') return;
 
-		const attente = await LocalNotifications.getPending();
+		const pending = await LocalNotifications.getPending();
 		const prevus = new Set(plans.map((plan) => plan.id));
-		const perimes = attente.notifications.filter(
+		const stale = pending.notifications.filter(
 			(notification) => !prevus.has(Number(notification.id))
 		);
-		if (perimes.length) await LocalNotifications.cancel({ notifications: perimes });
+		if (stale.length) await LocalNotifications.cancel({ notifications: stale });
 
 		if (!plans.length) return;
 

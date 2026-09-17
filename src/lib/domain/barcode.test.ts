@@ -236,7 +236,7 @@ describe('expandUpcE', () => {
 	});
 });
 
-const RELECTURE: [string, BarcodeFormat, string][] = [
+const REVIEWED: [string, BarcodeFormat, string][] = [
 	['ean_13', BarcodeFormat.EAN_13, '4006381333931'],
 	['ean_8', BarcodeFormat.EAN_8, '96385074'],
 	['code_39', BarcodeFormat.CODE_39, 'FC-8471-8803'],
@@ -250,13 +250,13 @@ describe('relecture par un décodeur indépendant', () => {
 	it('couvre tous les formats en barres proposés à la saisie', () => {
 		// A format offered with no read-back vector would be a format drawn with no proof that it scans: that is
 		// exactly what we are trying to avoid.
-		const couverts = new Set(RELECTURE.map(([codeType]) => codeType));
+		const covered = new Set(REVIEWED.map(([codeType]) => codeType));
 
-		expect(CODE_TYPES.filter((type) => !isMatrixFormat(type)).every((type) => couverts.has(type)))
+		expect(CODE_TYPES.filter((type) => !isMatrixFormat(type)).every((type) => covered.has(type)))
 			.toBe(true);
 	});
 
-	it.each(RELECTURE)('%s rend la donnée d origine une fois relu', (codeType, format, value) => {
+	it.each(REVIEWED)('%s rend la donnée d origine une fois relu', (codeType, format, value) => {
 		expect(decode(linearCode(value, codeType), format)).toBe(value);
 	});
 

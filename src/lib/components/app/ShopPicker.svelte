@@ -20,14 +20,14 @@
 		dialog?.close();
 	}
 
-	function choisir(shopId: string) {
+	function choose(shopId: string) {
 		feedback.play('tap');
 		data.setActiveShop(shopId);
 		hide();
 	}
 
 	/** What tells two shops of the same brand apart: where they are. */
-	function situation(address: string, dist?: string) {
+	function locationLabel(address: string, dist?: string) {
 		return [address.trim(), dist?.trim()].filter(Boolean).join(' • ');
 	}
 </script>
@@ -49,13 +49,13 @@
 
 		<ul class="mt-4 space-y-1">
 			{#each data.shops as shop (shop.id)}
-				{@const actif = data.activeShopId === shop.id}
-				{@const appris = data.layouts.find((l) => l.shopId === shop.id)?.learned}
+				{@const enabled = data.activeShopId === shop.id}
+				{@const learned = data.layouts.find((l) => l.shopId === shop.id)?.learned}
 				<li>
 					<button
 						type="button"
-						onclick={() => choisir(shop.id)}
-						aria-current={actif ? 'true' : undefined}
+						onclick={() => choose(shop.id)}
+						aria-current={enabled ? 'true' : undefined}
 						data-test-class="shop-choice"
 						class="hover:bg-muted aria-[current]:bg-[var(--fl-primary-tint)] flex min-h-[max(3.5rem,56px)] w-full cursor-pointer items-center gap-3 rounded-lg px-2 text-start transition-colors"
 					>
@@ -70,10 +70,10 @@
 						<span class="min-w-0 flex-1">
 							<span class="text-label block font-medium break-words">{shop.name}</span>
 							<span class="text-muted-foreground text-caption flex flex-wrap items-center gap-x-2">
-								{#if situation(shop.address, shop.dist)}
-									<span class="break-words">{situation(shop.address, shop.dist)}</span>
+								{#if locationLabel(shop.address, shop.dist)}
+									<span class="break-words">{locationLabel(shop.address, shop.dist)}</span>
 								{/if}
-								{#if appris}
+								{#if learned}
 									<span class="text-secondary inline-flex items-center gap-1 font-semibold">
 										<Route size={12} aria-hidden="true" />
 										{t('list.learnedShop')}
@@ -82,7 +82,7 @@
 							</span>
 						</span>
 
-						{#if actif}
+						{#if enabled}
 							<Check size={22} class="text-primary shrink-0" aria-hidden="true" />
 						{/if}
 					</button>

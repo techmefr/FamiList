@@ -372,9 +372,9 @@
 		"servingsHint": "Isan ny olona nanoratana ireo habetsahana ireo.",
 		"stepper": "Dingana amin ny fenoina",
 		"step": {
-			"recette": "Ny recette",
+			"recipe": "Ny recette",
 			"ingredients": "Ny akora",
-			"etapes": "Ny fanomanana"
+			"steps": "Ny fanomanana"
 		},
 		"ingredientsHint": "Akora iray isaky ny andalana. Tsy raisina ny andalana banga.",
 		"ingredientName": "Akora {rank}",

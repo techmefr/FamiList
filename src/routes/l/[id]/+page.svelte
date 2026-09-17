@@ -40,7 +40,7 @@
 	const list = $derived(data.list(listId));
 	const groups = $derived(data.groupedItems(listId));
 
-	const appris = $derived(
+	const learned = $derived(
 		data.layouts.find((l) => l.shopId === data.activeShopId)?.learned ?? false
 	);
 
@@ -103,7 +103,7 @@
 	 * The text carries the whole list, not the filtered view: hiding ticked items is a reading convenience
 	 * here, not a decision about what is sent over there.
 	 */
-	function listeEnTexte(): string {
+	function listAsText(): string {
 		return listToMarkdown({
 			name: list?.name ?? '',
 			emoji: list?.emoji ?? '',
@@ -125,11 +125,11 @@
 		});
 	}
 
-	async function envoyer() {
+	async function send() {
 		if (!list) return;
 
 		feedback.play('tap');
-		const outcome = await shareText(list.name, listeEnTexte());
+		const outcome = await shareText(list.name, listAsText());
 
 		// A sheet closed without choosing: the person knows what they have just done.
 		if (outcome === 'cancelled') return;
@@ -140,7 +140,7 @@
 
 	let priorityOnly = $state(false);
 	let hideChecked = $state(false);
-	const filtresActifs = $derived(Number(priorityOnly) + Number(hideChecked));
+	const activeFilters = $derived(Number(priorityOnly) + Number(hideChecked));
 
 	const visible = $derived(
 		groups
@@ -164,12 +164,12 @@
 	 * changed — the rest follows the rule, including aisles that appear later because an item has just
 	 * been added to them.
 	 */
-	let plies = $state<Record<string, boolean>>({});
-	const ouvert = (aisleId: string, index: number) => plies[aisleId] ?? index < 2;
+	let unfolded = $state<Record<string, boolean>>({});
+	const isOpen = (aisleId: string, index: number) => unfolded[aisleId] ?? index < 2;
 
-	function basculer(aisleId: string, index: number) {
+	function toggle(aisleId: string, index: number) {
 		feedback.play('tap');
-		plies = { ...plies, [aisleId]: !ouvert(aisleId, index) };
+		unfolded = { ...unfolded, [aisleId]: !isOpen(aisleId, index) };
 	}
 
 	/**
@@ -213,21 +213,21 @@
 	 * says how to remove it.
 	 */
 	const HIGHLIGHT_MS = 2400;
-	let surligne = $state<string | null>(null);
+	let highlighted = $state<string | null>(null);
 
 	$effect(() => {
-		const cible = page.url.searchParams.get('item');
-		if (!cible || !data.ready) return;
+		const target = page.url.searchParams.get('item');
+		if (!target || !data.ready) return;
 
-		const item = data.itemsOf(listId).find((i) => i.id === cible);
+		const item = data.itemsOf(listId).find((i) => i.id === target);
 		if (!item) return;
 
-		plies[item.aisleId] = true;
-		surligne = cible;
+		unfolded[item.aisleId] = true;
+		highlighted = target;
 
-		const timer = setTimeout(() => (surligne = null), HIGHLIGHT_MS);
+		const timer = setTimeout(() => (highlighted = null), HIGHLIGHT_MS);
 		const frame = requestAnimationFrame(() => {
-			document.getElementById(`item-${cible}`)?.scrollIntoView({
+			document.getElementById(`item-${target}`)?.scrollIntoView({
 				block: 'center',
 				behavior: settings.animates ? 'smooth' : 'auto'
 			});
@@ -296,7 +296,7 @@
 
 		<button
 			type="button"
-			onclick={envoyer}
+			onclick={send}
 			data-test-id="send-list"
 			class="text-primary text-label inline-flex min-h-[max(2.75rem,44px)] items-center gap-2 underline"
 		>
@@ -350,11 +350,11 @@
 		>
 			<SlidersHorizontal size={18} aria-hidden="true" />
 			{t('list.filters')}
-			{#if filtresActifs > 0}
+			{#if activeFilters > 0}
 				<span
 					class="bg-primary text-primary-foreground text-caption grid size-5 place-items-center rounded-full font-semibold"
 				>
-					{filtresActifs}
+					{activeFilters}
 				</span>
 			{/if}
 		</Button>
@@ -379,7 +379,7 @@
 			whose filters let nothing through. The second is fixed by touching the filters, the first by adding
 			an item — the drawing says it before the sentence does.
 		-->
-		{#if filtresActifs > 0}
+		{#if activeFilters > 0}
 			<EmptyState illustration="filter" text={t('list.empty')} testId="list-empty">
 				{#snippet action()}
 					<Button variant="outline" onclick={() => filters?.show()} data-test-id="empty-filters">
@@ -414,13 +414,13 @@
 			data-test-id="route-hint"
 		>
 			<Route size={18} class="mt-0.5 shrink-0" aria-hidden="true" />
-			<span>{appris ? t('list.routeLearned') : t('list.routeDefault')}</span>
+			<span>{learned ? t('list.routeLearned') : t('list.routeDefault')}</span>
 		</p>
 
 		<div class="mt-4 space-y-3" data-reorder-zone>
 			{#each visible as group, aisleIndex (group.aisleId)}
 				{@const aisle = data.aisle(group.aisleId)}
-				{@const nom = aisle?.name ?? group.aisleId}
+				{@const name = aisle?.name ?? group.aisleId}
 				{@const itemReorder = createReorder((from, to) =>
 					moveItem(group.aisleId, group.items, from, to)
 				)}
@@ -440,14 +440,14 @@
 					}}
 				>
 					<AisleCard
-						name={nom}
+						name={name}
 						emoji={aisle?.emoji ?? '🛒'}
 						rank={aisleIndex}
 						done={group.items.filter((i) => i.checked).length}
 						total={group.items.length}
-						open={ouvert(group.aisleId, aisleIndex)}
+						open={isOpen(group.aisleId, aisleIndex)}
 						grip={aisleReorder.handle(aisleIndex)}
-						onToggle={() => basculer(group.aisleId, aisleIndex)}
+						onToggle={() => toggle(group.aisleId, aisleIndex)}
 						onMoveUp={() => moveAisle(aisleIndex, aisleIndex - 1)}
 						onMoveDown={() => moveAisle(aisleIndex, aisleIndex + 1)}
 						canMoveUp={aisleIndex > 0}
@@ -459,7 +459,7 @@
 									id="item-{item.id}"
 									data-reorder-row
 									data-held={itemReorder.index === index}
-									class="fl-reorder-row rounded-md {surligne === item.id
+									class="fl-reorder-row rounded-md {highlighted === item.id
 										? 'ring-primary ring-2 ring-offset-2'
 										: ''}"
 									animate:flip={{
@@ -538,11 +538,11 @@
 		>
 			<SlidersHorizontal size={18} aria-hidden="true" />
 			<span class="sr-only">{t('list.filters')}</span>
-			{#if filtresActifs > 0}
+			{#if activeFilters > 0}
 				<span
 					class="bg-primary text-primary-foreground text-caption grid size-5 place-items-center rounded-full font-semibold"
 				>
-					{filtresActifs}
+					{activeFilters}
 				</span>
 			{/if}
 		</button>

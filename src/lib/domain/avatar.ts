@@ -19,18 +19,18 @@ export const AVATAR_MAX_BYTES = 12 * 1024 * 1024;
  * de La Fontaine" reads JL, not JD. Accents stay — "Élise" gives "É", which is the right letter, and the
  * badge has room to show it.
  */
-const PARTICULES = new Set(['de', 'du', 'des', 'da', 'di', 'del', 'la', 'le', 'van', 'von', 'el']);
+const PARTICLES = new Set(['de', 'du', 'des', 'da', 'di', 'del', 'la', 'le', 'van', 'von', 'el']);
 
 export function initialsOf(name: string): string {
-	const mots = name
+	const words = name
 		.trim()
 		.split(/[\s'’-]+/)
-		.filter((mot) => mot.length > 0 && !PARTICULES.has(mot.toLowerCase()));
+		.filter((word) => word.length > 0 && !PARTICLES.has(word.toLowerCase()));
 
-	if (mots.length === 0) return '—';
-	if (mots.length === 1) return premiere(mots[0]);
+	if (words.length === 0) return '—';
+	if (words.length === 1) return firstLetter(words[0]);
 
-	return premiere(mots[0]) + premiere(mots[mots.length - 1]);
+	return firstLetter(words[0]) + firstLetter(words[words.length - 1]);
 }
 
 /**
@@ -42,12 +42,12 @@ export function initialsOf(name: string): string {
  * we fall back on the display name, which is often "First Last" anyway.
  */
 export function initialsFor(firstName: string, lastName: string, displayName: string): string {
-	const complet = `${firstName.trim()} ${lastName.trim()}`.trim();
-	return complet ? initialsOf(complet) : initialsOf(displayName);
+	const full = `${firstName.trim()} ${lastName.trim()}`.trim();
+	return full ? initialsOf(full) : initialsOf(displayName);
 }
 
-function premiere(mot: string): string {
-	return [...mot][0].toLocaleUpperCase();
+function firstLetter(word: string): string {
+	return [...word][0].toLocaleUpperCase();
 }
 
 /**
@@ -58,11 +58,11 @@ function premiere(mot: string): string {
  * themselves when they photograph themselves.
  */
 export function coverSquare(width: number, height: number) {
-	const cote = Math.min(width, height);
+	const side = Math.min(width, height);
 
 	return {
-		sx: Math.round((width - cote) / 2),
-		sy: Math.round((height - cote) / 2),
-		taille: cote
+		sx: Math.round((width - side) / 2),
+		sy: Math.round((height - side) / 2),
+		size: side
 	};
 }

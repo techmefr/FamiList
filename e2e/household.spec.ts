@@ -15,13 +15,13 @@ test('un code inconnu est refusé en toutes lettres, pas en jargon de base', asy
 	await page.getByTestId('join-code').fill('ZZZZZZ');
 	await page.getByTestId('join-submit').click();
 
-	const refus = page.getByTestId('household-error');
-	await expect(refus).toBeVisible();
+	const refusal = page.getByTestId('household-error');
+	await expect(refusal).toBeVisible();
 
 	// The database message — "code invalide ou expire", without accents and never translated — no longer
 	// reaches the screen.
-	await expect(refus).toContainText(/invalid or has expired/i);
-	await expect(refus).not.toContainText('code invalide ou expire');
+	await expect(refusal).toContainText(/invalid or has expired/i);
+	await expect(refusal).not.toContainText('code invalide ou expire');
 
 	// This refusal has no "enter my code" way out: it is not about the second factor.
 	await expect(page.getByTestId('household-second-factor')).toHaveCount(0);
