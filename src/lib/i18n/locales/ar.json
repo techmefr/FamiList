@@ -207,7 +207,8 @@
 		"cancel": "إلغاء",
 		"loading": "جارٍ التحميل…",
 		"close": "إغلاق",
-		"edit": "تعديل"
+		"edit": "تعديل",
+		"crashed": "تعذّر عرض هذه الشاشة. وقد تم تسجيل المشكلة."
 	},
 	"list": {
 		"shop": "المتجر",
@@ -693,6 +694,34 @@
 		"publishReport": "فتح مسألة",
 		"reportIssuePending": "تم طلب النشر",
 		"reportIssue": "المسألة رقم {number}",
+		"crashesTitle": "الأعطال",
+		"crashesEmpty": "لا توجد أعطال خلال الثلاثين يومًا الماضية.",
+		"crashesHint": "أخطاء تُجمع تلقائيًا، وتُنقّى من كل ما قد يدل على شخص ما، وتُحفظ ثلاثين يومًا. لا تُسجَّل أسماء المتأثرين.",
+		"crashSource": {
+			"window": "المتصفح",
+			"promise": "وعد",
+			"render": "العرض",
+			"sync": "المزامنة"
+		},
+		"crashOccurrences": {
+			"zero": "لم تقع",
+			"one": "مرة واحدة",
+			"two": "مرتان",
+			"few": "{count} مرات",
+			"many": "{count} مرة",
+			"other": "{count} مرة"
+		},
+		"crashPeople": {
+			"zero": "لا حسابات متأثرة",
+			"one": "حساب واحد متأثر",
+			"two": "حسابان متأثران",
+			"few": "{count} حسابات متأثرة",
+			"many": "{count} حسابًا متأثرًا",
+			"other": "{count} حساب متأثر"
+		},
+		"crashSeen": "من {first} إلى {last}",
+		"crashStack": "تتبّع الاستدعاءات",
+		"resolveCrash": "وضع علامة كمصحَّح",
 		"reportKind": {
 			"bug": "مشكلة",
 			"suggestion": "اقتراح"

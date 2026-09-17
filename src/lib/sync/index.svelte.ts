@@ -2,6 +2,7 @@ import { browser } from '$app/environment';
 import { supabase } from '$db/supabase';
 import { db, type OutboxEntry } from '$db/schema';
 import { describeError } from './errors';
+import { reportCrash } from '$lib/crash/reporter';
 import {
 	toAisle,
 	toCard,
@@ -86,7 +87,23 @@ class SyncStore {
 		void work.catch((cause) => {
 			this.state = 'error';
 			this.lastError = describeError(cause);
+			this.report(cause);
 		});
+	}
+
+	/**
+	 * La même panne, remontée cette fois à l'administration.
+	 *
+	 * Ce moteur rattrape déjà tout ce qui échoue pour alimenter son bandeau : ajouter un écouteur
+	 * global par-dessus compterait chaque panne deux fois, et l'écouteur global ne verrait de toute
+	 * façon rien, puisque plus rien n'est rejeté une fois rattrapé ici. On se branche donc sur les
+	 * deux endroits qui savaient déjà, plutôt que d'en inventer un troisième.
+	 *
+	 * Le bandeau reste ce qui parle à la personne — cet appel-ci ne s'adresse qu'à nous, et ne
+	 * change rien à l'écran.
+	 */
+	private report(cause: unknown) {
+		reportCrash(cause, 'sync', browser ? location.pathname : '');
 	}
 
 	/** Appelé une fois le compte validé. Renvoie true si le cache local a été rempli. */
@@ -476,6 +493,7 @@ class SyncStore {
 		} catch (cause) {
 			this.state = 'error';
 			this.lastError = describeError(cause);
+			this.report(cause);
 			return;
 		}
 

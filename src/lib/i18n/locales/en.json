@@ -203,7 +203,8 @@
 		"cancel": "Cancel",
 		"loading": "Loading…",
 		"close": "Close",
-		"edit": "Edit"
+		"edit": "Edit",
+		"crashed": "This screen could not be displayed. The problem has been logged."
 	},
 	"list": {
 		"shop": "Shop",
@@ -681,6 +682,26 @@
 		"publishReport": "Open an issue",
 		"reportIssuePending": "Publication requested",
 		"reportIssue": "Issue #{number}",
+		"crashesTitle": "Crashes",
+		"crashesEmpty": "No crashes in the last thirty days.",
+		"crashesHint": "Errors collected automatically, stripped of anything that could point to someone and kept for thirty days. The names of affected people are not recorded.",
+		"crashSource": {
+			"window": "Browser",
+			"promise": "Promise",
+			"render": "Rendering",
+			"sync": "Sync"
+		},
+		"crashOccurrences": {
+			"one": "{count} time",
+			"other": "{count} times"
+		},
+		"crashPeople": {
+			"one": "{count} account affected",
+			"other": "{count} accounts affected"
+		},
+		"crashSeen": "From {first} to {last}",
+		"crashStack": "Call stack",
+		"resolveCrash": "Mark as fixed",
 		"reportKind": {
 			"bug": "Bug",
 			"suggestion": "Suggestion"

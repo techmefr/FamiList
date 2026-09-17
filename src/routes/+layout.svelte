@@ -24,6 +24,7 @@
 	import { navDirection } from '$domain/motion';
 	import { pushAppearance, syncAppearance } from '$lib/sync/appearance';
 	import { registerServiceWorker } from '$native/pwa';
+	import { watchCrashes } from '$lib/crash/reporter';
 	import { install } from '$stores/install.svelte';
 	import { reminderPlans } from '$domain/reminder';
 	import { applyReminders } from '$native/reminders';
@@ -60,6 +61,15 @@
 	i18n.init();
 	session.init();
 	registerServiceWorker();
+
+	/**
+	 * Les filets à erreurs, posés avant tout le reste de la page.
+	 *
+	 * Un plantage au démarrage est le plus coûteux — l'application ne s'ouvre pas du tout — et
+	 * c'est justement celui qu'on manquerait en branchant l'écoute plus tard. Les deux écouteurs
+	 * ne coûtent rien tant que rien ne casse.
+	 */
+	watchCrashes();
 
 	/**
 	 * Le compteur d'ouvertures démarre ici, au lancement, et non quand le bandeau s'affiche : ce

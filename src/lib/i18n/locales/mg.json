@@ -203,7 +203,8 @@
 		"cancel": "Aoka ihany",
 		"loading": "Eo am-pakana…",
 		"close": "Hidio",
-		"edit": "Hanova"
+		"edit": "Hanova",
+		"crashed": "Tsy afaka niseho ity pejy ity. Voarakitra ny olana."
 	},
 	"list": {
 		"shop": "Fivarotana",
@@ -681,6 +682,26 @@
 		"publishReport": "Hanokatra olana",
 		"reportIssuePending": "Nangatahina ny famoahana",
 		"reportIssue": "Olana #{number}",
+		"crashesTitle": "Fahatapahana",
+		"crashesEmpty": "Tsy nisy fahatapahana tao anatin'ny telopolo andro lasa.",
+		"crashesHint": "Diso voaangona ho azy, nesorina izay rehetra mety hanondro olona, ary tehirizina telopolo andro. Tsy voarakitra ny anaran'ireo voakasika.",
+		"crashSource": {
+			"window": "Navigateur",
+			"promise": "Promise",
+			"render": "Fampisehoana",
+			"sync": "Fampifanarahana"
+		},
+		"crashOccurrences": {
+			"one": "in-{count}",
+			"other": "in-{count}"
+		},
+		"crashPeople": {
+			"one": "kaonty {count} voakasika",
+			"other": "kaonty {count} voakasika"
+		},
+		"crashSeen": "Nanomboka {first} ka hatramin’ny {last}",
+		"crashStack": "Lisitry ny antso",
+		"resolveCrash": "Marihina ho voavaha",
 		"reportKind": {
 			"bug": "Olana",
 			"suggestion": "Hevitra"
