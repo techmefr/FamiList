@@ -1,144 +1,143 @@
 # FamiList
 
-Liste de courses partagée pour un foyer : listes collaboratives, rayons ordonnés magasin par
-magasin, cartes de fidélité, loupe d'accessibilité, et une discussion par liste avec sondages de
-date et répartition de ce que chacun apporte.
+Shared shopping list for a household: collaborative lists, aisles ordered shop by shop, loyalty
+cards, an accessibility magnifier, and one conversation per list with date polls and a split of
+what everyone brings.
 
-Application SvelteKit servie en statique, données dans Supabase, cache local IndexedDB pour
-fonctionner sans réseau. Le même build alimente le web et l'application Android via Capacitor.
+A SvelteKit app served as static files, data in Supabase, a local IndexedDB cache so it works
+without network. The same build feeds the web and the Android app through Capacitor.
 
-## Prérequis
+## Requirements
 
-| Outil | Version | Pourquoi |
+| Tool | Version | Why |
 | --- | --- | --- |
-| Node | **24 ou plus** | `@zxing/library` déclare `engines.node >= 24`, et `.npmrc` porte `engine-strict=true` : l'installation échoue sur Node 22 |
-| pnpm | **11.9** | épinglé par `packageManager` dans `package.json` |
-| Docker | — | requis par la pile Supabase locale |
-| JDK + SDK Android | API 36 | seulement pour construire l'APK (Gradle 8.14.3, `compileSdk` 36, `minSdk` 24) |
+| Node | **24 or later** | `@zxing/library` declares `engines.node >= 24`, and `.npmrc` sets `engine-strict=true`: installation fails on Node 22 |
+| pnpm | **11.9** | pinned by `packageManager` in `package.json` |
+| Docker | — | required by the local Supabase stack |
+| JDK + Android SDK | API 36 | only to build the APK (Gradle 8.14.3, `compileSdk` 36, `minSdk` 24) |
 
-La CLI Supabase n'est pas à installer : elle est épinglée dans les dépendances de développement et
-s'appelle via les scripts `db:*`.
+The Supabase CLI does not need installing: it is pinned in the dev dependencies and called through
+the `db:*` scripts.
 
 ```sh
 nvm use 24
 ```
 
-## Installation
+## Install
 
 ```sh
 pnpm install
 cp .env.example .env
 ```
 
-Deux variables, les seules du projet :
+Two variables, the only ones in the project:
 
 ```
 PUBLIC_SUPABASE_URL=
 PUBLIC_SUPABASE_ANON_KEY=
 ```
 
-Toutes deux sont publiques par construction : elles partent dans le bundle client, et la sécurité
-repose sur les politiques RLS, pas sur leur confidentialité. La clé `service_role` n'a rien à faire
-ici.
+Both are public by construction: they ship in the client bundle, and security rests on the RLS
+policies, not on keeping them secret. The `service_role` key has no place here.
 
-## Développement
+## Development
 
 ```sh
-pnpm db:start           # API 54321, base 54322, Studio 54323, courriels 54324
-pnpm db:reset           # applique les migrations puis supabase/seed.sql
+pnpm db:start           # API 54321, database 54322, Studio 54323, mail 54324
+pnpm db:reset           # applies the migrations then supabase/seed.sql
 pnpm dev                # http://localhost:5173
 ```
 
-`pnpm db:start` affiche l'URL d'API et la clé anon à recopier dans `.env`.
+`pnpm db:start` prints the API URL and the anon key to copy into `.env`.
 
-`pnpm db:reset` crée un compte de test confirmé et approuvé, celui dont se servent les tests de
-bout en bout. Il n'existe que dans la pile locale.
+`pnpm db:reset` creates a confirmed and approved test account, the one the end-to-end tests use. It
+only exists in the local stack.
 
-Après toute migration qui change le schéma :
+After any migration that changes the schema:
 
 ```sh
-pnpm db:types           # régénère src/lib/db/types.ts
+pnpm db:types           # regenerates src/lib/db/types.ts
 ```
 
 ## Tests
 
 ```sh
 pnpm check              # types
-pnpm test               # unitaires
-pnpm test:coverage      # unitaires, avec seuil de couverture
-pnpm e2e                # bout en bout
+pnpm test               # unit
+pnpm test:coverage      # unit, with a coverage threshold
+pnpm e2e                # end to end
 ```
 
-Les tests de bout en bout ont besoin de la pile locale démarrée, et du navigateur Playwright :
+The end-to-end tests need the local stack running, and the Playwright browser:
 
 ```sh
 pnpm exec playwright install --with-deps chromium
 ```
 
-> Si `pnpm check` signale des erreurs dans des fichiers que vous n'avez pas touchés, cherchez un
-> `node_modules` égaré dans un dossier parent : TypeScript remonte l'arborescence pour trouver
-> `@types/node`, et en adopte alors une version étrangère au projet.
+> If `pnpm check` reports errors in files you have not touched, look for a stray `node_modules` in a
+> parent folder: TypeScript walks up the tree to find `@types/node`, and then picks up a version
+> that is foreign to the project.
 
-## Déploiement web
+## Web deployment
 
-Le build est statique — `@sveltejs/adapter-static`, repli `index.html` — donc n'importe quel
-hébergeur de fichiers convient, à condition de réécrire toutes les routes vers `index.html`.
+The build is static — `@sveltejs/adapter-static`, `index.html` fallback — so any file host will do,
+as long as it rewrites every route to `index.html`.
 
 ```sh
-pnpm build              # produit build/
-pnpm preview            # sert ce build localement
+pnpm build              # produces build/
+pnpm preview            # serves that build locally
 ```
 
-Sur Vercel, `vercel.json` porte déjà la commande de build, le dossier de sortie, la réécriture et
-les en-têtes de sécurité. Le seul réglage à faire dans l'interface est d'ajouter
-`PUBLIC_SUPABASE_URL` et `PUBLIC_SUPABASE_ANON_KEY` aux variables d'environnement du projet.
+On Vercel, `vercel.json` already carries the build command, the output folder, the rewrite and the
+security headers. The only setting to make in the interface is adding `PUBLIC_SUPABASE_URL` and
+`PUBLIC_SUPABASE_ANON_KEY` to the project environment variables.
 
-### Base de production
+### Production database
 
 ```sh
 pnpm exec supabase link --project-ref <ref>
 pnpm exec supabase db push
 ```
 
-`db push` applique les migrations. **Ne pas jouer `supabase/seed.sql` en production** : il crée un
-compte de test dont le mot de passe est écrit dans le dépôt.
+`db push` applies the migrations. **Do not run `supabase/seed.sql` in production**: it creates a
+test account whose password is written in the repository.
 
-Régler enfin `site_url` et les URL de redirection sur le domaine réel, dans les réglages
-d'authentification du projet Supabase.
+Finally set `site_url` and the redirect URLs to the real domain, in the Supabase project
+authentication settings.
 
-#### Écrire une migration
+#### Writing a migration
 
-Un fichier par changement, jamais de modification d'un fichier déjà appliqué :
+One file per change, never an edit to a file already applied:
 
 ```
-supabase/migrations/<horodatage>_<nom_en_minuscules>.sql
+supabase/migrations/<timestamp>_<lowercase_name>.sql
 ```
 
-L'horodatage doit être strictement postérieur à tous les autres, et **unique** : la CLI indexe ses
-migrations sur ce seul nombre, pas sur le nom du fichier. Deux fichiers au même horodatage font
-échouer `db:start` sur une violation de clé primaire.
+The timestamp must be strictly later than every other, and **unique**: the CLI indexes its
+migrations on that number alone, not on the file name. Two files with the same timestamp make
+`db:start` fail on a primary key violation.
 
-Le client ne peut écrire que les colonnes listées dans un `grant update (...)`. Une colonne ajoutée
-sans l'y inscrire se laisse lire, et refuse silencieusement les écritures.
+The client can only write the columns listed in a `grant update (...)`. A column added without
+being listed there can be read, and silently refuses writes.
 
-## Héberger une instance
+## Hosting an instance
 
-Pour faire tourner FamiList pour un foyer plutôt que pour y développer, voir
-[SELF-HOSTING.md](SELF-HOSTING.md) : mise en place de la base, publication de l'application, et
-configuration des courriels depuis l'administration.
+To run FamiList for a household rather than to develop on it, see
+[SELF-HOSTING.md](SELF-HOSTING.md): setting up the database, publishing the app, and configuring
+email from the admin panel.
 
-## Premier compte
+## First account
 
-**Le premier compte créé devient administrateur, approuvé d'office.** Les suivants arrivent en
-attente et ne voient aucune donnée tant qu'ils ne sont pas validés : les fonctions d'accès exigent
-toutes `is_approved()`.
+**The first account created becomes the administrator, approved outright.** The following ones
+arrive pending and see no data until they are approved: every access function requires
+`is_approved()`.
 
-Créer donc son compte d'administration juste après la mise en ligne, puis valider les inscriptions
-depuis `/admin`. Un administrateur ne peut pas valider son propre compte.
+So create your admin account right after going live, then approve sign-ups from `/admin`. An
+administrator cannot approve their own account.
 
-## Application Android
+## Android app
 
-Capacitor embarque le build web (`webDir: 'build'`) : il n'y a pas de code mobile séparé.
+Capacitor wraps the web build (`webDir: 'build'`): there is no separate mobile code.
 
 ```sh
 pnpm build
@@ -146,22 +145,22 @@ pnpm exec cap sync android
 cd android && ./gradlew assembleDebug
 ```
 
-L'APK atterrit dans `android/app/build/outputs/apk/debug/`.
+The APK lands in `android/app/build/outputs/apk/debug/`.
 
-Le dossier `android/` est versionné : il porte la permission caméra et la configuration native
-qu'un `cap add` sur une machine neuve ne saurait pas retrouver. Le projet iOS n'est pas généré, il
-demande un Mac (`pnpm exec cap add ios`).
+The `android/` folder is versioned: it carries the camera permission and the native configuration
+that a `cap add` on a fresh machine would not know how to recover. The iOS project is not
+generated, it needs a Mac (`pnpm exec cap add ios`).
 
 ## Structure
 
 ```
-src/lib/domain      logique pure, couverte par les tests unitaires
-src/lib/components  composants d'interface
-src/lib/db          schéma IndexedDB et types Supabase générés
-src/lib/sync        synchronisation et file d'attente hors-ligne
-src/lib/scan        décodage des codes-barres et QR
-src/lib/i18n        traductions, dix langues
+src/lib/domain      pure logic, covered by the unit tests
+src/lib/components  interface components
+src/lib/db          IndexedDB schema and generated Supabase types
+src/lib/sync        synchronisation and offline queue
+src/lib/scan        barcode and QR decoding
+src/lib/i18n        translations, ten languages
 src/routes          pages
-supabase/migrations schéma et politiques RLS
-e2e                 tests de bout en bout
+supabase/migrations schema and RLS policies
+e2e                 end-to-end tests
 ```

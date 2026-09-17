@@ -1,38 +1,36 @@
-# Héberger FamiList soi-même
+# Hosting FamiList yourself
 
-Le README s'adresse à qui développe le projet. Cette page s'adresse à qui veut le faire tourner
-pour sa famille, et n'ouvrira pas un terminal deux fois par semaine.
+The README speaks to someone developing the project. This page speaks to someone who wants to run
+it for their family, and will not open a terminal twice a week.
 
-Il n'y a **pas deux services jumeaux** à lancer. Il y a une base de données Supabase, qui tourne en
-conteneurs Docker, et une application web qui n'est qu'un dossier de fichiers statiques — elle
-n'exécute rien côté serveur.
+There are **not two twin services** to run. There is a Supabase database, running in Docker
+containers, and a web app that is only a folder of static files — it executes nothing on the
+server.
 
-## Ce qu'il faut
+## What you need
 
 | | |
 | --- | --- |
-| **Docker** | fait tourner la base, l'authentification et le stockage |
-| **Node 24 ou plus** | construit l'application |
-| **pnpm** | installé par `corepack enable pnpm` |
-| un hébergeur de fichiers | Vercel, Netlify, un nginx — n'importe lequel |
+| **Docker** | runs the database, authentication and storage |
+| **Node 24 or later** | builds the app |
+| **pnpm** | installed by `corepack enable pnpm` |
+| a file host | Vercel, Netlify, an nginx — any of them |
 
-La CLI Supabase n'est pas à installer séparément : elle est épinglée dans les dépendances du
-projet.
+The Supabase CLI does not need installing separately: it is pinned in the project dependencies.
 
-## Un compte Supabase, ou chez soi
+## A Supabase account, or your own machine
 
-Deux chemins, et le second n'est pas plus « pur » que le premier.
+Two paths, and the second is no more "pure" than the first.
 
-**Supabase hébergé** : on crée un projet sur supabase.com, on relie le dépôt, on pousse le schéma.
-Rien à administrer, une base sauvegardée. C'est ce que fait l'instance d'origine.
+**Hosted Supabase**: create a project on supabase.com, link the repository, push the schema.
+Nothing to administer, a backed-up database. This is what the original instance does.
 
-**Tout chez soi** : Supabase se lance en Docker sur sa propre machine. Il faut alors gérer les
-sauvegardes, les certificats et les mises à jour — ce qui est un vrai travail, pas une case à
-cocher.
+**Everything at home**: Supabase runs in Docker on your own machine. You then have to handle
+backups, certificates and updates — which is real work, not a checkbox.
 
-La suite décrit le premier chemin, avec les écarts du second signalés au passage.
+What follows describes the first path, with the differences of the second noted along the way.
 
-## Mettre en place la base
+## Setting up the database
 
 ```sh
 git clone https://github.com/techmefr/Familiste.git
@@ -40,19 +38,19 @@ cd Familiste
 pnpm install
 ```
 
-Relier le projet Supabase, puis appliquer le schéma :
+Link the Supabase project, then apply the schema:
 
 ```sh
-pnpm exec supabase link --project-ref <la-reference-du-projet>
+pnpm exec supabase link --project-ref <the-project-ref>
 pnpm exec supabase db push
 ```
 
-> **Ne jamais jouer `supabase/seed.sql` en production.** Il crée un compte de test dont le mot de
-> passe est écrit dans le dépôt, confirmé et approuvé d'office. Il n'existe que pour les tests
-> automatisés.
+> **Never run `supabase/seed.sql` in production.** It creates a test account whose password is
+> written in the repository, confirmed and approved outright. It only exists for the automated
+> tests.
 
-Certaines fonctions tournent côté serveur — courriels, publication de signalements, import de
-recette. Elles se déploient une fois :
+Some functions run on the server — email, publishing reports, importing a recipe. They are deployed
+once:
 
 ```sh
 pnpm exec supabase functions deploy notify-admins
@@ -61,62 +59,62 @@ pnpm exec supabase functions deploy import-recipe
 pnpm exec supabase functions deploy test-instance-mail
 ```
 
-Pour un hébergement à domicile, remplacer les deux premières commandes par `pnpm exec supabase
-start`, et lire l'URL et la clé qu'il affiche.
+For hosting at home, replace the first two commands with `pnpm exec supabase start`, and read the
+URL and the key it prints.
 
-## Construire et publier l'application
+## Building and publishing the app
 
-Deux variables, les seules du projet :
+Two variables, the only ones in the project:
 
 ```
 PUBLIC_SUPABASE_URL=
 PUBLIC_SUPABASE_ANON_KEY=
 ```
 
-Elles sont publiques par construction : elles partent dans le fichier que télécharge le navigateur.
-La sécurité tient aux règles de la base, pas à leur secret. La clé `service_role`, elle, n'a rien à
-faire ici.
+They are public by construction: they ship in the file the browser downloads. Security rests on the
+database rules, not on keeping them secret. The `service_role` key, on the other hand, has no place
+here.
 
 ```sh
 pnpm build
 ```
 
-Le résultat est dans `build/`. Toute route inconnue doit être renvoyée vers `index.html`, sinon un
-lien partagé vers une liste tombera sur une page absente. Sur Vercel, `vercel.json` s'en charge
-déjà ; ailleurs, c'est une ligne de configuration à écrire.
+The result is in `build/`. Any unknown route must be sent back to `index.html`, otherwise a link
+shared to a list will land on a missing page. On Vercel, `vercel.json` already takes care of it;
+elsewhere, it is one line of configuration to write.
 
-Régler enfin, dans les réglages d'authentification du projet Supabase, l'adresse du site et les
-URL de redirection sur le domaine réel. Sans cela, le lien reçu par courriel ramène ailleurs.
+Finally, in the Supabase project authentication settings, set the site URL and the redirect URLs to
+the real domain. Without that, the link received by email leads somewhere else.
 
-## Le premier compte
+## The first account
 
-**Le premier compte créé devient administrateur, et il est approuvé sur-le-champ.** Tous les
-suivants arrivent en attente et ne voient rien tant qu'ils ne sont pas validés.
+**The first account created becomes the administrator, and it is approved on the spot.** Every
+following one arrives pending and sees nothing until it is approved.
 
-Donc : créer son propre compte **immédiatement** après la mise en ligne. Quelqu'un d'autre qui
-s'inscrirait avant deviendrait l'administrateur de votre instance.
+So: create your own account **immediately** after going live. Someone else signing up before you
+would become the administrator of your instance.
 
-Les inscriptions suivantes se valident depuis `/admin`. Un administrateur ne peut pas valider son
-propre compte — c'est voulu.
+Later sign-ups are approved from `/admin`. An administrator cannot approve their own account — that
+is deliberate.
 
-## Le reste se règle dans l'application
+## The rest is set from inside the app
 
-Depuis `/admin`, sans terminal :
+From `/admin`, with no terminal:
 
-- **L'envoi de courriels** — serveur, port, identifiant, mot de passe, expéditeur. Le mot de passe
-  part dans le coffre de la base et ne se relit jamais, pas même par un administrateur.
-- **Le jeton GitHub**, si l'on veut qu'un signalement ouvre une issue.
+- **Sending email** — server, port, username, password, sender. The password goes into the
+  database vault and is never read back, not even by an administrator.
+- **The GitHub token**, if you want a report to open an issue.
 
-Un bouton d'essai envoie un message et dit ce qui a échoué.
+A test button sends a message and says what failed.
 
-> L'erreur la plus fréquente est l'**expéditeur non vérifié**. Brevo, Sendgrid et les autres
-> refusent d'envoyer depuis une adresse qu'on ne leur a pas prouvée. Vérifier l'adresse chez le
-> fournisseur avant de la poser ici.
+> The most common mistake is an **unverified sender**. Brevo, Sendgrid and the others refuse to send
+> from an address you have not proven to them. Verify the address with the provider before setting
+> it here.
 
-Tant que rien n'est configuré, les courriels s'accumulent sans partir. L'écran le dit. Les
-inscriptions restent visibles dans `/admin`, qui fait foi.
+As long as nothing is configured, emails pile up without leaving. The screen says so. Sign-ups stay
+visible in `/admin`, which is the authority.
 
-## Mettre à jour
+## Updating
 
 ```sh
 git pull
@@ -125,18 +123,17 @@ pnpm exec supabase db push
 pnpm build
 ```
 
-Redéployer le contenu de `build/`, et redéployer les fonctions si elles ont changé. Les migrations
-ne s'appliquent qu'une fois : rejouer `db push` sur une base à jour ne fait rien.
+Redeploy the contents of `build/`, and redeploy the functions if they changed. Migrations only apply
+once: running `db push` again on an up-to-date database does nothing.
 
-## Quand ça ne marche pas
+## When it does not work
 
-**L'installation échoue sur la version de Node.** Une dépendance exige Node 24, et `.npmrc` refuse
-de passer outre. `node --version` doit afficher 24 ou plus.
+**Installation fails on the Node version.** A dependency requires Node 24, and `.npmrc` refuses to
+override it. `node --version` must print 24 or later.
 
-**Personne ne reçoit de courriel.** Vérifier l'expéditeur chez le fournisseur, puis le bouton
-d'essai dans `/admin`.
+**Nobody receives any email.** Check the sender with the provider, then the test button in `/admin`.
 
-**Quelqu'un s'est inscrit et ne voit rien.** C'est le comportement prévu : son compte attend une
-validation dans `/admin`.
+**Someone signed up and sees nothing.** That is the intended behaviour: their account is waiting for
+approval in `/admin`.
 
-**Une page rechargée renvoie une erreur 404.** L'hébergeur ne réécrit pas vers `index.html`.
+**A reloaded page returns a 404.** The host does not rewrite to `index.html`.
