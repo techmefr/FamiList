@@ -12,6 +12,7 @@ import {
 	toLayout,
 	toList,
 	toMember,
+	toConversation,
 	toMessage,
 	toPoll,
 	toPollOption,
@@ -387,7 +388,9 @@ class SyncStore {
 			prices,
 			recipes,
 			recipeIngredients,
-			recipeSteps
+			recipeSteps,
+			conversations,
+			conversationParticipants
 		] = await Promise.all([
 			supabase.from('shops').select('*').in('household_id', cercles),
 			supabase.from('aisles').select('*').in('household_id', cercles),
@@ -413,7 +416,11 @@ class SyncStore {
 			// Les lignes d'une recette ne portent pas de foyer : la policy les filtre déjà par la
 			// recette dont elles dépendent, comme pour les articles d'une liste.
 			supabase.from('recipe_ingredients').select('*'),
-			supabase.from('recipe_steps').select('*')
+			supabase.from('recipe_steps').select('*'),
+			// Une conversation directe ne se rattache à aucun cercle : la filtrer sur le foyer
+			// affiché la ferait disparaître. La RLS n'en laisse passer que celles où l'on figure.
+			supabase.from('conversations').select('*'),
+			supabase.from('conversation_participants').select('*')
 		]);
 
 		const failed = [
@@ -433,7 +440,9 @@ class SyncStore {
 			prices,
 			recipes,
 			recipeIngredients,
-			recipeSteps
+			recipeSteps,
+			conversations,
+			conversationParticipants
 		]
 			.map((result) => result.error)
 			.find(Boolean);
@@ -461,6 +470,15 @@ class SyncStore {
 			membersByList.set(listId, [...(membersByList.get(listId) ?? []), row.user_id as string]);
 		}
 
+		const participantsByConversation = new Map<string, string[]>();
+		for (const row of conversationParticipants.data ?? []) {
+			const conversationId = row.conversation_id as string;
+			participantsByConversation.set(conversationId, [
+				...(participantsByConversation.get(conversationId) ?? []),
+				row.user_id as string
+			]);
+		}
+
 		// Le compte a pu changer pendant ces lectures. Écrire maintenant remplirait le cache du
 		// nouveau avec les cercles du précédent. Basculer de cercle, en revanche, ne remet rien en
 		// cause : ce qu'on tient décrit tous les cercles, l'actif comme les autres.
@@ -485,7 +503,8 @@ class SyncStore {
 				db.prices,
 				db.recipes,
 				db.recipeIngredients,
-				db.recipeSteps
+				db.recipeSteps,
+				db.conversations
 			],
 			async () => {
 				/**
@@ -521,7 +540,8 @@ class SyncStore {
 					db.prices.clear(),
 					db.recipes.clear(),
 					db.recipeIngredients.clear(),
-					db.recipeSteps.clear()
+					db.recipeSteps.clear(),
+					db.conversations.clear()
 				]);
 
 				await Promise.all([
@@ -548,7 +568,12 @@ class SyncStore {
 					db.recipeIngredients.bulkAdd(
 						(recipeIngredients.data ?? []).map(toRecipeIngredient)
 					),
-					db.recipeSteps.bulkAdd((recipeSteps.data ?? []).map(toRecipeStep))
+					db.recipeSteps.bulkAdd((recipeSteps.data ?? []).map(toRecipeStep)),
+					db.conversations.bulkAdd(
+						(conversations.data ?? []).map((row) =>
+							toConversation(row, participantsByConversation.get(row.id as string) ?? [])
+						)
+					)
 				]);
 			}
 		);
@@ -706,6 +731,9 @@ class SyncStore {
 		 */
 		const plan = planRealtime(event, {
 			knownListIds: new Set((await db.lists.toCollection().primaryKeys()) as string[]),
+			knownConversationIds: new Set(
+				(await db.conversations.toCollection().primaryKeys()) as string[]
+			),
 			applied: this.appliedAt,
 			busy
 		});

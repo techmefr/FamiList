@@ -809,7 +809,18 @@
 			"other": "已向清单添加 {count} 件物品"
 		},
 		"indexTitle": "讨论",
-		"indexEmpty": "还没有清单：新建一个清单即可开始讨论。"
+		"indexEmpty": "还没有清单：新建一个清单即可开始讨论。",
+		"directs": "私信",
+		"directsEmpty": "暂时没有私人对话。",
+		"directsHint": "私信不经过任何圈子：只留在你们两人之间。",
+		"listSection": "清单对话",
+		"newDirect": "新建对话",
+		"newDirectTitle": "你想写给谁？",
+		"noDirectCandidates": "你已经和所有人都在聊了。",
+		"directFailed": "无法打开对话，请重试。",
+		"backToChats": "返回对话列表",
+		"directNotFound": "找不到这个对话。",
+		"someone": "某人"
 	},
 	"household": {
 		"title": "我的家庭",

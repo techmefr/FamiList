@@ -3,6 +3,7 @@ import { planRealtime, rowKey, type RealtimeContext, type RealtimeEvent } from '
 import { toItem, toMessage } from './mapping';
 
 const LIST = '11111111-1111-1111-1111-111111111111';
+const CONVERSATION = '33333333-3333-3333-3333-333333333333';
 const ITEM = '22222222-2222-2222-2222-222222222222';
 
 const itemRow = (extra: Record<string, unknown> = {}) => ({
@@ -22,6 +23,7 @@ const itemRow = (extra: Record<string, unknown> = {}) => ({
 
 const context = (extra: Partial<RealtimeContext> = {}): RealtimeContext => ({
 	knownListIds: new Set([LIST]),
+	knownConversationIds: new Set([CONVERSATION]),
 	applied: new Map(),
 	busy: false,
 	...extra
@@ -41,6 +43,40 @@ describe('planRealtime', () => {
 			kind: 'put',
 			table: 'items',
 			row: toItem(itemRow())
+		});
+	});
+
+	it('pose un message direct inséré', () => {
+		const row = {
+			id: ITEM,
+			list_id: null,
+			conversation_id: CONVERSATION,
+			user_id: 'moi',
+			body: 'entre nous',
+			is_system: false,
+			created_at: '2026-09-16T10:00:00.000Z'
+		};
+
+		expect(planRealtime(event({ table: 'messages', new: row }), context())).toEqual({
+			kind: 'put',
+			table: 'messages',
+			row: toMessage(row)
+		});
+	});
+
+	it('relit tout quand la conversation est inconnue du cache', () => {
+		const row = {
+			id: ITEM,
+			list_id: null,
+			conversation_id: '99999999-9999-9999-9999-999999999999',
+			user_id: 'moi',
+			body: 'entre nous',
+			is_system: false,
+			created_at: '2026-09-16T10:00:00.000Z'
+		};
+
+		expect(planRealtime(event({ table: 'messages', new: row }), context())).toEqual({
+			kind: 'pull'
 		});
 	});
 

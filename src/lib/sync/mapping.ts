@@ -1,5 +1,6 @@
 import type {
 	Aisle,
+	Conversation,
 	Item,
 	List,
 	LoyaltyCard,
@@ -243,9 +244,15 @@ export const toItemOrder = (row: Row): ShopItemOrder => {
 	};
 };
 
+/**
+ * Les deux colonnes de portée sont lues telles quelles, sans en inventer une quand l'autre manque :
+ * une chaîne vide posée à la place d'un null ferait échouer la contrainte de la base, qui exige
+ * exactement une des deux.
+ */
 export const toMessage = (row: Row): Message => ({
 	id: text(row.id),
-	listId: text(row.list_id),
+	listId: typeof row.list_id === 'string' ? row.list_id : undefined,
+	conversationId: typeof row.conversation_id === 'string' ? row.conversation_id : undefined,
 	userId: text(row.user_id),
 	body: text(row.body),
 	isSystem: flag(row.is_system),
@@ -254,10 +261,23 @@ export const toMessage = (row: Row): Message => ({
 
 export const fromMessage = (message: Message) => ({
 	id: message.id,
-	list_id: message.listId,
+	list_id: message.listId ?? null,
+	conversation_id: message.conversationId ?? null,
 	user_id: message.userId || null,
 	body: message.body,
 	is_system: message.isSystem
+});
+
+/**
+ * Les participants ne viennent pas de la ligne : ils vivent dans leur propre table, comme les
+ * membres d'une liste. La colonne `pair` existe côté base mais c'est un détail d'unicité — on lit
+ * la table qui fait foi pour l'accès.
+ */
+export const toConversation = (row: Row, participantIds: string[]): Conversation => ({
+	id: text(row.id),
+	scope: 'direct',
+	participantIds,
+	createdAt: Date.parse(text(row.created_at)) || 0
 });
 
 export const toPoll = (row: Row): Poll => ({

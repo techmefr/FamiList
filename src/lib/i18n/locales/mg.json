@@ -816,7 +816,18 @@
 			"other": "Nampiana zavatra {count} ny lisitra"
 		},
 		"indexTitle": "Resaka",
-		"indexEmpty": "Mbola tsy misy lisitra: mamorona iray hanombohana resaka."
+		"indexEmpty": "Mbola tsy misy lisitra: mamorona iray hanombohana resaka.",
+		"directs": "Hafatra manokana",
+		"directsEmpty": "Mbola tsy misy resaka manokana.",
+		"directsHint": "Ny hafatra manokana tsy mandalo faribolana: mijanona eo aminareo roa ihany.",
+		"listSection": "Resaka momba ny lisitra",
+		"newDirect": "Resaka vaovao",
+		"newDirectTitle": "Iza no tianao hosoratana?",
+		"noDirectCandidates": "Efa miresaka amin’ny olona rehetra ianao.",
+		"directFailed": "Tsy afaka nosokafana ny resaka. Andramo indray.",
+		"backToChats": "Hiverina amin’ny resaka",
+		"directNotFound": "Tsy hita io resaka io.",
+		"someone": "Olona iray"
 	},
 	"household": {
 		"title": "Ny ankohonako",

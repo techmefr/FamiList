@@ -816,7 +816,18 @@
 			"other": "{count} articles ajoutés à la liste"
 		},
 		"indexTitle": "Discussions",
-		"indexEmpty": "Aucune liste : créez-en une pour démarrer une discussion."
+		"indexEmpty": "Aucune liste : créez-en une pour démarrer une discussion.",
+		"directs": "Messages privés",
+		"directsEmpty": "Aucune conversation privée pour le moment.",
+		"directsHint": "Un message privé ne passe par aucun cercle : il reste entre vous deux.",
+		"listSection": "Discussions de liste",
+		"newDirect": "Nouvelle conversation",
+		"newDirectTitle": "À qui voulez-vous écrire ?",
+		"noDirectCandidates": "Vous écrivez déjà à tout le monde.",
+		"directFailed": "La conversation n'a pas pu s'ouvrir. Réessayez.",
+		"backToChats": "Retour aux discussions",
+		"directNotFound": "Cette conversation est introuvable.",
+		"someone": "Quelqu’un"
 	},
 	"household": {
 		"title": "Mon foyer",

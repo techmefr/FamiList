@@ -37,6 +37,13 @@ export interface RealtimeContext {
 	 * l'écran et jamais nettoyée.
 	 */
 	knownListIds: ReadonlySet<string>;
+	/**
+	 * Les conversations directes présentes dans le cache. Même raison que pour les listes : un
+	 * message qui pointe vers une conversation qu'on n'a pas encore lue laisserait une ligne
+	 * orpheline. La conversation elle-même n'est pas dans le chemin rapide — elle naît rarement, et
+	 * sa naissance retombe sur la relecture complète, qui la posera avec ses participants.
+	 */
+	knownConversationIds: ReadonlySet<string>;
 	/** Horodatage du dernier évènement appliqué, par ligne. Sert de pierre tombale après un DELETE. */
 	applied: ReadonlyMap<string, string>;
 	/** Vrai tant qu'une écriture locale n'a pas atteint le serveur, ou qu'une relecture est en vol. */
@@ -94,6 +101,16 @@ export const planRealtime = (event: RealtimeEvent, context: RealtimeContext): Re
 
 	const row = event.new;
 	if (!row) return { kind: 'pull' };
+
+	// Un message porte une portée parmi deux : une liste, ou une conversation directe. Un article
+	// n'en a qu'une. Chacune se vérifie contre ce que le cache connaît déjà, et tout le reste —
+	// portée absente, portée inconnue — retombe sur la relecture complète.
+	const conversationId = row.conversation_id;
+	if (table === 'messages' && typeof conversationId === 'string') {
+		return context.knownConversationIds.has(conversationId)
+			? { kind: 'put', table, row: toMessage(row) }
+			: { kind: 'pull' };
+	}
 
 	const listId = row.list_id;
 	if (typeof listId !== 'string' || !context.knownListIds.has(listId)) return { kind: 'pull' };

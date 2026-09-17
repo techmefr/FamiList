@@ -163,12 +163,32 @@ export interface Price extends PriceEntry {
 	recordedBy: string;
 }
 
+/**
+ * Un message appartient à une liste ou à une conversation directe, jamais aux deux. La base pose la
+ * même contrainte ; ici les deux champs sont optionnels parce que TypeScript ne sait pas dire
+ * « exactement un », et que les lire au cas par cas reste plus simple qu'une union à déballer
+ * partout.
+ */
 export interface Message {
 	id: string;
-	listId: string;
+	listId?: string;
+	conversationId?: string;
 	userId: string;
 	body: string;
 	isSystem: boolean;
+	createdAt: number;
+}
+
+/**
+ * Une conversation directe, entre deux personnes et hors de tout cercle.
+ *
+ * `participantIds` en porte exactement deux — la base le garantit, et personne ne peut s'y ajouter
+ * puisque aucun droit d'écriture n'est accordé sur ces tables côté client.
+ */
+export interface Conversation {
+	id: string;
+	scope: 'direct';
+	participantIds: string[];
 	createdAt: number;
 }
 
@@ -278,6 +298,7 @@ class FamiListDatabase extends Dexie {
 	shopItemOrders!: EntityTable<ShopItemOrder, 'key'>;
 	outbox!: EntityTable<OutboxEntry, 'seq'>;
 	messages!: EntityTable<Message, 'id'>;
+	conversations!: EntityTable<Conversation, 'id'>;
 	polls!: EntityTable<Poll, 'id'>;
 	pollOptions!: EntityTable<PollOption, 'id'>;
 	pollVotes!: EntityTable<PollVote, 'key'>;
@@ -349,6 +370,13 @@ class FamiListDatabase extends Dexie {
 					)
 				);
 			});
+
+		// Les messages s'interrogent désormais aussi par conversation. L'ancien index `listId` reste :
+		// une liste garde ses messages, seule la portée directe s'ajoute à côté.
+		this.version(8).stores({
+			conversations: 'id',
+			messages: 'id, listId, conversationId, createdAt'
+		});
 	}
 }
 

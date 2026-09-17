@@ -4,6 +4,7 @@ import {
 	itemOrderKey,
 	pollVoteKey,
 	type Aisle,
+	type Conversation,
 	type Item,
 	type List,
 	type LoyaltyCard,
@@ -45,6 +46,7 @@ import {
 	fromShop
 } from '$lib/sync/mapping';
 import { copiedItem, copyName } from '$domain/duplicate';
+import { directSummaries, otherParticipant } from '$domain/direct-conversation';
 import { slugify } from '$domain/slug';
 import {
 	compareShops,
@@ -102,6 +104,7 @@ class DataStore {
 	layouts = $state<ShopLayout[]>([]);
 	itemOrders = $state<ShopItemOrder[]>([]);
 	messages = $state<Message[]>([]);
+	conversations = $state<Conversation[]>([]);
 	polls = $state<Poll[]>([]);
 	pollOptions = $state<PollOption[]>([]);
 	pollVotes = $state<PollVote[]>([]);
@@ -192,7 +195,8 @@ class DataStore {
 			prices,
 			recipes,
 			recipeIngredients,
-			recipeSteps
+			recipeSteps,
+			conversations
 		] = await Promise.all([
 			db.shops.toArray(),
 			db.aisles.orderBy('position').toArray(),
@@ -209,7 +213,8 @@ class DataStore {
 			db.prices.toArray(),
 			db.recipes.toArray(),
 			db.recipeIngredients.toArray(),
-			db.recipeSteps.toArray()
+			db.recipeSteps.toArray(),
+			db.conversations.toArray()
 		]);
 
 		this.cachedShops = shops;
@@ -228,6 +233,7 @@ class DataStore {
 		this.cachedRecipes = recipes;
 		this.recipeIngredients = recipeIngredients;
 		this.recipeSteps = recipeSteps;
+		this.conversations = conversations;
 
 		this.restoreActiveShop();
 	}
@@ -933,6 +939,41 @@ class DataStore {
 			.sort((a, b) => a.createdAt - b.createdAt);
 	}
 
+	/** Mes conversations directes, la plus récemment animée en tête. */
+	get directs() {
+		return directSummaries(this.conversations, this.messages, this.userId);
+	}
+
+	direct(conversationId: string) {
+		return this.conversations.find((c) => c.id === conversationId);
+	}
+
+	/**
+	 * Les personnes avec qui une conversation directe peut s'ouvrir : celles d'un cercle commun,
+	 * sauf soi-même et celles à qui on écrit déjà. Le cercle ne sert ici que d'annuaire — la
+	 * conversation, elle, n'en dépendra pas.
+	 */
+	get directCandidates() {
+		const dejaVus = new Set(this.directs.map((d) => d.otherId));
+
+		return this.members.filter((m) => m.id !== this.userId && !dejaVus.has(m.id));
+	}
+
+	messagesOfConversation(conversationId: string) {
+		return this.messages
+			.filter((m) => m.conversationId === conversationId)
+			.sort((a, b) => a.createdAt - b.createdAt);
+	}
+
+	otherOf(conversationId: string) {
+		const conversation = this.direct(conversationId);
+		if (!conversation) return undefined;
+
+		const otherId = otherParticipant(conversation, this.userId);
+
+		return otherId ? this.member(otherId) : undefined;
+	}
+
 	pollOf(messageId: string) {
 		return this.polls.find((p) => p.messageId === messageId);
 	}
@@ -1049,6 +1090,60 @@ class DataStore {
 		const message: Message = {
 			id: crypto.randomUUID(),
 			listId,
+			userId: this.userId,
+			body: body.trim(),
+			isSystem: false,
+			createdAt: Date.now()
+		};
+
+		this.messages = [...this.messages, message];
+		db.messages.add(message);
+		this.push('messages', message, fromMessage);
+		return message;
+	}
+
+	/**
+	 * Ouvre — ou retrouve — la conversation directe avec quelqu'un.
+	 *
+	 * Seule écriture du client sur ces tables, et elle passe par une fonction : personne n'a le
+	 * droit d'insérer une conversation ni un participant, c'est ce qui garantit qu'on ne s'invite
+	 * pas dans celle des autres. Rien n'est donc posé d'avance dans le cache — l'écran attend le
+	 * serveur, comme pour l'envoi d'un portrait.
+	 */
+	async startDirect(otherId: string) {
+		if (!this.userId || otherId === this.userId) return null;
+
+		const { data: conversationId, error } = await supabase.rpc('start_direct_conversation', {
+			other: otherId
+		});
+		if (error || typeof conversationId !== 'string') return null;
+
+		// La conversation vient peut-être de naître : sans elle dans le cache, le fil qu'on ouvre
+		// serait vide et la relecture complète n'arriverait qu'après coup.
+		const conversation: Conversation = {
+			id: conversationId,
+			scope: 'direct',
+			participantIds: [this.userId, otherId],
+			createdAt: Date.now()
+		};
+
+		this.conversations = [
+			...this.conversations.filter((c) => c.id !== conversationId),
+			conversation
+		];
+		await db.conversations.put(conversation);
+
+		return conversationId;
+	}
+
+	/**
+	 * Un message direct ne porte pas de liste : c'est l'autre colonne de portée qui le rattache, et
+	 * la base refuse qu'il en porte deux.
+	 */
+	sendDirectMessage(conversationId: string, body: string) {
+		const message: Message = {
+			id: crypto.randomUUID(),
+			conversationId,
 			userId: this.userId,
 			body: body.trim(),
 			isSystem: false,
@@ -1440,7 +1535,8 @@ class DataStore {
 			db.prices.clear(),
 			db.recipes.clear(),
 			db.recipeIngredients.clear(),
-			db.recipeSteps.clear()
+			db.recipeSteps.clear(),
+			db.conversations.clear()
 		]);
 
 		for (const circle of sync.householdIds) localStorage.removeItem(activeShopKey(circle));
