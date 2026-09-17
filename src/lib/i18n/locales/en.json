@@ -816,7 +816,18 @@
 			"other": "{count} items added to the list"
 		},
 		"indexTitle": "Chats",
-		"indexEmpty": "No lists yet — create one to start a conversation."
+		"indexEmpty": "No lists yet — create one to start a conversation.",
+		"directs": "Direct messages",
+		"directsEmpty": "No private conversations yet.",
+		"directsHint": "A direct message goes through no circle: it stays between the two of you.",
+		"listSection": "List chats",
+		"newDirect": "New conversation",
+		"newDirectTitle": "Who would you like to write to?",
+		"noDirectCandidates": "You are already writing to everyone.",
+		"directFailed": "The conversation could not be opened. Try again.",
+		"backToChats": "Back to chats",
+		"directNotFound": "This conversation cannot be found.",
+		"someone": "Someone"
 	},
 	"household": {
 		"title": "My household",

@@ -816,7 +816,18 @@
 			"other": "{count} Artikel zur Liste hinzugefügt"
 		},
 		"indexTitle": "Unterhaltungen",
-		"indexEmpty": "Noch keine Listen – lege eine an, um ein Gespräch zu beginnen."
+		"indexEmpty": "Noch keine Listen – lege eine an, um ein Gespräch zu beginnen.",
+		"directs": "Direktnachrichten",
+		"directsEmpty": "Noch keine privaten Gespräche.",
+		"directsHint": "Eine Direktnachricht läuft über keinen Kreis: Sie bleibt unter euch beiden.",
+		"listSection": "Listengespräche",
+		"newDirect": "Neues Gespräch",
+		"newDirectTitle": "Wem möchten Sie schreiben?",
+		"noDirectCandidates": "Sie schreiben bereits mit allen.",
+		"directFailed": "Das Gespräch konnte nicht geöffnet werden. Bitte erneut versuchen.",
+		"backToChats": "Zurück zu den Gesprächen",
+		"directNotFound": "Dieses Gespräch wurde nicht gefunden.",
+		"someone": "Jemand"
 	},
 	"household": {
 		"title": "Mein Haushalt",

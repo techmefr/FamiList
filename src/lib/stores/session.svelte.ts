@@ -1,6 +1,7 @@
 import { browser } from '$app/environment';
 import { supabase } from '$db/supabase';
 import { OAUTH_PROVIDERS, type ProviderId } from '$domain/oauth';
+import { sync } from '$lib/sync/index.svelte';
 import type { Session, User } from '@supabase/supabase-js';
 
 export type AccountStatus = 'pending' | 'approved' | 'rejected';
@@ -396,7 +397,18 @@ class SessionStore {
 		return true;
 	}
 
+	/**
+	 * Ce qui n'est pas encore parti part d'abord.
+	 *
+	 * Une écriture vit quelques instants dans la file avant d'atteindre le serveur. Se déconnecter
+	 * pendant ce temps révoquait le jeton sous elle : la requête en vol échouait, et la file la
+	 * rejouait ensuite sous le compte suivant, qui n'a pas le droit d'écrire au nom du précédent.
+	 * Le serveur la refusait donc définitivement et elle était jetée — un message écrit, affiché,
+	 * puis perdu sans que rien ne le dise.
+	 */
 	async signOut() {
+		await sync.flush();
+
 		await supabase.auth.signOut();
 		this.user = null;
 		this.profile = null;

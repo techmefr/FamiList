@@ -12,6 +12,7 @@ import {
 	toLayout,
 	toList,
 	toMember,
+	toConversation,
 	toMessage,
 	toPoll,
 	toPollOption,
@@ -34,6 +35,8 @@ const HOUSEHOLD_KEY = 'familist:household';
 const PERMANENT_CODES = new Set(['22P02', '23502', '23503', '23505', '23514', '42501', '42703']);
 
 const isPermanent = (code: string | undefined) => code !== undefined && PERMANENT_CODES.has(code);
+
+const noop = () => undefined;
 
 export type SyncState = 'idle' | 'syncing' | 'offline' | 'error';
 
@@ -83,6 +86,16 @@ class SyncStore {
 	private onPulled: (() => void) | null = null;
 	private pullTimer: ReturnType<typeof setTimeout> | null = null;
 	private watchingNetwork = false;
+
+	/**
+	 * Les mises en file encore en cours d'écriture.
+	 *
+	 * `enqueue` est appelé depuis des méthodes synchrones : au retour du clic, l'entrée n'est pas
+	 * encore posée dans la file. Une purge lancée dans cet intervalle — celle de la déconnexion —
+	 * lisait une file vide et laissait l'écriture derrière elle. `flush` les attend donc avant de
+	 * lire ce qu'il a à envoyer.
+	 */
+	private writing: Promise<unknown> = Promise.resolve();
 
 	/**
 	 * Horodatage du dernier évènement temps réel posé, par ligne. C'est la seule mémoire d'ordre
@@ -387,7 +400,9 @@ class SyncStore {
 			prices,
 			recipes,
 			recipeIngredients,
-			recipeSteps
+			recipeSteps,
+			conversations,
+			conversationParticipants
 		] = await Promise.all([
 			supabase.from('shops').select('*').in('household_id', cercles),
 			supabase.from('aisles').select('*').in('household_id', cercles),
@@ -413,7 +428,11 @@ class SyncStore {
 			// Les lignes d'une recette ne portent pas de foyer : la policy les filtre déjà par la
 			// recette dont elles dépendent, comme pour les articles d'une liste.
 			supabase.from('recipe_ingredients').select('*'),
-			supabase.from('recipe_steps').select('*')
+			supabase.from('recipe_steps').select('*'),
+			// Une conversation directe ne se rattache à aucun cercle : la filtrer sur le foyer
+			// affiché la ferait disparaître. La RLS n'en laisse passer que celles où l'on figure.
+			supabase.from('conversations').select('*'),
+			supabase.from('conversation_participants').select('*')
 		]);
 
 		const failed = [
@@ -433,7 +452,9 @@ class SyncStore {
 			prices,
 			recipes,
 			recipeIngredients,
-			recipeSteps
+			recipeSteps,
+			conversations,
+			conversationParticipants
 		]
 			.map((result) => result.error)
 			.find(Boolean);
@@ -461,6 +482,15 @@ class SyncStore {
 			membersByList.set(listId, [...(membersByList.get(listId) ?? []), row.user_id as string]);
 		}
 
+		const participantsByConversation = new Map<string, string[]>();
+		for (const row of conversationParticipants.data ?? []) {
+			const conversationId = row.conversation_id as string;
+			participantsByConversation.set(conversationId, [
+				...(participantsByConversation.get(conversationId) ?? []),
+				row.user_id as string
+			]);
+		}
+
 		// Le compte a pu changer pendant ces lectures. Écrire maintenant remplirait le cache du
 		// nouveau avec les cercles du précédent. Basculer de cercle, en revanche, ne remet rien en
 		// cause : ce qu'on tient décrit tous les cercles, l'actif comme les autres.
@@ -485,7 +515,8 @@ class SyncStore {
 				db.prices,
 				db.recipes,
 				db.recipeIngredients,
-				db.recipeSteps
+				db.recipeSteps,
+				db.conversations
 			],
 			async () => {
 				/**
@@ -521,7 +552,8 @@ class SyncStore {
 					db.prices.clear(),
 					db.recipes.clear(),
 					db.recipeIngredients.clear(),
-					db.recipeSteps.clear()
+					db.recipeSteps.clear(),
+					db.conversations.clear()
 				]);
 
 				await Promise.all([
@@ -548,7 +580,12 @@ class SyncStore {
 					db.recipeIngredients.bulkAdd(
 						(recipeIngredients.data ?? []).map(toRecipeIngredient)
 					),
-					db.recipeSteps.bulkAdd((recipeSteps.data ?? []).map(toRecipeStep))
+					db.recipeSteps.bulkAdd((recipeSteps.data ?? []).map(toRecipeStep)),
+					db.conversations.bulkAdd(
+						(conversations.data ?? []).map((row) =>
+							toConversation(row, participantsByConversation.get(row.id as string) ?? [])
+						)
+					)
 				]);
 			}
 		);
@@ -568,7 +605,9 @@ class SyncStore {
 		// méthodes synchrones. Un stockage local plein doit donc se voir sur le bandeau plutôt que
 		// disparaître : sans cela, l'écriture n'est ni partie ni signalée.
 		try {
-			await db.outbox.add(entry);
+			const added = db.outbox.add(entry);
+			this.writing = this.writing.then(() => added.then(noop, noop));
+			await added;
 		} catch (cause) {
 			this.state = 'error';
 			this.lastError = describeError(cause);
@@ -593,6 +632,8 @@ class SyncStore {
 			this.state = 'offline';
 			return;
 		}
+
+		await this.writing;
 
 		const pending = await db.outbox.orderBy('seq').toArray();
 
@@ -706,6 +747,9 @@ class SyncStore {
 		 */
 		const plan = planRealtime(event, {
 			knownListIds: new Set((await db.lists.toCollection().primaryKeys()) as string[]),
+			knownConversationIds: new Set(
+				(await db.conversations.toCollection().primaryKeys()) as string[]
+			),
 			applied: this.appliedAt,
 			busy
 		});

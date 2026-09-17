@@ -57,6 +57,18 @@ test.describe('accessibilite', () => {
 		await expectNoNewViolations(page, 'suppression-de-compte');
 	});
 
+	/**
+	 * Le choix de la personne à qui écrire n'existe qu'une fois le panneau ouvert : l'écran replié
+	 * ne dirait rien des boutons de la liste ni du titre qui les annonce.
+	 */
+	test('messages prives', async ({ signedInPage: page }) => {
+		await page.goto('/chat');
+		await page.getByTestId('new-direct').click();
+		await expect(page.getByTestId('direct-picker')).toBeVisible();
+
+		await expectNoNewViolations(page, 'messages-prives');
+	});
+
 	test('detail de liste et palette d emojis', async ({ signedInPage: page }) => {
 		const nom = `A11y ${Date.now()}`;
 

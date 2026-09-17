@@ -231,6 +231,53 @@ export type Database = {
         }
         Relationships: []
       }
+      conversation_participants: {
+        Row: {
+          conversation_id: string
+          user_id: string
+        }
+        Insert: {
+          conversation_id: string
+          user_id: string
+        }
+        Update: {
+          conversation_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "conversation_participants_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "conversations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      conversations: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          id: string
+          pair: string[]
+          scope: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          pair: string[]
+          scope: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          pair?: string[]
+          scope?: string
+        }
+        Relationships: []
+      }
       household_invites: {
         Row: {
           code: string
@@ -629,29 +676,39 @@ export type Database = {
       messages: {
         Row: {
           body: string | null
+          conversation_id: string | null
           created_at: string
           id: string
           is_system: boolean
-          list_id: string
+          list_id: string | null
           user_id: string | null
         }
         Insert: {
           body?: string | null
+          conversation_id?: string | null
           created_at?: string
           id?: string
           is_system?: boolean
-          list_id: string
+          list_id?: string | null
           user_id?: string | null
         }
         Update: {
           body?: string | null
+          conversation_id?: string | null
           created_at?: string
           id?: string
           is_system?: boolean
-          list_id?: string
+          list_id?: string | null
           user_id?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "messages_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "conversations"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "messages_list_id_fkey"
             columns: ["list_id"]
@@ -1092,6 +1149,7 @@ export type Database = {
       backup_codes_left: { Args: never; Returns: number }
       begin_instance_mail_test: { Args: never; Returns: string }
       can_access_list: { Args: { target: string }; Returns: boolean }
+      can_access_message: { Args: { target: string }; Returns: boolean }
       can_access_recipe: { Args: { target: string }; Returns: boolean }
       can_access_shop: { Args: { target: string }; Returns: boolean }
       claim_admin_notifications: { Args: never; Returns: Json }
@@ -1136,6 +1194,10 @@ export type Database = {
       }
       is_admin: { Args: never; Returns: boolean }
       is_approved: { Args: never; Returns: boolean }
+      is_conversation_participant: {
+        Args: { target: string }
+        Returns: boolean
+      }
       is_household_member: { Args: { target: string }; Returns: boolean }
       is_household_owner: { Args: { target: string }; Returns: boolean }
       is_household_sole_member: { Args: { target: string }; Returns: boolean }
@@ -1245,6 +1307,7 @@ export type Database = {
         Returns: undefined
       }
       slugify: { Args: { value: string }; Returns: string }
+      start_direct_conversation: { Args: { other: string }; Returns: string }
       submit_bug_report: {
         Args: {
           description: string

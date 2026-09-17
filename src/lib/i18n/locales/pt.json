@@ -816,7 +816,18 @@
 			"other": "{count} artigos adicionados à lista"
 		},
 		"indexTitle": "Conversas",
-		"indexEmpty": "Ainda não há listas: crie uma para iniciar uma conversa."
+		"indexEmpty": "Ainda não há listas: crie uma para iniciar uma conversa.",
+		"directs": "Mensagens privadas",
+		"directsEmpty": "Ainda não há conversas privadas.",
+		"directsHint": "Uma mensagem privada não passa por nenhum círculo: fica entre vocês dois.",
+		"listSection": "Conversas de lista",
+		"newDirect": "Nova conversa",
+		"newDirectTitle": "A quem quer escrever?",
+		"noDirectCandidates": "Já está a escrever a toda a gente.",
+		"directFailed": "Não foi possível abrir a conversa. Tente novamente.",
+		"backToChats": "Voltar às conversas",
+		"directNotFound": "Esta conversa não foi encontrada.",
+		"someone": "Alguém"
 	},
 	"household": {
 		"title": "A minha casa",

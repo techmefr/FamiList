@@ -16,6 +16,7 @@ import {
 	toItemOrder,
 	toLayout,
 	toList,
+	toConversation,
 	toMember,
 	toMessage,
 	toPoll,
@@ -389,6 +390,44 @@ describe('toMessage / fromMessage', () => {
 	it('range l’auteur absent en null pour un message système', () => {
 		const message = toMessage({ id: 'm1', body: 'Bienvenue', is_system: true });
 		expect(fromMessage(message).user_id).toBeNull();
+	});
+
+	it('lit un message direct, qui n’a pas de liste', () => {
+		const message = toMessage({
+			id: 'm1',
+			list_id: null,
+			conversation_id: 'c1',
+			user_id: 'u1',
+			body: 'entre nous',
+			is_system: false,
+			created_at: '2026-01-01T00:00:00Z'
+		});
+
+		expect(message.listId).toBeUndefined();
+		expect(message.conversationId).toBe('c1');
+	});
+
+	it('n’invente pas la portée absente : la base en exige exactement une', () => {
+		const direct = fromMessage(toMessage({ id: 'm1', conversation_id: 'c1', body: 'salut' }));
+		expect(direct.list_id).toBeNull();
+		expect(direct.conversation_id).toBe('c1');
+
+		const liste = fromMessage(toMessage({ id: 'm2', list_id: 'l1', body: 'pain' }));
+		expect(liste.list_id).toBe('l1');
+		expect(liste.conversation_id).toBeNull();
+	});
+});
+
+describe('toConversation', () => {
+	it('prend ses participants de la table qui fait foi', () => {
+		expect(
+			toConversation({ id: 'c1', created_at: '2026-01-01T00:00:00Z' }, ['moi', 'toi'])
+		).toEqual({
+			id: 'c1',
+			scope: 'direct',
+			participantIds: ['moi', 'toi'],
+			createdAt: Date.parse('2026-01-01T00:00:00Z')
+		});
 	});
 });
 
