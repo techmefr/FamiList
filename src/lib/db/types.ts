@@ -460,7 +460,7 @@ export type Database = {
           created_at: string
           emoji: string
           event_date: string | null
-          household_id: string
+          household_id: string | null
           id: string
           name: string
         }
@@ -470,7 +470,7 @@ export type Database = {
           created_at?: string
           emoji?: string
           event_date?: string | null
-          household_id: string
+          household_id?: string | null
           id?: string
           name: string
         }
@@ -480,7 +480,7 @@ export type Database = {
           created_at?: string
           emoji?: string
           event_date?: string | null
-          household_id?: string
+          household_id?: string | null
           id?: string
           name?: string
         }

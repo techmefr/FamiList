@@ -84,12 +84,17 @@ export const toList = (row: Row, memberIds: string[]): List => ({
 	emoji: text(row.emoji, '🛒'),
 	color: text(row.color, DEFAULT_TINT),
 	memberIds,
-	eventDate: typeof row.event_date === 'string' ? row.event_date : undefined
+	eventDate: typeof row.event_date === 'string' ? row.event_date : undefined,
+	householdId: typeof row.household_id === 'string' ? row.household_id : undefined
 });
 
-export const fromList = (list: List, householdId: string) => ({
+/**
+ * Le cercle vient de la liste elle-même, pas du cercle affiché : une liste personnelle n'en a pas,
+ * et une liste partagée garde le sien même si on regarde ailleurs.
+ */
+export const fromList = (list: List) => ({
 	id: list.id,
-	household_id: householdId,
+	household_id: list.householdId ?? null,
 	name: list.name,
 	emoji: list.emoji,
 	color: list.color,

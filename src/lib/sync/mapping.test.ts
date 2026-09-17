@@ -115,7 +115,19 @@ describe('toList / fromList', () => {
 	});
 
 	it('écrit null pour une liste sans date', () => {
-		expect(fromList(toList({ id: 'l1' }, []), 'h1').event_date).toBeNull();
+		expect(fromList(toList({ id: 'l1' }, [])).event_date).toBeNull();
+	});
+
+	it('laisse le cercle absent sur une liste personnelle', () => {
+		expect(toList({ id: 'l1', household_id: null }, []).householdId).toBeUndefined();
+	});
+
+	it('écrit null comme cercle tant que la liste est personnelle', () => {
+		expect(fromList(toList({ id: 'l1', household_id: null }, [])).household_id).toBeNull();
+	});
+
+	it('renvoie une liste partagée à son propre cercle, pas à celui affiché', () => {
+		expect(fromList(toList({ id: 'l1', household_id: 'h2' }, [])).household_id).toBe('h2');
 	});
 });
 

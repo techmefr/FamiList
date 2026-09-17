@@ -61,6 +61,12 @@ export interface List {
 	color: string;
 	memberIds: string[];
 	eventDate?: string;
+	/**
+	 * Le cercle avec lequel la liste est partagée, absent tant qu'elle est personnelle. Partager
+	 * une liste consiste à lui en désigner un — la colonne `household_id` est nullable côté serveur
+	 * pour cette raison.
+	 */
+	householdId?: string;
 }
 
 export interface Item {

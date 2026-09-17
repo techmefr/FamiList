@@ -335,14 +335,10 @@ class DataStore {
 			emoji: input.emoji,
 			color: input.color,
 			eventDate: input.eventDate || undefined,
-			// Une liste naît ouverte au foyer : c'est le retrait qui est un geste, pas le partage.
-			// Le déclencheur `lists_share_with_household` fait la même chose côté base ; on l'écrit
-			// aussi ici pour que l'affichage soit juste avant même la première synchronisation.
-			memberIds: this.members.length
-				? this.members.map((m) => m.id)
-				: this.userId
-					? [this.userId]
-					: []
+			// Une liste naît personnelle : elle n'a pas de cercle, et son auteur en est le seul
+			// membre. Le déclencheur `lists_share_with_household` fait la même chose côté base ; on
+			// l'écrit aussi ici pour que l'affichage soit juste avant la première synchronisation.
+			memberIds: this.userId ? [this.userId] : []
 		};
 
 		this.lists = [...this.lists, list];
@@ -388,6 +384,10 @@ class DataStore {
 	 * La ligne dans `list_members` est la clé : `can_access_list` s'appuie dessus, et tout ce qui
 	 * appartient à la liste — articles, discussion, sondages — suit. Retirer une personne la met
 	 * vraiment dehors, et elle ne peut pas s'y remettre seule.
+	 *
+	 * Ouvrir une liste personnelle à quelqu'un, c'est la partager, et partager exige de désigner un
+	 * cercle : on lui attribue donc celui qu'on regarde. Sans ça la base refuserait la ligne —
+	 * `list_belongs_to_household_of` n'accepte sur une liste sans cercle que son propre auteur.
 	 */
 	setListMember(listId: string, userId: string, member: boolean) {
 		const list = this.lists.find((l) => l.id === listId);
@@ -397,9 +397,14 @@ class DataStore {
 			? [...new Set([...list.memberIds, userId])]
 			: list.memberIds.filter((id) => id !== userId);
 
-		const next = { ...list, memberIds };
+		const partage = member && !list.householdId && userId !== this.userId;
+		const cercle = partage ? this.householdId : list.householdId;
+
+		const next = { ...list, memberIds, householdId: cercle || undefined };
 		this.lists = this.lists.map((l) => (l.id === listId ? next : l));
 		db.lists.put(next);
+
+		if (partage && cercle) this.push('lists', next, fromList);
 
 		sync.enqueue(
 			member
@@ -442,7 +447,8 @@ class DataStore {
 			),
 			emoji: source.emoji,
 			color: source.color,
-			memberIds: [...source.memberIds]
+			memberIds: [...source.memberIds],
+			householdId: source.householdId
 		};
 
 		const articles: Item[] = this.itemsOf(id).map((item, rang) => ({
@@ -462,15 +468,16 @@ class DataStore {
 		this.push('lists', copie, fromList);
 		for (const article of articles) this.push('items', article, fromItem);
 
-		// Toute liste qui naît côté serveur est ouverte au foyer entier par
-		// `lists_share_with_household`. La copie d'une liste restreinte doit donc refermer derrière
-		// elle : les retraits partent dans la file après l'insertion, dans cet ordre.
-		for (const membre of this.members) {
-			if (copie.memberIds.includes(membre.id)) continue;
+		// Le partage de l'originale se rejoue ligne à ligne. Une liste naît désormais ouverte à son
+		// seul auteur : il n'y a plus rien à refermer derrière l'insertion, seulement à rouvrir aux
+		// personnes que la source connaissait.
+		for (const membre of copie.memberIds) {
+			if (membre === this.userId) continue;
 			sync.enqueue({
 				table: 'list_members',
-				op: 'delete',
-				match: { list_id: copie.id, user_id: membre.id }
+				op: 'upsert',
+				match: { list_id: copie.id, user_id: membre },
+				payload: { list_id: copie.id, user_id: membre }
 			});
 		}
 
