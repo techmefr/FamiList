@@ -12,16 +12,16 @@ describe('trigram', () => {
 		['Auchan Beynost', 'ABT'],
 		['Grand Frais', 'GFS'],
 		['Intermarché Contact', 'ICT']
-	])('deux mots : les initiales et la dernière lettre — %j donne %j', (nom, attendu) => {
-		expect(trigram(nom)).toBe(attendu);
+	])('deux mots : les initiales et la dernière lettre — %j donne %j', (name, expected) => {
+		expect(trigram(name)).toBe(expected);
 	});
 
 	it.each([
 		['Super U Montluel', 'SUM'],
 		['Carrefour Market Montluel', 'CML'],
 		['8 à Huit', '8AH']
-	])('trois mots ou plus : une initiale par mot — %j donne %j', (nom, attendu) => {
-		expect(trigram(nom)).toBe(attendu);
+	])('trois mots ou plus : une initiale par mot — %j donne %j', (name, expected) => {
+		expect(trigram(name)).toBe(expected);
 	});
 
 	it.each([
@@ -30,8 +30,8 @@ describe('trigram', () => {
 		['Leclerc', 'LEC'],
 		['Lidl', 'LID'],
 		['Monoprix', 'MON']
-	])('un seul mot : ses trois premières lettres — %j donne %j', (nom, attendu) => {
-		expect(trigram(nom)).toBe(attendu);
+	])('un seul mot : ses trois premières lettres — %j donne %j', (name, expected) => {
+		expect(trigram(name)).toBe(expected);
 	});
 
 	it.each([
@@ -41,8 +41,8 @@ describe('trigram', () => {
 		// The last letter of "Épicerie" is an E, which would double the one from the base: we move to the P.
 		["L'Épicerie", 'LEP'],
 		['  lidl  ', 'LID']
-	])('ignore la ponctuation, les accents et les espaces — %j donne %j', (nom, attendu) => {
-		expect(trigram(nom)).toBe(attendu);
+	])('ignore la ponctuation, les accents et les espaces — %j donne %j', (name, expected) => {
+		expect(trigram(name)).toBe(expected);
 	});
 
 	/**
@@ -57,16 +57,16 @@ describe('trigram', () => {
 		['U', 'U'],
 		['Bio', 'BIO'],
 		['', '']
-	])('ne complète pas un nom plus court que trois caractères — %j donne %j', (nom, attendu) => {
-		expect(trigram(nom)).toBe(attendu);
+	])('ne complète pas un nom plus court que trois caractères — %j donne %j', (name, expected) => {
+		expect(trigram(name)).toBe(expected);
 	});
 
 	it.each([
 		['###', '###'],
 		['🛒', '🛒'],
 		['🛒🥕🧀🍎', '🛒🥕🧀']
-	])('garde le nom tel quel quand il n’y a rien à transcrire — %j donne %j', (nom, attendu) => {
-		expect(trigram(nom)).toBe(attendu);
+	])('garde le nom tel quel quand il n’y a rien à transcrire — %j donne %j', (name, expected) => {
+		expect(trigram(name)).toBe(expected);
 	});
 
 	it('ne coupe jamais un emoji en deux', () => {
@@ -89,7 +89,7 @@ describe('trigram — unicité', () => {
 	});
 
 	it('donne un trigramme distinct à chaque magasin d’une même enseigne', () => {
-		const noms = [
+		const names = [
 			'Carrefour Meximieux',
 			'Carrefour Montluel',
 			'Carrefour Miribel',
@@ -97,19 +97,19 @@ describe('trigram — unicité', () => {
 			'Carrefour Mionnay'
 		];
 
-		const pris: string[] = [];
-		for (const nom of noms) pris.push(trigram(nom, pris));
+		const taken: string[] = [];
+		for (const name of names) taken.push(trigram(name, taken));
 
-		expect(pris).toEqual(['CMX', 'CML', 'CMI', 'CMA', 'CMY']);
-		expect(new Set(pris).size).toBe(noms.length);
+		expect(taken).toEqual(['CMX', 'CML', 'CMI', 'CMA', 'CMY']);
+		expect(new Set(taken).size).toBe(names.length);
 	});
 
 	it('numérote en dernier recours, quand toutes les lettres du nom sont prises', () => {
-		const toutes: string[] = [];
-		for (let i = 0; i < 12; i += 1) toutes.push(trigram('Bio', toutes));
+		const all: string[] = [];
+		for (let i = 0; i < 12; i += 1) all.push(trigram('Bio', all));
 
-		expect(toutes.slice(0, 3)).toEqual(['BIO', 'BI2', 'BI3']);
-		expect(new Set(toutes.slice(0, 9)).size).toBe(9);
+		expect(all.slice(0, 3)).toEqual(['BIO', 'BI2', 'BI3']);
+		expect(new Set(all.slice(0, 9)).size).toBe(9);
 	});
 
 	it('compare sans tenir compte de la casse ni des espaces', () => {

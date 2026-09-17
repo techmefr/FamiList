@@ -57,7 +57,7 @@ export const NEARBY_CHECK_MS = 3 * 60 * 1000;
 
 const EARTH_RADIUS_M = 6_371_000;
 
-const radians = (degres: number) => (degres * Math.PI) / 180;
+const radians = (degrees: number) => (degrees * Math.PI) / 180;
 
 /**
  * The distance between two points, as the crow flies.
@@ -75,7 +75,7 @@ export function distanceMeters(a: NearbyPosition, b: NearbyPosition): number {
 	return 2 * EARTH_RADIUS_M * Math.asin(Math.min(1, Math.sqrt(arc)));
 }
 
-const normalise = (texte: string) => texte.trim().toLowerCase();
+const normalize = (text: string) => text.trim().toLowerCase();
 
 /**
  * The card to bring out for this shop, if there is one.
@@ -88,21 +88,21 @@ const normalise = (texte: string) => texte.trim().toLowerCase();
  * would be worse than silence.
  */
 export function cardForShop(shop: NearbyShop, cards: NearbyCard[]): NearbyCard | null {
-	const parMagasin = cards.find((card) => card.shopId === shop.shopId);
-	if (parMagasin) return parMagasin;
+	const byShop = cards.find((card) => card.shopId === shop.shopId);
+	if (byShop) return byShop;
 
-	const enseigne = normalise(shop.brand ?? '');
-	if (!enseigne) return null;
+	const brand = normalize(shop.brand ?? '');
+	if (!brand) return null;
 
-	return cards.find((card) => normalise(card.brand) === enseigne) ?? null;
+	return cards.find((card) => normalize(card.brand) === brand) ?? null;
 }
 
 /** The day as lived, in the device timezone: it is the unit of the anti-repeat rule. */
 export function nearbyDay(now: Date): string {
-	const mois = `${now.getMonth() + 1}`.padStart(2, '0');
-	const jour = `${now.getDate()}`.padStart(2, '0');
+	const month = `${now.getMonth() + 1}`.padStart(2, '0');
+	const day = `${now.getDate()}`.padStart(2, '0');
 
-	return `${now.getFullYear()}-${mois}-${jour}`;
+	return `${now.getFullYear()}-${month}-${day}`;
 }
 
 /**
@@ -116,7 +116,7 @@ export const NEARBY_ID_OFFSET = 1_000_000_000;
 
 export function nearbyId(shopId: string): number {
 	let hash = 0;
-	for (const caractere of shopId) hash = (hash * 31 + caractere.charCodeAt(0)) | 0;
+	for (const character of shopId) hash = (hash * 31 + character.charCodeAt(0)) | 0;
 
 	return NEARBY_ID_OFFSET + (Math.abs(hash) % 1_000_000_000);
 }
@@ -142,12 +142,12 @@ export function nearbyAlert(
 	now: Date,
 	radius: number = NEARBY_RADIUS_M
 ): NearbyAlert | null {
-	const aujourdhui = nearbyDay(now);
-	let meilleur: NearbyAlert | null = null;
+	const today = nearbyDay(now);
+	let best: NearbyAlert | null = null;
 
 	for (const shop of shops) {
 		if (typeof shop.lat !== 'number' || typeof shop.lng !== 'number') continue;
-		if (notified[shop.shopId] === aujourdhui) continue;
+		if (notified[shop.shopId] === today) continue;
 
 		const meters = distanceMeters(position, { lat: shop.lat, lng: shop.lng });
 		if (meters > radius) continue;
@@ -155,9 +155,9 @@ export function nearbyAlert(
 		const card = cardForShop(shop, cards);
 		if (!card) continue;
 
-		if (meilleur && meilleur.meters <= meters) continue;
+		if (best && best.meters <= meters) continue;
 
-		meilleur = {
+		best = {
 			shopId: shop.shopId,
 			shopName: shop.name,
 			cardId: card.cardId,
@@ -167,7 +167,7 @@ export function nearbyAlert(
 		};
 	}
 
-	return meilleur;
+	return best;
 }
 
 /**
@@ -181,13 +181,13 @@ export function rememberNotified(
 	shopId: string,
 	now: Date
 ): Record<string, string> {
-	const aujourdhui = nearbyDay(now);
-	const garde: Record<string, string> = {};
+	const today = nearbyDay(now);
+	const kept: Record<string, string> = {};
 
-	for (const [id, jour] of Object.entries(notified)) {
-		if (jour === aujourdhui) garde[id] = jour;
+	for (const [id, day] of Object.entries(notified)) {
+		if (day === today) kept[id] = day;
 	}
 
-	garde[shopId] = aujourdhui;
-	return garde;
+	kept[shopId] = today;
+	return kept;
 }

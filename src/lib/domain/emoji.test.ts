@@ -8,10 +8,10 @@ import {
 	type EmojiEntry
 } from './emoji';
 
-type Traductions = { emoji: Record<string, string>; emojiGroup: Record<string, string> };
+type Translations = { emoji: Record<string, string>; emojiGroup: Record<string, string> };
 
 /** A demonstration name, in place of the i18n: the domain does not know the displayed language. */
-const NOMS: Record<string, string> = {
+const NAMES: Record<string, string> = {
 	carrot: 'Carotte',
 	pasta: 'Pâtes',
 	soap: 'Savon',
@@ -21,7 +21,7 @@ const NOMS: Record<string, string> = {
 	apple: 'Pomme'
 };
 
-const nom = (entry: EmojiEntry) => NOMS[entry.key] ?? entry.key;
+const name = (entry: EmojiEntry) => NAMES[entry.key] ?? entry.key;
 
 describe('palette', () => {
 	it('ne contient pas deux fois le même caractère', () => {
@@ -48,7 +48,7 @@ describe('palette', () => {
  * translation is the palette's real constraint, so the test may as well hold it.
  */
 describe('traductions', () => {
-	const locales = import.meta.glob<Traductions>('../i18n/locales/*.json', {
+	const locales = import.meta.glob<Translations>('../i18n/locales/*.json', {
 		eager: true,
 		import: 'default'
 	});
@@ -57,9 +57,9 @@ describe('traductions', () => {
 		expect(Object.keys(locales)).toHaveLength(10);
 	});
 
-	it.each(Object.entries(locales))('nomme chaque emoji en %s', (_chemin, traductions) => {
-		for (const entry of EMOJIS) expect(traductions.emoji[entry.key]).toBeTruthy();
-		for (const group of EMOJI_GROUPS) expect(traductions.emojiGroup[group]).toBeTruthy();
+	it.each(Object.entries(locales))('nomme chaque emoji en %s', (_path, translations) => {
+		for (const entry of EMOJIS) expect(translations.emoji[entry.key]).toBeTruthy();
+		for (const group of EMOJI_GROUPS) expect(translations.emojiGroup[group]).toBeTruthy();
 	});
 });
 
@@ -69,39 +69,39 @@ describe('foldForSearch', () => {
 		['CAFÉ', 'cafe'],
 		['  Savon  ', 'savon'],
 		['Éponge', 'eponge']
-	])('ramène %j à %j', (entree, attendu) => {
-		expect(foldForSearch(entree)).toBe(attendu);
+	])('ramène %j à %j', (entry, expected) => {
+		expect(foldForSearch(entry)).toBe(expected);
 	});
 });
 
 describe('searchEmojis', () => {
-	const palette = EMOJIS.filter((entry) => entry.key in NOMS);
+	const palette = EMOJIS.filter((entry) => entry.key in NAMES);
 
 	it('rend toute la palette quand la recherche est vide', () => {
-		expect(searchEmojis('', nom, palette)).toEqual(palette);
-		expect(searchEmojis('   ', nom, palette)).toEqual(palette);
+		expect(searchEmojis('', name, palette)).toEqual(palette);
+		expect(searchEmojis('   ', name, palette)).toEqual(palette);
 	});
 
 	it('trouve sans les accents ni la casse', () => {
-		expect(searchEmojis('pates', nom, palette).map((e) => e.char)).toEqual(['🍝']);
-		expect(searchEmojis('CAFE', nom, palette).map((e) => e.char)).toEqual(['☕']);
+		expect(searchEmojis('pates', name, palette).map((e) => e.char)).toEqual(['🍝']);
+		expect(searchEmojis('CAFE', name, palette).map((e) => e.char)).toEqual(['☕']);
 	});
 
 	it('cherche partout dans le nom, pas seulement au début', () => {
-		expect(searchEmojis('terre', nom, palette).map((e) => e.char)).toEqual(['🥔']);
+		expect(searchEmojis('terre', name, palette).map((e) => e.char)).toEqual(['🥔']);
 	});
 
 	/** Pasting an emoji into the search to find it in the grid is a natural gesture. */
 	it('accepte le caractère lui-même', () => {
-		expect(searchEmojis('🧀', nom, palette).map((e) => e.char)).toEqual(['🧀']);
+		expect(searchEmojis('🧀', name, palette).map((e) => e.char)).toEqual(['🧀']);
 	});
 
 	it('rend plusieurs résultats quand plusieurs noms correspondent', () => {
-		expect(searchEmojis('pomme', nom, palette).map((e) => e.char)).toEqual(['🍎', '🥔']);
+		expect(searchEmojis('pomme', name, palette).map((e) => e.char)).toEqual(['🍎', '🥔']);
 	});
 
 	it('ne rend rien quand rien ne correspond', () => {
-		expect(searchEmojis('zzz', nom, palette)).toEqual([]);
+		expect(searchEmojis('zzz', name, palette)).toEqual([]);
 	});
 });
 

@@ -1,16 +1,16 @@
 import { test, expect } from './fixtures';
 
-const nomListe = () => `Repas ${Date.now()}`;
+const listName = () => `Repas ${Date.now()}`;
 
-async function creerListe(page: import('@playwright/test').Page, nom: string) {
+async function createList(page: import('@playwright/test').Page, name: string) {
 	await page.goto('/');
 	await page.getByTestId('nav-create').click();
 	await page.getByTestId('create-list').click();
-	await page.getByTestId('list-name').fill(nom);
+	await page.getByTestId('list-name').fill(name);
 	await page.getByTestId('list-create').click();
 
 	await page.getByTestId('nav-/chat').click();
-	await page.locator('[data-test-class="chat-entry"]').filter({ hasText: nom }).click();
+	await page.locator('[data-test-class="chat-entry"]').filter({ hasText: name }).click();
 	await expect(page.getByTestId('chat-input')).toBeVisible();
 }
 
@@ -20,14 +20,14 @@ async function creerListe(page: import('@playwright/test').Page, nom: string) {
  * message that left for the database from one that stayed on the screen.
  */
 test('écrire un message dans la conversation d’une liste', async ({ signedInPage: page }) => {
-	const nom = nomListe();
-	await creerListe(page, nom);
+	const name = listName();
+	await createList(page, name);
 
-	const texte = `On se retrouve samedi ${Date.now()}`;
-	await page.getByTestId('chat-input').fill(texte);
+	const text = `On se retrouve samedi ${Date.now()}`;
+	await page.getByTestId('chat-input').fill(text);
 	await page.getByTestId('chat-send').click();
 
-	await expect(page.locator('[data-test-class="chat-message"]').filter({ hasText: texte })).toBeVisible({
+	await expect(page.locator('[data-test-class="chat-message"]').filter({ hasText: text })).toBeVisible({
 		timeout: 15_000
 	});
 
@@ -35,7 +35,7 @@ test('écrire un message dans la conversation d’une liste', async ({ signedInP
 	await expect(page.getByTestId('chat-input')).toHaveValue('');
 
 	await page.reload();
-	await expect(page.locator('[data-test-class="chat-message"]').filter({ hasText: texte })).toBeVisible({
+	await expect(page.locator('[data-test-class="chat-message"]').filter({ hasText: text })).toBeVisible({
 		timeout: 15_000
 	});
 });
@@ -46,30 +46,30 @@ test('écrire un message dans la conversation d’une liste', async ({ signedInP
  * conversation.
  */
 test('proposer des dates, voter, et fixer la date retenue', async ({ signedInPage: page }) => {
-	const nom = nomListe();
-	await creerListe(page, nom);
+	const name = listName();
+	await createList(page, name);
 
 	await page.getByTestId('new-poll-date').click();
 	await page.getByTestId('poll-question').fill('Quel soir ?');
 	await page.getByTestId('poll-choices').fill('Vendredi\nSamedi');
 	await page.getByTestId('poll-create').click();
 
-	const sondage = page.locator('[data-test-class="poll-card"]').last();
-	await expect(sondage).toBeVisible({ timeout: 15_000 });
+	const poll = page.locator('[data-test-class="poll-card"]').last();
+	await expect(poll).toBeVisible({ timeout: 15_000 });
 
-	const choix = sondage.locator('[data-test-class="poll-vote"]');
-	await expect(choix).toHaveCount(2);
+	const choices = poll.locator('[data-test-class="poll-vote"]');
+	await expect(choices).toHaveCount(2);
 
-	await choix.filter({ hasText: 'Samedi' }).click();
-	await expect(choix.filter({ hasText: 'Samedi' })).toHaveAttribute('aria-pressed', 'true', {
+	await choices.filter({ hasText: 'Samedi' }).click();
+	await expect(choices.filter({ hasText: 'Samedi' })).toHaveAttribute('aria-pressed', 'true', {
 		timeout: 15_000
 	});
 
 	// The button only appears once a choice is leading: with no vote, there is nothing to keep.
-	const retenir = sondage.locator('[data-test-class="poll-set-date"]');
-	await expect(retenir).toBeVisible({ timeout: 15_000 });
-	await expect(retenir).toContainText('Samedi');
-	await retenir.click();
+	const setDate = poll.locator('[data-test-class="poll-set-date"]');
+	await expect(setDate).toBeVisible({ timeout: 15_000 });
+	await expect(setDate).toContainText('Samedi');
+	await setDate.click();
 
 	await expect(page.getByTestId('event-date')).toContainText('Samedi', { timeout: 15_000 });
 });
@@ -81,8 +81,8 @@ test('proposer des dates, voter, et fixer la date retenue', async ({ signedInPag
 test('un sondage sans choix est refusé sans fermer le formulaire', async ({
 	signedInPage: page
 }) => {
-	const nom = nomListe();
-	await creerListe(page, nom);
+	const name = listName();
+	await createList(page, name);
 
 	await page.getByTestId('new-poll-date').click();
 	await page.getByTestId('poll-question').fill('Quel soir ?');

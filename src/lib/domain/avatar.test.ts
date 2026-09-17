@@ -65,20 +65,20 @@ describe('initialsOf', () => {
 
 describe('coverSquare', () => {
 	it('centre le carre dans une image large', () => {
-		expect(coverSquare(400, 200)).toEqual({ sx: 100, sy: 0, taille: 200 });
+		expect(coverSquare(400, 200)).toEqual({ sx: 100, sy: 0, size: 200 });
 	});
 
 	it('centre le carre dans une image haute', () => {
-		expect(coverSquare(200, 400)).toEqual({ sx: 0, sy: 100, taille: 200 });
+		expect(coverSquare(200, 400)).toEqual({ sx: 0, sy: 100, size: 200 });
 	});
 
 	it('ne rogne rien sur une image deja carree', () => {
-		expect(coverSquare(300, 300)).toEqual({ sx: 0, sy: 0, taille: 300 });
+		expect(coverSquare(300, 300)).toEqual({ sx: 0, sy: 0, size: 300 });
 	});
 
 	it('arrondit sur une difference impaire', () => {
-		const { sx, taille } = coverSquare(101, 100);
-		expect(taille).toBe(100);
+		const { sx, size } = coverSquare(101, 100);
+		expect(size).toBe(100);
 		expect(sx).toBe(1);
 	});
 });

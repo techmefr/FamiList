@@ -372,9 +372,9 @@
 		"servingsHint": "El número de personas para el que están escritas las cantidades.",
 		"stepper": "Pasos del formulario",
 		"step": {
-			"recette": "La receta",
+			"recipe": "La receta",
 			"ingredients": "Los ingredientes",
-			"etapes": "La preparación"
+			"steps": "La preparación"
 		},
 		"ingredientsHint": "Un ingrediente por línea. Las líneas vacías se ignoran.",
 		"ingredientName": "Ingrediente {rank}",

@@ -41,25 +41,25 @@
 	 * Limited to signing in: creating an account needs a name, and a mistyped address would make a ghost
 	 * account to sort out.
 	 */
-	let sansMotDePasse = $state(false);
-	let codeEnvoye = $state(false);
+	let withoutPassword = $state(false);
+	let codeSent = $state(false);
 	let code = $state('');
 
 	const providers = enabledProviders();
 
 	const MODES = ['signin', 'signup'] as const;
 
-	async function envoyerCode(event: SubmitEvent) {
+	async function sendCode(event: SubmitEvent) {
 		event.preventDefault();
 		busy = true;
 
 		const ok = await session.sendEmailCode(email);
 		busy = false;
 
-		if (ok) codeEnvoye = true;
+		if (ok) codeSent = true;
 	}
 
-	async function validerCode(event: SubmitEvent) {
+	async function submitCode(event: SubmitEvent) {
 		event.preventDefault();
 		busy = true;
 
@@ -75,15 +75,15 @@
 	}
 
 	/** Creating an account needs a name: the passwordless path does not lead there. */
-	function revenirAuMotDePasse() {
-		sansMotDePasse = false;
-		codeEnvoye = false;
+	function backToPassword() {
+		withoutPassword = false;
+		codeSent = false;
 		code = '';
 	}
 
-	function basculer() {
-		sansMotDePasse = !sansMotDePasse;
-		codeEnvoye = false;
+	function toggle() {
+		withoutPassword = !withoutPassword;
+		codeSent = false;
 		code = '';
 		session.error = null;
 	}
@@ -149,7 +149,7 @@
 					checked={mode === value}
 					onchange={() => {
 						mode = value;
-						if (value === 'signup') revenirAuMotDePasse();
+						if (value === 'signup') backToPassword();
 					}}
 					data-test-id="mode-{value}"
 				/>
@@ -180,9 +180,9 @@
 		</div>
 	{/if}
 
-	{#if sansMotDePasse}
+	{#if withoutPassword}
 		<form
-			onsubmit={codeEnvoye ? validerCode : envoyerCode}
+			onsubmit={codeSent ? submitCode : sendCode}
 			class="bg-card shadow-fl-1 mt-4 space-y-5 rounded-xl border p-5"
 			data-test-id="auth-code-form"
 		>
@@ -195,14 +195,14 @@
 						bind:value={email}
 						data-test-id="auth-otp-email"
 						autocomplete="email"
-						readonly={codeEnvoye}
+						readonly={codeSent}
 						required
 						placeholder={t('auth.emailPlaceholder')}
 					/>
 				</IconField>
 			</div>
 
-			{#if codeEnvoye}
+			{#if codeSent}
 				<p class="text-muted-foreground text-label" data-test-id="auth-code-sent">
 					{t('auth.codeSent', { email })}
 				</p>
@@ -228,19 +228,19 @@
 
 			<Button
 				type="submit"
-				disabled={busy || (codeEnvoye && !isCompleteOtp(code))}
+				disabled={busy || (codeSent && !isCompleteOtp(code))}
 				data-test-id="auth-code-submit"
 				class="fl-press w-full"
 			>
-				{busy ? t('common.loading') : codeEnvoye ? t('auth.verify') : t('auth.sendCode')}
+				{busy ? t('common.loading') : codeSent ? t('auth.verify') : t('auth.sendCode')}
 			</Button>
 
-			{#if codeEnvoye}
+			{#if codeSent}
 				<Button
 					variant="ghost"
 					class="w-full"
 					disabled={busy}
-					onclick={() => (codeEnvoye = false)}
+					onclick={() => (codeSent = false)}
 					data-test-id="auth-code-again"
 				>
 					{t('auth.resend')}
@@ -248,7 +248,7 @@
 			{/if}
 		</form>
 
-		<Button variant="ghost" class="mt-2 w-full" onclick={basculer} data-test-id="auth-use-password">
+		<Button variant="ghost" class="mt-2 w-full" onclick={toggle} data-test-id="auth-use-password">
 			<Lock size={18} aria-hidden="true" />
 			{t('auth.usePassword')}
 		</Button>
@@ -358,7 +358,7 @@
 			<Button
 				variant="ghost"
 				class="mt-2 w-full"
-				onclick={basculer}
+				onclick={toggle}
 				data-test-id="auth-passwordless"
 			>
 				<KeyRound size={18} aria-hidden="true" />

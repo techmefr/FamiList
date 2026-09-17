@@ -134,11 +134,11 @@ export function visibleSource(source: Size, view: Size, focus: Focus, scale: num
 	const factor = Math.max(1, Number.isFinite(scale) ? scale : 1);
 	const width = cover.width / factor;
 	const height = cover.height / factor;
-	const centre = clampFocus(focus, factor);
+	const center = clampFocus(focus, factor);
 
 	return {
-		x: (source.width - cover.width) / 2 + centre.x * cover.width - width / 2,
-		y: (source.height - cover.height) / 2 + centre.y * cover.height - height / 2,
+		x: (source.width - cover.width) / 2 + center.x * cover.width - width / 2,
+		y: (source.height - cover.height) / 2 + center.y * cover.height - height / 2,
 		width,
 		height
 	};

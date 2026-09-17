@@ -9,13 +9,13 @@ test("le signalement s'ouvre par-dessus l'écran, sans le quitter", async ({
 	signedInPage: page
 }) => {
 	await page.goto('/shops');
-	const avant = page.url();
+	const before = page.url();
 
 	await page.getByTestId('help').click();
 	await page.getByTestId('help-menu-bug').click();
 
 	await expect(page.getByTestId('report-panel')).toBeVisible();
-	expect(page.url()).toBe(avant);
+	expect(page.url()).toBe(before);
 
 	// What we want to show is still on screen: that is the whole point of the panel.
 	await expect(page.getByTestId('add-aisle')).toBeVisible();
@@ -34,8 +34,8 @@ test('réduire le panneau rend l’écran, et ne perd pas ce qui est écrit', as
 	await page.getByTestId('help').click();
 	await page.getByTestId('help-menu-bug').click();
 
-	const texte = 'La liste se vide quand je coche le dernier article.';
-	await page.getByTestId('bug-description').fill(texte);
+	const text = 'La liste se vide quand je coche le dernier article.';
+	await page.getByTestId('bug-description').fill(text);
 
 	await page.getByTestId('report-minimize').click();
 
@@ -48,7 +48,7 @@ test('réduire le panneau rend l’écran, et ne perd pas ce qui est écrit', as
 
 	// Reopening comes back exactly to the state left: it is the property that tells "shrink" from "close",
 	// and the only one that makes the gesture usable.
-	await expect(page.getByTestId('bug-description')).toHaveValue(texte);
+	await expect(page.getByTestId('bug-description')).toHaveValue(text);
 });
 
 test('le brouillon survit à un changement d’écran', async ({ signedInPage: page }) => {
@@ -57,8 +57,8 @@ test('le brouillon survit à un changement d’écran', async ({ signedInPage: p
 	await page.getByTestId('help').click();
 	await page.getByTestId('help-menu-suggestion').click();
 
-	const texte = 'Pouvoir trier les magasins par distance.';
-	await page.getByTestId('bug-description').fill(texte);
+	const text = 'Pouvoir trier les magasins par distance.';
+	await page.getByTestId('bug-description').fill(text);
 	await page.getByTestId('report-minimize').click();
 
 	// We are going to reproduce the problem elsewhere, then resume: the panel lives outside the pages.
@@ -66,7 +66,7 @@ test('le brouillon survit à un changement d’écran', async ({ signedInPage: p
 	await expect(page.getByTestId('report-panel')).toBeVisible();
 
 	await page.getByTestId('report-restore').click();
-	await expect(page.getByTestId('bug-description')).toHaveValue(texte);
+	await expect(page.getByTestId('bug-description')).toHaveValue(text);
 
 	// Closing is the only gesture that throws away: without it the draft would follow the whole session.
 	await page.getByTestId('report-close').click();

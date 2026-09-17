@@ -7,7 +7,7 @@ import type { Locale } from './index.svelte';
  * not load outside the browser. A language added there and forgotten here will fall out of the typing.
  */
 const CODES: Locale[] = ['fr', 'en', 'es', 'de', 'it', 'pt', 'ru', 'ar', 'zh', 'mg'];
-const SANS_DRAPEAU: Locale[] = ['en', 'ar'];
+const WITHOUT_FLAG: Locale[] = ['en', 'ar'];
 
 describe('flagForLocale', () => {
 	it("rend le drapeau du pays d'origine de la langue", () => {
@@ -17,7 +17,7 @@ describe('flagForLocale', () => {
 	});
 
 	it("ne choisit pas de pays pour l'anglais et l'arabe", () => {
-		for (const code of SANS_DRAPEAU) {
+		for (const code of WITHOUT_FLAG) {
 			expect(flagForLocale(code)).toBeNull();
 		}
 	});
@@ -25,8 +25,8 @@ describe('flagForLocale', () => {
 	it('répond pour chaque langue proposée, drapeau ou non', () => {
 		for (const code of CODES) {
 			const flag = flagForLocale(code);
-			const attendu = SANS_DRAPEAU.includes(code);
-			expect(flag === null).toBe(attendu);
+			const expected = WITHOUT_FLAG.includes(code);
+			expect(flag === null).toBe(expected);
 		}
 	});
 

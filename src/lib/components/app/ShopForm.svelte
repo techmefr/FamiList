@@ -29,7 +29,7 @@
 	 */
 	let {
 		prefix = 'shop',
-		shop: edite,
+		shop: editing,
 		oncreated,
 		onsaved,
 		oncancel
@@ -43,17 +43,17 @@
 
 	// The fields start from the shop as it is on opening, and belong to the form afterwards: the form is
 	// remounted on every edit, and an update coming from the sync must not overwrite a typing in progress.
-	let brand = $state(untrack(() => edite?.brand ?? ''));
-	let name = $state(untrack(() => edite?.name ?? ''));
-	let address = $state(untrack(() => edite?.address ?? ''));
-	let short = $state(untrack(() => edite?.short ?? ''));
-	let lat = $state(untrack(() => edite?.lat));
-	let lng = $state(untrack(() => edite?.lng));
+	let brand = $state(untrack(() => editing?.brand ?? ''));
+	let name = $state(untrack(() => editing?.name ?? ''));
+	let address = $state(untrack(() => editing?.address ?? ''));
+	let short = $state(untrack(() => editing?.short ?? ''));
+	let lat = $state(untrack(() => editing?.lat));
+	let lng = $state(untrack(() => editing?.lng));
 
-	let releve = $state(false);
-	let erreurGps = $state('');
+	let captured = $state(false);
+	let gpsError = $state('');
 
-	const situe = $derived(lat !== undefined && lng !== undefined);
+	const located = $derived(lat !== undefined && lng !== undefined);
 
 	/**
 	 * The shop's position, taken on site, through the pin in the address field.
@@ -68,27 +68,27 @@
 	 * In the form and not on the shop page: the position can now be set while creating the shop, where you
 	 * used to have to create it then come back to its page.
 	 */
-	function releverPosition() {
+	function capturePosition() {
 		if (!navigator.geolocation) {
-			erreurGps = t('shops.geoUnavailable');
+			gpsError = t('shops.geoUnavailable');
 			return;
 		}
 
-		releve = true;
-		erreurGps = '';
+		captured = true;
+		gpsError = '';
 
 		navigator.geolocation.getCurrentPosition(
 			(position) => {
 				lat = position.coords.latitude;
 				lng = position.coords.longitude;
-				releve = false;
+				captured = false;
 				// When editing, the position stands for itself: you take it in front of the shop, not at the moment
 				// you think of saving the rest of the form.
-				if (edite) data.updateShop(edite.id, { lat, lng });
+				if (editing) data.updateShop(editing.id, { lat, lng });
 			},
 			() => {
-				erreurGps = t('shops.geoDenied');
-				releve = false;
+				gpsError = t('shops.geoDenied');
+				captured = false;
 			},
 			{ enableHighAccuracy: true, timeout: 15000 }
 		);
@@ -96,29 +96,29 @@
 
 	// The code of the shop being edited does not count as taken by another: keeping it as it is must stay
 	// possible.
-	const pris = $derived(
-		data.shops.filter((shop) => shop.id !== edite?.id).map((shop) => shop.short)
+	const taken = $derived(
+		data.shops.filter((shop) => shop.id !== editing?.id).map((shop) => shop.short)
 	);
 
 	/**
 	 * The brands already typed in the household, offered as you type. We keep no catalogue of chains: the
 	 * list fills with what the family really goes to, and an independent shop has nothing to find in it.
 	 */
-	const enseignes = $derived([
+	const brands = $derived([
 		...new Set(data.shops.map((shop) => shop.brand.trim()).filter(Boolean))
 	]);
 
 	/** What the badge will carry if nobody fills the field. */
-	const propose = $derived(data.proposedShort({ brand, name, address }, edite?.id));
+	const suggested = $derived(data.proposedShort({ brand, name, address }, editing?.id));
 
-	const saisi = $derived(short.trim().toUpperCase());
+	const typed = $derived(short.trim().toUpperCase());
 
 	/**
 	 * A code already taken is refused rather than silently corrected: someone typing CMX has a reason to
 	 * want it, and ending up with CM2 with no explanation is more confusing than reading that the place is
 	 * taken.
 	 */
-	const dejaPris = $derived(saisi.length > 0 && pris.some((court) => court.toUpperCase() === saisi));
+	const alreadyTaken = $derived(typed.length > 0 && taken.some((short) => short.toUpperCase() === typed));
 
 	/**
 	 * Creating before the first sync has settled means picking a code and a tint from a still-empty cache:
@@ -127,21 +127,21 @@
 	 *
 	 * On creation only: editing a shop assumes you can already see it.
 	 */
-	const attendSynchro = $derived(!edite && !sync.settled);
+	const attendSynchro = $derived(!editing && !sync.settled);
 
 	function submit(event: SubmitEvent) {
 		event.preventDefault();
-		if (!name.trim() || dejaPris || attendSynchro) return;
+		if (!name.trim() || alreadyTaken || attendSynchro) return;
 
-		if (edite) {
+		if (editing) {
 			feedback.play('success');
 			// A code left empty goes back to the one the badge already shows: we never clear it, a shop with no
 			// badge does not exist.
-			data.updateShop(edite.id, {
+			data.updateShop(editing.id, {
 				brand: brand.trim(),
 				name: name.trim(),
 				address: address.trim(),
-				short: saisi || edite.short
+				short: typed || editing.short
 			});
 			onsaved?.();
 			return;
@@ -164,7 +164,7 @@
 		short = '';
 		lat = undefined;
 		lng = undefined;
-		erreurGps = '';
+		gpsError = '';
 		oncreated?.(shop);
 	}
 </script>
@@ -188,8 +188,8 @@
 				/>
 			</IconField>
 			<datalist id="{prefix}-brands">
-				{#each enseignes as enseigne (enseigne)}
-					<option value={enseigne}></option>
+				{#each brands as brand (brand)}
+					<option value={brand}></option>
 				{/each}
 			</datalist>
 		</div>
@@ -223,20 +223,20 @@
 					placeholder={t('shops.addressPlaceholder')}
 				/>
 				{#snippet action()}
-					{@const libelle = releve
+					{@const label = captured
 						? t('shops.locating')
-						: situe
+						: located
 							? t('shops.relocate')
 							: t('shops.locate')}
 					<button
 						type="button"
-						onclick={releverPosition}
-						disabled={releve}
-						aria-label={libelle}
-						title={libelle}
+						onclick={capturePosition}
+						disabled={captured}
+						aria-label={label}
+						title={label}
 						data-test-class="shop-locate"
 						class={'hover:text-foreground focus-visible:ring-ring flex size-11 items-center justify-center rounded-md transition-colors focus-visible:ring-2 focus-visible:ring-inset focus-visible:outline-none disabled:opacity-40 ' +
-							(situe ? 'text-primary' : 'text-muted-foreground')}
+							(located ? 'text-primary' : 'text-muted-foreground')}
 					>
 						<MapPin size={18} aria-hidden="true" />
 					</button>
@@ -245,9 +245,9 @@
 			<p id="{prefix}-address-hint" class="text-muted-foreground text-caption">
 				{t('shops.addressHint')}
 			</p>
-			{#if erreurGps}
+			{#if gpsError}
 				<p class="text-destructive text-caption" role="alert" data-test-id="shop-geo-error">
-					{erreurGps}
+					{gpsError}
 				</p>
 			{/if}
 		</div>
@@ -267,17 +267,17 @@
 					bind:value={short}
 					data-test-id="shop-short"
 					maxlength={3}
-					placeholder={propose}
+					placeholder={suggested}
 					autocapitalize="characters"
-					aria-invalid={dejaPris}
-					aria-describedby={dejaPris ? `${prefix}-short-error` : undefined}
+					aria-invalid={alreadyTaken}
+					aria-describedby={alreadyTaken ? `${prefix}-short-error` : undefined}
 					class="text-center uppercase"
 				/>
 				{#snippet action()}
 					<button
 						type="button"
-						onclick={() => (short = propose)}
-						disabled={!propose}
+						onclick={() => (short = suggested)}
+						disabled={!suggested}
 						aria-label={t('shops.shortRegenerate')}
 						title={t('shops.shortRegenerate')}
 						data-test-id="shop-short-regenerate"
@@ -290,7 +290,7 @@
 		</div>
 	</div>
 
-	{#if dejaPris}
+	{#if alreadyTaken}
 		<p
 			id="{prefix}-short-error"
 			class="text-destructive text-caption"
@@ -301,7 +301,7 @@
 		</p>
 	{/if}
 
-	{#if edite}
+	{#if editing}
 		<div class="flex flex-wrap items-stretch gap-2">
 			<Button type="submit" data-test-class="shop-save">
 				<Check size={18} aria-hidden="true" />

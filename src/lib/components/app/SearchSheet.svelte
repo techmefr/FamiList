@@ -21,7 +21,7 @@
 	 * — hovering a row while scanning with your eyes would move the Enter key's target under the fingers of
 	 * somebody not looking at the mouse.
 	 */
-	let actif = $state(0);
+	let enabled = $state(0);
 
 	/**
 	 * Everything happens on the local cache: the lists, the items, the shops and the cards are already in
@@ -49,7 +49,7 @@
 
 	export async function show() {
 		query = '';
-		actif = 0;
+		enabled = 0;
 		dialog?.showModal();
 
 		// Like the emoji palette: `showModal` places focus itself, we only move it afterwards.
@@ -77,13 +77,13 @@
 
 		if (event.key === 'ArrowDown') {
 			event.preventDefault();
-			actif = (actif + 1) % hits.length;
+			enabled = (enabled + 1) % hits.length;
 		} else if (event.key === 'ArrowUp') {
 			event.preventDefault();
-			actif = (actif - 1 + hits.length) % hits.length;
+			enabled = (enabled - 1 + hits.length) % hits.length;
 		} else if (event.key === 'Enter') {
 			event.preventDefault();
-			const hit = hits[actif];
+			const hit = hits[enabled];
 			if (hit) open(hit);
 		}
 	}
@@ -92,7 +92,7 @@
 	// Enter would open the third row of a list that no longer exists.
 	$effect(() => {
 		void query;
-		actif = 0;
+		enabled = 0;
 	});
 
 	const optionId = (index: number) => `search-hit-${index}`;
@@ -128,7 +128,7 @@
 					role="combobox"
 					aria-expanded={hits.length > 0}
 					aria-controls="search-results"
-					aria-activedescendant={hits.length > 0 ? optionId(actif) : undefined}
+					aria-activedescendant={hits.length > 0 ? optionId(enabled) : undefined}
 				/>
 			</IconField>
 		</div>
@@ -174,11 +174,11 @@
 											type="button"
 											id={optionId(index)}
 											role="option"
-											aria-selected={index === actif}
+											aria-selected={index === enabled}
 											tabindex="-1"
 											onclick={() => open(hit)}
 											class="fl-press hover:bg-muted flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-start
-												{index === actif ? 'bg-muted ring-primary ring-2' : ''}"
+												{index === enabled ? 'bg-muted ring-primary ring-2' : ''}"
 										>
 											{#if hit.icon}
 												<span class="text-h2 shrink-0" aria-hidden="true">{hit.icon}</span>

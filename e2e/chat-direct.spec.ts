@@ -25,14 +25,14 @@ test('écrire en privé à quelqu’un d’un cercle commun', async ({ signedInP
 		timeout: 15_000
 	});
 
-	const corps = `Entre nous ${Date.now()}`;
+	const body = `Entre nous ${Date.now()}`;
 
 	await page.goto('/chat');
 	await page.getByTestId('new-direct').click();
 	await page.locator('[data-test-class="direct-candidate"]').first().click();
 	await expect(page).toHaveURL(/\/chat\/d\//, { timeout: 15_000 });
 
-	await page.getByTestId('direct-input').fill(corps);
+	await page.getByTestId('direct-input').fill(body);
 
 	/**
 	 * The screen shows the message before the server knows it: sending goes through the write queue, and that
@@ -44,28 +44,28 @@ test('écrire en privé à quelqu’un d’un cercle commun', async ({ signedInP
 	 * for the real round trip, with its own time limit, rather than for a fixed delay that would be either
 	 * too short on a slow machine or wasted time on every other.
 	 */
-	const enregistre = page.waitForResponse(
-		(reponse) =>
-			reponse.url().includes('/rest/v1/messages') &&
-			reponse.request().method() === 'POST' &&
-			reponse.ok(),
+	const saved = page.waitForResponse(
+		(response) =>
+			response.url().includes('/rest/v1/messages') &&
+			response.request().method() === 'POST' &&
+			response.ok(),
 		{ timeout: 15_000 }
 	);
 
 	await page.getByTestId('direct-send').click();
-	await expect(page.locator('[data-test-class="direct-message"]')).toContainText(corps);
-	await enregistre;
+	await expect(page.locator('[data-test-class="direct-message"]')).toContainText(body);
+	await saved;
 
 	// The other end of the conversation: the message must be there, and the entry must carry their name.
 	await signOut(page);
 	await signIn(page, FIXTURE_EMAIL, FIXTURE_PASSWORD);
 
 	await page.goto('/chat');
-	const entree = page.locator('[data-test-class="direct-entry"]').filter({ hasText: corps });
-	await expect(entree).toBeVisible({ timeout: 15_000 });
+	const entry = page.locator('[data-test-class="direct-entry"]').filter({ hasText: body });
+	await expect(entry).toBeVisible({ timeout: 15_000 });
 
-	await entree.click();
-	await expect(page.locator('[data-test-class="direct-message"]')).toContainText(corps);
+	await entry.click();
+	await expect(page.locator('[data-test-class="direct-message"]')).toContainText(body);
 
 	// We give the accounts back as we found them: the second leaves the shared household.
 	await signOut(page);

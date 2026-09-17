@@ -8,9 +8,9 @@ import { base32Decode, counterBytes, totpCounter, truncate } from './totp';
  */
 const SECRET_RFC = 'GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ';
 
-const code = (secondes: number) => {
+const code = (seconds: number) => {
 	const digest = createHmac('sha1', Buffer.from(base32Decode(SECRET_RFC)))
-		.update(Buffer.from(counterBytes(totpCounter(secondes * 1000))))
+		.update(Buffer.from(counterBytes(totpCounter(seconds * 1000))))
 		.digest();
 
 	return truncate(new Uint8Array(digest), 8);

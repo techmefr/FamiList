@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { contrastWithWhite, parseHex, tintForWhiteText } from './tint';
 
-const contraste = (hex: string) => contrastWithWhite(parseHex(hex)!);
+const contrast = (hex: string) => contrastWithWhite(parseHex(hex)!);
 
 describe('parseHex', () => {
 	it('lit la forme longue et la forme courte', () => {
@@ -24,8 +24,8 @@ describe('parseHex', () => {
 
 describe('tintForWhiteText', () => {
 	it('assombrit la teracotta qui echouait de peu', () => {
-		expect(contraste('#c8532a')).toBeLessThan(4.5);
-		expect(contraste(tintForWhiteText('#c8532a'))).toBeGreaterThanOrEqual(4.5);
+		expect(contrast('#c8532a')).toBeLessThan(4.5);
+		expect(contrast(tintForWhiteText('#c8532a'))).toBeGreaterThanOrEqual(4.5);
 	});
 
 	it('laisse intacte une teinte deja assez sombre', () => {
@@ -33,7 +33,7 @@ describe('tintForWhiteText', () => {
 	});
 
 	it('fait passer meme une teinte tres claire', () => {
-		expect(contraste(tintForWhiteText('#ffe08a'))).toBeGreaterThanOrEqual(4.5);
+		expect(contrast(tintForWhiteText('#ffe08a'))).toBeGreaterThanOrEqual(4.5);
 	});
 
 	it('rend la valeur telle quelle quand ce n est pas un hexadecimal', () => {

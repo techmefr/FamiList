@@ -41,7 +41,7 @@
 	let reminderRefused = $state(false);
 
 	/** The list being renamed. The same form serves to create and to correct. */
-	let renomme = $state<string | null>(null);
+	let renamed = $state<string | null>(null);
 
 	/**
 	 * Opening the form on an existing list, by long-pressing its card.
@@ -49,9 +49,9 @@
 	 * The name and the emoji are corrected in the same place they are set: a second form would only have
 	 * repeated the same two fields and the same palette.
 	 */
-	function renommer(list: { id: string; name: string; emoji: string; eventDate?: string }) {
+	function rename(list: { id: string; name: string; emoji: string; eventDate?: string }) {
 		feedback.play('tap');
-		renomme = list.id;
+		renamed = list.id;
 		name = list.name;
 		emoji = list.emoji;
 		eventDate = list.eventDate ?? '';
@@ -62,8 +62,8 @@
 		window.scrollTo({ top: 0, behavior: settings.animates ? 'smooth' : 'auto' });
 	}
 
-	function annuler() {
-		renomme = null;
+	function cancel() {
+		renamed = null;
 		name = '';
 		emoji = '🛒';
 		eventDate = '';
@@ -140,7 +140,7 @@
 	 * reminder, would amount to losing it. A refusal blocks nothing — the date is already saved, only the
 	 * notification is missing, and we say so.
 	 */
-	async function demanderRappel() {
+	async function requestReminder() {
 		const permission = await requestReminderPermission();
 		reminderRefused = permission === 'denied';
 	}
@@ -149,18 +149,18 @@
 		event.preventDefault();
 		if (!name.trim()) return;
 
-		const datee = Boolean(eventDate);
+		const hasDate = Boolean(eventDate);
 
-		if (renomme) {
+		if (renamed) {
 			feedback.play('success');
-			data.updateList(renomme, { name, emoji, eventDate });
+			data.updateList(renamed, { name, emoji, eventDate });
 		} else {
 			feedback.play('add');
 			data.addList({ name, emoji, eventDate, color: TINTS[data.lists.length % TINTS.length] });
 		}
 
-		annuler();
-		if (datee) void demanderRappel();
+		cancel();
+		if (hasDate) void requestReminder();
 	}
 
 	/**
@@ -230,11 +230,11 @@
 		</div>
 		<div class="flex flex-wrap items-stretch gap-2">
 			<Button type="submit" data-test-id="list-create" class="fl-press">{t('common.save')}</Button>
-			{#if renomme}
+			{#if renamed}
 				<Button
 					type="button"
 					variant="outline"
-					onclick={annuler}
+					onclick={cancel}
 					data-test-id="list-rename-cancel"
 					class="fl-press"
 				>
@@ -279,7 +279,7 @@
 						-->
 						<a
 							href="/l/{list.id}"
-							use:longpress={() => renommer(list)}
+							use:longpress={() => rename(list)}
 							class="flex min-w-0 flex-auto flex-wrap items-center gap-4"
 						>
 							<span class="text-h1" aria-hidden="true">{list.emoji}</span>
@@ -318,7 +318,7 @@
 							<Badge variant="secondary">{t('lists.remaining', { count: total - done })}</Badge>
 							<button
 								type="button"
-								onclick={() => renommer(list)}
+								onclick={() => rename(list)}
 								aria-label={t('lists.rename', { name: list.name })}
 								data-test-class="list-rename"
 								class="fl-press text-muted-foreground hover:text-foreground grid size-11 min-w-[44px] place-items-center rounded-md transition-colors"
@@ -363,16 +363,16 @@
 						alone does not say whether you are alone.
 					-->
 					<Card.Footer class="text-caption text-muted-foreground flex items-center gap-2">
-						{@const membres = membersOf(list)}
-						{#if membres.length > 1}
+						{@const members = membersOf(list)}
+						{#if members.length > 1}
 							<span class="flex items-center" data-test-class="list-members">
-								{#each membres.slice(0, 4) as membre, rang (membre.id)}
-									<span class={rang === 0 ? '' : '-ms-2'}>
-										<Avatar member={membre} size={26} ring />
+								{#each members.slice(0, 4) as member, rank (member.id)}
+									<span class={rank === 0 ? '' : '-ms-2'}>
+										<Avatar member={member} size={26} ring />
 									</span>
 								{/each}
-								{#if membres.length > 4}
-									<span class="ms-1.5">+{membres.length - 4}</span>
+								{#if members.length > 4}
+									<span class="ms-1.5">+{members.length - 4}</span>
 								{/if}
 							</span>
 							<span class="inline-flex items-center gap-1 font-medium">
@@ -414,4 +414,4 @@
 	</button>
 {/if}
 
-<EmojiPicker bind:this={picker} value={emoji} onpick={(choix) => (emoji = choix)} />
+<EmojiPicker bind:this={picker} value={emoji} onpick={(choices) => (emoji = choices)} />

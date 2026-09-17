@@ -36,7 +36,7 @@ export interface ScanOptions {
 export type ScanSupport = 'native' | 'browser' | 'none';
 
 /** The result of any decoder, brought back to the card's model. */
-const resultatDe = (value: string, format: string): ScanResult => ({
+const resultOf = (value: string, format: string): ScanResult => ({
 	value: normalizeValue(value, format),
 	codeType: normalizeFormat(format)
 });
@@ -74,9 +74,9 @@ let formatsUtilisables: Promise<string[]> | null = null;
 
 function formatsDemandes() {
 	formatsUtilisables ??= Promise.resolve(constructeurDetecteur().getSupportedFormats?.())
-		.then((supportes) =>
-			supportes
-				? SCAN_FORMATS.filter((format) => supportes.includes(format))
+		.then((supported) =>
+			supported
+				? SCAN_FORMATS.filter((format) => supported.includes(format))
 				: ['qr_code', 'ean_13', 'code_39']
 		)
 		.catch(() => ['qr_code', 'ean_13', 'code_39']);
@@ -84,19 +84,19 @@ function formatsDemandes() {
 	return formatsUtilisables;
 }
 
-async function nouveauDetecteur() {
+async function newDetector() {
 	return new (constructeurDetecteur())({ formats: await formatsDemandes() });
 }
 
 /** The fallback decoder, loaded once and kept. */
-let secours: Promise<import('@zxing/browser').BrowserMultiFormatReader> | null = null;
+let backup: Promise<import('@zxing/browser').BrowserMultiFormatReader> | null = null;
 
-function lecteurDeSecours() {
-	secours ??= import('@zxing/browser').then(
+function fallbackReader() {
+	backup ??= import('@zxing/browser').then(
 		({ BrowserMultiFormatReader }) => new BrowserMultiFormatReader()
 	);
 
-	return secours;
+	return backup;
 }
 
 async function scanNative(): Promise<ScanResult | null> {
@@ -111,7 +111,7 @@ async function scanNative(): Promise<ScanResult | null> {
 	const first = barcodes.find((barcode) => barcode.rawValue);
 	if (!first?.rawValue) return null;
 
-	return resultatDe(first.rawValue, first.format);
+	return resultOf(first.rawValue, first.format);
 }
 
 /**
@@ -128,8 +128,8 @@ async function scanBrowser(
 	signal: AbortSignal,
 	{ timeoutMs = SCAN_TIMEOUT_MS, onTrack }: ScanOptions = {}
 ): Promise<ScanResult | null> {
-	const detector = aBarcodeDetector() ? await nouveauDetecteur() : null;
-	const lecteur = detector ? null : await lecteurDeSecours();
+	const detector = aBarcodeDetector() ? await newDetector() : null;
+	const reader = detector ? null : await fallbackReader();
 
 	const stream = await navigator.mediaDevices.getUserMedia({
 		video: { facingMode: 'environment' }
@@ -139,18 +139,18 @@ async function scanBrowser(
 	await video.play();
 	onTrack?.(stream.getVideoTracks()[0] ?? null);
 
-	const fin = Date.now() + timeoutMs;
+	const end = Date.now() + timeoutMs;
 
 	try {
-		while (!signal.aborted && Date.now() < fin) {
+		while (!signal.aborted && Date.now() < end) {
 			if (detector) {
 				const [found] = await detector.detect(video);
-				if (found) return resultatDe(found.rawValue, found.format);
-			} else if (lecteur) {
+				if (found) return resultOf(found.rawValue, found.format);
+			} else if (reader) {
 				// One frame at a time, rather than `decodeOnce`: that one would take the camera itself and only hand
 				// back at the first code found, so never on a deliberate stop.
-				const resultat = await decoderUneImage(lecteur, video);
-				if (resultat) return resultat;
+				const result = await decodeOneFrame(reader, video);
+				if (result) return result;
 			}
 
 			await new Promise((resolve) => setTimeout(resolve, 150));
@@ -165,28 +165,28 @@ async function scanBrowser(
 }
 
 /** One frame of the stream, decoded by the fallback reader. Returns null when there is nothing to read. */
-async function decoderUneImage(
-	lecteur: import('@zxing/browser').BrowserMultiFormatReader,
+async function decodeOneFrame(
+	reader: import('@zxing/browser').BrowserMultiFormatReader,
 	source: HTMLVideoElement
 ): Promise<ScanResult | null> {
-	const toile = document.createElement('canvas');
-	toile.width = source.videoWidth || source.clientWidth;
-	toile.height = source.videoHeight || source.clientHeight;
-	if (!toile.width || !toile.height) return null;
+	const canvas = document.createElement('canvas');
+	canvas.width = source.videoWidth || source.clientWidth;
+	canvas.height = source.videoHeight || source.clientHeight;
+	if (!canvas.width || !canvas.height) return null;
 
-	toile.getContext('2d')?.drawImage(source, 0, 0, toile.width, toile.height);
+	canvas.getContext('2d')?.drawImage(source, 0, 0, canvas.width, canvas.height);
 
-	return decoderLaToile(lecteur, toile);
+	return decodeCanvas(reader, canvas);
 }
 
 /** The decoding itself, shared by the video stream and the imported image. */
-function decoderLaToile(
-	lecteur: import('@zxing/browser').BrowserMultiFormatReader,
-	toile: HTMLCanvasElement
+function decodeCanvas(
+	reader: import('@zxing/browser').BrowserMultiFormatReader,
+	canvas: HTMLCanvasElement
 ): ScanResult | null {
 	try {
-		const resultat = lecteur.decodeFromCanvas(toile);
-		return resultatDe(resultat.getText(), resultat.getBarcodeFormat().toString());
+		const result = reader.decodeFromCanvas(canvas);
+		return resultOf(result.getText(), result.getBarcodeFormat().toString());
 	} catch {
 		// No code on this frame: that is the common case, not a failure.
 		return null;
@@ -208,29 +208,29 @@ export async function scanImage(file: File): Promise<ScanResult | null> {
 		// silence: it ignores formats common on loyalty cards, which the fallback decoder does read. Returning
 		// `null` here left the latter unused on all of Chrome, that is, on almost all of Android.
 		if (aBarcodeDetector()) {
-			const [found] = await (await nouveauDetecteur()).detect(image).catch(() => []);
-			if (found) return resultatDe(found.rawValue, found.format);
+			const [found] = await (await newDetector()).detect(image).catch(() => []);
+			if (found) return resultOf(found.rawValue, found.format);
 		}
 
 		// A full-resolution phone photo often fails on a barcode, where the same image scaled down passes.
 		const scale = scanScale(image.width, image.height);
-		const toile = document.createElement('canvas');
-		toile.width = Math.max(1, Math.round(image.width * scale));
-		toile.height = Math.max(1, Math.round(image.height * scale));
-		toile.getContext('2d')?.drawImage(image, 0, 0, toile.width, toile.height);
+		const canvas = document.createElement('canvas');
+		canvas.width = Math.max(1, Math.round(image.width * scale));
+		canvas.height = Math.max(1, Math.round(image.height * scale));
+		canvas.getContext('2d')?.drawImage(image, 0, 0, canvas.width, canvas.height);
 
-		const lecteur = await lecteurDeSecours();
-		const reduit = decoderLaToile(lecteur, toile);
-		if (reduit || scale === 1) return reduit;
+		const reader = await fallbackReader();
+		const small = decodeCanvas(reader, canvas);
+		if (small || scale === 1) return small;
 
 		// A code already small in the image can conversely suffer from the downscaling: we give the original
 		// size one more chance before giving up.
-		const entiere = document.createElement('canvas');
-		entiere.width = image.width;
-		entiere.height = image.height;
-		entiere.getContext('2d')?.drawImage(image, 0, 0);
+		const whole = document.createElement('canvas');
+		whole.width = image.width;
+		whole.height = image.height;
+		whole.getContext('2d')?.drawImage(image, 0, 0);
 
-		return decoderLaToile(lecteur, entiere);
+		return decodeCanvas(reader, whole);
 	} finally {
 		image.close();
 	}

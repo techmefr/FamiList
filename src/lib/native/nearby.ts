@@ -29,7 +29,7 @@ export interface NearbyContext {
 	onOpen: (cardId: string) => void;
 }
 
-const JOURNAL_KEY = 'familiste:nearby';
+const LOG_KEY = 'familiste:nearby';
 
 export function nearbySupported(): boolean {
 	return Capacitor.isNativePlatform();
@@ -41,18 +41,18 @@ export function nearbySupported(): boolean {
  * Deliberately local and not synced: it is this phone that passed this shop. Somebody else in the
  * household going there the same day is entitled to their own notification.
  */
-function lireJournal(): Record<string, string> {
+function readLog(): Record<string, string> {
 	try {
-		const brut = JSON.parse(localStorage.getItem(JOURNAL_KEY) ?? '{}');
-		return typeof brut === 'object' && brut !== null ? (brut as Record<string, string>) : {};
+		const raw = JSON.parse(localStorage.getItem(LOG_KEY) ?? '{}');
+		return typeof raw === 'object' && raw !== null ? (raw as Record<string, string>) : {};
 	} catch {
 		return {};
 	}
 }
 
-function ecrireJournal(journal: Record<string, string>) {
+function writeLog(log: Record<string, string>) {
 	try {
-		localStorage.setItem(JOURNAL_KEY, JSON.stringify(journal));
+		localStorage.setItem(LOG_KEY, JSON.stringify(log));
 	} catch {
 		// Storage full or refused: at worst one notification too many, nothing broken.
 	}
@@ -78,34 +78,34 @@ export async function requestNearbyPermission(): Promise<NearbyPermission> {
 		const notifications = await LocalNotifications.checkPermissions();
 		if (notifications.display === 'granted') return 'granted';
 
-		const demandee = await LocalNotifications.requestPermissions();
-		return demandee.display === 'granted' ? 'granted' : 'denied';
+		const requested = await LocalNotifications.requestPermissions();
+		return requested.display === 'granted' ? 'granted' : 'denied';
 	} catch {
 		return 'unsupported';
 	}
 }
 
-let contexte: NearbyContext | null = null;
-let veille: string | null = null;
-let dernierControle = 0;
-let ecoute = false;
+let context: NearbyContext | null = null;
+let lastDay: string | null = null;
+let lastCheck = 0;
+let listening = false;
 
-async function annoncer(latitude: number, longitude: number) {
-	if (!contexte) return;
+async function announce(latitude: number, longitude: number) {
+	if (!context) return;
 
-	const maintenant = new Date();
+	const now = new Date();
 	// The position can arrive every second; we only look at one now and then.
-	if (maintenant.getTime() - dernierControle < NEARBY_CHECK_MS) return;
-	dernierControle = maintenant.getTime();
+	if (now.getTime() - lastCheck < NEARBY_CHECK_MS) return;
+	lastCheck = now.getTime();
 
-	const alerte = nearbyAlert(
+	const alert = nearbyAlert(
 		{ lat: latitude, lng: longitude },
-		contexte.shops,
-		contexte.cards,
-		lireJournal(),
-		maintenant
+		context.shops,
+		context.cards,
+		readLog(),
+		now
 	);
-	if (!alerte) return;
+	if (!alert) return;
 
 	try {
 		const { LocalNotifications } = await import('@capacitor/local-notifications');
@@ -113,20 +113,20 @@ async function annoncer(latitude: number, longitude: number) {
 		const permission = await LocalNotifications.checkPermissions();
 		if (permission.display !== 'granted') return;
 
-		const { title, body } = contexte.texts(alerte);
+		const { title, body } = context.texts(alert);
 
 		// The log is written before sending: if the display fails, better a missed notification than a loop
 		// retrying on every position.
-		ecrireJournal(rememberNotified(lireJournal(), alerte.shopId, maintenant));
+		writeLog(rememberNotified(readLog(), alert.shopId, now));
 
 		await LocalNotifications.schedule({
 			notifications: [
 				{
-					id: alerte.id,
+					id: alert.id,
 					title,
 					body,
 					// No scheduling: we are in front of the shop now, not later.
-					extra: { cardId: alerte.cardId }
+					extra: { cardId: alert.cardId }
 				}
 			]
 		});
@@ -145,7 +145,7 @@ async function annoncer(latitude: number, longitude: number) {
  * enough, and that is what lets the watch run without draining the battery.
  */
 export async function applyNearbyWatch(enabled: boolean, next: NearbyContext): Promise<void> {
-	contexte = next;
+	context = next;
 
 	if (!nearbySupported()) return;
 
@@ -153,32 +153,32 @@ export async function applyNearbyWatch(enabled: boolean, next: NearbyContext): P
 		const { Geolocation } = await import('@capacitor/geolocation');
 
 		if (!enabled) {
-			if (veille) await Geolocation.clearWatch({ id: veille });
-			veille = null;
+			if (lastDay) await Geolocation.clearWatch({ id: lastDay });
+			lastDay = null;
 			return;
 		}
 
-		if (!ecoute) {
+		if (!listening) {
 			const { LocalNotifications } = await import('@capacitor/local-notifications');
 
 			// Tapping the notification opens the card: that is the whole point of offering it.
 			await LocalNotifications.addListener('localNotificationActionPerformed', (action) => {
 				const cardId = action.notification.extra?.cardId;
-				if (typeof cardId === 'string') contexte?.onOpen(cardId);
+				if (typeof cardId === 'string') context?.onOpen(cardId);
 			});
-			ecoute = true;
+			listening = true;
 		}
 
-		if (veille) return;
+		if (lastDay) return;
 
 		const permission = await Geolocation.checkPermissions();
 		if (permission.location !== 'granted' && permission.coarseLocation !== 'granted') return;
 
-		veille = await Geolocation.watchPosition(
+		lastDay = await Geolocation.watchPosition(
 			{ enableHighAccuracy: false, timeout: 30_000, maximumAge: NEARBY_CHECK_MS },
 			(position) => {
 				if (!position) return;
-				void annoncer(position.coords.latitude, position.coords.longitude);
+				void announce(position.coords.latitude, position.coords.longitude);
 			}
 		);
 	} catch {

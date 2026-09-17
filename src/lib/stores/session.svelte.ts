@@ -203,9 +203,9 @@ class SessionStore {
 		const email = this.user?.email;
 		if (!email) return false;
 
-		const { error: refus } = await supabase.auth.signInWithPassword({ email, password: current });
-		if (refus) {
-			this.error = refus.message;
+		const { error: refusal } = await supabase.auth.signInWithPassword({ email, password: current });
+		if (refusal) {
+			this.error = refusal.message;
 			return false;
 		}
 

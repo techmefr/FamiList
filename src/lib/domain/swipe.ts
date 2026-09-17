@@ -56,10 +56,10 @@ export function swipeOffset(dx: number, threshold = SWIPE_THRESHOLD, max = SWIPE
 	const distance = Math.abs(dx);
 	if (distance <= threshold) return dx;
 
-	const signe = Math.sign(dx);
-	const reste = distance - threshold;
+	const sign = Math.sign(dx);
+	const rest = distance - threshold;
 
-	return signe * Math.min(max, threshold + reste * 0.35);
+	return sign * Math.min(max, threshold + rest * 0.35);
 }
 
 /**
@@ -68,9 +68,9 @@ export function swipeOffset(dx: number, threshold = SWIPE_THRESHOLD, max = SWIPE
  */
 export function swipeSide(offset: number, limits: SwipeLimits = {}): SwipeSide | null {
 	const { rtl = false, startAt = SWIPE_THRESHOLD, endAt = SWIPE_THRESHOLD } = limits;
-	const logique = rtl ? -offset : offset;
+	const logical = rtl ? -offset : offset;
 
-	if (logique >= startAt) return 'start';
-	if (logique <= -endAt) return 'end';
+	if (logical >= startAt) return 'start';
+	if (logical <= -endAt) return 'end';
 	return null;
 }

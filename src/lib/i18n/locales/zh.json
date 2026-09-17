@@ -370,9 +370,9 @@
 		"servingsHint": "这些用量是按多少人写的。",
 		"stepper": "表单步骤",
 		"step": {
-			"recette": "食谱",
+			"recipe": "食谱",
 			"ingredients": "配料",
-			"etapes": "做法"
+			"steps": "做法"
 		},
 		"ingredientsHint": "每行一种配料。空行会被忽略。",
 		"ingredientName": "配料 {rank}",

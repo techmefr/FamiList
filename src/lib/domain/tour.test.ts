@@ -2,11 +2,11 @@ import { describe, expect, it } from 'vitest';
 import { NAV_STEPS, pickSteps, screenSteps, SCREEN_STEPS, type TourStep } from './tour';
 
 const tout = () => true;
-const rien = () => false;
-const seulement =
-	(...selecteurs: string[]) =>
+const never = () => false;
+const only =
+	(...selectors: string[]) =>
 	(selector: string) =>
-		selecteurs.includes(selector);
+		selectors.includes(selector);
 
 describe('screenSteps', () => {
 	it("rend le tour d'ensemble sur l'accueil", () => {
@@ -37,14 +37,14 @@ describe('screenSteps', () => {
 	});
 
 	it('a un tour pour chacun des cinq onglets', () => {
-		for (const chemin of ['/', '/magnifier', '/shops', '/cards', '/profile']) {
-			expect(screenSteps(chemin).length).toBeGreaterThan(0);
+		for (const path of ['/', '/magnifier', '/shops', '/cards', '/profile']) {
+			expect(screenSteps(path).length).toBeGreaterThan(0);
 		}
 	});
 });
 
 describe('pickSteps', () => {
-	const etapes: TourStep[] = [
+	const steps: TourStep[] = [
 		{ selector: '#a', key: 'un' },
 		{ selector: '#b', key: 'deux' },
 		{ selector: '#c', key: 'deux' },
@@ -52,19 +52,19 @@ describe('pickSteps', () => {
 	];
 
 	it('écarte les repères invisibles', () => {
-		expect(pickSteps(etapes, rien)).toEqual([]);
+		expect(pickSteps(steps, never)).toEqual([]);
 	});
 
 	it("ne garde qu'un repère par sujet", () => {
-		expect(pickSteps(etapes, tout).map((s) => s.selector)).toEqual(['#a', '#b', '#d']);
+		expect(pickSteps(steps, tout).map((s) => s.selector)).toEqual(['#a', '#b', '#d']);
 	});
 
 	it('prend la variante visible quand la première est cachée', () => {
-		expect(pickSteps(etapes, seulement('#c', '#d')).map((s) => s.selector)).toEqual(['#c', '#d']);
+		expect(pickSteps(steps, only('#c', '#d')).map((s) => s.selector)).toEqual(['#c', '#d']);
 	});
 
 	it("conserve l'ordre de déclaration", () => {
-		expect(pickSteps(etapes, seulement('#d', '#a')).map((s) => s.key)).toEqual(['un', 'trois']);
+		expect(pickSteps(steps, only('#d', '#a')).map((s) => s.key)).toEqual(['un', 'trois']);
 	});
 
 	it('rend une liste vide sans étape', () => {
@@ -73,17 +73,17 @@ describe('pickSteps', () => {
 });
 
 describe('les repères visés', () => {
-	const toutes = [...NAV_STEPS, ...SCREEN_STEPS.flatMap((entry) => entry.steps)];
+	const all = [...NAV_STEPS, ...SCREEN_STEPS.flatMap((entry) => entry.steps)];
 
 	it('ne visent que des repères de test', () => {
-		for (const etape of toutes) {
-			expect(etape.selector).toMatch(/^\[data-test-id="[^"]+"\]$/);
+		for (const step of all) {
+			expect(step.selector).toMatch(/^\[data-test-id="[^"]+"\]$/);
 		}
 	});
 
 	it('portent tous une clé de traduction', () => {
-		for (const etape of toutes) {
-			expect(etape.key).toMatch(/^[a-zA-Z]+$/);
+		for (const step of all) {
+			expect(step.key).toMatch(/^[a-zA-Z]+$/);
 		}
 	});
 });

@@ -7,24 +7,24 @@
 	import { Label } from '$lib/components/ui/label';
 	import { Check } from '@lucide/svelte';
 
-	const moi = $derived(data.members.find((m) => m.id === data.me));
+	const me = $derived(data.members.find((m) => m.id === data.me));
 
-	let prenom = $state<string | null>(null);
-	let nom = $state<string | null>(null);
-	let affiche = $state<string | null>(null);
-	let occupe = $state(false);
-	let enregistre = $state(false);
-	let erreur = $state('');
+	let firstName = $state<string | null>(null);
+	let name = $state<string | null>(null);
+	let displayed = $state<string | null>(null);
+	let busy = $state(false);
+	let saved = $state(false);
+	let error = $state('');
 
 	/**
 	 * The fields fill with what the sync brings back, then keep quiet: an update coming from the server must
 	 * not erase what is being written.
 	 */
 	$effect(() => {
-		if (prenom === null && moi) {
-			prenom = moi.firstName;
-			nom = moi.lastName;
-			affiche = moi.name;
+		if (firstName === null && me) {
+			firstName = me.firstName;
+			name = me.lastName;
+			displayed = me.name;
 		}
 	});
 
@@ -36,53 +36,53 @@
 	 * else ("Granny", "Lulu"), it stops moving: that nickname is a choice, not a draft to be overwritten at
 	 * the next keystroke.
 	 */
-	function poser(champ: 'prenom' | 'nom', valeur: string) {
-		const avant = compose(prenom ?? '', nom ?? '');
-		const perso = (affiche ?? '').trim() !== '' && (affiche ?? '').trim() !== avant;
+	function setPart(field: 'prenom' | 'nom', value: string) {
+		const before = compose(firstName ?? '', name ?? '');
+		const custom = (displayed ?? '').trim() !== '' && (displayed ?? '').trim() !== before;
 
-		if (champ === 'prenom') prenom = valeur;
-		else nom = valeur;
+		if (field === 'prenom') firstName = value;
+		else name = value;
 
-		if (!perso) affiche = compose(prenom ?? '', nom ?? '');
+		if (!custom) displayed = compose(firstName ?? '', name ?? '');
 	}
 
 	// While the account is not identified, we do not know which profile to write: the fields stay closed
 	// rather than accept a keystroke that would go nowhere.
-	const modifie = $derived(
-		!!moi &&
-			(affiche ?? '').trim().length > 0 &&
-			((affiche ?? '').trim() !== moi.name ||
-				(prenom ?? '').trim() !== moi.firstName ||
-				(nom ?? '').trim() !== moi.lastName)
+	const changed = $derived(
+		!!me &&
+			(displayed ?? '').trim().length > 0 &&
+			((displayed ?? '').trim() !== me.name ||
+				(firstName ?? '').trim() !== me.firstName ||
+				(name ?? '').trim() !== me.lastName)
 	);
 
-	async function enregistrer(event: SubmitEvent) {
+	async function save(event: SubmitEvent) {
 		event.preventDefault();
-		if (!modifie) return;
+		if (!changed) return;
 
-		const identite = {
-			name: (affiche ?? '').trim(),
-			firstName: (prenom ?? '').trim(),
-			lastName: (nom ?? '').trim()
+		const identity = {
+			name: (displayed ?? '').trim(),
+			firstName: (firstName ?? '').trim(),
+			lastName: (name ?? '').trim()
 		};
 
-		occupe = true;
-		erreur = (await data.setMyName(identite)) ?? '';
-		occupe = false;
+		busy = true;
+		error = (await data.setMyName(identity)) ?? '';
+		busy = false;
 
-		if (erreur) {
-			prenom = moi?.firstName ?? '';
-			nom = moi?.lastName ?? '';
-			affiche = moi?.name ?? '';
+		if (error) {
+			firstName = me?.firstName ?? '';
+			name = me?.lastName ?? '';
+			displayed = me?.name ?? '';
 			return;
 		}
 
-		prenom = identite.firstName;
-		nom = identite.lastName;
-		affiche = identite.name;
-		enregistre = true;
+		firstName = identity.firstName;
+		name = identity.lastName;
+		displayed = identity.name;
+		saved = true;
 		feedback.play('success');
-		setTimeout(() => (enregistre = false), 2000);
+		setTimeout(() => (saved = false), 2000);
 	}
 </script>
 
@@ -92,14 +92,14 @@
 	which stays short. The badge initials are computed again from these fields, they have nothing to enter on
 	their own side.
 -->
-<form onsubmit={enregistrer} class="flex flex-wrap items-end gap-3" data-test-id="name-form">
+<form onsubmit={save} class="flex flex-wrap items-end gap-3" data-test-id="name-form">
 	<div class="min-w-0 flex-1 basis-40">
 		<Label for="first-name">{t('profile.firstName')}</Label>
 		<Input
 			id="first-name"
-			bind:value={() => prenom ?? '', (v) => poser('prenom', v)}
+			bind:value={() => firstName ?? '', (v) => setPart('prenom', v)}
 			data-test-id="first-name-input"
-			disabled={!moi}
+			disabled={!me}
 			maxlength={60}
 			autocomplete="given-name"
 		/>
@@ -109,9 +109,9 @@
 		<Label for="last-name">{t('profile.lastName')}</Label>
 		<Input
 			id="last-name"
-			bind:value={() => nom ?? '', (v) => poser('nom', v)}
+			bind:value={() => name ?? '', (v) => setPart('nom', v)}
 			data-test-id="last-name-input"
-			disabled={!moi}
+			disabled={!me}
 			maxlength={60}
 			autocomplete="family-name"
 		/>
@@ -121,9 +121,9 @@
 		<Label for="display-name">{t('profile.name')}</Label>
 		<Input
 			id="display-name"
-			bind:value={() => affiche ?? '', (v) => (affiche = v)}
+			bind:value={() => displayed ?? '', (v) => (displayed = v)}
 			data-test-id="name-input"
-			disabled={!moi}
+			disabled={!me}
 			maxlength={60}
 			autocomplete="nickname"
 			placeholder={t('profile.namePlaceholder')}
@@ -131,8 +131,8 @@
 		<p class="text-muted-foreground text-caption mt-1">{t('profile.nameHint')}</p>
 	</div>
 
-	<Button type="submit" disabled={occupe || !modifie} data-test-id="name-save" class="fl-press">
-		{#if enregistre}
+	<Button type="submit" disabled={busy || !changed} data-test-id="name-save" class="fl-press">
+		{#if saved}
 			<Check size={18} aria-hidden="true" data-test-id="name-saved" />
 			{t('profile.nameSaved')}
 		{:else}
@@ -140,7 +140,7 @@
 		{/if}
 	</Button>
 
-	{#if erreur}
+	{#if error}
 		<p class="text-destructive text-caption basis-full" role="alert" data-test-id="name-error">
 			{t('profile.nameFailed')}
 		</p>

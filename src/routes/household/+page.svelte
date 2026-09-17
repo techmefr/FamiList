@@ -21,7 +21,7 @@
 
 	const circleName = $derived(data.circleName(data.circle));
 	let error = $state<string | null>(null);
-	let secondFacteurRequis = $state(false);
+	let secondFactorRequired = $state(false);
 	let busy = $state(false);
 	let copied = $state(false);
 
@@ -33,10 +33,10 @@
 	 * awaiting approval and a second factor not yet presented, and what the client believes about the
 	 * session may come from a read that failed.
 	 */
-	async function montrerRefus(message: string) {
+	async function showRefusal(message: string) {
 		await session.refreshLevels();
-		secondFacteurRequis = session.needsSecondFactor;
-		error = t(householdErrorKey(message, secondFacteurRequis));
+		secondFactorRequired = session.needsSecondFactor;
+		error = t(householdErrorKey(message, secondFactorRequired));
 	}
 
 	async function createInvite() {
@@ -47,7 +47,7 @@
 
 		busy = false;
 		if (rpcError) {
-			await montrerRefus(rpcError.message);
+			await showRefusal(rpcError.message);
 			return;
 		}
 
@@ -71,19 +71,19 @@
 		busy = true;
 		error = null;
 
-		const { data: reponse, error: rpcError } = await supabase.rpc('redeem_invite', {
+		const { data: response, error: rpcError } = await supabase.rpc('redeem_invite', {
 			invite_code: joinCode
 		});
 
 		if (rpcError) {
 			busy = false;
-			await montrerRefus(rpcError.message);
+			await showRefusal(rpcError.message);
 			return;
 		}
 
 		// A refused code no longer arrives as an exception: the database must be able to record the attempt,
 		// which a rolled-back transaction would forbid.
-		const issue = readInviteOutcome(reponse);
+		const issue = readInviteOutcome(response);
 
 		if (issue.errorKey) {
 			busy = false;
@@ -109,20 +109,20 @@
 	async function rename(event: SubmitEvent) {
 		event.preventDefault();
 
-		const nom = renaming.trim();
-		if (!nom || !sync.householdId) return;
+		const name = renaming.trim();
+		if (!name || !sync.householdId) return;
 
 		busy = true;
 		error = null;
 
 		const { error: rpcError } = await supabase
 			.from('households')
-			.update({ name: nom })
+			.update({ name: name })
 			.eq('id', sync.householdId);
 
 		busy = false;
 		if (rpcError) {
-			await montrerRefus(rpcError.message);
+			await showRefusal(rpcError.message);
 			return;
 		}
 
@@ -140,7 +140,7 @@
 
 		if (rpcError) {
 			busy = false;
-			await montrerRefus(rpcError.message);
+			await showRefusal(rpcError.message);
 			return;
 		}
 
@@ -163,7 +163,7 @@
 			The only refusal with an immediate way out: the person does have their verification code, all they are
 			missing is the screen to type it on.
 		-->
-		{#if secondFacteurRequis}
+		{#if secondFactorRequired}
 			<Button
 				variant="outline"
 				onclick={() => goto('/auth/mfa')}
@@ -199,18 +199,18 @@
 
 			<ul class="mt-4 space-y-1">
 				{#each data.circles as circle (circle.id)}
-					{@const actif = circle.id === data.circle}
+					{@const enabled = circle.id === data.circle}
 					<li>
 						<button
 							type="button"
 							onclick={() => data.switchCircle(circle.id)}
-							aria-current={actif ? 'true' : undefined}
+							aria-current={enabled ? 'true' : undefined}
 							data-test-class="circle-option"
 							class="fl-press hover:bg-muted flex min-h-[max(3.5rem,56px)] w-full items-center gap-3 rounded-lg px-3 text-start"
-							class:bg-muted={actif}
+							class:bg-muted={enabled}
 						>
 							<span class="text-product min-w-0 flex-1 font-medium">{circle.name}</span>
-							{#if actif}
+							{#if enabled}
 								<span class="text-secondary text-caption inline-flex shrink-0 items-center gap-1 font-semibold">
 									<Check size={16} aria-hidden="true" />
 									{t('household.circleShown')}

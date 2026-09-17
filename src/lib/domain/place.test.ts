@@ -1,37 +1,37 @@
 import { describe, expect, it } from 'vitest';
-import { communeFromAddress, trigramSource } from './place';
+import { townFromAddress, trigramSource } from './place';
 import { trigram } from './trigram';
 
 describe('communeFromAddress', () => {
 	it('lit la commune après le code postal', () => {
-		expect(communeFromAddress('12 rue des Lilas, 01800 Meximieux')).toBe('Meximieux');
-		expect(communeFromAddress('01120 Montluel')).toBe('Montluel');
+		expect(townFromAddress('12 rue des Lilas, 01800 Meximieux')).toBe('Meximieux');
+		expect(townFromAddress('01120 Montluel')).toBe('Montluel');
 	});
 
 	it('accepte une adresse sur plusieurs lignes', () => {
-		expect(communeFromAddress('Zone du Bois\n01800 Meximieux\nFrance')).toBe('Meximieux');
+		expect(townFromAddress('Zone du Bois\n01800 Meximieux\nFrance')).toBe('Meximieux');
 	});
 
 	it('accepte un nom de commune en plusieurs mots', () => {
-		expect(communeFromAddress('69100 Villeurbanne')).toBe('Villeurbanne');
-		expect(communeFromAddress('3 place Croix-Rousse, 69004 Lyon 4e')).toBe('Lyon 4e');
+		expect(townFromAddress('69100 Villeurbanne')).toBe('Villeurbanne');
+		expect(townFromAddress('3 place Croix-Rousse, 69004 Lyon 4e')).toBe('Lyon 4e');
 	});
 
 	// With no postcode, the last piece stays the most likely.
 	it('se rabat sur le dernier morceau', () => {
-		expect(communeFromAddress('12 rue des Lilas, Meximieux')).toBe('Meximieux');
+		expect(townFromAddress('12 rue des Lilas, Meximieux')).toBe('Meximieux');
 	});
 
 	it('ne prend pas le pays pour une commune', () => {
-		expect(communeFromAddress('12 rue des Lilas, Meximieux, France')).toBe('Meximieux');
+		expect(townFromAddress('12 rue des Lilas, Meximieux, France')).toBe('Meximieux');
 	});
 
 	// A wrong three-letter code is worse than none: we do not guess.
 	it('ne rend rien quand rien ne ressemble à une commune', () => {
-		expect(communeFromAddress('12 rue des Lilas')).toBe('');
-		expect(communeFromAddress('')).toBe('');
-		expect(communeFromAddress(null)).toBe('');
-		expect(communeFromAddress(undefined)).toBe('');
+		expect(townFromAddress('12 rue des Lilas')).toBe('');
+		expect(townFromAddress('')).toBe('');
+		expect(townFromAddress(null)).toBe('');
+		expect(townFromAddress(undefined)).toBe('');
 	});
 });
 
@@ -64,12 +64,12 @@ describe('trigramSource', () => {
  * be read on the chips, and that is where a regression would show.
  */
 describe('trigramme d’un lieu', () => {
-	const court = (place: Parameters<typeof trigramSource>[0], pris: string[] = []) =>
-		trigram(trigramSource(place), pris);
+	const short = (place: Parameters<typeof trigramSource>[0], taken: string[] = []) =>
+		trigram(trigramSource(place), taken);
 
 	it('distingue deux magasins de la même enseigne', () => {
-		const meximieux = court({ brand: 'Carrefour', name: 'Carrefour', address: '01800 Meximieux' });
-		const miribel = court({ brand: 'Carrefour', name: 'Carrefour', address: '01700 Miribel' });
+		const meximieux = short({ brand: 'Carrefour', name: 'Carrefour', address: '01800 Meximieux' });
+		const miribel = short({ brand: 'Carrefour', name: 'Carrefour', address: '01700 Miribel' });
 
 		expect(meximieux).toBe('CMX');
 		// Last letter of the last word: Meximieux gives X, Miribel gives L.
@@ -77,14 +77,14 @@ describe('trigramme d’un lieu', () => {
 	});
 
 	it('donne un trigramme lisible à un indépendant', () => {
-		expect(court({ name: 'Salon Émilie' })).toBe('SEM');
-		expect(court({ name: 'Boucherie Martin' })).toBe('BMN');
+		expect(short({ name: 'Salon Émilie' })).toBe('SEM');
+		expect(short({ name: 'Boucherie Martin' })).toBe('BMN');
 	});
 
 	it('reste unique dans le foyer', () => {
 		const place = { brand: 'Carrefour', name: 'Carrefour', address: '01800 Meximieux' };
 
-		expect(court(place)).toBe('CMX');
-		expect(court(place, ['CMX'])).not.toBe('CMX');
+		expect(short(place)).toBe('CMX');
+		expect(short(place, ['CMX'])).not.toBe('CMX');
 	});
 });

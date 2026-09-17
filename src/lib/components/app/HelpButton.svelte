@@ -25,7 +25,7 @@
 	 * driver.js and its stylesheet only come down here, on demand. They weigh a hundred kilobytes or so for a
 	 * need that, for most people, comes up once.
 	 */
-	async function tutoriel() {
+	async function tour() {
 		hide();
 		const { startTour } = await import('$lib/tour');
 		startTour(page.url.pathname, () => settings.setTourSeen(true));
@@ -38,7 +38,7 @@
 	 * disappear. The panel, for its part, shrinks and lets the screen be seen again. Where you started from
 	 * is noted in passing, so it does not have to be described.
 	 */
-	function signaler(kind: 'bug' | 'suggestion') {
+	function openReport(kind: 'bug' | 'suggestion') {
 		hide();
 		report.show(kind, page.url.pathname);
 	}
@@ -49,15 +49,15 @@
 	 * banner keeps quiet for six months, but coming back of your own accord must stay possible the next day.
 	 */
 	const ACTIONS = $derived([
-		{ key: 'tutorial', icon: GraduationCap, action: tutoriel },
+		{ key: 'tutorial', icon: GraduationCap, action: tour },
 		...(install.canExplain
-			? [{ key: 'install', icon: Download, action: () => expliquerInstallation() }]
+			? [{ key: 'install', icon: Download, action: () => explainInstall() }]
 			: []),
-		{ key: 'suggestion', icon: Lightbulb, action: () => signaler('suggestion') },
-		{ key: 'bug', icon: Bug, action: () => signaler('bug') }
+		{ key: 'suggestion', icon: Lightbulb, action: () => openReport('suggestion') },
+		{ key: 'bug', icon: Bug, action: () => openReport('bug') }
 	]);
 
-	function expliquerInstallation() {
+	function explainInstall() {
 		hide();
 		install.showDetails();
 	}

@@ -4,7 +4,7 @@ import { dropIndex, edgeScrollStep, slotShifts, move } from '$domain/reorder';
 export { move };
 
 /** Below this, it is a trembling press, not an intention to move. */
-const SEUIL = 4;
+const THRESHOLD = 4;
 
 /**
  * Reordering by the handle, with a finger as with a mouse.
@@ -21,83 +21,83 @@ const SEUIL = 4;
  * readers, for which no pointer gesture exists.
  */
 export function createReorder(onCommit: (from: number, to: number) => void) {
-	let lignes: HTMLElement[] = [];
+	let rows: HTMLElement[] = [];
 	let tops: number[] = [];
-	let hauteurs: number[] = [];
-	let ecart = 0;
-	let depart = -1;
-	let origine = 0;
-	let engage = false;
-	let dernierY = 0;
+	let heights: number[] = [];
+	let gap = 0;
+	let origin = -1;
+	let originTop = 0;
+	let engaged = false;
+	let lastY = 0;
 	let image = 0;
 
-	let saisie = $state<number | null>(null);
-	let cible = $state<number | null>(null);
+	let grabbed = $state<number | null>(null);
+	let target = $state<number | null>(null);
 
-	function mesurer(poignee: HTMLElement) {
-		const zone = poignee.closest('[data-reorder-zone]');
+	function measure(handle: HTMLElement) {
+		const zone = handle.closest('[data-reorder-zone]');
 		if (!zone) return false;
 
-		lignes = [...zone.querySelectorAll<HTMLElement>(':scope > [data-reorder-row]')];
-		if (lignes.length < 2) return false;
+		rows = [...zone.querySelectorAll<HTMLElement>(':scope > [data-reorder-row]')];
+		if (rows.length < 2) return false;
 
 		// Page coordinates, not window ones: the page scrolls during the gesture, and window-relative positions
 		// would become wrong at the first pixel of scrolling.
-		const haut = window.scrollY;
-		const rects = lignes.map((ligne) => ligne.getBoundingClientRect());
-		tops = rects.map((r) => r.top + haut);
-		hauteurs = rects.map((r) => r.height);
-		ecart = rects.length > 1 ? Math.max(0, rects[1].top - rects[0].bottom) : 0;
+		const scrollTop = window.scrollY;
+		const rects = rows.map((row) => row.getBoundingClientRect());
+		tops = rects.map((r) => r.top + scrollTop);
+		heights = rects.map((r) => r.height);
+		gap = rects.length > 1 ? Math.max(0, rects[1].top - rects[0].bottom) : 0;
 		return true;
 	}
 
-	function peindre(dy: number) {
-		const centre = tops[depart] + hauteurs[depart] / 2 + dy;
-		const vers = dropIndex(centre, tops, hauteurs, depart);
-		cible = vers;
+	function paint(dy: number) {
+		const center = tops[origin] + heights[origin] / 2 + dy;
+		const to = dropIndex(center, tops, heights, origin);
+		target = to;
 
-		const decalages = slotShifts(tops, hauteurs, ecart, depart, vers);
-		lignes.forEach((ligne, i) => {
-			ligne.style.translate = `0 ${i === depart ? dy : decalages[i]}px`;
+		const shifts = slotShifts(tops, heights, gap, origin, to);
+		rows.forEach((row, i) => {
+			row.style.translate = `0 ${i === origin ? dy : shifts[i]}px`;
 		});
 	}
 
 	/** The page follows the finger when it reaches an edge — the step is computed in $domain/reorder. */
-	function defiler() {
-		if (!engage) return;
+	function autoScroll() {
+		if (!engaged) return;
 
-		const pas = edgeScrollStep(dernierY, window.innerHeight);
+		const pas = edgeScrollStep(lastY, window.innerHeight);
 		if (pas !== 0) {
 			window.scrollBy(0, pas);
-			peindre(dernierY + window.scrollY - origine);
+			paint(lastY + window.scrollY - originTop);
 		}
 
-		image = requestAnimationFrame(defiler);
+		image = requestAnimationFrame(autoScroll);
 	}
 
-	function nettoyer() {
+	function cleanup() {
 		cancelAnimationFrame(image);
 		image = 0;
 
-		for (const ligne of lignes) {
-			ligne.style.translate = '';
-			ligne.style.transition = '';
-			ligne.style.zIndex = '';
+		for (const row of rows) {
+			row.style.translate = '';
+			row.style.transition = '';
+			row.style.zIndex = '';
 		}
-		lignes = [];
+		rows = [];
 	}
 
-	async function terminer(valider: boolean) {
-		const de = depart;
-		const vers = cible;
+	async function finish(submit: boolean) {
+		const de = origin;
+		const to = target;
 
-		nettoyer();
-		depart = -1;
-		engage = false;
-		saisie = null;
-		cible = null;
+		cleanup();
+		origin = -1;
+		engaged = false;
+		grabbed = null;
+		target = null;
 
-		if (valider && vers !== null && vers !== de) onCommit(de, vers);
+		if (submit && to !== null && to !== de) onCommit(de, to);
 
 		// The next turn: the caller can bring the animations back once the new order is in place.
 		await tick();
@@ -105,7 +105,7 @@ export function createReorder(onCommit: (from: number, to: number) => void) {
 
 	return {
 		get index() {
-			return saisie;
+			return grabbed;
 		},
 		/**
 		 * True for the duration of a gesture.
@@ -114,7 +114,7 @@ export function createReorder(onCommit: (from: number, to: number) => void) {
 		 * screen, we put them there. Animating on top would make them jump back before setting off again.
 		 */
 		get busy() {
-			return saisie !== null;
+			return grabbed !== null;
 		},
 
 		handle(index: number) {
@@ -123,55 +123,55 @@ export function createReorder(onCommit: (from: number, to: number) => void) {
 				onpointerdown: (event: PointerEvent) => {
 					if (event.button !== 0 && event.pointerType === 'mouse') return;
 
-					const poignee = event.currentTarget as HTMLElement;
-					if (!mesurer(poignee)) return;
+					const handle = event.currentTarget as HTMLElement;
+					if (!measure(handle)) return;
 
 					event.preventDefault();
 					event.stopPropagation();
 
-					depart = index;
-					origine = event.clientY + window.scrollY;
-					dernierY = event.clientY;
-					engage = false;
+					origin = index;
+					originTop = event.clientY + window.scrollY;
+					lastY = event.clientY;
+					engaged = false;
 					// Safari has already refused capture on a pointer it no longer recognises: the gesture works without
 					// it, it only becomes sensitive to leaving the element.
 					try {
-						poignee.setPointerCapture(event.pointerId);
+						handle.setPointerCapture(event.pointerId);
 					} catch {
 						/* nothing to do */
 					}
 				},
 
 				onpointermove: (event: PointerEvent) => {
-					if (depart === -1) return;
+					if (origin === -1) return;
 
-					dernierY = event.clientY;
-					const dy = event.clientY + window.scrollY - origine;
-					if (!engage) {
-						if (Math.abs(dy) < SEUIL) return;
-						engage = true;
-						saisie = depart;
-						cible = depart;
-						lignes[depart].style.zIndex = '2';
-						lignes[depart].style.transition = 'none';
-						image = requestAnimationFrame(defiler);
+					lastY = event.clientY;
+					const dy = event.clientY + window.scrollY - originTop;
+					if (!engaged) {
+						if (Math.abs(dy) < THRESHOLD) return;
+						engaged = true;
+						grabbed = origin;
+						target = origin;
+						rows[origin].style.zIndex = '2';
+						rows[origin].style.transition = 'none';
+						image = requestAnimationFrame(autoScroll);
 					}
 
-					peindre(dy);
+					paint(dy);
 				},
 
 				onpointerup: () => {
-					if (depart === -1) return;
-					void terminer(engage);
+					if (origin === -1) return;
+					void finish(engaged);
 				},
 
 				onpointercancel: () => {
-					if (depart === -1) return;
-					void terminer(false);
+					if (origin === -1) return;
+					void finish(false);
 				},
 
 				onkeydown: (event: KeyboardEvent) => {
-					if (event.key === 'Escape' && depart !== -1) void terminer(false);
+					if (event.key === 'Escape' && origin !== -1) void finish(false);
 				}
 			};
 		}

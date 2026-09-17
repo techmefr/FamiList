@@ -8,22 +8,22 @@ import { test, expect } from './fixtures';
  * ambiguous on the next run.
  */
 test('dupliquer une liste depuis sa carte', async ({ signedInPage: page }) => {
-	const nom = `Courses e2e ${Date.now()}`;
+	const name = `Courses e2e ${Date.now()}`;
 
 	await page.goto('/');
 	await page.getByTestId('nav-create').click();
 	await page.getByTestId('create-list').click();
-	await page.getByTestId('list-name').fill(nom);
+	await page.getByTestId('list-name').fill(name);
 	await page.getByTestId('list-create').click();
 
-	const carte = page.locator('[data-test-class="list-card"]').filter({ hasText: nom });
-	await expect(carte).toBeVisible();
+	const card = page.locator('[data-test-class="list-card"]').filter({ hasText: name });
+	await expect(card).toBeVisible();
 
-	await carte.locator('[data-test-class="list-duplicate"]').click();
+	await card.locator('[data-test-class="list-duplicate"]').click();
 
-	const copie = page.locator('[data-test-class="list-card"]').filter({ hasText: `${nom} (2)` });
-	await expect(copie).toBeVisible();
+	const copied = page.locator('[data-test-class="list-card"]').filter({ hasText: `${name} (2)` });
+	await expect(copied).toBeVisible();
 
 	// The original stays: duplicating is not renaming.
-	await expect(carte).toHaveCount(2);
+	await expect(card).toHaveCount(2);
 });

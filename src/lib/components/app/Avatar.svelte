@@ -9,7 +9,7 @@
 	}: { member: Member; size?: number; ring?: boolean } = $props();
 
 	/** The photo fills the badge; with no photo, it is the initials on the member's colour. */
-	const fond = $derived(tintForWhiteText(member.tint));
+	const background = $derived(tintForWhiteText(member.tint));
 </script>
 
 <!--
@@ -23,7 +23,7 @@
 	class="grid shrink-0 place-items-center overflow-hidden rounded-full font-semibold text-white {ring
 		? 'border-card border-2'
 		: ''}"
-	style="width: {size}px; height: {size}px; background: {fond}; font-size: {Math.round(size * 0.4)}px"
+	style="width: {size}px; height: {size}px; background: {background}; font-size: {Math.round(size * 0.4)}px"
 	data-test-class="avatar"
 	aria-hidden="true"
 >

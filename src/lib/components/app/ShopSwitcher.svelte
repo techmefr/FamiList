@@ -10,7 +10,7 @@
 	let picker = $state<ShopPicker | null>(null);
 
 	const shop = $derived(data.activeShop);
-	const appris = $derived(data.layouts.find((l) => l.shopId === shop?.id)?.learned ?? false);
+	const learned = $derived(data.layouts.find((l) => l.shopId === shop?.id)?.learned ?? false);
 </script>
 
 <!--
@@ -54,7 +54,7 @@
 			<span class="sr-only">{t('list.shop')} : </span>{shop.name}
 		</span>
 
-		{#if appris}
+		{#if learned}
 			<Route size={14} class="text-secondary shrink-0" aria-hidden="true" />
 		{/if}
 		<ChevronDown size={18} class="text-muted-foreground shrink-0" aria-hidden="true" />
@@ -80,7 +80,7 @@
 		<span class="min-w-0 flex-1">
 			<span class="text-caption text-muted-foreground flex flex-wrap items-center gap-x-2">
 				{t('list.shop')}
-				{#if appris}
+				{#if learned}
 					<span class="text-secondary inline-flex items-center gap-1 font-semibold">
 						<Route size={12} aria-hidden="true" />
 						{t('list.learnedShop')}

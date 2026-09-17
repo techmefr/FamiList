@@ -19,9 +19,9 @@
 		event.preventDefault();
 		if (!body.trim()) return;
 
-		const envoi = data.sendDirectMessage(conversationId, body);
+		const sending = data.sendDirectMessage(conversationId, body);
 		body = '';
-		await envoi;
+		await sending;
 	}
 
 	const time = (at: number) =>

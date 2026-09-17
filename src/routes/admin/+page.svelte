@@ -85,10 +85,10 @@
 	 * elevated, or ceased to be, since the last time we looked at it — a second factor set on another
 	 * device leaves precisely this tab behind.
 	 */
-	function refuser(messages: (string | undefined)[]) {
-		const bruts = messages.filter((message): message is string => !!message);
-		elevationRequise = needsElevation(bruts);
-		errors = bruts.map((message) => {
+	function refuse(messages: (string | undefined)[]) {
+		const raws = messages.filter((message): message is string => !!message);
+		elevationRequise = needsElevation(raws);
+		errors = raws.map((message) => {
 			const key = adminErrorKey(message);
 			return key ? t(key) : message;
 		});
@@ -111,7 +111,7 @@
 		//
 		// The reads are independent and can each fail for their own reason: showing only one would suggest the
 		// others answered.
-		refuser([rpcError?.message, reportError?.message, crashError?.message]);
+		refuse([rpcError?.message, reportError?.message, crashError?.message]);
 		accounts = (data as PendingAccount[]) ?? [];
 		reports = (reportData as BugReport[]) ?? [];
 		crashes = (crashData as ClientError[]) ?? [];
@@ -123,7 +123,7 @@
 			target: fingerprint
 		});
 		if (rpcError) {
-			refuser([rpcError.message]);
+			refuse([rpcError.message]);
 			return;
 		}
 		await load();
@@ -132,7 +132,7 @@
 	async function resolveReport(id: string) {
 		const { error: rpcError } = await supabase.rpc('resolve_bug_report', { target: id });
 		if (rpcError) {
-			refuser([rpcError.message]);
+			refuse([rpcError.message]);
 			return;
 		}
 		await load();
@@ -151,7 +151,7 @@
 	async function publishReport(id: string) {
 		const { error: rpcError } = await supabase.rpc('request_bug_report_issue', { target: id });
 		if (rpcError) {
-			refuser([rpcError.message]);
+			refuse([rpcError.message]);
 			return;
 		}
 		await load();
@@ -160,7 +160,7 @@
 	async function review(id: string, decision: 'approved' | 'rejected') {
 		const { error: rpcError } = await supabase.rpc('review_account', { target: id, decision });
 		if (rpcError) {
-			refuser([rpcError.message]);
+			refuse([rpcError.message]);
 			return;
 		}
 		await load();
@@ -170,7 +170,7 @@
 		const { error: rpcError } = await supabase.rpc(admin ? 'promote_admin' : 'demote_admin', {
 			target: id
 		});
-		refuser([rpcError?.message]);
+		refuse([rpcError?.message]);
 		await load();
 	}
 
@@ -178,20 +178,20 @@
 	// action looking ineffective because the row itself barely changes.
 	async function resetMfa(id: string) {
 		const { error: rpcError } = await supabase.rpc('admin_reset_mfa', { target: id });
-		refuser([rpcError?.message]);
+		refuse([rpcError?.message]);
 		notice = rpcError ? null : t('admin.mfaReset');
 		await load();
 	}
 
 	async function setDemo(id: string, demo: boolean) {
 		const { error: rpcError } = await supabase.rpc('set_demo', { target: id, demo });
-		refuser([rpcError?.message]);
+		refuse([rpcError?.message]);
 		await load();
 	}
 
 	async function resetDemo() {
 		const { error: rpcError } = await supabase.rpc('reset_demo');
-		refuser([rpcError?.message]);
+		refuse([rpcError?.message]);
 		notice = rpcError ? null : t('admin.demoReset');
 
 		// The reset rebuilds the demonstration household: without a re-read, the screen keeps the accounts and
@@ -542,5 +542,5 @@
 		email sending — that last gesture is done once. Refusals surface in the same place as those of the rest
 		of the screen, elevation button included.
 	-->
-	<InstanceSettings onRefused={(message) => refuser([message])} />
+	<InstanceSettings onRefused={(message) => refuse([message])} />
 {/if}

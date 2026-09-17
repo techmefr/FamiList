@@ -31,28 +31,28 @@ export interface Place {
  * No geocoding: the address does not leave the device, there is no API key and no third-party service to
  * keep alive, and the application keeps working without network.
  */
-export function communeFromAddress(address: string | null | undefined): string {
-	const texte = (address ?? '').trim();
-	if (!texte) return '';
+export function townFromAddress(address: string | null | undefined): string {
+	const text = (address ?? '').trim();
+	if (!text) return '';
 
-	const parCodePostal = texte.match(/\b\d{5}\b\s*([^,;\n]+)/);
+	const parCodePostal = text.match(/\b\d{5}\b\s*([^,;\n]+)/);
 	if (parCodePostal?.[1]?.trim()) return parCodePostal[1].trim();
 
-	const morceaux = texte
+	const parts = text
 		.split(/[,;\n]/)
-		.map((morceau) => morceau.trim())
+		.map((part) => part.trim())
 		.filter(Boolean);
 
 	// A single part is the street or the place name, not a town: we do not invent it.
-	if (morceaux.length < 2) return '';
+	if (parts.length < 2) return '';
 
-	const dernier = morceaux.at(-1) ?? '';
+	const last = parts.at(-1) ?? '';
 	// A country at the end of an address is not a town. The list stays short deliberately: it covers what
 	// people really write, not the whole world.
-	const PAYS = new Set(['france', 'belgique', 'suisse', 'luxembourg', 'canada', 'madagascar']);
+	const COUNTRIES = new Set(['france', 'belgique', 'suisse', 'luxembourg', 'canada', 'madagascar']);
 
-	if (PAYS.has(slugify(dernier))) return morceaux.at(-2) ?? '';
-	return dernier;
+	if (COUNTRIES.has(slugify(last))) return parts.at(-2) ?? '';
+	return last;
 }
 
 /**
@@ -68,9 +68,9 @@ export function communeFromAddress(address: string | null | undefined): string {
  * three characters.
  */
 export function trigramSource({ brand, name, address }: Place): string {
-	const enseigne = (brand ?? '').trim();
-	const commune = communeFromAddress(address);
-	const tete = enseigne || name.trim();
+	const brandName = (brand ?? '').trim();
+	const town = townFromAddress(address);
+	const head = brandName || name.trim();
 
-	return [tete, commune].filter(Boolean).join(' ').trim();
+	return [head, town].filter(Boolean).join(' ').trim();
 }

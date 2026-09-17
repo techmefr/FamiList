@@ -32,7 +32,7 @@
 	let note = $state('');
 
 	/** The item being edited, or nothing at all when adding one. */
-	let edite = $state<Item | null>(null);
+	let editing = $state<Item | null>(null);
 
 	/**
 	 * Same contract as the other sheets: `showModal()` and nothing else, never a boolean alongside. Escape
@@ -47,7 +47,7 @@
 	 * focus from somebody who has already tabbed elsewhere.
 	 */
 	export async function show(item?: Item) {
-		edite = item ?? null;
+		editing = item ?? null;
 
 		if (item) {
 			name = item.name;
@@ -67,8 +67,8 @@
 		field?.focus();
 
 		setTimeout(() => {
-			const perdu = document.activeElement === document.body || document.activeElement === dialog;
-			if (dialog?.open && perdu) field?.focus();
+			const lost = document.activeElement === document.body || document.activeElement === dialog;
+			if (dialog?.open && lost) field?.focus();
 		}, 80);
 	}
 
@@ -103,15 +103,15 @@
 		event.preventDefault();
 		if (!name.trim()) return;
 
-		if (edite) {
+		if (editing) {
 			feedback.play('success');
-			data.updateItem(edite.id, { name, qty, unit, aisleId: effectiveAisle, note });
+			data.updateItem(editing.id, { name, qty, unit, aisleId: effectiveAisle, note });
 		} else {
 			feedback.play('add');
 			data.addItem(listId, { name, qty, unit, aisleId: effectiveAisle, note });
 		}
 
-		edite = null;
+		editing = null;
 		reset();
 		hide();
 	}
@@ -139,7 +139,7 @@
 		class:fl-rise={settings.animates}
 	>
 		<h2 id="add-title" class="text-h2 pe-12 font-semibold">
-			{edite ? t('add.editTitle') : t('create.item')}
+			{editing ? t('add.editTitle') : t('create.item')}
 		</h2>
 
 		<form onsubmit={submit} class="mt-4 space-y-5">
@@ -269,7 +269,7 @@
 					{t('common.cancel')}
 				</Button>
 				<Button type="submit" data-test-id="add-submit" class="fl-press">
-					{#if edite}
+					{#if editing}
 						<Check size={18} aria-hidden="true" />
 						{t('add.saveEdit')}
 					{:else}

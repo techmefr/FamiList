@@ -16,33 +16,33 @@
 	}: { onScanned: (result: ScanResult) => void; mode?: 'image' | 'photo' } = $props();
 
 	const photo = $derived(mode === 'photo');
-	const libelle = $derived(photo ? t('scan.takePhoto') : t('scan.fromImage'));
+	const label = $derived(photo ? t('scan.takePhoto') : t('scan.fromImage'));
 
 	let input = $state<HTMLInputElement | null>(null);
-	let occupe = $state(false);
-	let erreur = $state('');
+	let busy = $state(false);
+	let error = $state('');
 
-	async function lire(event: Event) {
-		const fichier = (event.currentTarget as HTMLInputElement).files?.[0];
-		if (!fichier) return;
+	async function read(event: Event) {
+		const file = (event.currentTarget as HTMLInputElement).files?.[0];
+		if (!file) return;
 
-		erreur = '';
-		occupe = true;
+		error = '';
+		busy = true;
 
 		try {
-			const resultat = await scanImage(fichier);
-			if (resultat) {
+			const result = await scanImage(file);
+			if (result) {
 				feedback.play('success');
-				onScanned(resultat);
+				onScanned(result);
 			} else {
 				feedback.play('error');
-				erreur = t('scan.noCodeInImage');
+				error = t('scan.noCodeInImage');
 			}
 		} catch {
 			feedback.play('error');
-			erreur = t('scan.imageFailed');
+			error = t('scan.imageFailed');
 		} finally {
-			occupe = false;
+			busy = false;
 			if (input) input.value = '';
 		}
 	}
@@ -61,18 +61,18 @@
 <Button
 	variant="outline"
 	onclick={() => input?.click()}
-	disabled={occupe}
+	disabled={busy}
 	data-test-id={photo ? 'capture-photo' : 'import-code'}
 	class="fl-press"
 >
-	{#if occupe}
+	{#if busy}
 		<LoaderCircle size={18} class="animate-spin" aria-hidden="true" />
 	{:else if photo}
 		<Camera size={18} aria-hidden="true" />
 	{:else}
 		<ImageUp size={18} aria-hidden="true" />
 	{/if}
-	{libelle}
+	{label}
 </Button>
 
 <input
@@ -80,15 +80,15 @@
 	type="file"
 	accept="image/*"
 	capture={photo ? 'environment' : undefined}
-	onchange={lire}
-	aria-label={libelle}
+	onchange={read}
+	aria-label={label}
 	data-test-id={photo ? 'capture-photo-input' : 'import-code-input'}
 	class="sr-only"
 />
 
 <!-- Full width: the message takes its own line instead of stretching a single button of the row. -->
-{#if erreur}
+{#if error}
 	<p class="text-destructive text-caption w-full" role="alert" data-test-id="import-code-error">
-		{erreur}
+		{error}
 	</p>
 {/if}

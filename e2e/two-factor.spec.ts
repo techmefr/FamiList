@@ -30,16 +30,16 @@ function codeTotp(secret: string, atMs = Date.now()): string {
  * hand, only changes after the list of factors is re-read: it is the only signal that answers for the
  * account, and it is the one we wait for.
  */
-async function retirerDeuxiemeEtape(page: Page) {
+async function removeSecondStep(page: Page) {
 	await page.goto('/profile/security');
 
-	const etat = page.getByTestId('totp-state');
-	await expect(etat).toBeVisible({ timeout: 15_000 });
+	const status = page.getByTestId('totp-state');
+	await expect(status).toBeVisible({ timeout: 15_000 });
 
-	if ((await etat.getAttribute('data-test-state')) === 'off') return;
+	if ((await status.getAttribute('data-test-state')) === 'off') return;
 
 	await page.getByTestId('totp-switch').click();
-	await expect(etat).toHaveAttribute('data-test-state', 'off', { timeout: 15_000 });
+	await expect(status).toHaveAttribute('data-test-state', 'off', { timeout: 15_000 });
 }
 
 /**
@@ -60,31 +60,31 @@ test.afterEach(async ({ page }) => {
 
 	// The email field rather than the "sign in" choice to recognise the form: the latter is a box reserved
 	// for screen readers, one pixel across, whose visibility does not mean much.
-	const courriel = page.getByTestId('auth-email');
-	const demandeCode = page.getByTestId('mfa-form');
-	const ouverte = page.getByTestId('nav-create');
+	const email = page.getByTestId('auth-email');
+	const codeForm = page.getByTestId('mfa-form');
+	const visible = page.getByTestId('nav-create');
 
 	await page.goto('/auth');
 
 	// Three possible states on arrival, and we wait for one of them to appear rather than guess which: the
 	// form, the code prompt, or the application already open.
-	await expect(courriel.or(demandeCode).or(ouverte).first()).toBeVisible({ timeout: 15_000 });
+	await expect(email.or(codeForm).or(visible).first()).toBeVisible({ timeout: 15_000 });
 
-	if (await courriel.isVisible()) {
+	if (await email.isVisible()) {
 		await page.getByTestId('mode-signin').check();
-		await courriel.fill(FIXTURE_EMAIL);
+		await email.fill(FIXTURE_EMAIL);
 		await page.getByTestId('auth-password').fill(FIXTURE_PASSWORD);
 		await page.getByTestId('auth-submit').click();
-		await expect(demandeCode.or(ouverte).first()).toBeVisible({ timeout: 15_000 });
+		await expect(codeForm.or(visible).first()).toBeVisible({ timeout: 15_000 });
 	}
 
-	if (await demandeCode.isVisible()) {
+	if (await codeForm.isVisible()) {
 		await page.getByTestId('mfa-code').fill(codeTotp(secret));
 		await page.getByTestId('mfa-submit').click();
 	}
 
-	await expect(ouverte).toBeVisible({ timeout: 15_000 });
-	await retirerDeuxiemeEtape(page);
+	await expect(visible).toBeVisible({ timeout: 15_000 });
+	await removeSecondStep(page);
 });
 
 test('activer la 2FA, se reconnecter avec un code, puis la retirer', async ({
@@ -109,8 +109,8 @@ test('activer la 2FA, se reconnecter avec un code, puis la retirer', async ({
 	// Enabling the second step with no backup codes would amount to putting up a lock and throwing away the
 	// spare key: they must arrive straight away, without being asked for.
 	await expect(page.getByTestId('backup-codes')).toBeVisible({ timeout: 15_000 });
-	const secours = await page.locator('[data-test-id="backup-codes"] li').allInnerTexts();
-	expect(secours.length).toBeGreaterThan(0);
+	const backup = await page.locator('[data-test-id="backup-codes"] li').allInnerTexts();
+	expect(backup.length).toBeGreaterThan(0);
 
 	// The switch takes the lead from the gesture during enrolment: we read it again after a reload, so that
 	// it answers for the account's state and not for that lead.
@@ -138,6 +138,6 @@ test('activer la 2FA, se reconnecter avec un code, puis la retirer', async ({
 
 	// Putting things back: the fixed account is shared by the whole suite, and leaving it in 2FA would stop
 	// every other test at sign-in.
-	await retirerDeuxiemeEtape(page);
+	await removeSecondStep(page);
 	secretEnCours = null;
 });

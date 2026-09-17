@@ -32,15 +32,15 @@
 	 * a stable key and not by label, otherwise the emoji can no longer be found as soon as the current
 	 * language is not French.
 	 */
-	const APPORT_PRESET = [
+	const CONTRIBUTION_PRESET = [
 		{ key: 'aperitif', emoji: '🍾' },
 		{ key: 'starter', emoji: '🍞' },
 		{ key: 'main', emoji: '🥘' },
 		{ key: 'dessert', emoji: '🍰' }
 	];
 
-	const apportEmojis = () =>
-		new Map(APPORT_PRESET.map((p) => [t(`chat.apportPreset.${p.key}`), p.emoji]));
+	const contributionEmojis = () =>
+		new Map(CONTRIBUTION_PRESET.map((p) => [t(`chat.apportPreset.${p.key}`), p.emoji]));
 
 	function send(event: SubmitEvent) {
 		event.preventDefault();
@@ -56,7 +56,7 @@
 		question = kind === 'date' ? t('chat.dateQuestion') : t('chat.apportQuestion');
 		choices =
 			kind === 'apport'
-				? APPORT_PRESET.map((p) => t(`chat.apportPreset.${p.key}`)).join('\n')
+				? CONTRIBUTION_PRESET.map((p) => t(`chat.apportPreset.${p.key}`)).join('\n')
 				: '';
 	}
 
@@ -64,7 +64,7 @@
 		event.preventDefault();
 		if (!composing) return;
 
-		const emojis = apportEmojis();
+		const emojis = contributionEmojis();
 		const labels = choices
 			.split('\n')
 			.map((line) => line.trim())

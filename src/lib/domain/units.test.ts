@@ -53,15 +53,15 @@ describe('unitKey', () => {
 
 describe('UNIT_GROUPS', () => {
 	it('range chaque unité dans une famille et une seule', () => {
-		const rangees = UNIT_GROUPS.flatMap((groupe) => groupe.units as readonly string[]);
+		const rows = UNIT_GROUPS.flatMap((group) => group.units as readonly string[]);
 
-		expect([...rangees].sort()).toEqual([...UNITS].sort());
-		expect(new Set(rangees).size).toBe(rangees.length);
+		expect([...rows].sort()).toEqual([...UNITS].sort());
+		expect(new Set(rows).size).toBe(rows.length);
 	});
 
 	// Ten pack sizes is already a lot to read at once; beyond that, the family splits.
 	it('ne propose jamais plus de dix choix à la fois', () => {
-		for (const groupe of UNIT_GROUPS) expect(groupe.units.length).toBeLessThanOrEqual(10);
+		for (const group of UNIT_GROUPS) expect(group.units.length).toBeLessThanOrEqual(10);
 	});
 });
 
@@ -93,6 +93,6 @@ describe('unitsOf', () => {
 	});
 
 	it('rend toujours une rangée non vide', () => {
-		for (const groupe of UNIT_GROUPS) expect(unitsOf(groupe.id).length).toBeGreaterThan(0);
+		for (const group of UNIT_GROUPS) expect(unitsOf(group.id).length).toBeGreaterThan(0);
 	});
 });

@@ -31,7 +31,7 @@
 	 * The long press opens the sheet. It is the expected gesture on a phone, but it does not exist for the
 	 * keyboard or the screen reader: the pencil button does the same thing and stays the announced path.
 	 */
-	function editer() {
+	function edit() {
 		feedback.play('tap');
 		onEdit();
 	}
@@ -113,7 +113,7 @@
 	-->
 	<label
 		for={inputId}
-		use:longpress={editer}
+		use:longpress={edit}
 		class="flex min-h-[max(2.75rem,44px)] min-w-0 flex-1 basis-[12rem] cursor-pointer items-center gap-3 py-1"
 	>
 		<input
@@ -163,7 +163,7 @@
 		</button>
 		<button
 			type="button"
-			onclick={editer}
+			onclick={edit}
 			aria-label={t('list.edit', { name: item.name })}
 			data-test-class="item-edit"
 			class="fl-press text-muted-foreground grid size-11 min-w-[44px] place-items-center"

@@ -160,12 +160,12 @@ describe('pricedProducts', () => {
 			entry({ shopId: 'shop-b', amount: 0.95 })
 		];
 
-		const produits = pricedProducts(entries);
+		const products = pricedProducts(entries);
 
-		expect(produits.map((p) => p.slug)).toEqual(['lait-demi-ecreme', 'pain']);
-		expect(produits[1].name).toBe('Pain de campagne');
-		expect(produits[0].shopCount).toBe(2);
-		expect(produits[0].best.amount).toBe(0.95);
+		expect(products.map((p) => p.slug)).toEqual(['lait-demi-ecreme', 'pain']);
+		expect(products[1].name).toBe('Pain de campagne');
+		expect(products[0].shopCount).toBe(2);
+		expect(products[0].best.amount).toBe(0.95);
 	});
 
 	it('rend une liste vide sans aucun relevé', () => {

@@ -35,24 +35,24 @@ describe('scoreEntry', () => {
 
 	it('note une correspondance exacte au-dessus d’un simple début', () => {
 		const exact = scoreEntry('cafe', [{ value: 'Café', weight: 1 }]);
-		const debut = scoreEntry('cafe', [{ value: 'Cafetière', weight: 1 }]);
+		const start = scoreEntry('cafe', [{ value: 'Cafetière', weight: 1 }]);
 
-		expect(exact).toBeGreaterThan(debut);
+		expect(exact).toBeGreaterThan(start);
 	});
 
 	it('note un début de mot au-dessus d’un fragment au milieu', () => {
-		const mot = scoreEntry('lait', [{ value: 'Chocolat lait', weight: 1 }]);
-		const milieu = scoreEntry('lait', [{ value: 'Allaitement', weight: 1 }]);
+		const word = scoreEntry('lait', [{ value: 'Chocolat lait', weight: 1 }]);
+		const middle = scoreEntry('lait', [{ value: 'Allaitement', weight: 1 }]);
 
-		expect(mot).toBeGreaterThan(milieu);
-		expect(milieu).toBeGreaterThan(0);
+		expect(word).toBeGreaterThan(middle);
+		expect(middle).toBeGreaterThan(0);
 	});
 
 	it('abaisse la note d’un champ secondaire', () => {
-		const nom = scoreEntry('lait', [{ value: 'Lait', weight: 1 }]);
+		const name = scoreEntry('lait', [{ value: 'Lait', weight: 1 }]);
 		const note = scoreEntry('lait', [{ value: 'Lait', weight: 0.5 }]);
 
-		expect(note).toBeLessThan(nom);
+		expect(note).toBeLessThan(name);
 	});
 
 	it('exige que chaque mot tapé se retrouve', () => {
@@ -108,8 +108,8 @@ describe('searchAll', () => {
 		const groups = searchAll('lait', source);
 		expect(groups.map((group) => group.kind)).toEqual(['item']);
 
-		const mixte = searchAll('carrefour', source);
-		expect(mixte.map((group) => group.kind)).toEqual(['shop', 'card']);
+		const mixed = searchAll('carrefour', source);
+		expect(mixed.map((group) => group.kind)).toEqual(['shop', 'card']);
 	});
 
 	it('ne rend aucune famille vide', () => {
@@ -150,7 +150,7 @@ describe('searchAll', () => {
 	});
 
 	it('borne le nombre de résultats par famille', () => {
-		const beaucoup: SearchSource = {
+		const many: SearchSource = {
 			lists: [],
 			items: Array.from({ length: HITS_PER_KIND + 5 }, (_, index) => ({
 				id: `x${index}`,
@@ -162,7 +162,7 @@ describe('searchAll', () => {
 			cards: []
 		};
 
-		expect(flattenHits(searchAll('lait', beaucoup))).toHaveLength(HITS_PER_KIND);
+		expect(flattenHits(searchAll('lait', many))).toHaveLength(HITS_PER_KIND);
 	});
 
 	it('ne rend rien sur un mot absent', () => {

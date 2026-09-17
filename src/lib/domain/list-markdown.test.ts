@@ -23,7 +23,7 @@ describe('listToMarkdown', () => {
 	});
 
 	it('écrit la quantité et son unité après le nom', () => {
-		const texte = listToMarkdown(
+		const text = listToMarkdown(
 			list({
 				aisles: [
 					{ name: 'Fruits', emoji: '🥕', items: [item({ qty: '1', unit: 'kg' })] }
@@ -31,36 +31,36 @@ describe('listToMarkdown', () => {
 			})
 		);
 
-		expect(texte).toContain('- [ ] Pommes — 1 kg');
+		expect(text).toContain('- [ ] Pommes — 1 kg');
 	});
 
 	it('tait une unité sans quantité, qui ne veut rien dire seule', () => {
-		const texte = listToMarkdown(
+		const text = listToMarkdown(
 			list({ aisles: [{ name: 'Fruits', emoji: '🥕', items: [item({ unit: 'kg' })] }] })
 		);
 
-		expect(texte).toContain('- [ ] Pommes');
-		expect(texte).not.toContain('kg');
+		expect(text).toContain('- [ ] Pommes');
+		expect(text).not.toContain('kg');
 	});
 
 	it('donne la quantité sans unité quand il n’y en a pas', () => {
-		const texte = listToMarkdown(
+		const text = listToMarkdown(
 			list({ aisles: [{ name: 'Fruits', emoji: '🥕', items: [item({ qty: '3' })] }] })
 		);
 
-		expect(texte).toContain('- [ ] Pommes — 3');
+		expect(text).toContain('- [ ] Pommes — 3');
 	});
 
 	it('garde un article déjà pris, coché et barré', () => {
-		const texte = listToMarkdown(
+		const text = listToMarkdown(
 			list({ aisles: [{ name: 'Fruits', emoji: '🥕', items: [item({ checked: true })] }] })
 		);
 
-		expect(texte).toContain('- [x] ~~Pommes~~');
+		expect(text).toContain('- [x] ~~Pommes~~');
 	});
 
 	it('ne barre ni n’étoile deux fois un article pris et urgent', () => {
-		const texte = listToMarkdown(
+		const text = listToMarkdown(
 			list({
 				aisles: [
 					{ name: 'Fruits', emoji: '🥕', items: [item({ checked: true, priority: true })] }
@@ -68,20 +68,20 @@ describe('listToMarkdown', () => {
 			})
 		);
 
-		expect(texte).toContain('- [x] ~~Pommes~~');
-		expect(texte).not.toContain('⭐');
+		expect(text).toContain('- [x] ~~Pommes~~');
+		expect(text).not.toContain('⭐');
 	});
 
 	it('marque l’urgence d’une étoile', () => {
-		const texte = listToMarkdown(
+		const text = listToMarkdown(
 			list({ aisles: [{ name: 'Fruits', emoji: '🥕', items: [item({ priority: true })] }] })
 		);
 
-		expect(texte).toContain('- [ ] ⭐ Pommes');
+		expect(text).toContain('- [ ] ⭐ Pommes');
 	});
 
 	it('met la note en italique, après la quantité', () => {
-		const texte = listToMarkdown(
+		const text = listToMarkdown(
 			list({
 				aisles: [
 					{
@@ -93,19 +93,19 @@ describe('listToMarkdown', () => {
 			})
 		);
 
-		expect(texte).toContain('- [ ] Pommes — 1 kg _(bio si possible)_');
+		expect(text).toContain('- [ ] Pommes — 1 kg _(bio si possible)_');
 	});
 
 	it('ignore une note vide', () => {
-		const texte = listToMarkdown(
+		const text = listToMarkdown(
 			list({ aisles: [{ name: 'Fruits', emoji: '🥕', items: [item({ note: '  ' })] }] })
 		);
 
-		expect(texte).toBe('# 🛒 Courses\n\n## 🥕 Fruits\n- [ ] Pommes');
+		expect(text).toBe('# 🛒 Courses\n\n## 🥕 Fruits\n- [ ] Pommes');
 	});
 
 	it('omet les rayons vides plutôt que de laisser un intitulé orphelin', () => {
-		const texte = listToMarkdown(
+		const text = listToMarkdown(
 			list({
 				aisles: [
 					{ name: 'Fruits', emoji: '🥕', items: [] },
@@ -114,7 +114,7 @@ describe('listToMarkdown', () => {
 			})
 		);
 
-		expect(texte).toBe('# 🛒 Courses\n\n## 🥫 Épicerie\n- [ ] Riz');
+		expect(text).toBe('# 🛒 Courses\n\n## 🥫 Épicerie\n- [ ] Riz');
 	});
 
 	it('rend une liste vide à son seul titre', () => {
@@ -122,7 +122,7 @@ describe('listToMarkdown', () => {
 	});
 
 	it('sépare les rayons d’une ligne vide et garde leur ordre', () => {
-		const texte = listToMarkdown(
+		const text = listToMarkdown(
 			list({
 				aisles: [
 					{ name: 'Fruits', emoji: '🥕', items: [item()] },
@@ -131,16 +131,16 @@ describe('listToMarkdown', () => {
 			})
 		);
 
-		expect(texte).toBe(
+		expect(text).toBe(
 			'# 🛒 Courses\n\n## 🥕 Fruits\n- [ ] Pommes\n\n## 🥫 Épicerie\n- [ ] Riz'
 		);
 	});
 
 	it('ne laisse pas d’espace pendant quand un emoji manque', () => {
-		const texte = listToMarkdown(
+		const text = listToMarkdown(
 			list({ emoji: '', aisles: [{ name: 'Fruits', emoji: '', items: [item()] }] })
 		);
 
-		expect(texte).toBe('# Courses\n\n## Fruits\n- [ ] Pommes');
+		expect(text).toBe('# Courses\n\n## Fruits\n- [ ] Pommes');
 	});
 });

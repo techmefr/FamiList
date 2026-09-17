@@ -372,9 +372,9 @@
 		"servingsHint": "The number of people the quantities are written for.",
 		"stepper": "Form steps",
 		"step": {
-			"recette": "The recipe",
+			"recipe": "The recipe",
 			"ingredients": "Ingredients",
-			"etapes": "Method"
+			"steps": "Method"
 		},
 		"ingredientsHint": "One ingredient per row. Empty rows are ignored.",
 		"ingredientName": "Ingredient {rank}",

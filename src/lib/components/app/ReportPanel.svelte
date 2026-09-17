@@ -6,7 +6,7 @@
 	import ReportForm from '$components/app/ReportForm.svelte';
 	import { ChevronDown, ChevronUp, X } from '@lucide/svelte';
 
-	const titre = $derived(t(`bugReport.title.${report.kind}`));
+	const title = $derived(t(`bugReport.title.${report.kind}`));
 
 	/**
 	 * Escape shrinks, it does not close.
@@ -15,7 +15,7 @@
 	 * see my screen again", not "throw away what I have just written". Closing stays possible, through a
 	 * button nobody presses by reflex.
 	 */
-	function auClavier(event: KeyboardEvent) {
+	function onKeyDown(event: KeyboardEvent) {
 		if (event.key === 'Escape' && report.open && !report.minimized) {
 			event.preventDefault();
 			report.minimize();
@@ -23,7 +23,7 @@
 	}
 </script>
 
-<svelte:window onkeydown={auClavier} />
+<svelte:window onkeydown={onKeyDown} />
 
 {#if report.open}
 	<!--
@@ -48,7 +48,7 @@
 	>
 		<div class="flex items-center gap-2 px-4 py-3">
 			<h2 id="report-title" class="text-h2 min-w-0 flex-1 truncate font-semibold">
-				{titre}
+				{title}
 			</h2>
 
 			{#if report.minimized}

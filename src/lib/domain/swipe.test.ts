@@ -39,9 +39,9 @@ describe('swipeOffset', () => {
 	});
 
 	it('résiste au-delà du seuil', () => {
-		const course = swipeOffset(SWIPE_THRESHOLD + 100);
-		expect(course).toBeGreaterThan(SWIPE_THRESHOLD);
-		expect(course).toBeLessThan(SWIPE_THRESHOLD + 100);
+		const offset = swipeOffset(SWIPE_THRESHOLD + 100);
+		expect(offset).toBeGreaterThan(SWIPE_THRESHOLD);
+		expect(offset).toBeLessThan(SWIPE_THRESHOLD + 100);
 	});
 
 	it('s’arrête au maximum, dans les deux sens', () => {
@@ -72,11 +72,11 @@ describe('swipeSide', () => {
 
 	// Deleting has to be earned: the same gesture, further.
 	it('respecte un seuil propre à chaque côté', () => {
-		const limites = { startAt: SWIPE_THRESHOLD, endAt: SWIPE_DESTRUCTIVE };
+		const bounds = { startAt: SWIPE_THRESHOLD, endAt: SWIPE_DESTRUCTIVE };
 
-		expect(swipeSide(SWIPE_THRESHOLD, limites)).toBe('start');
-		expect(swipeSide(-SWIPE_THRESHOLD, limites)).toBeNull();
-		expect(swipeSide(-SWIPE_DESTRUCTIVE, limites)).toBe('end');
+		expect(swipeSide(SWIPE_THRESHOLD, bounds)).toBe('start');
+		expect(swipeSide(-SWIPE_THRESHOLD, bounds)).toBeNull();
+		expect(swipeSide(-SWIPE_DESTRUCTIVE, bounds)).toBe('end');
 	});
 
 	it('inverse les deux sens quand la ligne se lit de droite à gauche', () => {

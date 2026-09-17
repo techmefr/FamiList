@@ -28,10 +28,10 @@ describe('buildIssue', () => {
 	// leaves.
 	it('ne publie que le numero, jamais le contenu du signalement', () => {
 		const issue = buildIssue({ id: 'e1f2-3456', number: 42, kind: 'bug' });
-		const publie = `${issue.title}\n${issue.body}`;
+		const published = `${issue.title}\n${issue.body}`;
 
 		for (const secret of ['e1f2-3456', 'Camille', 'data:image/jpeg', '/lists/8f']) {
-			expect(publie).not.toContain(secret);
+			expect(published).not.toContain(secret);
 		}
 	});
 });

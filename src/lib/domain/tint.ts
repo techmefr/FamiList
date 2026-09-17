@@ -33,20 +33,20 @@ export const DEFAULT_MEMBER_TINT = '#A94008';
 /** Bottom of a loyalty card's gradient, shared by every tint. */
 export const CARD_GRADIENT_END = '#2E2518';
 
-const CIBLE = 4.5;
-const PALIER = 0.04;
+const TARGET = 4.5;
+const STEP = 0.04;
 
-const canal = (v: number) => {
+const channel = (v: number) => {
 	const s = v / 255;
 	return s <= 0.03928 ? s / 12.92 : Math.pow((s + 0.055) / 1.055, 2.4);
 };
 
 /** WCAG relative luminance. */
 export const luminance = ({ r, g, b }: Rgb) =>
-	0.2126 * canal(r) + 0.7152 * canal(g) + 0.0722 * canal(b);
+	0.2126 * channel(r) + 0.7152 * channel(g) + 0.0722 * channel(b);
 
 /** WCAG contrast between pure white and a colour. */
-export const contrastWithWhite = (couleur: Rgb) => 1.05 / (luminance(couleur) + 0.05);
+export const contrastWithWhite = (color: Rgb) => 1.05 / (luminance(color) + 0.05);
 
 export interface Rgb {
 	r: number;
@@ -59,23 +59,23 @@ export interface Rgb {
  * the database must not be guessed, the caller will let it through as it is.
  */
 export function parseHex(value: string | null | undefined): Rgb | null {
-	const brut = (value ?? '').trim();
-	const court = /^#([0-9a-f])([0-9a-f])([0-9a-f])$/i.exec(brut);
-	if (court) {
-		const [, r, g, b] = court;
+	const raw = (value ?? '').trim();
+	const short = /^#([0-9a-f])([0-9a-f])([0-9a-f])$/i.exec(raw);
+	if (short) {
+		const [, r, g, b] = short;
 		return { r: parseInt(r + r, 16), g: parseInt(g + g, 16), b: parseInt(b + b, 16) };
 	}
-	const long = /^#([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})$/i.exec(brut);
+	const long = /^#([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})$/i.exec(raw);
 	if (!long) return null;
 	return { r: parseInt(long[1], 16), g: parseInt(long[2], 16), b: parseInt(long[3], 16) };
 }
 
-const octet = (v: number) =>
+const byte = (v: number) =>
 	Math.round(Math.max(0, Math.min(255, v)))
 		.toString(16)
 		.padStart(2, '0');
 
-const toHex = ({ r, g, b }: Rgb) => '#' + octet(r) + octet(g) + octet(b);
+const toHex = ({ r, g, b }: Rgb) => '#' + byte(r) + byte(g) + byte(b);
 
 /**
  * A tint dark enough to carry white text at 4.5:1. A tint already dark enough comes out unchanged, and so
@@ -85,15 +85,15 @@ export function tintForWhiteText(value: string | null | undefined): string {
 	const rgb = parseHex(value);
 	if (!rgb) return (value ?? '').trim();
 
-	let couleur = rgb;
+	let color = rgb;
 	// 40 steps of 4% are far more than enough to reach black, the loop is bounded for safety.
-	for (let i = 0; i < 40 && contrastWithWhite(couleur) < CIBLE; i++) {
-		couleur = {
-			r: couleur.r * (1 - PALIER),
-			g: couleur.g * (1 - PALIER),
-			b: couleur.b * (1 - PALIER)
+	for (let i = 0; i < 40 && contrastWithWhite(color) < TARGET; i++) {
+		color = {
+			r: color.r * (1 - STEP),
+			g: color.g * (1 - STEP),
+			b: color.b * (1 - STEP)
 		};
 	}
 
-	return toHex(couleur);
+	return toHex(color);
 }
