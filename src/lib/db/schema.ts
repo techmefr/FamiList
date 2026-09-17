@@ -4,6 +4,8 @@ import type { PriceEntry } from '$domain/price';
 
 export interface Shop {
 	id: string;
+	/** Le cercle auquel le magasin appartient. Le cache en porte plusieurs, l'écran n'en montre qu'un. */
+	householdId: string;
 	name: string;
 	short: string;
 	tint: string;
@@ -39,6 +41,7 @@ export interface Shop {
 
 export interface Aisle {
 	id: string;
+	householdId: string;
 	name: string;
 	emoji: string;
 	/**
@@ -85,6 +88,7 @@ export interface Item {
 
 export interface LoyaltyCard {
 	id: string;
+	householdId: string;
 	/** Rattachement à un magasin précis. Vide quand la carte vaut pour toute une enseigne. */
 	shopId: string;
 	/** Rattachement à une enseigne : une carte Carrefour marche dans tous les Carrefour. */
@@ -100,7 +104,14 @@ export interface LoyaltyCard {
 }
 
 export interface Member {
+	/**
+	 * Le couple (cercle, personne). Un compte membre de deux cercles a deux rattachements, avec un
+	 * rôle et une couleur propres à chacun : `id` seul ne peut donc pas être la clé.
+	 */
+	key: string;
+	/** Le compte. Le même dans tous les cercles où la personne figure. */
 	id: string;
+	householdId: string;
 	/**
 	 * Le nom affiché, celui que voit le foyer. Libre : « Mamie » et « Lulu » sont des réponses
 	 * valables, et c'est pour ça qu'il ne suffit pas à porter l'identité à lui seul.
@@ -148,6 +159,7 @@ export interface ShopItemOrder {
  * remplir la colonne correspondante en base.
  */
 export interface Price extends PriceEntry {
+	householdId: string;
 	recordedBy: string;
 }
 
@@ -197,6 +209,7 @@ export const pollVoteKey = (optionId: string, userId: string) => `${optionId}::$
  */
 export interface Recipe {
 	id: string;
+	householdId: string;
 	name: string;
 	emoji: string;
 	servings: number;
@@ -242,6 +255,8 @@ export interface OutboxEntry {
 
 export const itemOrderKey = (shopId: string, aisleId: string) => `${shopId}::${aisleId}`;
 
+export const memberKey = (householdId: string, userId: string) => `${householdId}::${userId}`;
+
 /** Rayons livrés avec l'application, dans l'ordre d'une grande surface classique. */
 export const REFERENCE_AISLE_ORDER = [
 	'fruits',
@@ -258,7 +273,7 @@ class FamiListDatabase extends Dexie {
 	lists!: EntityTable<List, 'id'>;
 	items!: EntityTable<Item, 'id'>;
 	cards!: EntityTable<LoyaltyCard, 'id'>;
-	members!: EntityTable<Member, 'id'>;
+	members!: EntityTable<Member, 'key'>;
 	shopLayouts!: EntityTable<ShopLayout, 'shopId'>;
 	shopItemOrders!: EntityTable<ShopItemOrder, 'key'>;
 	outbox!: EntityTable<OutboxEntry, 'seq'>;
@@ -315,6 +330,25 @@ class FamiListDatabase extends Dexie {
 			recipeIngredients: 'id, recipeId',
 			recipeSteps: 'id, recipeId'
 		});
+
+		/**
+		 * Le cache tient désormais tous les cercles du compte à la fois, plus un seul : chaque table
+		 * de cercle porte donc son `householdId`, et les membres changent de clé — le même compte
+		 * apparaît une fois par cercle.
+		 *
+		 * Les tables touchées sont vidées plutôt que migrées ligne à ligne : elles se relisent
+		 * entièrement du serveur à la première synchronisation, et deviner un cercle pour des lignes
+		 * qui n'en portaient pas produirait un cache faux jusque-là.
+		 */
+		this.version(7)
+			.stores({ members: 'key, id, householdId' })
+			.upgrade(async (tx) => {
+				await Promise.all(
+					['shops', 'aisles', 'cards', 'members', 'prices', 'recipes'].map((name) =>
+						tx.table(name).clear()
+					)
+				);
+			});
 	}
 }
 

@@ -16,7 +16,7 @@ import type {
 	ShopItemOrder,
 	ShopLayout
 } from '$db/schema';
-import { itemOrderKey, pollVoteKey } from '$db/schema';
+import { itemOrderKey, memberKey, pollVoteKey } from '$db/schema';
 import { CODE_TYPES, type CodeType } from '$domain/code-format';
 import { DEFAULT_MEMBER_TINT, DEFAULT_TINT } from '$domain/tint';
 import { DEFAULT_UNIT } from '$domain/units';
@@ -38,6 +38,7 @@ const number = (value: unknown) => (typeof value === 'number' ? value : undefine
 
 export const toShop = (row: Row): Shop => ({
 	id: text(row.id),
+	householdId: text(row.household_id),
 	name: text(row.name),
 	short: text(row.short),
 	tint: text(row.tint, DEFAULT_TINT),
@@ -63,6 +64,7 @@ export const fromShop = (shop: Shop, householdId: string) => ({
 
 export const toAisle = (row: Row): Aisle => ({
 	id: text(row.id),
+	householdId: text(row.household_id),
 	name: text(row.name),
 	emoji: text(row.emoji, '🛒'),
 	position: typeof row.position === 'number' ? row.position : 0,
@@ -153,6 +155,7 @@ const toCodeType = (raw: string): CodeType =>
 
 export const toCard = (row: Row): LoyaltyCard => ({
 	id: text(row.id),
+	householdId: text(row.household_id),
 	shopId: text(row.shop_id),
 	brand: text(row.brand),
 	name: text(row.name),
@@ -180,9 +183,16 @@ export const fromCard = (card: LoyaltyCard, householdId: string) => ({
 	notes: card.notes ?? null
 });
 
-/** Un membre est la jonction du rattachement au foyer et du profil qui porte le nom affiché. */
+/**
+ * Un membre est la jonction du rattachement au foyer et du profil qui porte le nom affiché.
+ *
+ * La clé porte le couple (cercle, personne) et non la seule personne : depuis qu'on lit tous ses
+ * cercles d'un coup, quelqu'un présent dans deux d'entre eux donne deux lignes, et le rôle comme la
+ * couleur appartiennent au rattachement, pas au compte.
+ */
 export const toMember = (row: Row, profile: Row | undefined, currentUserId: string): Member => {
 	const id = text(row.user_id);
+	const householdId = text(row.household_id);
 	const name = text(profile?.display_name) || text(profile?.email) || '—';
 	const firstName = text(profile?.first_name);
 	const lastName = text(profile?.last_name);
@@ -190,7 +200,9 @@ export const toMember = (row: Row, profile: Row | undefined, currentUserId: stri
 	// Le rôle est stocké tel quel et traduit à l'affichage : la base ne parle pas la langue de
 	// l'utilisateur, et un foyer peut mêler plusieurs langues.
 	return {
+		key: memberKey(householdId, id),
 		id,
+		householdId,
 		name,
 		firstName,
 		lastName,
@@ -305,6 +317,7 @@ export const fromItemOrder = (order: ShopItemOrder, userId: string) => ({
  */
 export const toPrice = (row: Row): Price => ({
 	id: text(row.id),
+	householdId: text(row.household_id),
 	shopId: text(row.shop_id),
 	productSlug: text(row.product_slug),
 	productName: text(row.product_name),
@@ -329,6 +342,7 @@ export const fromPrice = (price: Price, householdId: string) => ({
 
 export const toRecipe = (row: Row): Recipe => ({
 	id: text(row.id),
+	householdId: text(row.household_id),
 	name: text(row.name),
 	emoji: text(row.emoji, '🍲'),
 	// Un nombre de parts absent ou illisible retombe sur la valeur de départ : zéro part rendrait la

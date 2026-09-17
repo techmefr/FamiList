@@ -26,6 +26,7 @@ import { initialsFor } from '$domain/avatar';
 import { accountDecision } from '$domain/account-switch';
 import { guessAisleKind, FALLBACK_AISLE_KIND } from '$domain/guess-aisle';
 import { groupByAisle, learnedItemOrder } from '$domain/aisle-order';
+import { defaultCircle, ofCircle, resolveAisle, visibleLists } from '$domain/circle';
 import { sync } from '$lib/sync/index.svelte';
 import {
 	fromAisle,
@@ -60,7 +61,14 @@ import { DEFAULT_UNIT } from '$domain/units';
 import { TINTS } from '$domain/tint';
 import { i18n, t } from '$lib/i18n/index.svelte';
 
-const ACTIVE_SHOP_KEY = 'familist:active-shop';
+/**
+ * Le magasin actif est retenu par cercle : les magasins appartiennent à un cercle, et une seule clé
+ * pour tous ferait retomber sur le premier magasin venu à chaque bascule.
+ */
+const activeShopKey = (circle: string) => `familist:active-shop:${circle}`;
+
+/** La clé d'avant les cercles multiples, relue une dernière fois pour ne pas perdre le choix en cours. */
+const LEGACY_ACTIVE_SHOP_KEY = 'familist:active-shop';
 
 /**
  * Les douze derniers chiffres de l'identifiant du magasin par défaut ; les vingt-quatre premiers
@@ -76,28 +84,52 @@ const DEFAULT_SHOP_NODE = 'd0defa017000';
  * marchant, la synchronisation suit.
  */
 class DataStore {
-	shops = $state<Shop[]>([]);
-	aisles = $state<Aisle[]>([]);
-	lists = $state<List[]>([]);
+	/**
+	 * Le cache complet : tous les cercles du compte. L'écran ne le lit pas directement — il lit les
+	 * vues dérivées juste en dessous, qui ne montrent que le cercle actif.
+	 */
+	private cachedShops = $state<Shop[]>([]);
+	private cachedAisles = $state<Aisle[]>([]);
+	private cachedLists = $state<List[]>([]);
+	private cachedCards = $state<LoyaltyCard[]>([]);
+	private cachedMembers = $state<Member[]>([]);
+	private cachedPrices = $state<Price[]>([]);
+	private cachedRecipes = $state<Recipe[]>([]);
+
+	// Ce qui se lit par liste, par magasin ou par recette n'est pas filtré ici : la clé étrangère le
+	// fait déjà, et ces tables n'ont pas de cercle à elles.
 	items = $state<Item[]>([]);
-	cards = $state<LoyaltyCard[]>([]);
-	members = $state<Member[]>([]);
 	layouts = $state<ShopLayout[]>([]);
 	itemOrders = $state<ShopItemOrder[]>([]);
 	messages = $state<Message[]>([]);
 	polls = $state<Poll[]>([]);
 	pollOptions = $state<PollOption[]>([]);
 	pollVotes = $state<PollVote[]>([]);
-	prices = $state<Price[]>([]);
-	recipes = $state<Recipe[]>([]);
 	recipeIngredients = $state<RecipeIngredient[]>([]);
 	recipeSteps = $state<RecipeStep[]>([]);
 
 	activeShopId = $state<string>('');
 	ready = $state(false);
 
+	/** Le cercle actif — celui qu'on regarde, et celui dans lequel ce qu'on crée atterrit. */
+	circle = $derived(sync.householdId ?? '');
+
+	/** Les cercles entre lesquels basculer. Un seul cercle, et le sélecteur n'a rien à proposer. */
+	circles = $derived(sync.circles);
+
+	shops = $derived(ofCircle(this.cachedShops, this.circle));
+	aisles = $derived(ofCircle(this.cachedAisles, this.circle));
+	cards = $derived(ofCircle(this.cachedCards, this.circle));
+	members = $derived(ofCircle(this.cachedMembers, this.circle));
+	prices = $derived(ofCircle(this.cachedPrices, this.circle));
+	recipes = $derived(ofCircle(this.cachedRecipes, this.circle));
+	lists = $derived(visibleLists(this.cachedLists, this.circle));
+
 	activeShop = $derived(this.shops.find((s) => s.id === this.activeShopId) ?? this.shops[0]);
 	activeLayout = $derived(this.layouts.find((l) => l.shopId === this.activeShopId));
+
+	/** Les rayons du cercle actif, pour décider si celui d'un article y a un sens. */
+	private knownAisleIds = $derived(new Set(this.aisles.map((aisle) => aisle.id)));
 
 	// L'identifiant est lu de façon asynchrone, après le premier rendu : sans état réactif, tout ce
 	// qui dérive de `me` — le champ du nom, le sélecteur de portrait — resterait calculé sur la
@@ -180,30 +212,55 @@ class DataStore {
 			db.recipeSteps.toArray()
 		]);
 
-		this.shops = shops;
-		this.aisles = aisles;
-		this.lists = lists;
+		this.cachedShops = shops;
+		this.cachedAisles = aisles;
+		this.cachedLists = lists;
 		this.items = items;
-		this.cards = cards;
-		this.members = members;
+		this.cachedCards = cards;
+		this.cachedMembers = members;
 		this.layouts = layouts;
 		this.itemOrders = itemOrders;
 		this.messages = messages;
 		this.polls = polls;
 		this.pollOptions = pollOptions;
 		this.pollVotes = pollVotes;
-		this.prices = prices;
-		this.recipes = recipes;
+		this.cachedPrices = prices;
+		this.cachedRecipes = recipes;
 		this.recipeIngredients = recipeIngredients;
 		this.recipeSteps = recipeSteps;
 
-		const saved = localStorage.getItem(ACTIVE_SHOP_KEY);
-		const known = saved && shops.some((s) => s.id === saved) ? saved : (shops[0]?.id ?? '');
+		this.restoreActiveShop();
+	}
+
+	/**
+	 * Le magasin actif du cercle qu'on regarde.
+	 *
+	 * Relu à l'hydratation comme à chaque bascule : un magasin appartient à un cercle, et garder
+	 * celui d'à côté laisserait l'écran ranger la liste selon un parcours qui n'existe pas ici.
+	 */
+	private restoreActiveShop() {
+		const mine = this.shops;
+		const saved =
+			localStorage.getItem(activeShopKey(this.circle)) ??
+			localStorage.getItem(LEGACY_ACTIVE_SHOP_KEY);
+		const known = saved && mine.some((s) => s.id === saved) ? saved : (mine[0]?.id ?? '');
 		if (known !== this.activeShopId) this.activeShopId = known;
 	}
 
-	private get householdId() {
-		return sync.householdId ?? '';
+	/**
+	 * Bascule de cercle.
+	 *
+	 * Rien n'est relu et rien n'est vidé : le cache porte déjà tous les cercles, seule change la
+	 * tranche que l'écran en montre. C'est ce qui rend la bascule immédiate, y compris sans réseau.
+	 * Le magasin actif suit, et le cercle reçoit son magasin par défaut s'il n'en a pas encore.
+	 */
+	switchCircle(circleId: string) {
+		if (!circleId || circleId === this.circle) return;
+		if (!this.circles.some((circle) => circle.id === circleId)) return;
+
+		sync.adopt(circleId);
+		this.restoreActiveShop();
+		this.ensureDefaultShop();
 	}
 
 	aisle(id: string) {
@@ -223,8 +280,13 @@ class DataStore {
 		return byKind?.id ?? fallback?.id ?? this.aisles[0]?.id ?? '';
 	}
 
+	/**
+	 * Une liste par identifiant, prise dans tout le cache et non dans la seule tranche affichée : un
+	 * lien reçu ou une notification peut viser une liste d'un autre cercle, et l'écran de détail doit
+	 * l'ouvrir plutôt que de conclure qu'elle n'existe pas.
+	 */
 	list(id: string) {
-		return this.lists.find((l) => l.id === id);
+		return this.cachedLists.find((l) => l.id === id);
 	}
 
 	itemsOf(listId: string) {
@@ -240,12 +302,20 @@ class DataStore {
 			if (entry.shopId === this.activeShopId) byAisle[entry.aisleId] = entry.productSlugs;
 		}
 
-		return groupByAisle(this.itemsOf(listId), order, byAisle);
+		// Une liste personnelle suit son auteur d'un cercle à l'autre, mais le rayon de ses articles
+		// appartient au cercle où on les a saisis : ailleurs, il se range là où la détection le
+		// mettrait. Rien n'est réécrit — revenir retrouve le rangement d'origine.
+		const range = this.itemsOf(listId).map((item) => ({
+			...item,
+			aisleId: resolveAisle(item.aisleId, this.knownAisleIds, this.suggestAisleId(item.name))
+		}));
+
+		return groupByAisle(range, order, byAisle);
 	}
 
 	setActiveShop(shopId: string) {
 		this.activeShopId = shopId;
-		if (browser) localStorage.setItem(ACTIVE_SHOP_KEY, shopId);
+		if (browser) localStorage.setItem(activeShopKey(this.circle), shopId);
 	}
 
 	toggleItem(id: string) {
@@ -341,7 +411,7 @@ class DataStore {
 			memberIds: this.userId ? [this.userId] : []
 		};
 
-		this.lists = [...this.lists, list];
+		this.cachedLists = [...this.cachedLists, list];
 		db.lists.add(list);
 		this.push('lists', list, fromList);
 
@@ -365,7 +435,7 @@ class DataStore {
 	 * remplie, et le repas prévu samedi se décale au dimanche.
 	 */
 	updateList(id: string, patch: { name?: string; emoji?: string; eventDate?: string }) {
-		const list = this.lists.find((candidate) => candidate.id === id);
+		const list = this.cachedLists.find((candidate) => candidate.id === id);
 		if (!list) return;
 
 		if (patch.name !== undefined) list.name = patch.name.trim();
@@ -386,11 +456,16 @@ class DataStore {
 	 * vraiment dehors, et elle ne peut pas s'y remettre seule.
 	 *
 	 * Ouvrir une liste personnelle à quelqu'un, c'est la partager, et partager exige de désigner un
-	 * cercle : on lui attribue donc celui qu'on regarde. Sans ça la base refuserait la ligne —
-	 * `list_belongs_to_household_of` n'accepte sur une liste sans cercle que son propre auteur.
+	 * cercle. Sans ça la base refuserait la ligne — `list_belongs_to_household_of` n'accepte sur une
+	 * liste sans cercle que son propre auteur.
+	 *
+	 * Le cercle est désormais dit par l'appelant : depuis qu'un compte en a plusieurs à l'écran en
+	 * même temps, prendre celui qu'on regarde partagerait avec les collègues une liste qu'on ouvrait
+	 * à la famille. Sans précision, le cercle actif reste le défaut — c'est le cas d'un compte qui
+	 * n'en a qu'un.
 	 */
-	setListMember(listId: string, userId: string, member: boolean) {
-		const list = this.lists.find((l) => l.id === listId);
+	setListMember(listId: string, userId: string, member: boolean, circleId?: string) {
+		const list = this.cachedLists.find((l) => l.id === listId);
 		if (!list) return;
 
 		const memberIds = member
@@ -398,10 +473,14 @@ class DataStore {
 			: list.memberIds.filter((id) => id !== userId);
 
 		const partage = member && !list.householdId && userId !== this.userId;
-		const cercle = partage ? this.householdId : list.householdId;
+		const cercle = partage ? (circleId ?? this.circle) : list.householdId;
+
+		// Partager dans un cercle dont on n'est pas membre est refusé par la RLS : on ne l'enfile
+		// même pas, plutôt que de laisser la file s'en débarrasser en silence.
+		if (partage && !this.circles.some((candidate) => candidate.id === cercle)) return;
 
 		const next = { ...list, memberIds, householdId: cercle || undefined };
-		this.lists = this.lists.map((l) => (l.id === listId ? next : l));
+		this.cachedLists = this.cachedLists.map((l) => (l.id === listId ? next : l));
 		db.lists.put(next);
 
 		if (partage && cercle) this.push('lists', next, fromList);
@@ -436,14 +515,14 @@ class DataStore {
 	 * ce qui rend la duplication utilisable hors ligne comme le reste.
 	 */
 	duplicateList(id: string) {
-		const source = this.lists.find((candidate) => candidate.id === id);
+		const source = this.cachedLists.find((candidate) => candidate.id === id);
 		if (!source) return;
 
 		const copie: List = {
 			id: crypto.randomUUID(),
 			name: copyName(
 				source.name,
-				this.lists.map((l) => l.name)
+				this.cachedLists.map((l) => l.name)
 			),
 			emoji: source.emoji,
 			color: source.color,
@@ -460,7 +539,7 @@ class DataStore {
 			createdAt: Date.now() + rang
 		}));
 
-		this.lists = [...this.lists, copie];
+		this.cachedLists = [...this.cachedLists, copie];
 		this.items = [...this.items, ...articles];
 		db.lists.add(copie);
 		db.items.bulkAdd(articles);
@@ -486,7 +565,7 @@ class DataStore {
 
 	removeList(id: string) {
 		const items = this.itemsOf(id).map((i) => i.id);
-		this.lists = this.lists.filter((l) => l.id !== id);
+		this.cachedLists = this.cachedLists.filter((l) => l.id !== id);
 		this.items = this.items.filter((i) => i.listId !== id);
 		db.lists.delete(id);
 		db.items.bulkDelete(items);
@@ -499,12 +578,13 @@ class DataStore {
 	addAisle(input: { name: string; emoji: string }) {
 		const aisle: Aisle = {
 			id: crypto.randomUUID(),
+			householdId: this.circle,
 			name: input.name.trim(),
 			emoji: input.emoji || '🛒',
 			position: Math.max(-1, ...this.aisles.map((a) => a.position)) + 1
 		};
 
-		this.aisles = [...this.aisles, aisle];
+		this.cachedAisles = [...this.cachedAisles, aisle];
 		db.aisles.add(aisle);
 		this.push('aisles', aisle, fromAisle);
 
@@ -544,7 +624,7 @@ class DataStore {
 	 * même rôle, pour ce que le client ne peut pas garantir.
 	 */
 	ensureDefaultShop() {
-		const household = this.householdId;
+		const household = this.circle;
 		if (!household || this.shops.length > 0) return;
 
 		this.addShop({
@@ -607,6 +687,7 @@ class DataStore {
 
 		const shop: Shop = {
 			id: input.id ?? crypto.randomUUID(),
+			householdId: this.circle,
 			name: input.name.trim(),
 			// Un magasin, un trigramme : ce qui est déjà porté par un autre magasin du foyer est
 			// écarté, saisi à la main comme calculé. Le calcul part de l'enseigne et de la commune
@@ -628,7 +709,7 @@ class DataStore {
 			learned: false
 		};
 
-		this.shops = [...this.shops, shop];
+		this.cachedShops = [...this.cachedShops, shop];
 		this.layouts = [...this.layouts, layout];
 		db.shops.add(shop);
 		db.shopLayouts.add(layout);
@@ -675,15 +756,17 @@ class DataStore {
 
 		const orders = this.itemOrders.filter((entry) => entry.shopId === id).map((entry) => entry.key);
 
-		this.shops = this.shops.filter((candidate) => candidate.id !== id);
+		this.cachedShops = this.cachedShops.filter((candidate) => candidate.id !== id);
 		this.layouts = this.layouts.filter((layout) => layout.shopId !== id);
 		this.itemOrders = this.itemOrders.filter((entry) => entry.shopId !== id);
-		this.cards = this.cards.map((card) => (card.shopId === id ? { ...card, shopId: '' } : card));
+		this.cachedCards = this.cachedCards.map((card) =>
+			card.shopId === id ? { ...card, shopId: '' } : card
+		);
 
 		db.shops.delete(id);
 		db.shopLayouts.delete(id);
 		db.shopItemOrders.bulkDelete(orders);
-		db.cards.bulkPut($state.snapshot(this.cards) as LoyaltyCard[]);
+		db.cards.bulkPut($state.snapshot(this.cachedCards) as LoyaltyCard[]);
 
 		sync.enqueue({ table: 'shops', op: 'delete', match: { id } });
 
@@ -707,16 +790,16 @@ class DataStore {
 		);
 	}
 
-	addCard(input: Omit<LoyaltyCard, 'id'>) {
-		const card: LoyaltyCard = { ...input, id: crypto.randomUUID() };
-		this.cards = [...this.cards, card];
+	addCard(input: Omit<LoyaltyCard, 'id' | 'householdId'>) {
+		const card: LoyaltyCard = { ...input, id: crypto.randomUUID(), householdId: this.circle };
+		this.cachedCards = [...this.cachedCards, card];
 		db.cards.add(card);
 		this.push('loyalty_cards', card, fromCard);
 		return card;
 	}
 
-	updateCard(id: string, patch: Partial<Omit<LoyaltyCard, 'id'>>) {
-		const card = this.cards.find((c) => c.id === id);
+	updateCard(id: string, patch: Partial<Omit<LoyaltyCard, 'id' | 'householdId'>>) {
+		const card = this.cachedCards.find((c) => c.id === id);
 		if (!card) return;
 
 		Object.assign(card, patch);
@@ -727,7 +810,7 @@ class DataStore {
 	}
 
 	removeCard(id: string) {
-		this.cards = this.cards.filter((c) => c.id !== id);
+		this.cachedCards = this.cachedCards.filter((c) => c.id !== id);
 		db.cards.delete(id);
 		sync.enqueue({ table: 'loyalty_cards', op: 'delete', match: { id } });
 	}
@@ -805,6 +888,7 @@ class DataStore {
 
 		const price: Price = {
 			id: dujour?.id ?? crypto.randomUUID(),
+			householdId: this.circle,
 			shopId,
 			productSlug: slug,
 			productName: item.name,
@@ -816,13 +900,13 @@ class DataStore {
 			recordedBy: this.userId
 		};
 
-		this.prices = [...this.prices.filter((p) => p.id !== price.id), price];
+		this.cachedPrices = [...this.cachedPrices.filter((p) => p.id !== price.id), price];
 		db.prices.put(price);
 		this.push('item_prices', price, fromPrice);
 	}
 
 	removePrice(id: string) {
-		this.prices = this.prices.filter((p) => p.id !== id);
+		this.cachedPrices = this.cachedPrices.filter((p) => p.id !== id);
 		db.prices.delete(id);
 		sync.enqueue({ table: 'item_prices', op: 'delete', match: { id } });
 	}
@@ -877,12 +961,16 @@ class DataStore {
 		const id = this.me;
 		if (!id) return;
 
-		const membre = this.members.find((m) => m.id === id);
-		if (!membre) return;
+		// Le portrait appartient au profil, pas au rattachement : il change dans tous les cercles où
+		// la personne figure, et le cache en porte une ligne par cercle.
+		const miennes = this.cachedMembers.filter((m) => m.id === id);
+		if (miennes.length === 0) return;
 
-		const suivant: Member = { ...membre, avatar };
-		this.members = this.members.map((m) => (m.id === id ? suivant : m));
-		db.members.put(suivant);
+		const suivants = miennes.map((membre) => ({ ...membre, avatar }));
+		this.cachedMembers = this.cachedMembers.map(
+			(m) => suivants.find((suivant) => suivant.key === m.key) ?? m
+		);
+		db.members.bulkPut(suivants);
 
 		await supabase
 			.from('profiles')
@@ -904,19 +992,22 @@ class DataStore {
 		const id = this.me;
 		if (!id) return;
 
-		const membre = this.members.find((m) => m.id === id);
-		if (!membre) return;
+		const miennes = this.cachedMembers.filter((m) => m.id === id);
+		if (miennes.length === 0) return;
 
 		const { name, firstName, lastName } = identite;
-		const suivant: Member = {
+		const suivants: Member[] = miennes.map((membre) => ({
 			...membre,
 			name,
 			firstName,
 			lastName,
 			initial: initialsFor(firstName, lastName, name)
-		};
-		this.members = this.members.map((m) => (m.id === id ? suivant : m));
-		db.members.put(suivant);
+		}));
+		const remplace = (rows: Member[]) =>
+			this.cachedMembers.map((m) => rows.find((row) => row.key === m.key) ?? m);
+
+		this.cachedMembers = remplace(suivants);
+		db.members.bulkPut(suivants);
 
 		const { error } = await supabase
 			.from('profiles')
@@ -925,8 +1016,8 @@ class DataStore {
 		if (error) {
 			// Le nom affiché revient à ce que la base connaît : le laisser à l'écran ferait croire à
 			// un enregistrement qui n'a pas eu lieu, jusqu'à la prochaine synchronisation.
-			this.members = this.members.map((m) => (m.id === id ? membre : m));
-			db.members.put(membre);
+			this.cachedMembers = remplace(miennes);
+			db.members.bulkPut(miennes);
 			return error.message;
 		}
 
@@ -935,7 +1026,19 @@ class DataStore {
 	}
 
 	member(id: string) {
-		return this.members.find((m) => m.id === id);
+		// Tout le cache et non le seul cercle actif : une liste personnelle partagée ailleurs, ou une
+		// discussion ouverte depuis un lien, montre des visages qui ne sont pas d'ici.
+		return this.cachedMembers.find((m) => m.id === id);
+	}
+
+	/** Les membres d'un cercle donné — celui vers lequel on s'apprête à partager, par exemple. */
+	membersOf(circleId: string) {
+		return ofCircle(this.cachedMembers, circleId);
+	}
+
+	/** Le nom d'un cercle, tel que le sélecteur l'affiche. */
+	circleName(circleId: string) {
+		return this.circles.find((circle) => circle.id === circleId)?.name ?? '';
 	}
 
 	get me() {
@@ -1095,7 +1198,7 @@ class DataStore {
 	}
 
 	setEventDate(listId: string, eventDate: string) {
-		const list = this.lists.find((l) => l.id === listId);
+		const list = this.cachedLists.find((l) => l.id === listId);
 		if (!list) return;
 
 		list.eventDate = eventDate;
@@ -1143,6 +1246,7 @@ class DataStore {
 	}) {
 		const recipe: Recipe = {
 			id: crypto.randomUUID(),
+			householdId: this.circle,
 			name: input.name.trim(),
 			emoji: input.emoji,
 			servings: input.servings > 0 ? Math.round(input.servings) : DEFAULT_SERVINGS,
@@ -1171,7 +1275,7 @@ class DataStore {
 				position
 			}));
 
-		this.recipes = [...this.recipes, recipe];
+		this.cachedRecipes = [...this.cachedRecipes, recipe];
 		this.recipeIngredients = [...this.recipeIngredients, ...lignes];
 		this.recipeSteps = [...this.recipeSteps, ...etapes];
 
@@ -1195,7 +1299,7 @@ class DataStore {
 		const lignes = this.recipeIngredients.filter((line) => line.recipeId === id).map((l) => l.id);
 		const etapes = this.recipeSteps.filter((step) => step.recipeId === id).map((s) => s.id);
 
-		this.recipes = this.recipes.filter((r) => r.id !== id);
+		this.cachedRecipes = this.cachedRecipes.filter((r) => r.id !== id);
 		this.recipeIngredients = this.recipeIngredients.filter((line) => line.recipeId !== id);
 		this.recipeSteps = this.recipeSteps.filter((step) => step.recipeId !== id);
 
@@ -1232,7 +1336,7 @@ class DataStore {
 			this.addList({
 				name: recipe.name,
 				emoji: recipe.emoji,
-				color: TINTS[this.lists.length % TINTS.length]
+				color: TINTS[this.cachedLists.length % TINTS.length]
 			});
 
 		const articles = generatedItems(
@@ -1250,7 +1354,7 @@ class DataStore {
 	 * Les tables du foyer prennent toutes le même chemin : on écrit la ligne complète, l'upsert
 	 * côté serveur se charge de savoir si elle existait déjà.
 	 */
-	private push<T extends { id: string }>(
+	private push<T extends { id: string; householdId?: string }>(
 		table: string,
 		record: T,
 		map: (record: T, householdId: string) => Record<string, unknown>
@@ -1263,7 +1367,10 @@ class DataStore {
 				payload: map(record, householdId)
 			});
 
-		const connu = this.householdId;
+		// Le cercle de la ligne elle-même passe avant le cercle affiché : une carte ou un prix qu'on
+		// modifie appartient au cercle où il est né, et le réécrire avec celui qu'on regarde le ferait
+		// changer de cercle à la première correction.
+		const connu = record.householdId || this.circle;
 		if (connu) {
 			enfiler(connu);
 			return;
@@ -1336,7 +1443,8 @@ class DataStore {
 			db.recipeSteps.clear()
 		]);
 
-		localStorage.removeItem(ACTIVE_SHOP_KEY);
+		for (const circle of sync.householdIds) localStorage.removeItem(activeShopKey(circle));
+		localStorage.removeItem(LEGACY_ACTIVE_SHOP_KEY);
 	}
 
 	async reset() {

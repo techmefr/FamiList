@@ -11,13 +11,31 @@
 
 	let dialog = $state<HTMLDialogElement | null>(null);
 
+	/**
+	 * Le cercle visé, choisi explicitement.
+	 *
+	 * Une liste personnelle n'en a pas encore : partager, c'est justement en désigner un, et prendre
+	 * celui qu'on regarde ouvrirait aux collègues ce qu'on destinait à la famille. Vide tant que la
+	 * feuille n'a pas été ouverte — le cercle actif fait alors le défaut.
+	 */
+	let chosen = $state('');
+
 	const list = $derived(data.list(listId));
+
+	/** Le cercle de la liste s'il y en a un ; sinon celui qu'on est en train de désigner. */
+	const circle = $derived(list?.householdId ?? (chosen || data.circle));
+
+	/** Une liste déjà partagée ne change pas de cercle : c'est le sien qui dit à qui elle peut s'ouvrir. */
+	const settled = $derived(!!list?.householdId);
+
+	const roster = $derived(data.membersOf(circle));
 
 	/**
 	 * Même contrat que la feuille de création : le navigateur tient l'état, on ne le double pas d'un
 	 * booléen qui finirait par mentir dès qu'Échap ferme la feuille sans passer par nous.
 	 */
 	export function show() {
+		chosen = data.circle;
 		dialog?.showModal();
 	}
 
@@ -27,7 +45,7 @@
 
 	function toggle(userId: string, on: boolean) {
 		feedback.play('tap');
-		data.setListMember(listId, userId, on);
+		data.setListMember(listId, userId, on, circle);
 	}
 </script>
 
@@ -47,8 +65,34 @@
 		<h2 id="share-title" class="text-h2 pe-12 font-semibold">{t('share.title')}</h2>
 		<p class="text-muted-foreground text-caption mt-1 pe-12">{t('share.note')}</p>
 
+		<!--
+			Avec quel cercle. La question ne se pose qu'une fois, tant que la liste est personnelle :
+			une fois partagée, elle appartient à ce cercle-là, et c'est lui qui dit qui peut y figurer.
+			Elle ne se pose pas non plus quand il n'y a qu'un cercle — il n'y aurait rien à choisir.
+		-->
+		{#if settled}
+			<p class="text-muted-foreground text-caption mt-3" data-test-id="share-circle-settled">
+				{t('share.sharedWithCircle', { name: data.circleName(circle) })}
+			</p>
+		{:else if data.circles.length > 1}
+			<div class="mt-4">
+				<label for="share-circle" class="text-label font-medium">{t('share.circle')}</label>
+				<p class="text-muted-foreground text-caption mt-1">{t('share.circleHint')}</p>
+				<select
+					id="share-circle"
+					bind:value={chosen}
+					data-test-id="share-circle"
+					class="border-input bg-card text-product mt-2 min-h-[max(2.75rem,44px)] w-full rounded-lg border px-3"
+				>
+					{#each data.circles as option (option.id)}
+						<option value={option.id}>{option.name}</option>
+					{/each}
+				</select>
+			</div>
+		{/if}
+
 		<ul class="mt-4 space-y-1">
-			{#each data.members as member (member.id)}
+			{#each roster as member (member.key)}
 				{@const on = list?.memberIds.includes(member.id) ?? false}
 				<li>
 					<label
@@ -81,7 +125,7 @@
 
 		<p class="text-muted-foreground text-caption mt-2">{t('share.youLocked')}</p>
 
-		{#if data.members.length <= 1}
+		{#if roster.length <= 1}
 			<p class="text-muted-foreground text-label mt-4">{t('share.alone')}</p>
 			<Button variant="outline" href="/household" class="fl-press mt-3" data-test-id="share-invite">
 				{t('share.invite')}
