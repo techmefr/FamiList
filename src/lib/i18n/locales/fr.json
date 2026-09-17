@@ -203,7 +203,8 @@
 		"cancel": "Annuler",
 		"loading": "Chargement…",
 		"close": "Fermer",
-		"edit": "Modifier"
+		"edit": "Modifier",
+		"crashed": "Cet écran n'a pas pu s'afficher. Le problème a été noté."
 	},
 	"list": {
 		"shop": "Magasin",
@@ -685,6 +686,26 @@
 		"publishReport": "Ouvrir une issue",
 		"reportIssuePending": "Publication demandée",
 		"reportIssue": "Issue #{number}",
+		"crashesTitle": "Plantages",
+		"crashesEmpty": "Aucun plantage sur les trente derniers jours.",
+		"crashesHint": "Erreurs relevées automatiquement, nettoyées de ce qui pouvait désigner quelqu'un et conservées trente jours. Le nom des personnes touchées n'est pas enregistré.",
+		"crashSource": {
+			"window": "Navigateur",
+			"promise": "Promesse",
+			"render": "Affichage",
+			"sync": "Synchronisation"
+		},
+		"crashOccurrences": {
+			"one": "{count} fois",
+			"other": "{count} fois"
+		},
+		"crashPeople": {
+			"one": "{count} compte touché",
+			"other": "{count} comptes touchés"
+		},
+		"crashSeen": "Du {first} au {last}",
+		"crashStack": "Pile d'appels",
+		"resolveCrash": "Marquer comme corrigé",
 		"roleAdmin": "Administrateur",
 		"twoFactor": "2FA",
 		"promote": "Nommer administrateur",

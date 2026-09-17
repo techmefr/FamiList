@@ -203,7 +203,8 @@
 		"cancel": "Cancelar",
 		"loading": "A carregar…",
 		"close": "Fechar",
-		"edit": "Editar"
+		"edit": "Editar",
+		"crashed": "Este ecrã não pôde ser apresentado. O problema foi registado."
 	},
 	"list": {
 		"shop": "Loja",
@@ -681,6 +682,26 @@
 		"publishReport": "Abrir uma issue",
 		"reportIssuePending": "Publicação solicitada",
 		"reportIssue": "Issue n.º {number}",
+		"crashesTitle": "Falhas",
+		"crashesEmpty": "Nenhuma falha nos últimos trinta dias.",
+		"crashesHint": "Erros recolhidos automaticamente, limpos de tudo o que pudesse apontar para alguém e guardados durante trinta dias. Os nomes das pessoas afetadas não ficam registados.",
+		"crashSource": {
+			"window": "Navegador",
+			"promise": "Promessa",
+			"render": "Apresentação",
+			"sync": "Sincronização"
+		},
+		"crashOccurrences": {
+			"one": "{count} vez",
+			"other": "{count} vezes"
+		},
+		"crashPeople": {
+			"one": "{count} conta afetada",
+			"other": "{count} contas afetadas"
+		},
+		"crashSeen": "De {first} a {last}",
+		"crashStack": "Pilha de chamadas",
+		"resolveCrash": "Marcar como corrigido",
 		"reportKind": {
 			"bug": "Erro",
 			"suggestion": "Sugestão"

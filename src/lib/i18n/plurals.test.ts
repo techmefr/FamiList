@@ -61,6 +61,8 @@ describe('formes plurielles', () => {
 			'lists.remaining',
 			'prices.shopCount',
 			'recipes.servingsCount',
+			'admin.crashOccurrences',
+			'admin.crashPeople',
 			'chat.votes',
 			'chat.pushed',
 			'security.backupLeft',
