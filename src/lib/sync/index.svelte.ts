@@ -28,9 +28,8 @@ import { planRealtime, rowKey, type RealtimeEvent } from './realtime';
 const HOUSEHOLD_KEY = 'familist:household';
 
 /**
- * Codes Postgres qu'un nouvel essai ne réglera jamais : donnée mal formée, référence absente,
- * champ obligatoire vide, droit refusé. Tout le reste (réseau coupé, serveur indisponible) mérite
- * d'attendre son tour.
+ * Postgres codes a retry will never fix: malformed data, missing reference, empty required field,
+ * permission denied. Everything else (network down, server unavailable) deserves to wait its turn.
  */
 const PERMANENT_CODES = new Set(['22P02', '23502', '23503', '23505', '23514', '42501', '42703']);
 
@@ -40,44 +39,44 @@ const noop = () => undefined;
 
 export type SyncState = 'idle' | 'syncing' | 'offline' | 'error';
 
-/** Un cercle dont le compte est membre, tel que le sélecteur le nomme. */
+/** A circle the account belongs to, as the selector names it. */
 export interface Circle {
 	id: string;
 	name: string;
 }
 
 /**
- * Le serveur fait autorité, Dexie est le cache qui permet d'ouvrir l'application dans un magasin
- * sans réseau. Les écritures partent par une file : on répond tout de suite à l'écran, on pousse
- * ensuite. Le volume d'un foyer est petit, donc on relit tout à chaque synchronisation plutôt que
- * de tenir un journal de deltas — un mécanisme de moins à maintenir et à déboguer.
+ * The server is the authority, Dexie is the cache that lets the application open in a shop with no
+ * network. Writes leave through a queue: the screen is answered at once, the push comes after. A
+ * household's volume is small, so we re-read everything on each sync rather than keep a delta log —
+ * one mechanism fewer to maintain and debug.
  */
 class SyncStore {
 	/**
-	 * Le cercle actif : celui que l'écran montre, et celui dans lequel ce qu'on crée atterrit.
+	 * The active circle: the one the screen shows, and the one new things land in.
 	 *
-	 * Le cache, lui, porte tous les cercles à la fois — voir `circles`. Distinguer les deux est ce
-	 * qui rend le changement de cercle instantané et utilisable hors réseau : il ne relit rien, il
-	 * change ce qu'on regarde.
+	 * The cache, on the other hand, holds every circle at once — see `circles`. Telling the two apart is
+	 * what makes switching circle instant and usable offline: it re-reads nothing, it changes what you
+	 * are looking at.
 	 */
 	householdId = $state<string | null>(null);
 
-	/** Tous les cercles du compte, du plus ancien au plus récent. Tous sont lus, tous sont en cache. */
+	/** Every circle of the account, oldest first. All are read, all are cached. */
 	circles = $state<Circle[]>([]);
 
 	state = $state<SyncState>('idle');
 	lastError = $state<string | null>(null);
 
 	/**
-	 * Vrai dès que la première tentative de synchronisation est retombée, qu'elle ait réussi, échoué
-	 * ou trouvé le réseau absent.
+	 * True as soon as the first sync attempt has settled, whether it succeeded, failed or found no
+	 * network.
 	 *
-	 * Ce qui se décide à partir du cache complet attend ce drapeau — le trigramme d'un magasin se
-	 * choisit parmi ceux déjà pris, et le cache est vide pendant la seconde qui suit l'ouverture.
-	 * Sans lui, un magasin créé dans cette fenêtre prend un trigramme déjà porté.
+	 * What is decided from the full cache waits on this flag — a shop's three-letter code is picked among
+	 * those already taken, and the cache is empty during the second that follows opening. Without it, a
+	 * shop created in that window takes a code already in use.
 	 *
-	 * Il retombe sur les chemins d'échec aussi, et pas seulement sur le succès : hors réseau, la
-	 * réponse ne viendra jamais, et bloquer l'écran indéfiniment serait pire que le doublon.
+	 * It falls on the failure paths too, not only on success: offline, the answer will never come, and
+	 * blocking the screen indefinitely would be worse than the duplicate.
 	 */
 	settled = $state(false);
 
@@ -88,54 +87,53 @@ class SyncStore {
 	private watchingNetwork = false;
 
 	/**
-	 * Les mises en file encore en cours d'écriture.
+	 * The queue writes still in flight.
 	 *
-	 * `enqueue` est appelé depuis des méthodes synchrones : au retour du clic, l'entrée n'est pas
-	 * encore posée dans la file. Une purge lancée dans cet intervalle — celle de la déconnexion —
-	 * lisait une file vide et laissait l'écriture derrière elle. `flush` les attend donc avant de
-	 * lire ce qu'il a à envoyer.
+	 * `enqueue` is called from synchronous methods: when the click returns, the entry is not in the queue
+	 * yet. A drain started in that window — the one on sign-out — read an empty queue and left the write
+	 * behind. `flush` therefore waits on them before reading what it has to send.
 	 */
 	private writing: Promise<unknown> = Promise.resolve();
 
 	/**
-	 * Horodatage du dernier évènement temps réel posé, par ligne. C'est la seule mémoire d'ordre
-	 * dont on dispose : le canal ne numérote pas ses messages.
+	 * Timestamp of the last realtime event applied, per row. It is the only ordering memory we have: the
+	 * channel does not number its messages.
 	 */
 	private appliedAt = new Map<string, string>();
 
-	/** Vrai après le premier abonnement : les suivants sont des reprises après coupure. */
+	/** True after the first subscription: the ones after are recoveries from an outage. */
 	private subscribed = false;
 
 	/**
-	 * Numéro du cache courant, incrémenté par `stop()`.
+	 * Number of the current cache, incremented by `stop()`.
 	 *
-	 * Une lecture partie avant un changement de compte ne doit pas s'écrire dans le cache du
-	 * suivant. On comparait pour cela le cercle affiché avant et après ; ce test est devenu faux le
-	 * jour où changer de cercle a cessé de vider le cache — il jetait alors une relecture ou un
-	 * évènement temps réel parfaitement valides, simplement parce qu'on avait basculé entre-temps.
-	 * Ce compteur ne bouge que quand le cache change vraiment de propriétaire.
+	 * A read that left before an account change must not write into the next account's cache. We used to
+	 * compare the displayed circle before and after; that test became wrong the day switching circle
+	 * stopped emptying the cache — it then discarded a perfectly valid re-read or realtime event, simply
+	 * because we had switched in the meantime. This counter only moves when the cache really changes
+	 * owner.
 	 */
 	private generation = 0;
 
 	/**
-	 * Le cercle retenu est repris dès la construction, sans attendre le réseau.
+	 * The remembered circle is restored at construction, without waiting for the network.
 	 *
-	 * L'écran est scindé par cercle : sans cette reprise, la première hydratation depuis le cache
-	 * n'aurait aucun cercle actif et montrerait un écran vide jusqu'à la réponse du serveur — soit
-	 * indéfiniment dans un magasin sans réseau, ce que tout le reste du moteur s'attache à éviter.
-	 * `provision()` vérifie l'appartenance ensuite et corrige si besoin.
+	 * The screen is split by circle: without this restore, the first hydration from the cache would have
+	 * no active circle and would show an empty screen until the server answers — so indefinitely in a
+	 * shop with no network, which everything else in this engine works to avoid. `provision()` checks
+	 * membership afterwards and corrects if needed.
 	 */
 	constructor() {
 		if (browser) this.householdId = localStorage.getItem(HOUSEHOLD_KEY);
 	}
 
 	/**
-	 * Lance un travail qu'on ne peut pas attendre — la file poussée en arrière-plan, le réveil du
-	 * réseau, la relecture différée du temps réel — sans le laisser finir en rejet muet.
+	 * Starts a job that cannot be awaited — the queue pushed in the background, the network waking up,
+	 * the deferred re-read from realtime — without letting it end as a silent rejection.
 	 *
-	 * Sans cela, une panne de ces chemins-là s'écrit dans une console que personne n'ouvre :
-	 * l'écran continue d'afficher un foyer qui a l'air à jour alors que plus rien ne part. On la
-	 * ramène là où l'interface lit déjà l'état de la synchronisation.
+	 * Without this, a failure on those paths is written to a console nobody opens: the screen goes on
+	 * showing a household that looks up to date while nothing leaves any more. We bring it back where the
+	 * interface already reads the sync state.
 	 */
 	private detach(work: Promise<unknown>) {
 		void work.catch((cause) => {
@@ -146,21 +144,21 @@ class SyncStore {
 	}
 
 	/**
-	 * La même panne, remontée cette fois à l'administration.
+	 * The same failure, reported this time to the administration.
 	 *
-	 * Ce moteur rattrape déjà tout ce qui échoue pour alimenter son bandeau : ajouter un écouteur
-	 * global par-dessus compterait chaque panne deux fois, et l'écouteur global ne verrait de toute
-	 * façon rien, puisque plus rien n'est rejeté une fois rattrapé ici. On se branche donc sur les
-	 * deux endroits qui savaient déjà, plutôt que d'en inventer un troisième.
+	 * This engine already catches everything that fails to feed its banner: adding a global listener on
+	 * top would count each failure twice, and the global listener would see nothing anyway, since nothing
+	 * is rejected any more once caught here. So we hook into the two places that already knew, rather
+	 * than inventing a third.
 	 *
-	 * Le bandeau reste ce qui parle à la personne — cet appel-ci ne s'adresse qu'à nous, et ne
-	 * change rien à l'écran.
+	 * The banner remains what speaks to the person — this call is for us alone, and changes nothing on
+	 * screen.
 	 */
 	private report(cause: unknown) {
 		reportCrash(cause, 'sync', browser ? location.pathname : '');
 	}
 
-	/** Appelé une fois le compte validé. Renvoie true si le cache local a été rempli. */
+	/** Called once the account is approved. Returns true if the local cache was filled. */
 	async start(onPulled: () => void) {
 		try {
 			return await this.attempt(onPulled);
@@ -174,12 +172,12 @@ class SyncStore {
 
 		this.onPulled = onPulled;
 
-		// L'état est branché sur le navigateur, pas seulement sur nos appels : sinon le bandeau
-		// n'apparaîtrait qu'à la première écriture, longtemps après la perte du réseau.
+		// The state is wired to the browser, not only to our own calls: otherwise the banner would only
+		// appear on the first write, long after the network was lost.
 		//
-		// Une seule fois : `start()` est rappelé à chaque changement de foyer ou de compte, et
-		// sans cette garde chaque passage ajoutait une paire d'écouteurs. Après trois changements,
-		// un simple retour du réseau lançait trois relectures complètes en même temps.
+		// Only once: `start()` is called again on every household or account change, and without this guard
+		// each pass added a pair of listeners. After three changes, a single network recovery started three
+		// full re-reads at once.
 		if (!this.watchingNetwork) {
 			this.watchingNetwork = true;
 			addEventListener('online', () => this.detach(this.resume()));
@@ -201,34 +199,32 @@ class SyncStore {
 	}
 
 	stop() {
-		// `removeChannel` et non `unsubscribe` : le client garde ses canaux indexés par sujet, et un
-		// simple désabonnement laisserait celui-ci en place. Rejoindre un foyer puis revenir au
-		// précédent réutiliserait alors un canal déjà abonné, que la bibliothèque refuse de
-		// reconfigurer — le temps réel s'arrêterait sans rien dire.
+		// `removeChannel` and not `unsubscribe`: the client keeps its channels indexed by topic, and a plain
+		// unsubscribe would leave this one in place. Joining a household then coming back to the previous one
+		// would reuse an already-subscribed channel, which the library refuses to reconfigure — realtime
+		// would stop without a word.
 		if (this.channel) supabase.removeChannel(this.channel);
 		this.channel = null;
 		this.householdId = null;
 		this.circles = [];
 		this.generation += 1;
 		this.state = 'idle';
-		// Changer de foyer ou de compte repart d'un cache qui ne dit plus rien du nouveau : ce qui
-		// attend la première synchronisation doit l'attendre de nouveau.
+		// Changing household or account starts again from a cache that says nothing about the new one: what
+		// waits for the first sync must wait for it again.
 		this.settled = false;
 
-		// Une relecture en vol appartient au foyer qu'on quitte. La garder ferait rendre cette
-		// vieille promesse au prochain `pull()`, qui croirait avoir relu le nouveau foyer : on
-		// rejoindrait une famille et l'écran resterait sur l'ancienne, sans plus rien attendre.
+		// A re-read in flight belongs to the household being left. Keeping it would hand that old promise to
+		// the next `pull()`, which would believe it had re-read the new household: you would join a family and
+		// the screen would stay on the old one, with nothing left to wait for.
 		this.pulling = null;
 
-		// Une relecture programmée par le temps réel appartient elle aussi au foyer qu'on quitte.
-		// Laissée en place, elle part huit dixièmes de seconde plus tard, au milieu du chargement
-		// du nouveau foyer.
+		// A re-read scheduled by realtime also belongs to the household being left. Left in place, it fires
+		// eight tenths of a second later, in the middle of loading the new household.
 		if (this.pullTimer) clearTimeout(this.pullTimer);
 		this.pullTimer = null;
 
-		// Les horodatages appliqués décrivent les lignes du foyer qu'on quitte. Gardés, ils feraient
-		// écarter comme « retardataire » le premier évènement d'une ligne du nouveau foyer portant
-		// le même identifiant.
+		// The applied timestamps describe the rows of the household being left. Kept, they would make the
+		// first event of a row in the new household carrying the same id be discarded as late.
 		this.appliedAt.clear();
 		this.subscribed = false;
 	}
@@ -243,28 +239,27 @@ class SyncStore {
 	}
 
 	/**
-	 * Le foyer, en attendant qu'il soit connu s'il ne l'est pas encore.
+	 * The household, waiting for it to be known if it is not yet.
 	 *
-	 * Une écriture partie avant que le foyer soit provisionné portait jusqu'ici une chaîne vide à
-	 * la place de l'identifiant. Postgres refuse — « invalid input syntax for type uuid » — et ce
-	 * refus est définitif : la file jetait l'écriture, sans que rien ne la rattrape. Le magasin
-	 * créé restait à l'écran le temps d'une relecture, puis disparaissait pour de bon.
+	 * A write leaving before the household was provisioned used to carry an empty string in place of the
+	 * id. Postgres refuses it — "invalid input syntax for type uuid" — and that refusal is final: the
+	 * queue discarded the write, with nothing to catch it. The shop just created stayed on screen for one
+	 * re-read, then disappeared for good.
 	 *
-	 * Mieux vaut donc attendre l'identifiant que d'écrire à côté. Rendre une chaîne vide reste
-	 * possible — hors réseau, serveur en erreur — et l'appelant doit alors renoncer plutôt que
-	 * d'enfiler quelque chose d'invalide.
+	 * Better to wait for the id than to write beside it. Returning an empty string stays possible —
+	 * offline, server in error — and the caller must then give up rather than queue something invalid.
 	 */
 	async whenHousehold(delaiMs = 5000): Promise<string> {
 		if (this.householdId) return this.householdId;
 		if (!browser) return '';
 
 		/**
-		 * On attend celui que `start()` est en train de poser — on n'en provisionne pas un second.
+		 * We wait for the one `start()` is setting — we do not provision a second.
 		 *
-		 * `ensure_household` rend le foyer existant quand il y en a un, mais deux appels partis en
-		 * même temps ne voient ni l'un ni l'autre de membre : les deux en créent un, et le compte
-		 * se retrouve dans deux foyers dont un seul sera lu. Provisionner ici, en parallèle du
-		 * démarrage, produisait exactement ça — et les listes du foyer disparaissaient.
+		 * `ensure_household` returns the existing household when there is one, but two calls made at the same
+		 * time see neither the other's membership: both create one, and the account ends up in two households
+		 * of which only one will be read. Provisioning here, in parallel with startup, produced exactly that —
+		 * and the household's lists disappeared.
 		 */
 		const fin = Date.now() + delaiMs;
 		while (!this.householdId && Date.now() < fin) {
@@ -275,30 +270,30 @@ class SyncStore {
 	}
 
 	/**
-	 * Le cercle affiché, choisi explicitement.
+	 * The displayed circle, chosen explicitly.
 	 *
-	 * Rejoindre une famille ne fait plus quitter la sienne : `ensure_household` rendrait le plus
-	 * ancien, donc celui de l'inscription, et l'invitation n'aurait l'air d'avoir rien fait.
+	 * Joining a family no longer means leaving your own: `ensure_household` would return the oldest, so the
+	 * one from sign-up, and the invitation would look as if it had done nothing.
 	 *
-	 * Basculer d'un cercle à l'autre ne relit rien et ne vide rien : le cache les porte déjà tous,
-	 * seul change ce que l'écran en montre.
+	 * Switching from one circle to another re-reads nothing and empties nothing: the cache already holds
+	 * them all, only what the screen shows changes.
 	 */
 	adopt(householdId: string) {
 		this.householdId = householdId;
 		localStorage.setItem(HOUSEHOLD_KEY, householdId);
 	}
 
-	/** Les identifiants des cercles connus, dans l'ordre d'arrivée. */
+	/** The ids of the known circles, in arrival order. */
 	get householdIds(): string[] {
 		return this.circles.map((circle) => circle.id);
 	}
 
 	/**
-	 * Les cercles dont le compte est membre, du plus ancien au plus récent, relus du serveur.
+	 * The circles the account belongs to, oldest first, re-read from the server.
 	 *
-	 * Le nom vient de `households`, que la RLS n'ouvre qu'à ses propres membres : la jointure ne
-	 * rapporte donc jamais un cercle auquel on n'appartient pas, et un cercle sans nom lisible est
-	 * écarté plutôt que présenté vide dans le sélecteur.
+	 * The name comes from `households`, which RLS only opens to its own members: the join therefore never
+	 * brings back a circle you do not belong to, and a circle with no readable name is dropped rather than
+	 * shown blank in the selector.
 	 */
 	async households(): Promise<Circle[]> {
 		const { data: session } = await supabase.auth.getUser();
@@ -326,9 +321,9 @@ class SyncStore {
 	private async provision() {
 		const connus = await this.households();
 
-		// Le cercle retenu la dernière fois passe avant : sans ça, un compte membre de plusieurs
-		// cercles reviendrait au plus ancien à chaque ouverture, quel que soit celui qu'il regardait.
-		// L'appartenance est vérifiée — on a pu en être sorti depuis un autre appareil.
+		// The circle remembered last time comes first: without that, an account belonging to several circles
+		// would go back to the oldest on every opening, whichever one it was looking at. Membership is
+		// checked — we may have been removed from another device.
 		const choisi = defaultCircle(connus, localStorage.getItem(HOUSEHOLD_KEY));
 		if (choisi) {
 			this.adopt(choisi);
@@ -349,9 +344,9 @@ class SyncStore {
 	}
 
 	/**
-	 * Relit tous les cercles du compte et remplace le cache. Les tables sont vidées et réécrites dans
-	 * une seule transaction : un rayon supprimé sur un autre appareil disparaît vraiment ici, ce
-	 * qu'un simple bulkPut ne ferait pas.
+	 * Re-reads every circle of the account and replaces the cache. The tables are emptied and rewritten in
+	 * a single transaction: an aisle deleted on another device really disappears here, which a plain
+	 * bulkPut would not do.
 	 */
 	async pull() {
 		if (this.pulling) return this.pulling;
@@ -366,18 +361,17 @@ class SyncStore {
 	private async pullOnce() {
 		if (!this.householdId) return;
 
-		// Les appartenances sont relues d'abord : un cercle rejoint depuis un autre appareil doit
-		// entrer dans cette relecture-ci, pas à la suivante.
+		// Memberships are re-read first: a circle joined from another device must enter this re-read, not the
+		// next one.
 		const cercles = (await this.households()).map((circle) => circle.id);
 		if (cercles.length === 0) return;
 
 		const generation = this.generation;
 
-		// Ce qui attend dans la file part d'abord. La relecture vide les tables et les réécrit
-		// depuis le serveur : lancée alors qu'une écriture n'est pas encore partie, elle efface de
-		// l'écran un magasin qu'on vient de créer, ou ramène celui qu'on vient de supprimer. Si la
-		// file ne se vide pas — hors réseau, serveur en erreur — on ne relit pas du tout, plutôt
-		// que d'écraser un travail qui n'a pas encore atteint le serveur.
+		// What waits in the queue leaves first. The re-read empties the tables and rewrites them from the
+		// server: started while a write has not left yet, it erases from the screen a shop just created, or
+		// brings back one just deleted. If the queue does not drain — offline, server in error — we do not
+		// re-read at all, rather than overwrite work that has not reached the server yet.
 		await this.flush(true);
 		if ((await db.outbox.count()) > 0) return;
 
@@ -406,9 +400,8 @@ class SyncStore {
 		] = await Promise.all([
 			supabase.from('shops').select('*').in('household_id', cercles),
 			supabase.from('aisles').select('*').in('household_id', cercles),
-			// Une liste personnelle n'a pas de cercle : la filtrer sur les cercles la ferait
-			// disparaître de l'écran de son propre auteur. La RLS n'en laisse passer que les
-			// siennes, le `or` ne fait que ne pas les exclure.
+			// A personal list has no circle: filtering on circles would make it disappear from its own author's
+			// screen. RLS only lets their own through, the `or` merely refrains from excluding them.
 			supabase
 				.from('lists')
 				.select('*')
@@ -425,12 +418,12 @@ class SyncStore {
 			supabase.from('poll_votes').select('*'),
 			supabase.from('item_prices').select('*').in('household_id', cercles),
 			supabase.from('recipes').select('*').in('household_id', cercles),
-			// Les lignes d'une recette ne portent pas de foyer : la policy les filtre déjà par la
-			// recette dont elles dépendent, comme pour les articles d'une liste.
+			// A recipe's lines carry no household: the policy already filters them by the recipe they depend on,
+			// as for a list's items.
 			supabase.from('recipe_ingredients').select('*'),
 			supabase.from('recipe_steps').select('*'),
-			// Une conversation directe ne se rattache à aucun cercle : la filtrer sur le foyer
-			// affiché la ferait disparaître. La RLS n'en laisse passer que celles où l'on figure.
+			// A direct conversation attaches to no circle: filtering on the displayed household would make it
+			// disappear. RLS only lets through the ones you take part in.
 			supabase.from('conversations').select('*'),
 			supabase.from('conversation_participants').select('*')
 		]);
@@ -468,8 +461,8 @@ class SyncStore {
 		const { data: session } = await supabase.auth.getUser();
 		const currentUserId = session.user?.id ?? '';
 
-		// Les profils passent par une fonction : la policy de la table limite la lecture au sien,
-		// et un foyer où personne n'a de nom ne se lit pas.
+		// Profiles go through a function: the table's policy limits reading to your own, and a household where
+		// nobody has a name cannot be read.
 		const profiles = await supabase.rpc('household_profiles');
 
 		const profileById = new Map(
@@ -491,9 +484,9 @@ class SyncStore {
 			]);
 		}
 
-		// Le compte a pu changer pendant ces lectures. Écrire maintenant remplirait le cache du
-		// nouveau avec les cercles du précédent. Basculer de cercle, en revanche, ne remet rien en
-		// cause : ce qu'on tient décrit tous les cercles, l'actif comme les autres.
+		// The account may have changed during these reads. Writing now would fill the new one's cache with the
+		// previous one's circles. Switching circle, on the other hand, changes nothing: what we hold describes
+		// every circle, the active one included.
 		if (this.generation !== generation) return;
 
 		await db.transaction(
@@ -520,19 +513,18 @@ class SyncStore {
 			],
 			async () => {
 				/**
-				 * Dernier regard sur la file, à l'abri de la transaction.
+				 * One last look at the queue, under the protection of the transaction.
 				 *
-				 * La file était vide au départ, mais treize lectures prennent du temps, et
-				 * quelqu'un a pu créer un magasin pendant ce temps-là. Ce qu'on tient dans les
-				 * mains ne connaît pas cette écriture : l'écrire effacerait de l'écran quelque
-				 * chose que la personne vient de faire, et qui ne reviendrait qu'à la relecture
-				 * suivante — quand elle a lieu. On a vu le magasin disparaître pour de bon.
+				 * The queue was empty at the start, but thirteen reads take time, and somebody may have created a
+				 * shop meanwhile. What we hold in our hands does not know about that write: writing it would erase
+				 * from the screen something the person has just done, and which would only come back at the next
+				 * re-read — when there is one. We have seen the shop disappear for good.
 				 *
-				 * On abandonne donc cette relecture-là, sans rien toucher. L'envoi de l'écriture
-				 * en attente en programme une autre derrière lui, avec un serveur qui la connaît.
+				 * So we abandon this re-read, touching nothing. Sending the pending write schedules another one
+				 * behind it, with a server that knows about it.
 				 *
-				 * Le contrôle est ici, dans la transaction, et pas juste avant : Dexie sérialise
-				 * les transactions sur ces tables, ce qui ferme la fenêtre au lieu de la réduire.
+				 * The check is here, inside the transaction, and not just before: Dexie serialises transactions on
+				 * these tables, which closes the window instead of narrowing it.
 				 */
 				if ((await db.outbox.count()) > 0) return;
 
@@ -590,8 +582,8 @@ class SyncStore {
 			}
 		);
 
-		// La relecture vient de poser l'état du serveur : tout évènement antérieur est absorbé, et
-		// les horodatages retenus ne servent plus qu'à faire grossir la carte.
+		// The re-read has just laid down the server's state: any earlier event is absorbed, and the kept
+		// timestamps would only make the map grow.
 		this.appliedAt.clear();
 
 		this.state = 'idle';
@@ -599,11 +591,11 @@ class SyncStore {
 		this.onPulled?.();
 	}
 
-	/** Enregistre une écriture et tente de la pousser tout de suite. */
+	/** Records a write and tries to push it straight away. */
 	async enqueue(entry: OutboxEntry) {
-		// Les appelants n'attendent pas cette promesse — le magasin de données l'appelle depuis des
-		// méthodes synchrones. Un stockage local plein doit donc se voir sur le bandeau plutôt que
-		// disparaître : sans cela, l'écriture n'est ni partie ni signalée.
+		// Callers do not await this promise — the data store calls it from synchronous methods. A full local
+		// storage must therefore show on the banner rather than disappear: without this, the write is neither
+		// sent nor reported.
 		try {
 			const added = db.outbox.add(entry);
 			this.writing = this.writing.then(() => added.then(noop, noop));
@@ -619,13 +611,13 @@ class SyncStore {
 	}
 
 	/**
-	 * Vide la file dans l'ordre d'arrivée. L'ordre compte : une liste doit exister avant ses
-	 * articles. Une panne réseau arrête la boucle et laisse tout en attente. Un refus définitif du
-	 * serveur, lui, jette l'écriture : la garder bloquerait la file pour toujours et l'utilisateur
-	 * ne verrait plus rien partir.
+	 * Drains the queue in arrival order. Order matters: a list must exist before its items. A network
+	 * failure stops the loop and leaves everything pending. A final refusal from the server, on the other
+	 * hand, discards the write: keeping it would block the queue forever and the user would see nothing
+	 * leave any more.
 	 *
-	 * `depuisRelecture` dit que l'appel vient de la relecture elle-même, qui vide la file avant de
-	 * lire : elle n'a pas besoin qu'on lui en programme une seconde derrière.
+	 * `depuisRelecture` says the call comes from the re-read itself, which drains the queue before reading: it
+	 * does not need a second one scheduled behind it.
 	 */
 	async flush(depuisRelecture = false) {
 		if (!browser || !navigator.onLine) {
@@ -637,9 +629,9 @@ class SyncStore {
 
 		const pending = await db.outbox.orderBy('seq').toArray();
 
-		// L'erreur qui compte est celle de ce cycle-ci. En relisant `this.state`, un refus définitif
-		// d'hier laissait le bandeau en erreur pour toujours, avec un message décrivant une écriture
-		// déjà abandonnée, pendant que tout le reste partait normalement.
+		// The error that counts is this cycle's. By re-reading `this.state`, a final refusal from yesterday
+		// left the banner in error forever, with a message describing a write already abandoned, while
+		// everything else left normally.
 		let rejected = false;
 		let sent = 0;
 
@@ -667,37 +659,35 @@ class SyncStore {
 			await db.outbox.delete(entry.seq as number);
 		}
 
-		// Relire après un refus définitif serait logique — l'écran doit montrer ce que le serveur a
-		// vraiment. Essayé, et retiré : chaque relecture vide les douze tables et les réécrit, donc
-		// reconstruit tout le DOM, et les refus de routine suffisaient à rendre les cartes de liste
-		// inatteignables au clic. À reprendre quand la relecture réconciliera par identifiant au
-		// lieu de tout remplacer (#95).
+		// Re-reading after a final refusal would be logical — the screen should show what the server really
+		// has. Tried, and removed: every re-read empties the twelve tables and rewrites them, so it rebuilds
+		// the whole DOM, and routine refusals were enough to make the list cards unclickable. To revisit when
+		// the re-read reconciles by id instead of replacing everything (#95).
 		if (rejected) return;
 
 		this.state = 'idle';
 		this.lastError = null;
 
-		// Une relecture partie avant cet envoi a lu un serveur qui ne connaissait pas encore ces
-		// écritures, et elle remplace le cache par ce qu'elle a lu : le magasin qu'on vient de
-		// créer disparaît de l'écran alors qu'il est bien enregistré. On relit donc une fois
-		// celle-là terminée, avec un serveur qui sait tout.
+		// A re-read that left before this send read a server that did not know these writes yet, and it
+		// replaces the cache with what it read: the shop just created disappears from the screen although it
+		// is properly saved. So we re-read once that one is done, with a server that knows everything.
 		if (sent > 0 && !depuisRelecture) {
 			this.detach(Promise.resolve(this.pulling).then(() => this.pull()));
 		}
 	}
 
 	/**
-	 * Un changement venu d'un autre appareil se pose directement dans le cache quand il vient d'une
-	 * table qu'on sait reconstruire depuis son seul payload — voir `realtime.ts`. Tout le reste
-	 * déclenche encore la relecture complète, différée : nos propres écritures reviennent aussi par
-	 * ce canal, et sans le délai cocher un article relirait tout le foyer à chaque case cochée.
+	 * A change from another device lands straight in the cache when it comes from a table we know how to
+	 * rebuild from its payload alone — see `realtime.ts`. Everything else still triggers the full re-read,
+	 * deferred: our own writes come back through this channel too, and without the delay ticking an item
+	 * would re-read the whole household on every checkbox.
 	 */
 	private listen() {
 		if (this.channel || !this.householdId) return;
 
-		// Un seul canal pour tous les cercles, et non un par cercle : l'abonnement ne filtre rien,
-		// c'est la RLS qui décide de ce qui arrive. Le nommer d'après le cercle affiché obligerait à
-		// le refaire à chaque bascule, pour écouter exactement la même chose.
+		// One channel for every circle, and not one per circle: the subscription filters nothing, RLS decides
+		// what arrives. Naming it after the displayed circle would mean redoing it on every switch, to listen
+		// to exactly the same thing.
 		this.channel = supabase
 			.channel('familist:changes')
 			.on('postgres_changes', { event: '*', schema: 'public' }, (payload) =>
@@ -706,20 +696,19 @@ class SyncStore {
 			.subscribe((status) => {
 				if (status !== 'SUBSCRIBED') return;
 
-				// Une reprise après coupure laisse un trou : les changements survenus pendant
-				// l'absence ne sont jamais rejoués, et aucun payload ne viendra les décrire. Seule
-				// une relecture complète les rattrape. Le tout premier abonnement, lui, suit déjà
-				// une relecture.
+				// A recovery after an outage leaves a hole: changes that happened during the absence are never
+				// replayed, and no payload will come to describe them. Only a full re-read catches them up. The very
+				// first subscription already follows a re-read.
 				if (this.subscribed) this.schedulePull();
 				this.subscribed = true;
 			});
 	}
 
 	/**
-	 * Applique un payload, ou renvoie à la relecture complète.
+	 * Applies a payload, or hands back to the full re-read.
 	 *
-	 * La décision est prise par une fonction pure, testée à part. Ne reste ici que ce qu'elle ne
-	 * peut pas savoir : l'état de la file d'attente, celui du cache, et le foyer affiché.
+	 * The decision is made by a pure function, tested separately. What is left here is what it cannot
+	 * know: the state of the queue, the state of the cache, and the displayed household.
 	 */
 	private async receive(payload: Record<string, unknown>) {
 		if (!this.householdId) return;
@@ -734,16 +723,16 @@ class SyncStore {
 			old: payload.old as Record<string, unknown> | undefined
 		};
 
-		// Une écriture locale encore en file, ou une relecture en vol, font autorité sur le payload :
-		// poser celui-ci effacerait un travail que le serveur ne connaît pas encore, ou courrait
-		// contre une lecture dont on ignore l'âge. Dans les deux cas la relecture tranche.
+		// A local write still queued, or a re-read in flight, outranks the payload: applying it would erase
+		// work the server does not know yet, or race a read whose age we do not know. In both cases the
+		// re-read decides.
 		const busy = this.pulling !== null || (await db.outbox.count()) > 0;
 
 		/**
-		 * Le cache porte les listes de tous les cercles, pas seulement celles du cercle affiché :
-		 * c'est ce qui rend ce raccourci utilisable ici. Un article coché dans un cercle qu'on ne
-		 * regarde pas se pose donc directement, au lieu de retomber sur la relecture complète parce
-		 * que sa liste aurait l'air inconnue — et il est déjà juste quand on bascule.
+		 * The cache holds the lists of every circle, not only those of the displayed one: that is what makes
+		 * this shortcut usable here. An item ticked in a circle nobody is looking at therefore lands directly,
+		 * instead of falling back on the full re-read because its list would look unknown — and it is already
+		 * right when you switch.
 		 */
 		const plan = planRealtime(event, {
 			knownListIds: new Set((await db.lists.toCollection().primaryKeys()) as string[]),
@@ -761,13 +750,13 @@ class SyncStore {
 			return;
 		}
 
-		// Le compte a pu changer pendant ces lectures, comme dans la relecture : écrire maintenant
-		// poserait une ligne de l'ancien compte dans le cache du nouveau.
+		// The account may have changed during these reads, as in the re-read: writing now would put a row of
+		// the old account into the new one's cache.
 		if (this.generation !== generation) return;
 
 		if (plan.kind === 'delete') {
-			// Supprimer un identifiant absent du cache ne fait rien : c'est exactement ce qu'on veut
-			// d'un DELETE portant sur une ligne qu'on n'a jamais eue.
+			// Deleting an id absent from the cache does nothing: that is exactly what we want from a DELETE on a
+			// row we never had.
 			if (plan.table === 'items') await db.items.delete(plan.id);
 			else await db.messages.delete(plan.id);
 		} else if (plan.table === 'items') {

@@ -5,12 +5,11 @@ const COLUMNS =
 	'theme, accent_id, type_scale, font_id, motion, hand, sound, haptics, nearby_cards, has_seen_tour';
 
 /**
- * Compte dont l'arbitrage initial a déjà eu lieu sur cet appareil.
+ * Account whose initial arbitration has already happened on this device.
  *
- * Tant qu'il n'a pas eu lieu, aucun envoi ne part. Sans ce verrou, l'envoi déclenché par le
- * premier rendu pouvait doubler la lecture encore en vol : les réglages de l'appareil partaient
- * vers la base, la lecture les relisait, et les préférences venues de l'autre appareil étaient
- * écrasées par celles-là mêmes qu'on venait d'y écrire.
+ * Until it has, nothing is sent. Without this lock, the send triggered by the first render could overtake
+ * the read still in flight: the device's settings left for the database, the read took them back, and the
+ * preferences coming from the other device were overwritten by the very ones just written there.
  */
 let arbitrated: string | null = null;
 
@@ -29,20 +28,20 @@ async function pull(userId: string) {
 async function push(userId: string) {
 	const { error } = await supabase.from('profiles').update(settings.snapshot()).eq('id', userId);
 
-	// On ne date l'envoi que s'il a abouti, sinon la modification serait considérée comme
-	// transmise et le prochain démarrage la remplacerait par ce que dit la base.
+	// We only date the send if it went through, otherwise the change would be considered transmitted and the
+	// next start-up would replace it with what the database says.
 	if (!error) settings.markSynced(userId);
 }
 
 /**
- * Les préférences d'apparence suivent la personne d'un appareil à l'autre.
+ * Appearance preferences follow the person from one device to another.
  *
- * Le stockage local reste la source rapide : c'est lui que lit le script d'amorçage, avant le
- * premier rendu, pour qu'un rechargement en grande police ne passe pas par un éclair en petit. La
- * base n'est qu'un relais entre appareils, consulté une fois la session connue.
+ * Local storage stays the fast source: it is what the bootstrap script reads, before the first render, so
+ * that a reload in large type does not go through a flash in small. The database is only a relay between
+ * devices, consulted once the session is known.
  *
- * Un échec réseau ne casse rien et ne se signale pas : les réglages locaux restent en place et le
- * prochain démarrage réessaiera. Rien ici ne vaut la peine d'interrompre quelqu'un.
+ * A network failure breaks nothing and reports nothing: the local settings stay in place and the next
+ * start-up will try again. Nothing here is worth interrupting somebody for.
  */
 export async function syncAppearance(userId: string) {
 	if (settings.localWins(userId)) {
@@ -54,7 +53,7 @@ export async function syncAppearance(userId: string) {
 	arbitrated = userId;
 }
 
-/** Renvoie un réglage modifié depuis l'interface, une fois l'arbitrage initial passé. */
+/** Sends a setting changed from the interface, once the initial arbitration is past. */
 export async function pushAppearance(userId: string) {
 	if (arbitrated !== userId || !settings.localWins(userId)) return;
 

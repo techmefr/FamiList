@@ -9,8 +9,8 @@
 	let dialog = $state<HTMLDialogElement | null>(null);
 
 	/**
-	 * Même contrat que les autres feuilles : le navigateur tient l'état ouvert/fermé, on ne le
-	 * double pas d'un booléen qui finirait par mentir dès qu'Échap ferme la feuille sans nous.
+	 * Same contract as the other sheets: the browser holds the open/closed state, we do not double it with a
+	 * boolean that would end up lying as soon as Escape closes the sheet without us.
 	 */
 	export function show() {
 		dialog?.showModal();
@@ -26,7 +26,7 @@
 		hide();
 	}
 
-	/** Ce qui distingue deux magasins de la même enseigne : où ils sont. */
+	/** What tells two shops of the same brand apart: where they are. */
 	function situation(address: string, dist?: string) {
 		return [address.trim(), dist?.trim()].filter(Boolean).join(' • ');
 	}
@@ -91,9 +91,8 @@
 		</ul>
 
 		<!--
-			Ajouter un magasin depuis la feuille : c'est ici qu'on s'aperçoit qu'il manque, pas dans
-			l'écran des réglages. Le trait tireté le distingue des magasins réels sans en faire une
-			commande de plus à ignorer.
+			Adding a shop from the sheet: this is where you notice it is missing, not in the settings screen. The
+			dashed outline tells it from the real shops without making it one more control to ignore.
 		-->
 		<a
 			href="/shops"

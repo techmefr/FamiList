@@ -1,18 +1,16 @@
 /**
- * Le code à six chiffres d'un authentificateur, calculé depuis le secret.
+ * The six-digit code of an authenticator, computed from the secret.
  *
- * L'application n'en a pas besoin pour fonctionner — c'est Supabase qui vérifie les codes, et
- * c'est l'authentificateur de l'utilisateur qui les produit. Cette implémentation existe pour les
- * tests : sans elle, la deuxième étape ne pouvait être vérifiée qu'à la main, avec un téléphone,
- * ce qui revient à ne jamais la vérifier.
+ * The application does not need it to work — Supabase is what checks the codes, and the user's
+ * authenticator is what produces them. This implementation exists for the tests: without it, the second
+ * step could only be checked by hand, with a phone, which amounts to never checking it.
  *
- * RFC 6238, dans le réglage que Supabase utilise : SHA-1, six chiffres, fenêtre de trente
- * secondes.
+ * RFC 6238, in the setting Supabase uses: SHA-1, six digits, thirty-second window.
  */
 
 const ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
 
-/** Décode le secret tel qu'il est affiché à l'écran : base32, sans remplissage, casse libre. */
+/** Decodes the secret as it is shown on screen: base32, no padding, any case. */
 export function base32Decode(secret: string): Uint8Array {
 	const propre = secret.replace(/[\s=-]/g, '').toUpperCase();
 	const octets: number[] = [];
@@ -35,12 +33,12 @@ export function base32Decode(secret: string): Uint8Array {
 	return Uint8Array.from(octets);
 }
 
-/** Le compteur de la RFC : le nombre de fenêtres de trente secondes écoulées depuis l'époque. */
+/** The RFC counter: the number of thirty-second windows elapsed since the epoch. */
 export function totpCounter(atMs: number, stepSeconds = 30): bigint {
 	return BigInt(Math.floor(atMs / 1000 / stepSeconds));
 }
 
-/** Le compteur, écrit sur huit octets en gros-boutien, tel qu'il entre dans le HMAC. */
+/** The counter, written on eight bytes big-endian, as it goes into the HMAC. */
 export function counterBytes(counter: bigint): Uint8Array {
 	const octets = new Uint8Array(8);
 	let reste = counter;
@@ -54,8 +52,8 @@ export function counterBytes(counter: bigint): Uint8Array {
 }
 
 /**
- * La troncature dynamique de la RFC : quatre octets choisis par les quatre derniers bits du
- * condensat, puis les six derniers chiffres décimaux.
+ * The RFC's dynamic truncation: four bytes chosen by the last four bits of the digest, then the last six
+ * decimal digits.
  */
 export function truncate(digest: Uint8Array, digits = 6): string {
 	const decalage = digest[digest.length - 1] & 0x0f;

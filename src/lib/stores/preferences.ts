@@ -5,14 +5,14 @@ export type Theme = 'light' | 'dark' | 'system';
 
 export interface AccentPreset {
 	id: string;
-	/** Clé i18n du libellé. */
+	/** i18n key of the label. */
 	label: string;
 }
 
 /**
- * Les valeurs de couleur vivent dans src/app.css, sous [data-accent='<id>']. Ce fichier ne porte
- * que la liste et l'ordre d'affichage : ajouter un preset, c'est ajouter une entrée ici et un bloc
- * là-bas, jamais une valeur en double.
+ * The colour values live in src/app.css, under [data-accent='<id>']. This file only carries the list and
+ * the display order: adding a preset means adding an entry here and a block over there, never a value
+ * twice.
  */
 export const ACCENT_PRESETS: AccentPreset[] = [
 	{ id: 'terracotta', label: 'accent.terracotta' },
@@ -29,9 +29,9 @@ export interface FontScalePreset {
 }
 
 /**
- * Sept crans, jusqu'à 2,3. « Confort » est fait pour être lu à bout de bras, dans un rayon, par
- * quelqu'un qui a laissé ses lunettes chez lui. Les multiplicateurs eux-mêmes sont dans app.css,
- * sous [data-scale='<id>'] ; chaque cran doit tenir sur un écran de 375 px sans rien couper.
+ * Seven steps, up to 2.3. "Comfort" is made to be read at arm's length, in an aisle, by somebody who left
+ * their glasses at home. The multipliers themselves are in app.css, under [data-scale='<id>']; each step
+ * must fit on a 375px screen without cutting anything off.
  */
 export const FONT_SCALE_PRESETS: FontScalePreset[] = [
 	{ id: 'xs', label: 'scale.xs' },
@@ -49,15 +49,15 @@ export interface FontPreset {
 }
 
 /**
- * « Système » d'abord, et par défaut : la pile du système reprend la police que la personne a
- * choisie sur son appareil. Quelqu'un qui a installé une police adaptée à sa dyslexie la retrouve
- * ici sans rien régler, et c'est toujours mieux que la meilleure des polices qu'on lui imposerait.
+ * "System" first, and by default: the system stack takes the font the person chose on their device.
+ * Somebody who installed a font suited to their dyslexia finds it here without setting anything, and that
+ * is always better than the best font we could impose on them.
  *
- * Les deux autres sont là pour qui n'a rien réglé : Atkinson Hyperlegible a été dessinée pour la
- * basse vision, elle écarte les formes qui se confondent (I, l, 1 — O, 0). Le duo de la maquette
- * reste disponible pour retrouver l'allure d'origine.
+ * The other two are there for those who set nothing: Atkinson Hyperlegible was drawn for low vision, it
+ * pushes apart the shapes that blend (I, l, 1 — O, 0). The mockup's pair stays available to find the
+ * original look.
  *
- * Comme pour les accents, les valeurs vivent dans src/app.css, sous [data-font='<id>'].
+ * As for the accents, the values live in src/app.css, under [data-font='<id>'].
  */
 export const FONT_PRESETS: FontPreset[] = [
 	{ id: 'system', label: 'font.system' },
@@ -70,25 +70,24 @@ export const DEFAULT_FONT_SCALE = 'sm';
 export const DEFAULT_FONT = 'system';
 export const DEFAULT_MOTION: MotionPreference = 'system';
 
-/** Droitier par défaut : c'est la place qu'occupe déjà le bouton de création. */
+/** Right-handed by default: it is the place the create button already occupies. */
 export const DEFAULT_HAND: Hand = 'right';
 
 /**
- * Son et vibration partent allumés. Les deux ne se déclenchent que sur un geste, durent moins d'un
- * tiers de seconde et se coupent d'un interrupteur dans le profil ; les découvrir en cochant un
- * article est plus probable que d'aller les chercher dans les réglages.
+ * Sound and vibration start on. Both only fire on a gesture, last less than a third of a second and are
+ * switched off from the profile; discovering them by ticking an item is more likely than going to look for
+ * them in the settings.
  */
 export const DEFAULT_SOUND = true;
 export const DEFAULT_HAPTICS = true;
 
 /**
- * La proposition de carte à l'approche d'un magasin part éteinte, contrairement au son et aux
- * vibrations : elle suppose de laisser l'appareil suivre sa position. Ce genre d'accord se donne,
- * il ne se retire pas après coup.
+ * The card offer on approaching a shop starts off, unlike sound and vibration: it assumes letting the
+ * device follow your position. That kind of consent is given, it is not taken back afterwards.
  */
 export const DEFAULT_NEARBY_CARDS = false;
 
-/** Couleurs de fond de :root et .dark, pour la barre de statut du système. */
+/** Background colours of :root and .dark, for the system status bar. */
 export const THEME_COLORS = { light: '#f1ede5', dark: '#0a0907' } as const;
 
 export const STORAGE_KEY = 'familist:appearance';

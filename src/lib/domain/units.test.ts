@@ -32,7 +32,7 @@ describe('resolveUnit', () => {
 	});
 
 	it('ne rapproche pas deux unites de volumes differents', () => {
-		// 50 cl ramenes a 50 ml, ce serait dix fois moins sans que personne ne le voie.
+		// 50 cl brought back to 50 ml would be ten times less with nobody seeing it.
 		expect(resolveUnit('cl')).toBeNull();
 	});
 
@@ -59,7 +59,7 @@ describe('UNIT_GROUPS', () => {
 		expect(new Set(rangees).size).toBe(rangees.length);
 	});
 
-	// Dix conditionnements, c'est déjà beaucoup à lire d'un coup ; au-delà, la famille se scinde.
+	// Ten pack sizes is already a lot to read at once; beyond that, the family splits.
 	it('ne propose jamais plus de dix choix à la fois', () => {
 		for (const groupe of UNIT_GROUPS) expect(groupe.units.length).toBeLessThanOrEqual(10);
 	});
@@ -78,7 +78,7 @@ describe('unitGroupOf', () => {
 		expect(unitGroupOf('boîte')).toBe('pack');
 	});
 
-	// Un article importé avec une unité fantaisiste doit rester modifiable.
+	// An item imported with a fanciful unit must stay editable.
 	it('retombe sur les pièces plutôt que d’échouer', () => {
 		expect(unitGroupOf('douzaine')).toBe('count');
 		expect(unitGroupOf('')).toBe('count');

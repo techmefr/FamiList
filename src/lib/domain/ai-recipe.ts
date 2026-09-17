@@ -3,18 +3,16 @@ import { slugify } from './slug';
 import { DEFAULT_UNIT, resolveUnit, UNITS } from './units';
 
 /**
- * Une idee de recette a partir de ce que le foyer achete, et surtout : ce qui sort de l'appareil
- * pour l'obtenir.
+ * A recipe idea from what the household buys, and above all: what leaves the device to get it.
  *
- * Ce depot a refuse le geocodage pour ne pas faire sortir une adresse
- * (`20260908170000_shop_place.sql`). Demander une recette a un tiers renverse ce principe, et il
- * n'y a pas de demi-mesure possible : ou bien on envoie quelque chose, ou bien il n'y a pas de
- * fonctionnalite. Ce que ce fichier peut faire, c'est rendre ce « quelque chose » aussi petit que
- * possible et entierement montrable — `shoppedProducts` rend une liste de chaines que l'ecran
- * affiche telle quelle avant l'envoi, et c'est litteralement tout ce qui part.
+ * This repository refused geocoding so as not to let an address out (`20260908170000_shop_place.sql`).
+ * Asking a third party for a recipe reverses that principle, and there is no middle way: either we send
+ * something, or there is no feature. What this file can do is make that "something" as small as possible and
+ * entirely showable — `shoppedProducts` returns a list of strings the screen displays as it is before
+ * sending, and that is literally all that leaves.
  */
 
-/** Ce que la fonction a besoin de savoir d'un article. Volontairement pas `Item` en entier. */
+/** What the function needs to know about an item. Deliberately not the whole `Item`. */
 export interface Purchase {
 	name: string;
 	checked: boolean;
@@ -22,25 +20,24 @@ export interface Purchase {
 }
 
 /**
- * Au-dela, la liste cesse d'etre lisible d'un coup d'oeil avant l'envoi, et le consentement
- * devient une case cochee sans avoir rien lu.
+ * Beyond this, the list stops being readable at a glance before sending, and consent becomes a box ticked
+ * without having read anything.
  */
 export const MAX_PRODUCTS = 40;
 
 /**
- * Les produits deja achetes, du plus recent au plus ancien, sans doublon.
+ * The products already bought, most recent first, with no duplicates.
  *
- * Ce qui part : le nom du produit. Ce qui ne part pas, et dont l'absence est la fonctionnalite :
- * les quantites, les notes, a qui l'article etait assigne, le nom des listes, celui des membres,
- * le magasin, les prix, les dates. « Couches taille 2 » et « 3 bouteilles de whisky assignees a
- * papa le 14 » ne disent pas la meme chose sur un foyer, et seule la premiere forme est utile a
- * une suggestion de recette.
+ * What leaves: the product name. What does not leave, and whose absence is the feature: the quantities, the
+ * notes, who the item was assigned to, the list names, the member names, the shop, the prices, the dates.
+ * "Size 2 nappies" and "3 bottles of whisky assigned to dad on the 14th" do not say the same thing about a
+ * household, and only the first form is useful to a recipe suggestion.
  *
- * Seuls les articles coches sont retenus : un article non coche est une intention, un article
- * coche est un achat. L'issue parle bien de ce qui a ete achete.
+ * Only ticked items are kept: an unticked item is an intention, a ticked item is a purchase. The issue does
+ * speak of what has been bought.
  *
- * Le doublon se juge sur le slug, comme partout ailleurs ici : « Tomates » et « tomates » sont le
- * meme produit, et l'envoyer deux fois coute deux fois sans rien apprendre a personne.
+ * Duplicates are judged on the slug, as everywhere else here: "Tomates" and "tomates" are the same product,
+ * and sending it twice costs twice without teaching anybody anything.
  */
 export function shoppedProducts(purchases: Purchase[], limit = MAX_PRODUCTS): string[] {
 	const seen = new Set<string>();
@@ -62,21 +59,20 @@ export function shoppedProducts(purchases: Purchase[], limit = MAX_PRODUCTS): st
 }
 
 export interface PromptOptions {
-	/** La langue dans laquelle la recette doit etre ecrite, ecrite dans cette langue-la. */
+	/** The language the recipe must be written in, written in that language. */
 	language: string;
 	servings: number;
 }
 
 /**
- * La demande envoyee au fournisseur, en entier.
+ * The request sent to the provider, in full.
  *
- * Elle est construite ici et nulle part ailleurs pour que l'ecran puisse en montrer le contenu
- * avant l'envoi : ce qui est affiche et ce qui part sont alors le meme texte, et non deux
- * redactions qu'une modification ulterieure ferait diverger.
+ * It is built here and nowhere else so that the screen can show its content before sending: what is
+ * displayed and what leaves are then the same text, and not two wordings that a later change would make
+ * diverge.
  *
- * Les unites acceptees sont dictees plutot que laissees libres : elles retombent dans les colonnes
- * de `recipe_ingredients`, dont `unit` doit parler le meme langage que `items.unit` pour que la
- * generation de liste ne traduise rien.
+ * The accepted units are dictated rather than left free: they land in the columns of `recipe_ingredients`,
+ * whose `unit` must speak the same language as `items.unit` so that generating a list translates nothing.
  */
 export function recipePrompt(products: string[], options: PromptOptions): string {
 	const servings = clampServings(options.servings);
@@ -111,16 +107,15 @@ export interface SuggestedRecipe {
 	steps: string[];
 }
 
-/** Ce qu'on affiche a defaut d'emoji rendu par le fournisseur, comme le formulaire de saisie. */
+/** What we show in the absence of an emoji returned by the provider, like the entry form. */
 const FALLBACK_EMOJI = '🍲';
 
 /**
- * Le JSON cache dans la reponse, quoi qu'il arrive autour.
+ * The JSON hidden in the response, whatever surrounds it.
  *
- * Un modele repond regulierement « Voici votre recette : ```json … ``` » malgre la consigne. On ne
- * retire donc pas les balises une par une : on prend ce qui va de la premiere accolade ouvrante a
- * la derniere fermante, ce qui couvre aussi bien le bloc de code que la phrase d'introduction sans
- * dependre de leur forme exacte.
+ * A model regularly answers "Here is your recipe: ```json … ```" despite the instruction. So we do not strip
+ * the markers one by one: we take what runs from the first opening brace to the last closing one, which
+ * covers both the code block and the introductory sentence without depending on their exact form.
  */
 function extractJson(text: string): unknown {
 	const start = text.indexOf('{');
@@ -142,13 +137,13 @@ const asRecord = (value: unknown): Record<string, unknown> | null =>
 const asText = (value: unknown): string => (typeof value === 'string' ? value.trim() : '');
 
 /**
- * La recette proposee, ou null si la reponse n'en contient pas une exploitable.
+ * The suggested recipe, or null if the response contains no usable one.
  *
- * Tout est revalide plutot que fait confiance : ce texte vient d'un tiers, il finit dans des
- * colonnes contraintes cote base, et un `servings` a 0 ou une unite inventee ferait echouer
- * l'ecriture apres que la personne a accepte la recette — donc au pire moment. Une recette sans
- * nom ou sans le moindre ingredient rend null : il n'y a rien a montrer, et afficher une carte
- * vide ferait croire a une reponse utile.
+ * Everything is validated again rather than trusted: this text comes from a third party, it ends up in
+ * constrained columns on the database side, and a `servings` of 0 or an invented unit would make the write
+ * fail after the person has accepted the recipe — so at the worst moment. A recipe with no name or without a
+ * single ingredient returns null: there is nothing to show, and displaying an empty card would suggest a
+ * useful answer.
  */
 export function parseRecipeSuggestion(text: string): SuggestedRecipe | null {
 	const root = asRecord(extractJson(text));
@@ -162,8 +157,8 @@ export function parseRecipeSuggestion(text: string): SuggestedRecipe | null {
 		.map(line => ({
 			name: asText(line?.name),
 			qty: asText(line?.qty).replace(/\s+/g, ''),
-			// `resolveUnit` connait deja les alias et les pluriels ecrits a la main : un modele qui
-			// repond « grammes » malgre la consigne retombe sur `g` au lieu d'etre ramene a la piece.
+			// `resolveUnit` already knows the aliases and the plurals written by hand: a model answering "grammes"
+			// despite the instruction falls back on `g` instead of being brought back to the piece.
 			unit: resolveUnit(line?.unit as string) ?? DEFAULT_UNIT
 		}))
 		.filter(line => line.name !== '');
@@ -179,8 +174,8 @@ export function parseRecipeSuggestion(text: string): SuggestedRecipe | null {
 		emoji,
 		servings: clampServings(Number(root.servings)),
 		ingredients,
-		// Une recette sans etape reste une recette — la liste de courses, qui est le but, n'en a
-		// pas besoin. On garde une entree vide pour que le formulaire de relecture ait sa rangee.
+		// A recipe with no step is still a recipe — the shopping list, which is the point, does not need one. We
+		// keep an empty entry so that the review form has its row.
 		steps: steps.length > 0 ? steps : ['']
 	};
 }

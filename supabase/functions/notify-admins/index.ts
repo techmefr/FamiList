@@ -1,16 +1,16 @@
 /**
- * Envoie aux administrateurs un courriel groupe reprenant le tampon `admin_notifications`.
+ * Sends the administrators a grouped email covering the `admin_notifications` buffer.
  *
- * Reveillee par `public.flush_admin_notifications()` (pg_cron, toutes les cinq minutes) : rien ici
- * n est declenche par une action d utilisateur, et rien ici ne peut donc faire echouer une
- * inscription ou un signalement. La fonction repond toujours 200 — une erreur renvoyee ne serait
- * lue par personne, alors qu une ligne relachee sera reprise au tour suivant.
+ * Woken by `public.flush_admin_notifications()` (pg_cron, every five minutes): nothing here is triggered by a
+ * user action, and nothing here can therefore make a sign-up or a report fail. The function always answers
+ * 200 — an error returned would be read by nobody, whereas a released row will be taken again on the next
+ * round.
  *
- * Configuration : les reglages d instance poses depuis `/admin` (#138), avec priorite aux secrets
- * de fonction quand ils existent — ADMIN_MAIL_SMTP_HOST, ADMIN_MAIL_SMTP_PORT, ADMIN_MAIL_FROM et
- * le couple ADMIN_MAIL_SMTP_USER / ADMIN_MAIL_SMTP_PASSWORD. Une instance deja configuree par
- * `supabase secrets set` continue donc sans rien changer. Tant que ni l un ni l autre ne repond,
- * la fonction relache ce qu elle a reclame et le tampon garde tout.
+ * Configuration: the instance settings set from `/admin` (#138), with priority to the function secrets when
+ * they exist — ADMIN_MAIL_SMTP_HOST, ADMIN_MAIL_SMTP_PORT, ADMIN_MAIL_FROM and the ADMIN_MAIL_SMTP_USER /
+ * ADMIN_MAIL_SMTP_PASSWORD pair. An instance already configured by `supabase secrets set` therefore carries
+ * on with no change. While neither answers, the function releases what it has claimed and the buffer keeps
+ * everything.
  */
 
 import { isMailConfigured, loadMailSettings, sendMail } from '../_shared/mail.ts';
@@ -39,9 +39,9 @@ Deno.serve(async () => {
 		const settings = await loadMailSettings();
 		if (!isMailConfigured(settings)) throw new Error('SMTP non configure');
 
-		// Le plafond journalier est reclame avant d ouvrir la session, et le refus est une erreur
-		// comme une autre : les lignes retournent au tampon et repartiront demain, plutot que d etre
-		// marquees envoyees alors que rien n est parti.
+		// The daily cap is claimed before opening the session, and the refusal is an error like any other: the
+		// rows go back to the buffer and will leave again tomorrow, rather than being marked as sent when nothing
+		// has left.
 		if (!(await rpc<boolean>('claim_instance_mail', { amount: 1 }))) {
 			throw new Error("plafond d envoi journalier atteint");
 		}
@@ -55,8 +55,8 @@ Deno.serve(async () => {
 		return Response.json({ status: 'sent', notifications: claimed.length });
 	} catch (error) {
 		if (claimed.length > 0) {
-			// Relachees et non perdues : le prochain reveil les reprendra, et le tampon garde la
-			// trace de ce qui n est jamais parti.
+			// Released and not lost: the next wake-up will take them again, and the buffer keeps the trace of what
+			// never left.
 			await rpc('release_admin_notifications', { ids: claimed }).catch(() => undefined);
 		}
 

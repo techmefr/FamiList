@@ -1,10 +1,9 @@
--- Le portrait des membres du foyer.
+-- The household members' portrait.
 --
--- Une vignette carree de 128 px, rangee en `data:` dans la ligne du profil plutot que dans un
--- espace de fichiers. A cette taille elle pese une poignee de kilo-octets : elle voyage avec le
--- reste du foyer, sans deuxieme chemin de donnees a securiser, et elle reste lisible hors ligne.
--- La contrainte de longueur est la pour que ce choix reste tenable — au-dela, c'est qu'on essaie
--- d'y ranger la photo d'origine.
+-- A square 128 px thumbnail, stored as `data:` in the profile's row rather than in a file store. At that size
+-- it weighs a handful of kilobytes: it travels with the rest of the household, with no second data path to
+-- secure, and it stays readable offline. The length constraint is there so that this choice stays tenable —
+-- beyond it, somebody is trying to store the original photograph in there.
 
 alter table public.profiles
   add column if not exists avatar text not null default '';
@@ -17,8 +16,8 @@ alter table public.profiles
 
 grant update (avatar) on public.profiles to authenticated;
 
--- La fonction expose desormais le portrait, au meme titre que le nom et les initiales : la policy
--- de lecture des profils reste etroite, seules les colonnes utiles au foyer sortent d'ici.
+-- The function now exposes the portrait, just as it does the name and the initials: the profiles read policy
+-- stays narrow, only the columns the household needs come out of here.
 drop function if exists public.household_profiles();
 
 create function public.household_profiles()

@@ -10,7 +10,7 @@ import {
 
 type Traductions = { emoji: Record<string, string>; emojiGroup: Record<string, string> };
 
-/** Un nom de démonstration, à la place de l'i18n : le domaine ne connaît pas la langue affichée. */
+/** A demonstration name, in place of the i18n: the domain does not know the displayed language. */
 const NOMS: Record<string, string> = {
 	carrot: 'Carotte',
 	pasta: 'Pâtes',
@@ -44,8 +44,8 @@ describe('palette', () => {
 });
 
 /**
- * Un emoji dont le nom manque dans une langue est introuvable à la recherche pour qui lit cette
- * langue : la traduction est la vraie contrainte de la palette, autant que le test la tienne.
+ * An emoji whose name is missing in a language cannot be found by search by whoever reads that language:
+ * translation is the palette's real constraint, so the test may as well hold it.
  */
 describe('traductions', () => {
 	const locales = import.meta.glob<Traductions>('../i18n/locales/*.json', {
@@ -91,7 +91,7 @@ describe('searchEmojis', () => {
 		expect(searchEmojis('terre', nom, palette).map((e) => e.char)).toEqual(['🥔']);
 	});
 
-	/** Coller un emoji dans la recherche pour le retrouver dans la grille est un geste naturel. */
+	/** Pasting an emoji into the search to find it in the grid is a natural gesture. */
 	it('accepte le caractère lui-même', () => {
 		expect(searchEmojis('🧀', nom, palette).map((e) => e.char)).toEqual(['🧀']);
 	});
@@ -122,7 +122,7 @@ describe('customEmoji', () => {
 		expect(customEmoji('🧀')).toBeNull();
 	});
 
-	/** Sans quoi taper le début d'un nom proposerait la lettre elle-même comme illustration. */
+	/** Without which typing the start of a name would offer the letter itself as an illustration. */
 	it('refuse les lettres et les chiffres', () => {
 		expect(customEmoji('a')).toBeNull();
 		expect(customEmoji('7')).toBeNull();

@@ -8,13 +8,11 @@
 	import ReportForm from '$components/app/ReportForm.svelte';
 
 	/**
-	 * La page reste pour les liens directs — un message qui dit « signale-le ici » — mais ce n'est
-	 * plus le chemin normal : le bouton d'aide ouvre un panneau, qui ne fait pas disparaître
-	 * l'écran à photographier.
+	 * The page stays for direct links — a message saying "report it here" — but it is no longer the normal
+	 * path: the help button opens a panel, which does not make the screen to be photographed disappear.
 	 *
-	 * Le brouillon est le même des deux côtés, d'où la lecture de l'état plutôt qu'une copie
-	 * locale : arriver ici avec un signalement commencé dans le panneau le retrouve, au lieu d'en
-	 * ouvrir un second à côté.
+	 * The draft is the same on both sides, hence reading the state rather than a local copy: arriving here
+	 * with a report started in the panel finds it again, instead of opening a second one alongside.
 	 */
 	const rawKind = page.url.searchParams.get('kind');
 	const kind = isReportKind(rawKind) ? rawKind : 'bug';

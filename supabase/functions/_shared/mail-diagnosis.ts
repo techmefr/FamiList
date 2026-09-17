@@ -1,21 +1,18 @@
 /**
- * Ce qu un echec d envoi veut dire, en une cause et pas en une trace.
+ * What a sending failure means, as a cause and not as a stack trace.
  *
- * Le bouton de test n a d interet que s il distingue les causes : chacune se repare ailleurs. Un
- * refus d authentification se corrige dans le champ mot de passe ; un hote injoignable, dans le
- * champ serveur ou chez l hebergeur ; un expediteur non verifie, sur le tableau de bord du
- * fournisseur, et nulle part dans cet ecran. Rendre « erreur SMTP » aux trois renverrait les deux
- * tiers des gens chercher au mauvais endroit.
+ * The test button is only of interest if it tells the causes apart: each is fixed somewhere else. An
+ * authentication refusal is fixed in the password field; an unreachable host, in the server field or at the
+ * host; an unverified sender, on the provider's dashboard, and nowhere in this screen. Returning "SMTP
+ * error" for all three would send two thirds of people looking in the wrong place.
  *
- * L expediteur non verifie merite son propre cas parce que c est la panne la plus frequente :
- * Brevo, Sendgrid, Mailgun et les autres acceptent la connexion, acceptent le mot de passe, puis
- * refusent le message parce que l adresse d expedition ne leur a jamais ete prouvee. Vu du
- * terminal, c est un 550 au milieu d une session reussie ; vu de l ecran, c est « tout est bon et
- * pourtant rien ne part ».
+ * The unverified sender deserves its own case because it is the most frequent failure: Brevo, Sendgrid,
+ * Mailgun and the others accept the connection, accept the password, then refuse the message because the
+ * sending address has never been proved to them. Seen from the terminal, it is a 550 in the middle of a
+ * successful session; seen from the screen, it is "everything is fine and yet nothing leaves".
  *
- * La classification lit le texte de l erreur, faute de mieux : denomailer ne rend pas le code de
- * reponse separement. On lit donc le code a trois chiffres quand il est la, et les tournures
- * habituelles sinon.
+ * The classification reads the error text, for want of better: denomailer does not return the response code
+ * separately. So we read the three-digit code when it is there, and the usual turns of phrase otherwise.
  */
 
 export type MailTestOutcome =
@@ -75,9 +72,9 @@ const SENDER_HINTS = [
 const SENDER_CODES = ['550', '553', '554', '551', '501'];
 
 /**
- * Le rang compte. Un refus d expediteur arrive souvent dans un message qui contient aussi le mot
- * « authentication » (« sender not verified, see authentication docs ») : teste en dernier, il
- * serait lu comme un mot de passe faux, et la personne changerait un mot de passe qui marchait.
+ * Order matters. A sender refusal often arrives in a message that also contains the word "authentication"
+ * ("sender not verified, see authentication docs"): tested last, it would be read as a wrong password, and
+ * the person would change a password that was working.
  */
 export function diagnoseMailFailure(reason: string): MailTestOutcome {
 	const text = reason.toLowerCase();
@@ -95,7 +92,7 @@ export function diagnoseMailFailure(reason: string): MailTestOutcome {
 	return 'failed';
 }
 
-/** Les cles de reglage dont l envoi a besoin, et celles sans lesquelles il ne tente rien. */
+/** The setting keys sending needs, and those without which it attempts nothing. */
 export const MAIL_SETTING_KEYS = [
 	'mail_smtp_host',
 	'mail_smtp_port',
@@ -107,10 +104,10 @@ export const MAIL_SETTING_KEYS = [
 export const MAIL_REQUIRED_KEYS = ['mail_smtp_host', 'mail_from'] as const;
 
 /**
- * Vrai quand l envoi a de quoi tenter quelque chose.
+ * True when sending has enough to attempt something.
  *
- * L hote et l expediteur suffisent : un relais local n exige pas d identifiants, et exiger un mot
- * de passe ici interdirait la pile de developpement et les relais internes.
+ * The host and the sender are enough: a local relay does not require credentials, and demanding a password
+ * here would rule out the development stack and internal relays.
  */
 export function isMailConfigured(settings: Record<string, string | undefined>): boolean {
 	return MAIL_REQUIRED_KEYS.every((key) => {

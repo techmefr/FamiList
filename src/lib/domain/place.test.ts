@@ -17,7 +17,7 @@ describe('communeFromAddress', () => {
 		expect(communeFromAddress('3 place Croix-Rousse, 69004 Lyon 4e')).toBe('Lyon 4e');
 	});
 
-	// Sans code postal, le dernier morceau reste le plus probable.
+	// With no postcode, the last piece stays the most likely.
 	it('se rabat sur le dernier morceau', () => {
 		expect(communeFromAddress('12 rue des Lilas, Meximieux')).toBe('Meximieux');
 	});
@@ -26,7 +26,7 @@ describe('communeFromAddress', () => {
 		expect(communeFromAddress('12 rue des Lilas, Meximieux, France')).toBe('Meximieux');
 	});
 
-	// Un mauvais trigramme est pire que pas de trigramme : on ne devine pas.
+	// A wrong three-letter code is worse than none: we do not guess.
 	it('ne rend rien quand rien ne ressemble à une commune', () => {
 		expect(communeFromAddress('12 rue des Lilas')).toBe('');
 		expect(communeFromAddress('')).toBe('');
@@ -60,8 +60,8 @@ describe('trigramSource', () => {
 });
 
 /*
- * Le point de la manœuvre : les trigrammes que ça produit vraiment. Ces cas sont ceux qu'on lira
- * sur les pastilles, et c'est là qu'une régression se verrait.
+ * The point of the exercise: the three-letter codes it really produces. These cases are the ones that will
+ * be read on the chips, and that is where a regression would show.
  */
 describe('trigramme d’un lieu', () => {
 	const court = (place: Parameters<typeof trigramSource>[0], pris: string[] = []) =>
@@ -72,7 +72,7 @@ describe('trigramme d’un lieu', () => {
 		const miribel = court({ brand: 'Carrefour', name: 'Carrefour', address: '01700 Miribel' });
 
 		expect(meximieux).toBe('CMX');
-		// Dernière lettre du dernier mot : Meximieux donne X, Miribel donne L.
+		// Last letter of the last word: Meximieux gives X, Miribel gives L.
 		expect(miribel).toBe('CML');
 	});
 

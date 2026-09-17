@@ -2,11 +2,11 @@ import type { Page } from '@playwright/test';
 import { test, expect } from './fixtures';
 
 /**
- * Un article n'était pas modifiable du tout après création — et la note, affichée sous son nom,
- * n'avait aucun écran pour l'écrire.
+ * An item was not editable at all after creation — and the note, shown under its name, had no screen to
+ * write it on.
  *
- * La liste porte un nom daté, comme les autres tests de listes : elle reste derrière, sans jamais
- * rendre un sélecteur ambigu au passage suivant.
+ * The list carries a dated name, like the other list tests: it stays behind, without ever making a selector
+ * ambiguous on the next run.
  */
 async function nouvelleListe(page: Page, nom: string) {
 	await page.goto('/');
@@ -32,7 +32,7 @@ test('modifier un article, au bouton comme à l appui long', async ({ signedInPa
 	const ligne = page.locator('[data-test-class="item-row"]').filter({ hasText: 'Pommes' });
 	await expect(ligne).toBeVisible();
 
-	// Le bouton crayon : le chemin annoncé, celui du clavier et du lecteur d'écran.
+	// The pencil button: the announced path, that of the keyboard and the screen reader.
 	await ligne.locator('[data-test-class="item-edit"]').click();
 	await expect(page.getByTestId('add-name')).toHaveValue('Pommes');
 
@@ -45,7 +45,7 @@ test('modifier un article, au bouton comme à l appui long', async ({ signedInPa
 	await expect(modifiee).toContainText('les bien mûres');
 	await expect(modifiee).toContainText('3');
 
-	// L'appui long, le geste du pouce : la même fiche, préremplie.
+	// The long press, the thumb's gesture: the same sheet, prefilled.
 	const etiquette = modifiee.locator('label').first();
 	const boite = await etiquette.boundingBox();
 	await page.mouse.move(boite!.x + boite!.width / 2, boite!.y + boite!.height / 2);
@@ -56,7 +56,7 @@ test('modifier un article, au bouton comme à l appui long', async ({ signedInPa
 	await expect(page.getByTestId('add-name')).toHaveValue('Poires');
 	await expect(page.getByTestId('add-note')).toHaveValue('les bien mûres');
 
-	// Le relâchement du doigt ne doit pas cocher l'article dont on vient d'ouvrir la fiche.
+	// Releasing the finger must not tick the item whose sheet has just been opened.
 	await page.getByTestId('add-close').click();
 	await expect(modifiee.locator('[data-test-class="item-check"]')).not.toBeChecked();
 

@@ -24,16 +24,15 @@
 </script>
 
 <!--
-	Un seul champ, et non une case par caractère.
+	A single field, and not one box per character.
 
-	Les six petites cases sont partout, et elles sont mauvaises : un lecteur d'écran y annonce six
-	champs sans nom, le collage n'y marche qu'au prix d'un bricolage, revenir en arrière d'un
-	caractère demande de deviner quelle case a le focus, et un clavier logiciel se rouvre à chaque
-	saut. Un champ unique reçoit le code collé d'un courriel, se corrige au retour arrière, et
-	s'annonce une fois.
+	The six little boxes are everywhere, and they are bad: a screen reader announces six unnamed fields there,
+	pasting only works at the cost of a hack, going back one character means guessing which box has focus, and
+	a soft keyboard reopens at every jump. A single field takes the code pasted from an email, is corrected
+	with backspace, and announces itself once.
 
-	`autocomplete="one-time-code"` est ce qui compte vraiment : sur un téléphone, le code reçu par
-	SMS ou par courriel est proposé au-dessus du clavier, et il n'y a plus rien à recopier.
+	`autocomplete="one-time-code"` is what really counts: on a phone, the code received by SMS or email is
+	offered above the keyboard, and there is nothing left to copy.
 -->
 <Label for={id}>{label}</Label>
 <Input
@@ -42,8 +41,8 @@
 	oninput={(event) => {
 		const champ = event.currentTarget as HTMLInputElement;
 		value = normalize(champ.value);
-		// Réécrire la valeur : sans cela un caractère refusé resterait affiché, l'état et l'écran ne
-		// diraient plus la même chose, et la personne croirait avoir tapé ce qu'on a jeté.
+		// Write the value back: without that a refused character would stay displayed, the state and the screen
+		// would no longer say the same thing, and the person would believe they typed what we threw away.
 		champ.value = value;
 	}}
 	inputmode={numeric ? 'numeric' : 'text'}

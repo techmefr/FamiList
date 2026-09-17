@@ -16,7 +16,7 @@
 
 	const QUIET = 2;
 
-	/** Une suite de modules sombres devient un seul rectangle : moins de nœuds, tracé plus net. */
+	/** A run of dark modules becomes a single rectangle: fewer nodes, sharper drawing. */
 	const runs = $derived.by(() => {
 		if (!qr) return [];
 
@@ -91,11 +91,11 @@
 	</svg>
 {:else}
 	<!--
-		Un code invalide n'est pas dessiné : un tracé approximatif scannerait une autre donnée.
+		An invalid code is not drawn: an approximate rendering would scan as different data.
 
-		Rouge fixe, pas `text-destructive` : ce message s'affiche sur le cartouche blanc de la carte,
-		blanc en toutes circonstances pour rester scannable. Le jeton de thème, lui, s'éclaircit en thème
-		sombre — le message tombait alors à 2,4:1 sur ce blanc.
+		Fixed red, not `text-destructive`: this message shows on the card's white panel, white in all
+		circumstances so as to stay scannable. The theme token, for its part, lightens in dark theme — the
+		message then fell to 2.4:1 on that white.
 	-->
 	<p class="text-label px-4 py-6 text-center text-red-700" data-test-id="code-invalid">
 		{t('cards.invalidCode')}

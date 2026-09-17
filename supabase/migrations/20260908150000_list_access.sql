@@ -1,33 +1,31 @@
--- Participer a une liste et pouvoir la lire deviennent la meme chose.
+-- Taking part in a list and being able to read it become the same thing.
 --
--- Jusqu'ici list_members n'etait qu'un marqueur : la lecture, elle, etait ouverte a tout le foyer.
--- Desormais la ligne dans list_members est la cle. Tout ce qui appartient a une liste — articles,
--- messages, sondages, options, votes — passe deja par can_access_list : redefinir cette seule
--- fonction ferme le contenu d'un coup. Il ne reste que la table lists elle-meme, dont la policy
--- regardait l'appartenance au foyer.
+-- Until now list_members was only a marker: reading, for its part, was open to the whole household. From now
+-- on the row in list_members is the key. Everything belonging to a list — items, messages, polls, options,
+-- votes — already goes through can_access_list: redefining that single function closes the content in one
+-- go. That leaves only the lists table itself, whose policy looked at household membership.
 --
--- Le partage reste la position de depart : une liste nait ouverte a tout le foyer, et c'est le
--- retrait qui est un geste. L'inverse — une liste privee qu'il faut ouvrir personne par personne —
--- transformerait chaque course en corvee de configuration, dans une application dont l'objet est
--- justement la liste commune.
+-- Sharing stays the starting position: a list is born open to the whole household, and it is removal that is
+-- a deliberate gesture. The opposite — a private list to be opened person by person — would turn every
+-- shopping trip into a configuration chore, in an application whose very object is the shared list.
 
--- 1. Personne ne perd une liste au passage.
+-- 1. Nobody loses a list along the way.
 --
--- L'etat equivalent a « tout le foyer lisait tout », une fois la regle changee, c'est que chacun
--- soit inscrit sur les listes de son foyer.
+-- The state equivalent to "the whole household read everything", once the rule has changed, is that each
+-- person is signed up to their household's lists.
 insert into public.list_members (list_id, user_id)
 select l.id, m.user_id
 from public.lists l
 join public.household_members m on m.household_id = l.household_id
 on conflict do nothing;
 
--- 2. La cle, desormais, c'est la ligne dans list_members.
+-- 2. The key, from now on, is the row in list_members.
 --
--- La fonction reste security definer : elle lit list_members sans repasser par la policy de cette
--- table, laquelle l'appelle justement. Sans cela, la verification tournerait en rond.
+-- The function stays security definer: it reads list_members without going back through that table's policy,
+-- which is precisely what calls it. Without that, the check would go round in circles.
 --
--- Consequence a garder en tete : quelqu'un qu'on retire d'une liste ne peut pas s'y remettre seul,
--- puisque la policy d'ecriture de list_members s'appuie sur cette meme fonction.
+-- A consequence to keep in mind: somebody removed from a list cannot put themselves back on it alone, since
+-- list_members's write policy relies on that same function.
 create or replace function public.can_access_list(target uuid)
 returns boolean
 language sql
@@ -42,12 +40,12 @@ as $$
   )
 $$;
 
--- 3. Une liste qui vient de naitre n'a aucun membre, donc personne pour l'ouvrir.
+-- 3. A list that has just been born has no member, so nobody to open it.
 --
--- Le declencheur y inscrit le foyer au complet. Il regarde household_members plutot que auth.uid()
--- parce que les listes ne sont pas toutes creees par leur futur lecteur : ensure_household pose la
--- liste de depart d'un nouveau compte, et reset_demo repeuple le foyer de demonstration depuis le
--- compte d'un administrateur qui, lui, n'a rien a y faire.
+-- The trigger signs up the whole household. It looks at household_members rather than auth.uid() because
+-- lists are not all created by their future reader: ensure_household lays down a new account's starting
+-- list, and reset_demo repopulates the demonstration household from an administrator's account, which itself
+-- has no business being there.
 create or replace function public.share_list_with_household()
 returns trigger
 language plpgsql
@@ -69,12 +67,11 @@ drop trigger if exists lists_share_with_household on public.lists;
 create trigger lists_share_with_household after insert on public.lists
   for each row execute function public.share_list_with_household();
 
--- 4. Quelqu'un qui arrive dans le foyer rejoint les listes ouvertes, pas les autres.
+-- 4. Somebody arriving in the household joins the open lists, not the others.
 --
--- Sans cela, un nouveau venu ouvre une application vide. Mais l'inscrire partout ferait entrer un
--- inconnu dans une liste dont on avait justement retire du monde : on ne l'ajoute donc qu'aux
--- listes ou tous les autres membres du foyer figurent deja, c'est-a-dire celles que personne n'a
--- restreintes.
+-- Without that, a newcomer opens an empty application. But signing them up everywhere would let a stranger
+-- into a list from which people had precisely been removed: they are therefore only added to the lists where
+-- every other household member already appears, that is, the ones nobody has restricted.
 create or replace function public.join_open_lists()
 returns trigger
 language plpgsql
@@ -107,10 +104,10 @@ drop trigger if exists household_members_join_lists on public.household_members;
 create trigger household_members_join_lists after insert on public.household_members
   for each row execute function public.join_open_lists();
 
--- 5. Quitter le foyer ferme aussi ses listes.
+-- 5. Leaving the household also closes its lists.
 --
--- list_members ne pointe que vers auth.users : sans ce declencheur, une personne partie du foyer
--- garderait ses lignes, donc son acces, ce qui viderait la nouvelle regle de son sens.
+-- list_members points only at auth.users: without this trigger, somebody who has left the household would
+-- keep their rows, and therefore their access, which would empty the new rule of its meaning.
 create or replace function public.leave_household_lists()
 returns trigger
 language plpgsql
@@ -132,11 +129,11 @@ drop trigger if exists household_members_leave_lists on public.household_members
 create trigger household_members_leave_lists after delete on public.household_members
   for each row execute function public.leave_household_lists();
 
--- 6. La table lists suit la meme regle, sauf a l'insertion.
+-- 6. The lists table follows the same rule, except on insert.
 --
--- L'ancienne policy « for all » melait les quatre operations ; il faut les separer, l'insertion
--- etant le seul moment ou l'appartenance au foyer suffit — la liste n'a alors pas encore de
--- membres, et une policy fondee sur can_access_list se refuserait elle-meme.
+-- The old "for all" policy mixed the four operations; they have to be separated, insertion being the only
+-- moment when household membership is enough — the list has no member yet, and a policy founded on
+-- can_access_list would refuse itself.
 drop policy if exists lists_all on public.lists;
 
 create policy lists_select on public.lists for select

@@ -15,18 +15,17 @@
 
 	const shopTint = (id: string) => data.shops.find((shop) => shop.id === id)?.tint ?? '#5A4A2F';
 
-	/** La date du relevé, dans la langue lue : un prix d'il y a six mois ne vaut pas celui d'hier. */
+	/** The date of the reading, in the language being read: a price from six months ago is not yesterday's. */
 	const jour = (recordedAt: number) =>
 		new Intl.DateTimeFormat(i18n.locale, { dateStyle: 'medium' }).format(new Date(recordedAt));
 </script>
 
 <!--
-	L'historique des prix.
+	The price history.
 
-	Une liste par produit, et sous chaque produit ses magasins du moins cher au plus cher. Pas de
-	courbe : ce que le foyer vient chercher, c'est où acheter ce produit — une comparaison à un
-	instant, pas une tendance. Le dernier prix connu de chaque magasin suffit à la donner, et la date
-	dit ce qu'il vaut encore.
+	One list per product, and under each product its shops from cheapest to dearest. No curve: what the
+	household comes looking for is where to buy this product — a comparison at one moment, not a trend. The
+	last known price of each shop is enough to give it, and the date says what it is still worth.
 -->
 <svelte:head>
 	<title>{t('prices.title')} — {t('app.name')}</title>
@@ -71,9 +70,8 @@
 								</span>
 
 								<!--
-									Le moins cher est dit en toutes lettres et pas seulement par sa place dans la
-									liste : « le premier de la liste » ne se lit ni au lecteur d'écran ni d'un
-									coup d'œil quand deux prix se ressemblent.
+									The cheapest is said in words and not only by its place in the list: "first in the list" reads neither
+									to a screen reader nor at a glance when two prices look alike.
 								-->
 								<span class="text-end">
 									<span class="text-product font-semibold {rang === 0 ? 'text-secondary' : ''}">

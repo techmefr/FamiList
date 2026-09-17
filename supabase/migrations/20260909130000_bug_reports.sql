@@ -2,8 +2,8 @@ create table public.bug_reports (
   id uuid primary key default gen_random_uuid(),
   user_id uuid references auth.users on delete set null,
   description text not null check (char_length(description) between 1 and 4000),
-  -- Une capture JPEG redimensionnée à 1280px tient largement sous ce plafond ; il coupe court à
-  -- une image non redimensionnée envoyée par un client qui contournerait l'app.
+  -- A JPEG capture resized to 1280px fits comfortably under this ceiling; it cuts short an unresized image
+  -- sent by a client bypassing the app.
   screenshot text check (screenshot is null or char_length(screenshot) <= 1500000),
   path text,
   user_agent text,
@@ -16,8 +16,8 @@ create index bug_reports_status_idx on public.bug_reports (status, created_at);
 
 alter table public.bug_reports enable row level security;
 
--- Aucune policy : la table ne s'ouvre que par les fonctions security definer ci-dessous, jamais
--- par un select/insert direct depuis le client.
+-- No policy: the table only opens through the security definer functions below, never through a direct
+-- select/insert from the client.
 revoke all on public.bug_reports from public, anon, authenticated;
 
 create or replace function public.submit_bug_report(
@@ -38,8 +38,8 @@ begin
     raise exception 'reserve aux comptes approuves' using errcode = '42501';
   end if;
 
-  -- Le client Supabase genere des types qui refusent null sur un parametre text : on lui laisse
-  -- passer une chaine vide et on la convertit ici plutot que de la stocker telle quelle.
+  -- The Supabase client generates types that refuse null on a text parameter: we let it pass an empty string
+  -- and convert it here rather than storing it as is.
   insert into public.bug_reports (user_id, description, screenshot, path, user_agent)
   values ((select auth.uid()), description, nullif(screenshot, ''), nullif(path, ''), user_agent)
   returning id into inserted_id;

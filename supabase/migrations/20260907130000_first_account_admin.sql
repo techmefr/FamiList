@@ -1,14 +1,14 @@
--- Le premier compte cree est administrateur, et deja valide.
+-- The first account created is an administrator, and already valid.
 --
--- Sans lui, une base neuve est un cul-de-sac : chaque inscription arrive en attente, et personne
--- n a le droit de valider qui que ce soit. Le deblocage demandait d ouvrir un editeur SQL sur la
--- production, ce qui n est pas une etape qu on veut dans la mise en ligne.
+-- Without it, a fresh database is a dead end: every sign-up arrives pending, and nobody has the right to
+-- validate anyone. Unblocking it required opening a SQL editor on production, which is not a step we want in
+-- going live.
 --
--- Le verrou consultatif serialise le comptage pour la duree de la transaction : sans lui, deux
--- inscriptions simultanees sur une base vide verraient chacune zero profil et se declareraient
--- toutes les deux administratrices. Il n est pris qu a l inscription, jamais sur un chemin chaud.
+-- The advisory lock serialises the count for the duration of the transaction: without it, two simultaneous
+-- sign-ups on an empty database would each see zero profiles and both declare themselves administrators. It
+-- is only taken at sign-up, never on a hot path.
 --
--- Les comptes suivants ne changent pas : en attente, role utilisateur, valides depuis /admin.
+-- The following accounts do not change: pending, user role, validated from /admin.
 
 create or replace function public.handle_new_user()
 returns trigger

@@ -28,9 +28,9 @@
 	let pollError = $state(false);
 
 	/**
-	 * Parts d'un repas : ce sont celles que le prototype propose, et elles couvrent presque tout.
-	 * Indexé par clé stable et pas par libellé, sinon l'emoji ne se retrouve plus dès que la langue
-	 * courante n'est pas le français.
+	 * Parts of a meal: these are the ones the prototype offers, and they cover almost everything. Indexed by
+	 * a stable key and not by label, otherwise the emoji can no longer be found as soon as the current
+	 * language is not French.
 	 */
 	const APPORT_PRESET = [
 		{ key: 'aperitif', emoji: '🍾' },
@@ -210,9 +210,9 @@
 	{/if}
 
 	<!--
-		aria-label et pas seulement le placeholder : celui-ci n'est pas un nom accessible, et il
-		disparaît dès la première lettre tapée. min-w-[44px] sur le bouton parce qu'il ne porte qu'une
-		icône — il tombait à 43 px de large, un pixel sous la cible tactile.
+		aria-label and not only the placeholder: the latter is not an accessible name, and it disappears at the
+		first letter typed. min-w-[44px] on the button because it carries only an icon — it was coming out 43 px
+		wide, one pixel under the touch target.
 	-->
 	<form onsubmit={send} class="mt-4 flex gap-2" data-test-id="chat-form">
 		<Input

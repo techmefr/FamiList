@@ -9,8 +9,8 @@ describe('buildTestMail', () => {
 		expect(mail.text).toContain('camille@example.test');
 	});
 
-	// Ce qu il prouve compte autant que le fait d arriver : lu trois jours plus tard dans un dossier
-	// indesirables, le message doit expliquer pourquoi il est la.
+	// What it proves counts as much as the fact of arriving: read three days later in a junk folder, the
+	// message must explain why it is there.
 	it('dit ce que sa reception demontre', () => {
 		const mail = buildTestMail('camille@example.test');
 

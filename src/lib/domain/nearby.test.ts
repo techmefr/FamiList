@@ -31,7 +31,7 @@ const carte = (patch: Partial<NearbyCard> = {}): NearbyCard => ({
 	...patch
 });
 
-/** Un décalage en latitude, converti en mètres : un degré vaut environ 111 320 m. */
+/** An offset in latitude, converted to metres: one degree is about 111,320 m. */
 const aMetres = (metres: number) => ({
 	lat: MEXIMIEUX.lat + metres / 111_320,
 	lng: MEXIMIEUX.lng
@@ -53,7 +53,7 @@ describe('distanceMeters', () => {
 		expect(aller).toBeCloseTo(retour, 6);
 	});
 
-	// Paris–Lyon, environ 392 km : de quoi voir qu'on ne confond pas latitude et longitude.
+	// Paris–Lyon, about 392 km: enough to see that latitude and longitude are not being confused.
 	it('tient sur une longue distance', () => {
 		const paris = { lat: 48.8566, lng: 2.3522 };
 		const lyon = { lat: 45.764, lng: 4.8357 };
@@ -79,7 +79,7 @@ describe('cardForShop', () => {
 		expect(cardForShop(magasin(), [carte({ brand: 'Intermarché' })])).toBeNull();
 	});
 
-	// Un commerce indépendant n'a pas d'enseigne : sans rattachement direct, il n'y a rien à sortir.
+	// An independent shop has no brand: with no direct attachment, there is nothing to return.
 	it('ne rattrape pas un magasin sans enseigne par une carte sans enseigne', () => {
 		const boucherie = magasin({ brand: '', name: 'Boucherie Émile' });
 
@@ -164,7 +164,7 @@ describe('nearbyAlert', () => {
 		);
 	});
 
-	// Le magasin déjà annoncé ne masque pas son voisin : la zone commerciale reste utilisable.
+	// The shop already announced does not hide its neighbour: the retail park stays usable.
 	it('passe au suivant quand le plus proche a déjà été annoncé', () => {
 		const voisin = magasin({ shopId: 'shop-2', name: 'Lidl', brand: 'Lidl', ...aMetres(200) });
 		const cartes = [carte(), carte({ cardId: 'card-2', brand: 'Lidl', name: 'Lidl' })];

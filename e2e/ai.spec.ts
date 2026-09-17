@@ -1,20 +1,20 @@
 import { test, expect } from './fixtures';
 
 /**
- * La clé d'IA, et la seule chose qu'elle commande : l'apparition de la suggestion de recette.
+ * The AI key, and the only thing it governs: the appearance of the recipe suggestion.
  *
- * Aucun appel n'est fait vers un fournisseur ici. La clé posée est fausse, et c'est voulu — ce qui
- * est vérifié n'a pas besoin du réseau : sans clé la fonctionnalité n'existe pas, avec clé elle
- * apparaît, et avant tout envoi l'écran montre exactement ce qui partirait.
+ * No call is made to a provider here. The key set is a fake one, and that is intended — what is checked
+ * does not need the network: with no key the feature does not exist, with a key it appears, and before any
+ * sending the screen shows exactly what would leave.
  *
- * Le compte fixe est partagé par toute la suite : chaque test retire la clé qu'il a posée, sinon
- * il laisserait la suggestion visible pour les autres.
+ * The fixed account is shared by the whole suite: each test removes the key it set, otherwise it would
+ * leave the suggestion visible for the others.
  */
 test.describe('intelligence artificielle', () => {
 	/**
-	 * Le compte fixe est partagé, et une exécution interrompue peut laisser une clé derrière elle.
-	 * On repart donc d'un compte sans clé plutôt que de le supposer : sans cela, le premier test
-	 * échouerait pour l'état laissé par le précédent et non pour ce qu'il vérifie.
+	 * The fixed account is shared, and an interrupted run may leave a key behind. So we start again from an
+	 * account with no key rather than assume it: without that, the first test would fail for the state left
+	 * by the previous one and not for what it checks.
 	 */
 	test.beforeEach(async ({ signedInPage: page }) => {
 		await page.goto('/profile/ai');
@@ -47,13 +47,13 @@ test.describe('intelligence artificielle', () => {
 		await expect(page.getByTestId('ai-saved')).toBeVisible();
 		await expect(page.getByTestId('ai-state')).toHaveAttribute('data-test-state', 'on');
 
-		// La clé quitte l'écran dès qu'elle est enregistrée : elle n'a plus rien à faire dans un champ.
+		// The key leaves the screen as soon as it is saved: it has no business in a field any more.
 		await expect(page.getByTestId('ai-key')).toHaveValue('');
 
 		await page.goto('/recipes');
 		await expect(page.getByTestId('ai-suggest-open')).toBeVisible();
 
-		// Le dépliage n'envoie rien : il montre ce qui partirait, et attend un second geste.
+		// Unfolding sends nothing: it shows what would leave, and waits for a second gesture.
 		await page.getByTestId('ai-suggest-open').click();
 		await expect(page.getByTestId('ai-suggest-open')).toBeVisible();
 
@@ -66,13 +66,12 @@ test.describe('intelligence artificielle', () => {
 	});
 
 	/**
-	 * Ce qui est montré avant l'envoi est ce qui part. Le test coche un article, puis vérifie que
-	 * son nom se trouve dans le texte affiché — et qu'un nom de liste, lui, n'y est pas.
+	 * What is shown before sending is what leaves. The test ticks an item, then checks that its name is in
+	 * the displayed text — and that a list name is not.
 	 *
-	 * La clé est posée en premier, et la navigation se fait ensuite par les liens de l'application
-	 * et non par `page.goto` : un rechargement complet relance `data.load()`, qui vide le cache
-	 * local avant de le remplir depuis le serveur, et emporterait l'article coché s'il n'a pas
-	 * encore été synchronisé.
+	 * The key is set first, and the navigation then goes through the application's links and not through
+	 * `page.goto`: a full reload restarts `data.load()`, which empties the local cache before filling it from
+	 * the server, and would take the ticked item with it if it has not been synced yet.
 	 */
 	test('avant l envoi, l écran montre le texte exact et rien de plus', async ({
 		signedInPage: page

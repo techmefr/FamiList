@@ -95,8 +95,8 @@ describe('planRealtime', () => {
 		).toEqual({ kind: 'put', table: 'messages', row: toMessage(row) });
 	});
 
-	// Le contrat central : ce que la voie rapide écrit doit être exactement ce que la relecture
-	// écrirait. Une divergence ici ne se verrait qu'à la prochaine relecture, des jours plus tard.
+	// The central contract: what the fast path writes must be exactly what the reload would write. A
+	// divergence here would only show at the next reload, days later.
 	it('produit la même ligne que la couche de traduction', () => {
 		const row = itemRow({ qty: '1.5', checked: true, note: 'bio' });
 		const plan = planRealtime(event({ eventType: 'UPDATE', new: row }), context());
@@ -232,7 +232,7 @@ describe('planRealtime', () => {
 		});
 	});
 
-	// Le cas qui a motivé la pierre tombale : suppression puis recréation du même identifiant.
+	// The case that motivated the tombstone: deletion then recreation of the same identifier.
 	it('réapplique une insertion postérieure à une suppression', () => {
 		const applied = new Map([[rowKey('items', ITEM), '2026-09-16T10:00:05.000Z']]);
 

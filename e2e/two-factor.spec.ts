@@ -4,14 +4,14 @@ import { test, expect, signIn, signOut, FIXTURE_EMAIL, FIXTURE_PASSWORD } from '
 import { base32Decode, counterBytes, totpCounter, truncate } from '../src/lib/domain/totp';
 
 /**
- * La deuxième étape était entièrement écrite — QR, clé en clair, codes de secours, écran de
- * demande à la connexion — et vérifiée par un seul test : que le bouton « Activer » s'affiche.
- * Autant dire rien. Ce test-ci joue le rôle de l'authentificateur : il lit la clé affichée à
- * l'écran, calcule le code à six chiffres comme le ferait le téléphone, et va jusqu'au bout —
- * activation, déconnexion, reconnexion à travers la demande de code.
+ * The second step was entirely written — QR, key in plain text, backup codes, prompt screen at sign-in —
+ * and verified by a single test: that the "Enable" button was shown. Next to nothing, in other words.
+ * This test plays the part of the authenticator: it reads the key shown on screen, computes the six-digit
+ * code as the phone would, and goes all the way — enabling, signing out, signing back in through the code
+ * prompt.
  *
- * Il se nettoie derrière lui : le compte fixe est partagé par toute la suite, et le laisser en
- * 2FA bloquerait tous les autres tests à la connexion.
+ * It cleans up behind itself: the fixed account is shared by the whole suite, and leaving it in 2FA would
+ * block every other test at sign-in.
  */
 function codeTotp(secret: string, atMs = Date.now()): string {
 	const digest = createHmac('sha1', Buffer.from(base32Decode(secret)))
@@ -22,13 +22,13 @@ function codeTotp(secret: string, atMs = Date.now()): string {
 }
 
 /**
- * Retire le deuxième facteur et n'en revient qu'une fois le compte d'accord.
+ * Removes the second factor and only returns once the account agrees.
  *
- * L'interrupteur répond du geste : il passe à « éteint » dès le clic, avant même que la demande
- * soit partie. S'arrêter là, puis recharger ou fermer la page, coupait la requête en vol — le
- * facteur restait en base, et tout ce qui se connectait ensuite butait sur une demande de code.
- * La ligne d'état, elle, ne change qu'après relecture de la liste des facteurs : c'est le seul
- * signal qui réponde du compte, et c'est celui qu'on attend.
+ * The switch answers for the gesture: it goes to "off" as soon as you click, before the request has even
+ * left. Stopping there, then reloading or closing the page, cut the request in flight — the factor stayed
+ * in the database, and everything signing in afterwards hit a code prompt. The status line, on the other
+ * hand, only changes after the list of factors is re-read: it is the only signal that answers for the
+ * account, and it is the one we wait for.
  */
 async function retirerDeuxiemeEtape(page: Page) {
 	await page.goto('/profile/security');
@@ -43,13 +43,12 @@ async function retirerDeuxiemeEtape(page: Page) {
 }
 
 /**
- * Le nettoyage doit tenir même si le test s'est arrêté en chemin, le carré à peine affiché ou le
- * code à peine confirmé : ce qu'il laisse derrière lui n'arrête pas seulement ce test-ci, mais
- * tout ce qui se connecte après. On repasse donc ici quoi qu'il arrive, et on n'en sort qu'une
- * fois le compte revenu au mot de passe seul.
+ * The cleanup must hold even if the test stopped mid-way, with the square barely shown or the code barely
+ * confirmed: what it leaves behind stops not only this test, but everything signing in after it. So we
+ * come through here whatever happens, and only leave once the account is back to the password alone.
  *
- * La reconnexion peut elle-même se heurter à la demande de code — c'est le cas quand l'échec est
- * survenu après l'activation. Le secret retenu par le test sert alors à la franchir.
+ * Signing back in can itself hit the code prompt — that is the case when the failure happened after
+ * enabling. The secret kept by the test then serves to get through it.
  */
 let secretEnCours: string | null = null;
 
@@ -59,17 +58,16 @@ test.afterEach(async ({ page }) => {
 	const secret = secretEnCours;
 	secretEnCours = null;
 
-	// Le champ de courriel plutôt que le choix « se connecter » pour reconnaître le formulaire :
-	// ce dernier est une case réservée aux lecteurs d'écran, d'un pixel de côté, dont la visibilité
-	// ne veut pas dire grand-chose.
+	// The email field rather than the "sign in" choice to recognise the form: the latter is a box reserved
+	// for screen readers, one pixel across, whose visibility does not mean much.
 	const courriel = page.getByTestId('auth-email');
 	const demandeCode = page.getByTestId('mfa-form');
 	const ouverte = page.getByTestId('nav-create');
 
 	await page.goto('/auth');
 
-	// Trois états possibles en arrivant, et on attend qu'il s'en présente un plutôt que de deviner
-	// lequel : le formulaire, la demande de code, ou l'application déjà ouverte.
+	// Three possible states on arrival, and we wait for one of them to appear rather than guess which: the
+	// form, the code prompt, or the application already open.
 	await expect(courriel.or(demandeCode).or(ouverte).first()).toBeVisible({ timeout: 15_000 });
 
 	if (await courriel.isVisible()) {
@@ -96,32 +94,32 @@ test('activer la 2FA, se reconnecter avec un code, puis la retirer', async ({
 
 	await page.getByTestId('totp-switch').click();
 
-	// Le carré à photographier, et la clé pour qui ne peut pas viser un carré : les deux doivent
-	// être là, c'est le seul moment où le secret existe à l'écran.
+	// The square to photograph, and the key for anyone who cannot aim at a square: both must be there, it is
+	// the only moment the secret exists on screen.
 	await expect(page.getByTestId('totp-qr')).toBeVisible({ timeout: 15_000 });
 	const secret = (await page.getByTestId('totp-secret').innerText()).trim();
 	expect(secret).not.toBe('');
 
-	// À partir d'ici le compte peut se retrouver en 2FA : le filet de fin de test en a besoin.
+	// From here on the account may end up in 2FA: the end-of-test net needs to know.
 	secretEnCours = secret;
 
 	await page.getByTestId('totp-code').fill(codeTotp(secret));
 	await page.getByTestId('totp-confirm').click();
 
-	// Activer la deuxième étape sans codes de secours reviendrait à poser un verrou en jetant le
-	// double de la clé : ils doivent arriver dans la foulée, sans qu'on les demande.
+	// Enabling the second step with no backup codes would amount to putting up a lock and throwing away the
+	// spare key: they must arrive straight away, without being asked for.
 	await expect(page.getByTestId('backup-codes')).toBeVisible({ timeout: 15_000 });
 	const secours = await page.locator('[data-test-id="backup-codes"] li').allInnerTexts();
 	expect(secours.length).toBeGreaterThan(0);
 
-	// L'interrupteur prend l'avance du geste pendant l'inscription : on le relit après rechargement,
-	// pour qu'il réponde de l'état du compte et non de cette avance.
+	// The switch takes the lead from the gesture during enrolment: we read it again after a reload, so that
+	// it answers for the account's state and not for that lead.
 	await page.reload();
 	await expect(page.getByTestId('totp-switch')).toHaveAttribute('aria-checked', 'true', {
 		timeout: 15_000
 	});
 
-	// La vraie question : est-ce que la porte se referme ? On se déconnecte et on revient.
+	// The real question: does the door close? We sign out and come back.
 	await signOut(page);
 
 	await page.goto('/auth');
@@ -130,7 +128,7 @@ test('activer la 2FA, se reconnecter avec un code, puis la retirer', async ({
 	await page.getByTestId('auth-password').fill(FIXTURE_PASSWORD);
 	await page.getByTestId('auth-submit').click();
 
-	// Le mot de passe seul ne suffit plus : la demande de code s'interpose.
+	// The password alone is no longer enough: the code prompt stands in the way.
 	await expect(page).toHaveURL(/\/auth\/mfa/, { timeout: 15_000 });
 	await expect(page.getByTestId('mfa-form')).toBeVisible();
 
@@ -138,8 +136,8 @@ test('activer la 2FA, se reconnecter avec un code, puis la retirer', async ({
 	await page.getByTestId('mfa-submit').click();
 	await expect(page.getByTestId('nav-create')).toBeVisible({ timeout: 15_000 });
 
-	// Remise en état : le compte fixe est partagé par toute la suite, et le laisser en 2FA
-	// arrêterait tous les autres tests à la connexion.
+	// Putting things back: the fixed account is shared by the whole suite, and leaving it in 2FA would stop
+	// every other test at sign-in.
 	await retirerDeuxiemeEtape(page);
 	secretEnCours = null;
 });

@@ -20,15 +20,15 @@
 	const custom = $derived(customEmoji(query));
 
 	/**
-	 * Même contrat que les autres feuilles : le navigateur tient l'état ouvert / fermé, on ne le
-	 * double pas d'un booléen qui finirait par mentir dès qu'Échap ferme la feuille sans nous.
+	 * Same contract as the other sheets: the browser holds the open / closed state, we do not double it with
+	 * a boolean that would end up lying as soon as Escape closes the sheet without us.
 	 */
 	export async function show() {
 		query = '';
 		dialog?.showModal();
 
-		// Le champ de recherche prend le focus, mais seulement après le rendu : `showModal` place le
-		// focus lui-même sur le premier élément focalisable, et le faire avant serait écrasé.
+		// The search field takes focus, but only after rendering: `showModal` places focus itself on the first
+		// focusable element, and doing it before would be overwritten.
 		await tick();
 		field?.focus();
 	}
@@ -43,7 +43,7 @@
 		hide();
 	}
 
-	/** Les emoji trouvés, regroupés — la grille garde ses intertitres pendant une recherche. */
+	/** The emoji found, grouped — the grid keeps its subheadings during a search. */
 	const sections = $derived(
 		EMOJI_GROUPS.map((group) => ({
 			group,
@@ -84,8 +84,8 @@
 
 		{#if custom}
 			<!--
-				La palette ne peut pas tout prévoir : un caractère collé dans la recherche devient
-				un choix à part entière plutôt qu'une impasse.
+				The palette cannot foresee everything: a character pasted into the search becomes a choice in its own
+				right rather than a dead end.
 			-->
 			<button
 				type="button"
@@ -100,8 +100,8 @@
 		{/if}
 
 		<!--
-			Hauteur bornée et défilement interne : une feuille qui pousse au-delà de l'écran
-			cacherait son propre champ de recherche, seul moyen de traverser la palette vite.
+			Bounded height and internal scrolling: a sheet growing past the screen would hide its own search field,
+			the only way to cross the palette quickly.
 		-->
 		<div class="mt-4 max-h-[50vh] overflow-y-auto pe-1">
 			{#each sections as section (section.group)}
@@ -134,7 +134,7 @@
 			{/each}
 		</div>
 
-		<!-- La fermeture après la grille : le premier focus doit tomber sur la recherche. -->
+		<!-- The close button after the grid: first focus must land on the search. -->
 		<button
 			type="button"
 			onclick={hide}

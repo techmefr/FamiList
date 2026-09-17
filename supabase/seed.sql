@@ -1,15 +1,14 @@
--- Comptes fixes pour les tests E2E et le développement local.
+-- Fixed accounts for the E2E tests and local development.
 --
--- Créés directement dans les tables d'auth plutôt que par une inscription, parce qu'une inscription
--- laisserait le compte en attente : ici, ils doivent exister confirmés et approuvés dès
--- `supabase start`, sans clé de service ni appel réseau. Le mot de passe est un mot de passe de
--- test connu de tous, jamais utilisé hors de cette pile locale.
+-- Created directly in the auth tables rather than by a sign-up, because a sign-up would leave the account
+-- pending: here they must exist confirmed and approved from `supabase start`, with no service key and no
+-- network call. The password is a test password known to everybody, never used outside this local stack.
 --
--- Deux comptes, parce que l'application se joue à plusieurs : rejoindre un foyer, partager une
--- liste ou voter demandent quelqu'un d'autre. Le premier créé devient administrateur — c'est la
--- règle du premier compte — et reste celui que la plupart des tests utilisent.
+-- Two accounts, because the application is played with several people: joining a household, sharing a list or
+-- voting all need somebody else. The first created becomes an administrator — that is the first-account rule
+-- — and stays the one most tests use.
 --
--- Rejoué à chaque `db reset` : idempotent, comme le reste de ce fichier.
+-- Replayed on every `db reset`: idempotent, like the rest of this file.
 
 do $$
 declare
@@ -47,7 +46,7 @@ begin
       'email', now(), now(), now()
     );
 
-    -- Le trigger d'inscription a déjà posé la ligne `profiles` : on ne fait qu'approuver.
+    -- The sign-up trigger has already laid down the `profiles` row: we only approve.
     update public.profiles set status = 'approved' where id = fixture.id;
   end loop;
 end $$;

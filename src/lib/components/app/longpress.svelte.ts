@@ -1,17 +1,17 @@
 import { LONGPRESS_MS, movedTooFar } from '$domain/longpress';
 
 /**
- * L'action qui pose l'appui long sur un élément.
+ * The action that puts a long press on an element.
  *
- * Elle écoute des `pointer*` et non des `touch*` : la souris et le stylet déclenchent le même
- * geste, ce qui rend la chose testable au clavier près et utilisable au bureau.
+ * It listens to `pointer*` and not `touch*`: the mouse and the stylus trigger the same gesture, which makes
+ * the thing testable and usable at a desk.
  *
- * Deux précautions valent d'être dites :
+ * Two precautions are worth saying:
  *
- * — `contextmenu` est annulé pendant l'appui. Sur mobile, maintenir le doigt ouvre le menu du
- *   navigateur et fige la sélection de texte par-dessus notre feuille.
- * — Une fois le geste parti, le `click` qui suit est avalé. Sans cela, relâcher le doigt cocherait
- *   l'article dont on vient d'ouvrir la fiche.
+ * — `contextmenu` is cancelled during the press. On mobile, holding the finger opens the browser menu and
+ *   freezes the text selection over our sheet.
+ * — Once the gesture has started, the `click` that follows is swallowed. Without that, releasing the finger
+ *   would tick the item whose sheet has just been opened.
  */
 export function longpress(node: HTMLElement, action: () => void) {
 	let timer: ReturnType<typeof setTimeout> | null = null;
@@ -25,8 +25,8 @@ export function longpress(node: HTMLElement, action: () => void) {
 	}
 
 	function down(event: PointerEvent) {
-		// Le bouton droit ouvre déjà le menu du système : lui superposer notre geste ferait deux
-		// réponses à une seule pression.
+		// The right button already opens the system menu: laying our gesture over it would make two answers to
+		// a single press.
 		if (event.button !== 0) return;
 
 		parti = false;

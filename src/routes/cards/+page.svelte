@@ -28,19 +28,19 @@
 	let adding = $state(false);
 
 	/**
-	 * Le bouton central annonce ce qu'il vient chercher. Le formulaire de carte reste replié tant
-	 * qu'on ne l'a pas demandé : sans cela, le curseur arriverait sur un écran sans champ.
+	 * The central button announces what it comes for. The card form stays folded until it is asked for:
+	 * without that, the cursor would land on a screen with no field.
 	 */
 	$effect(() => {
 		if (createIntent.take('card')) adding = true;
 	});
 
 	/**
-	 * La carte désignée par la notification de proximité s'ouvre en grand toute seule.
+	 * The card pointed at by the proximity notification opens full screen on its own.
 	 *
-	 * On y arrive le code-barres à la main, devant la caisse : demander un tapotement de plus sur
-	 * la bonne vignette annulerait le service rendu. L'adresse est nettoyée après coup, pour qu'un
-	 * retour arrière ne rouvre pas la carte en boucle.
+	 * You get there with the barcode in hand, in front of the till: asking for one more tap on the right
+	 * thumbnail would cancel the service rendered. The address is cleaned afterwards, so that going back
+	 * does not reopen the card in a loop.
 	 */
 	$effect(() => {
 		const demandee = page.url.searchParams.get('card');
@@ -57,24 +57,22 @@
 	let notes = $state('');
 
 	/**
-	 * À quoi la carte est rattachée : `shop:<id>`, `brand:<enseigne>`, ou rien.
+	 * What the card is attached to: `shop:<id>`, `brand:<brand>`, or nothing.
 	 *
-	 * Le rattachement était deviné en comparant le nom de la carte à celui des magasins, ce qui
-	 * cassait au premier renommage et ne pouvait pas exprimer le cas courant — une carte Carrefour
-	 * marche dans tous les Carrefour, pas seulement celui de Meximieux. Il se choisit donc, et le
-	 * choix distingue les deux portées.
+	 * The attachment used to be guessed by comparing the card's name to the shops', which broke at the
+	 * first rename and could not express the common case — a Carrefour card works in every Carrefour, not
+	 * only the one in Meximieux. So it is chosen, and the choice tells the two scopes apart.
 	 */
 	let attach = $state('');
 
 	/**
-	 * Créer un magasin sans quitter la carte.
+	 * Creating a shop without leaving the card.
 	 *
-	 * On s'aperçoit qu'un magasin manque exactement ici : au moment de rattacher la carte. La liste
-	 * porte donc une dernière entrée qui ouvre le formulaire dans une feuille, et le magasin créé
-	 * devient le rattachement choisi — sans que la saisie en cours ne soit perdue.
+	 * You notice a shop is missing exactly here: at the moment of attaching the card. The list therefore
+	 * carries a last entry opening the form in a sheet, and the created shop becomes the chosen attachment
+	 * — without the typing in progress being lost.
 	 *
-	 * Un `<select>` ne peut pas ouvrir une boîte de dialogue pendant son propre changement : on
-	 * remet la valeur d'avant, puis on ouvre.
+	 * A `<select>` cannot open a dialog during its own change: we put the previous value back, then open.
 	 */
 	const NOUVEAU = '__new__';
 	let nouveauMagasin = $state<NewShopSheet | null>(null);
@@ -93,12 +91,12 @@
 
 	const openCard = $derived(data.cards.find((c) => c.id === openCardId) ?? null);
 
-	/** Le format suit la saisie tant que l'utilisateur n'en a pas imposé un. */
+	/** The format follows what is typed until the user imposes one. */
 	const effectiveType = $derived(codeType || (code.trim() ? guessCodeType(code) : 'code_39'));
 
 	/**
-	 * Un format que la saisie ne peut pas former est signalé à la saisie, pas à la caisse : sinon
-	 * la carte s'enregistre et ne se dessine plus le jour où on en a besoin.
+	 * A format the entry cannot form is reported at entry time, not at the till: otherwise the card saves
+	 * and stops being drawn on the day it is needed.
 	 */
 	const invalidCode = $derived(
 		!isMatrixFormat(effectiveType) && code.trim() !== '' && !linearCode(code, effectiveType)
@@ -114,14 +112,14 @@
 			: null
 	);
 
-	/** Un magasin rattaché apporte son enseigne avec lui : la carte vaut alors pour la chaîne. */
+	/** An attached shop brings its brand with it: the card is then valid for the chain. */
 	const enseigne = $derived(
 		attach.startsWith('brand:') ? attach.slice(6) : (magasin?.brand.trim() ?? '')
 	);
 
 	/**
-	 * La couleur vient du magasin, à défaut du premier magasin de l'enseigne : deux cartes de la
-	 * même chaîne se ressemblent, et c'est ce qu'on cherche à la caisse.
+	 * The colour comes from the shop, failing that from the brand's first shop: two cards of the same chain
+	 * look alike, and that is what you are looking for at the till.
 	 */
 	const tint = $derived(
 		magasin?.tint ??
@@ -130,7 +128,7 @@
 				: DEFAULT_TINT)
 	);
 
-	/** Le rattachement nomme la carte tant qu'on ne lui donne pas un autre nom. */
+	/** The attachment names the card until it is given another name. */
 	const suggestion = $derived(magasin?.name ?? enseigne);
 	const libelle = $derived(name.trim() || suggestion);
 
@@ -229,9 +227,9 @@
 			data-test-id="card-form"
 		>
 			<!--
-				Le rattachement en premier : c'est lui qui donne le nom, la couleur, et plus tard le
-				rappel à l'arrivée devant le magasin. Le choix reste facultatif — une carte de
-				bibliothèque ou de piscine ne se rattache à rien de ce qui est dans la liste.
+				The attachment first: it is what gives the name, the colour, and later the reminder on arriving at
+				the shop. The choice stays optional — a library or swimming pool card attaches to nothing in the
+				list.
 			-->
 			<div>
 				<Label for="card-attach">{t('cards.attach')}</Label>
@@ -268,9 +266,9 @@
 			</div>
 
 			<!--
-				Le nom n'est plus obligatoire : le rattachement le donne, et il s'affiche en filigrane
-				pour qu'on voie ce qui sera pris. On ne le remplit que pour distinguer deux cartes du
-				même magasin — celle de la mère et celle du père.
+				The name is no longer required: the attachment gives it, and it shows as a placeholder so you can see
+				what will be used. You only fill it in to tell two cards of the same shop apart — the mother's and
+				the father's.
 			-->
 			<div>
 				<Label for="card-name">{t('cards.name')}</Label>
@@ -297,9 +295,9 @@
 					/>
 				</IconField>
 				<!--
-					Deux chemins vers le même code : la caméra, et une image déjà sur l'appareil. Le second
-					n'est pas un repli — c'est le chemin normal quand on enregistre ses cartes assis
-					devant un ordinateur, la carte étant dans un courriel ou dans une vieille photo.
+					Two paths to the same code: the camera, and an image already on the device. The second is not a
+					fallback — it is the normal path when you register your cards sitting in front of a computer, the
+					card being in an email or in an old photo.
 				-->
 				<ScanButton
 					onScanned={(result) => {
@@ -363,9 +361,9 @@
 			</div>
 
 			<!--
-				La note se saisit dès la création : ce qu'on a à écrire — le code secret de la carte, le
-				palier où les points se dépensent — on l'a sous les yeux au moment où on enregistre la
-				carte, pas plus tard. L'obliger à passer par le plein écran revenait à ne jamais l'écrire.
+				The note is typed from creation onwards: what you have to write — the card's secret code, the
+				threshold where points can be spent — is in front of you at the moment you save the card, not later.
+				Forcing it through the full-screen view amounted to never writing it.
 			-->
 			<div>
 				<Label for="card-notes">{t('cards.notes')}</Label>
@@ -406,7 +404,7 @@
 	<CardFullscreen card={openCard} onClose={() => (openCardId = null)} />
 {/if}
 
-<!-- Le magasin qui manque se crée ici, et devient aussitôt le rattachement de la carte. -->
+<!-- The missing shop is created here, and immediately becomes the card's attachment. -->
 <NewShopSheet
 	bind:this={nouveauMagasin}
 	oncreated={(shop) => {

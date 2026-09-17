@@ -3,24 +3,22 @@ import { dropIndex, edgeScrollStep, slotShifts, move } from '$domain/reorder';
 
 export { move };
 
-/** En deçà, c'est un appui qui tremble, pas une intention de déplacer. */
+/** Below this, it is a trembling press, not an intention to move. */
 const SEUIL = 4;
 
 /**
- * Réordonner à la poignée, au doigt comme à la souris.
+ * Reordering by the handle, with a finger as with a mouse.
  *
- * Un seul mécanisme pour les deux : le glisser-déposer HTML5 qu'on utilisait avant ne répond pas
- * au tactile, et la moitié des gens sont sur téléphone. Les événements de pointeur couvrent tout,
- * à condition que la poignée porte `touch-action: none` — sans quoi le navigateur emmène le geste
- * en défilement avant qu'on ait pu dire quoi que ce soit.
+ * A single mechanism for both: the HTML5 drag-and-drop used before does not respond to touch, and half the
+ * people are on a phone. Pointer events cover everything, provided the handle carries `touch-action: none`
+ * — without which the browser takes the gesture away as a scroll before we can say anything.
  *
- * Svelte reste seul maître de l'ordre du DOM. Pendant le geste on ne déplace rien : on décale les
- * lignes visuellement, et on ne réordonne le tableau qu'au relâchement. Une bibliothèque qui
- * réarrange elle-même les enfants du conteneur empêcherait un déplacement venu d'ailleurs — les
- * boutons monter/descendre, un autre appareil qui synchronise — de s'afficher.
+ * Svelte stays the sole owner of DOM order. During the gesture we move nothing: we shift the rows
+ * visually, and only reorder the array on release. A library rearranging the container's children itself
+ * would stop a move coming from elsewhere — the up/down buttons, another device syncing — from showing.
  *
- * Les boutons monter/descendre restent. Ils ne sont pas un repli : ils sont le chemin du clavier
- * et des lecteurs d'écran, pour lesquels aucun geste de pointeur n'existe.
+ * The up/down buttons stay. They are not a fallback: they are the path for the keyboard and for screen
+ * readers, for which no pointer gesture exists.
  */
 export function createReorder(onCommit: (from: number, to: number) => void) {
 	let lignes: HTMLElement[] = [];
@@ -43,8 +41,8 @@ export function createReorder(onCommit: (from: number, to: number) => void) {
 		lignes = [...zone.querySelectorAll<HTMLElement>(':scope > [data-reorder-row]')];
 		if (lignes.length < 2) return false;
 
-		// Des coordonnées de page, pas de fenêtre : la page défile pendant le geste, et des
-		// positions relatives à la fenêtre deviendraient fausses au premier pixel de défilement.
+		// Page coordinates, not window ones: the page scrolls during the gesture, and window-relative positions
+		// would become wrong at the first pixel of scrolling.
 		const haut = window.scrollY;
 		const rects = lignes.map((ligne) => ligne.getBoundingClientRect());
 		tops = rects.map((r) => r.top + haut);
@@ -64,7 +62,7 @@ export function createReorder(onCommit: (from: number, to: number) => void) {
 		});
 	}
 
-	/** La page suit le doigt quand il arrive au bord — le pas est calculé dans $domain/reorder. */
+	/** The page follows the finger when it reaches an edge — the step is computed in $domain/reorder. */
 	function defiler() {
 		if (!engage) return;
 
@@ -101,7 +99,7 @@ export function createReorder(onCommit: (from: number, to: number) => void) {
 
 		if (valider && vers !== null && vers !== de) onCommit(de, vers);
 
-		// Le tour suivant : l'appelant peut ranimer les bascules une fois le nouvel ordre posé.
+		// The next turn: the caller can bring the animations back once the new order is in place.
 		await tick();
 	}
 
@@ -110,11 +108,10 @@ export function createReorder(onCommit: (from: number, to: number) => void) {
 			return saisie;
 		},
 		/**
-		 * Vrai le temps d'un geste.
+		 * True for the duration of a gesture.
 		 *
-		 * L'appelant s'en sert pour couper l'animation de bascule pendant qu'on valide : les lignes
-		 * sont déjà à leur place à l'écran, c'est nous qui les y avons mises. Animer par-dessus les
-		 * ferait revenir en arrière d'un bond avant de repartir.
+		 * The caller uses it to switch off the flip animation while we commit: the rows are already in place on
+		 * screen, we put them there. Animating on top would make them jump back before setting off again.
 		 */
 		get busy() {
 			return saisie !== null;
@@ -136,12 +133,12 @@ export function createReorder(onCommit: (from: number, to: number) => void) {
 					origine = event.clientY + window.scrollY;
 					dernierY = event.clientY;
 					engage = false;
-					// Safari a deja refuse la capture sur un pointeur qu'il ne reconnait plus : le geste
-					// marche sans, il devient seulement sensible a une sortie de l'element.
+					// Safari has already refused capture on a pointer it no longer recognises: the gesture works without
+					// it, it only becomes sensitive to leaving the element.
 					try {
 						poignee.setPointerCapture(event.pointerId);
 					} catch {
-						/* rien a faire */
+						/* nothing to do */
 					}
 				},
 

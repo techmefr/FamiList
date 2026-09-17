@@ -1,22 +1,20 @@
 /**
- * Ce qu'on retient d'un plantage avant de l'envoyer, et ce qu'on en retire.
+ * What we keep from a crash before sending it, and what we strip out of it.
  *
- * Une pile d'appels n'est pas une donnée technique neutre. Elle traverse des URL qui portent des
- * identifiants de foyer, des messages d'erreur où Postgres a recopié la valeur qui a violé une
- * contrainte, des chemins de fichiers qui commencent par le prénom de la personne. Le nettoyage
- * ci-dessous passe avant tout envoi.
+ * A stack trace is not neutral technical data. It crosses URLs carrying household ids, error messages
+ * where Postgres copied back the value that violated a constraint, file paths starting with the person's
+ * first name. The scrubbing below happens before anything is sent.
  *
- * Ce qu'il ne peut pas faire, et il vaut mieux l'écrire que le laisser croire : le texte libre
- * d'une `Error` reste du texte libre. Si une bibliothèque écrit « impossible de supprimer
- * Pique-nique de mamie », aucune expression régulière ne distinguera ce nom d'un mot technique.
- * On coupe donc court — cinq cents caractères — et la base garde ces lignes trente jours, pas
- * davantage.
+ * What it cannot do, and it is better written down than left to be assumed: the free text of an `Error`
+ * stays free text. If a library writes "cannot delete Granny's picnic", no regular expression will tell
+ * that name from a technical word. So we cut it short — five hundred characters — and the database keeps
+ * these rows for thirty days, no more.
  */
 
 const MESSAGE_LIMIT = 500;
 const STACK_LIMIT = 4000;
 
-/** D'où vient le plantage. Les mêmes quatre valeurs que la contrainte de `client_errors.source`. */
+/** Where the crash comes from. The same four values as the `client_errors.source` constraint. */
 export type CrashSource = 'window' | 'promise' | 'render' | 'sync';
 
 export interface Crash {
@@ -28,25 +26,25 @@ export interface Crash {
 }
 
 /**
- * Les remplacements, dans cet ordre.
+ * The replacements, in this order.
  *
- * L'ordre n'est pas décoratif : une adresse de courriel contient un point et des lettres qui
- * seraient sinon avalées par le motif des jetons longs, et une URL de données commence par des
- * caractères que le motif des UUID ne reconnaîtrait plus une fois tronqués.
+ * The order is not decorative: an email address contains a dot and letters that would otherwise be eaten
+ * by the long-token pattern, and a data URL starts with characters the UUID pattern would no longer
+ * recognise once truncated.
  */
 const REPLACEMENTS: Array<[RegExp, string]> = [
 	[/\bdata:[\w/+.-]+;base64,[A-Za-z0-9+/=]+/g, '{data}'],
 	[/\beyJ[\w-]+\.[\w-]+\.[\w-]+/g, '{token}'],
 	[/[\w.+-]+@[\w-]+\.[\w.-]+/g, '{email}'],
 	[/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/gi, '{id}'],
-	// Un chemin absolu de développement ou d'appareil commence par le nom du compte système.
+	// An absolute development or device path starts with the system account name.
 	[/\/(?:home|Users)\/[^/\s)'"]+/g, '/home/{user}'],
-	// La chaîne de requête n'est retirée que si elle porte vraiment une paire clé=valeur : sinon
-	// le point d'interrogation d'une phrase emporterait la fin du message.
+	// The query string is only removed if it really carries a key=value pair: otherwise the question mark
+	// of a sentence would take the end of the message with it.
 	[/\?[\w[\]%.+-]+=[^\s)'"]*/g, '?{query}'],
 	[/\b[A-Za-z0-9_-]{32,}\b/g, '{token}'],
-	// Six chiffres et plus : un identifiant, un horodatage, un numéro. En dessous, ce sont les
-	// numéros de ligne et de colonne de la pile, et les effacer rendrait la pile inutile.
+	// Six digits and more: an id, a timestamp, a number. Below that, they are the line and column numbers
+	// of the stack, and erasing them would make the stack useless.
 	[/\d{6,}/g, '{n}']
 ];
 
@@ -55,11 +53,11 @@ export function scrub(text: string): string {
 }
 
 /**
- * L'écran d'où vient le plantage, réduit à sa route.
+ * The screen the crash comes from, reduced to its route.
  *
- * `/l/7f3a-…` devient `/l/{id}` : le segment est l'identifiant d'une liste, et le garder dirait
- * de quelle liste il s'agit sans rien apprendre sur le bug — deux personnes qui plantent sur deux
- * listes différentes plantent au même endroit du code.
+ * `/l/7f3a-…` becomes `/l/{id}`: the segment is a list id, and keeping it would say which list it is
+ * without teaching anything about the bug — two people crashing on two different lists crash at the same
+ * place in the code.
  */
 export function normalizePath(path: string): string {
 	const withoutQuery = path.split('?')[0].split('#')[0];
@@ -68,12 +66,11 @@ export function normalizePath(path: string): string {
 }
 
 /**
- * Le message lisible d'une cause quelconque.
+ * The readable message of any cause.
  *
- * Même problème que dans la synchronisation : ce qui est levé n'est pas toujours une `Error`.
- * `describeError` répond déjà à cette question pour le bandeau, mais elle vit dans `sync/` et ne
- * connaît pas le nom de l'erreur ; ici on préfixe par le nom (`TypeError: …`), qui est ce qui
- * regroupe le mieux deux plantages identiques.
+ * Same problem as in the sync: what is thrown is not always an `Error`. `describeError` already answers
+ * that question for the banner, but it lives in `sync/` and does not know the error's name; here we
+ * prefix with the name (`TypeError: …`), which is what groups two identical crashes best.
  */
 function readMessage(cause: unknown): string {
 	if (cause instanceof Error) {
@@ -103,11 +100,11 @@ function readStack(cause: unknown): string {
 }
 
 /**
- * Le hachage qui sert d'empreinte : FNV-1a sur 32 bits, rendu en hexadécimal.
+ * The hash used as a fingerprint: FNV-1a on 32 bits, rendered in hexadecimal.
  *
- * Volontairement pas `crypto.subtle` : celui-ci est asynchrone, et le rapporteur doit pouvoir
- * travailler depuis un gestionnaire d'événement synchrone sans rien retarder. Il ne s'agit pas de
- * cacher quoi que ce soit — l'empreinte n'a qu'à regrouper deux plantages identiques.
+ * Deliberately not `crypto.subtle`: that one is asynchronous, and the reporter must be able to work from
+ * a synchronous event handler without delaying anything. This is not about hiding anything — the
+ * fingerprint only has to group two identical crashes.
  */
 function hash(text: string): string {
 	let value = 0x811c9dc5;
@@ -121,10 +118,10 @@ function hash(text: string): string {
 }
 
 /**
- * La première image de la pile, sans numéro de ligne ni de colonne.
+ * The first frame of the stack, without line or column numbers.
  *
- * Les numéros bougent à chaque build : les garder dans l'empreinte ferait apparaître le même bug
- * comme neuf à chaque déploiement, et le compteur d'occurrences ne compterait plus rien.
+ * The numbers move on every build: keeping them in the fingerprint would make the same bug look new on
+ * every deployment, and the occurrence counter would count nothing any more.
  */
 function topFrame(stack: string): string {
 	const frame = stack.split('\n').find((line) => line.includes('at ') || line.includes('@'));
@@ -139,11 +136,11 @@ export function fingerprint(source: CrashSource, message: string, stack: string)
 }
 
 /**
- * Tout ce qui précède, mis bout à bout.
+ * Everything above, put end to end.
  *
- * Renvoie `null` quand il n'y a rien à dire : une cause sans message ni pile ne remonterait qu'une
- * ligne vide dans l'écran d'administration, et une ligne vide coûte la même place qu'une utile
- * tout en n'apprenant rien.
+ * Returns `null` when there is nothing to say: a cause with no message and no stack would only send an
+ * empty row to the admin screen, and an empty row takes the same space as a useful one while teaching
+ * nothing.
  */
 export function buildCrash(cause: unknown, source: CrashSource, path: string): Crash | null {
 	const message = scrub(readMessage(cause)).trim().slice(0, MESSAGE_LIMIT);

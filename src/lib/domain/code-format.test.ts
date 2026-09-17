@@ -60,8 +60,8 @@ describe('CODE_TYPES', () => {
 	});
 
 	it('contient tout format que la détection peut proposer', () => {
-		// Proposer un format absent de la liste reviendrait à enregistrer une carte qu'on ne sait
-		// pas redessiner.
+		// Offering a format missing from the list would amount to saving a card we do not know how to draw
+		// again.
 		for (const value of ['3017620422003', 'ABC-123', 'café@2026']) {
 			expect(CODE_TYPES).toContain(guessCodeType(value));
 		}

@@ -10,10 +10,10 @@
 	import { MessagesSquare, Plus } from '@lucide/svelte';
 
 	/**
-	 * Deux portées cohabitent ici. Une discussion de liste est rattachée à sa liste — `list_id`,
-	 * route `/l/[id]/chat` — et se partage avec le cercle. Un message privé, lui, n'appartient à
-	 * aucun cercle : c'est le choix qui lève l'ambiguïté de deux personnes membres de plusieurs
-	 * cercles communs, et la raison pour laquelle les deux ne se mélangent pas à l'écran.
+	 * Two scopes live side by side here. A list discussion is attached to its list — `list_id`, route
+	 * `/l/[id]/chat` — and is shared with the circle. A private message, for its part, belongs to no circle:
+	 * it is the choice that removes the ambiguity of two people who are members of several shared circles,
+	 * and the reason the two do not mix on screen.
 	 */
 	const rows = $derived(
 		data.lists.map((list) => {
@@ -38,7 +38,7 @@
 		await goto(`/chat/d/${conversationId}`);
 	}
 
-	/** L'heure du dernier message, dans la langue de l'écran. Aujourd'hui l'heure, sinon la date. */
+	/** The time of the last message, in the screen's language. Today the time, otherwise the date. */
 	function when(createdAt: number) {
 		const date = new Date(createdAt);
 		if (Number.isNaN(date.getTime())) return '';

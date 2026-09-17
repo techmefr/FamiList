@@ -20,7 +20,7 @@ describe('needsElevation', () => {
 		expect(needsElevation([])).toBe(false);
 	});
 
-	// Les deux lectures du panneau échouent indépendamment : une seule des deux causes suffit.
+	// The panel's two reads fail independently: either one of the two causes is enough.
 	it('trouve la cause même noyée parmi plusieurs refus', () => {
 		expect(needsElevation(['aucun compte de demonstration', 'elevation requise'])).toBe(true);
 	});

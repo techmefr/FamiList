@@ -3,8 +3,8 @@ import { flagForLocale } from './flags';
 import type { Locale } from './index.svelte';
 
 /**
- * La liste est recopiée plutôt qu'importée de `index.svelte.ts`, qui tire `$app/environment` et ne
- * se charge pas hors du navigateur. Une langue ajoutée là-bas et oubliée ici sortira du typage.
+ * The list is copied rather than imported from `index.svelte.ts`, which pulls `$app/environment` and does
+ * not load outside the browser. A language added there and forgotten here will fall out of the typing.
  */
 const CODES: Locale[] = ['fr', 'en', 'es', 'de', 'it', 'pt', 'ru', 'ar', 'zh', 'mg'];
 const SANS_DRAPEAU: Locale[] = ['en', 'ar'];
@@ -30,7 +30,7 @@ describe('flagForLocale', () => {
 		}
 	});
 
-	// Un drapeau en double signalerait une langue rattachée au mauvais pays par recopie.
+	// A duplicate flag would signal a language attached to the wrong country by copying.
 	it('ne rattache pas deux langues au même pays', () => {
 		const flags = CODES.map(flagForLocale).filter((flag) => flag !== null);
 		expect(new Set(flags).size).toBe(flags.length);

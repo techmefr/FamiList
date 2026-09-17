@@ -3,9 +3,9 @@ import { test, expect } from './fixtures';
 const nomListe = () => `Discussion ${Date.now()}`;
 
 /**
- * Le chat existait sans y mener : on ne l'atteignait qu'en ouvrant une liste et en trouvant son
- * bouton. Ce parcours vérifie l'entrée qui manquait — l'onglet, l'index des listes, et l'aller
- * jusqu'à la conversation elle-même.
+ * The chat existed with no way to it: you only reached it by opening a list and finding its button. This
+ * journey checks the entrance that was missing — the tab, the list index, and going through to the
+ * conversation itself.
  */
 test('rejoindre une discussion depuis la navigation', async ({ signedInPage: page }) => {
 	const nom = nomListe();

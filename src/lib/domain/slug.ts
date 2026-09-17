@@ -1,12 +1,12 @@
 /**
- * Doit produire exactement le même résultat que public.slugify() en base, qui alimente la colonne
- * générée items.product_slug. La parité est couverte par slug.test.ts contre des valeurs relevées
- * sur la vraie base : toute divergence casserait l'ordre appris, qui est indexé par slug.
+ * Must produce exactly the same result as public.slugify() in the database, which feeds the generated column
+ * items.product_slug. Parity is covered by slug.test.ts against values taken from the real database: any
+ * divergence would break the learned order, which is indexed by slug.
  */
 
 /**
- * Caractères que la décomposition NFD ne sépare pas, mais que unaccent transcrit quand même.
- * Sans ça, « Bœuf haché » donnerait buf-hache côté client et boeuf-hache côté base.
+ * Characters that NFD decomposition does not separate, but that unaccent transcribes all the same. Without
+ * this, "Bœuf haché" would give buf-hache on the client side and boeuf-hache on the database side.
  */
 const LIGATURES: [RegExp, string][] = [
 	[/œ/g, 'oe'],

@@ -1,13 +1,13 @@
 /**
- * La géométrie d'un réordonnancement au doigt.
+ * The geometry of reordering with a finger.
  *
- * Le glisser-déposer HTML5 ignore le tactile : sur téléphone, il ne se passait rien. Ce qui suit
- * remplace ce mécanisme par des événements de pointeur, qui eux couvrent doigt, stylet et souris
- * d'un même geste. Le calcul est ici, sans DOM, pour être vérifiable : c'est lui qui décide où la
- * ligne saisie retombe, et de combien les autres s'écartent pour lui faire place.
+ * HTML5 drag-and-drop ignores touch: on a phone, nothing happened. What follows replaces that mechanism
+ * with pointer events, which cover finger, stylus and mouse in one go. The computation is here, with no
+ * DOM, so it can be verified: it is what decides where the grabbed row lands, and by how much the others
+ * move apart to make room.
  */
 
-/** Déplace un élément d'une position à une autre, sans toucher au tableau d'origine. */
+/** Moves an element from one position to another, without touching the original array. */
 export function move<T>(items: T[], from: number, to: number): T[] {
 	const next = [...items];
 	const [moved] = next.splice(from, 1);
@@ -16,11 +16,11 @@ export function move<T>(items: T[], from: number, to: number): T[] {
 }
 
 /**
- * Où retombe la ligne saisie, d'après le centre qu'elle occupe maintenant.
+ * Where the grabbed row lands, from the centre it now occupies.
  *
- * On compare à la moitié de chaque ligne plutôt qu'à son bord : franchir la moitié d'un voisin,
- * c'est avoir pris sa place. Comparer aux bords ferait sauter l'ordre dès le premier millimètre,
- * et hésiter entre deux positions au moindre tremblement de la main.
+ * We compare against the middle of each row rather than its edge: crossing half of a neighbour means
+ * having taken its place. Comparing against edges would reorder from the first millimetre, and hesitate
+ * between two positions at the slightest tremble of the hand.
  */
 export function dropIndex(
 	centre: number,
@@ -40,12 +40,12 @@ export function dropIndex(
 }
 
 /**
- * De combien chaque ligne doit se décaler pour que l'ordre visé se lise déjà à l'écran.
+ * By how much each row must shift so the intended order already reads on screen.
  *
- * Les hauteurs ne sont pas égales — un article avec une note est plus haut qu'un autre — donc on
- * ne peut pas décaler d'un « pas » constant : on recompose les positions de tout le monde dans
- * l'ordre visé, et on en déduit le déplacement de chacun. Le décalage rendu pour la ligne saisie
- * est celui de sa case d'arrivée ; l'appelant lui préfère la position réelle du doigt.
+ * The heights are not equal — an item with a note is taller than another — so we cannot shift by a constant
+ * "step": we recompose everybody's positions in the intended order, and derive each one's movement from
+ * that. The shift returned for the grabbed row is that of its landing slot; the caller prefers the
+ * finger's real position.
  */
 export function slotShifts(
 	tops: number[],
@@ -71,18 +71,18 @@ export function slotShifts(
 	return decalages;
 }
 
-/** À quelle distance du bord de l'écran la page commence à défiler d'elle-même. */
+/** How close to the screen edge the page starts scrolling by itself. */
 export const BORD = 88;
 
-/** Le pas maximal d'un défilement automatique, par image. */
+/** The maximum step of an automatic scroll, per frame. */
 export const VITESSE = 14;
 
 /**
- * De combien la page doit défiler quand le doigt tient une ligne près d'un bord.
+ * By how much the page must scroll when the finger holds a row near an edge.
  *
- * Sans ce défilement, une ligne ne peut pas dépasser la hauteur de l'écran : on tient la carte, on
- * arrive en bas, et il n'y a nulle part où aller. Le pas croît avec l'enfoncement dans la zone de
- * bord, pour qu'un effleurement ne parte pas en fuite ; il est négatif vers le haut.
+ * Without this scrolling, a row cannot be taller than the screen: you hold the card, you reach the bottom,
+ * and there is nowhere to go. The step grows with how far into the edge zone you are, so a brush does not
+ * run away; it is negative upwards.
  */
 export function edgeScrollStep(
 	y: number,

@@ -2,9 +2,9 @@ import { describe, expect, it } from 'vitest';
 import { slugify } from './slug';
 
 /**
- * Valeurs attendues relevées sur la vraie base, en appelant public.slugify(). Les regénérer avec :
+ * Expected values taken from the real database, by calling public.slugify(). Regenerate them with:
  *   select v, public.slugify(v) from (values ('Bœuf haché'), ...) as t(v);
- * L'ordre appris étant indexé par slug, une divergence le viderait silencieusement.
+ * The learned order being indexed by slug, a divergence would empty it silently.
  */
 describe('slugify — parité avec public.slugify()', () => {
 	it.each([

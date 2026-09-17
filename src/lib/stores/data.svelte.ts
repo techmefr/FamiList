@@ -65,31 +65,30 @@ import { TINTS } from '$domain/tint';
 import { i18n, t } from '$lib/i18n/index.svelte';
 
 /**
- * Le magasin actif est retenu par cercle : les magasins appartiennent à un cercle, et une seule clé
- * pour tous ferait retomber sur le premier magasin venu à chaque bascule.
+ * The active shop is remembered per circle: shops belong to a circle, and a single key for all of
+ * them would fall back to whatever shop came first on every switch.
  */
 const activeShopKey = (circle: string) => `familist:active-shop:${circle}`;
 
-/** La clé d'avant les cercles multiples, relue une dernière fois pour ne pas perdre le choix en cours. */
+/** The key from before multiple circles, read one last time so the current choice is not lost. */
 const LEGACY_ACTIVE_SHOP_KEY = 'familist:active-shop';
 
 /**
- * Les douze derniers chiffres de l'identifiant du magasin par défaut ; les vingt-quatre premiers
- * caractères viennent de l'identifiant du foyer. Le tout reste un UUID valide, et surtout il est
- * le même sur tous les appareils du foyer — deux ouvertures simultanées ne créent pas deux
- * magasins.
+ * The last twelve digits of the default shop's id; the first twenty-four characters come from the
+ * household's id. The whole stays a valid UUID, and above all it is the same on every device of the
+ * household — two simultaneous openings do not create two shops.
  */
 const DEFAULT_SHOP_NODE = 'd0defa017000';
 
 /**
- * L'écran ne lit jamais Dexie directement : il lit cet état, écrit par des méthodes qui persistent
- * en tâche de fond. Aucune interaction n'attend le disque ni le réseau — on coche un article en
- * marchant, la synchronisation suit.
+ * The screen never reads Dexie directly: it reads this state, written by methods that persist in
+ * the background. No interaction waits on disk or network — you tick an item while walking, the
+ * sync follows.
  */
 class DataStore {
 	/**
-	 * Le cache complet : tous les cercles du compte. L'écran ne le lit pas directement — il lit les
-	 * vues dérivées juste en dessous, qui ne montrent que le cercle actif.
+	 * The full cache: every circle of the account. The screen does not read it directly — it reads the
+	 * derived views just below, which show only the active circle.
 	 */
 	private cachedShops = $state<Shop[]>([]);
 	private cachedAisles = $state<Aisle[]>([]);
@@ -99,8 +98,8 @@ class DataStore {
 	private cachedPrices = $state<Price[]>([]);
 	private cachedRecipes = $state<Recipe[]>([]);
 
-	// Ce qui se lit par liste, par magasin ou par recette n'est pas filtré ici : la clé étrangère le
-	// fait déjà, et ces tables n'ont pas de cercle à elles.
+	// What is read per list, per shop or per recipe is not filtered here: the foreign key already does
+	// it, and those tables have no circle of their own.
 	items = $state<Item[]>([]);
 	layouts = $state<ShopLayout[]>([]);
 	itemOrders = $state<ShopItemOrder[]>([]);
@@ -115,10 +114,10 @@ class DataStore {
 	activeShopId = $state<string>('');
 	ready = $state(false);
 
-	/** Le cercle actif — celui qu'on regarde, et celui dans lequel ce qu'on crée atterrit. */
+	/** The active circle — the one being looked at, and the one new things land in. */
 	circle = $derived(sync.householdId ?? '');
 
-	/** Les cercles entre lesquels basculer. Un seul cercle, et le sélecteur n'a rien à proposer. */
+	/** The circles to switch between. With a single circle, the selector has nothing to offer. */
 	circles = $derived(sync.circles);
 
 	shops = $derived(ofCircle(this.cachedShops, this.circle));
@@ -132,12 +131,12 @@ class DataStore {
 	activeShop = $derived(this.shops.find((s) => s.id === this.activeShopId) ?? this.shops[0]);
 	activeLayout = $derived(this.layouts.find((l) => l.shopId === this.activeShopId));
 
-	/** Les rayons du cercle actif, pour décider si celui d'un article y a un sens. */
+	/** The active circle's aisles, to decide whether an item's aisle makes sense there. */
 	private knownAisleIds = $derived(new Set(this.aisles.map((aisle) => aisle.id)));
 
-	// L'identifiant est lu de façon asynchrone, après le premier rendu : sans état réactif, tout ce
-	// qui dérive de `me` — le champ du nom, le sélecteur de portrait — resterait calculé sur la
-	// chaîne vide et ne trouverait jamais son propre membre.
+	// The id is read asynchronously, after the first render: without reactive state, everything derived
+	// from `me` — the name field, the avatar picker — would stay computed on the empty string and would
+	// never find its own member.
 	private userId = $state('');
 	private userIdKnown = false;
 
@@ -147,10 +146,9 @@ class DataStore {
 		const { data, error } = await supabase.auth.getUser();
 		const answer = { id: data.user?.id ?? '', failed: !!error };
 
-		// Changer de compte sur le même appareil doit tout reprendre à zéro. Sans cette
-		// comparaison, le cache du compte précédent resterait à l'écran : les listes d'une
-		// personne s'afficheraient à une autre. Une réponse en erreur, elle, ne dit rien de
-		// l'identité et ne décide de rien.
+		// Switching account on the same device must start everything over. Without this comparison, the
+		// previous account's cache would stay on screen: one person's lists shown to another. An error
+		// response, on the other hand, says nothing about identity and decides nothing.
 		if (this.ready) {
 			const decision = accountDecision({ id: this.userId, known: this.userIdKnown }, answer);
 			if (decision === 'ignore') return;
@@ -166,14 +164,13 @@ class DataStore {
 			this.userIdKnown = true;
 		}
 
-		// Le cache s'affiche d'abord, la synchronisation le remplace ensuite. Hors réseau, ou le
-		// temps que le serveur réponde, l'application reste utilisable.
+		// The cache is shown first, the sync replaces it afterwards. Offline, or while the server answers,
+		// the application stays usable.
 		await this.hydrate();
 		this.ready = true;
 
-		// Le magasin par défaut se crée après la synchronisation, jamais avant : sur un appareil
-		// neuf le cache est vide, et le créer tout de suite en ferait un deuxième à côté de celui
-		// que le foyer possède déjà.
+		// The default shop is created after the sync, never before: on a new device the cache is empty, and
+		// creating it right away would make a second one beside the one the household already owns.
 		await sync.start(() => {
 			void this.hydrate().then(() => this.ensureDefaultShop());
 		});
@@ -240,10 +237,10 @@ class DataStore {
 	}
 
 	/**
-	 * Le magasin actif du cercle qu'on regarde.
+	 * The active shop of the circle being looked at.
 	 *
-	 * Relu à l'hydratation comme à chaque bascule : un magasin appartient à un cercle, et garder
-	 * celui d'à côté laisserait l'écran ranger la liste selon un parcours qui n'existe pas ici.
+	 * Re-read on hydration and on every switch: a shop belongs to a circle, and keeping the neighbour's
+	 * would let the screen sort the list along a route that does not exist here.
 	 */
 	private restoreActiveShop() {
 		const mine = this.shops;
@@ -255,11 +252,11 @@ class DataStore {
 	}
 
 	/**
-	 * Bascule de cercle.
+	 * Circle switch.
 	 *
-	 * Rien n'est relu et rien n'est vidé : le cache porte déjà tous les cercles, seule change la
-	 * tranche que l'écran en montre. C'est ce qui rend la bascule immédiate, y compris sans réseau.
-	 * Le magasin actif suit, et le cercle reçoit son magasin par défaut s'il n'en a pas encore.
+	 * Nothing is re-read and nothing is emptied: the cache already holds every circle, only the slice
+	 * the screen shows changes. That is what makes the switch instant, offline included. The active shop
+	 * follows, and the circle gets its default shop if it has none yet.
 	 */
 	switchCircle(circleId: string) {
 		if (!circleId || circleId === this.circle) return;
@@ -275,9 +272,9 @@ class DataStore {
 	}
 
 	/**
-	 * La détection raisonne sur des catégories ; les rayons, eux, portent un identifiant propre au
-	 * foyer. On traduit ici. Un foyer dont les rayons de départ ont été supprimés n'a plus de
-	 * catégorie à proposer : l'article part alors dans le premier rayon, jamais dans le vide.
+	 * Detection reasons in categories; aisles carry an id of their own, per household. We translate
+	 * here. A household whose starting aisles were deleted has no category left to offer: the item then
+	 * goes into the first aisle, never into nothing.
 	 */
 	suggestAisleId(name: string) {
 		const kind = guessAisleKind(name);
@@ -288,9 +285,9 @@ class DataStore {
 	}
 
 	/**
-	 * Une liste par identifiant, prise dans tout le cache et non dans la seule tranche affichée : un
-	 * lien reçu ou une notification peut viser une liste d'un autre cercle, et l'écran de détail doit
-	 * l'ouvrir plutôt que de conclure qu'elle n'existe pas.
+	 * A list by id, taken from the whole cache and not from the displayed slice alone: a received link
+	 * or a notification may point at a list in another circle, and the detail screen must open it rather
+	 * than conclude it does not exist.
 	 */
 	list(id: string) {
 		return this.cachedLists.find((l) => l.id === id);
@@ -300,7 +297,7 @@ class DataStore {
 		return this.items.filter((i) => i.listId === listId);
 	}
 
-	/** Liste regroupée et ordonnée selon le parcours appris du magasin actif. */
+	/** The list grouped and ordered along the active shop's learned route. */
 	groupedItems(listId: string) {
 		const order = this.activeLayout?.aisleOrder ?? this.aisles.map((a) => a.id);
 		const byAisle: Record<string, string[]> = {};
@@ -309,9 +306,9 @@ class DataStore {
 			if (entry.shopId === this.activeShopId) byAisle[entry.aisleId] = entry.productSlugs;
 		}
 
-		// Une liste personnelle suit son auteur d'un cercle à l'autre, mais le rayon de ses articles
-		// appartient au cercle où on les a saisis : ailleurs, il se range là où la détection le
-		// mettrait. Rien n'est réécrit — revenir retrouve le rangement d'origine.
+		// A personal list follows its author from one circle to another, but its items' aisle belongs to the
+		// circle they were typed in: elsewhere, it sits where detection would put it. Nothing is rewritten —
+		// coming back finds the original arrangement.
 		const range = this.itemsOf(listId).map((item) => ({
 			...item,
 			aisleId: resolveAisle(item.aisleId, this.knownAisleIds, this.suggestAisleId(item.name))
@@ -358,11 +355,11 @@ class DataStore {
 	}
 
 	/**
-	 * Modifier un article après coup : la faute de frappe, la quantité qu'on revoit devant le
-	 * rayon, la précision qu'on ajoute — « la grande bouteille », « sans sucre ».
+	 * Editing an item afterwards: the typo, the quantity you reconsider in front of the aisle, the detail
+	 * you add — "the big bottle", "sugar free".
 	 *
-	 * Une note vidée redevient absente plutôt que chaîne vide : l'affichage teste la présence de
-	 * la note pour décider du tiret qui la précède.
+	 * A cleared note becomes absent again rather than an empty string: the display tests the note's
+	 * presence to decide on the dash before it.
 	 */
 	updateItem(
 		id: string,
@@ -412,9 +409,9 @@ class DataStore {
 			emoji: input.emoji,
 			color: input.color,
 			eventDate: input.eventDate || undefined,
-			// Une liste naît personnelle : elle n'a pas de cercle, et son auteur en est le seul
-			// membre. Le déclencheur `lists_share_with_household` fait la même chose côté base ; on
-			// l'écrit aussi ici pour que l'affichage soit juste avant la première synchronisation.
+			// A list is born personal: it has no circle, and its author is its only member. The
+			// `lists_share_with_household` trigger does the same on the database side; we write it here too so
+			// the display is right before the first sync.
 			memberIds: this.userId ? [this.userId] : []
 		};
 
@@ -435,11 +432,11 @@ class DataStore {
 	}
 
 	/**
-	 * Renommer une liste, changer son emoji, poser ou retirer sa date.
+	 * Renaming a list, changing its emoji, setting or clearing its date.
 	 *
-	 * Les trois vont ensemble parce qu'ils se corrigent ensemble : « Cources » se relit une semaine
-	 * plus tard, l'emoji pris à la va-vite au moment de créer ne dit plus rien une fois la liste
-	 * remplie, et le repas prévu samedi se décale au dimanche.
+	 * The three go together because they are corrected together: "Grocries" is read again a week later,
+	 * the emoji picked in a hurry at creation says nothing once the list is full, and the meal planned for
+	 * Saturday moves to Sunday.
 	 */
 	updateList(id: string, patch: { name?: string; emoji?: string; eventDate?: string }) {
 		const list = this.cachedLists.find((candidate) => candidate.id === id);
@@ -447,7 +444,7 @@ class DataStore {
 
 		if (patch.name !== undefined) list.name = patch.name.trim();
 		if (patch.emoji !== undefined) list.emoji = patch.emoji;
-		// Un champ vidé retire la date : c'est le seul geste disponible pour annuler un rappel.
+		// A cleared field removes the date: it is the only gesture available to cancel a reminder.
 		if (patch.eventDate !== undefined) list.eventDate = patch.eventDate || undefined;
 
 		const snapshot = $state.snapshot(list) as List;
@@ -456,20 +453,19 @@ class DataStore {
 	}
 
 	/**
-	 * Ouvre ou ferme une liste à quelqu'un.
+	 * Opens or closes a list to someone.
 	 *
-	 * La ligne dans `list_members` est la clé : `can_access_list` s'appuie dessus, et tout ce qui
-	 * appartient à la liste — articles, discussion, sondages — suit. Retirer une personne la met
-	 * vraiment dehors, et elle ne peut pas s'y remettre seule.
+	 * The row in `list_members` is the key: `can_access_list` leans on it, and everything belonging to the
+	 * list — items, conversation, polls — follows. Removing someone really puts them out, and they cannot
+	 * put themselves back.
 	 *
-	 * Ouvrir une liste personnelle à quelqu'un, c'est la partager, et partager exige de désigner un
-	 * cercle. Sans ça la base refuserait la ligne — `list_belongs_to_household_of` n'accepte sur une
-	 * liste sans cercle que son propre auteur.
+	 * Opening a personal list to someone is sharing it, and sharing requires naming a circle. Without one
+	 * the database would refuse the row — `list_belongs_to_household_of` accepts, on a list with no circle,
+	 * only its own author.
 	 *
-	 * Le cercle est désormais dit par l'appelant : depuis qu'un compte en a plusieurs à l'écran en
-	 * même temps, prendre celui qu'on regarde partagerait avec les collègues une liste qu'on ouvrait
-	 * à la famille. Sans précision, le cercle actif reste le défaut — c'est le cas d'un compte qui
-	 * n'en a qu'un.
+	 * The circle is now said by the caller: since an account has several on screen at once, taking the one
+	 * being looked at would share with colleagues a list you were opening to family. With nothing given,
+	 * the active circle stays the default — which is the case of an account that only has one.
 	 */
 	setListMember(listId: string, userId: string, member: boolean, circleId?: string) {
 		const list = this.cachedLists.find((l) => l.id === listId);
@@ -482,8 +478,8 @@ class DataStore {
 		const partage = member && !list.householdId && userId !== this.userId;
 		const cercle = partage ? (circleId ?? this.circle) : list.householdId;
 
-		// Partager dans un cercle dont on n'est pas membre est refusé par la RLS : on ne l'enfile
-		// même pas, plutôt que de laisser la file s'en débarrasser en silence.
+		// Sharing into a circle you are not a member of is refused by RLS: we do not even queue it, rather
+		// than let the queue discard it silently.
 		if (partage && !this.circles.some((candidate) => candidate.id === cercle)) return;
 
 		const next = { ...list, memberIds, householdId: cercle || undefined };
@@ -505,21 +501,21 @@ class DataStore {
 	}
 
 	/**
-	 * Refaire une liste qui revient : les courses de la semaine, le repas du dimanche.
+	 * Redoing a list that comes back: the weekly shop, Sunday's meal.
 	 *
-	 * La copie reprend l'apparence de l'originale — emoji, couleur — et son partage : une liste
-	 * privée reste privée, une liste ouverte au foyer le reste. Recopier `memberIds` plutôt que
-	 * repartir de tout le foyer comme `addList` est ce qui empêche une liste d'anniversaire de
-	 * s'afficher chez la personne concernée.
+	 * The copy takes the original's appearance — emoji, colour — and its sharing: a private list stays
+	 * private, a list open to the household stays open. Copying `memberIds` rather than starting from the
+	 * whole household as `addList` does is what stops a birthday list from showing up for the person
+	 * concerned.
 	 *
-	 * La date d'événement ne suit pas : elle datait l'occasion passée, et la reconduire ferait
-	 * afficher un repas déjà eu sur une liste à venir.
+	 * The event date does not follow: it dated an occasion now past, and carrying it over would show a meal
+	 * already had on a list still to come.
 	 *
-	 * L'ordre des rayons n'est pas recopié parce qu'il n'appartient pas à la liste : il vit dans le
-	 * parcours du magasin actif, et la copie s'y range donc toute seule.
+	 * The aisle order is not copied because it does not belong to the list: it lives in the active shop's
+	 * route, so the copy sorts itself.
 	 *
-	 * Rien de spécial pour le réseau : chaque ligne part par la même file que si on l'avait tapée,
-	 * ce qui rend la duplication utilisable hors ligne comme le reste.
+	 * Nothing special for the network: every row leaves through the same queue as if it had been typed,
+	 * which makes duplication usable offline like the rest.
 	 */
 	duplicateList(id: string) {
 		const source = this.cachedLists.find((candidate) => candidate.id === id);
@@ -541,8 +537,8 @@ class DataStore {
 			...copiedItem(item),
 			id: crypto.randomUUID(),
 			listId: copie.id,
-			// Le rang préserve l'ordre de saisie de l'originale : deux articles créés dans la même
-			// milliseconde se départageaient sinon au hasard de la relecture.
+			// The rank preserves the original's entry order: two items created in the same millisecond were
+			// otherwise separated at random on re-read.
 			createdAt: Date.now() + rang
 		}));
 
@@ -554,9 +550,8 @@ class DataStore {
 		this.push('lists', copie, fromList);
 		for (const article of articles) this.push('items', article, fromItem);
 
-		// Le partage de l'originale se rejoue ligne à ligne. Une liste naît désormais ouverte à son
-		// seul auteur : il n'y a plus rien à refermer derrière l'insertion, seulement à rouvrir aux
-		// personnes que la source connaissait.
+		// The original's sharing is replayed row by row. A list is now born open to its author alone: there is
+		// nothing left to close behind the insert, only to reopen to the people the source knew.
 		for (const membre of copie.memberIds) {
 			if (membre === this.userId) continue;
 			sync.enqueue({
@@ -577,8 +572,7 @@ class DataStore {
 		db.lists.delete(id);
 		db.items.bulkDelete(items);
 
-		// Les articles partent avec la liste côté serveur (on delete cascade) : une seule
-		// suppression à pousser.
+		// Items go with the list on the server side (on delete cascade): a single deletion to push.
 		sync.enqueue({ table: 'lists', op: 'delete', match: { id } });
 	}
 
@@ -595,8 +589,8 @@ class DataStore {
 		db.aisles.add(aisle);
 		this.push('aisles', aisle, fromAisle);
 
-		// Un rayon créé après coup s'ajoute à la fin de chaque parcours : il apparaît, quitte à ne
-		// pas être à la bonne place tant que l'utilisateur ne l'a pas déplacé.
+		// An aisle created afterwards is appended to every route: it appears, even if it is not in the right
+		// place until the user moves it.
 		this.layouts = this.layouts.map((layout) => ({
 			...layout,
 			aisleOrder: [...layout.aisleOrder, aisle.id]
@@ -612,23 +606,23 @@ class DataStore {
 	}
 
 	/**
-	 * Le magasin par défaut du foyer, celui qu'on n'a pas créé soi-même.
+	 * The household's default shop, the one nobody created.
 	 *
-	 * Il existe pour une raison technique devenue une raison d'usage : un parcours appartient
-	 * toujours à un magasin, donc sans magasin il n'y avait rien à réordonner. Il permet de ranger
-	 * sa liste dès la première ouverture, avant d'avoir décrit le moindre commerce.
+	 * It exists for a technical reason that became a reason of use: a route always belongs to a shop, so
+	 * with no shop there was nothing to reorder. It makes it possible to sort your list from the first
+	 * opening, before describing a single shop.
 	 */
 	get defaultShop() {
 		return this.shops.find((shop) => shop.isDefault);
 	}
 
 	/**
-	 * Le crée s'il manque, une fois le foyer connu.
+	 * Creates it if missing, once the household is known.
 	 *
-	 * Son identifiant se déduit de celui du foyer au lieu d'être tiré au sort : deux téléphones
-	 * qui ouvrent l'application en même temps sur un foyer neuf visent alors la même ligne, et le
-	 * foyer se retrouve avec un magasin par défaut, pas deux. Un index unique en base tient le
-	 * même rôle, pour ce que le client ne peut pas garantir.
+	 * Its id is derived from the household's rather than drawn at random: two phones opening the
+	 * application at the same time on a fresh household then aim at the same row, and the household ends
+	 * up with one default shop, not two. A unique index in the database plays the same role, for what the
+	 * client cannot guarantee.
 	 */
 	ensureDefaultShop() {
 		const household = this.circle;
@@ -644,12 +638,12 @@ class DataStore {
 	}
 
 	/**
-	 * Ajouter un magasin — sauf le tout premier vrai, qui remplace le magasin par défaut au lieu
-	 * de s'ajouter à côté de lui.
+	 * Adding a shop — except the very first real one, which replaces the default shop instead of being
+	 * added beside it.
 	 *
-	 * Remplacer et non supprimer puis recréer : le parcours appris pointe sur l'identifiant du
-	 * magasin, et le rangement déjà fait sous « Mon magasin » est justement ce qu'on veut garder.
-	 * Il change de nom, rien de plus.
+	 * Replacing and not deleting then recreating: the learned route points at the shop's id, and the
+	 * arrangement already done under "My shop" is exactly what we want to keep. It changes name, nothing
+	 * more.
 	 */
 	addShop(input: {
 		name: string;
@@ -666,8 +660,8 @@ class DataStore {
 		const address = (input.address ?? '').trim();
 		const remplace = !input.isDefault ? this.defaultShop : undefined;
 
-		// Une position absente reste absente : écrire `lat: undefined` effacerait celle qu'un
-		// magasin remplacé avait déjà, et ferait porter la clé à un magasin qui n'en a pas.
+		// An absent position stays absent: writing `lat: undefined` would erase the one a replaced shop
+		// already had, and would give the key to a shop that has none.
 		const position =
 			input.lat !== undefined && input.lng !== undefined
 				? { lat: input.lat, lng: input.lng }
@@ -696,9 +690,9 @@ class DataStore {
 			id: input.id ?? crypto.randomUUID(),
 			householdId: this.circle,
 			name: input.name.trim(),
-			// Un magasin, un trigramme : ce qui est déjà porté par un autre magasin du foyer est
-			// écarté, saisi à la main comme calculé. Le calcul part de l'enseigne et de la commune
-			// plutôt que du nom — voir $domain/place.
+			// One shop, one three-letter code: anything already carried by another shop of the household is set
+			// aside, typed by hand as much as computed. The computation starts from the brand and the town rather
+			// than from the name — see $domain/place.
 			short: trigram(
 				input.short.trim() || trigramSource({ brand, name: input.name, address }),
 				this.shops.map((existant) => existant.short)
@@ -728,12 +722,11 @@ class DataStore {
 	}
 
 	/**
-	 * Modifier un magasin : l'adresse qu'on complète après coup, la position qu'on relève sur
-	 * place, le trigramme qu'on recalcule.
+	 * Editing a shop: the address completed afterwards, the position taken on site, the three-letter code
+	 * recomputed.
 	 *
-	 * Le trigramme n'est jamais recalculé tout seul ici. Changer l'adresse d'un magasin ne doit pas
-	 * changer sous les yeux la pastille qu'on a appris à reconnaître : c'est un geste explicite,
-	 * demandé depuis l'écran.
+	 * The code is never recomputed on its own here. Changing a shop's address must not change, under your
+	 * eyes, the badge you have learned to recognise: it is an explicit gesture, asked for from the screen.
 	 */
 	updateShop(id: string, patch: Partial<Omit<Shop, 'id'>>) {
 		const shop = this.shops.find((candidate) => candidate.id === id);
@@ -747,15 +740,15 @@ class DataStore {
 	}
 
 	/**
-	 * Supprimer un magasin, et avec lui le parcours qu'on y avait appris.
+	 * Deleting a shop, and with it the route learned there.
 	 *
-	 * Le serveur efface en cascade la disposition et l'ordre des articles, et détache les cartes
-	 * de fidélité sans les perdre (`on delete set null`) : une carte survit au magasin, c'est le
-	 * rattachement qui disparaît. Le cache local fait la même chose de son côté, tout de suite,
-	 * pour que l'écran ne montre pas un magasin à moitié parti en attendant la synchronisation.
+	 * The server cascades the layout and the item order away, and detaches loyalty cards without losing
+	 * them (`on delete set null`): a card outlives the shop, it is the attachment that disappears. The
+	 * local cache does the same on its side, straight away, so the screen does not show a half-gone shop
+	 * while waiting for the sync.
 	 *
-	 * Le magasin par défaut se recrée tout seul si c'était le dernier : un parcours appartient
-	 * toujours à un magasin, et se retrouver sans aucun laisserait les listes sans rangement.
+	 * The default shop is recreated on its own if that was the last one: a route always belongs to a shop,
+	 * and ending up with none would leave the lists unsorted.
 	 */
 	removeShop(id: string) {
 		const shop = this.shops.find((candidate) => candidate.id === id);
@@ -781,8 +774,8 @@ class DataStore {
 	}
 
 	/**
-	 * Le trigramme libre pour ce magasin, celui d'un autre magasin du foyer ne comptant pas comme
-	 * pris par lui-même — sans quoi recalculer sans rien changer donnerait un trigramme différent.
+	 * The three-letter code free for this shop, another household shop's code not counting as taken by
+	 * itself — otherwise recomputing without changing anything would give a different code.
 	 */
 	proposedShort(
 		place: { brand?: string; name: string; address?: string },
@@ -823,11 +816,11 @@ class DataStore {
 	}
 
 	/**
-	 * Glisser-déposer des rayons : marque le magasin comme appris.
+	 * Dragging aisles: marks the shop as learned.
 	 *
-	 * La sortie sans magasin actif est un garde-fou, plus un cas courant : tout foyer en a un
-	 * depuis `ensureDefaultShop`. Elle a longtemps rendu les flèches et le glisser-déposer
-	 * inertes — rendus actifs, cliquables, sans le moindre effet ni message.
+	 * Leaving with no active shop is a guard rather than a common case: every household has one since
+	 * `ensureDefaultShop`. It long made the arrows and the dragging inert — rendered, clickable, with no
+	 * effect and no message.
 	 */
 	reorderAisles(aisleOrder: string[]) {
 		if (!this.activeShopId) return;
@@ -838,7 +831,7 @@ class DataStore {
 		this.pushLayout(layout);
 	}
 
-	/** Glisser-déposer des produits dans un rayon : mémorisé par slug, pas par identifiant. */
+	/** Dragging products inside an aisle: remembered by slug, not by id. */
 	reorderItems(aisleId: string, items: Item[]) {
 		if (!this.activeShopId) return;
 
@@ -862,20 +855,20 @@ class DataStore {
 	}
 
 	/**
-	 * Le prix d'un produit, relevé au moment où on le met dans le chariot.
+	 * A product's price, recorded at the moment it goes into the trolley.
 	 *
-	 * C'est la seule minute où quelqu'un connaît le prix : l'étiquette est sous les yeux, et
-	 * l'article vient d'être coché. Le demander à l'ajout — souvent la veille, sur le canapé —
-	 * reviendrait à demander de deviner, et le demander après la course obligerait à rouvrir chaque
-	 * ligne de mémoire. Le champ n'apparaît donc que sur un article coché, et il reste facultatif :
-	 * une course entière peut se faire sans en remplir un seul.
+	 * That is the only minute when somebody knows the price: the label is in front of them, and the item
+	 * has just been ticked. Asking at add time — often the day before, on the sofa — would be asking them
+	 * to guess, and asking after the trip would mean reopening every row from memory. The field therefore
+	 * only appears on a ticked item, and it stays optional: a whole shop can be done without filling a
+	 * single one.
 	 *
-	 * Le magasin est celui qui est actif — celui dont le parcours range déjà la liste. Une liste
-	 * n'appartient à aucun magasin ; c'est le sélecteur en bas de l'écran qui dit où l'on est.
+	 * The shop is the active one — the one whose route already sorts the list. A list belongs to no shop;
+	 * it is the selector at the bottom of the screen that says where you are.
 	 *
-	 * Un second relevé du même produit, dans le même magasin, le même jour, remplace le précédent au
-	 * lieu de s'ajouter : c'est une correction de frappe, pas une évolution de prix. Vider le champ
-	 * efface ce relevé du jour, pour la même raison.
+	 * A second record of the same product, in the same shop, on the same day, replaces the previous one
+	 * instead of adding to it: it is a typo correction, not a price change. Clearing the field erases that
+	 * day's record, for the same reason.
 	 */
 	setItemPrice(item: Item, raw: string) {
 		const shopId = this.activeShopId;
@@ -900,8 +893,8 @@ class DataStore {
 			productSlug: slug,
 			productName: item.name,
 			amount,
-			// La monnaie ne change jamais sur un relevé existant : celle d'hier reste celle d'hier,
-			// même si l'application a changé de langue depuis.
+			// The currency never changes on an existing record: yesterday's stays yesterday's, even if the
+			// application has changed language since.
 			currency: dujour?.currency ?? currencyForLocale(i18n.locale),
 			recordedAt: Date.now(),
 			recordedBy: this.userId
@@ -918,18 +911,17 @@ class DataStore {
 		sync.enqueue({ table: 'item_prices', op: 'delete', match: { id } });
 	}
 
-	/** Le dernier prix connu de ce produit dans le magasin actif, celui que le champ réaffiche. */
+	/** The latest known price of this product in the active shop, the one the field shows again. */
 	priceOf(item: Item) {
 		if (!this.activeShopId) return null;
 		return latestAt(this.prices, slugify(item.name), this.activeShopId);
 	}
 
-	/** Les magasins où ce produit a été relevé, du moins cher au plus cher. */
+	/** The shops where this product was recorded, cheapest first. */
 	priceComparison(slug: string) {
 		return compareShops(this.prices, slug);
 	}
 
-	/** Les produits dont on connaît au moins un prix. */
 	get pricedProducts() {
 		return pricedProducts(this.prices);
 	}
@@ -940,7 +932,7 @@ class DataStore {
 			.sort((a, b) => a.createdAt - b.createdAt);
 	}
 
-	/** Mes conversations directes, la plus récemment animée en tête. */
+	/** My direct conversations, the most recently active first. */
 	get directs() {
 		return directSummaries(this.conversations, this.messages, this.me);
 	}
@@ -950,17 +942,16 @@ class DataStore {
 	}
 
 	/**
-	 * Les personnes avec qui une conversation directe peut s'ouvrir : celles d'un cercle commun,
-	 * sauf soi-même et celles à qui on écrit déjà. Le cercle ne sert ici que d'annuaire — la
-	 * conversation, elle, n'en dépendra pas.
+	 * The people a direct conversation can be opened with: those in a shared circle, minus yourself and
+	 * those already being written to. The circle only serves as a directory here — the conversation itself
+	 * will not depend on it.
 	 */
 	get directCandidates() {
 		const dejaVus = new Set(this.directs.map((d) => d.otherId));
 
-		// Une personne figure une fois par cercle partagé : sans ce tri, quelqu'un qu'on côtoie dans
-		// deux cercles apparaîtrait deux fois dans la liste. C'est précisément l'ambiguïté qu'une
-		// conversation directe écarte — elle n'appartient à aucun des deux — et la liste des gens à
-		// qui écrire doit la refléter : un compte, une entrée.
+		// A person appears once per shared circle: without this pass, someone met in two circles would show up
+		// twice. That is precisely the ambiguity a direct conversation sidesteps — it belongs to neither — and
+		// the list of people to write to should say so: one account, one entry.
 		const vus = new Set<string>();
 
 		return this.cachedMembers.filter((m) => {
@@ -1001,21 +992,21 @@ class DataStore {
 	}
 
 	/**
-	 * Son propre portrait.
+	 * Your own avatar.
 	 *
-	 * L'écriture ne passe pas par la file de sortie : celle-ci fait des `upsert`, et personne n'a
-	 * le droit d'insérer une ligne dans `profiles` — c'est un déclencheur qui la crée à
-	 * l'inscription. Une mise à jour directe, comme pour les réglages d'apparence.
+	 * The write does not go through the outbox: that one does `upsert`s, and nobody is allowed to insert a
+	 * row into `profiles` — a trigger creates it at sign-up. A direct update, as for the appearance
+	 * settings.
 	 *
-	 * L'écran est servi d'abord, le serveur ensuite : changer sa photo doit se voir tout de suite,
-	 * et la prochaine synchronisation confirmera.
+	 * The screen is served first, the server afterwards: changing your photo must show at once, and the
+	 * next sync will confirm.
 	 */
 	async setMyAvatar(avatar: string | undefined) {
 		const id = this.me;
 		if (!id) return;
 
-		// Le portrait appartient au profil, pas au rattachement : il change dans tous les cercles où
-		// la personne figure, et le cache en porte une ligne par cercle.
+		// The avatar belongs to the profile, not to the membership: it changes in every circle the person
+		// appears in, and the cache holds one row per circle.
 		const miennes = this.cachedMembers.filter((m) => m.id === id);
 		if (miennes.length === 0) return;
 
@@ -1032,14 +1023,14 @@ class DataStore {
 	}
 
 	/**
-	 * Change son identité : prénom, nom, et nom affiché.
+	 * Changes your identity: first name, last name, and display name.
 	 *
-	 * Les trois partent ensemble, en une écriture — ils se saisissent dans le même formulaire, et
-	 * n'enregistrer que le nom affiché laisserait des initiales tirées d'un prénom périmé.
+	 * The three go together, in one write — they are typed in the same form, and saving only the display
+	 * name would leave initials taken from a stale first name.
 	 *
-	 * Les initiales suivent d'elles-mêmes : elles se calculent à chaque lecture, la colonne
-	 * `initial` n'étant plus regardée. Le nom affiché est aussi écrit dans les métadonnées du
-	 * compte, où l'inscription l'avait posé, pour que les deux ne divergent pas.
+	 * The initials follow on their own: they are computed on every read, the `initial` column no longer
+	 * being looked at. The display name is also written into the account metadata, where sign-up put it, so
+	 * the two do not drift apart.
 	 */
 	async setMyName(identite: { name: string; firstName: string; lastName: string }) {
 		const id = this.me;
@@ -1067,8 +1058,8 @@ class DataStore {
 			.update({ display_name: name, first_name: firstName, last_name: lastName })
 			.eq('id', id);
 		if (error) {
-			// Le nom affiché revient à ce que la base connaît : le laisser à l'écran ferait croire à
-			// un enregistrement qui n'a pas eu lieu, jusqu'à la prochaine synchronisation.
+			// The display name goes back to what the database knows: leaving it on screen would suggest a save that
+			// did not happen, until the next sync.
 			this.cachedMembers = remplace(miennes);
 			db.members.bulkPut(miennes);
 			return error.message;
@@ -1079,33 +1070,32 @@ class DataStore {
 	}
 
 	member(id: string) {
-		// Tout le cache et non le seul cercle actif : une liste personnelle partagée ailleurs, ou une
-		// discussion ouverte depuis un lien, montre des visages qui ne sont pas d'ici.
+		// The whole cache and not the active circle alone: a personal list shared elsewhere, or a conversation
+		// opened from a link, shows faces that are not from here.
 		return this.cachedMembers.find((m) => m.id === id);
 	}
 
-	/** Les membres d'un cercle donné — celui vers lequel on s'apprête à partager, par exemple. */
+	/** The members of a given circle — the one you are about to share into, for instance. */
 	membersOf(circleId: string) {
 		return ofCircle(this.cachedMembers, circleId);
 	}
 
-	/** Le nom d'un cercle, tel que le sélecteur l'affiche. */
 	circleName(circleId: string) {
 		return this.circles.find((circle) => circle.id === circleId)?.name ?? '';
 	}
 
 	/**
-	 * Le compte connecté, tel que la session le connaît.
+	 * The connected account, as the session knows it.
 	 *
-	 * `userId` n'en est qu'une copie, posée par `load()`. Entre une déconnexion suivie d'une
-	 * reconnexion sur un autre compte et la relecture qui suit, cette copie décrit encore le compte
-	 * précédent — l'écran désigne alors la mauvaise personne, et surtout un message direct part
-	 * signé de quelqu'un d'autre. La base le refuse, à juste titre : elle exige que l'auteur soit le
-	 * compte connecté. Le message était perdu sans que rien ne le dise.
+	 * `userId` is only a copy of it, set by `load()`. Between a sign-out followed by a sign-in on another
+	 * account and the re-read that follows, that copy still describes the previous one — the screen then
+	 * names the wrong person, and above all a direct message leaves signed by somebody else. The database
+	 * refuses it, rightly: it requires the author to be the connected account. The message was lost with
+	 * nothing to say so.
 	 *
-	 * La session, elle, est mise à jour par `onAuthStateChange`, à l'instant du changement. On la
-	 * lit donc en premier, et `userId` ne sert plus que de repli quand la session n'a pas encore
-	 * répondu — au tout premier rendu, ou hors ligne.
+	 * The session, on the other hand, is updated by `onAuthStateChange`, at the instant of the change. We
+	 * therefore read it first, and `userId` is now only a fallback for when the session has not answered
+	 * yet — on the very first render, or offline.
 	 */
 	get me() {
 		return session.user?.id ?? this.userId;
@@ -1128,12 +1118,12 @@ class DataStore {
 	}
 
 	/**
-	 * Ouvre — ou retrouve — la conversation directe avec quelqu'un.
+	 * Opens — or finds again — the direct conversation with someone.
 	 *
-	 * Seule écriture du client sur ces tables, et elle passe par une fonction : personne n'a le
-	 * droit d'insérer une conversation ni un participant, c'est ce qui garantit qu'on ne s'invite
-	 * pas dans celle des autres. Rien n'est donc posé d'avance dans le cache — l'écran attend le
-	 * serveur, comme pour l'envoi d'un portrait.
+	 * The client's only write on these tables, and it goes through a function: nobody is allowed to insert
+	 * a conversation or a participant, which is what guarantees you cannot invite yourself into somebody
+	 * else's. Nothing is therefore put into the cache ahead of time — the screen waits for the server, as
+	 * for sending an avatar.
 	 */
 	async startDirect(otherId: string) {
 		const moi = this.me;
@@ -1144,8 +1134,8 @@ class DataStore {
 		});
 		if (error || typeof conversationId !== 'string') return null;
 
-		// La conversation vient peut-être de naître : sans elle dans le cache, le fil qu'on ouvre
-		// serait vide et la relecture complète n'arriverait qu'après coup.
+		// The conversation may have just been born: without it in the cache, the thread being opened would be
+		// empty and the full re-read would only arrive afterwards.
 		const conversation: Conversation = {
 			id: conversationId,
 			scope: 'direct',
@@ -1163,8 +1153,8 @@ class DataStore {
 	}
 
 	/**
-	 * Un message direct ne porte pas de liste : c'est l'autre colonne de portée qui le rattache, et
-	 * la base refuse qu'il en porte deux.
+	 * A direct message carries no list: it is the other scope column that attaches it, and the database
+	 * refuses it carrying both.
 	 */
 	async sendDirectMessage(conversationId: string, body: string) {
 		const message: Message = {
@@ -1179,14 +1169,12 @@ class DataStore {
 		this.messages = [...this.messages, message];
 		db.messages.add(message);
 
-		// `push` estampille l'écriture avec le cercle de la ligne, et attend qu'un cercle existe
-		// avant d'enfiler quoi que ce soit. Une conversation directe n'en a aucun, par construction :
-		// l'attente allait donc jusqu'à son terme, cinq secondes plus tard, et une déconnexion dans
-		// cet intervalle emportait le message. Il n'a rien à attendre, il part directement.
+		// `push` stamps the write with the row's circle, and waits for a circle to exist before queueing
+		// anything. A direct conversation has none by construction: the wait therefore ran to its end, five
+		// seconds later, and a sign-out in that window took the message away.
 		//
-		// L'attente porte sur la mise en file, pas sur le serveur : l'écran a déjà le message, mais
-		// une déconnexion juste après le clic doit trouver l'écriture dans la file plutôt qu'une
-		// file encore vide.
+		// The await is on the queueing, not on the server: the screen already has the message, but a sign-out
+		// just after the click must find the write in the queue rather than an empty one.
 		await sync.enqueue({
 			table: 'messages',
 			op: 'upsert',
@@ -1198,9 +1186,9 @@ class DataStore {
 	}
 
 	/**
-	 * Un sondage est porté par un message : il apparaît dans le fil à sa place, et disparaît avec
-	 * lui. Message, sondage et options partent dans cet ordre — la file les rejouerait tels quels
-	 * après une coupure, et une option sans sondage serait refusée.
+	 * A poll is carried by a message: it appears in the thread in its place, and disappears with it.
+	 * Message, poll and options leave in that order — the queue would replay them as such after an outage,
+	 * and an option with no poll would be refused.
 	 */
 	createPoll(
 		listId: string,
@@ -1241,7 +1229,7 @@ class DataStore {
 		return poll;
 	}
 
-	/** Un vote par sondage : voter ailleurs retire le vote précédent. */
+	/** One vote per poll: voting elsewhere removes the previous vote. */
 	toggleVote(pollId: string, optionId: string) {
 		if (!this.userId) return;
 
@@ -1279,12 +1267,12 @@ class DataStore {
 		});
 	}
 
-	/** « Qui ramène quoi » : on prend une part, ou on la relâche si on l'avait prise. */
+	/** "Who brings what": you take a share, or release it if you had taken it. */
 	toggleClaim(optionId: string) {
 		const option = this.pollOptions.find((o) => o.id === optionId);
 		if (!option || !this.userId) return;
 
-		// Une part déjà prise par quelqu'un d'autre ne se vole pas : il faut qu'il la relâche.
+		// A share already taken by somebody else cannot be stolen: they have to release it.
 		if (option.claimedBy && option.claimedBy !== this.userId) return;
 
 		option.claimedBy = option.claimedBy === this.userId ? undefined : this.userId;
@@ -1306,8 +1294,8 @@ class DataStore {
 	}
 
 	/**
-	 * Verse dans la liste ce qu'une personne s'est engagée à apporter. Les articles déjà présents
-	 * ne sont pas ajoutés une seconde fois : on pousse souvent la même part après l'avoir complétée.
+	 * Pours into the list what a person committed to bring. Items already there are not added a second
+	 * time: the same share is often pushed again after being completed.
 	 */
 	pushIngredients(listId: string, optionId: string) {
 		const option = this.pollOptions.find((o) => o.id === optionId);
@@ -1348,7 +1336,7 @@ class DataStore {
 		return this.recipes.find((r) => r.id === id);
 	}
 
-	/** Les lignes d'une recette, dans l'ordre où elles ont été saisies. */
+	/** A recipe's lines, in the order they were typed. */
 	ingredientsOf(recipeId: string) {
 		return this.recipeIngredients
 			.filter((line) => line.recipeId === recipeId)
@@ -1362,15 +1350,14 @@ class DataStore {
 	}
 
 	/**
-	 * Une recette, avec ses ingrédients et ses étapes, écrits d'un seul geste.
+	 * A recipe, with its ingredients and its steps, written in one gesture.
 	 *
-	 * Les trois tables partent dans la file dans cet ordre : la recette d'abord, ses lignes ensuite.
-	 * La file est vidée dans l'ordre d'arrivée, et les clés étrangères côté serveur refuseraient une
-	 * ligne dont la recette n'existe pas encore.
+	 * The three tables go into the queue in this order: the recipe first, its lines after. The queue is
+	 * drained in arrival order, and the server-side foreign keys would refuse a line whose recipe does not
+	 * exist yet.
 	 *
-	 * Les lignes sans nom sont écartées ici plutôt qu'à l'écran : un formulaire propose toujours une
-	 * rangée vide de plus que ce qu'on a rempli, et l'enregistrer produirait des ingrédients
-	 * fantômes qu'on retrouverait dans la liste de courses.
+	 * Nameless lines are dropped here rather than on screen: a form always offers one empty row more than
+	 * what has been filled, and saving it would produce ghost ingredients turning up in the shopping list.
 	 */
 	addRecipe(input: {
 		name: string;
@@ -1427,9 +1414,9 @@ class DataStore {
 	}
 
 	/**
-	 * Le serveur supprime les lignes et les étapes de lui-même — `on delete cascade` sur la recette.
-	 * On ne met donc dans la file que la recette, et on vide le cache local à la main pour que
-	 * l'écran soit juste avant la prochaine relecture.
+	 * The server deletes the lines and the steps itself — `on delete cascade` on the recipe. We therefore
+	 * only queue the recipe, and empty the local cache by hand so the screen is right before the next
+	 * re-read.
 	 */
 	removeRecipe(id: string) {
 		const lignes = this.recipeIngredients.filter((line) => line.recipeId === id).map((l) => l.id);
@@ -1446,21 +1433,19 @@ class DataStore {
 	}
 
 	/**
-	 * La liste de courses d'une recette, pour un nombre de convives donné.
+	 * A recipe's shopping list, for a given number of servings.
 	 *
-	 * C'est une copie, pas un lien. Les articles nés ici vivent ensuite leur vie — on les coche, on
-	 * corrige « grande bouteille » devant le rayon, on en supprime — et la recette continue la
-	 * sienne. Un lien vivant ferait qu'une correction de recette réécrive une course en train de se
-	 * faire, et que supprimer la recette vide la liste. `pushIngredients`, le seul précédent de la
-	 * base, copie pour les mêmes raisons.
+	 * It is a copy, not a link. Items born here then live their own life — you tick them, correct "big
+	 * bottle" in front of the aisle, delete some — and the recipe goes on with its own. A live link would
+	 * mean a correction to the recipe rewrites a shop in progress, and that deleting the recipe empties the
+	 * list. `pushIngredients`, the only precedent in the codebase, copies for the same reasons.
 	 *
-	 * Sans liste visée, on en crée une au nom de la recette : c'est le cas courant — on décide de
-	 * cuisiner ça, on va acheter de quoi. Avec une liste visée, les ingrédients s'ajoutent aux
-	 * courses de la semaine sans écraser ce qui s'y trouve déjà.
+	 * With no target list, one is created named after the recipe: that is the common case — you decide to
+	 * cook this, you go and buy what it takes. With a target list, the ingredients join the weekly shop
+	 * without overwriting what is already there.
 	 *
-	 * Le rayon n'est pas décidé ici : `addItem` devine celui de chaque article depuis son nom, donc
-	 * la liste générée arrive rangée selon le parcours du magasin actif, comme si elle avait été
-	 * saisie à la main.
+	 * The aisle is not decided here: `addItem` guesses each item's aisle from its name, so the generated
+	 * list arrives sorted along the active shop's route, as if it had been typed by hand.
 	 */
 	generateList(recipeId: string, people: number, targetListId?: string) {
 		const recipe = this.recipe(recipeId);
@@ -1487,8 +1472,8 @@ class DataStore {
 	}
 
 	/**
-	 * Les tables du foyer prennent toutes le même chemin : on écrit la ligne complète, l'upsert
-	 * côté serveur se charge de savoir si elle existait déjà.
+	 * The household tables all take the same path: we write the whole row, and the server-side upsert takes
+	 * care of knowing whether it already existed.
 	 */
 	private push<T extends { id: string; householdId?: string }>(
 		table: string,
@@ -1503,9 +1488,9 @@ class DataStore {
 				payload: map(record, householdId)
 			});
 
-		// Le cercle de la ligne elle-même passe avant le cercle affiché : une carte ou un prix qu'on
-		// modifie appartient au cercle où il est né, et le réécrire avec celui qu'on regarde le ferait
-		// changer de cercle à la première correction.
+		// The row's own circle comes before the displayed circle: a card or a price being edited belongs to the
+		// circle it was born in, and rewriting it with the one being looked at would move it at the first
+		// correction.
 		const connu = record.householdId || this.circle;
 		if (connu) {
 			enfiler(connu);
@@ -1513,14 +1498,13 @@ class DataStore {
 		}
 
 		/**
-		 * Le foyer n'est pas encore provisionné — première ouverture, ou changement de compte en
-		 * cours. Estampiller la ligne avec une chaîne vide, ce qu'on faisait ici, produisait un
-		 * refus définitif de Postgres (« invalid input syntax for type uuid ») : la file jetait
-		 * l'écriture en silence, et le magasin qu'on venait de créer disparaissait de l'écran à la
-		 * relecture suivante, définitivement.
+		 * The household is not provisioned yet — first opening, or an account change in progress. Stamping the
+		 * row with an empty string, which is what we used to do, produced a final refusal from Postgres
+		 * ("invalid input syntax for type uuid"): the queue discarded the write silently, and the shop just
+		 * created disappeared from the screen at the next re-read, for good.
 		 *
-		 * On attend donc l'identifiant. Si on ne peut pas l'obtenir, on n'enfile rien : une file
-		 * vide et un bandeau d'erreur valent mieux qu'une écriture qui part se faire refuser.
+		 * So we wait for the id. If it cannot be obtained, nothing is queued: an empty queue and an error
+		 * banner are better than a write leaving to be refused.
 		 */
 		void sync.whenHousehold().then((householdId) => {
 			if (householdId) enfiler(householdId);
@@ -1538,9 +1522,9 @@ class DataStore {
 	}
 
 	/**
-	 * Le compte ou le foyer a changé : le cache décrit le précédent, il ne doit rien en rester. On
-	 * repart du serveur plutôt que de trier — les listes de quelqu'un d'autre affichées ici
-	 * seraient au mieux incompréhensibles, au pire indiscrètes.
+	 * The account or the household changed: the cache describes the previous one, nothing of it must
+	 * remain. We start again from the server rather than sort through it — somebody else's lists shown here
+	 * would be incomprehensible at best, indiscreet at worst.
 	 */
 	async reload() {
 		sync.stop();
@@ -1550,12 +1534,11 @@ class DataStore {
 	}
 
 	/**
-	 * À la déconnexion il n'y a plus de compte : on vide sans rien redemander au serveur.
+	 * On sign-out there is no account any more: we empty without asking the server anything.
 	 *
-	 * La file part avec le compte qui l'a remplie. `signOut` la vide d'abord ; ce qui reste ici n'a
-	 * pas pu partir — hors ligne, ou serveur injoignable. Le garder ne la sauverait pas : la
-	 * prochaine tentative se ferait avec le jeton du compte suivant, et la base refuse qu'on écrive
-	 * au nom de quelqu'un d'autre.
+	 * The queue goes with the account that filled it. `signOut` drains it first; what is left here could not
+	 * leave — offline, or server unreachable. Keeping it would not save it: the next attempt would use the
+	 * next account's token, and the database refuses writes on somebody else's behalf.
 	 */
 	async forget() {
 		sync.stop();

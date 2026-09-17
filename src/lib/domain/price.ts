@@ -1,16 +1,15 @@
 import { slugify } from './slug';
 
 /**
- * Le prix relevé une fois, pour un produit et dans un magasin.
+ * A price recorded once, for a product and in a shop.
  *
- * Il n'y a pas de catalogue de produits : les articles sont tapés à la main, liste après liste.
- * Ce qui fait « le même produit » d'une semaine sur l'autre, c'est donc le slug du nom — exactement
- * celui qui sert déjà à retenir l'ordre des produits dans un rayon (`shop_item_orders`) et qui
- * existe en base comme colonne générée sur `items`. Un troisième mode d'identification donnerait
- * deux produits là où l'application en voit un.
+ * There is no product catalogue: items are typed by hand, list after list. What makes "the same product"
+ * from one week to the next is therefore the slug of the name — exactly the one already used to remember
+ * the order of products in an aisle (`shop_item_orders`) and which exists in the database as a generated
+ * column on `items`. A third way of identifying would give two products where the application sees one.
  *
- * Le nom est conservé à côté du slug parce qu'un slug ne se lit pas : « lait-demi-ecreme » n'est
- * pas ce qu'on veut afficher, et le nom d'origine ne se reconstruit pas depuis le slug.
+ * The name is kept beside the slug because a slug cannot be read: "semi-skimmed-milk" is not what we want
+ * to display, and the original name cannot be rebuilt from the slug.
  */
 export interface PriceEntry {
 	id: string;
@@ -25,12 +24,11 @@ export interface PriceEntry {
 export const DEFAULT_CURRENCY = 'EUR';
 
 /**
- * La monnaie que l'on propose selon la langue d'affichage.
+ * The currency we offer according to the display language.
  *
- * C'est une approximation assumée : une langue n'est pas un pays, et l'anglais ou l'arabe en
- * couvrent plusieurs. Elle ne sert qu'à choisir une valeur de départ — la monnaie est enregistrée
- * sur chaque relevé, si bien qu'un prix noté en voyage garde la sienne pour toujours et qu'un
- * changement de langue ne réécrit rien.
+ * It is an acknowledged approximation: a language is not a country, and English or Arabic cover several.
+ * It only serves to pick a starting value — the currency is saved on each record, so a price noted while
+ * travelling keeps its own forever and a language change rewrites nothing.
  */
 const CURRENCY_BY_LANGUAGE: Record<string, string> = {
 	fr: 'EUR',
@@ -45,22 +43,21 @@ const CURRENCY_BY_LANGUAGE: Record<string, string> = {
 	ar: 'MAD'
 };
 
-/** Accepte aussi bien « fr » que « fr-CH » : seule la langue est connue de la table. */
+/** Accepts "fr" as well as "fr-CH": only the language is known to the table. */
 export function currencyForLocale(locale: string): string {
 	const language = locale.split('-')[0].toLowerCase();
 	return CURRENCY_BY_LANGUAGE[language] ?? DEFAULT_CURRENCY;
 }
 
-/** L'identité d'un produit à travers les listes et le temps. */
+/** A product's identity across lists and time. */
 export const productSlug = (name: string) => slugify(name);
 
 /**
- * Lit un montant tapé au clavier.
+ * Reads an amount typed on a keyboard.
  *
- * La virgule et le point sont acceptés tous les deux : le séparateur décimal dépend de la langue,
- * et un clavier de téléphone ne propose pas toujours celui qu'attendrait la locale. Zéro et les
- * montants négatifs sont refusés — ce n'est pas un prix, et les laisser passer ferait d'une frappe
- * malheureuse le « moins cher » de la comparaison.
+ * Comma and dot are both accepted: the decimal separator depends on the language, and a phone keyboard
+ * does not always offer the one the locale would expect. Zero and negative amounts are refused — that is
+ * not a price, and letting them through would make an unlucky keystroke the "cheapest" of the comparison.
  */
 export function parseAmount(raw: string): number | null {
 	const written = raw.trim().replace(/\s/g, '');
@@ -69,16 +66,16 @@ export function parseAmount(raw: string): number | null {
 	const parsed = Number(written.replace(/,/g, '.'));
 	if (!Number.isFinite(parsed) || parsed <= 0) return null;
 
-	// Deux décimales : au-delà, le prix affiché ne serait plus celui qui a été saisi.
+	// Two decimals: beyond that, the price displayed would no longer be the one typed.
 	return Math.round(parsed * 100) / 100;
 }
 
 /**
- * Le montant tel qu'on l'écrit dans la langue lue. Ni le symbole ni le séparateur décimal ne sont
- * posés à la main : « 1,50 € », « £1.50 » et « ١٫٥٠ » sortent tous du même appel.
+ * The amount as written in the language being read. Neither the symbol nor the decimal separator is set
+ * by hand: "1,50 €", "£1.50" and "١٫٥٠" all come out of the same call.
  *
- * Une monnaie inconnue de l'environnement ne doit pas faire disparaître le prix : on retombe alors
- * sur un nombre nu suivi du code.
+ * A currency unknown to the environment must not make the price disappear: we then fall back on a bare
+ * number followed by the code.
  */
 export function formatAmount(amount: number, currency: string, locale: string): string {
 	try {
@@ -88,7 +85,7 @@ export function formatAmount(amount: number, currency: string, locale: string): 
 	}
 }
 
-/** Le relevé le plus récent d'un produit dans un magasin donné, s'il y en a un. */
+/** The most recent record of a product in a given shop, if there is one. */
 export function latestAt(entries: PriceEntry[], slug: string, shopId: string): PriceEntry | null {
 	let best: PriceEntry | null = null;
 
@@ -100,7 +97,7 @@ export function latestAt(entries: PriceEntry[], slug: string, shopId: string): P
 	return best;
 }
 
-/** Deux horodatages tombent-ils le même jour, pour l'appareil qui regarde. */
+/** Whether two timestamps fall on the same day, for the device looking. */
 export function sameDay(a: number, b: number): boolean {
 	const first = new Date(a);
 	const second = new Date(b);
@@ -113,16 +110,15 @@ export function sameDay(a: number, b: number): boolean {
 }
 
 /**
- * Ce que le foyer vient chercher : où ce produit coûte le moins cher, aujourd'hui.
+ * What the household comes for: where this product costs least, today.
  *
- * Un seul relevé par magasin, le plus récent — un prix d'il y a six mois n'a rien à dire de plus
- * que celui de la semaine dernière, et les empiler ferait une liste où le même magasin revient.
- * Le résultat est trié du moins cher au plus cher : c'est la seule lecture que la fonctionnalité
- * promet.
+ * One record per shop, the most recent — a price from six months ago has nothing more to say than last
+ * week's, and stacking them would make a list where the same shop comes back. The result is sorted
+ * cheapest first: that is the only reading the feature promises.
  *
- * Les monnaies ne se comparent pas entre elles sans taux de change, que l'application n'a pas. On
- * ne garde donc que celle du relevé le plus récent : un prix noté une fois en voyage ne vient pas
- * se ranger, comme s'il était comparable, au milieu des prix du quotidien.
+ * Currencies cannot be compared without an exchange rate, which the application does not have. So we only
+ * keep the most recent record's: a price noted once while travelling does not come and sit, as if it were
+ * comparable, among everyday prices.
  */
 export function compareShops(entries: PriceEntry[], slug: string): PriceEntry[] {
 	const mine = entries.filter((entry) => entry.productSlug === slug);
@@ -149,11 +145,11 @@ export interface PricedProduct {
 }
 
 /**
- * Les produits dont on connaît au moins un prix, pour l'écran d'historique.
+ * The products we know at least one price for, for the history screen.
  *
- * Le nom affiché est celui du relevé le plus récent : c'est la dernière orthographe qu'on a
- * utilisée, et celle qu'on reconnaîtra. L'ordre est alphabétique, le seul qui laisse retrouver un
- * produit précis sans le chercher deux fois.
+ * The displayed name is that of the most recent record: it is the last spelling used, and the one that
+ * will be recognised. The order is alphabetical, the only one that lets a specific product be found
+ * without looking twice.
  */
 export function pricedProducts(entries: PriceEntry[]): PricedProduct[] {
 	const slugs = [...new Set(entries.map((entry) => entry.productSlug))];

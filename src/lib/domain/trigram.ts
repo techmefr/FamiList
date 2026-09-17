@@ -1,22 +1,21 @@
 import { slugify } from './slug';
 
 /**
- * Les initiales d'un magasin, telles qu'elles s'affichent dans la pastille de couleur.
+ * A shop's initials, as they show in the coloured badge.
  *
- * Un magasin porte le nom de son enseigne et celui de sa commune — Carrefour Meximieux, Super U
- * Montluel. C'est la commune qui distingue, pas l'enseigne : trois lettres prises au début
- * donneraient CAR à tous les Carrefour du département. La règle part donc des mots :
+ * A shop carries the name of its brand and that of its town — Carrefour Meximieux, Super U Montluel. It is
+ * the town that distinguishes, not the brand: three letters taken from the start would give CAR to every
+ * Carrefour in the county. So the rule starts from the words:
  *
- *   une initiale par mot, complétée par la dernière lettre quand il n'y a pas trois mots.
+ *   one initial per word, completed by the last letter when there are not three words.
  *
- *   Carrefour Meximieux    CMX     deux initiales, puis la dernière lettre de la commune
- *   Super U Montluel       SUM     trois mots, trois initiales
- *   Carrefour              CAR     un seul mot, ses trois premières lettres
+ *   Carrefour Meximieux    CMX     two initials, then the last letter of the town
+ *   Super U Montluel       SUM     three words, three initials
+ *   Carrefour              CAR     a single word, its first three letters
  *
- * Deux magasins peuvent malgré tout tomber sur le même trigramme. `taken` reçoit alors ceux qui
- * sont déjà pris, et on avance d'une lettre : Carrefour Meximieux donne CMX, le suivant CME, puis
- * CMI. Les candidats sont tirés du nom, dans son ordre, pour que le trigramme reste reconnaissable
- * même quand ce n'est plus le premier choix.
+ * Two shops can still land on the same code. `taken` then receives those already in use, and we move on a
+ * letter: Carrefour Meximieux gives CMX, the next CME, then CMI. The candidates are drawn from the name,
+ * in its order, so the code stays recognisable even when it is no longer the first choice.
  */
 const LONGUEUR = 3;
 
@@ -32,12 +31,12 @@ export function trigram(name: string, taken: Iterable<string> = []): string {
 		if (!pris.has(candidat)) return candidat;
 	}
 
-	// Tout est pris, jusqu'aux suffixes chiffrés. Rendre une pastille vide serait pire que rendre
-	// un doublon : au moins le doublon dit de quelle enseigne il s'agit.
+	// Everything is taken, down to the numbered suffixes. Returning an empty badge would be worse than
+	// returning a duplicate: at least the duplicate says which brand it is.
 	return premier;
 }
 
-/** Les trigrammes possibles pour ce nom, du plus parlant au plus lointain. */
+/** The possible codes for this name, from the most telling to the most remote. */
 function* candidats(name: string): Generator<string> {
 	const mots = slugify(name)
 		.split('-')
@@ -45,9 +44,9 @@ function* candidats(name: string): Generator<string> {
 		.map((mot) => mot.toUpperCase());
 
 	if (mots.length === 0) {
-		// Un nom sans lettre ni chiffre — un emoji seul, « ### ». slugify le vide entièrement ;
-		// plutôt qu'une pastille blanche, on garde ce qui a été tapé. Le découpage passe par les
-		// points de code, sinon un emoji serait coupé en deux moitiés de paire de substitution.
+		// A name with no letter or digit — a lone emoji, "###". slugify empties it completely; rather than a
+		// blank badge, we keep what was typed. The splitting goes through code points, otherwise an emoji would
+		// be cut into two halves of a surrogate pair.
 		const brut = [...name.trim().replaceAll(/\s+/g, '')].slice(0, LONGUEUR).join('').toUpperCase();
 		if (brut) yield* avecSuffixes(brut);
 		return;
@@ -55,7 +54,7 @@ function* candidats(name: string): Generator<string> {
 
 	const lettres = mots.join('');
 
-	// Un nom plus court que le trigramme ne se raccourcit pas : « U », « Bio ».
+	// A name shorter than the code is not shortened: "U", "Bio".
 	if (lettres.length <= LONGUEUR) {
 		yield* avecSuffixes(lettres);
 		return;
@@ -70,18 +69,17 @@ function* candidats(name: string): Generator<string> {
 		preferees = [lettres[2]];
 	} else if (mots.length === 2) {
 		base = mots[0][0] + mots[1][0];
-		// Un mot d'une seule lettre — le « U » de Super U — n'a pas de dernière lettre distincte de
-		// son initiale. Le filtre plus bas s'en charge, et on complète alors depuis le nom entier.
+		// A one-letter word — the "U" of Super U — has no last letter distinct from its initial. The filter
+		// below takes care of it, and we then complete from the whole name.
 		preferees = [dernier.at(-1)];
 	} else {
 		base = mots[0][0] + mots[1][0];
 		preferees = [mots[2][0], dernier.at(-1)];
 	}
 
-	// La suite des candidats vient d'abord du dernier mot — c'est la commune qui distingue deux
-	// magasins de la même enseigne, pas l'enseigne —, puis du nom entier. On saute la première
-	// lettre, déjà prise comme initiale, et toute lettre qui doublerait celle d'avant : « SUU » ne
-	// se lit pas.
+	// The sequence of candidates comes first from the last word — it is the town that tells two shops of the
+	// same brand apart, not the brand — then from the whole name. We skip the first letter, already taken as
+	// the initial, and any letter that would double the one before: "SUU" does not read.
 	const suite = [...preferees, ...dernier.slice(1), ...lettres.slice(1)].filter(
 		(lettre): lettre is string => Boolean(lettre) && lettre !== base.at(-1)
 	);
@@ -91,7 +89,7 @@ function* candidats(name: string): Generator<string> {
 	yield* suffixes(base);
 }
 
-/** Dernier recours : le même début, numéroté. */
+/** Last resort: the same start, numbered. */
 function* suffixes(base: string): Generator<string> {
 	for (const chiffre of '23456789') yield base + chiffre;
 }

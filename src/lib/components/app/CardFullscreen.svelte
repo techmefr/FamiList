@@ -11,8 +11,8 @@
 	let { card, onClose }: { card: LoyaltyCard; onClose: () => void } = $props();
 
 	/**
-	 * `null` signifie « pas en train d'éditer ». Repartir de la carte à chaque ouverture de l'édition
-	 * évite qu'un brouillon reste collé à une carte modifiée entre-temps sur un autre appareil.
+	 * `null` means "not editing". Starting again from the card at every opening of the editor stops a draft
+	 * from staying stuck to a card changed in the meantime on another device.
 	 */
 	let draft = $state<string | null>(null);
 
@@ -22,8 +22,8 @@
 	}
 
 	/**
-	 * Plein écran sur fond noir avec un code très contrasté : c'est ce qui se lit le plus vite sous
-	 * une douchette de caisse, et ce que l'utilisateur cherche quand il ouvre une carte.
+	 * Full screen on a black ground with a very contrasted code: that is what reads fastest under a till
+	 * scanner, and what the user is looking for when they open a card.
 	 */
 </script>
 
@@ -34,9 +34,9 @@
 />
 
 <!--
-	Le fond noir se fond, le code monte : c'est le geste d'une carte qu'on sort du portefeuille. Une
-	mise à l'échelle de tout l'écran serait ici sans risque — rien ne se superpose à ce calque — mais
-	le code-barres, lui, doit être net tout de suite.
+	The black ground fades in, the code rises: it is the gesture of a card being taken out of a wallet.
+	Scaling the whole screen would carry no risk here — nothing overlaps this layer — but the barcode must be
+	sharp straight away.
 -->
 <div
 	transition:fade={{ duration: motionMs(180) }}

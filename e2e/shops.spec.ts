@@ -12,18 +12,18 @@ test('créer un magasin et lui ajouter un rayon', async ({ signedInPage: page })
 	const carte = page.locator('[data-test-class="shop-card"]').filter({ hasText: nom });
 	await expect(carte).toBeVisible();
 
-	// Le rayon porte l'heure, comme le magasin au-dessus.
+	// The aisle carries the time, like the shop above.
 	//
-	// Les rayons appartiennent au foyer et rien ne permet d'en supprimer un : ce test en ajoutait
-	// donc un de plus à chaque passage, tous nommés pareil. Au deuxième, `getByText` en trouvait
-	// deux et Playwright refusait de choisir — le test ne se rejouait pas sur une base déjà servie.
+	// Aisles belong to the household and nothing allows deleting one: this test therefore added one more on
+	// every run, all named the same. On the second, `getByText` found two and Playwright refused to choose —
+	// the test did not replay on an already used database.
 	const rayon = `Surgelés e2e ${Date.now()}`;
 
 	await page.getByTestId('aisle-name').fill(rayon);
 	await page.getByTestId('aisle-create').click();
 
-	// Visé dans la puce plutôt que dans la page entière : c'est l'élément que ce test vient de
-	// créer, et non un texte qui pourrait venir d'ailleurs.
+	// Aimed at inside the chip rather than in the whole page: it is the element this test has just created,
+	// and not a text that could come from elsewhere.
 	await expect(
 		page.locator('[data-test-class="aisle-chip"]').filter({ hasText: rayon })
 	).toBeVisible();

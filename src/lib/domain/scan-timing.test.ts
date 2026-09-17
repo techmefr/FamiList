@@ -6,7 +6,7 @@ describe('delais du scan', () => {
 		expect(SCAN_SUGGEST_MS).toBeLessThan(SCAN_TIMEOUT_MS);
 	});
 
-	// Sous deux secondes, la suggestion tomberait sur une carte simplement pas encore cadree.
+	// Under two seconds, the suggestion would land on a card simply not framed yet.
 	it('laisse le temps de cadrer avant de suggerer', () => {
 		expect(SCAN_SUGGEST_MS).toBeGreaterThanOrEqual(2_000);
 	});

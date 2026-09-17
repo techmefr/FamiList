@@ -1,37 +1,36 @@
 /**
- * Rendre lisible du texte blanc posé sur une teinte choisie par quelqu'un d'autre.
+ * Making white text readable on a tint chosen by somebody else.
  *
- * Les teintes de membres et de magasins sont des données : elles arrivent de la base, personne ne
- * les a validées contre un ratio de contraste. Celle qui était posée par défaut, l'ancienne
- * terracotta #C8532A, donnait 4,44:1 sous du blanc — juste sous les 4,5:1 exigés. Et noircir le
- * texte n'aurait pas sauvé ce cas-là : sur cette teinte, l'encre sombre ne fait que 3,97:1. Aucune
- * couleur de texte ne passe sur une teinte de milieu de gamme, il faut donc bouger le fond.
+ * Member and shop tints are data: they come from the database, nobody validated them against a contrast
+ * ratio. The one set as the default, the old terracotta #C8532A, gave 4.44:1 under white — just under the
+ * 4.5:1 required. And darkening the text would not have saved that case: on that tint, dark ink only
+ * reaches 3.97:1. No text colour passes on a mid-range tint, so the background has to move.
  *
- * On assombrit par paliers jusqu'à ce que le blanc passe. La teinte reste reconnaissable — c'est
- * la même couleur, plus foncée — et la convergence est garantie puisque le noir donne 21:1.
+ * We darken in steps until white passes. The tint stays recognisable — it is the same colour, darker —
+ * and convergence is guaranteed since black gives 21:1.
  */
 /**
- * Palette des teintes attribuées aux magasins, aux cartes et aux listes.
+ * Palette of the tints given to shops, cards and lists.
  *
- * Ce sont des couleurs de repérage, pas la couleur d'accent : deux magasins doivent se distinguer
- * l'un de l'autre, les aligner sur l'accent les rendrait tous identiques. On les parcourt en
- * boucle à la création pour que les premières créations se distinguent d'emblée.
+ * These are identifying colours, not the accent colour: two shops must be told apart, and aligning them on
+ * the accent would make them all identical. We cycle through them at creation so the first few creations
+ * stand out straight away.
  *
- * Elles passent toutes par `tintForWhiteText` à l'affichage, qui les assombrit au besoin : la
- * liste n'a donc pas à être vérifiée au contraste, seule sa lisibilité de teinte compte.
+ * They all go through `tintForWhiteText` at display time, which darkens them if needed: the list
+ * therefore does not have to be checked for contrast, only its tint legibility matters.
  */
 export const TINTS = ['#5A4A2F', '#8B3A62', '#4A6B3A', '#C67A3E', '#2563EB', '#1F5C3A'];
 
-/** Teinte reprise quand la base n'en porte pas, pour un magasin, une carte ou une liste. */
+/** Tint used when the database carries none, for a shop, a card or a list. */
 export const DEFAULT_TINT = TINTS[0];
 
 /**
- * Teinte de repli d'un membre : la terracotta par défaut, recopiée de --primary dans app.css. Un
- * membre sans couleur est un membre qui n'a pas encore choisi, autant lui donner celle de l'app.
+ * A member's fallback tint: the default terracotta, copied from --primary in app.css. A member with no
+ * colour is a member who has not chosen yet, so they may as well get the app's.
  */
 export const DEFAULT_MEMBER_TINT = '#A94008';
 
-/** Bas du dégradé d'une carte de fidélité, commun à toutes les teintes. */
+/** Bottom of a loyalty card's gradient, shared by every tint. */
 export const CARD_GRADIENT_END = '#2E2518';
 
 const CIBLE = 4.5;
@@ -42,11 +41,11 @@ const canal = (v: number) => {
 	return s <= 0.03928 ? s / 12.92 : Math.pow((s + 0.055) / 1.055, 2.4);
 };
 
-/** Luminance relative WCAG. */
+/** WCAG relative luminance. */
 export const luminance = ({ r, g, b }: Rgb) =>
 	0.2126 * canal(r) + 0.7152 * canal(g) + 0.0722 * canal(b);
 
-/** Contraste WCAG entre du blanc pur et une couleur. */
+/** WCAG contrast between pure white and a colour. */
 export const contrastWithWhite = (couleur: Rgb) => 1.05 / (luminance(couleur) + 0.05);
 
 export interface Rgb {
@@ -56,8 +55,8 @@ export interface Rgb {
 }
 
 /**
- * Accepte `#rgb` et `#rrggbb`. Rend null sur tout le reste — un `oklch(...)` ou un nom CSS stocké
- * en base ne doit pas être deviné, l'appelant le laissera passer tel quel.
+ * Accepts `#rgb` and `#rrggbb`. Returns null on everything else — an `oklch(...)` or a CSS name stored in
+ * the database must not be guessed, the caller will let it through as it is.
  */
 export function parseHex(value: string | null | undefined): Rgb | null {
 	const brut = (value ?? '').trim();
@@ -79,16 +78,15 @@ const octet = (v: number) =>
 const toHex = ({ r, g, b }: Rgb) => '#' + octet(r) + octet(g) + octet(b);
 
 /**
- * Teinte assez sombre pour porter du texte blanc à 4,5:1. Une teinte déjà assez sombre ressort
- * inchangée, et une valeur qu'on ne sait pas lire aussi : mieux vaut afficher la couleur demandée
- * que d'inventer.
+ * A tint dark enough to carry white text at 4.5:1. A tint already dark enough comes out unchanged, and so
+ * does a value we cannot read: better to show the colour asked for than to invent.
  */
 export function tintForWhiteText(value: string | null | undefined): string {
 	const rgb = parseHex(value);
 	if (!rgb) return (value ?? '').trim();
 
 	let couleur = rgb;
-	// 40 paliers de 4 % suffisent largement à atteindre le noir, la boucle est bornée par sécurité.
+	// 40 steps of 4% are far more than enough to reach black, the loop is bounded for safety.
 	for (let i = 0; i < 40 && contrastWithWhite(couleur) < CIBLE; i++) {
 		couleur = {
 			r: couleur.r * (1 - PALIER),

@@ -13,21 +13,19 @@
 	import { Plus, Store, Building2, MapPin, RefreshCw, Check } from '@lucide/svelte';
 
 	/**
-	 * Le formulaire de création d'un magasin, là où on en a besoin.
+	 * The shop creation form, where it is needed.
 	 *
-	 * Il vit sur l'écran des magasins, mais aussi dans une feuille appelée depuis ailleurs :
-	 * enregistrer une carte de fidélité, c'est souvent découvrir qu'on n'a pas encore créé le
-	 * magasin qui va avec. Faire sortir la personne du formulaire de la carte pour aller le créer
-	 * ailleurs, c'est lui faire perdre ce qu'elle avait commencé à saisir.
+	 * It lives on the shops screen, but also in a sheet opened from elsewhere: saving a loyalty card is
+	 * often when you discover you have not created the matching shop yet. Making the person leave the card
+	 * form to go and create it elsewhere loses what they had started typing.
 	 *
-	 * Les identifiants des champs sont préfixés : deux exemplaires du formulaire peuvent coexister
-	 * sur une même page, et deux `for` identiques feraient pointer les deux étiquettes au même
-	 * endroit.
+	 * The field ids are prefixed: two copies of the form can coexist on the same page, and two identical
+	 * `for` attributes would make both labels point at the same place.
 	 */
 	/**
-	 * Avec `shop`, le même formulaire modifie au lieu de créer : les champs sont ceux de la
-	 * création, les règles sur le trigramme aussi, et un second formulaire d'édition n'aurait fait
-	 * que les répéter à l'identique — en laissant les deux diverger avec le temps.
+	 * With `shop`, the same form edits instead of creating: the fields are those of creation, the rules on
+	 * the three-letter code too, and a second edit form would only have repeated them identically — while
+	 * letting the two drift apart over time.
 	 */
 	let {
 		prefix = 'shop',
@@ -43,9 +41,8 @@
 		oncancel?: () => void;
 	} = $props();
 
-	// Les champs partent du magasin tel qu'il est à l'ouverture, et lui appartiennent ensuite : le
-	// formulaire est remonté à chaque édition, et une mise à jour venue de la synchronisation ne
-	// doit pas écraser une saisie en cours.
+	// The fields start from the shop as it is on opening, and belong to the form afterwards: the form is
+	// remounted on every edit, and an update coming from the sync must not overwrite a typing in progress.
 	let brand = $state(untrack(() => edite?.brand ?? ''));
 	let name = $state(untrack(() => edite?.name ?? ''));
 	let address = $state(untrack(() => edite?.address ?? ''));
@@ -59,17 +56,17 @@
 	const situe = $derived(lat !== undefined && lng !== undefined);
 
 	/**
-	 * La position du magasin, prise sur place, par le pin du champ adresse.
+	 * The shop's position, taken on site, through the pin in the address field.
 	 *
-	 * C'est l'appareil qui la donne, pas un service de géocodage : l'adresse ne sort jamais du
-	 * téléphone, il n'y a ni clé d'API ni quota, et la chose marche sans réseau. En échange il faut
-	 * être devant le magasin — ce qui tombe bien, on y est quand on fait ses courses.
+	 * The device gives it, not a geocoding service: the address never leaves the phone, there is no API key
+	 * and no quota, and it works without network. In exchange you have to be in front of the shop — which
+	 * works out, since that is where you are when shopping.
 	 *
-	 * Elle sert à retrouver le magasin quand on y revient, pour sortir la bonne carte de fidélité
-	 * sans la chercher. Le pin ne remplit que les coordonnées : l'adresse reste écrite à la main.
+	 * It serves to recognise the shop when you come back, to bring out the right loyalty card without
+	 * looking for it. The pin only fills the coordinates: the address is still written by hand.
 	 *
-	 * Dans le formulaire et non sur la fiche du magasin : on peut désormais poser la position en
-	 * créant le magasin, alors qu'il fallait le créer puis revenir sur sa fiche.
+	 * In the form and not on the shop page: the position can now be set while creating the shop, where you
+	 * used to have to create it then come back to its page.
 	 */
 	function releverPosition() {
 		if (!navigator.geolocation) {
@@ -85,8 +82,8 @@
 				lat = position.coords.latitude;
 				lng = position.coords.longitude;
 				releve = false;
-				// En modification, la position vaut pour elle-même : on la relève devant le magasin,
-				// pas au moment où l'on pense à enregistrer le reste du formulaire.
+				// When editing, the position stands for itself: you take it in front of the shop, not at the moment
+				// you think of saving the rest of the form.
 				if (edite) data.updateShop(edite.id, { lat, lng });
 			},
 			() => {
@@ -97,39 +94,38 @@
 		);
 	}
 
-	// Le trigramme du magasin qu'on modifie ne se compte pas comme pris par un autre : le garder
-	// tel quel doit rester possible.
+	// The code of the shop being edited does not count as taken by another: keeping it as it is must stay
+	// possible.
 	const pris = $derived(
 		data.shops.filter((shop) => shop.id !== edite?.id).map((shop) => shop.short)
 	);
 
 	/**
-	 * Les enseignes déjà saisies dans le foyer, proposées à la frappe. On ne tient pas de
-	 * catalogue de chaînes : la liste se remplit de ce que la famille fréquente vraiment, et un
-	 * commerce indépendant n'a rien à y trouver.
+	 * The brands already typed in the household, offered as you type. We keep no catalogue of chains: the
+	 * list fills with what the family really goes to, and an independent shop has nothing to find in it.
 	 */
 	const enseignes = $derived([
 		...new Set(data.shops.map((shop) => shop.brand.trim()).filter(Boolean))
 	]);
 
-	/** Ce que portera la pastille si personne ne remplit le champ. */
+	/** What the badge will carry if nobody fills the field. */
 	const propose = $derived(data.proposedShort({ brand, name, address }, edite?.id));
 
 	const saisi = $derived(short.trim().toUpperCase());
 
 	/**
-	 * Un trigramme déjà porté est refusé plutôt que corrigé en silence : quelqu'un qui tape CMX a
-	 * une raison de le vouloir, et se retrouver avec CM2 sans explication est plus déroutant que
-	 * de lire que la place est prise.
+	 * A code already taken is refused rather than silently corrected: someone typing CMX has a reason to
+	 * want it, and ending up with CM2 with no explanation is more confusing than reading that the place is
+	 * taken.
 	 */
 	const dejaPris = $derived(saisi.length > 0 && pris.some((court) => court.toUpperCase() === saisi));
 
 	/**
-	 * Créer avant que la première synchronisation soit retombée, c'est choisir un trigramme et une
-	 * teinte parmi un cache encore vide : le magasin prend alors ceux d'un autre. On attend, plutôt
-	 * que d'avoir à corriger après coup un magasin que son doublon rend non modifiable.
+	 * Creating before the first sync has settled means picking a code and a tint from a still-empty cache:
+	 * the shop then takes somebody else's. We wait, rather than having to fix afterwards a shop its own
+	 * duplicate makes uneditable.
 	 *
-	 * Seulement à la création : modifier un magasin suppose qu'on le voit déjà.
+	 * On creation only: editing a shop assumes you can already see it.
 	 */
 	const attendSynchro = $derived(!edite && !sync.settled);
 
@@ -139,8 +135,8 @@
 
 		if (edite) {
 			feedback.play('success');
-			// Le trigramme laissé vide revient à celui que la pastille montre déjà : on ne le vide
-			// jamais, un magasin sans pastille n'existe pas.
+			// A code left empty goes back to the one the badge already shows: we never clear it, a shop with no
+			// badge does not exist.
 			data.updateShop(edite.id, {
 				brand: brand.trim(),
 				name: name.trim(),
@@ -176,9 +172,9 @@
 <form onsubmit={submit} class="space-y-3" data-test-id="add-shop">
 	<div class="grid gap-3 sm:grid-cols-2">
 		<!--
-			L'enseigne d'abord, parce que c'est elle qui ouvre le trigramme et qui portera la carte.
-			Facultative et annoncée comme telle : un salon de coiffure n'en a pas, et le formulaire
-			ne doit pas donner l'impression qu'il en faut une.
+			The brand first, because it is what opens the three-letter code and what will carry the card.
+			Optional and announced as such: a hairdresser has none, and the form must not give the impression
+			that one is needed.
 		-->
 		<div>
 			<Label for="{prefix}-brand">{t('shops.brand')}</Label>
@@ -215,9 +211,8 @@
 		<div>
 			<Label for="{prefix}-address">{t('shops.address')}</Label>
 			<!--
-				Le pin n'est pas décoratif : il pose la position relevée par l'appareil. Il ne touche
-				pas à l'adresse écrite au-dessus — aucun service de géocodage n'est appelé, et rien de
-				ce qui est saisi ne sort du téléphone.
+				The pin is not decoration: it sets the position taken by the device. It does not touch the address
+				written above — no geocoding service is called, and nothing typed leaves the phone.
 			-->
 			<IconField>
 				<Input
@@ -257,12 +252,12 @@
 			{/if}
 		</div>
 		<!--
-			Le champ ne se remplit pas : il montre en filigrane ce qui sera pris si on n'y touche pas.
-			Une valeur écrite d'office donnerait l'impression d'avoir été saisie, et il faudrait
-			l'effacer pour revenir au trigramme automatique.
+			The field is not filled in: it shows as a placeholder what will be used if nobody touches it. A value
+			written outright would look as if it had been typed, and you would have to clear it to get back to
+			the automatic code.
 
-			Le bouton, lui, écrit la proposition dans le champ — pour la retoucher d'une lettre, ou
-			pour revenir dessus après avoir corrigé l'enseigne ou la commune.
+			The button, on the other hand, writes the suggestion into the field — to tweak one letter of it, or
+			to come back to it after correcting the brand or the town.
 		-->
 		<div>
 			<Label for="{prefix}-short">{t('shops.short')}</Label>

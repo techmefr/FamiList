@@ -1,12 +1,12 @@
 /**
- * Les réglages d'instance vus de l'écran : quels champs, lesquels sont secrets, et où on en est.
+ * The instance settings as the screen sees them: which fields, which are secret, and where things stand.
  *
- * Un porte-réglages et non une page de courriel. #137 a le même besoin pour son jeton de suivi de
- * dépôt, et les suivants en auront d'autres : la liste ci-dessous est le seul endroit à toucher
- * pour en ajouter un, l'écran se déduit d'elle.
+ * A settings holder and not an email page. #137 has the same need for its repository tracking token, and
+ * the next ones will have others: the list below is the only place to touch to add one, the screen is
+ * derived from it.
  *
- * Ce module ne sait rien de Supabase : il ne fait que décrire et interpréter, ce qui le rend
- * testable sans base ni navigateur.
+ * This module knows nothing about Supabase: it only describes and interprets, which makes it testable
+ * without a database or a browser.
  */
 
 export type SettingGroup = 'mail' | 'tracker';
@@ -15,7 +15,7 @@ export type SettingField = {
 	key: string;
 	group: SettingGroup;
 	isSecret: boolean;
-	/** Le clavier attendu, pour que le port n'ouvre pas un clavier alphabétique sur téléphone. */
+	/** The keyboard expected, so that the port does not open an alphabetic keyboard on a phone. */
 	kind: 'text' | 'email' | 'number' | 'password';
 };
 
@@ -42,11 +42,11 @@ export const fieldsOf = (group: SettingGroup): SettingField[] =>
 	SETTING_FIELDS.filter((field) => field.group === group);
 
 /**
- * Ce qu'on met dans le champ à l'ouverture.
+ * What we put in the field on opening.
  *
- * Une valeur en clair revient telle quelle : on la relit, on la corrige. Un secret revient vide,
- * jamais en points-de-suspension qu'on prendrait pour sa vraie longueur — la base ne le rend pas,
- * et l'écran n'a rien à inventer. C'est l'étiquette à côté qui dit qu'il est posé.
+ * A plain value comes back as it is: you read it again, you correct it. A secret comes back empty, never as
+ * dots that would be taken for its real length — the database does not return it, and the screen has
+ * nothing to invent. It is the label beside it that says it is set.
  */
 export function initialValue(row: SettingRow | undefined): string {
 	if (!row || row.is_secret) return '';
@@ -55,11 +55,11 @@ export function initialValue(row: SettingRow | undefined): string {
 }
 
 /**
- * Vrai quand rien ne partira.
+ * True when nothing will leave.
  *
- * L'hôte et l'expéditeur suffisent à tenter un envoi : un relais local n'exige pas d'identifiants.
- * La même règle que la fonction edge, écrite deux fois parce que les deux couches ne partagent pas
- * de code — mais couverte des deux côtés, et c'est ce qui la tient alignée.
+ * The host and the sender are enough to attempt a send: a local relay does not require credentials. The
+ * same rule as the edge function, written twice because the two layers share no code — but covered on both
+ * sides, and that is what keeps it aligned.
  */
 export function isMailConfigured(rows: SettingRow[]): boolean {
 	const set = (key: string) => {
@@ -90,10 +90,10 @@ const OUTCOMES: readonly MailTestOutcome[] = [
 ];
 
 /**
- * La clé de traduction du verdict.
+ * The verdict's translation key.
  *
- * Une issue inconnue retombe sur `failed` plutôt que d'afficher une clé crue : une fonction edge
- * déployée en avance sur le bundle ne doit pas écrire « instance.mailTest.bidule » à l'écran.
+ * An unknown outcome falls back on `failed` rather than showing a raw key: an edge function deployed ahead
+ * of the bundle must not write "instance.mailTest.whatsit" on the screen.
  */
 export function mailTestKey(outcome: string | null | undefined): string {
 	const known = OUTCOMES.find((candidate) => candidate === outcome) ?? 'failed';
@@ -101,5 +101,5 @@ export function mailTestKey(outcome: string | null | undefined): string {
 	return `instance.mailTest.${known}`;
 }
 
-/** L'issue est-elle une réussite ? Le ton du message en dépend, pas seulement son texte. */
+/** Is the outcome a success? The tone of the message depends on it, not only its text. */
 export const isMailTestSuccess = (outcome: string | null | undefined): boolean => outcome === 'sent';

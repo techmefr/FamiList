@@ -1,14 +1,14 @@
 /**
- * Combien de temps laisser la caméra chercher avant de proposer autre chose.
+ * How long to let the camera search before offering something else.
  *
- * Une carte bien présentée est lue en une seconde ou deux. Passé six secondes, ce n'est plus une
- * question de patience : c'est le reflet de l'écran, la pellicule froissée ou la lumière qui
- * empêchent la lecture, et attendre davantage n'y change rien. On propose donc la photo à ce
- * moment-là, sans rien couper — le scan peut encore aboutir pendant qu'on lit la suggestion.
+ * A well presented card is read in a second or two. Past six seconds, it is no longer a question of
+ * patience: it is the screen's reflection, the crumpled film or the light preventing the reading, and
+ * waiting longer changes nothing. So we offer the photo at that moment, without cutting anything — the scan
+ * can still succeed while the suggestion is being read.
  *
- * L'arrêt à trente secondes est là pour celui qui a reposé le téléphone : au-delà, la caméra
- * chauffe et vide la batterie pour rien. C'est long à dessein, parce qu'une coupure au moment où
- * l'on cherche le bon angle serait plus agaçante que le balayage lui-même.
+ * The stop at thirty seconds is there for somebody who has put the phone down: beyond that, the camera
+ * heats up and drains the battery for nothing. It is long on purpose, because a cut just as you are looking
+ * for the right angle would be more annoying than the sweep itself.
  */
 export const SCAN_SUGGEST_MS = 6_000;
 export const SCAN_TIMEOUT_MS = 30_000;
@@ -16,8 +16,8 @@ export const SCAN_TIMEOUT_MS = 30_000;
 export type ScanOutcome = 'stopped' | 'timeout';
 
 /**
- * Un arrêt demandé n'est pas un échec : afficher « aucun code trouvé » parce qu'on vient d'appuyer
- * sur « Arrêter » ferait passer un geste volontaire pour une panne.
+ * A requested stop is not a failure: showing "no code found" because "Stop" has just been pressed would
+ * make a deliberate gesture look like a breakdown.
  */
 export function scanOutcome(aborted: boolean): ScanOutcome {
 	return aborted ? 'stopped' : 'timeout';

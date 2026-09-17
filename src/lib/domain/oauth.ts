@@ -1,27 +1,25 @@
 /**
- * Connexion par fournisseur externe. Le code est complet pour les quatre fournisseurs, mais un
- * bouton n'apparait que si son identifiant est dans ENABLED_PROVIDERS : Supabase repond
- * « Unsupported provider » a un fournisseur qu'on n'a pas configure chez lui, et un bouton qui
- * echoue toujours est pire que pas de bouton du tout.
+ * Signing in through an external provider. The code is complete for all four providers, but a button only
+ * appears if its identifier is in ENABLED_PROVIDERS: Supabase answers "Unsupported provider" for a provider
+ * not configured on its side, and a button that always fails is worse than no button at all.
  *
- * Activer un fournisseur demande deux gestes, dans cet ordre :
- *  1. creer l'application OAuth chez le fournisseur, puis coller son identifiant et son secret dans
- *     Supabase (Authentication > Sign In / Providers). L'URL de retour a declarer chez le
- *     fournisseur est https://<ref>.supabase.co/auth/v1/callback ;
- *  2. ajouter son identifiant a ENABLED_PROVIDERS ici, puis redeployer.
+ * Enabling a provider takes two steps, in this order:
+ *  1. create the OAuth application at the provider, then paste its identifier and secret into Supabase
+ *     (Authentication > Sign In / Providers). The return URL to declare at the provider is
+ *     https://<ref>.supabase.co/auth/v1/callback;
+ *  2. add its identifier to ENABLED_PROVIDERS here, then redeploy.
  *
- * Microsoft s'appelle « azure » cote Supabase, c'est son ancien nom de produit.
+ * Microsoft is called "azure" on the Supabase side, which is its former product name.
  */
 export type ProviderId = 'google' | 'apple' | 'facebook' | 'azure';
 
 export interface OAuthProvider {
 	id: ProviderId;
-	/** Nom de marque, jamais traduit : « Google » s'ecrit Google dans toutes les langues. */
+	/** Brand name, never translated: "Google" is written Google in every language. */
 	label: string;
 	/**
-	 * Portees demandees en plus de celles par defaut. Microsoft ne renvoie pas l'adresse e-mail
-	 * sans email, et sans adresse le declencheur qui cree le profil n'a rien pour nommer la
-	 * personne.
+	 * Scopes requested on top of the default ones. Microsoft does not return the email address without
+	 * email, and with no address the trigger creating the profile has nothing to name the person with.
 	 */
 	scopes?: string;
 }
@@ -34,8 +32,8 @@ export const OAUTH_PROVIDERS: OAuthProvider[] = [
 ];
 
 /**
- * Les fournisseurs reellement configures dans Supabase. Vide tant qu'aucune application OAuth
- * n'existe : l'ecran de connexion n'affiche alors que le formulaire e-mail, sans separateur.
+ * The providers actually configured in Supabase. Empty while no OAuth application exists: the sign-in screen
+ * then shows only the email form, with no separator.
  */
 export const ENABLED_PROVIDERS: ProviderId[] = [];
 

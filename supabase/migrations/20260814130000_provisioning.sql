@@ -1,9 +1,9 @@
--- Provisionnement du foyer d'un nouveau compte.
+-- Provisioning a new account's household.
 --
--- Le faire en deux appels depuis le client (insert household puis insert household_members)
--- laisserait une fenetre ou deux appareils du meme compte creent chacun leur foyer. On le fait
--- donc en une transaction, cote base, et on le rend idempotent : un compte deja rattache a un
--- foyer recupere simplement son identifiant.
+-- Doing it in two calls from the client (insert household then insert household_members) would leave a window
+-- where two devices of the same account each create their own household. So we do it in one transaction, on
+-- the database side, and we make it idempotent: an account already attached to a household simply gets its
+-- identifier back.
 
 create or replace function public.ensure_household(household_name text default 'Ma maison')
 returns uuid
@@ -36,8 +36,8 @@ begin
   insert into public.household_members (household_id, user_id, role)
   values (created, (select auth.uid()), 'owner');
 
-  -- Rayons de depart, dans l'ordre d'une grande surface classique. Sans eux, un nouveau compte
-  -- ouvre une application vide ou rien ne peut etre range.
+  -- Starting aisles, in the order of a classic supermarket. Without them, a new account opens an empty
+  -- application where nothing can be filed.
   insert into public.aisles (household_id, name, emoji, position)
   values
     (created, 'Fruits & Légumes', '🥬', 0),

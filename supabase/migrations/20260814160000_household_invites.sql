@@ -1,8 +1,8 @@
--- Rejoindre le foyer de quelqu'un.
+-- Joining somebody's household.
 --
--- Sans cela, chaque compte vit dans son propre foyer et l'application n'est partagee avec
--- personne : c'est pourtant tout son objet. Le partage passe par un code court, lu a voix haute
--- ou envoye par message, valable un temps limite.
+-- Without this, each account lives in its own household and the application is shared with nobody: yet that
+-- is its whole object. Sharing goes through a short code, read aloud or sent by message, valid for a limited
+-- time.
 
 create table public.household_invites (
   code text primary key,
@@ -16,8 +16,8 @@ create table public.household_invites (
 
 alter table public.household_invites enable row level security;
 
--- Un membre voit et retire les invitations de son foyer. Personne ne peut lister les invitations
--- des autres : le code est le secret, il ne doit pas etre enumerable.
+-- A member sees and removes their household's invitations. Nobody can list other people's invitations: the
+-- code is the secret, it must not be enumerable.
 create policy household_invites_select on public.household_invites for select
   using (public.is_household_member(household_id));
 create policy household_invites_delete on public.household_invites for delete
@@ -44,7 +44,7 @@ begin
     raise exception 'aucun foyer' using errcode = '42501';
   end if;
 
-  -- Alphabet sans I, O, 0 ni 1 : le code est souvent dicte a l oral ou recopie a la main.
+  -- Alphabet with no I, O, 0 or 1: the code is often dictated aloud or copied by hand.
   loop
     generated := (
       select string_agg(substr('ABCDEFGHJKLMNPQRSTUVWXYZ23456789',
@@ -65,9 +65,9 @@ revoke all on function public.create_invite() from public;
 grant execute on function public.create_invite() to authenticated;
 
 /*
- * Consommer une invitation. Verrouille la ligne pour que deux appareils qui saisissent le meme
- * code au meme instant ne rattachent pas deux fois la personne, et refuse un code expire ou deja
- * utilise sans dire lequel des deux : un code invalide reste un code invalide.
+ * Consuming an invitation. Locks the row so that two devices entering the same code at the same instant do
+ * not attach the person twice, and refuses an expired or already used code without saying which of the two:
+ * an invalid code stays an invalid code.
  */
 create or replace function public.redeem_invite(invite_code text)
 returns uuid
@@ -100,9 +100,9 @@ begin
     return invite.household_id;
   end if;
 
-  -- Un compte appartient a un seul foyer : celui qu on lui a cree a l inscription n a plus lieu
-  -- d etre s il rejoint une famille. On ne le supprime que s il est reste vide, sinon on refuse
-  -- plutot que d effacer des courses que quelqu un a saisies.
+  -- An account belongs to a single household: the one created for it at sign-up has no reason to exist any
+  -- more if it joins a family. We only delete it if it has stayed empty, otherwise we refuse rather than
+  -- erase shopping somebody has entered.
   select household_id into previous
   from public.household_members
   where user_id = (select auth.uid())
@@ -138,9 +138,9 @@ revoke all on function public.redeem_invite(text) from public;
 grant execute on function public.redeem_invite(text) to authenticated;
 
 /*
- * Quitter un foyer. La policy de suppression laisse un membre retirer n importe qui du foyer ;
- * on garde ce comportement, mais on refuse de retirer la derniere personne : un foyer sans membre
- * deviendrait invisible et ses donnees inaccessibles a tous.
+ * Leaving a household. The delete policy lets a member remove anybody from the household; we keep that
+ * behaviour, but we refuse to remove the last person: a household with no member would become invisible and
+ * its data inaccessible to everyone.
  */
 create or replace function public.leave_household(target uuid)
 returns void

@@ -1,12 +1,11 @@
 import { test, expect } from './fixtures';
 
 /**
- * Les deux chemins vers un code — la caméra, une image déjà sur l'appareil — sont côte à côte.
- * L'un portait une marge haute que l'autre n'avait pas, et des icônes d'une autre taille : sur un
- * écran étroit, le décalage se voyait tout de suite.
+ * Both paths to a code — the camera, an image already on the device — sit side by side. One carried a top
+ * margin the other did not have, and icons of another size: on a narrow screen, the offset showed at once.
  *
- * Le test mesure la géométrie réelle plutôt que les classes : c'est le décalage qui se voit, pas
- * la feuille de style.
+ * The test measures the real geometry rather than the classes: it is the offset that shows, not the
+ * stylesheet.
  */
 test('les deux boutons de code sont alignés sur mobile', async ({ signedInPage: page }) => {
 	await page.setViewportSize({ width: 375, height: 812 });
@@ -16,21 +15,21 @@ test('les deux boutons de code sont alignés sur mobile', async ({ signedInPage:
 	const scan = page.getByTestId('scan-start');
 	const image = page.getByTestId('import-code');
 
-	// Sans caméra, le bouton de scan n'existe pas : il n'y a alors rien à aligner.
+	// With no camera, the scan button does not exist: there is then nothing to align.
 	await expect(image).toBeVisible();
 	if ((await scan.count()) === 0) test.skip();
 
-	// Les polices décident du repli des libellés, donc de la hauteur des boutons : mesurer avant
-	// qu'elles soient chargées donne une géométrie qui n'est celle de personne.
+	// The fonts decide how the labels wrap, and therefore the height of the buttons: measuring before they
+	// are loaded gives a geometry that is nobody's.
 	await page.evaluate(() => document.fonts.ready);
 
 	/**
-	 * Le formulaire s'ouvre en glissant : mesuré au milieu de l'animation, tout est décalé. On
-	 * relit jusqu'à ce que la géométrie tienne — un vrai désalignement, lui, ne se résorbe pas.
+	 * The form opens by sliding: measured in the middle of the animation, everything is offset. We read again
+	 * until the geometry holds — a real misalignment, for its part, does not settle.
 	 *
-	 * Selon la langue et la taille du texte, la rangée tient sur une ligne ou se replie. Les deux
-	 * cas sont bons ; ce qui ne l'est pas, c'est le décalage de quelques pixels qu'on avait — côte
-	 * à côte, même hauteur et même sommet ; l'un sous l'autre, même bord gauche.
+	 * Depending on the language and the text size, the row fits on one line or wraps. Both cases are fine;
+	 * what is not is the few-pixel offset we had — side by side, same height and same top; one under the
+	 * other, same left edge.
 	 */
 	await expect
 		.poll(

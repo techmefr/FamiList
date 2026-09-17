@@ -17,8 +17,8 @@
 	let erreur = $state('');
 
 	/**
-	 * Les champs se remplissent de ce que la synchronisation rapporte, puis se taisent : une mise à
-	 * jour venue du serveur ne doit pas effacer ce qu'on est en train d'écrire.
+	 * The fields fill with what the sync brings back, then keep quiet: an update coming from the server must
+	 * not erase what is being written.
 	 */
 	$effect(() => {
 		if (prenom === null && moi) {
@@ -31,10 +31,10 @@
 	const compose = (p: string, n: string) => `${p.trim()} ${n.trim()}`.trim();
 
 	/**
-	 * Le nom affiché suit le prénom et le nom tant qu'il n'a pas été personnalisé — c'est le cas le
-	 * plus courant, et le retaper une troisième fois n'apprendrait rien à personne. Dès qu'il porte
-	 * autre chose (« Mamie », « Lulu »), il ne bouge plus : ce surnom-là est un choix, pas un
-	 * brouillon à écraser à la frappe suivante.
+	 * The display name follows the first and last name while it has not been customised — that is the most
+	 * common case, and typing it a third time would teach nobody anything. As soon as it carries something
+	 * else ("Granny", "Lulu"), it stops moving: that nickname is a choice, not a draft to be overwritten at
+	 * the next keystroke.
 	 */
 	function poser(champ: 'prenom' | 'nom', valeur: string) {
 		const avant = compose(prenom ?? '', nom ?? '');
@@ -46,8 +46,8 @@
 		if (!perso) affiche = compose(prenom ?? '', nom ?? '');
 	}
 
-	// Tant que le compte n'est pas identifié, on ne sait pas quel profil écrire : les champs
-	// restent fermés plutôt que d'accepter une frappe qui partirait dans le vide.
+	// While the account is not identified, we do not know which profile to write: the fields stay closed
+	// rather than accept a keystroke that would go nowhere.
 	const modifie = $derived(
 		!!moi &&
 			(affiche ?? '').trim().length > 0 &&
@@ -87,10 +87,10 @@
 </script>
 
 <!--
-	Le nom se pose à l'inscription, et jusqu'ici plus rien ne permettait d'y revenir : une faute de
-	frappe restait affichée à tout le foyer. Le prénom et le nom, eux, ne se demandent qu'ici — pas
-	à l'inscription, qui reste courte. Les initiales de la pastille se recalculent depuis ces
-	champs, elles n'ont rien à saisir de leur côté.
+	The name is set at sign-up, and until now nothing allowed coming back to it: a typo stayed on display for
+	the whole household. The first and last name, for their part, are only asked for here — not at sign-up,
+	which stays short. The badge initials are computed again from these fields, they have nothing to enter on
+	their own side.
 -->
 <form onsubmit={enregistrer} class="flex flex-wrap items-end gap-3" data-test-id="name-form">
 	<div class="min-w-0 flex-1 basis-40">

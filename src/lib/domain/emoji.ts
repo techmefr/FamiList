@@ -1,17 +1,16 @@
 /**
- * La palette proposée pour illustrer une liste ou un rayon.
+ * The palette offered to illustrate a list or an aisle.
  *
- * Une liste choisie, pas le jeu complet d'Unicode, mais assez large pour qu'un foyer y retrouve ce
- * qu'il range vraiment : les courses ne sont qu'une partie de la vie domestique, et une liste
- * « pharmacie » ou « rentrée des classes » a droit à son dessin. Ce qui rendait autrefois une
- * grande grille impraticable — l'absence de recherche — n'existe plus : `searchEmojis` trie la
- * palette dès la première lettre.
+ * A chosen list, not the full Unicode set, but wide enough for a household to find what it really files
+ * away: shopping is only part of domestic life, and a "pharmacy" or "back to school" list deserves its
+ * drawing. What once made a large grid impractical — the absence of search — is gone: `searchEmojis`
+ * filters the palette from the first letter.
  *
- * Ce qui borne la palette aujourd'hui, c'est la traduction : chaque entrée porte une clé qu'il faut
- * écrire dans les dix langues de l'application, faute de quoi le dessin reste introuvable pour qui
- * le cherche dans la sienne. Mieux vaut cent dessins nommés partout que trois mille muets.
+ * What bounds the palette today is translation: each entry carries a key that has to be written in the
+ * application's ten languages, without which the drawing stays unfindable for whoever looks for it in
+ * theirs. Better a hundred drawings named everywhere than three thousand mute ones.
  *
- * Et pour ce que la palette n'a pas : `customEmoji` accepte un caractère collé dans la recherche.
+ * And for what the palette does not have: `customEmoji` accepts a character pasted into the search.
  */
 export type EmojiGroup =
 	| 'fruits'
@@ -200,8 +199,8 @@ export const EMOJIS: EmojiEntry[] = [
 ];
 
 /**
- * Rend la recherche indifférente aux accents et à la casse : « pates » doit trouver « Pâtes »,
- * parce que personne ne pose les accents dans un champ de recherche.
+ * Makes the search indifferent to accents and case: "pates" must find "Pâtes", because nobody types
+ * accents into a search field.
  */
 export function foldForSearch(value: string): string {
 	return value
@@ -212,11 +211,11 @@ export function foldForSearch(value: string): string {
 }
 
 /**
- * Les emoji dont le nom contient la recherche. Une recherche vide rend toute la palette, ce qui
- * est le bon comportement : la grille est le mode normal, la recherche un raccourci.
+ * The emojis whose name contains the search. An empty search returns the whole palette, which is the right
+ * behaviour: the grid is the normal mode, the search a shortcut.
  *
- * `name` est fourni par l'appelant plutôt que lu ici : le domaine ne connaît pas la langue
- * affichée, et cette fonction reste testable sans monter l'i18n.
+ * `name` is supplied by the caller rather than read here: the domain does not know the displayed language,
+ * and this function stays testable without bringing up the i18n.
  */
 export function searchEmojis(
 	query: string,
@@ -226,8 +225,8 @@ export function searchEmojis(
 	const needle = foldForSearch(query);
 	if (!needle) return entries;
 
-	// Le caractère lui-même compte comme une correspondance : coller un emoji dans la recherche
-	// pour le retrouver dans la grille est un geste naturel.
+	// The character itself counts as a match: pasting an emoji into the search to find it in the grid is a
+	// natural gesture.
 	return entries.filter(
 		(entry) => entry.char === query.trim() || foldForSearch(name(entry)).includes(needle)
 	);
@@ -236,11 +235,11 @@ export function searchEmojis(
 const GRAPHEMES = new Intl.Segmenter(undefined, { granularity: 'grapheme' });
 
 /**
- * Le caractère collé dans la recherche, quand la palette ne le propose pas : elle suggère, elle
- * n'enferme pas, et un foyer qui tient à son propre dessin ne dépend pas de nos choix.
+ * The character pasted into the search, when the palette does not offer it: it suggests, it does not shut
+ * you in, and a household attached to its own drawing does not depend on our choices.
  *
- * On exige un seul groupe de graphèmes — un emoji vaut souvent plusieurs points de code — et on
- * écarte lettres et chiffres, sans quoi taper le début d'un nom proposerait la lettre elle-même.
+ * We require a single grapheme cluster — an emoji is often several code points — and we exclude letters
+ * and digits, without which typing the start of a name would offer the letter itself.
  */
 export function customEmoji(query: string, entries: EmojiEntry[] = EMOJIS): string | null {
 	const candidate = query.trim();

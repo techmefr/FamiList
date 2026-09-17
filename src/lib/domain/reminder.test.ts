@@ -16,7 +16,7 @@ describe('isEventDate', () => {
 		expect(isEventDate('2026-12-31')).toBe(true);
 	});
 
-	// Le sondage du chat écrit dans le même champ, et son libellé n'est pas une date ISO.
+	// The chat poll writes into the same field, and its label is not an ISO date.
 	it('refuse ce qui n’est pas un jour', () => {
 		expect(isEventDate('samedi prochain')).toBe(false);
 		expect(isEventDate('14/02/2026')).toBe(false);
@@ -54,7 +54,7 @@ describe('reminderAt', () => {
 		expect(at?.getDate()).toBe(28);
 	});
 
-	// Programmer dans le passé ne déclenche rien : autant ne rien rendre et le dire.
+	// Scheduling in the past triggers nothing: better return nothing and say so.
 	it('ne rend rien quand la veille au soir est passée', () => {
 		expect(reminderAt('2026-02-14', le('2026-02-13T19:00:00'))).toBeNull();
 		expect(reminderAt('2026-02-14', le('2026-02-14T08:00:00'))).toBeNull();
@@ -123,7 +123,7 @@ describe('reminderPlans', () => {
 		expect(reminderPlans([liste({ total: 3, done: 3 })], maintenant)).toHaveLength(0);
 	});
 
-	// C'est justement la liste qu'on n'a pas encore remplie qu'il faut rappeler.
+	// It is precisely the list not filled in yet that has to be a reminder.
 	it('garde une liste vide', () => {
 		expect(reminderPlans([liste({ total: 0, done: 0 })], maintenant)).toHaveLength(1);
 	});
@@ -157,7 +157,7 @@ describe('reminderStatus', () => {
 		expect(at?.getDate()).toBe(13);
 	});
 
-	// Date encore devant nous, mais veille au soir dépassée : on l'écrit plutôt que de mentir.
+	// Date still ahead of us, but the evening before is past: we write it rather than lie.
 	it('avoue qu’il est trop tard pour un rappel', () => {
 		expect(reminderStatus('2026-02-14', le('2026-02-13T20:00:00')).status).toBe('late');
 		expect(reminderStatus('2026-02-14', le('2026-02-14T08:00:00')).status).toBe('late');

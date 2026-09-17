@@ -28,9 +28,8 @@
 	} = $props();
 
 	/**
-	 * L'appui long ouvre la fiche. C'est le geste attendu sur téléphone, mais il n'existe pas au
-	 * clavier ni au lecteur d'écran : le bouton crayon fait la même chose et reste le chemin
-	 * annoncé.
+	 * The long press opens the sheet. It is the expected gesture on a phone, but it does not exist for the
+	 * keyboard or the screen reader: the pencil button does the same thing and stays the announced path.
 	 */
 	function editer() {
 		feedback.play('tap');
@@ -40,25 +39,24 @@
 	const inputId = $derived(`item-${item.id}`);
 
 	/**
-	 * Une unité inconnue s'affiche telle qu'elle a été écrite : un article saisi « douzaine » avant
-	 * que le champ devienne une liste doit rester lisible, pas être remplacé par une unité voisine.
+	 * An unknown unit is shown exactly as it was written: an item typed as "dozen" before the field became a
+	 * list must stay readable, not be replaced by a neighbouring unit.
 	 */
 	const unitLabel = $derived.by(() => {
 		const key = unitKey(item.unit);
 		return key ? t(key) : item.unit;
 	});
 
-	/** `item.checked` est encore l'état d'avant : cocher monte, décocher descend. */
+	/** `item.checked` is still the previous state: ticking goes up, unticking goes down. */
 	function toggle() {
 		feedback.play(item.checked ? 'uncheck' : 'check');
 		data.toggleItem(item.id);
 	}
 
 	/**
-	 * Ce qui est en train d'être tapé, tant que le champ n'a pas été quitté. `null` veut dire « rien
-	 * en cours » : le champ affiche alors le prix enregistré, remis en forme dans la langue lue.
-	 * Sans cet état, chaque frappe serait réécrite par le formatage et le champ deviendrait
-	 * intapable.
+	 * What is being typed, until the field is left. `null` means "nothing in progress": the field then shows
+	 * the saved price, reformatted in the language being read. Without this state, every keystroke would be
+	 * rewritten by the formatting and the field would become untypable.
 	 */
 	let draft = $state<string | null>(null);
 
@@ -72,11 +70,11 @@
 	);
 
 	/**
-	 * Le prix du même produit ailleurs, et seulement s'il est plus bas que celui d'ici.
+	 * The price of the same product elsewhere, and only if it is lower than here.
 	 *
-	 * C'est toute la fonctionnalité en une ligne, posée au moment où elle sert : le produit est dans
-	 * la main, devant le rayon. Rien à afficher quand on est déjà au moins cher — une ligne qui dit
-	 * « vous avez bien fait » occupe la place sans rien apprendre.
+	 * That is the whole feature in one line, placed at the moment it serves: the product is in your hand, in
+	 * front of the aisle. Nothing to show when you are already at the cheapest — a line saying "you did
+	 * well" takes the space without teaching anything.
 	 */
 	const cheaper = $derived.by(() => {
 		if (!item.checked) return null;
@@ -96,9 +94,9 @@
 	data-test-class="item-row"
 >
 	<!--
-		La poignée. Elle double les flèches sans les remplacer : celles-ci restent le chemin du
-		clavier, elle est le geste du pouce. Ni focalisable ni annoncée, pour la même raison —
-		atteindre au clavier une poignée dont on ne peut rien faire au clavier serait un piège.
+		The handle. It doubles the arrows without replacing them: those stay the keyboard's path, this is the
+		thumb's gesture. Neither focusable nor announced, for the same reason — reaching by keyboard a handle you
+		can do nothing with by keyboard would be a trap.
 	-->
 	<span
 		{...grip}
@@ -110,8 +108,8 @@
 	</span>
 
 	<!--
-		La case est dans l'étiquette, pas à côté : seule, elle offrait une cible de 28 px là où il en
-		faut 44. Englobée, c'est toute la ligne de texte qui coche, et la cible dépasse largement.
+		The checkbox is inside the label, not beside it: alone, it offered a 28px target where 44 are needed.
+		Wrapped, the whole text line ticks, and the target is well over.
 	-->
 	<label
 		for={inputId}
@@ -202,14 +200,14 @@
 	</div>
 
 	<!--
-		Le prix, sur un article coché seulement.
+		The price, on a ticked item only.
 
-		C'est le seul moment où quelqu'un l'a sous les yeux : l'étiquette est devant lui et le produit
-		part dans le chariot. Le demander à l'ajout reviendrait à le faire deviner la veille sur le
-		canapé, et le demander après la course obligerait à rouvrir chaque ligne de mémoire.
+		It is the only moment somebody has it in front of them: the label is there and the product is going into
+		the trolley. Asking at add time would mean guessing the day before on the sofa, and asking after the
+		trip would mean reopening every row from memory.
 
-		Il prend toute la largeur sous la ligne, plutôt qu'une case coincée entre les boutons : un
-		champ de saisie à côté de cinq cibles de 44 px se touche par erreur à chaque course.
+		It takes the full width under the row, rather than a box squeezed between the buttons: an input field
+		next to five 44px targets is touched by mistake on every shopping trip.
 	-->
 	{#if item.checked}
 		<div class="flex w-full flex-wrap items-center gap-x-3 gap-y-1 ps-9">

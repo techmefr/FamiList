@@ -1,11 +1,11 @@
 import { test, expect } from './fixtures';
 
 /**
- * La même liste type revient chaque semaine : la dupliquer évite de la retaper. Le test vérifie ce
- * que l'utilisateur voit — une deuxième carte, numérotée, à côté de l'originale qui reste intacte.
+ * The same standard list comes back every week: duplicating it saves typing it again. The test checks what
+ * the user sees — a second card, numbered, next to the original which stays intact.
  *
- * La liste porte un nom daté, comme les autres tests de listes : elle reste derrière sans jamais
- * rendre un sélecteur ambigu au passage suivant.
+ * The list carries a dated name, like the other list tests: it stays behind without ever making a selector
+ * ambiguous on the next run.
  */
 test('dupliquer une liste depuis sa carte', async ({ signedInPage: page }) => {
 	const nom = `Courses e2e ${Date.now()}`;
@@ -24,6 +24,6 @@ test('dupliquer une liste depuis sa carte', async ({ signedInPage: page }) => {
 	const copie = page.locator('[data-test-class="list-card"]').filter({ hasText: `${nom} (2)` });
 	await expect(copie).toBeVisible();
 
-	// L'originale reste : dupliquer n'est pas renommer.
+	// The original stays: duplicating is not renaming.
 	await expect(carte).toHaveCount(2);
 });

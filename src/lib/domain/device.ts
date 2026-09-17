@@ -1,13 +1,13 @@
 /**
- * Reconnaître un appareil dans une liste de sessions.
+ * Recognising a device in a list of sessions.
  *
- * La question posée devant cette liste est toujours la même : « laquelle est ma tablette ? ». Un
- * en-tête `User-Agent` brut n'y répond pas — il fait deux cents caractères et cite trois
- * navigateurs qui n'y sont pour rien. On en tire deux mots.
+ * The question asked in front of that list is always the same: "which one is my tablet?". A raw `User-Agent`
+ * header does not answer it — it is two hundred characters long and names three browsers that have nothing
+ * to do with it. We pull two words out of it.
  *
- * L'exercice est notoirement approximatif : les navigateurs se déclarent les uns les autres depuis
- * trente ans, et les versions récentes mentent de plus en plus. On vise donc « assez juste pour
- * reconnaître le sien parmi trois », pas l'exactitude.
+ * The exercise is notoriously approximate: browsers have been declaring themselves as one another for
+ * thirty years, and recent versions lie more and more. So we aim for "right enough to recognise your own
+ * among three", not for accuracy.
  */
 
 export interface DeviceLabel {
@@ -15,7 +15,7 @@ export interface DeviceLabel {
 	platform: string;
 }
 
-/** L'ordre compte : Edge se déclare Chrome, Chrome se déclare Safari. Le plus précis d'abord. */
+/** Order matters: Edge declares itself Chrome, Chrome declares itself Safari. Most precise first. */
 const BROWSERS: [RegExp, string][] = [
 	[/\bEdgA?\//, 'Edge'],
 	[/\bOPR\/|\bOpera\//, 'Opera'],
@@ -35,7 +35,7 @@ const PLATFORMS: [RegExp, string][] = [
 	[/\bLinux\b/, 'Linux']
 ];
 
-/** L'application installée se signale elle-même : inutile de deviner son moteur de rendu. */
+/** The installed application reports itself: no need to guess its rendering engine. */
 const NATIVE = /\bFamiList\b|\bCapacitor\b/;
 
 function match(pairs: [RegExp, string][], agent: string): string {
@@ -43,10 +43,10 @@ function match(pairs: [RegExp, string][], agent: string): string {
 }
 
 /**
- * Le navigateur et le système, ou des chaînes vides quand on ne sait pas.
+ * The browser and the system, or empty strings when we do not know.
  *
- * Ne rien inventer est important ici : afficher « Chrome sur Windows » pour une session qu'on n'a
- * pas su lire ferait fermer la mauvaise, ou garder ouverte celle qu'on cherchait.
+ * Inventing nothing matters here: showing "Chrome on Windows" for a session we failed to read would get the
+ * wrong one closed, or keep open the one being looked for.
  */
 export function deviceLabel(userAgent: string | null | undefined): DeviceLabel {
 	const agent = (userAgent ?? '').trim();
@@ -59,7 +59,7 @@ export function deviceLabel(userAgent: string | null | undefined): DeviceLabel {
 	return { browser: match(BROWSERS, agent), platform };
 }
 
-/** Les deux morceaux en une ligne, avec le mot de liaison fourni par la langue. */
+/** The two pieces on one line, with the joining word supplied by the language. */
 export function deviceText(label: DeviceLabel, on: string, unknown: string): string {
 	if (label.browser && label.platform) return `${label.browser} ${on} ${label.platform}`;
 

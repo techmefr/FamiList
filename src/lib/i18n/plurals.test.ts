@@ -11,11 +11,11 @@ import zh from './locales/zh.json';
 import mg from './locales/mg.json';
 
 /**
- * Les formes plurielles sont le seul endroit où une traduction peut être présente et pourtant
- * inutilisable : la catégorie que réclame la langue — `one` en malgache, `zero` en arabe — n'a
- * rien à voir avec celles du français, et une catégorie absente retombe sur `other`, une phrase
- * juste au singulier près. Dans l'autre sens, une catégorie que la langue ignore (`one` en
- * chinois) ne sera jamais lue : c'est du texte mort qu'on croit avoir traduit.
+ * Plural forms are the only place where a translation can be present and yet unusable: the category the
+ * language demands — `one` in Malagasy, `zero` in Arabic — has nothing to do with French's, and a missing
+ * category falls back on `other`, a sentence that is right except in the singular. The other way round, a
+ * category the language never uses (`one` in Chinese) will never be read: it is dead text we think we have
+ * translated.
  */
 const MESSAGES: Record<string, unknown> = { fr, en, es, de, it: italiano, pt, ru, ar, zh, mg };
 
@@ -23,7 +23,7 @@ const CATEGORIES: Intl.LDMLPluralRule[] = ['zero', 'one', 'two', 'few', 'many', 
 
 type Node = Record<string, unknown>;
 
-/** Un nœud pluriel : rien que des chaînes, sous des noms de catégories CLDR. */
+/** A plural node: nothing but strings, under CLDR category names. */
 function isPluralNode(value: unknown): value is Record<string, string> {
 	if (typeof value !== 'object' || value === null) return false;
 
@@ -80,13 +80,13 @@ describe('formes plurielles', () => {
 
 			const written = Object.keys(node as Record<string, string>);
 
-			// `other` est le filet : c'est sur lui que retombe toute catégorie absente.
+			// `other` is the net: it is what any missing category falls back on.
 			expect(written).toContain('other');
 
-			// La catégorie de 1, celle qu'une liste de courses affiche le plus souvent.
+			// The category of 1, the one a shopping list shows most often.
 			expect(written).toContain(new Intl.PluralRules(code).select(1));
 
-			// Aucune catégorie que la langue n'emploie jamais : elle ne serait jamais lue.
+			// No category the language never uses: it would never be read.
 			expect(
 				written.filter((category) => !supported.includes(category as Intl.LDMLPluralRule))
 			).toEqual([]);

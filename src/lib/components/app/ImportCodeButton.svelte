@@ -6,10 +6,9 @@
 	import { Camera, ImageUp, LoaderCircle } from '@lucide/svelte';
 
 	/**
-	 * Deux entrées pour un seul décodeur. En mode photo, `capture` fait ouvrir l'appareil photo
-	 * directement : sans cet attribut, le téléphone proposait un choix entre galerie et caméra sous
-	 * un libellé qui ne parlait que d'image, et personne ne devinait qu'on pouvait photographier sa
-	 * carte quand le scan en direct n'y arrivait pas.
+	 * Two entrances for a single decoder. In photo mode, `capture` opens the camera directly: without that
+	 * attribute, the phone offered a choice between gallery and camera under a label that only spoke of
+	 * images, and nobody guessed they could photograph their card when the live scan could not manage it.
 	 */
 	let {
 		onScanned,
@@ -50,15 +49,14 @@
 </script>
 
 <!--
-	Enregistrer une carte depuis une image plutôt que devant la caméra.
+	Saving a card from an image rather than in front of the camera.
 
-	C'est souvent la seule voie praticable sur un ordinateur : la carte est dans un courriel, dans
-	une photo prise il y a un mois, ou dans l'application de l'enseigne. La présenter à la webcam
-	d'un portable, à l'envers et à bout de bras, ne marche pas — et c'est justement devant un
-	ordinateur qu'on s'installe pour enregistrer une pile de cartes d'un coup.
+	It is often the only workable route on a computer: the card is in an email, in a photo taken a month ago,
+	or in the retailer's application. Presenting it to a laptop webcam, upside down and at arm's length, does
+	not work — and a computer is precisely where you sit down to save a stack of cards in one go.
 
-	Sur téléphone, la même mécanique sert d'issue au scan en direct : une photo est fixe, nette et
-	relue plusieurs fois, là où le flux vidéo se bat contre le reflet de l'écran qui porte la carte.
+	On a phone, the same mechanism serves as the live scan's way out: a photo is still, sharp and read several
+	times, where the video stream fights the reflection of the screen carrying the card.
 -->
 <Button
 	variant="outline"
@@ -88,7 +86,7 @@
 	class="sr-only"
 />
 
-<!-- Pleine largeur : le message prend sa propre ligne au lieu d'étirer un seul bouton de la rangée. -->
+<!-- Full width: the message takes its own line instead of stretching a single button of the row. -->
 {#if erreur}
 	<p class="text-destructive text-caption w-full" role="alert" data-test-id="import-code-error">
 		{erreur}

@@ -17,11 +17,11 @@
 </script>
 
 <!--
-	Un écran vide, et ce qu'on peut y faire.
+	An empty screen, and what can be done there.
 
-	Une phrase seule dans une page blanche se lit comme une panne. Le dessin dit que l'écran
-	fonctionne et qu'il n'y a simplement rien encore — c'est la différence entre « c'est cassé » et
-	« c'est à vous de jouer ». Il reste décoratif : la phrase porte tout le sens.
+	A sentence alone on a blank page reads as a breakdown. The drawing says the screen works and that there is
+	simply nothing yet — it is the difference between "this is broken" and "it is your turn". It stays
+	decorative: the sentence carries all the meaning.
 -->
 <div
 	class="flex flex-col items-center gap-4 py-10 text-center"

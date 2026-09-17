@@ -1,27 +1,27 @@
--- Le prix d'un produit, releve dans un magasin, a une date.
+-- The price of a product, noted in a shop, on a date.
 --
--- Rien ne gardait trace de ce qu'on paie. La valeur attendue est simple et tient en une phrase :
--- savoir que ce produit coute moins cher la-bas qu'ici. C'est une comparaison entre magasins, pas
--- une courbe : la table garde l'historique complet parce qu'un releve se perime, mais l'ecran ne
--- montre que le dernier prix connu de chaque magasin.
+-- Nothing kept track of what we pay. The expected value is simple and fits in one sentence: knowing that this
+-- product costs less over there than here. It is a comparison between shops, not a curve: the table keeps the
+-- full history because a reading goes stale, but the screen only shows each shop's last known price.
 --
--- Il n'y a pas de catalogue de produits : les articles sont tapes a la main, liste apres liste. Ce
--- qui identifie « le meme produit » d'une semaine sur l'autre est donc le slug de son nom, celui
--- que public.slugify() produit deja pour la colonne generee items.product_slug et pour l'ordre
--- appris dans shop_item_orders. On ne pointe volontairement pas items.id : un article est
--- consommable, il disparait avec sa liste, alors que le prix doit survivre a la course.
+-- There is no product catalogue: items are typed by hand, list after list. What identifies "the same product"
+-- from one week to the next is therefore the slug of its name, the one public.slugify() already produces for
+-- the generated column items.product_slug and for the order learnt in shop_item_orders. We deliberately do
+-- not point at items.id: an item is consumable, it disappears with its list, whereas the price must outlive
+-- the shopping trip.
 --
--- Le nom est conserve a cote du slug parce qu'un slug ne s'affiche pas, et qu'il ne se remonte pas
--- vers le nom d'origine.
+-- The name is kept beside the slug because a slug is not displayable, and because it cannot be traced back to
+-- the original name.
 --
--- La monnaie est portee par chaque ligne et non par le foyer : l'application se lit en dix langues,
--- un prix note en voyage doit garder la sienne, et l'affichage passe par Intl.NumberFormat cote
--- client. numeric(12, 2) et non un entier de centimes : la colonne items.qty est deja numeric, et
--- deux representations du meme genre de nombre dans la meme base se confondent tot ou tard.
+-- The currency is carried by each row and not by the household: the application reads in ten languages, a
+-- price noted while travelling must keep its own, and the display goes through Intl.NumberFormat on the
+-- client side. numeric(12, 2) and not an integer number of cents: the items.qty column is already numeric,
+-- and two representations of the same kind of number in the same database end up being confused sooner or
+-- later.
 --
--- recorded_at est ecrit par le client et non par defaut a now() : l'application est hors ligne
--- d'abord, et un prix saisi dans un magasin sans reseau part parfois plusieurs heures plus tard.
--- L'heure du releve est celle du magasin, pas celle de la synchronisation.
+-- recorded_at is written by the client and not defaulted to now(): the application is offline first, and a
+-- price entered in a shop with no network sometimes leaves several hours later. The time of the reading is
+-- the shop's, not the synchronisation's.
 create table public.item_prices (
   id uuid primary key default extensions.uuid_generate_v4(),
   household_id uuid not null references public.households on delete cascade,
@@ -35,22 +35,22 @@ create table public.item_prices (
   created_at timestamptz not null default now()
 );
 
--- L'ecran d'historique part toujours du foyer, puis d'un produit : c'est l'ordre de l'index.
+-- The history screen always starts from the household, then from a product: that is the index's order.
 create index item_prices_lookup_idx
   on public.item_prices (household_id, product_slug, shop_id, recorded_at desc);
 
 alter table public.item_prices enable row level security;
 
--- Comme toutes les tables du foyer. La double condition n'est pas redondante : le magasin porte
--- deja son foyer, et sans elle une ligne pourrait rattacher le prix a un magasin d'ailleurs.
+-- Like every household table. The double condition is not redundant: the shop already carries its household,
+-- and without it a row could attach the price to a shop from somewhere else.
 create policy item_prices_all on public.item_prices for all
   using (public.is_household_member(household_id) and public.can_access_shop(shop_id))
   with check (public.is_household_member(household_id) and public.can_access_shop(shop_id));
 
--- Les droits par defaut du schema couvrent deja les tables creees ensuite ; on les redit ici pour
--- que la table se suffise a elle-meme si ces defauts changent un jour.
+-- The schema's default privileges already cover tables created afterwards; we say it again here so that the
+-- table stands on its own if those defaults change one day.
 grant select, insert, update, delete on public.item_prices to authenticated;
 
--- Une personne releve un prix pendant que l'autre finit la liste : l'ecran d'historique doit le
--- voir sans attendre la prochaine ouverture, comme les articles.
+-- One person notes a price while the other finishes the list: the history screen must see it without waiting
+-- for the next opening, like the items.
 alter publication supabase_realtime add table public.item_prices;

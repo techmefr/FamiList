@@ -1,19 +1,18 @@
 /**
- * La capture jointe à un signalement de bug n'a besoin que d'être lisible, pas de rester à sa
- * résolution d'origine : une photo d'écran de téléphone pèse plusieurs mégaoctets, la migration
- * `bug_reports` plafonne la colonne à 1,5 Mo de texte base64.
+ * The capture attached to a bug report only needs to be readable, not to stay at its original resolution: a
+ * phone screenshot weighs several megabytes, and the `bug_reports` migration caps the column at 1.5 MB of
+ * base64 text.
  */
 
-/** Au-delà, l'image la plus longue est redimensionnée avant l'encodage. */
+/** Beyond this, the longest side of the image is resized before encoding. */
 export const SCREENSHOT_MAX_DIM = 1280;
 
-/** Au-delà, on refuse le fichier avant même de le décoder : ce n'est pas une capture d'écran. */
+/** Beyond this, we refuse the file before even decoding it: that is not a screenshot. */
 export const SCREENSHOT_MAX_BYTES = 15 * 1024 * 1024;
 
 /**
- * Les dimensions à donner à une image pour qu'elle tienne dans `maxDim` sur son plus grand côté,
- * sans la déformer. Une image déjà plus petite ne doit pas être agrandie — mieux vaut la garder
- * telle quelle qu'introduire du flou.
+ * The dimensions to give an image so that it fits within `maxDim` on its longest side, without distorting
+ * it. An image already smaller must not be enlarged — better keep it as it is than introduce blur.
  */
 export function fitWithin(width: number, height: number, maxDim: number) {
   const scale = Math.min(1, maxDim / Math.max(width, height));

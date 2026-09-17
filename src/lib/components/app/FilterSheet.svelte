@@ -12,7 +12,7 @@
 
 	let dialog = $state<HTMLDialogElement | null>(null);
 
-	/** Même contrat que les autres feuilles : c'est le navigateur qui tient l'état ouvert. */
+	/** Same contract as the other sheets: it is the browser that holds the open state. */
 	export function show() {
 		dialog?.showModal();
 	}

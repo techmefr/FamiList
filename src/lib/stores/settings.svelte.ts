@@ -24,7 +24,7 @@ export { HANDS, type Hand } from '$domain/hand';
 
 const THEMES: Theme[] = ['light', 'dark', 'system'];
 
-/** Les colonnes d'apparence de `profiles`, dans la forme attendue par la base. */
+/** The appearance columns of `profiles`, in the shape the database expects. */
 export interface AppearanceRow {
 	theme: string;
 	accent_id: string;
@@ -51,21 +51,20 @@ class Settings {
 	hasSeenTour = $state(false);
 
 	/**
-	 * Le parcours d'accueil se joue avant qu'un compte existe : ce témoin reste donc sur
-	 * l'appareil et ne part pas en base, contrairement à celui du tour guidé.
+	 * The welcome journey plays before an account exists: this marker therefore stays on the device and
+	 * does not go to the database, unlike the guided tour's.
 	 */
 	hasSeenWelcome = $state(false);
 	#prefersDark = $state(false);
 	#prefersReducedMotion = $state(false);
 
 	/**
-	 * Horodatages de synchronisation. Volontairement hors de `$state` : l'effet qui enregistre les
-	 * préférences les lit, et les rendre réactifs le ferait se redéclencher lui-même en boucle.
+	 * Sync timestamps. Deliberately outside `$state`: the effect that saves the preferences reads them, and
+	 * making them reactive would have it re-trigger itself in a loop.
 	 *
-	 * `#syncedFor` retient à quel compte le dernier envoi a servi. Sans lui, impossible de
-	 * distinguer « je viens de régler ma taille pendant l'accueil, avant même d'avoir un compte »
-	 * — où c'est l'appareil qui a raison — de « j'ouvre l'application sur la tablette » — où c'est
-	 * la base qui a raison.
+	 * `#syncedFor` remembers which account the last send served. Without it, there is no telling "I have
+	 * just set my text size during the welcome, before even having an account" — where the device is right
+	 * — from "I am opening the application on the tablet" — where the database is right.
 	 */
 	#changedAt = 0;
 	#syncedAt = 0;
@@ -74,9 +73,9 @@ class Settings {
 	isDark = $derived(this.theme === 'dark' || (this.theme === 'system' && this.#prefersDark));
 
 	/**
-	 * Le seul endroit qui répond « est-ce qu'on anime ». Les transitions Svelte reçoivent une durée
-	 * calculée en JavaScript, le CSS a son propre garde-fou sur `data-motion` : les deux doivent
-	 * dire la même chose, donc partir de la même valeur.
+	 * The only place answering "do we animate". Svelte transitions receive a duration computed in
+	 * JavaScript, the CSS has its own guard on `data-motion`: the two must say the same thing, so they must
+	 * start from the same value.
 	 */
 	animates = $derived(animates(this.motion, this.#prefersReducedMotion));
 
@@ -100,7 +99,7 @@ class Settings {
 			if (typeof saved.syncedAt === 'number') this.#syncedAt = saved.syncedAt;
 			if (typeof saved.syncedFor === 'string') this.#syncedFor = saved.syncedFor;
 		} catch {
-			// préférences illisibles, on garde les valeurs par défaut
+			// unreadable preferences, we keep the defaults
 		}
 
 		const dark = matchMedia('(prefers-color-scheme: dark)');
@@ -126,7 +125,7 @@ class Settings {
 				root.dataset.motion = this.motion;
 				root.dataset.hand = this.hand;
 
-				// La barre de statut du système suit le thème choisi, pas celui de l'appareil.
+				// The system status bar follows the chosen theme, not the device's.
 				document
 					.querySelector('meta[name="theme-color"]')
 					?.setAttribute('content', this.isDark ? THEME_COLORS.dark : THEME_COLORS.light);
@@ -154,7 +153,7 @@ class Settings {
 		});
 	}
 
-	/** Toute modification venue de l'interface passe par ici, pour dater le changement. */
+	/** Every change coming from the interface goes through here, to date the change. */
 	#touch() {
 		this.#changedAt = Date.now();
 	}
@@ -220,12 +219,12 @@ class Settings {
 	}
 
 	/**
-	 * Qui a raison, l'appareil ou la base, quand ce compte s'ouvre ici.
+	 * Who is right, the device or the database, when this account opens here.
 	 *
-	 * L'appareil gagne dans deux cas : les réglages ont été touchés sans qu'aucun compte n'ait
-	 * jamais reçu d'envoi — c'est le parcours d'accueil, où l'on choisit sa taille avant de créer
-	 * son compte — ou bien ils ont changé depuis le dernier envoi réussi pour ce même compte, par
-	 * exemple hors réseau. Partout ailleurs, c'est la base : on arrive sur un nouvel appareil.
+	 * The device wins in two cases: the settings were touched without any account ever having received a
+	 * send — that is the welcome journey, where you pick your size before creating your account — or they
+	 * changed since the last successful send for this same account, offline for instance. Everywhere else,
+	 * it is the database: you are arriving on a new device.
 	 */
 	localWins(userId: string) {
 		if (this.#syncedFor === null) return this.#changedAt > 0;
@@ -249,9 +248,9 @@ class Settings {
 	}
 
 	/**
-	 * Applique ce que dit la base. Chaque valeur est revalidée : la contrainte SQL et la liste des
-	 * préréglages peuvent diverger le temps d'un déploiement, et une valeur inconnue doit laisser
-	 * la valeur par défaut plutôt que poser un `data-accent` que le CSS ne connaît pas.
+	 * Applies what the database says. Each value is revalidated: the SQL constraint and the list of presets
+	 * can diverge for the duration of a deployment, and an unknown value must leave the default in place
+	 * rather than set a `data-accent` the CSS does not know.
 	 */
 	adoptRemote(row: Partial<AppearanceRow>, userId: string) {
 		if (THEMES.includes(row.theme as Theme)) this.theme = row.theme as Theme;
@@ -274,8 +273,8 @@ class Settings {
 		this.#syncedAt = Date.now();
 		this.#changedAt = this.#syncedAt;
 
-		// L'effet ne surveille que les valeurs réactives : sans cette écriture, l'horodatage
-		// resterait en mémoire et le prochain démarrage renverrait tout une seconde fois.
+		// The effect only watches reactive values: without this write, the timestamp would stay in memory and
+		// the next start would send everything a second time.
 		this.persist();
 	}
 
@@ -298,7 +297,7 @@ class Settings {
 export const settings = new Settings();
 
 /**
- * Durée d'une transition Svelte, coupée net quand le mouvement est refusé. Passer 0 plutôt que de
- * retirer la directive garde le même code des deux côtés, et l'élément apparaît quand même.
+ * Duration of a Svelte transition, cut to nothing when motion is refused. Passing 0 rather than removing
+ * the directive keeps the same code on both sides, and the element still appears.
  */
 export const motionMs = (ms: number) => (settings.animates ? ms : 0);

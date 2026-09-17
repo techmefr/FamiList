@@ -114,8 +114,8 @@ describe('buildCrash', () => {
 		expect(crash?.message.length).toBe(500);
 	});
 
-	// Le motif des jetons longs attrape aussi une suite de lettres sans espace : c'est voulu, une
-	// telle suite est presque toujours un identifiant, un hachage ou une clé recopiés dans le texte.
+	// The long-token pattern also catches a run of letters with no space: that is intended, such a run is
+	// almost always an identifier, a hash or a key copied into the text.
 	it('remplace une longue suite sans espace par un marqueur de jeton', () => {
 		expect(buildCrash(new Error('x'.repeat(2000)), 'window', '/')?.message).toBe(
 			'Error: {token}'

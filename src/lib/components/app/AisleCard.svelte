@@ -41,22 +41,21 @@
 </script>
 
 <!--
-	Un rayon, sa carte, et de quoi la replier.
+	An aisle, its card, and a way to fold it.
 
-	Replier n'est pas de la décoration : on ne fait pas toutes ses courses dans le même magasin. La
-	viande ici, le reste ailleurs — dans ce cas on veut ouvrir un rayon, l'ordonner, et que les huit
-	autres cessent d'occuper l'écran. Déplié, un rayon de dix articles remplit deux hauteurs de
-	téléphone à lui seul.
+	Folding is not decoration: you do not do all your shopping in the same shop. The meat here, the rest
+	elsewhere — in that case you want to open one aisle, order it, and have the other eight stop taking up the
+	screen. Unfolded, an aisle of ten items fills two phone heights on its own.
 
-	Le trait sous l'en-tête sépare ce qui décrit le rayon de ce qu'il contient. Sans lui, la carte
-	n'est qu'une colonne d'éléments de même poids et le titre se perd dans ses propres articles.
+	The rule under the header separates what describes the aisle from what it contains. Without it, the card
+	is only a column of items of the same weight and the title gets lost among its own items.
 -->
 <section class="bg-card shadow-fl-1 overflow-hidden rounded-xl border" data-test-class="aisle-group">
 	<div class="flex items-stretch">
 		<!--
-			La poignée double les flèches, elle ne les remplace pas. Elle n'est ni focalisable ni
-			annoncée : son unique fonction est déjà offerte par deux boutons étiquetés juste à côté,
-			et un élément qu'on peut atteindre au clavier sans pouvoir s'en servir est un piège.
+			The handle doubles the arrows, it does not replace them. It is neither focusable nor announced: its only
+			function is already offered by two labelled buttons right beside it, and an element you can reach by
+			keyboard without being able to use it is a trap.
 		-->
 		<span
 			{...grip}
@@ -77,7 +76,7 @@
 		>
 			<span class="bg-muted relative grid size-11 shrink-0 place-items-center rounded-md text-xl">
 				<span aria-hidden="true">{emoji}</span>
-				<!-- Le rang dit l'ordre du parcours : sans lui, « appris » reste une affirmation. -->
+				<!-- The rank says the order of the route: without it, "learned" stays an assertion. -->
 				<span
 					class="bg-foreground text-background text-caption absolute -start-1.5 -top-1.5 grid size-5 place-items-center rounded-full font-semibold"
 					aria-hidden="true"

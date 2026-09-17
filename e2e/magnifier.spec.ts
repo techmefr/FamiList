@@ -1,17 +1,17 @@
 import { test, expect } from './fixtures';
 
 /**
- * Ce que ce fichier ne teste pas, et pourquoi.
+ * What this file does not test, and why.
  *
- * La loupe est un appareil photo : grossissement optique, torche, image figée, pincement à deux
- * doigts. Un navigateur sans tête n'a pas de caméra, et la fausse caméra de Chromium ne rend
- * qu'une mire animée, sans capacité de zoom ni de torche — un test qui la pilote vérifierait le
- * décor, pas l'outil. Le grossissement et le découpage dans la trame sont, eux, déjà couverts par
- * les tests unitaires de `$domain/magnifier`, où ils sont du calcul pur.
+ * The magnifier is a camera: optical magnification, torch, frozen image, two-finger pinch. A headless
+ * browser has no camera, and Chromium's fake camera only returns an animated test pattern, with no zoom or
+ * torch capability — a test driving it would verify the scenery, not the tool. The magnification and the
+ * cropping from the frame are, for their part, already covered by the unit tests of `$domain/magnifier`,
+ * where they are pure computation.
  *
- * Reste ce qu'un test de bout en bout peut seul dire : quand la caméra manque, l'écran l'annonce
- * au lieu de rester noir, et on peut en repartir. C'est le cas le plus fréquent chez l'utilisateur
- * — autorisation refusée — et le seul qu'un écran muet rendrait incompréhensible.
+ * What is left is what only an end-to-end test can say: when the camera is missing, the screen announces it
+ * instead of staying black, and you can leave. It is the most frequent case for users — permission refused
+ * — and the only one a mute screen would make incomprehensible.
  */
 test('sans autorisation de caméra, la loupe le dit au lieu de rester noire', async ({
 	signedInPage: page
@@ -21,16 +21,16 @@ test('sans autorisation de caméra, la loupe le dit au lieu de rester noire', as
 	await expect(page.getByTestId('magnifier')).toBeVisible();
 	await expect(page.getByTestId('magnifier-unavailable')).toBeVisible({ timeout: 15_000 });
 
-	// Pas de flux, donc pas d'élément vidéo : l'afficher vide laisserait un rectangle noir sous le
-	// message, et on ne saurait plus lequel des deux dit la vérité.
+	// No stream, so no video element: showing it empty would leave a black rectangle under the message, and
+	// you would no longer know which of the two tells the truth.
 	await expect(page.getByTestId('magnifier-video')).toHaveCount(0);
 	await expect(page.getByTestId('magnifier-hint')).toHaveCount(0);
 });
 
 /**
- * L'autre façon d'échouer : un navigateur qui n'expose pas du tout la caméra. Le message n'est
- * pas le même — on ne demande pas de revoir une autorisation qui n'existe pas — et le chemin est
- * distinct dans le code, donc il se vérifie à part.
+ * The other way to fail: a browser that does not expose the camera at all. The message is not the same — we
+ * do not ask to review a permission that does not exist — and the path is distinct in the code, so it is
+ * checked separately.
  */
 test('un navigateur sans caméra du tout aboutit au même écran lisible', async ({
 	signedInPage: page
@@ -46,8 +46,8 @@ test('un navigateur sans caméra du tout aboutit au même écran lisible', async
 });
 
 /**
- * On doit pouvoir repartir de la loupe. Elle est posée en plein écran, au-dessus du contenu : si
- * elle recouvrait la barre de navigation, il n'y aurait plus aucune sortie.
+ * You must be able to leave the magnifier. It is laid out full screen, above the content: if it covered the
+ * navigation bar, there would be no way out.
  */
 test('on quitte la loupe par la navigation', async ({ signedInPage: page }) => {
 	await page.goto('/magnifier');

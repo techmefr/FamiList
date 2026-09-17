@@ -1,8 +1,8 @@
 /**
- * L ouverture d une session SMTP, partagee par l envoi groupe et par le bouton de test.
+ * Opening an SMTP session, shared by the grouped sending and by the test button.
  *
- * Le bouton de test ne vaut que s il emprunte exactement le chemin de l envoi reel : un test qui
- * passe par sa propre pile valide sa propre pile. Meme client, memes options, meme expediteur.
+ * The test button is only worth anything if it takes exactly the path of the real sending: a test going
+ * through its own stack validates its own stack. Same client, same options, same sender.
  */
 
 import { SMTPClient } from 'https://deno.land/x/denomailer@1.6.0/mod.ts';
@@ -13,11 +13,11 @@ import { callRpc, serviceKey } from './rpc.ts';
 export type MailSettings = Record<string, string | undefined>;
 
 /**
- * Les reglages d envoi : l environnement d abord, la base ensuite, cle par cle.
+ * The sending settings: the environment first, the database second, key by key.
  *
- * `instance_config` n est joignable que par `service_role`, et l appel echoue sur une base qui n a
- * pas encore la migration. On retombe alors sur l environnement seul, ce qui etait le comportement
- * d avant : une fonction deployee en avance sur la base ne doit pas cesser d envoyer.
+ * `instance_config` is only reachable by `service_role`, and the call fails on a database that does not have
+ * the migration yet. We then fall back on the environment alone, which was the previous behaviour: a
+ * function deployed ahead of the database must not stop sending.
  */
 export async function loadMailSettings(): Promise<MailSettings> {
 	let stored: InstanceConfig = {};
@@ -34,11 +34,10 @@ export async function loadMailSettings(): Promise<MailSettings> {
 export { isMailConfigured };
 
 /**
- * Envoie, ou leve.
+ * Sends, or raises.
  *
- * L expediteur vient du reglage et de nulle part ailleurs : aucun appelant ne le choisit, ce qui
- * retire au panneau la capacite d usurper une adresse meme entre les mains de quelqu un qui n y a
- * rien a faire.
+ * The sender comes from the setting and from nowhere else: no caller chooses it, which takes away from the
+ * panel the ability to spoof an address even in the hands of somebody who has no business doing so.
  */
 export async function sendMail(
 	settings: MailSettings,
@@ -58,30 +57,29 @@ export async function sendMail(
 		connection: {
 			hostname: host,
 			port,
-			// `tls: true` ouvre en SMTPS (465). Sur 587 on part en clair et denomailer eleve par
-			// STARTTLS, ce qu exigera tout relais avant de nous laisser nous authentifier. La pile
-			// locale, elle, n offre ni TLS ni authentification : d ou la cle `auth` reellement absente
-			// quand il n y a pas d identifiants, et non posee a `undefined` — denomailer refuse de
-			// s authentifier en clair, et la simple presence de la cle suffit a declencher ce refus.
+			// `tls: true` opens in SMTPS (465). On 587 we start in the clear and denomailer upgrades through
+			// STARTTLS, which any relay will require before letting us authenticate. The local stack, for its part,
+			// offers neither TLS nor authentication: hence the `auth` key really absent when there are no
+			// credentials, and not set to `undefined` — denomailer refuses to authenticate in the clear, and the
+			// mere presence of the key is enough to trigger that refusal.
 			tls: port === 465,
 			...(username && password ? { auth: { username, password } } : {})
 		},
-		// Refus par defaut d envoyer sur une liaison restee en clair. Mailpit, le collecteur de la
-		// pile locale, ne propose ni TLS ni STARTTLS : sans cette porte, la brique ne serait
-		// verifiable nulle part avant la production. Elle ne s ouvre que si on la nomme, et elle n a
-		// rien a faire dans les secrets d un projet en ligne.
+		// Refuses by default to send over a link left in the clear. Mailpit, the local stack's collector, offers
+		// neither TLS nor STARTTLS: without this door, the piece could not be checked anywhere before production.
+		// It only opens if it is named, and it has no business in the secrets of an online project.
 		debug: { allowUnsecure: Deno.env.get('ADMIN_MAIL_SMTP_ALLOW_INSECURE') === 'true' }
 	});
 
 	try {
 		await client.send({ from, to: recipients, subject, content: body });
 	} finally {
-		// `close()` leve quand la connexion n a jamais pu s ouvrir, et masquerait alors la vraie cause
-		// de l echec — celle qu on veut voir dans les journaux.
+		// `close()` raises when the connection never managed to open, and would then hide the real cause of the
+		// failure — the one we want to see in the logs.
 		try {
 			await client.close();
 		} catch {
-			// Deja ferme, ou jamais ouvert.
+			// Already closed, or never opened.
 		}
 	}
 }

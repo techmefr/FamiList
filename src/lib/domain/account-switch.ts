@@ -1,10 +1,9 @@
 /**
- * Que faire d'une identité que le serveur vient de renvoyer, quand le cache local est déjà à
- * l'écran.
+ * What to do with an identity the server has just returned, when the local cache is already on screen.
  *
- * `getUser()` interroge le serveur : une coupure réseau répond par une erreur, pas par une absence
- * de compte. Les confondre ferait passer une panne passagère pour un changement de compte, et
- * viderait le cache hors-ligne de quelqu'un qui est pourtant toujours connecté.
+ * `getUser()` questions the server: a network outage answers with an error, not with an absent account.
+ * Confusing the two would make a passing outage look like an account change, and would empty the offline
+ * cache of somebody who is in fact still signed in.
  */
 export type AccountDecision = 'ignore' | 'remember' | 'reload';
 
@@ -14,8 +13,8 @@ export type AccountAnswer = { id: string; failed: boolean };
 export function accountDecision(previous: KnownAccount, answer: AccountAnswer): AccountDecision {
 	if (answer.failed) return 'ignore';
 
-	// Premier démarrage sans réseau : on apprend l'identité au premier succès, sans rien vider.
-	// Le cache est celui de ce compte, personne n'a changé.
+	// First start-up with no network: we learn the identity on the first success, without emptying anything.
+	// The cache is this account's, nobody has changed.
 	if (!previous.known) return 'remember';
 
 	return answer.id === previous.id ? 'ignore' : 'reload';

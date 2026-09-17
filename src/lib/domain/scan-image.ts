@@ -2,11 +2,10 @@ import type { CodeType } from '$domain/code-format';
 import { expandUpcE } from '$domain/barcode';
 
 /**
- * Les formats qu'on demande à un décodeur.
+ * The formats we ask a decoder for.
  *
- * Une carte de fidélité n'est presque jamais un EAN-13 : les enseignes impriment surtout du
- * Code 128, parfois de l'ITF ou de l'UPC-A. Ne demander que trois formats, c'est répondre
- * « aucun code trouvé » sur la majorité des cartes réelles.
+ * A loyalty card is almost never an EAN-13: retailers mostly print Code 128, sometimes ITF or UPC-A.
+ * Asking for only three formats means answering "no code found" on most real cards.
  */
 export const SCAN_FORMATS = [
 	'qr_code',
@@ -25,10 +24,10 @@ export const SCAN_FORMATS = [
 ] as const;
 
 /**
- * Le format lu, ramené à ceux que la carte sait redessiner.
+ * The format read, brought back to those the card knows how to redraw.
  *
- * `null` n'est pas un échec de lecture : la valeur du code est bonne, c'est son dessin qu'on ne
- * sait pas produire. L'écran retombe alors sur le format deviné d'après la saisie.
+ * `null` is not a read failure: the code value is right, it is its drawing we cannot produce. The screen
+ * then falls back on the format guessed from what was typed.
  */
 export function normalizeFormat(raw: string): CodeType | null {
 	const lower = raw.toLowerCase().replace(/[^a-z0-9]/g, '');
@@ -41,15 +40,15 @@ export function normalizeFormat(raw: string): CodeType | null {
 	if (lower.includes('code128')) return 'code_128';
 	if (lower.includes('itf')) return 'itf';
 
-	// UPC-A est un EAN-13 dont le premier chiffre est zéro : le lecteur rend douze chiffres, le
-	// treizième est ce zéro implicite. Le dessin EAN-13 est donc exact, à ce préfixe près. UPC-E
-	// est le même code comprimé, qu'on réétend plutôt que de l'encoder.
+	// UPC-A is an EAN-13 whose first digit is zero: the reader gives twelve digits, the thirteenth is that
+	// implicit zero. The EAN-13 drawing is therefore exact, up to that prefix. UPC-E is the same code
+	// compressed, which we expand again rather than encode.
 	if (lower.includes('upca') || lower.includes('upce')) return 'ean_13';
 
 	return null;
 }
 
-/** Les deux variantes UPC sont ramenées à l'EAN-13 correspondant, que la carte sait dessiner. */
+/** Both UPC variants are brought back to the matching EAN-13, which the card knows how to draw. */
 export function normalizeValue(value: string, raw: string): string {
 	const lower = raw.toLowerCase().replace(/[^a-z0-9]/g, '');
 	const digits = value.trim();
@@ -61,11 +60,10 @@ export function normalizeValue(value: string, raw: string): string {
 }
 
 /**
- * De combien réduire une image avant de la donner au décodeur de secours.
+ * How much to shrink an image by before handing it to the fallback decoder.
  *
- * Une photo de téléphone fait plusieurs milliers de pixels de large. Sur un code à barres, cette
- * résolution travaille contre la lecture : le grain du papier et le bruit du capteur deviennent
- * des barres. Réduite, la même photo passe.
+ * A phone photo is several thousand pixels wide. On a barcode, that resolution works against the reading:
+ * the grain of the paper and the sensor noise become bars. Shrunk, the same photo goes through.
  */
 export function scanScale(width: number, height: number, max = 1600): number {
 	const largest = Math.max(width, height);

@@ -6,14 +6,14 @@ import type { Session, User } from '@supabase/supabase-js';
 
 export type AccountStatus = 'pending' | 'approved' | 'rejected';
 
-/** Un facteur TOTP tel qu'on en a besoin à l'écran : le reste de la réponse ne sert à rien ici. */
+/** A TOTP factor as the screen needs it: the rest of the response is of no use here. */
 export interface Factor {
 	id: string;
 	friendlyName: string;
 	createdAt: string;
 }
 
-/** Une session ouverte, telle que la rend `public.my_sessions()`. */
+/** An open session, as `public.my_sessions()` returns it. */
 export interface OpenSession {
 	id: string;
 	created_at: string;
@@ -39,10 +39,10 @@ class SessionStore {
 	error = $state<string | null>(null);
 
 	/**
-	 * Où en est cette session de son deuxième facteur.
+	 * Where this session stands on its second factor.
 	 *
-	 * `level` est ce qu'elle a présenté, `nextLevel` ce que le compte exige. Les deux se lisent dans
-	 * le jeton, sans appel réseau : Supabase les décode pour nous.
+	 * `level` is what it presented, `nextLevel` what the account requires. Both are read from the token,
+	 * with no network call: Supabase decodes them for us.
 	 */
 	level = $state<string | null>(null);
 	nextLevel = $state<string | null>(null);
@@ -50,12 +50,12 @@ class SessionStore {
 	isSignedIn = $derived(this.user !== null);
 
 	/**
-	 * Le compte demande un deuxième facteur et cette session ne l'a pas encore donné.
+	 * The account asks for a second factor and this session has not given it yet.
 	 *
-	 * Ce n'est pas qu'un écran : la base refuse déjà toute lecture dans cet état (voir
-	 * `public.is_approved()`). Le dire côté client sert surtout à ne pas lancer la synchronisation,
-	 * qui vide les tables locales avant de les remplir — elle les viderait pour rien, et l'appareil
-	 * perdrait son hors-ligne à cause d'un code pas encore saisi.
+	 * It is not only a screen: the database already refuses every read in this state (see
+	 * `public.is_approved()`). Saying it on the client mainly serves to avoid starting the sync, which
+	 * empties the local tables before filling them — it would empty them for nothing, and the device
+	 * would lose its offline copy because of a code not typed yet.
 	 */
 	needsSecondFactor = $derived(
 		this.isSignedIn && this.nextLevel === 'aal2' && this.level !== 'aal2'
@@ -95,19 +95,18 @@ class SessionStore {
 			.eq('id', this.user.id)
 			.maybeSingle();
 
-		// Le profil est créé par un trigger à l'inscription. S'il manque encore, on ne bloque pas :
-		// l'écran d'attente s'affichera, et le prochain rafraîchissement le trouvera.
+		// The profile is created by a trigger at sign-up. If it is still missing, we do not block: the
+		// waiting screen will show, and the next refresh will find it.
 		this.profile = error ? null : (data as Profile | null);
 	}
 
 	/**
-	 * Relit le niveau d'authentification de la session.
+	 * Re-reads the session's authentication level.
 	 *
-	 * Appelé à chaque changement de session, et à nouveau quand la base refuse une écriture pour
-	 * « compte non valide » : c'est le seul moyen de savoir si le refus vient d'un deuxième
-	 * facteur manquant plutôt que d'un compte non approuvé. Une lecture qui échoue laisse les
-	 * niveaux inchangés — les mettre à `null` ferait passer un compte protégé pour un compte sans
-	 * deuxième facteur.
+	 * Called on every session change, and again when the database refuses a write for "account not
+	 * valid": it is the only way to know whether the refusal comes from a missing second factor rather
+	 * than from an unapproved account. A read that fails leaves the levels unchanged — setting them to
+	 * `null` would make a protected account look like one with no second factor.
 	 */
 	async refreshLevels() {
 		const { data, error } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
@@ -139,10 +138,10 @@ class SessionStore {
 	}
 
 	/**
-	 * Part chez le fournisseur puis revient sur la racine. On ne redirige pas vers une page dediee :
-	 * le client Supabase est cree avec detectSessionInUrl, il echange le code contre une session
-	 * au premier chargement, quelle que soit la page. Et la racine sait deja renvoyer vers l'ecran
-	 * d'attente si le compte n'est pas encore valide.
+	 * Goes to the provider then comes back to the root. We do not redirect to a dedicated page: the
+	 * Supabase client is created with detectSessionInUrl, it exchanges the code for a session on the
+	 * first load, whatever the page. And the root already knows how to send to the waiting screen if the
+	 * account is not approved yet.
 	 */
 	async signInWithProvider(id: ProviderId) {
 		this.error = null;
@@ -161,12 +160,12 @@ class SessionStore {
 	}
 
 	/**
-	 * Envoie un code à six chiffres par courriel.
+	 * Sends a six-digit code by email.
 	 *
-	 * Le même appel sert au lien magique : c'est le gabarit de courriel qui décide lequel des deux
-	 * part, et Supabase accepte la vérification du code dans les deux cas. On ne crée pas de compte
-	 * au passage — une adresse mal tapée créerait un compte fantôme en attente de validation, que
-	 * l'administrateur devrait ensuite trier.
+	 * The same call serves the magic link: the email template decides which of the two goes out, and
+	 * Supabase accepts the code verification in both cases. No account is created along the way — a
+	 * mistyped address would make a ghost account awaiting approval, which the administrator would then
+	 * have to sort out.
 	 */
 	async sendEmailCode(email: string) {
 		this.error = null;
@@ -188,15 +187,15 @@ class SessionStore {
 	}
 
 	/**
-	 * Change le mot de passe, après avoir revérifié l'ancien.
+	 * Changes the password, after re-checking the old one.
 	 *
-	 * Supabase ne demande pas l'ancien : `updateUser` accepte un nouveau mot de passe sur la seule
-	 * foi de la session. C'est commode et c'est dangereux — un écran laissé ouvert dans un bureau
-	 * suffirait alors à s'emparer du compte, et la personne à qui il appartient ne pourrait plus
-	 * rentrer. On se reconnecte donc avec l'ancien avant d'écrire le nouveau.
+	 * Supabase does not ask for the old one: `updateUser` accepts a new password on the strength of the
+	 * session alone. That is convenient and it is dangerous — a screen left open in an office would then
+	 * be enough to take over the account, and the person it belongs to could no longer get in. So we sign
+	 * in again with the old one before writing the new one.
 	 *
-	 * L'appel de contrôle ouvre une session de plus, ce qui est visible dans la liste des appareils
-	 * : c'est le prix, et il est petit à côté de ce qu'il évite.
+	 * The check call opens one more session, which shows in the device list: that is the price, and it is
+	 * small next to what it avoids.
 	 */
 	async changePassword(current: string, next: string) {
 		this.error = null;
@@ -220,10 +219,10 @@ class SessionStore {
 	}
 
 	/**
-	 * Les facteurs TOTP vérifiés du compte. Les inscriptions inachevées ne comptent pas.
+	 * The account's verified TOTP factors. Unfinished enrolments do not count.
 	 *
-	 * `null` quand la lecture échoue : une liste vide voudrait dire « pas de deuxième facteur »,
-	 * ce qui est un état légitime et rassurant, alors que l'appel n'a rien pu établir.
+	 * `null` when the read fails: an empty list would mean "no second factor", which is a legitimate and
+	 * reassuring state, whereas the call could establish nothing.
 	 */
 	async listFactors(): Promise<Factor[] | null> {
 		const { data, error } = await supabase.auth.mfa.listFactors();
@@ -241,10 +240,10 @@ class SessionStore {
 	}
 
 	/**
-	 * Commence une inscription TOTP et rend de quoi la montrer.
+	 * Starts a TOTP enrolment and returns what is needed to show it.
 	 *
-	 * Supabase dessine lui-même le QR : rien à encoder ici. Le secret en clair l'accompagne, pour
-	 * les applications qui ne savent pas photographier et pour qui ne peut pas viser un carré.
+	 * Supabase draws the QR itself: nothing to encode here. The secret in plain text comes with it, for
+	 * applications that cannot photograph and for anyone who cannot aim at a square.
 	 */
 	async enrollTotp() {
 		this.error = null;
@@ -258,7 +257,7 @@ class SessionStore {
 		return { id: data.id, qr: data.totp.qr_code, secret: data.totp.secret };
 	}
 
-	/** Termine l'inscription : le code prouve que l'application a bien été réglée. */
+	/** Finishes the enrolment: the code proves the application really was set up. */
 	async verifyEnrollment(factorId: string, code: string) {
 		this.error = null;
 		const { error } = await supabase.auth.mfa.challengeAndVerify({ factorId, code });
@@ -267,14 +266,14 @@ class SessionStore {
 		return !error;
 	}
 
-	/** Élève la session courante en aal2. Même appel, autre moment : ici on se connecte. */
+	/** Raises the current session to aal2. Same call, different moment: here we are signing in. */
 	async challengeTotp(factorId: string, code: string) {
 		return this.verifyEnrollment(factorId, code);
 	}
 
 	/**
-	 * Retire le deuxième facteur. La session doit être en aal2 pour cela — c'est Supabase qui
-	 * l'exige, et c'est heureux : sinon un onglet volé suffirait à le désactiver.
+	 * Removes the second factor. The session must be at aal2 for that — Supabase requires it, and rightly
+	 * so: otherwise a stolen tab would be enough to switch it off.
 	 */
 	async unenrollTotp(factorId: string) {
 		this.error = null;
@@ -290,10 +289,10 @@ class SessionStore {
 	}
 
 	/**
-	 * Consomme un code de secours, ce qui retire le deuxième facteur du compte.
+	 * Uses up a backup code, which removes the account's second factor.
 	 *
-	 * Le jeton est rafraîchi juste après : il portait encore la trace d'un facteur qui n'existe
-	 * plus, et sans cela la session resterait bloquée devant une porte qu'on vient d'enlever.
+	 * The token is refreshed straight after: it still carried the trace of a factor that no longer exists,
+	 * and without that the session would stay stuck in front of a door we have just removed.
 	 */
 	async useBackupCode(code: string) {
 		this.error = null;
@@ -310,7 +309,7 @@ class SessionStore {
 		return true;
 	}
 
-	/** Fabrique une série neuve. Les codes en clair ne repasseront jamais par ici. */
+	/** Makes a fresh set. The plain codes will never pass through here again. */
 	async newBackupCodes(): Promise<string[]> {
 		this.error = null;
 		const { data, error } = await supabase.rpc('create_backup_codes');
@@ -323,7 +322,7 @@ class SessionStore {
 		return (data ?? []) as string[];
 	}
 
-	/** `null` sur échec : zéro se lirait comme « plus aucun code de secours ». */
+	/** `null` on failure: zero would read as "no backup codes left". */
 	async backupCodesLeft(): Promise<number | null> {
 		const { data, error } = await supabase.rpc('backup_codes_left');
 
@@ -335,7 +334,7 @@ class SessionStore {
 		return typeof data === 'number' ? data : 0;
 	}
 
-	/** `null` sur échec : une liste vide se lirait comme « aucun appareil connecté ». */
+	/** `null` on failure: an empty list would read as "no connected device". */
 	async listSessions(): Promise<OpenSession[] | null> {
 		const { data, error } = await supabase.rpc('my_sessions');
 
@@ -348,8 +347,8 @@ class SessionStore {
 	}
 
 	/**
-	 * Ferme une session. Fermer la sienne est permis, et vaut déconnexion : le client s'en aperçoit
-	 * au prochain rafraîchissement de jeton, on ne l'attend pas.
+	 * Closes a session. Closing your own is allowed, and amounts to signing out: the client notices at
+	 * the next token refresh, we do not wait for it.
 	 */
 	async revokeSession(id: string) {
 		this.error = null;
@@ -364,8 +363,8 @@ class SessionStore {
 	}
 
 	/**
-	 * Tout ce que l'app retient de ce compte, en JSON. `null` sur échec : un objet vide se lirait
-	 * comme « nous n'avons rien sur vous », ce qui serait un mensonge par accident.
+	 * Everything the app remembers about this account, as JSON. `null` on failure: an empty object would
+	 * read as "we have nothing on you", which would be a lie by accident.
 	 */
 	async exportData(): Promise<unknown | null> {
 		this.error = null;
@@ -380,9 +379,9 @@ class SessionStore {
 	}
 
 	/**
-	 * Ferme le compte, définitivement. La session locale est vidée dans la foulée : le jeton reste
-	 * valide quelques minutes après la suppression du compte, et une app qui continue d'afficher des
-	 * listes sur un appareil dont le compte n'existe plus n'est pas un état qu'on laisse s'installer.
+	 * Closes the account, for good. The local session is emptied straight after: the token stays valid for
+	 * a few minutes after the account is deleted, and an app still showing lists on a device whose account
+	 * no longer exists is not a state to let settle in.
 	 */
 	async deleteAccount(): Promise<boolean> {
 		this.error = null;
@@ -398,13 +397,13 @@ class SessionStore {
 	}
 
 	/**
-	 * Ce qui n'est pas encore parti part d'abord.
+	 * What has not left yet leaves first.
 	 *
-	 * Une écriture vit quelques instants dans la file avant d'atteindre le serveur. Se déconnecter
-	 * pendant ce temps révoquait le jeton sous elle : la requête en vol échouait, et la file la
-	 * rejouait ensuite sous le compte suivant, qui n'a pas le droit d'écrire au nom du précédent.
-	 * Le serveur la refusait donc définitivement et elle était jetée — un message écrit, affiché,
-	 * puis perdu sans que rien ne le dise.
+	 * A write lives a few moments in the queue before reaching the server. Signing out during that time
+	 * revoked the token underneath it: the request in flight failed, and the queue replayed it afterwards
+	 * under the next account, which is not allowed to write on behalf of the previous one. The server
+	 * therefore refused it for good and it was discarded — a message written, shown, then lost with
+	 * nothing to say so.
 	 */
 	async signOut() {
 		await sync.flush();
@@ -413,8 +412,8 @@ class SessionStore {
 		this.user = null;
 		this.profile = null;
 
-		// Le cache local survit à la déconnexion s'il n'est pas vidé : sur un appareil partagé, la
-		// personne suivante ouvrirait les listes de la précédente.
+		// The local cache survives sign-out if it is not emptied: on a shared device, the next person would
+		// open the previous one's lists.
 		const { data } = await import('$stores/data.svelte');
 		await data.forget();
 	}

@@ -3,12 +3,12 @@
 </script>
 
 <!--
-	Décorative, donc muette : la marque est toujours posée à côté du nom écrit, et « FamiList
-	FamiList » ne rendrait service à personne. La version parlante vit dans static/logo.svg.
+	Decorative, therefore silent: the brand is always placed next to the written name, and "FamiList FamiList"
+	would serve nobody. The speaking version lives in static/logo.svg.
 
-	Hauteur en `em`, couleur en `currentColor` : le dessin suit le texte voisin, y compris quand on
-	agrandit la police. `shrink-0` parce qu'un SVG est un élément remplacé — il se laisserait écraser
-	en largeur au lieu de pousser.
+	Height in `em`, colour in `currentColor`: the drawing follows the neighbouring text, including when the
+	font is enlarged. `shrink-0` because an SVG is a replaced element — it would let itself be squashed in
+	width instead of pushing.
 -->
 <svg
 	xmlns="http://www.w3.org/2000/svg"

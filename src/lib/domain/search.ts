@@ -1,26 +1,25 @@
 import { foldForSearch } from '$domain/emoji';
 
 /**
- * Ce qu'on peut retrouver d'un bout de mot.
+ * What can be found again from a fragment of a word.
  *
- * Quatre familles, et pas une de plus : ce sont les choses que le foyer a écrites lui-même et
- * qu'il range ensuite dans des écrans séparés — un article noté il y a trois semaines dort au
- * fond d'une liste parmi d'autres. Les discussions restent dehors : elles se relisent dans leur
- * fil, et les mêler aux articles ferait apparaître des bribes de conversation dans un résultat
- * qu'on ouvre devant quelqu'un d'autre. Les rayons et les membres aussi : ils tiennent tous sur
- * un écran, on les voit sans les chercher.
+ * Four families, and not one more: they are the things the household wrote itself and then files away in
+ * separate screens — an item noted three weeks ago sleeps at the bottom of a list among others.
+ * Conversations stay out: they are read again in their thread, and mixing them with items would make
+ * snippets of conversation appear in a result you open in front of somebody else. Aisles and members too:
+ * they all fit on one screen, you see them without looking.
  */
 export type SearchKind = 'list' | 'item' | 'shop' | 'card';
 
 export const SEARCH_KINDS: SearchKind[] = ['list', 'item', 'shop', 'card'];
 
 /**
- * En dessous de deux caractères, tout correspond : la recherche rendrait le foyer entier trié au
- * hasard, ce qui coûte plus à lire qu'à retrouver soi-même.
+ * Below two characters, everything matches: the search would return the whole household in random order,
+ * which costs more to read than finding it yourself.
  */
 export const MIN_QUERY_LENGTH = 2;
 
-/** Par famille, pas au total : sinon trente articles enterrent l'unique magasin trouvé. */
+/** Per family, not in total: otherwise thirty items bury the single shop found. */
 export const HITS_PER_KIND = 6;
 
 export interface SearchableList {
@@ -59,14 +58,14 @@ export interface SearchSource {
 export interface SearchHit {
 	kind: SearchKind;
 	id: string;
-	/** Ce qu'on a cherché : le nom, tel qu'il a été écrit. */
+	/** What was searched for: the name, as it was written. */
 	label: string;
-	/** Où ça vit — la liste d'un article, l'enseigne d'un magasin. Vide quand il n'y a rien à dire. */
+	/** Where it lives — an item's list, a shop's brand. Empty when there is nothing to say. */
 	detail: string;
-	/** Un emoji, jamais un mot : il redit la famille sans occuper de place. Vide si l'objet n'en a pas. */
+	/** An emoji, never a word: it repeats the family without taking space. Empty if the object has none. */
 	icon: string;
 	href: string;
-	/** Un article déjà coché se retrouve encore, mais se montre comme tel. */
+	/** An already ticked item is still found, but shows itself as such. */
 	checked: boolean;
 	score: number;
 }
@@ -79,8 +78,8 @@ export interface SearchGroup {
 interface Field {
 	value: string;
 	/**
-	 * Le nom pèse plus que la note : « lait » cherché doit sortir l'article « Lait » avant
-	 * l'article « Café » dont la note dit « avec du lait ».
+	 * The name weighs more than the note: searching "milk" must bring out the item "Milk" before the item
+	 * "Coffee" whose note says "with milk".
 	 */
 	weight: number;
 }
@@ -104,11 +103,11 @@ function fieldScore(needle: string, value: string): number {
 }
 
 /**
- * La note d'une recherche sur un objet, ou zéro s'il ne correspond pas.
+ * A search's score on an object, or zero if it does not match.
  *
- * Chaque mot tapé doit se retrouver quelque part — « lait bio » ne rend pas tous les laits. Mais
- * pas forcément dans le même champ : on tape le nom du produit et un mot de sa note sans savoir
- * lequel est où.
+ * Every word typed must be found somewhere — "organic milk" does not return every milk. But not
+ * necessarily in the same field: you type the product's name and a word from its note without knowing
+ * which is where.
  */
 export function scoreEntry(query: string, fields: Field[]): number {
 	const needles = foldForSearch(query).split(WORD_SEPARATORS).filter(Boolean);
@@ -131,10 +130,10 @@ export function scoreEntry(query: string, fields: Field[]): number {
 }
 
 /**
- * Les résultats sont ordonnés à la note, puis à l'alphabet.
+ * Results are ordered by score, then alphabetically.
  *
- * Le second critère n'est pas une coquetterie : sans lui, deux articles homonymes dans deux listes
- * changeraient de place d'une frappe à l'autre, et la cible glisserait sous le doigt.
+ * The second criterion is not a flourish: without it, two items of the same name in two lists would swap
+ * places from one keystroke to the next, and the target would slide under your finger.
  */
 const byScoreThenLabel = (a: SearchHit, b: SearchHit) =>
 	b.score - a.score || a.label.localeCompare(b.label);
@@ -179,7 +178,7 @@ export function searchAll(query: string, source: SearchSource): SearchGroup[] {
 			label: item.name,
 			detail: parent?.name ?? '',
 			icon: parent?.emoji ?? '',
-			// La liste sait mettre en évidence l'article désigné : c'est ce paramètre qui le lui dit.
+			// The list knows how to highlight the item pointed at: this parameter is what tells it.
 			href: `/l/${item.listId}?item=${item.id}`,
 			checked: item.checked,
 			score
@@ -238,6 +237,6 @@ export function searchAll(query: string, source: SearchSource): SearchGroup[] {
 	);
 }
 
-/** Les résultats à plat, dans l'ordre affiché : c'est sur cette suite que voyagent les flèches. */
+/** The results flattened, in display order: it is this sequence the arrow keys travel. */
 export const flattenHits = (groups: SearchGroup[]): SearchHit[] =>
 	groups.flatMap((group) => group.hits);

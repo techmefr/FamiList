@@ -5,12 +5,12 @@ import { settings } from '$stores/settings.svelte';
 import { pickSteps, screenSteps } from '$domain/tour';
 
 /**
- * Présent dans le document ne suffit pas : il faut que ça se voie.
+ * Present in the document is not enough: it has to be visible.
  *
- * La moitié des repères visés existent aux deux tailles d'écran et n'en montrent qu'une — l'onglet
- * Loupe est masqué sur grand écran, le bouton de filtres a une version pouce et une version
- * en-tête. `querySelector` les trouve quand même, et driver.js désignerait alors un rectangle vide
- * au coin de la page. Un élément caché n'a aucun rectangle de rendu, c'est ce qu'on lui demande.
+ * Half the targeted landmarks exist at both screen sizes and only show one — the Magnifier tab is hidden on
+ * a large screen, the filter button has a thumb version and a header one. `querySelector` finds them all
+ * the same, and driver.js would then point at an empty rectangle in the corner of the page. A hidden
+ * element has no rendered rectangle, which is exactly what we ask it for.
  */
 function visible(selector: string): boolean {
 	const element = document.querySelector(selector);
@@ -18,16 +18,15 @@ function visible(selector: string): boolean {
 }
 
 /**
- * Lance le tour de l'écran courant et prévient qu'il a été montré.
+ * Starts the tour of the current screen and records that it has been shown.
  *
- * Le signal part au lancement, pas à la fermeture. La raison est dans driver.js : son crochet
- * `onDestroyed` n'est appelé que si l'élément et l'étape actifs sont tous deux encore connus au
- * moment de la fermeture, et il est purement et simplement sauté sinon. S'y fier laissait passer
- * des sorties entières, et un tour jamais marqué comme vu revient à chaque ouverture — d'une aide
- * on ferait un obstacle, exactement ce qu'on veut éviter.
+ * The signal leaves on start, not on close. The reason is inside driver.js: its `onDestroyed` hook is only
+ * called if the active element and step are both still known at closing time, and it is plainly skipped
+ * otherwise. Relying on it let whole exits slip through, and a tour never marked as seen comes back at
+ * every opening — turning help into an obstacle, exactly what we want to avoid.
  *
- * Montré vaut donc vu, abandon compris. Une personne qui l'a coupé par accident le relance par le
- * point d'interrogation, qui est là sur chaque écran.
+ * Shown therefore counts as seen, abandoning included. Someone who cut it by accident starts it again from
+ * the question mark, which is there on every screen.
  */
 export function startTour(pathname: string, onShown: () => void) {
 	const steps: DriveStep[] = pickSteps(screenSteps(pathname), visible).map((step) => ({
@@ -38,15 +37,15 @@ export function startTour(pathname: string, onShown: () => void) {
 		}
 	}));
 
-	// Aucune cible : la page n'est pas celle qu'on croit, ou elle n'a pas fini de se peindre. On ne
-	// marque rien, la prochaine tentative repartira de zéro.
+	// No target: the page is not the one we think, or it has not finished painting. We record nothing, the
+	// next attempt will start again from scratch.
 	if (steps.length === 0) return;
 
 	driver({
 		steps,
 		popoverClass: 'fl-tour',
-		// Le refus du mouvement est déjà respecté par le CSS ; le dire aussi ici évite que la bulle
-		// se replace en glissant, ce qu'aucune règle de durée ne rattrape.
+		// Refused motion is already honoured by the CSS; saying it here too stops the bubble from gliding into
+		// place, which no duration rule makes up for.
 		animate: settings.animates,
 		showProgress: steps.length > 1,
 		allowClose: true,

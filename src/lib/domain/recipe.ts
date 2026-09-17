@@ -2,31 +2,31 @@ import { slugify } from './slug';
 import { DEFAULT_UNIT } from './units';
 
 /**
- * Passer d'une recette à une liste de courses.
+ * Going from a recipe to a shopping list.
  *
- * Le mot « ingrédient » est déjà pris ailleurs dans l'application — `poll_options.ingredients`
- * désigne ce que chacun ramène à un repas partagé. Ici il s'agit d'autre chose : la ligne d'une
- * recette, avec sa quantité et son unité. Les deux ne se rencontrent jamais.
+ * The word "ingredient" is already taken elsewhere in the application — `poll_options.ingredients` means
+ * what each person brings to a shared meal. Here it is something else: a recipe's line, with its quantity
+ * and its unit. The two never meet.
  */
 export interface RecipeLine {
 	name: string;
-	/** Saisie au clavier, donc une chaîne : « 1,5 » est une réponse valable. Vide = sans quantité. */
+	/** Typed on a keyboard, so a string: "1,5" is a valid answer. Empty = no quantity. */
 	qty: string;
 	unit: string;
 }
 
-/** Le plus petit nombre de parts qui ait un sens, et le plus grand qu'on accepte de saisir. */
+/** The smallest number of servings that makes sense, and the largest we accept being typed. */
 export const MIN_SERVINGS = 1;
 export const MAX_SERVINGS = 99;
 export const DEFAULT_SERVINGS = 4;
 
 /**
- * Le nombre écrit dans un champ de quantité, ou null.
+ * The number written in a quantity field, or null.
  *
- * La virgule décimale est acceptée : c'est celle du clavier français, et `mapping.ts` fait déjà la
- * même conversion avant d'écrire en base. Un texte qui n'est pas un nombre — « une pincée » —
- * rend null plutôt que zéro : une quantité absente et une quantité nulle ne disent pas la même
- * chose, et la mise à l'échelle doit laisser la première tranquille.
+ * The decimal comma is accepted: it is the one on a French keyboard, and `mapping.ts` already does the
+ * same conversion before writing to the database. Text that is not a number — "a pinch" — returns null
+ * rather than zero: a missing quantity and a zero quantity do not say the same thing, and scaling must
+ * leave the first alone.
  */
 export function parseQty(raw: string | null | undefined): number | null {
 	const written = (raw ?? '').trim();
@@ -37,10 +37,10 @@ export function parseQty(raw: string | null | undefined): number | null {
 }
 
 /**
- * De combien multiplier les quantités pour passer des parts écrites aux parts voulues.
+ * How much to multiply the quantities by to go from the written servings to the wanted ones.
  *
- * Des parts absurdes — zéro, négatif, illisible — rendent 1 plutôt qu'une erreur : la recette est
- * alors générée telle qu'elle est écrite, ce qui reste utile, là où un échec ne laisserait rien.
+ * Absurd servings — zero, negative, unreadable — return 1 rather than an error: the recipe is then
+ * generated as written, which stays useful, where a failure would leave nothing.
  */
 export function scalingFactor(servings: number, people: number): number {
 	if (!Number.isFinite(servings) || !Number.isFinite(people)) return 1;
@@ -50,13 +50,13 @@ export function scalingFactor(servings: number, people: number): number {
 }
 
 /**
- * La quantité une fois mise à l'échelle, telle qu'on l'écrit dans un article.
+ * The quantity once scaled, as it is written in an item.
  *
- * Trois décimales au maximum, et les zéros de fin retirés : un tiers de 400 g donne 133.333 et non
- * 133.33333333333334, et la moitié de 2 pièces reste « 1 » plutôt que « 1.0 ». On écrit un point
- * décimal et non une virgule parce que c'est ce que `toNumber` attend côté base — la virgule y
- * passerait aussi, mais l'article s'affiche tel quel dans la liste avant la première
- * synchronisation, et deux écritures différentes du même nombre se verraient.
+ * Three decimals at most, and trailing zeros removed: a third of 400 g gives 133.333 and not
+ * 133.33333333333334, and half of 2 pieces stays "1" rather than "1.0". We write a decimal point and not
+ * a comma because that is what `toNumber` expects on the database side — a comma would pass too, but the
+ * item is displayed as it is in the list before the first sync, and two different notations of the same
+ * number would show.
  */
 export function scaleQty(qty: string, factor: number): string {
 	const base = parseQty(qty);
@@ -66,7 +66,7 @@ export function scaleQty(qty: string, factor: number): string {
 	return String(Math.round(scaled * 1000) / 1000);
 }
 
-/** Une ligne de recette prête à devenir un article. */
+/** A recipe line ready to become an item. */
 export interface GeneratedItem {
 	name: string;
 	qty: string;
@@ -74,19 +74,18 @@ export interface GeneratedItem {
 }
 
 /**
- * Les articles à créer pour une recette, à l'échelle demandée, sans ceux que la liste contient
- * déjà.
+ * The items to create for a recipe, at the requested scale, minus those the list already contains.
  *
- * La comparaison passe par le slug, comme `pushIngredients` : « Tomates » et « tomates » sont le
- * même produit, et quelqu'un qui génère deux recettes dans la même liste ne veut pas deux lignes
- * de tomates. On ne cumule pas les quantités pour autant — additionner « 3 pièces » et « 500 g »
- * n'a pas de résultat juste, et deviner lequel garder trahirait la recette. Le doublon écarté,
- * c'est la quantité déjà présente qui reste, et la personne la corrige devant le rayon.
+ * The comparison goes through the slug, like `pushIngredients`: "Tomatoes" and "tomatoes" are the same
+ * product, and somebody generating two recipes into the same list does not want two tomato rows. We do
+ * not add the quantities up for all that — adding "3 pieces" and "500 g" has no correct result, and
+ * guessing which to keep would betray the recipe. With the duplicate dropped, it is the quantity already
+ * there that stays, and the person corrects it in front of the aisle.
  *
- * Les lignes sans nom sont ignorées : un formulaire laisse toujours traîner une rangée vide.
+ * Nameless lines are ignored: a form always leaves an empty row lying around.
  *
- * Le rayon n'est pas décidé ici. L'ajout d'un article devine déjà le sien depuis son nom
- * (`guessAisleKind`), donc la liste générée arrive rangée sans que la recette ait à s'en occuper.
+ * The aisle is not decided here. Adding an item already guesses its own from the name
+ * (`guessAisleKind`), so the generated list arrives sorted without the recipe having to care.
  */
 export function generatedItems(
 	lines: RecipeLine[],
@@ -104,8 +103,8 @@ export function generatedItems(
 		taken.add(slug);
 		produced.push({
 			name,
-			// Une ligne sans quantité devient un article à l'unité : la liste de courses n'a pas de
-			// case vide, et « sel » sans rien à côté se lit très bien comme « du sel ».
+			// A line with no quantity becomes an item by the piece: a shopping list has no empty box, and "salt"
+			// with nothing beside it reads perfectly well as "some salt".
 			qty: scaleQty(line.qty, factor) || '1',
 			unit: line.unit || DEFAULT_UNIT
 		});

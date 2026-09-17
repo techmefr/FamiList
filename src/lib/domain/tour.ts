@@ -1,22 +1,24 @@
 /**
- * Le contenu de la visite guidée : quel écran raconte quoi, et dans quel ordre.
+ * The contents of the guided tour: which screen tells what, and in which order.
  *
- * Rien ici ne touche au document. La partie qui dépend du navigateur — savoir si un repère est
- * réellement visible, et piloter driver.js — vit dans `$lib/tour`, et ne descend qu'à la demande.
- * Séparer les deux permet de vérifier le choix des étapes sans navigateur, là où un rendu de test
- * ne saurait de toute façon pas dire ce qui est visible.
+ * Nothing here touches the document. The part that depends on the browser — knowing whether a marker is
+ * really visible, and driving driver.js — lives in `$lib/tour`, and only comes down on demand. Separating
+ * the two makes it possible to check the choice of steps without a browser, where a test render could not
+ * say what is visible anyway.
  */
 export interface TourStep {
-	/** Le repère visé. Toujours un `data-test-id` déjà posé : un sélecteur inventé pour le tour
-	 * disparaît au premier remaniement, et personne ne s'en aperçoit. */
+	/**
+	 * The marker aimed at. Always a `data-test-id` already in place: a selector invented for the tour
+	 * disappears at the first rework, and nobody notices.
+	 */
 	selector: string;
-	/** La racine des deux clés de traduction, `tour.<key>Title` et `tour.<key>Body`. */
+	/** The root of the two translation keys, `tour.<key>Title` and `tour.<key>Body`. */
 	key: string;
 }
 
 /**
- * Le tour d'ensemble : ce que porte la barre de navigation. C'est celui de la première ouverture,
- * et celui vers lequel on retombe sur un écran qui n'a rien de particulier à expliquer.
+ * The overview tour: what the navigation bar carries. It is the one for the first opening, and the one we
+ * fall back to on a screen with nothing particular to explain.
  */
 export const NAV_STEPS: TourStep[] = [
 	{ selector: '[data-test-id="nav-create"]', key: 'create' },
@@ -24,21 +26,21 @@ export const NAV_STEPS: TourStep[] = [
 	{ selector: '[data-test-id="nav-/chat"]', key: 'chat' },
 	{ selector: '[data-test-id="nav-/shops"]', key: 'shops' },
 	{ selector: '[data-test-id="nav-/cards"]', key: 'cards' },
-	// Le profil est dans la colonne sur grand écran et dans l'en-tête sur téléphone. Deux repères,
-	// une seule étape : `pickSteps` garde celui qui se voit et laisse tomber l'autre.
+	// The profile is in the column on a large screen and in the header on a phone. Two markers, one step:
+	// `pickSteps` keeps the one that is visible and drops the other.
 	{ selector: '[data-test-id="nav-/profile"]', key: 'profile' },
 	{ selector: '[data-test-id="header-profile"]', key: 'profile' }
 ];
 
 /**
- * Ce que le point d'interrogation raconte selon l'écran ouvert.
+ * What the question mark tells depending on the screen open.
  *
- * Une aide qui répète toujours la même chose n'est lue qu'une fois. Quelqu'un qui l'appelle depuis
- * une liste de courses ne se demande pas où sont ses cartes de fidélité : il se demande à quoi
- * sert la poignée à gauche d'un rayon, ou pourquoi la moitié de sa liste a disparu.
+ * Help that always repeats the same thing is only read once. Somebody calling it from a shopping list is
+ * not wondering where their loyalty cards are: they are wondering what the handle to the left of an aisle
+ * does, or why half their list has disappeared.
  *
- * Deux repères peuvent porter la même clé — les filtres se prennent par la barre du pouce sur
- * téléphone et par le bouton d'en-tête sur grand écran. Celui des deux qui se voit gagne.
+ * Two markers can carry the same key — the filters are reached through the thumb bar on a phone and
+ * through the header button on a large screen. Whichever of the two is visible wins.
  */
 export const SCREEN_STEPS: { test: RegExp; steps: TourStep[] }[] = [
 	{
@@ -67,17 +69,16 @@ export const SCREEN_STEPS: { test: RegExp; steps: TourStep[] }[] = [
 ];
 
 /**
- * Les étapes candidates pour ce chemin.
+ * The candidate steps for this path.
  *
- * Un écran inconnu — le foyer, l'administration, une page ajoutée demain — retombe sur la barre de
- * navigation : mieux vaut redire où sont les choses que de ne rien répondre à quelqu'un qui
- * demande de l'aide.
+ * An unknown screen — the household, the admin panel, a page added tomorrow — falls back on the navigation
+ * bar: better to say again where things are than to answer nothing to somebody asking for help.
  */
 export function screenSteps(pathname: string): TourStep[] {
 	return SCREEN_STEPS.find((entry) => entry.test.test(pathname))?.steps ?? NAV_STEPS;
 }
 
-/** Les étapes retenues : celles qui se voient, une seule par sujet, dans l'ordre d'origine. */
+/** The steps kept: those that are visible, one per subject, in the original order. */
 export function pickSteps(steps: TourStep[], isVisible: (selector: string) => boolean): TourStep[] {
 	const seen = new Set<string>();
 

@@ -24,8 +24,8 @@ describe('diagnoseMailFailure', () => {
 		expect(diagnoseMailFailure('553 Sender address is unverified')).toBe('sender_rejected');
 	});
 
-	// Le piege qui a dicte l ordre des tests : le message parle d expediteur et d authentification,
-	// et seul le premier est la cause.
+	// The trap that dictated the order of the tests: the message speaks of a sender and of authentication, and
+	// only the first is the cause.
 	it('prefere l expediteur quand le message parle des deux', () => {
 		expect(
 			diagnoseMailFailure('550 sender not verified — see our authentication documentation')

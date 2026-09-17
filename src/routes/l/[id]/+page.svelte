@@ -49,20 +49,20 @@
 	let filters = $state<FilterSheet | null>(null);
 
 	/**
-	 * Le bouton de création amène ici, puis demande la feuille : c'est le même aller-retour que pour
-	 * une carte ou un magasin. La feuille n'existe pas encore quand la navigation se termine, d'où
-	 * l'effet plutôt qu'un appel direct.
+	 * The create button brings you here, then asks for the sheet: the same round trip as for a card or a
+	 * shop. The sheet does not exist yet when the navigation ends, hence the effect rather than a direct
+	 * call.
 	 */
 	$effect(() => {
 		if (add && createIntent.take('item')) void add.show();
 	});
 
 	/**
-	 * Les prénoms plutôt qu'un décompte : « Avec Hélène et Marc » se lit d'un coup d'œil, « 2
-	 * participants » demande d'ouvrir la feuille pour savoir de qui il s'agit.
+	 * First names rather than a count: "With Hélène and Marc" reads at a glance, "2 participants" means
+	 * opening the sheet to find out who they are.
 	 *
-	 * `Intl.ListFormat` s'occupe du « et » et des virgules — ce sont des règles de langue, pas des
-	 * chaînes à traduire, et elles diffèrent d'une langue à l'autre.
+	 * `Intl.ListFormat` handles the "and" and the commas — those are language rules, not strings to
+	 * translate, and they differ from one language to another.
 	 */
 	const others = $derived(
 		(list?.memberIds ?? [])
@@ -80,10 +80,10 @@
 	);
 
 	/**
-	 * Envoyer la liste au dehors, en texte, à quelqu'un qui n'a pas l'application.
+	 * Sending the list out, as text, to somebody who does not have the application.
 	 *
-	 * C'est une action distincte du partage de la feuille au-dessus : celle-ci donne l'accès dans le
-	 * foyer, celle-là fait sortir une copie figée. Deux gestes, deux boutons.
+	 * This is a different action from the sharing sheet above: that one gives access inside the household,
+	 * this one sends out a frozen copy. Two gestures, two buttons.
 	 */
 	const STATUS_KEY: Record<Exclude<ShareOutcome, 'cancelled'>, string> = {
 		shared: 'share.sent',
@@ -93,15 +93,15 @@
 
 	let shareStatus = $state<string | null>(null);
 
-	/** Même règle que la ligne d'article : une unité inconnue s'écrit telle qu'elle a été saisie. */
+	/** Same rule as the item row: an unknown unit is written exactly as it was typed. */
 	function unitLabel(unit: string): string {
 		const key = unitKey(unit);
 		return key ? t(key) : unit;
 	}
 
 	/**
-	 * Le texte porte la liste entière, pas la vue filtrée : masquer les articles cochés est une
-	 * commodité de lecture ici, pas une décision sur ce qu'on envoie là-bas.
+	 * The text carries the whole list, not the filtered view: hiding ticked items is a reading convenience
+	 * here, not a decision about what is sent over there.
 	 */
 	function listeEnTexte(): string {
 		return listToMarkdown({
@@ -131,7 +131,7 @@
 		feedback.play('tap');
 		const outcome = await shareText(list.name, listeEnTexte());
 
-		// Une feuille refermée sans choisir : la personne sait ce qu'elle vient de faire.
+		// A sheet closed without choosing: the person knows what they have just done.
 		if (outcome === 'cancelled') return;
 
 		feedback.play(outcome === 'failed' ? 'error' : 'success');
@@ -157,12 +157,12 @@
 	const done = $derived(data.itemsOf(listId).filter((i) => i.checked).length);
 
 	/**
-	 * Quels rayons sont dépliés.
+	 * Which aisles are unfolded.
 	 *
-	 * Les deux premiers à l'ouverture, comme dans la maquette : tout déplier remplit trois écrans
-	 * de téléphone, tout replier donne une page qui n'a l'air de rien contenir. On ne retient que
-	 * ce que la personne a changé — le reste suit la règle, y compris pour les rayons qui
-	 * apparaissent ensuite parce qu'on vient d'y ajouter un article.
+	 * The first two on opening, as in the mockup: unfolding everything fills three phone screens, folding
+	 * everything gives a page that looks like it contains nothing. We only remember what the person
+	 * changed — the rest follows the rule, including aisles that appear later because an item has just
+	 * been added to them.
 	 */
 	let plies = $state<Record<string, boolean>>({});
 	const ouvert = (aisleId: string, index: number) => plies[aisleId] ?? index < 2;
@@ -173,8 +173,8 @@
 	}
 
 	/**
-	 * L'écran ne montre que les rayons non vides : on réinjecte les rayons masqués à la fin, sinon
-	 * réordonner ferait disparaître le parcours appris des rayons momentanément vides.
+	 * The screen only shows non-empty aisles: we put the hidden aisles back at the end, otherwise
+	 * reordering would lose the learned route of momentarily empty aisles.
 	 */
 	function commitAisleOrder(visibleOrder: string[]) {
 		const previous = data.activeLayout?.aisleOrder ?? data.aisles.map((a) => a.id);
@@ -203,14 +203,14 @@
 	const aisleReorder = createReorder(moveAisle);
 
 	/**
-	 * L'article désigné par la recherche.
+	 * The item pointed at by the search.
 	 *
-	 * Trouver un article et atterrir en haut d'une liste de quarante lignes ne répond qu'à moitié à
-	 * la question : il faut encore le chercher des yeux. On déplie donc son rayon — il pouvait être
-	 * replié, ou plus bas que l'écran — on l'amène à la vue, et on le cerne le temps de le voir.
+	 * Finding an item and landing at the top of a forty-row list only half answers the question: you still
+	 * have to look for it. So we unfold its aisle — it may have been folded, or below the screen — bring
+	 * it into view, and outline it long enough to be seen.
 	 *
-	 * Le cadre s'efface tout seul : laissé en place, il se confondrait avec une sélection, et rien
-	 * dans la page ne dit comment l'enlever.
+	 * The outline fades on its own: left in place, it would look like a selection, and nothing on the page
+	 * says how to remove it.
 	 */
 	const HIGHLIGHT_MS = 2400;
 	let surligne = $state<string | null>(null);
@@ -264,7 +264,7 @@
 	</h1>
 	<p class="text-muted-foreground text-label mt-1">{t('lists.progress', { done, total })}</p>
 
-	<!-- Le texte au-dessus dit déjà l'avancement : la barre n'est là que pour le montrer bouger. -->
+	<!-- The text above already says the progress: the bar is only there to show it move. -->
 	<div class="bg-muted mt-2 h-1.5 overflow-hidden rounded-full" aria-hidden="true">
 		<div
 			class="fl-grow bg-secondary h-full rounded-full"
@@ -305,9 +305,9 @@
 		</button>
 
 		<!--
-			L'historique des prix se rejoint d'ici, et pas seulement par la colonne de gauche : sur
-			téléphone la barre du bas est pleine, et c'est en préparant sa liste qu'on se demande où
-			acheter — pas en ouvrant un onglet dédié.
+			Price history is reached from here, and not only from the left column: on a phone the bottom bar is
+			full, and it is while preparing your list that you wonder where to buy — not by opening a dedicated
+			tab.
 		-->
 		<a
 			href="/prices"
@@ -322,8 +322,8 @@
 	<p class="text-muted-foreground text-caption" data-test-id="share-summary">{sharedWith}</p>
 
 	<!--
-		Le repli presse-papier ne fait rien bouger à l'écran : sans cette ligne, l'envoi aurait l'air
-		d'avoir échoué sur un ordinateur de bureau. `aria-live` la fait lire à voix haute aussi.
+		The clipboard fallback moves nothing on screen: without this line, sending would look as if it had
+		failed on a desktop computer. `aria-live` has it read aloud too.
 	-->
 	<p class="text-muted-foreground text-caption" aria-live="polite" data-test-id="send-status">
 		{shareStatus ?? ''}
@@ -331,14 +331,14 @@
 
 	<ShareSheet bind:this={share} {listId} />
 
-	<!-- Sur téléphone, le magasin descend dans la barre du pouce, en bas : voir plus bas. -->
+	<!-- On a phone, the shop moves down into the thumb bar, at the bottom: see below. -->
 	<div class="mt-6 max-md:hidden">
 		<ShopSwitcher />
 	</div>
 
 	<!--
-		Les filtres sur grand écran seulement : sur téléphone, le même bouton flotte en bas à gauche,
-		à portée du pouce. Un seul jeu de commandes pour les deux, dans la feuille.
+		Filters on a large screen only: on a phone the same button floats at the bottom left, within reach of
+		the thumb. One set of controls for both, in the sheet.
 	-->
 	<div class="mt-4 flex flex-wrap items-center gap-2">
 		<Button
@@ -375,9 +375,9 @@
 
 	{#if visible.length === 0}
 		<!--
-			Deux vides qui ne veulent pas dire la même chose : une liste où personne n'a rien écrit, et
-			une liste pleine dont les filtres ne laissent rien passer. Le second se répare en touchant
-			les filtres, le premier en ajoutant un article — le dessin le dit avant la phrase.
+			Two kinds of empty that do not mean the same thing: a list nobody has written in, and a full list
+			whose filters let nothing through. The second is fixed by touching the filters, the first by adding
+			an item — the drawing says it before the sentence does.
 		-->
 		{#if filtresActifs > 0}
 			<EmptyState illustration="filter" text={t('list.empty')} testId="list-empty">
@@ -400,14 +400,14 @@
 		{/if}
 	{:else}
 		<!--
-			Pourquoi les rayons sont dans cet ordre-là.
+			Why the aisles are in that order.
 
-			L'ordre adaptatif est la promesse de l'application, et c'est aussi la seule chose qu'on ne
-			voit pas : une liste rangée selon un parcours appris ressemble trait pour trait à une liste
-			rangée par défaut. Sans cette phrase, réordonner un rayon a l'air d'un caprice sans effet.
+			Adaptive ordering is the promise of the application, and it is also the one thing you cannot see: a
+			list sorted along a learned route looks exactly like a list sorted by default. Without this
+			sentence, reordering an aisle looks like a whim with no effect.
 
-			La maquette dit « glissez les rayons ou cochez » ; cocher n'apprend rien chez nous — seul un
-			déplacement marque le parcours comme appris.
+			The mockup says "drag the aisles or tick"; ticking learns nothing here — only a move marks the route
+			as learned.
 		-->
 		<p
 			class="text-label text-secondary mt-6 flex items-start gap-2 rounded-md bg-[var(--fl-secondary-tint)] px-3.5 py-2.5 font-medium"
@@ -425,10 +425,10 @@
 					moveItem(group.aisleId, group.items, from, to)
 				)}
 				<!--
-					Le déplacement des rayons est ce qui rend visible l'ordre adaptatif : changer de
-					magasin ne recompose pas la page d'un coup, les rayons glissent vers leur nouvelle
-					place. Pendant un geste au doigt la bascule est coupée — les cartes sont déjà là où il
-					faut, c'est la poignée qui les y a mises, et animer par-dessus les ferait reculer.
+					Moving the aisles is what makes adaptive ordering visible: changing shop does not recompose the page
+					at once, the aisles slide to their new place. During a finger gesture the animation is switched
+					off — the cards are already where they should be, the handle put them there, and animating on top
+					would make them move back.
 				-->
 				<div
 					data-reorder-row
@@ -470,9 +470,9 @@
 									out:slide={{ duration: motionMs(180), easing: cubicOut }}
 								>
 									<!--
-										Le glissement double les boutons de la ligne, il ne les remplace pas : c'est
-										le geste rapide du chariot, une main occupée, et il ne se devine pas tout
-										seul. Supprimer demande d'aller plus loin que cocher — voir $domain/swipe.
+										The swipe doubles the row's buttons, it does not replace them: it is the quick gesture of the
+										trolley, one hand busy, and it is not guessed on its own. Deleting asks you to go further than
+										ticking — see $domain/swipe.
 									-->
 									<SwipeRow
 										start={{
@@ -514,16 +514,14 @@
 	{/if}
 
 	<!--
-		La barre du pouce.
+		The thumb bar.
 
-		Sur téléphone, toute la navigation vit en bas : le magasin et les filtres, qu'on manipule
-		autant que les onglets, n'ont rien à faire en haut de l'écran — il faudrait changer de prise
-		de main à chaque fois. Le magasin passe devant parce que c'est lui qui commande l'ordre de
-		tout le reste ; les filtres ne font que masquer.
+		On a phone, all the navigation lives at the bottom: the shop and the filters, handled as much as the
+		tabs, have no business at the top of the screen — you would have to change grip every time. The shop
+		comes first because it is what governs the order of everything else; the filters only hide.
 
-		Le fond est flou : la barre flotte au-dessus d'une liste qui défile, et posée à plat elle se
-		confondait avec les cartes qui passent dessous. Elle s'arrête avant le bouton de création,
-		qui garde son coin.
+		The background is blurred: the bar floats over a scrolling list, and set flat it blended into the
+		cards passing underneath. It stops before the create button, which keeps its corner.
 	-->
 	<div
 		class="fl-above-nav fl-dock flex items-center gap-1 md:hidden"

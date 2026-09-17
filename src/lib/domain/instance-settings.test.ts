@@ -38,8 +38,8 @@ describe('initialValue', () => {
 		);
 	});
 
-	// Le point de l'issue : l'écran écrit le secret, il ne le relit jamais — pas même sous forme de
-	// points dont la longueur trahirait celle du mot de passe.
+	// The point of the issue: the screen writes the secret, it never reads it back — not even as dots whose
+	// length would give away that of the password.
 	it('rend un champ vide pour un secret, même posé', () => {
 		expect(
 			initialValue(row('mail_smtp_password', { is_secret: true, is_set: true, value: null }))

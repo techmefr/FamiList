@@ -1,15 +1,15 @@
 <script lang="ts">
 	/**
-	 * Les réglages de l'instance, posés depuis l'écran plutôt que depuis un terminal.
+	 * The instance settings, set from the screen rather than from a terminal.
 	 *
-	 * Ce que cet écran ne fait jamais : afficher un secret. Un champ secret s'ouvre vide, quelle que
-	 * soit la valeur posée, et la base ne la rend de toute façon pas. L'étiquette à côté dit
-	 * « configuré le … » ; taper quelque chose remplace, laisser vide ne touche à rien.
+	 * What this screen never does: show a secret. A secret field opens empty, whatever value is set, and the
+	 * database does not return it anyway. The label beside it says "configured on …"; typing something
+	 * replaces it, leaving it empty touches nothing.
 	 *
-	 * Pourquoi un bouton d'essai. L'envoi réel part d'un cron toutes les cinq minutes et ne dit rien
-	 * quand il échoue. Sans cet essai, la seule façon de savoir si la configuration tient serait
-	 * d'attendre qu'un inconnu s'inscrive. Le verdict nomme la cause, parce que chacune se répare
-	 * ailleurs — et surtout l'expéditeur non vérifié, qui ne se répare pas du tout ici.
+	 * Why a test button. The real sending comes from a cron every five minutes and says nothing when it
+	 * fails. Without this test, the only way to know whether the configuration holds would be to wait for a
+	 * stranger to sign up. The verdict names the cause, because each is fixed elsewhere — and above all the
+	 * unverified sender, which is not fixed here at all.
 	 */
 
 	import { supabase } from '$db/supabase';
@@ -32,9 +32,9 @@
 	import { Mail, Save, Send, Trash2, CircleDot } from '@lucide/svelte';
 
 	/**
-	 * Le message brut de la base remonte tel quel à l'écran parent, qui le traduit et décide s'il
-	 * mérite le bouton d'élévation. Le traduire ici priverait « elevation requise » de sa sortie :
-	 * une phrase déjà traduite ne se reconnaît plus.
+	 * The database's raw message goes up as it is to the parent screen, which translates it and decides
+	 * whether it deserves the elevation button. Translating it here would deprive "elevation required" of
+	 * its way out: an already translated sentence is no longer recognised.
 	 */
 	let { onRefused }: { onRefused: (message: string) => void } = $props();
 
@@ -61,10 +61,10 @@
 	}
 
 	/**
-	 * Enregistre un groupe d'un seul geste.
+	 * Saves a group in one gesture.
 	 *
-	 * Un champ secret laissé vide est sauté et non effacé : sinon, corriger le port suffirait à
-	 * perdre le mot de passe, et personne ne ferait le lien. L'effacement a son propre bouton.
+	 * A secret field left empty is skipped and not cleared: otherwise, correcting the port would be enough to
+	 * lose the password, and nobody would make the connection. Clearing has its own button.
 	 */
 	async function save(group: SettingGroup) {
 		saving = true;
@@ -107,10 +107,10 @@
 	}
 
 	/**
-	 * Demande l'essai à la fonction edge, qui répond une cause et non une trace.
+	 * Asks the edge function for the test, which answers with a cause and not a trace.
 	 *
-	 * Le destinataire n'est pas choisi ici : la base rend l'adresse du compte qui clique, et c'est
-	 * la seule servie. Un champ libre aurait fait de ce bouton un formulaire d'envoi.
+	 * The recipient is not chosen here: the database returns the address of the account clicking, and it is
+	 * the only one served. A free field would have made this button a sending form.
 	 */
 	async function sendTest() {
 		testing = true;
@@ -129,8 +129,8 @@
 		const outcome = (data as { outcome?: string; reason?: string } | null)?.outcome ?? 'failed';
 		const reason = (data as { reason?: string } | null)?.reason;
 
-		// Un refus de rôle ou d'élévation sait déjà se dire ailleurs : on le renvoie au parent plutôt
-		// que d'en faire un « échec d'envoi », qui enverrait chercher du côté du serveur SMTP.
+		// A role or elevation refusal already knows how to say itself elsewhere: we hand it back to the parent
+		// rather than turn it into a "send failed", which would send people looking at the SMTP server.
 		if (outcome === 'failed' && reason && adminErrorKey(reason)) {
 			onRefused(reason);
 			return;
@@ -150,8 +150,8 @@
 </script>
 
 <!--
-	Un champ, écrit une fois. Les deux groupes ont exactement les mêmes règles d'affichage, et la
-	règle qui compte — un secret ne se relit pas — ne doit exister qu'à un seul endroit.
+	One field, written once. Both groups have exactly the same display rules, and the rule that matters — a
+	secret is never read back — must exist in only one place.
 -->
 {#snippet settingField(field: SettingField)}
 	{@const row = rowOf(field.key)}
@@ -203,8 +203,8 @@
 	</Card.Header>
 	<Card.Content class="space-y-4">
 		<!--
-			Dit avant les champs et non après : quelqu'un qui arrive ici croit que le courriel marche,
-			et l'apprendre après avoir rempli cinq champs n'aurait plus aucune valeur d'avertissement.
+			Said before the fields and not after: somebody arriving here believes email works, and learning it
+			after filling in five fields would have no warning value left.
 		-->
 		{#if !mailReady}
 			<p class="text-label" role="status" data-test-id="instance-mail-idle">

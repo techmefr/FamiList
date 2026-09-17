@@ -13,9 +13,8 @@ const KEY = 'secret-de-la-personne';
 
 describe('PROVIDERS', () => {
 	it("n'expose que des fournisseurs joignables depuis un navigateur", () => {
-		// OpenAI repond aux prevols mais pas aux reponses elles-memes : le proposer donnerait une
-		// entree qu'aucun navigateur ne peut appeler. Ce test est la pour qu'un ajout distrait le
-		// fasse echouer plutot que d'atterrir dans l'interface.
+		// OpenAI answers preflights but not the responses themselves: offering it would give an entry no browser
+		// can call. This test is here so that an absent-minded addition fails rather than lands in the interface.
 		expect(PROVIDERS.map(p => p.id)).not.toContain('openai');
 	});
 
@@ -52,10 +51,9 @@ describe('modelFor', () => {
 
 describe('buildRequest', () => {
 	/**
-	 * Le coeur de la fonctionnalite du point de vue de la vie privee : une cle posee dans une
-	 * adresse se retrouve dans les journaux des serveurs traverses, dans l'historique du navigateur
-	 * et dans l'en-tete de provenance. Gemini accepte les deux formes, et c'est justement lui qu'il
-	 * faut surveiller.
+	 * The heart of the feature from a privacy point of view: a key put in an address ends up in the logs of
+	 * the servers crossed, in the browser history and in the referrer header. Gemini accepts both forms, and it
+	 * is precisely the one to watch.
 	 */
 	it("ne met jamais la cle dans l'adresse, pour aucun fournisseur", () => {
 		for (const provider of PROVIDERS) {

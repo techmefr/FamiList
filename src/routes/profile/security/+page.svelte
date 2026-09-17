@@ -37,11 +37,11 @@
 	let sessions = $state<OpenSession[]>([]);
 	let restants = $state(0);
 
-	/** L'inscription en cours : le carré à photographier, la clé à recopier, et le code à confirmer. */
+	/** The enrolment in progress: the square to photograph, the key to copy, and the code to confirm. */
 	let inscription = $state<{ id: string; qr: string; secret: string } | null>(null);
 	let code = $state('');
 
-	/** Les codes en clair, affichés une seule fois. Rien ne permet de les revoir ensuite. */
+	/** The plain codes, shown once. Nothing lets them be seen again afterwards. */
 	let codes = $state<string[]>([]);
 	let copie = $state(false);
 
@@ -59,17 +59,17 @@
 	const actif = $derived(facteurs.length > 0);
 
 	/**
-	 * L'interrupteur n'est pas déduit de `actif` : entre le geste et le deuxième facteur réellement
-	 * posé, il y a un carré à photographier et un code à confirmer. Il prend donc l'avance du geste,
-	 * sinon il repartirait en arrière sous les doigts — et chaque sortie de l'inscription, abandon ou
-	 * échec, le remet sur l'état du compte pour qu'il cesse d'annoncer une protection inexistante.
+	 * The switch is not derived from `active`: between the gesture and the second factor actually set,
+	 * there is a square to photograph and a code to confirm. So it takes the lead from the gesture,
+	 * otherwise it would move back under your fingers — and every exit from enrolment, abandonment or
+	 * failure, puts it back on the account's state so it stops announcing a protection that does not exist.
 	 */
 	let interrupteurActif = $state(false);
 
 	/**
-	 * Ce que dit la ligne d'état sous l'interrupteur, en un mot. L'interrupteur, lui, répond du
-	 * geste — il passe à « éteint » dès le clic, avant que le retrait soit parti. Le seul état qui
-	 * réponde du compte est celui-ci : il ne change qu'une fois la liste des facteurs relue.
+	 * What the status line under the switch says, in one word. The switch answers for the gesture — it goes
+	 * to "off" as soon as you click, before the removal has left. The only state that answers for the
+	 * account is this one: it changes only once the list of factors has been re-read.
 	 */
 	const etat = $derived(
 		inscription || (interrupteurActif && !actif) ? 'pending' : actif ? 'on' : 'off'
@@ -80,9 +80,9 @@
 	);
 
 	/**
-	 * Tant que ces trois lectures n'ont pas répondu, l'écran ne conclut rien. Sans cela il affiche
-	 * « deuxième facteur désactivé » et « aucun appareil connecté », qui se lisent comme un état
-	 * établi — au mieux le temps du chargement, au pire pour de bon si la lecture a échoué.
+	 * Until these three reads have answered, the screen concludes nothing. Without that it shows "second
+	 * factor disabled" and "no connected device", which read as an established state — at best for the
+	 * duration of the loading, at worst for good if the read failed.
 	 */
 	async function recharger() {
 		chargement = true;
@@ -142,18 +142,17 @@
 			return;
 		}
 
-		// Éteindre sans facteur connu ne doit pas être un geste sans suite. La boucle seule ne
-		// partait alors sur rien : l'interrupteur, qui a déjà pris l'avance, restait sur « éteint »
-		// sans qu'aucune demande ait été envoyée ni aucune erreur affichée — l'écran annonçait une
-		// protection retirée qui tenait toujours. On relit le compte, qui remet l'interrupteur sur
-		// son état réel.
+		// Switching off with no known factor must not be a gesture with no follow-up. The loop alone then
+		// started from nothing: the switch, which has already taken the lead, stayed on "off" with no request
+		// sent and no error shown — the screen announced a protection removed that still held. We re-read the
+		// account, which puts the switch back on its real state.
 		if (facteurs.length === 0) {
 			await recharger();
 			return;
 		}
 
-		// On s'arrête au premier refus plutôt que d'enchaîner : `desactiver` a déjà remis
-		// l'interrupteur et affiché la raison, et le tour suivant l'effacerait aussitôt.
+		// We stop at the first refusal rather than carry on: `disable` has already put the switch back and shown
+		// the reason, and the next turn would erase it straight away.
 		for (const facteur of facteurs) {
 			if (!(await desactiver(facteur.id))) return;
 		}
@@ -178,8 +177,8 @@
 		inscription = null;
 		code = '';
 
-		// Activer la deuxième étape sans codes de secours, c'est poser un verrou et jeter le double
-		// de la clé. On les fabrique dans la foulée plutôt que de compter sur une bonne résolution.
+		// Enabling the second step with no backup codes is putting up a lock and throwing away the spare key.
+		// We make them straight away rather than count on a good resolution.
 		codes = await session.newBackupCodes();
 		await recharger();
 	}
@@ -216,9 +215,8 @@
 	}
 
 	/**
-	 * Le fichier est fabriqué dans la page et non demandé au serveur : ces codes ne doivent pas
-	 * repasser par le réseau une deuxième fois, et l'écran est le seul endroit où ils existent
-	 * encore en clair.
+	 * The file is made in the page and not asked of the server: these codes must not travel over the
+	 * network a second time, and the screen is the only place they still exist in plain text.
 	 */
 	function telecharger() {
 		const contenu = backupCodesText(codes, t('security.backupTitle'));
@@ -262,8 +260,8 @@
 	let erreurExport = $state('');
 
 	/**
-	 * Le fichier est assemblé dans la page, comme les codes de secours : il n'y a pas de serveur à
-	 * nous où le déposer, et un stockage intermédiaire serait une copie de plus à purger ensuite.
+	 * The file is assembled in the page, like the backup codes: there is no server of ours to put it on, and
+	 * intermediate storage would be one more copy to purge afterwards.
 	 */
 	async function exporter() {
 		exportEnCours = true;
@@ -287,8 +285,8 @@
 	}
 
 	/**
-	 * Deux gestes, pas un. Le premier ouvre le formulaire, le second demande de retaper son adresse :
-	 * un bouton unique sur un écran tactile, c'est un compte supprimé par un pouce qui a glissé.
+	 * Two gestures, not one. The first opens the form, the second asks you to retype your address: a single
+	 * button on a touch screen is an account deleted by a thumb that slipped.
 	 */
 	let suppressionOuverte = $state(false);
 	let confirmation = $state('');
@@ -359,8 +357,8 @@
 			<div>
 				<Label for="password-next">{t('security.passwordNext')}</Label>
 				<!--
-					Le type change, pas le champ : réécrire l'élément ferait perdre le curseur en pleine
-					saisie. Même geste que sur l'écran de connexion, et pour la même raison.
+					The type changes, not the field: rewriting the element would lose the cursor mid-typing. Same gesture
+					as on the sign-in screen, and for the same reason.
 				-->
 				<IconField icon={Lock}>
 					<Input
@@ -487,8 +485,8 @@
 			<p class="text-label">{t('security.scan')}</p>
 
 			<!--
-				Le carré est dessiné par Supabase et arrive en SVG : rien à encoder ici, et surtout rien
-				qui remonte le secret quelque part pour se le faire dessiner.
+				The square is drawn by Supabase and arrives as SVG: nothing to encode here, and above all nothing
+				sending the secret somewhere to have it drawn.
 			-->
 			<img
 				src={inscription.qr}
@@ -498,9 +496,9 @@
 			/>
 
 			<!--
-				La clé en clair n'est pas un repli technique : elle est indispensable à qui ne peut pas
-				viser un carré avec un appareil photo, et à qui règle son gestionnaire de mots de passe
-				sur le même ordinateur, sans deuxième écran à photographier.
+				The key in plain text is not a technical fallback: it is essential to anyone who cannot aim at a
+				square with a camera, and to anyone setting up their password manager on the same computer, with no
+				second screen to photograph.
 			-->
 			<p class="text-caption text-muted-foreground text-center">{t('security.secret')}</p>
 			<p
@@ -557,8 +555,8 @@
 
 			{#if codes.length > 0}
 				<!--
-					Le seul moment où ces codes existent en clair. L'avertissement est au-dessus de la
-					liste et non en dessous : lu après, il ne sert plus à rien.
+					The only moment these codes exist in plain text. The warning is above the list and not below it: read
+					afterwards, it is of no use any more.
 				-->
 				<p
 					class="text-label text-secondary flex items-start gap-2 rounded-md bg-[var(--fl-secondary-tint)] px-3.5 py-2.5 font-medium"

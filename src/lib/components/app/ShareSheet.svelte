@@ -12,27 +12,27 @@
 	let dialog = $state<HTMLDialogElement | null>(null);
 
 	/**
-	 * Le cercle visé, choisi explicitement.
+	 * The circle aimed at, chosen explicitly.
 	 *
-	 * Une liste personnelle n'en a pas encore : partager, c'est justement en désigner un, et prendre
-	 * celui qu'on regarde ouvrirait aux collègues ce qu'on destinait à la famille. Vide tant que la
-	 * feuille n'a pas été ouverte — le cercle actif fait alors le défaut.
+	 * A personal list does not have one yet: sharing is precisely designating one, and taking the one being
+	 * looked at would open to colleagues what was meant for the family. Empty until the sheet has been
+	 * opened — the active circle then makes the default.
 	 */
 	let chosen = $state('');
 
 	const list = $derived(data.list(listId));
 
-	/** Le cercle de la liste s'il y en a un ; sinon celui qu'on est en train de désigner. */
+	/** The list's circle if it has one; otherwise the one being designated. */
 	const circle = $derived(list?.householdId ?? (chosen || data.circle));
 
-	/** Une liste déjà partagée ne change pas de cercle : c'est le sien qui dit à qui elle peut s'ouvrir. */
+	/** An already shared list does not change circle: its own says who it can open to. */
 	const settled = $derived(!!list?.householdId);
 
 	const roster = $derived(data.membersOf(circle));
 
 	/**
-	 * Même contrat que la feuille de création : le navigateur tient l'état, on ne le double pas d'un
-	 * booléen qui finirait par mentir dès qu'Échap ferme la feuille sans passer par nous.
+	 * Same contract as the creation sheet: the browser holds the state, we do not double it with a boolean
+	 * that would end up lying as soon as Escape closes the sheet without going through us.
 	 */
 	export function show() {
 		chosen = data.circle;
@@ -66,9 +66,9 @@
 		<p class="text-muted-foreground text-caption mt-1 pe-12">{t('share.note')}</p>
 
 		<!--
-			Avec quel cercle. La question ne se pose qu'une fois, tant que la liste est personnelle :
-			une fois partagée, elle appartient à ce cercle-là, et c'est lui qui dit qui peut y figurer.
-			Elle ne se pose pas non plus quand il n'y a qu'un cercle — il n'y aurait rien à choisir.
+			With which circle. The question only comes up once, while the list is personal: once shared, it belongs
+			to that circle, and the circle says who can be on it. Nor does it come up when there is only one circle
+			— there would be nothing to choose.
 		-->
 		{#if settled}
 			<p class="text-muted-foreground text-caption mt-3" data-test-id="share-circle-settled">
@@ -107,9 +107,9 @@
 							{/if}
 						</span>
 						<!--
-							Sa propre case est verrouillee : se decocher ici ferait disparaitre la liste de
-							l'ecran sur-le-champ, sans que rien n'ait prevenu. Quitter une liste partagee par
-							quelqu'un d'autre est un geste a part, qui reste a faire.
+							Your own box is locked: unticking here would make the list disappear from the screen on the spot,
+							with no warning. Leaving a list shared by somebody else is a separate gesture, and remains to be
+							built.
 						-->
 						<input
 							type="checkbox"
@@ -132,7 +132,7 @@
 			</Button>
 		{/if}
 
-		<!-- La fermeture après la liste : le premier focus doit tomber sur un choix, pas sur la sortie. -->
+		<!-- The close button after the list: first focus must land on a choice, not on the way out. -->
 		<button
 			type="button"
 			onclick={hide}

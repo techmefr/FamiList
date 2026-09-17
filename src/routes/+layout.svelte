@@ -45,17 +45,16 @@
 	let recherche = $state<SearchSheet | null>(null);
 
 	/**
-	 * La hauteur mesurée de l'élément de navigation, publiée en variable CSS.
+	 * The measured height of the navigation element, published as a CSS variable.
 	 *
-	 * Les commandes flottantes d'une page — les filtres d'une liste — doivent se poser juste
-	 * au-dessus de la barre du bas. Cette hauteur n'est pas une constante : la barre grandit avec la
-	 * taille du texte et avec l'encoche de l'appareil, et une valeur écrite en dur mettrait le
-	 * bouton dessous dès le premier cran d'agrandissement.
+	 * A page's floating controls — a list's filters — must sit just above the bottom bar. That height is
+	 * not a constant: the bar grows with the text size and with the device notch, and a hard-coded value
+	 * would put the button underneath from the first size step.
 	 *
-	 * C'est bien une mesure brute et non `--fl-navbar-h` : dans les deux autres régimes la
-	 * navigation est une colonne haute comme l'écran, et publier sa hauteur sous ce nom ferait
-	 * croire aux commandes flottantes qu'un plancher de 900 px leur barre le bas de la page. La
-	 * feuille de style décide où la mesure compte.
+	 * It is deliberately a raw measurement and not `--fl-navbar-h`: in the other two regimes the
+	 * navigation is a column as tall as the screen, and publishing its height under that name would make
+	 * the floating controls believe a 900px floor blocks the bottom of the page. The stylesheet decides
+	 * where the measurement counts.
 	 */
 	let navbarH = $state(0);
 
@@ -64,33 +63,31 @@
 	registerServiceWorker();
 
 	/**
-	 * Les filets à erreurs, posés avant tout le reste de la page.
+	 * The error nets, set up before anything else on the page.
 	 *
-	 * Un plantage au démarrage est le plus coûteux — l'application ne s'ouvre pas du tout — et
-	 * c'est justement celui qu'on manquerait en branchant l'écoute plus tard. Les deux écouteurs
-	 * ne coûtent rien tant que rien ne casse.
+	 * A crash at startup is the most costly — the application does not open at all — and it is exactly
+	 * the one we would miss by hooking the listeners later. The two listeners cost nothing as long as
+	 * nothing breaks.
 	 */
 	watchCrashes();
 
 	/**
-	 * Le compteur d'ouvertures démarre ici, au lancement, et non quand le bandeau s'affiche : ce
-	 * qu'on veut mesurer est justement le fait de revenir. L'écoute de `beforeinstallprompt` doit
-	 * elle aussi être posée tout de suite — l'événement ne passe qu'une fois, et manqué, il est
-	 * perdu pour toute la session.
+	 * The opening counter starts here, at launch, and not when the banner appears: what we want to
+	 * measure is precisely the fact of coming back. The `beforeinstallprompt` listener must be set up
+	 * right away too — the event only passes once, and missed, it is lost for the whole session.
 	 */
 	install.init();
 
 	/**
-	 * Les rappels de date, reposés d'un bloc à chaque changement.
+	 * The date reminders, re-set as a whole on every change.
 	 *
-	 * C'est ici et pas sur la page des listes parce que l'appareil doit rester à jour même si on
-	 * n'y repasse jamais : une date choisie par quelqu'un d'autre du foyer arrive par la
-	 * synchronisation, et c'est cet effet qui la transforme en alarme. Chaque appareil programme
-	 * ses propres rappels depuis sa copie — personne n'envoie rien à personne, et tout le monde est
-	 * prévenu.
+	 * Here and not on the lists page because the device must stay up to date even if you never go back
+	 * there: a date chosen by somebody else in the household arrives through the sync, and it is this
+	 * effect that turns it into an alarm. Each device schedules its own reminders from its copy — nobody
+	 * sends anything to anyone, and everybody is warned.
 	 *
-	 * Rejoué au lancement, il rattrape aussi ce que le système a perdu : un redémarrage du
-	 * téléphone ou une réinstallation vident les alarmes en attente.
+	 * Replayed at launch, it also catches up what the system lost: a phone restart or a reinstall empties
+	 * the pending alarms.
 	 */
 	$effect(() => {
 		const plans = reminderPlans(
@@ -119,12 +116,12 @@
 	});
 
 	/**
-	 * La veille de proximité, reposée à chaque changement.
+	 * The proximity watch, re-set on every change.
 	 *
-	 * Ici et pas sur la page des cartes : le magasin se croise en faisant autre chose, et la page
-	 * des cartes est justement celle qu'on n'ouvre pas quand on a oublié qu'on avait une carte.
-	 * L'effet ne fait que transmettre l'état courant — magasins, cartes, réglage — la couche native
-	 * décide seule s'il y a une veille à démarrer ou à couper.
+	 * Here and not on the cards page: you pass a shop while doing something else, and the cards page is
+	 * precisely the one you do not open when you have forgotten you had a card. The effect only passes on
+	 * the current state — shops, cards, setting — and the native layer alone decides whether there is a
+	 * watch to start or to stop.
 	 */
 	$effect(() => {
 		void applyNearbyWatch(settings.nearbyCards && session.isApproved, {
@@ -149,22 +146,21 @@
 		});
 	});
 
-	// Comparaison exacte : /auth/pending parle d'un compte, il suppose donc une session.
-	// Un startsWith('/auth') le rendrait public et laisserait l'écran d'attente affiché
-	// après une déconnexion.
+	// Exact comparison: /auth/pending speaks about an account, so it assumes a session. A
+	// startsWith('/auth') would make it public and leave the waiting screen up after a sign-out.
 	const PUBLIC_ROUTES = ['/auth', '/welcome'];
 	const isPublic = $derived(PUBLIC_ROUTES.includes(page.url.pathname));
 
 	/**
-	 * Première ouverture : on passe par le parcours d'accueil, qui laisse régler la taille du texte
-	 * avant de demander quoi que ce soit. C'est l'ordre qui compte — quelqu'un qui ne lit pas le
-	 * formulaire de connexion ne peut pas non plus lire le lien vers les réglages.
+	 * First opening: we go through the welcome journey, which lets the text size be set before asking
+	 * anything. The order is what matters — someone who cannot read the sign-in form cannot read the link
+	 * to the settings either.
 	 */
 	const signedOutHome = $derived(settings.hasSeenWelcome ? '/auth' : '/welcome');
 
 	/**
-	 * Le verrou d'accès est en base : un compte non approuvé ne lit rien, même en appelant l'API
-	 * directement. Cette redirection n'est là que pour éviter d'afficher une coquille vide.
+	 * The access lock is in the database: an unapproved account reads nothing, even calling the API
+	 * directly. This redirect is only here to avoid showing an empty shell.
 	 */
 	$effect(() => {
 		if (session.loading) return;
@@ -175,13 +171,12 @@
 		}
 
 		/**
-		 * La session existe mais s'est arrêtée au mot de passe, alors que le compte exige un
-		 * deuxième facteur. Ce n'est pas un compte en attente de validation : le renvoyer vers
-		 * l'écran d'attente lui dirait quelque chose de faux, et surtout ne lui donnerait pas le
-		 * champ où taper son code.
+		 * The session exists but stopped at the password, while the account requires a second factor. This
+		 * is not an account awaiting approval: sending them to the waiting screen would tell them something
+		 * false, and above all would not give them the field to type their code in.
 		 *
-		 * La base refuse déjà toute lecture dans cet état ; ce détour évite en plus de lancer la
-		 * synchronisation, qui vide les tables locales avant de les remplir.
+		 * The database already refuses every read in this state; this detour additionally avoids starting
+		 * the sync, which empties the local tables before filling them.
 		 */
 		if (session.needsSecondFactor) {
 			if (page.url.pathname !== '/auth/mfa') goto('/auth/mfa');
@@ -201,11 +196,11 @@
 	});
 
 	/**
-	 * La clé d'IA est relue à chaque compte, et oubliée entre deux.
+	 * The AI key is re-read for each account, and forgotten between two.
 	 *
-	 * L'identifiant est lu dans l'effet pour qu'un changement de compte sur le même appareil le
-	 * redéclenche : sans lui, la clé de la personne précédente resterait en mémoire, et l'écran des
-	 * recettes proposerait de dépenser son crédit à quelqu'un d'autre.
+	 * The id is read inside the effect so that an account change on the same device re-triggers it:
+	 * without it, the previous person's key would stay in memory, and the recipes screen would offer to
+	 * spend their credit for somebody else.
 	 */
 	$effect(() => {
 		const id = session.user?.id;
@@ -219,15 +214,14 @@
 	});
 
 	/**
-	 * Le tour se joue une fois, sur l'accueil, une fois le compte validé.
+	 * The tour plays once, on the home screen, once the account is approved.
 	 *
-	 * driver.js et sa feuille de style sont chargés à la demande : ils ne servent qu'une fois dans
-	 * la vie d'un compte, les faire descendre à chaque ouverture serait payé par tout le monde pour
-	 * personne. Le délai laisse la liste se peindre — une bulle qui désigne un bouton pas encore
-	 * rendu se pose dans le vide.
+	 * driver.js and its stylesheet are loaded on demand: they only serve once in the life of an account,
+	 * and making them come down on every opening would be paid by everyone for nobody. The delay lets the
+	 * list paint — a bubble pointing at a button not yet rendered lands in the void.
 	 *
-	 * Être montré vaut vu, abandon compris : le reproposer à chaque démarrage ferait d'une aide un
-	 * obstacle. Il se relance depuis le profil.
+	 * Being shown counts as seen, abandonment included: offering it again on every start would turn help
+	 * into an obstacle. It can be replayed from the profile.
 	 */
 	$effect(() => {
 		if (!session.isApproved || settings.hasSeenTour) return;
@@ -248,11 +242,11 @@
 	});
 
 	/**
-	 * Premier contact de ce compte avec cet appareil : on décide une fois pour toutes qui, de
-	 * l'appareil ou de la base, porte les préférences les plus récentes.
+	 * This account's first contact with this device: we decide once and for all which of the device or
+	 * the database carries the most recent preferences.
 	 *
-	 * Cet effet ne dépend que de l'identifiant, jamais des réglages eux-mêmes : le relire à chaque
-	 * changement de couleur relancerait un arbitrage au milieu d'une modification.
+	 * This effect depends only on the id, never on the settings themselves: re-reading it on every colour
+	 * change would restart an arbitration in the middle of an edit.
 	 */
 	$effect(() => {
 		const id = session.user?.id;
@@ -260,11 +254,11 @@
 	});
 
 	/**
-	 * Ensuite, chaque réglage modifié repart vers la base. Le délai regroupe les rafales — glisser
-	 * le curseur de taille traverse six crans, ce qui ferait six écritures pour un seul geste.
+	 * Then every changed setting goes back to the database. The delay groups bursts — dragging the size
+	 * slider crosses six steps, which would make six writes for a single gesture.
 	 */
 	$effect(() => {
-		// Lecture explicite : c'est elle qui abonne l'effet à l'ensemble des réglages.
+		// Explicit read: it is what subscribes the effect to the whole of the settings.
 		settings.snapshot();
 
 		const id = session.user?.id;
@@ -275,27 +269,25 @@
 	});
 
 	/**
-	 * Une seule table pour les trois régimes, et un champ qui dit où l'entrée a sa place.
+	 * One table for the three regimes, and a field saying where each entry belongs.
 	 *
-	 * Trois régimes, mais deux jeux d'entrées seulement : la tablette en portrait reprend celui du
-	 * téléphone. Ce n'est pas un raccourci, c'est la place disponible — le rail est une colonne
-	 * étroite, elle porte des icônes surmontées d'un mot court, pas neuf destinations.
+	 * Three regimes, but only two sets of entries: the tablet in portrait takes the phone's. That is not a
+	 * shortcut, it is the space available — the rail is a narrow column, it carries icons above a short
+	 * word, not nine destinations.
 	 *
-	 * `handheld` : téléphone et tablette en portrait, c'est-à-dire tout ce qui se tient à la main.
-	 * La loupe se sert de l'appareil photo arrière devant une étiquette de produit — une tablette en
-	 * a un, un écran d'ordinateur n'aurait rien à montrer.
+	 * `handheld`: phone and tablet in portrait, that is, everything held in the hand. The magnifier uses
+	 * the rear camera in front of a product label — a tablet has one, a computer screen would have nothing
+	 * to show.
 	 *
-	 * `desktop` : la colonne complète seulement. Dans une barre au pouce comme dans un rail, cinq
-	 * onglets sont un maximum : au-delà, les libellés se serrent et les cibles passent sous le seuil
-	 * du doigt. Y tiennent donc les quatre allers-retours du quotidien — les listes, la loupe, les
-	 * discussions, les cartes. Les magasins en sortent : le bouton de création pose déjà un rayon et
-	 * un magasin, et on ne va sur cet écran que pour ranger, pas en faisant ses courses. Le foyer,
-	 * les comptes et le profil sont des destinations qu'on visite rarement ; hors de la colonne
-	 * complète on y arrive par l'en-tête et par le profil, dans la colonne ils ont leur onglet comme
-	 * le reste.
+	 * `desktop`: the full column only. In a thumb bar as in a rail, five tabs are a maximum: beyond that,
+	 * the labels crowd and the targets fall below the finger threshold. So it holds the four daily
+	 * round trips — lists, magnifier, chats, cards. Shops drop out: the create button already adds an
+	 * aisle and a shop, and you only go to that screen to tidy up, not while shopping. The household, the
+	 * accounts and the profile are destinations you visit rarely; outside the full column you reach them
+	 * through the header and the profile, in the column they get their tab like the rest.
 	 *
-	 * La loupe vient en deuxième, contre les listes : c'est l'outil qu'on ouvre en rayon, une main
-	 * sur le chariot, et le bord du pouce y arrive sans traverser la barre.
+	 * The magnifier comes second, against the lists: it is the tool you open in the aisle, one hand on the
+	 * trolley, and the edge of the thumb reaches it without crossing the bar.
 	 */
 	const nav = [
 		{ href: '/', key: 'nav.lists', icon: ListChecks, place: 'partout' },
@@ -310,16 +302,16 @@
 		{ href: '/profile', key: 'nav.profile', icon: User, place: 'desktop' }
 	] as const;
 
-	/** Les comptes ne s'affichent que pour qui peut les gérer. */
+	/** Accounts only show for those who can manage them. */
 	const entries = $derived(nav.filter((entry) => !('admin' in entry) || session.isAdmin));
 
 	const isActive = (href: string) =>
 		href === '/' ? page.url.pathname === '/' : page.url.pathname.startsWith(href);
 
 	/**
-	 * Ctrl+K, ⌘K sur Mac : le raccourci que tout le monde essaie déjà pour chercher. Il double le
-	 * bouton de l'en-tête, il ne le remplace pas — sur téléphone il n'y a pas de clavier pour le
-	 * taper, et c'est là que l'application sert le plus.
+	 * Ctrl+K, ⌘K on Mac: the shortcut everyone already tries in order to search. It doubles the header
+	 * button, it does not replace it — on a phone there is no keyboard to type it, and that is where the
+	 * application serves most.
 	 */
 	function surRaccourci(event: KeyboardEvent) {
 		if (event.key !== 'k' || !(event.ctrlKey || event.metaKey) || event.altKey) return;
@@ -329,21 +321,20 @@
 		void recherche?.show();
 	}
 
-	/** La loupe occupe toute la surface pour agrandir une étiquette : rien ne flotte par-dessus. */
+	/** The magnifier takes the whole surface to enlarge a label: nothing floats over it. */
 	const hidesCreate = $derived(page.url.pathname.startsWith('/magnifier'));
 
 	/**
-	 * Transition de page par l'API View Transitions : le navigateur photographie l'écran, laisse
-	 * SvelteKit remplacer le contenu, puis anime les deux images. Rien ne reste transformé après
-	 * coup, contrairement à un conteneur animé autour de la page — celui du prototype créait un
-	 * contexte d'empilement qui emprisonnait la loupe et la carte plein écran.
+	 * Page transition through the View Transitions API: the browser photographs the screen, lets
+	 * SvelteKit replace the content, then animates the two images. Nothing stays transformed afterwards,
+	 * unlike an animated container around the page — the prototype's created a stacking context that
+	 * trapped the magnifier and the full-screen card.
 	 *
-	 * Ce qui glisse, c'est la capture racine, et la barre de navigation est nommée pour en être
-	 * exclue (cf. app.css) : nommer `<main>` en ferait un contexte d'empilement, et le piège se
-	 * refermerait de la même façon.
+	 * What slides is the root capture, and the navigation bar is named so as to be excluded from it (see
+	 * app.css): naming `<main>` would make it a stacking context, and the trap would close the same way.
 	 *
-	 * Le sens du glissement est posé sur <html> avant de démarrer : le CSS n'a plus qu'à le lire.
-	 * Sans prise en charge du navigateur, ou mouvement refusé, la navigation reste instantanée.
+	 * The slide direction is set on <html> before starting: the CSS only has to read it. Without browser
+	 * support, or with motion refused, navigation stays instant.
 	 */
 	onNavigate((navigation) => {
 		if (!settings.animates || !document.startViewTransition) return;
@@ -361,14 +352,13 @@
 				await navigation.complete;
 			});
 
-			// Une transition interrompue rejette ses promesses — redirection enchaînée par le verrou
-			// d'accès, onglet caché, navigation suivante qui prend la main. Sans ces filets, la
-			// console reçoit une erreur non traitée alors que la navigation, elle, a bien eu lieu.
+			// An interrupted transition rejects its promises — a redirect chained by the access lock, a hidden
+			// tab, the next navigation taking over. Without these nets, the console gets an unhandled error
+			// while the navigation itself did happen.
 			//
-			// Aucun verrou « une transition à la fois » ici : la deuxième remplace la première, et un
-			// drapeau à remettre à zéro finit toujours par rester coincé sur une promesse qui ne se
-			// termine jamais — page cachée, par exemple — ce qui supprimerait les transitions pour
-			// tout le reste de la session.
+			// No "one transition at a time" lock here: the second replaces the first, and a flag to reset always
+			// ends up stuck on a promise that never settles — a hidden page, for instance — which would remove
+			// transitions for the rest of the session.
 			void transition.ready.catch(() => {});
 			void transition.updateCallbackDone.catch(() => {});
 			void transition.finished.catch(() => {});
@@ -384,10 +374,10 @@
 	</main>
 {:else if !session.isApproved}
 	<!--
-		Les écrans hors session tiennent en une carte : posés en haut, ils laissaient sur un grand
-		écran un vide de deux tiers de page sous eux. `safe` fait toute la règle — quand le contenu
-		dépasse la hauteur disponible, l'alignement retombe sur le haut au lieu de couper le début,
-		ce qui arrive dès qu'un clavier logiciel s'ouvre.
+		The signed-out screens fit in a single card: set at the top, they left two thirds of a page empty
+		below them on a large screen. `safe` is the whole rule — when the content exceeds the available
+		height, the alignment falls back to the top instead of cutting off the start, which happens as soon
+		as a software keyboard opens.
 	-->
 	<main class="fl-rise mx-auto flex min-h-dvh w-full max-w-md flex-col justify-center-safe px-4 py-10">
 		{@render children()}
@@ -400,30 +390,29 @@
 			style="view-transition-name: nav"
 			aria-label={t('nav.main')}
 		>
-			<!-- Le nom du foyer n'entre pas dans un rail de 5,5rem : en portrait il reste dans l'en-tête. -->
+			<!-- The household name does not fit in a 5.5rem rail: in portrait it stays in the header. -->
 			<p class="text-h2 hidden items-center gap-2.5 px-6 py-6 font-semibold full:flex">
 				<Logo />
 				{t('app.name')}
 			</p>
 
 			<!--
-				Le bouton de création : sur téléphone, un disque plein posé au-dessus de la barre, du côté
-				de la main qui tient l'appareil — à droite par défaut, la place que recommande Android.
-				C'est là que le pouce arrive sans que la main change de prise, et c'est la place que les
-				gens cherchent d'eux-mêmes ; `fl-thumb-side` la déplace pour un gaucher.
+				The create button: on a phone, a solid disc above the bar, on the side of the hand holding the
+				device — right by default, the place Android recommends. That is where the thumb lands without
+				the hand changing grip, and it is the place people look for by themselves; `fl-thumb-side` moves
+				it for a left-handed person.
 
-				Au centre, il tombait au milieu de l'onglet Loupe : la cible principale masquait à demi
-				une destination. Le liseré à la couleur du fond reste utile — c'est lui qui détache le
-				disque du contenu qui défile derrière.
+				In the centre, it fell in the middle of the Magnifier tab: the main target half covered a
+				destination. The rim in the background colour is still useful — it is what detaches the disc from
+				the content scrolling behind.
 
-				Il disparaît sur la loupe, et seulement sur téléphone : là-bas le disque flotte sur
-				l'étiquette qu'on essaie de lire. Dès que la navigation est une colonne — rail compris —
-				il y reprend sa place dans le flux, ne recouvre rien, et y reste. En rail il garde son
-				libellé caché : la colonne est trop étroite pour un mot à côté d'une icône.
+				It disappears on the magnifier, and only on a phone: there the disc floats over the label you are
+				trying to read. As soon as the navigation is a column — rail included — it goes back into the flow
+				there, covers nothing, and stays. In the rail it keeps its label hidden: the column is too narrow
+				for a word next to an icon.
 
-				Un seul élément pour les deux tailles d'écran, et non deux dont un masqué : deux boutons
-				porteraient le même repère de test, et la visite guidée finirait par en désigner un
-				invisible.
+				One element for both screen sizes, and not two with one hidden: two buttons would carry the same
+				test marker, and the guided tour would end up pointing at an invisible one.
 			-->
 			<button
 				type="button"
@@ -458,13 +447,12 @@
 								{active ? 'text-primary' : 'text-muted-foreground'}"
 						>
 							<!--
-								La pastille de l'onglet actif est un élément à part, nommé pour la transition :
-								elle glisse d'un onglet à l'autre pendant le changement de page. Nommer le lien
-								entier ferait glisser son texte, qui se fondrait dans celui de l'onglet suivant.
+								The active tab badge is a separate element, named for the transition: it slides from one tab
+								to the next during the page change. Naming the whole link would slide its text, which would
+								blend into the next tab's.
 
-								Sa forme est dans app.css : capsule derrière l'icône sur téléphone, ligne pleine
-								dans la colonne. C'est l'enveloppe qui décide, en cessant d'être son bloc
-								conteneur au-delà de 48rem.
+								Its shape is in app.css: a pill behind the icon on a phone, a full line in the column. The
+								wrapper decides, by ceasing to be its containing block beyond 48rem.
 							-->
 							<span class="fl-nav-icon">
 								{#if active}
@@ -476,7 +464,7 @@
 								{/if}
 								<Icon size={22} class="relative" aria-hidden="true" />
 							</span>
-							<!-- La graisse redit l'onglet actif : la couleur ne doit pas le dire toute seule. -->
+							<!-- The weight repeats the active tab: colour must not say it on its own. -->
 							<span class="relative {active ? 'font-medium' : ''}">{t(key)}</span>
 						</a>
 					</li>
@@ -491,14 +479,13 @@
 			<InstallBanner />
 
 			<!--
-				L'en-tête. L'aide y est à la même place sur tous les écrans et à toutes les tailles :
-				chercher le point d'interrogation ailleurs selon la page ferait perdre plus de temps
-				qu'il n'en fait gagner.
+				The header. Help is in the same place on every screen and at every size: looking for the question
+				mark somewhere else depending on the page would cost more time than it saves.
 
-				Partout où la navigation n'affiche que les destinations du quotidien — téléphone et
-				tablette en portrait — elle porte en plus ce que la colonne complète montre d'elle-même :
-				le logo et le nom, qui disent où l'on est, et le profil. Un réglage se cherche en haut
-				de l'écran ; un aller-retour se fait avec le pouce, sur le bord.
+				Everywhere the navigation only shows the daily destinations — phone and tablet in portrait — it
+				also carries what the full column shows by itself: the logo and the name, which say where you are,
+				and the profile. A setting is looked for at the top of the screen; a round trip is made with the
+				thumb, on the edge.
 			-->
 			<header class="mx-auto flex w-full max-w-3xl items-center justify-between gap-4 px-4 pt-3">
 				<p class="text-h2 flex items-center gap-2 font-semibold full:hidden">
@@ -508,11 +495,10 @@
 
 				<div class="ms-auto flex items-center gap-1">
 					<!--
-						La recherche est dans l'en-tête, à côté de l'aide, et à la même place sur les deux
-						tailles d'écran. Elle n'entre pas dans la barre du bas : celle-ci porte des
-						destinations, une par onglet, et la recherche n'en est pas une — elle ouvre une
-						feuille par-dessus la page et la rend ensuite. Ajouter un cinquième onglet sur
-						téléphone aurait en plus resserré les quatre autres sous le seuil du doigt.
+						Search is in the header, next to help, and in the same place at both screen sizes. It does not
+						go in the bottom bar: that one carries destinations, one per tab, and search is not one — it
+						opens a sheet over the page and gives it back afterwards. Adding a fifth tab on a phone would
+						also have squeezed the other four below the finger threshold.
 					-->
 					<button
 						type="button"
@@ -546,10 +532,10 @@
 		</div>
 
 		<!--
-			Le signalement est posé ici, dans la grille, et non à côté d'elle : c'est cet élément qui
-			publie `--fl-navbar-measured`, dont le panneau a besoin pour ne pas passer sous les onglets.
-			Il vit hors des pages pour survivre à une navigation — on peut aller reproduire le
-			problème ailleurs, le brouillon suit.
+			The report panel is placed here, inside the grid, and not beside it: this element is what
+			publishes `--fl-navbar-measured`, which the panel needs so as not to slip under the tabs. It lives
+			outside the pages so it survives a navigation — you can go and reproduce the problem elsewhere, the
+			draft follows.
 		-->
 		<ReportPanel />
 	</div>

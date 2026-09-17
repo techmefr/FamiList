@@ -1,6 +1,6 @@
 /**
- * Les formats que la carte sait dessiner, donc les seuls qu'on propose. Le Code 128 vient en
- * tête : c'est celui qu'impriment la plupart des enseignes.
+ * The formats the card knows how to draw, and therefore the only ones we offer. Code 128 comes first: it is
+ * what most retailers print.
  */
 export const CODE_TYPES = [
 	'code_128',
@@ -14,15 +14,14 @@ export const CODE_TYPES = [
 
 export type CodeType = (typeof CODE_TYPES)[number];
 
-/** Les formats en deux dimensions se dessinent en carré, les autres en barres. */
+/** Two-dimensional formats are drawn as a square, the others as bars. */
 const MATRIX = new Set(['qr_code', 'aztec', 'data_matrix', 'pdf417']);
 
 export const isMatrixFormat = (codeType: string) => MATRIX.has(codeType);
 
 /**
- * Devine le format d'après la saisie, pour éviter de faire choisir l'utilisateur. Treize chiffres
- * sont un EAN-13, une suite de caractères mêlés un QR ; le reste tombe en Code 39, qui accepte
- * lettres et chiffres.
+ * Guesses the format from what was typed, to save the user from choosing. Thirteen digits are an EAN-13, a
+ * mixed run of characters a QR; the rest falls to Code 39, which accepts letters and digits.
  */
 export function guessCodeType(value: string): CodeType {
 	const trimmed = String(value).trim();

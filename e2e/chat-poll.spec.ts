@@ -15,9 +15,9 @@ async function creerListe(page: import('@playwright/test').Page, nom: string) {
 }
 
 /**
- * On savait arriver sur la conversation ; on ne savait pas qu'on pouvait y parler. Ce test suit
- * le message de bout en bout : écrit, envoyé, affiché, et toujours là après un rechargement —
- * c'est le rechargement qui distingue un message parti en base d'un message resté à l'écran.
+ * We knew how to reach the conversation; we did not know you could speak in it. This test follows the
+ * message end to end: written, sent, shown, and still there after a reload — it is the reload that tells a
+ * message that left for the database from one that stayed on the screen.
  */
 test('écrire un message dans la conversation d’une liste', async ({ signedInPage: page }) => {
 	const nom = nomListe();
@@ -31,7 +31,7 @@ test('écrire un message dans la conversation d’une liste', async ({ signedInP
 		timeout: 15_000
 	});
 
-	// Vide après l'envoi : sinon le message suivant repart avec le précédent collé devant.
+	// Empty after sending: otherwise the next message leaves with the previous one stuck in front of it.
 	await expect(page.getByTestId('chat-input')).toHaveValue('');
 
 	await page.reload();
@@ -41,9 +41,9 @@ test('écrire un message dans la conversation d’une liste', async ({ signedInP
 });
 
 /**
- * Le sondage de date, jusqu'à sa conclusion. Voter ne suffit pas : ce qui compte, c'est que le
- * choix majoritaire devienne la date de la liste, visible en haut de l'écran, parce que c'est la
- * seule trace qui survive à la conversation.
+ * The date poll, through to its conclusion. Voting is not enough: what counts is that the majority choice
+ * becomes the list's date, visible at the top of the screen, because that is the only trace surviving the
+ * conversation.
  */
 test('proposer des dates, voter, et fixer la date retenue', async ({ signedInPage: page }) => {
 	const nom = nomListe();
@@ -65,7 +65,7 @@ test('proposer des dates, voter, et fixer la date retenue', async ({ signedInPag
 		timeout: 15_000
 	});
 
-	// Le bouton n'apparaît qu'une fois qu'un choix mène : sans voix, il n'y a rien à retenir.
+	// The button only appears once a choice is leading: with no vote, there is nothing to keep.
 	const retenir = sondage.locator('[data-test-class="poll-set-date"]');
 	await expect(retenir).toBeVisible({ timeout: 15_000 });
 	await expect(retenir).toContainText('Samedi');
@@ -75,8 +75,8 @@ test('proposer des dates, voter, et fixer la date retenue', async ({ signedInPag
 });
 
 /**
- * Un sondage sans choix n'est pas un sondage. Le refus doit se voir sur place, sans fermer le
- * formulaire : refermé, il emporterait la question déjà tapée.
+ * A poll with no choices is not a poll. The refusal must show on the spot, without closing the form: closed,
+ * it would take the question already typed with it.
  */
 test('un sondage sans choix est refusé sans fermer le formulaire', async ({
 	signedInPage: page

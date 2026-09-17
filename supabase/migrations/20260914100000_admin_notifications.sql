@@ -1,44 +1,41 @@
--- L administrateur est prevenu par courriel des inscriptions et des signalements.
+-- The administrator is told by email about sign-ups and reports.
 --
--- Les deux evenements partagent le meme probleme : ils n existent que dans /admin, et personne ne
--- regarde /admin en continu. Une inscription y est pire qu un signalement — le compte arrive en
--- `pending`, et les trois fonctions d acces exigent `is_approved()` : la personne se connecte et
--- ne voit rien, sans savoir qu elle attend une validation humaine. Une seule brique sert les deux.
+-- Both events share the same problem: they exist only in /admin, and nobody watches /admin continuously. A
+-- sign-up there is worse than a report — the account arrives `pending`, and the three access functions
+-- require `is_approved()`: the person signs in and sees nothing, without knowing they are waiting for a
+-- human validation. One single piece serves both.
 --
--- L application est un bundle statique : il n y a pas de serveur a nous ou poser un envoi de mail.
--- Le chemin est donc base de donnees -> Edge Function. Trois pieces, volontairement decouplees :
+-- The application is a static bundle: there is no server of ours to put an email send on. The path is
+-- therefore database -> Edge Function. Three pieces, deliberately decoupled:
 --
---   1. Un tampon (`admin_notifications`) que les declencheurs remplissent. Un declencheur qui
---      ferait l appel reseau lui-meme mettrait la latence — et l echec — du relais de courriel
---      dans la transaction d inscription : une panne du relais refuserait des inscriptions. Ici le
---      declencheur ne fait qu un insert local, et son bloc `exception when others` avale meme
---      celui-la. Une inscription et un signalement aboutissent quoi qu il arrive au courriel.
---   2. Une fonction d envoi (`flush_admin_notifications`) appelee toutes les cinq minutes par
---      pg_cron, qui reveille l Edge Function via pg_net.
---   3. L Edge Function `notify-admins`, qui reclame le tampon et envoie UN courriel groupe.
+--   1. A buffer (`admin_notifications`) the triggers fill. A trigger making the network call itself would
+--      put the latency — and the failure — of the email relay inside the sign-up transaction: a relay outage
+--      would refuse sign-ups. Here the trigger only does a local insert, and its `exception when others`
+--      block even swallows that. A sign-up and a report go through whatever happens to the email.
+--   2. A sending function (`flush_admin_notifications`) called every five minutes by pg_cron, which wakes
+--      the Edge Function through pg_net.
+--   3. The `notify-admins` Edge Function, which claims the buffer and sends ONE grouped email.
 --
--- Cinq minutes et un courriel groupe, plutot qu un courriel par evenement : une mauvaise journee
--- de signalements ne doit pas produire quarante courriels, sinon le quarante-et-unieme n est plus
--- lu. Cinq minutes restent un delai que quelqu un qui vient de s inscrire ne percoit pas comme un
--- oubli. Le groupage est gratuit — il tombe tout seul du fait que la fonction vide le tampon.
+-- Five minutes and a grouped email, rather than one email per event: a bad day of reports must not produce
+-- forty emails, or the forty-first is no longer read. Five minutes stays a delay that somebody who has just
+-- signed up does not perceive as an oversight. The grouping is free — it falls out of the fact that the
+-- function empties the buffer.
 --
--- Qui est « l administrateur » ? Tous les comptes `role = 'admin'` et `status = 'approved'`, pas
--- une adresse en dur. Le depot n en connait qu un aujourd hui, et l issue #11 dit justement que
--- c est un point de defaillance unique : le jour ou un second administrateur est nomme, il doit
--- recevoir les courriels sans qu on repasse par une migration. S il n y a aucun administrateur,
--- rien n est reclame et le tampon attend.
+-- Who is "the administrator"? Every account with `role = 'admin'` and `status = 'approved'`, not a
+-- hard-coded address. The repository knows only one today, and issue #11 says precisely that this is a
+-- single point of failure: the day a second administrator is appointed, they must receive the emails without
+-- going through another migration. If there is no administrator, nothing is claimed and the buffer waits.
 --
--- Ces courriels ne peuvent pas passer par le SMTP deja configure cote Supabase : celui-la n est
--- consomme que par Supabase Auth, pour ses propres messages (confirmation, reinitialisation,
--- invitation). Prevenir un administrateur qu une inscription attend n est aucun de ces messages,
--- et Auth n offre pas d envoi arbitraire. D ou un chemin d envoi a nous dans l Edge Function, qui
--- parle au relais directement — les memes identifiants peuvent le servir, ils doivent juste lui
--- etre donnes une seconde fois, en secrets de fonction.
+-- These emails cannot go through the SMTP already configured on the Supabase side: that one is only consumed
+-- by Supabase Auth, for its own messages (confirmation, reset, invitation). Telling an administrator that a
+-- sign-up is waiting is none of those messages, and Auth offers no arbitrary sending. Hence a sending path
+-- of our own in the Edge Function, which speaks to the relay directly — the same credentials can serve it,
+-- they just have to be given to it a second time, as function secrets.
 --
--- Rien de secret ici. L URL des fonctions et la cle de service vivent dans Supabase Vault, les
--- identifiants SMTP dans les secrets de l Edge Function. Absents — et ils le sont en CI comme sur
--- une base neuve — chaque etage se contente de ne rien faire : le cron ne poste pas, la fonction
--- relache ce qu elle avait reclame. Aucun secret n est requis pour que `db reset` passe.
+-- Nothing secret here. The functions URL and the service key live in Supabase Vault, the SMTP credentials in
+-- the Edge Function's secrets. Absent — and they are in CI as on a fresh database — each floor simply does
+-- nothing: the cron does not post, and the function releases what it had claimed. No secret is required for
+-- `db reset` to pass.
 
 create extension if not exists pg_net with schema extensions;
 create extension if not exists pg_cron;
@@ -58,8 +55,8 @@ create index admin_notifications_pending_idx
 
 alter table public.admin_notifications enable row level security;
 
--- Aucune policy, comme bug_reports : la table ne s atteint que par les fonctions security definer
--- ci-dessous. Le tampon recopie une adresse de courriel, il n a rien a faire dans l API publique.
+-- No policy, like bug_reports: the table is only reachable through the security definer functions below. The
+-- buffer copies an email address, and it has no business in the public API.
 revoke all on public.admin_notifications from public, anon, authenticated;
 
 comment on table public.admin_notifications is
@@ -74,9 +71,9 @@ security definer
 set search_path = ''
 as $$
 begin
-  -- Seuls les comptes qui attendent vraiment une decision. Le tout premier compte est cree
-  -- `approved` par handle_new_user, et le compte de demonstration aussi : signaler ces deux-la
-  -- reviendrait a demander une validation qui a deja eu lieu.
+  -- Only the accounts really waiting for a decision. The very first account is created `approved` by
+  -- handle_new_user, and so is the demonstration account: reporting those two would amount to asking for a
+  -- validation that has already happened.
   if new.status <> 'pending' or new.is_demo then
     return new;
   end if;
@@ -94,8 +91,8 @@ begin
   return new;
 exception
   when others then
-    -- Une inscription ne se perd jamais pour un courriel. L evenement manquera au tampon, le
-    -- compte restera visible dans /admin : le pire cas est celui d avant cette migration.
+    -- A sign-up is never lost over an email. The event will be missing from the buffer, and the account will
+    -- stay visible in /admin: the worst case is the one from before this migration.
     return new;
 end;
 $$;
@@ -118,9 +115,9 @@ begin
       'report_id', new.id,
       'report_kind', new.kind,
       'path', new.path,
-      -- La description entiere peut monter a quatre mille caracteres, et la capture a un megaoctet
-      -- et demi de base64 : ni l une ni l autre n a sa place dans un courriel de reveil. Le
-      -- courriel dit qu il y a quelque chose a lire, /admin le donne en entier.
+      -- The whole description can reach four thousand characters, and the capture one and a half megabytes of
+      -- base64: neither has any place in a wake-up email. The email says there is something to read, /admin
+      -- gives it in full.
       'excerpt', left(new.description, 300),
       'has_screenshot', new.screenshot is not null,
       'email', (select u.email::text from auth.users u where u.id = new.user_id)
@@ -158,7 +155,7 @@ begin
     return jsonb_build_object('recipients', recipients, 'notifications', '[]'::jsonb);
   end if;
 
-  -- Purge d abord : une ligne envoyee ne sert plus qu a garder une adresse en base.
+  -- Purge first: a sent row now only serves to keep an address in the database.
   delete from public.admin_notifications
   where sent_at is not null and sent_at < now() - interval '30 days';
 
@@ -241,8 +238,8 @@ begin
   from vault.decrypted_secrets s
   where s.name = 'admin_notifications_service_key';
 
-  -- Sans secrets, on ne tente rien. C est le cas en CI et sur une base neuve : le cron tourne
-  -- toutes les cinq minutes sans produire ni requete sortante ni erreur dans les journaux.
+  -- With no secrets, we attempt nothing. That is the case in CI and on a fresh database: the cron runs every
+  -- five minutes producing neither an outgoing request nor an error in the logs.
   if functions_url is null or service_key is null then
     return;
   end if;
@@ -254,9 +251,9 @@ begin
       'Authorization', 'Bearer ' || service_key
     ),
     body := '{}'::jsonb,
-    -- Les cinq secondes par defaut de pg_net ne suffisent pas : la fonction doit encore ouvrir une
-    -- session SMTP avec le relais. On ne lit pas la reponse de toute facon — c est le tampon qui
-    -- dit ce qui est parti — mais un abandon a cinq secondes couperait l envoi en cours.
+    -- pg_net's default five seconds are not enough: the function still has to open an SMTP session with the
+    -- relay. We do not read the response anyway — it is the buffer that says what has left — but giving up at
+    -- five seconds would cut the send in progress.
     timeout_milliseconds := 20000
   );
 end;

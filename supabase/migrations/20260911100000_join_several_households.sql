@@ -1,14 +1,13 @@
--- Rejoindre un foyer n en fait plus quitter un autre.
+-- Joining a household no longer means leaving another.
 --
--- Un foyer n est qu un cercle de partage : celui de la famille, celui du conjoint, celui des
--- collegues. redeem_invite tenait l invariant inverse — un compte, un foyer — en supprimant celui
--- de l inscription, et en refusant carrement quand il n etait pas vierge. La cle primaire de
--- household_members porte deja sur le couple (foyer, personne) : la forme des donnees n a jamais
--- interdit d appartenir a plusieurs foyers, seules ces lignes le faisaient.
+-- A household is only a sharing circle: the family's, the partner's, the colleagues'. redeem_invite held the
+-- opposite invariant — one account, one household — by deleting the sign-up one, and by refusing outright
+-- when it was not untouched. household_members's primary key is already on the pair (household, person): the
+-- shape of the data never forbade belonging to several households, only these lines did.
 --
--- Le reste de la fonction ne bouge pas : le verrou par compte, la lecture de l invitation pour
--- mise a jour, et le retour de l identifiant du foyer rejoint, dont l application se sert
--- desormais pour savoir quel foyer afficher.
+-- The rest of the function does not move: the per-account lock, reading the invitation for update, and
+-- returning the identifier of the household joined, which the application now uses to know which household to
+-- show.
 create or replace function public.redeem_invite(invite_code text)
 returns uuid
 language plpgsql

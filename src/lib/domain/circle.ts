@@ -1,24 +1,23 @@
 /**
- * Un cercle actif, parmi plusieurs lus en même temps.
+ * One active circle, among several read at the same time.
  *
- * Le compte appartient à autant de cercles qu'il veut — la famille, le conjoint, les collègues — et
- * le cache les porte tous : c'est ce qui rend la bascule instantanée et utilisable hors réseau, et
- * ce qui permet au temps réel de poser un article d'un cercle qu'on ne regarde pas.
+ * The account belongs to as many circles as it likes — the family, the partner, colleagues — and the
+ * cache holds them all: that is what makes switching instant and usable offline, and what lets realtime
+ * place an item from a circle nobody is looking at.
  *
- * Ce qui est lu partout n'est pas pour autant montré partout. Un seul cercle est actif à la fois, et
- * c'est lui qui décide de ce que l'écran affiche comme de l'endroit où atterrit ce qu'on crée. Trois
- * raisons, dans l'ordre :
+ * What is read everywhere is not shown everywhere for all that. One circle is active at a time, and it
+ * decides both what the screen shows and where what you create lands. Three reasons, in order:
  *
- * - les rayons sont propres à chaque cercle, et portent des identifiants distincts pour des noms
- *   identiques. Les fondre donnerait deux « Fruits et légumes » dans le même écran de rangement, et
- *   la détection automatique choisirait l'un des deux au hasard ;
- * - le parcours appris vit dans un magasin, donc dans un cercle. Mélanger les magasins ferait
- *   ranger une liste de famille selon un trajet appris au bureau ;
- * - créer une liste, un magasin ou une carte exige de toute façon un cercle cible. Un affichage
- *   fondu obligerait à le demander à chaque geste, au lieu d'une fois.
+ * - aisles are specific to each circle, and carry distinct ids for identical names. Merging them would
+ *   give two "Fruit and vegetables" in the same sorting screen, and automatic detection would pick one of
+ *   the two at random;
+ * - the learned route lives in a shop, therefore in a circle. Mixing shops would sort a family list along
+ *   a route learned at work;
+ * - creating a list, a shop or a card needs a target circle anyway. A merged display would mean asking
+ *   for it on every gesture, instead of once.
  *
- * La liste personnelle est la seule exception, et elle est dans le modèle : elle n'a pas de cercle,
- * donc aucun ne peut la cacher. Elle suit son auteur d'un cercle à l'autre.
+ * The personal list is the only exception, and it is in the model: it has no circle, so none can hide it.
+ * It follows its author from one circle to another.
  */
 
 export interface CircleScoped {
@@ -30,26 +29,26 @@ export interface Named {
 	name: string;
 }
 
-/** Ce qui appartient au cercle actif, et rien d'autre. */
+/** What belongs to the active circle, and nothing else. */
 export const ofCircle = <T extends CircleScoped>(rows: readonly T[], circle: string): T[] =>
 	circle === '' ? [] : rows.filter((row) => row.householdId === circle);
 
 /**
- * Les listes visibles : celles du cercle actif, et les personnelles, qui n'en ont aucun.
+ * The visible lists: those of the active circle, and the personal ones, which have none.
  *
- * Sans le second terme, partager une liste la ferait apparaître et basculer de cercle la ferait
- * disparaître — alors que personne ne l'a fermée.
+ * Without the second term, sharing a list would make it appear and switching circle would make it
+ * disappear — although nobody closed it.
  */
 export const visibleLists = <T extends CircleScoped>(lists: readonly T[], circle: string): T[] =>
 	lists.filter((list) => !list.householdId || list.householdId === circle);
 
 /**
- * Le rayon à afficher pour un article.
+ * The aisle to show for an item.
  *
- * Une liste personnelle traverse les cercles, ses articles gardent le rayon du cercle où on les a
- * saisis, et ce rayon-là n'existe pas dans le cercle d'à côté. On les range alors dans le rayon que
- * la détection propose ici plutôt que de les laisser tomber dans un groupe sans nom en fin de
- * liste. Rien n'est réécrit : revenir au cercle d'origine retrouve le rangement d'origine.
+ * A personal list crosses circles, its items keep the aisle of the circle they were typed in, and that
+ * aisle does not exist in the neighbouring circle. We then sort them into the aisle detection suggests
+ * here rather than let them fall into a nameless group at the end of the list. Nothing is rewritten:
+ * coming back to the original circle finds the original arrangement.
  */
 export const resolveAisle = (
 	aisleId: string,
@@ -58,10 +57,10 @@ export const resolveAisle = (
 ): string => (known.has(aisleId) ? aisleId : suggested);
 
 /**
- * Le cercle à montrer à l'ouverture : celui qu'on regardait, s'il est toujours à nous.
+ * The circle to show on opening: the one you were looking at, if it is still ours.
  *
- * On a pu en être sorti depuis un autre appareil ; on retombe alors sur le plus ancien plutôt que
- * sur un écran vide décrivant un cercle auquel on n'appartient plus.
+ * We may have been removed from it on another device; we then fall back on the oldest rather than on an
+ * empty screen describing a circle we no longer belong to.
  */
 export const defaultCircle = (circles: readonly Named[], remembered: string | null): string => {
 	if (remembered && circles.some((circle) => circle.id === remembered)) return remembered;

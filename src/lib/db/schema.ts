@@ -4,37 +4,36 @@ import type { PriceEntry } from '$domain/price';
 
 export interface Shop {
 	id: string;
-	/** Le cercle auquel le magasin appartient. Le cache en porte plusieurs, l'écran n'en montre qu'un. */
+	/** The circle the shop belongs to. The cache holds several, the screen shows only one. */
 	householdId: string;
 	name: string;
 	short: string;
 	tint: string;
 	dist?: string;
 	/**
-	 * L'enseigne, quand il y en a une. Un salon de coiffure ou une boucherie de quartier n'en a
-	 * pas, et tout doit marcher sans : c'est elle qui porte la carte de fidélité valable dans
-	 * toute la chaîne, et elle qui ouvre le trigramme.
+	 * The brand, when there is one. A hairdresser or a local butcher has none, and everything must work
+	 * without it: the brand is what carries the loyalty card valid across the whole chain, and what opens
+	 * the three-letter code.
 	 */
 	brand: string;
-	/** Telle qu'on l'écrit, sans normalisation. On n'en tire que la commune, pour le trigramme. */
+	/** As written, with no normalisation. Only the town is taken from it, for the three-letter code. */
 	address: string;
 	/**
-	 * Le point sur la carte, enregistré sur place depuis le GPS de l'appareil. Absent tant que
-	 * personne ne l'a fait : « pas encore relevé » et « au large de l'Afrique » ne sont pas la
-	 * même chose, d'où l'absence plutôt que zéro.
+	 * The point on the map, recorded on site from the device GPS. Absent until somebody does it: "not
+	 * taken yet" and "off the coast of Africa" are not the same thing, hence the absence rather than
+	 * zero.
 	 */
 	lat?: number;
 	lng?: number;
 	/**
-	 * Le magasin que le foyer n'a pas créé lui-même.
+	 * The shop the household did not create itself.
 	 *
-	 * Un parcours appartient toujours à un magasin — c'est la clé de `shop_layouts`. Sans magasin,
-	 * réordonner ses rayons n'avait donc nulle part où s'écrire, et les flèches ne faisaient rien.
-	 * Chaque foyer en reçoit un, vide, dès sa première ouverture : on peut ranger sa liste avant
-	 * d'avoir décrit le moindre commerce.
+	 * A route always belongs to a shop — it is the key of `shop_layouts`. Without a shop, reordering its
+	 * aisles therefore had nowhere to be written, and the arrows did nothing. Every household receives
+	 * one, empty, from its first opening: you can sort your list before describing a single shop.
 	 *
-	 * Le premier vrai magasin le remplace au lieu de s'ajouter à côté — le rangement déjà fait
-	 * change simplement de nom. C'est ce drapeau qui dit lequel est remplaçable.
+	 * The first real shop replaces it instead of being added beside it — the arrangement already done
+	 * simply changes name. This flag says which one is replaceable.
 	 */
 	isDefault: boolean;
 }
@@ -45,14 +44,13 @@ export interface Aisle {
 	name: string;
 	emoji: string;
 	/**
-	 * Ordre de référence des rayons, celui d'un magasin qu'on ne connaît pas encore. Sans lui,
-	 * Dexie rend les rayons triés par identifiant, donc dans un ordre alphabétique qui ne
-	 * correspond à aucun magasin réel.
+	 * Reference order of the aisles, that of a shop not yet known. Without it, Dexie returns the aisles
+	 * sorted by id, so in an alphabetical order matching no real shop.
 	 */
 	position: number;
 	/**
-	 * Catégorie de référence (fruits, boulangerie, …), cible de la détection automatique. Absente
-	 * sur un rayon créé par l'utilisateur, qui n'entre pas dans la détection.
+	 * Reference category (fruit, bakery, …), target of automatic detection. Absent on a user-created
+	 * aisle, which does not take part in detection.
 	 */
 	kind?: string;
 }
@@ -65,9 +63,8 @@ export interface List {
 	memberIds: string[];
 	eventDate?: string;
 	/**
-	 * Le cercle avec lequel la liste est partagée, absent tant qu'elle est personnelle. Partager
-	 * une liste consiste à lui en désigner un — la colonne `household_id` est nullable côté serveur
-	 * pour cette raison.
+	 * The circle the list is shared with, absent while it stays personal. Sharing a list means naming one
+	 * — the `household_id` column is nullable on the server side for that reason.
 	 */
 	householdId?: string;
 }
@@ -89,9 +86,9 @@ export interface Item {
 export interface LoyaltyCard {
 	id: string;
 	householdId: string;
-	/** Rattachement à un magasin précis. Vide quand la carte vaut pour toute une enseigne. */
+	/** Attachment to a specific shop. Empty when the card is valid for a whole brand. */
 	shopId: string;
-	/** Rattachement à une enseigne : une carte Carrefour marche dans tous les Carrefour. */
+	/** Attachment to a brand: a Carrefour card works in every Carrefour. */
 	brand: string;
 	name: string;
 	num: string;
@@ -105,22 +102,22 @@ export interface LoyaltyCard {
 
 export interface Member {
 	/**
-	 * Le couple (cercle, personne). Un compte membre de deux cercles a deux rattachements, avec un
-	 * rôle et une couleur propres à chacun : `id` seul ne peut donc pas être la clé.
+	 * The (circle, person) pair. An account belonging to two circles has two memberships, with a role and
+	 * a colour of its own in each: `id` alone therefore cannot be the key.
 	 */
 	key: string;
-	/** Le compte. Le même dans tous les cercles où la personne figure. */
+	/** The account. The same in every circle the person appears in. */
 	id: string;
 	householdId: string;
 	/**
-	 * Le nom affiché, celui que voit le foyer. Libre : « Mamie » et « Lulu » sont des réponses
-	 * valables, et c'est pour ça qu'il ne suffit pas à porter l'identité à lui seul.
+	 * The display name, the one the household sees. Free text: "Granny" and "Lulu" are valid answers, and
+	 * that is why it is not enough to carry the identity on its own.
 	 */
 	name: string;
 	/**
-	 * Le prénom et le nom, quand la personne les a renseignés depuis son profil. Vides sinon —
-	 * l'inscription ne les demande pas, et aucun compte créé avant ne les a. Ils ne servent qu'à
-	 * tirer des initiales justes même quand le nom affiché est un surnom.
+	 * First and last name, when the person filled them in from their profile. Empty otherwise — sign-up
+	 * does not ask for them, and no account created before has them. They only serve to derive correct
+	 * initials even when the display name is a nickname.
 	 */
 	firstName: string;
 	lastName: string;
@@ -128,24 +125,23 @@ export interface Member {
 	initial: string;
 	tint: string;
 	/**
-	 * Le portrait, en `data:` — une vignette carrée de 128 px, pas la photo d'origine.
+	 * The avatar, as a `data:` URL — a square 128px thumbnail, not the original photo.
 	 *
-	 * Elle voyage dans la ligne du profil plutôt que dans un espace de fichiers : à cette taille
-	 * elle pèse quelques kilo-octets, elle se synchronise avec le reste sans deuxième chemin de
-	 * données, et elle reste lisible hors ligne comme le reste du foyer. Absente tant que personne
-	 * n'en a posé — ce sont alors les initiales qui font le portrait.
+	 * It travels in the profile row rather than in file storage: at that size it weighs a few kilobytes,
+	 * it syncs with everything else with no second data path, and it stays readable offline like the rest
+	 * of the household. Absent until somebody sets one — the initials then make the portrait.
 	 */
 	avatar?: string;
 }
 
-/** Parcours appris dans un magasin : ordre des rayons. Propre à l'utilisateur. */
+/** Route learned in a shop: the order of the aisles. Per user. */
 export interface ShopLayout {
 	shopId: string;
 	aisleOrder: string[];
 	learned: boolean;
 }
 
-/** Ordre appris des produits dans un rayon d'un magasin, indexé par slug produit. */
+/** Learned order of products within a shop's aisle, indexed by product slug. */
 export interface ShopItemOrder {
 	key: string;
 	shopId: string;
@@ -154,9 +150,9 @@ export interface ShopItemOrder {
 }
 
 /**
- * Un prix relevé, tel qu'il est gardé sur l'appareil. La forme vient du domaine, qui porte la
- * comparaison entre magasins ; seule la personne qui a relevé s'y ajoute, et elle ne sert qu'à
- * remplir la colonne correspondante en base.
+ * A recorded price, as it is kept on the device. The shape comes from the domain, which carries the
+ * comparison between shops; only the person who recorded it is added here, and that only serves to fill
+ * the matching column in the database.
  */
 export interface Price extends PriceEntry {
 	householdId: string;
@@ -164,10 +160,9 @@ export interface Price extends PriceEntry {
 }
 
 /**
- * Un message appartient à une liste ou à une conversation directe, jamais aux deux. La base pose la
- * même contrainte ; ici les deux champs sont optionnels parce que TypeScript ne sait pas dire
- * « exactement un », et que les lire au cas par cas reste plus simple qu'une union à déballer
- * partout.
+ * A message belongs to a list or to a direct conversation, never to both. The database enforces the same
+ * constraint; here both fields are optional because TypeScript cannot say "exactly one", and reading them
+ * case by case stays simpler than a union to unwrap everywhere.
  */
 export interface Message {
 	id: string;
@@ -180,10 +175,10 @@ export interface Message {
 }
 
 /**
- * Une conversation directe, entre deux personnes et hors de tout cercle.
+ * A direct conversation, between two people and outside any circle.
  *
- * `participantIds` en porte exactement deux — la base le garantit, et personne ne peut s'y ajouter
- * puisque aucun droit d'écriture n'est accordé sur ces tables côté client.
+ * `participantIds` holds exactly two — the database guarantees it, and nobody can add themselves since no
+ * write grant is given on these tables to the client.
  */
 export interface Conversation {
 	id: string;
@@ -208,7 +203,7 @@ export interface PollOption {
 	label: string;
 	emoji?: string;
 	claimedBy?: string;
-	/** Ce que la personne apporte : ces lignes deviennent des articles de la liste. */
+	/** What the person brings: these lines become items of the list. */
 	ingredients: string[];
 	position: number;
 }
@@ -222,10 +217,10 @@ export interface PollVote {
 export const pollVoteKey = (optionId: string, userId: string) => `${optionId}::${userId}`;
 
 /**
- * Une recette du foyer : ce qu'on cuisine, et de quoi tirer une liste de courses.
+ * A household recipe: what we cook, and what a shopping list is drawn from.
  *
- * `servings` porte le nombre de parts pour lequel les quantités sont écrites : c'est lui qui rend
- * la mise à l'échelle possible au moment de générer.
+ * `servings` carries the number of servings the quantities are written for: it is what makes scaling
+ * possible at generation time.
  */
 export interface Recipe {
 	id: string;
@@ -239,15 +234,14 @@ export interface Recipe {
 }
 
 /**
- * Une ligne d'ingrédient. À ne pas confondre avec `PollOption.ingredients`, qui dit ce que
- * quelqu'un ramène à un repas partagé : ce sont deux choses sans rapport, et rien ne circule de
- * l'une à l'autre.
+ * An ingredient line. Not to be confused with `PollOption.ingredients`, which says what somebody brings
+ * to a shared meal: the two are unrelated, and nothing travels from one to the other.
  */
 export interface RecipeIngredient {
 	id: string;
 	recipeId: string;
 	name: string;
-	/** Saisie au clavier, donc une chaîne, comme `Item.qty`. Vide quand la recette n'en donne pas. */
+	/** Typed on a keyboard, so a string, like `Item.qty`. Empty when the recipe gives none. */
 	qty: string;
 	unit: string;
 	position: number;
@@ -261,14 +255,14 @@ export interface RecipeStep {
 }
 
 /**
- * Écriture locale pas encore confirmée par le serveur. C'est ce qui permet de cocher un article
- * dans un magasin sans réseau : la modification part de la file dès que la connexion revient.
+ * A local write not yet confirmed by the server. This is what makes it possible to tick an item in a shop
+ * with no network: the change leaves the queue as soon as the connection comes back.
  */
 export interface OutboxEntry {
 	seq?: number;
 	table: string;
 	op: 'upsert' | 'delete';
-	/** Clé primaire côté serveur, un objet car certaines tables ont une clé composée. */
+	/** Server-side primary key, an object because some tables have a composite key. */
 	match: Record<string, string>;
 	payload?: Record<string, unknown>;
 }
@@ -277,7 +271,7 @@ export const itemOrderKey = (shopId: string, aisleId: string) => `${shopId}::${a
 
 export const memberKey = (householdId: string, userId: string) => `${householdId}::${userId}`;
 
-/** Rayons livrés avec l'application, dans l'ordre d'une grande surface classique. */
+/** Aisles shipped with the application, in the order of a typical supermarket. */
 export const REFERENCE_AISLE_ORDER = [
 	'fruits',
 	'boulangerie',
@@ -341,11 +335,11 @@ class FamiListDatabase extends Dexie {
 			pollVotes: 'key, optionId'
 		});
 
-		// Indexé par slug : c'est par produit qu'on interroge l'historique, jamais par identifiant.
+		// Indexed by slug: the history is queried per product, never by id.
 		this.version(5).stores({ prices: 'id, productSlug, shopId' });
 
-		// Les deux tables filles s'interrogent toujours par recette, jamais par identifiant propre :
-		// c'est une recette entière qu'on affiche ou qu'on génère, pas une ligne isolée.
+		// The two child tables are always queried by recipe, never by their own id: it is a whole recipe that
+		// is shown or generated, not an isolated line.
 		this.version(6).stores({
 			recipes: 'id',
 			recipeIngredients: 'id, recipeId',
@@ -353,13 +347,13 @@ class FamiListDatabase extends Dexie {
 		});
 
 		/**
-		 * Le cache tient désormais tous les cercles du compte à la fois, plus un seul : chaque table
-		 * de cercle porte donc son `householdId`, et les membres changent de clé — le même compte
-		 * apparaît une fois par cercle.
+		 * The cache now holds every circle of the account at once, rather than a single one: each circle
+		 * table therefore carries its `householdId`, and members change key — the same account appears once
+		 * per circle.
 		 *
-		 * Les tables touchées sont vidées plutôt que migrées ligne à ligne : elles se relisent
-		 * entièrement du serveur à la première synchronisation, et deviner un cercle pour des lignes
-		 * qui n'en portaient pas produirait un cache faux jusque-là.
+		 * The affected tables are emptied rather than migrated row by row: they are fully re-read from the
+		 * server on the first sync, and guessing a circle for rows that carried none would produce a wrong
+		 * cache until then.
 		 */
 		this.version(7)
 			.stores({ members: 'key, id, householdId' })
@@ -371,8 +365,8 @@ class FamiListDatabase extends Dexie {
 				);
 			});
 
-		// Les messages s'interrogent désormais aussi par conversation. L'ancien index `listId` reste :
-		// une liste garde ses messages, seule la portée directe s'ajoute à côté.
+		// Messages are now also queried by conversation. The old `listId` index stays: a list keeps its
+		// messages, only the direct scope is added beside it.
 		this.version(8).stores({
 			conversations: 'id',
 			messages: 'id, listId, conversationId, createdAt'

@@ -1,31 +1,30 @@
 import type { ReportKind } from '$domain/bug-report';
 
 /**
- * Le signalement en cours d'écriture.
+ * The report being written.
  *
- * Il vit ici, hors de tout écran, pour une raison précise : le panneau doit pouvoir se réduire
- * sans rien perdre. Ce qu'on veut montrer est derrière lui — l'article qui s'affiche mal, le
- * message d'erreur, la liste qui a coincé — et le seul moyen d'en prendre une capture est de
- * ranger le formulaire le temps du geste. S'il vivait dans le composant, le réduire le
- * démonterait, et la description serait à retaper.
+ * It lives here, outside any screen, for a precise reason: the panel must be able to shrink without losing
+ * anything. What we want to show is behind it — the item displaying badly, the error message, the list that
+ * got stuck — and the only way to capture it is to put the form away for the time of the gesture. If it
+ * lived in the component, shrinking it would unmount it, and the description would have to be typed again.
  */
 class ReportStore {
-	/** Le panneau existe (ouvert ou réduit). Fermé, il n'y a plus de brouillon du tout. */
+	/** The panel exists (open or shrunk). Closed, there is no draft at all any more. */
 	open = $state(false);
 
-	/** Réduit : rangé en bas, l'écran redevient visible, le contenu saisi est conservé. */
+	/** Shrunk: tucked away at the bottom, the screen becomes visible again, what was typed is kept. */
 	minimized = $state(false);
 
 	kind = $state<ReportKind>('bug');
 
-	/** L'écran d'où part le signalement. Noté pour ne pas avoir à demander « vous étiez où ? ». */
+	/** The screen the report starts from. Noted so as not to have to ask "where were you?". */
 	path = $state('');
 
 	description = $state('');
 	screenshot = $state<string | null>(null);
 	sent = $state(false);
 
-	/** Le numéro court rendu par la base, montré à la personne une fois le signalement déposé. */
+	/** The short number returned by the database, shown to the person once the report is filed. */
 	number = $state<number | null>(null);
 
 	get hasDraft() {
@@ -33,12 +32,12 @@ class ReportStore {
 	}
 
 	/**
-	 * Ouvre le panneau depuis le menu d'aide.
+	 * Opens the panel from the help menu.
 	 *
-	 * Un brouillon déjà commencé n'est pas écrasé : quelqu'un qui a réduit le panneau pour aller
-	 * chercher sa capture, puis repasse par le menu d'aide au lieu du bouton « Reprendre »,
-	 * retrouve ce qu'il écrivait. On ne change alors ni le type ni l'écran d'origine — ils
-	 * appartiennent au signalement en cours.
+	 * A draft already started is not overwritten: somebody who shrank the panel to go and take their
+	 * screenshot, then comes back through the help menu instead of the "Resume" button, finds what they were
+	 * writing. We then change neither the type nor the screen of origin — they belong to the report in
+	 * progress.
 	 */
 	show(kind: ReportKind, path: string) {
 		if (!this.hasDraft || this.sent) {
@@ -62,7 +61,7 @@ class ReportStore {
 		this.minimized = false;
 	}
 
-	/** Ferme et oublie. C'est le seul chemin qui jette ce qui a été écrit. */
+	/** Closes and forgets. It is the only path that throws away what was written. */
 	close() {
 		this.open = false;
 		this.minimized = false;

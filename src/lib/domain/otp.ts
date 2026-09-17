@@ -1,27 +1,26 @@
 /**
- * Les codes qu'on recopie à la main : celui reçu par courriel, et ceux de secours.
+ * The codes people copy by hand: the one received by email, and the backup ones.
  *
- * Ils arrivent presque toujours abîmés — collés depuis un client de messagerie avec une espace
- * insécable au bout, dictés au téléphone avec des tirets, recopiés d'un papier en minuscules. Rien
- * de tout cela n'est une faute de la personne qui saisit, et refuser la saisie pour un espace
- * serait le genre de rigueur qui ne protège de rien.
+ * They almost always arrive damaged — pasted from a mail client with a non-breaking space at the end,
+ * dictated over the phone with dashes, copied from paper in lower case. None of that is the fault of the
+ * person typing, and refusing input over a space would be the kind of strictness that protects nothing.
  */
 
-/** Un code de courriel fait six chiffres. C'est Supabase qui le décide, pas nous. */
+/** An email code is six digits. Supabase decides that, not us. */
 export const OTP_LENGTH = 6;
 
-/** Un code de secours fait dix caractères, pris dans un alphabet sans lettre ambiguë. */
+/** A backup code is ten characters, drawn from an alphabet with no ambiguous letter. */
 export const BACKUP_LENGTH = 10;
 
 /**
- * L'alphabet des codes de secours, le même que celui de la fonction en base.
+ * The alphabet of the backup codes, the same as the database function's.
  *
- * Ni O, ni I, ni L, ni U : on les lirait 0, 1, 1 et V. Ce sont les quatre confusions qui font
- * qu'un code recopié d'un papier ne passe pas, sans qu'on puisse dire laquelle a eu lieu.
+ * No O, no I, no L, no U: they would be read as 0, 1, 1 and V. Those are the four confusions that make a
+ * code copied from paper fail, without being able to say which one occurred.
  */
 export const BACKUP_ALPHABET = '23456789ABCDEFGHJKMNPQRSTVWXYZ';
 
-/** Ne garde que les chiffres, et pas plus de six. */
+/** Keeps only the digits, and no more than six. */
 export function normalizeOtp(input: string): string {
 	return input.replace(/\D/g, '').slice(0, OTP_LENGTH);
 }
@@ -31,11 +30,11 @@ export function isCompleteOtp(input: string): boolean {
 }
 
 /**
- * Met un code de secours dans la forme attendue par la base : majuscules, sans séparateur.
+ * Puts a backup code into the shape the database expects: upper case, no separator.
  *
- * Les caractères hors alphabet sont écartés plutôt que refusés. Un zéro tapé à la place d'un O
- * n'existe pas dans cet alphabet — mais il n'y a pas non plus de O, donc rien à corriger : on
- * laisse simplement tomber ce que la base ne saurait pas reconnaître.
+ * Characters outside the alphabet are dropped rather than refused. A zero typed in place of an O does not
+ * exist in this alphabet — but there is no O either, so there is nothing to correct: we simply drop what
+ * the database would not recognise.
  */
 export function normalizeBackupCode(input: string): string {
 	return [...input.toUpperCase()]
@@ -48,7 +47,7 @@ export function isCompleteBackupCode(input: string): boolean {
 	return normalizeBackupCode(input).length === BACKUP_LENGTH;
 }
 
-/** Coupé en deux pour la lecture : dix caractères d'affilée se recopient mal. */
+/** Split in two for reading: ten characters in a row are copied badly. */
 export function formatBackupCode(code: string): string {
 	const propre = normalizeBackupCode(code);
 	if (propre.length !== BACKUP_LENGTH) return propre;
@@ -57,10 +56,10 @@ export function formatBackupCode(code: string): string {
 }
 
 /**
- * Le contenu du fichier qu'on télécharge en même temps qu'on affiche les codes.
+ * The contents of the file downloaded at the same time the codes are shown.
  *
- * Un écran de dix codes se ferme d'un geste et ne revient jamais : c'est le moment le plus fragile
- * de toute la 2FA. Le fichier n'est pas un luxe, c'est ce qui évite de perdre son compte.
+ * A screen of ten codes closes with one gesture and never comes back: it is the most fragile moment of the
+ * whole 2FA. The file is not a luxury, it is what stops you losing your account.
  */
 export function backupCodesText(codes: string[], heading: string): string {
 	return [heading, '', ...codes.map(formatBackupCode), ''].join('\n');

@@ -3,8 +3,8 @@ import { Capacitor } from '@capacitor/core';
 import { canExplain, installRoute, isIosSafari, shouldOffer } from '$domain/install';
 
 /**
- * L'invite d'installation de Chrome et Edge. Elle n'est pas dans la bibliothèque de types : la
- * spécification n'est portée que par ces navigateurs.
+ * The install prompt of Chrome and Edge. It is not in the type library: the specification is only carried
+ * by those browsers.
  */
 interface BeforeInstallPromptEvent extends Event {
 	prompt(): Promise<void>;
@@ -12,14 +12,14 @@ interface BeforeInstallPromptEvent extends Event {
 }
 
 /**
- * Le compteur d'ouvertures et la date du refus, sur l'appareil.
+ * The opening counter and the refusal date, on the device.
  *
- * `localStorage` et non `@capacitor/preferences`, alors que les deux existent dans le projet : la
- * question ne se pose que sur le web, où Preferences n'est de toute façon qu'une enveloppe
- * asynchrone autour de `localStorage`. La lecture sert au premier rendu, et un aller-retour
- * asynchrone ferait apparaître le bandeau après coup, sous le doigt de quelqu'un qui visait autre
- * chose. Ces deux valeurs appartiennent en plus au navigateur lui-même — installer Familiste dans
- * Chrome ne dit rien de Firefox — donc ni la base ni les préférences synchronisées.
+ * `localStorage` and not `@capacitor/preferences`, although both exist in the project: the question only
+ * arises on the web, where Preferences is in any case just an asynchronous wrapper around
+ * `localStorage`. The read serves the first render, and an asynchronous round trip would make the banner
+ * appear afterwards, under the finger of somebody aiming at something else. These two values also belong
+ * to the browser itself — installing FamiList in Chrome says nothing about Firefox — so neither the
+ * database nor the synced preferences.
  */
 const STORAGE_KEY = 'familist:install';
 
@@ -51,21 +51,20 @@ class InstallStore {
 	#ready = $state(false);
 
 	/**
-	 * L'heure figée au démarrage. Un `Date.now()` lu dans un `$derived` ne serait pas réactif, et
-	 * surtout : personne n'a besoin de voir le bandeau réapparaître à la seconde où un refus expire,
-	 * au milieu d'une session.
+	 * The time frozen at startup. A `Date.now()` read inside a `$derived` would not be reactive, and above
+	 * all: nobody needs to see the banner reappear the second a refusal expires, mid-session.
 	 */
 	#startedAt = Date.now();
 
-	/** Le bandeau, rangé pour cette session sans que ce soit encore un refus. */
+	/** The banner, put away for this session without that being a refusal yet. */
 	dismissed = $state(false);
 
-	/** L'explication, ouverte depuis le bandeau ou depuis le menu d'aide. */
+	/** The explanation, opened from the banner or from the help menu. */
 	detailsOpen = $state(false);
 
 	route = $derived(installRoute(this.#prompt !== null, this.#isIos));
 
-	/** Vrai quand le geste d'installation appartient à Safari et se raconte avec des mots. */
+	/** True when the install gesture belongs to Safari and is told in words. */
 	isManual = $derived(this.route === 'ios');
 
 	canExplain = $derived(
@@ -91,11 +90,11 @@ class InstallStore {
 	);
 
 	/**
-	 * Une ouverture de plus au compteur, et l'écoute de l'invite du navigateur.
+	 * One more opening on the counter, and the listener for the browser prompt.
 	 *
-	 * `beforeinstallprompt` ne passe qu'une fois : sans capture, l'invite est perdue pour la
-	 * session entière et le bouton n'aurait plus rien à déclencher. D'où l'écoute posée au
-	 * démarrage, bien avant que le bandeau ait le droit de s'afficher.
+	 * `beforeinstallprompt` only passes once: without capturing it, the prompt is lost for the whole session
+	 * and the button would have nothing left to trigger. Hence the listener set at startup, long before the
+	 * banner is allowed to show.
 	 */
 	init() {
 		if (!browser || this.#ready) return;
@@ -115,14 +114,14 @@ class InstallStore {
 		this.#isInstalled = this.#detectInstalled();
 
 		window.addEventListener('beforeinstallprompt', (event) => {
-			// Sans ça, Chrome affiche sa propre barre d'installation : deux propositions pour la
-			// même chose, dont une qui ne sait rien de ce que l'application apporte.
+			// Without this, Chrome shows its own install bar: two offers for the same thing, one of which knows
+			// nothing about what the application brings.
 			event.preventDefault();
 			this.#prompt = event as BeforeInstallPromptEvent;
 		});
 
-		// L'installation peut aussi venir d'ailleurs — le menu du navigateur. Le bandeau doit
-		// disparaître sans attendre un rechargement.
+		// Installation can also come from elsewhere — the browser menu. The banner must disappear without
+		// waiting for a reload.
 		window.addEventListener('appinstalled', () => {
 			this.#prompt = null;
 			this.#isInstalled = true;
@@ -132,7 +131,7 @@ class InstallStore {
 	}
 
 	#detectInstalled(): boolean {
-		// `navigator.standalone` est propre à iOS et absent des types du DOM.
+		// `navigator.standalone` is specific to iOS and absent from the DOM types.
 		const iosStandalone = (navigator as Navigator & { standalone?: boolean }).standalone === true;
 
 		return matchMedia('(display-mode: standalone)').matches || iosStandalone;
@@ -145,17 +144,17 @@ class InstallStore {
 				JSON.stringify({ openings: this.#openings, refusedAt: this.#refusedAt })
 			);
 		} catch {
-			// Stockage refusé — navigation privée, quota plein. La proposition reviendra à la
-			// prochaine ouverture : gênant, jamais bloquant.
+			// Storage refused — private browsing, quota full. The offer will come back at the next opening:
+			// annoying, never blocking.
 		}
 	}
 
 	/**
-	 * Ouvre l'invite du navigateur.
+	 * Opens the browser prompt.
 	 *
-	 * L'événement ne se rejoue pas : accepté ou refusé, il est consommé, et on l'oublie. Un refus
-	 * pris là est un vrai refus — il vaut celui du bandeau, sinon la même question reviendrait à
-	 * l'ouverture suivante.
+	 * The event does not replay: accepted or refused, it is consumed, and we forget it. A refusal taken
+	 * there is a real refusal — it counts as the banner's, otherwise the same question would come back at
+	 * the next opening.
 	 */
 	async accept() {
 		const prompt = this.#prompt;
@@ -169,13 +168,13 @@ class InstallStore {
 			if (outcome === 'dismissed') this.refuse();
 			else this.dismissed = true;
 		} catch {
-			// Invite déjà consommée par un autre onglet : rien à signaler, le menu du navigateur
-			// reste ouvert à qui veut.
+			// Prompt already consumed by another tab: nothing to report, the browser menu stays open to whoever
+			// wants it.
 			this.dismissed = true;
 		}
 	}
 
-	/** « Plus tard », et on s'en souvient six mois. */
+	/** "Later", and we remember it for six months. */
 	refuse() {
 		this.dismissed = true;
 		this.detailsOpen = false;

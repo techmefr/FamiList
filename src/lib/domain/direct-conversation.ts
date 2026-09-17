@@ -1,8 +1,8 @@
 /**
- * Ce qu'on affiche d'une conversation directe, hors de tout cercle.
+ * What we show of a direct conversation, outside any circle.
  *
- * Une conversation directe n'a ni nom ni emoji : elle se désigne par l'autre personne. Tout ce qui
- * suit se calcule donc à partir des deux participants et du dernier message, et rien d'autre.
+ * A direct conversation has neither name nor emoji: it is designated by the other person. Everything that
+ * follows is therefore computed from the two participants and the last message, and nothing else.
  */
 
 export interface DirectParticipation {
@@ -24,21 +24,21 @@ export interface DirectSummary {
 }
 
 /**
- * L'autre personne de la conversation.
+ * The other person in the conversation.
  *
- * Rien ne garantit côté écran que la paire soit intacte : un compte supprimé laisse son identifiant
- * derrière lui, et une conversation à un seul participant rendrait `undefined` plutôt que de se
- * désigner soi-même.
+ * Nothing guarantees on the screen side that the pair is intact: a deleted account leaves its identifier
+ * behind, and a conversation with a single participant would return `undefined` rather than designate
+ * oneself.
  */
 export const otherParticipant = (conversation: DirectParticipation, me: string) =>
 	conversation.participantIds.find((id) => id !== me);
 
 /**
- * Les conversations directes, la plus récemment animée en tête.
+ * The direct conversations, the most recently active first.
  *
- * Une conversation sans message garde sa place : elle vient d'être ouverte et c'est justement là
- * qu'on va écrire. Elle est datée à zéro et passe donc derrière celles qui vivent, mais elle ne
- * disparaît pas.
+ * A conversation with no message keeps its place: it has just been opened and that is precisely where we
+ * are about to write. It is dated at zero and therefore comes behind the live ones, but it does not
+ * disappear.
  */
 export const directSummaries = (
 	conversations: readonly DirectParticipation[],

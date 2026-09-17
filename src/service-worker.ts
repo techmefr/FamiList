@@ -4,29 +4,28 @@
 import { base, build, files, version } from '$service-worker';
 
 /**
- * Coquille hors-ligne.
+ * Offline shell.
  *
- * Les données du foyer sont déjà servies par Dexie et la file de synchronisation : ce fichier ne
- * s'occupe que du HTML, du JS et du CSS, c'est-à-dire du tout premier lancement sans réseau, celui
- * où IndexedDB est encore vide et où le navigateur n'a rien à afficher.
+ * The household's data is already served by Dexie and the sync queue: this file only deals with the HTML,
+ * the JS and the CSS, that is, with the very first launch without network, the one where IndexedDB is
+ * still empty and the browser has nothing to show.
  */
 
 const worker = self as unknown as ServiceWorkerGlobalScope;
 
-// `version` change à chaque build : un cache par version, et les anciens sont détruits à
-// l'activation. Sans ça, une mise à jour laisserait les gens sur une coquille figée, ce qui est
-// pire que pas de service worker du tout.
+// `version` changes on every build: one cache per version, and the old ones are destroyed on activation.
+// Without that, an update would leave people on a frozen shell, which is worse than no service worker at
+// all.
 const CACHE = `familist-${version}`;
 
-// La page d'entrée n'est ni dans `build` ni dans `files` : adapter-static la produit comme
-// `fallback`, et l'hébergeur la renvoie pour n'importe quelle route. C'est elle qu'il faut garder.
+// The entry page is in neither `build` nor `files`: adapter-static produces it as `fallback`, and the host
+// returns it for any route. It is the one to keep.
 const ENTRY = `${base}/`;
 const PRECACHE = [ENTRY, ...build, ...files];
 
 worker.addEventListener('install', event => {
-	// Pas de `skipWaiting()` : un onglet ouvert continue de tourner sur les fragments de code de sa
-	// propre version, qui restent dans son cache. Le nouveau worker prend la main à la prochaine
-	// ouverture à froid.
+// No `skipWaiting()`: an open tab keeps running on the code fragments of its own version, which stay in
+// its cache. The new worker takes over at the next cold start.
 	event.waitUntil(caches.open(CACHE).then(cache => cache.addAll(PRECACHE)));
 });
 
@@ -47,8 +46,7 @@ async function cacheFirst(request: Request, key: string) {
 
 	const response = await fetch(request);
 
-	// Une réponse d'erreur reste une réponse : la garder ferait de la panne du jour la version
-	// hors-ligne de demain.
+	// An error response is still a response: keeping it would make today's outage tomorrow's offline version.
 	if (response.ok) cache.put(key, response.clone());
 
 	return response;
@@ -72,19 +70,19 @@ worker.addEventListener('fetch', event => {
 
 	const url = new URL(request.url);
 
-	// Tout ce qui sort du domaine — Supabase en premier — passe sans nous : c'est le moteur de
-	// synchronisation qui sait quoi faire d'un appel réseau raté, pas un cache de coquille.
+	// Everything outside the domain — Supabase first — passes without us: it is the sync engine that knows
+	// what to do with a failed network call, not a shell cache.
 	if (url.origin !== worker.location.origin) return;
 	if (!url.protocol.startsWith('http')) return;
 
-	// Les fichiers du build portent leur empreinte dans leur nom : leur contenu ne change jamais,
-	// le cache fait donc autorité et évite un aller-retour réseau.
+	// The build files carry their fingerprint in their name: their content never changes, so the cache is the
+	// authority and a network round trip is avoided.
 	if (build.includes(url.pathname) || files.includes(url.pathname)) {
 		event.respondWith(cacheFirst(request, url.pathname));
 		return;
 	}
 
-	// Une navigation retombe sur la page d'entrée : l'hébergeur réécrit déjà toutes les routes vers
-	// elle, et le routeur client fait le reste une fois la coquille affichée.
+	// A navigation falls back on the entry page: the host already rewrites every route to it, and the client
+	// router does the rest once the shell is shown.
 	event.respondWith(networkFirst(request, ENTRY));
 });

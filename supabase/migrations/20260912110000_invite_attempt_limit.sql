@@ -1,29 +1,26 @@
--- Un code d invitation ne se devine plus a la chaine.
+-- An invitation code can no longer be guessed one after another.
 --
--- redeem_invite etait appelable sans aucune limite. Le code fait six caracteres dans un alphabet
--- de trente-deux, soit un milliard de combinaisons : c est long, mais un script qui tourne des
--- semaines finit par tomber dessus, et il suffit de tomber sur un seul code vivant pour entrer
--- dans la maison de quelqu un, voir ses courses et ses cartes de fidelite. Une invitation vit
--- sept jours ; multipliee par le nombre d invitations ouvertes a un instant donne, la fenetre
--- n est plus theorique.
+-- redeem_invite could be called with no limit at all. The code is six characters in an alphabet of
+-- thirty-two, that is a billion combinations: it is long, but a script running for weeks ends up hitting
+-- one, and hitting a single live code is enough to enter somebody's home, see their shopping and their
+-- loyalty cards. An invitation lives seven days; multiplied by the number of invitations open at a given
+-- moment, the window is no longer theoretical.
 --
--- On compte par COMPTE, pas par code. Verrouiller un code apres N echecs donnerait a n importe
--- qui le moyen d empecher une famille de se rejoindre : il lui suffirait de saisir des codes au
--- hasard jusqu a griller celui que la personne attend. Le deni de service serait plus facile a
--- monter que la force brute qu on cherche a arreter. Le compte, lui, n est pas une ressource
--- qu un tiers peut atteindre : redeem_invite exige deja une session approuvee, et personne ne
--- peut consommer les essais de quelqu un d autre. L adresse IP, elle, n existe pas ici — il n y
--- a pas de service intermediaire, l application est un paquet statique qui parle a Postgres.
+-- We count per ACCOUNT, not per code. Locking a code after N failures would give anybody the means to stop a
+-- family from joining up: they would only have to enter codes at random until they burnt the one the person
+-- is waiting for. The denial of service would be easier to mount than the brute force we are trying to stop.
+-- The account, for its part, is not a resource a third party can reach: redeem_invite already requires an
+-- approved session, and nobody can consume somebody else's attempts. The IP address, meanwhile, does not
+-- exist here — there is no intermediate service, the application is a static bundle talking to Postgres.
 --
--- Dix echecs par quart d heure glissant : large pour qui recopie un code a la main et se trompe,
--- etroit pour un script, qui plafonne alors a un millier d essais par jour et par compte —
--- negligeable devant le milliard de combinaisons. Un succes efface l ardoise.
+-- Ten failures per rolling quarter-hour: generous for anyone copying a code by hand and getting it wrong,
+-- narrow for a script, which then tops out at a thousand attempts a day per account — negligible against the
+-- billion combinations. A success wipes the slate.
 --
--- La fonction ne leve plus d exception quand le code est refuse, et c est le point delicat : une
--- exception annule toute la transaction, donc aussi l ecriture de la tentative ratee. Le compteur
--- n aurait jamais rien retenu. Elle renvoie desormais un objet qui dit ce qui s est passe, et
--- l ecriture survit. Les refus qui ne concernent pas le code — compte non valide — continuent de
--- lever, ils ne comptent pour rien.
+-- The function no longer raises an exception when the code is refused, and that is the delicate point: an
+-- exception cancels the whole transaction, hence also the write of the failed attempt. The counter would
+-- never have remembered anything. It now returns an object saying what happened, and the write survives.
+-- Refusals that do not concern the code — invalid account — go on raising, they count for nothing.
 
 create table public.invite_attempts (
   id bigint generated always as identity primary key,
@@ -33,9 +30,8 @@ create table public.invite_attempts (
 
 create index invite_attempts_user_time on public.invite_attempts (user_id, attempted_at desc);
 
--- Aucune policy, aucun grant : la table n est lisible et modifiable que par redeem_invite, qui
--- est security definer. Laisser un compte effacer ses propres tentatives reviendrait a lui
--- rendre la limite facultative.
+-- No policy, no grant: the table is only readable and writable by redeem_invite, which is security definer.
+-- Letting an account erase its own attempts would amount to making the limit optional for it.
 alter table public.invite_attempts enable row level security;
 
 drop function if exists public.redeem_invite(text);
@@ -73,8 +69,8 @@ begin
   where code = upper(trim(invite_code))
   for update;
 
-  -- Toujours la meme reponse pour un code inconnu, deja consomme ou perime : distinguer les trois
-  -- dirait a un script lequel de ses essais a touche un code existant.
+  -- Always the same answer for an unknown, already consumed or expired code: telling the three apart would
+  -- tell a script which of its attempts hit an existing code.
   if invite is null or invite.used_by is not null or invite.expires_at < now() then
     insert into public.invite_attempts (user_id) values ((select auth.uid()));
     return jsonb_build_object('status', 'invalid');

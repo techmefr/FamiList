@@ -1,9 +1,9 @@
 import { test, expect } from './fixtures';
 
 /**
- * Un nom unique par exécution : les tests tournent contre une base partagée entre les runs locaux
- * (`supabase db reset` n'a lieu qu'explicitement), et deux listes « Courses e2e » homonymes
- * rendraient les sélecteurs par texte ambigus.
+ * A unique name per run: the tests run against a database shared between local runs (`supabase db reset`
+ * only happens explicitly), and two lists both named "Courses e2e" would make the by-text selectors
+ * ambiguous.
  */
 const nomListe = () => `Courses e2e ${Date.now()}`;
 

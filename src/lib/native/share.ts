@@ -1,19 +1,19 @@
 import { Capacitor } from '@capacitor/core';
 
 /**
- * Sortir un texte de l'application vers ce que la personne veut : messagerie, WhatsApp, courriel.
+ * Getting a text out of the application towards whatever the person wants: messaging, WhatsApp, email.
  *
- * Trois étages, du plus juste au plus sûr :
- * - l'application installée passe par `@capacitor/share`, qui ouvre la vraie feuille du système —
- *   `navigator.share` n'existe pas dans une WebView Android ;
- * - un navigateur qui sait partager utilise `navigator.share`, même feuille, sans plugin ;
- * - partout ailleurs (ordinateur de bureau, Firefox), le presse-papier : le texte est prêt, la
- *   personne le colle où elle veut. C'est le seul étage où rien ne s'ouvre à l'écran, d'où le
- *   résultat rendu à l'appelant — il lui revient de le dire.
+ * Three tiers, from the most exact to the safest:
+ * - the installed application goes through `@capacitor/share`, which opens the real system sheet —
+ *   `navigator.share` does not exist in an Android WebView;
+ * - a browser that can share uses `navigator.share`, same sheet, no plugin;
+ * - everywhere else (desktop computer, Firefox), the clipboard: the text is ready, the person pastes it
+ *   where they want. It is the only tier where nothing opens on screen, hence the result returned to the
+ *   caller — it is up to them to say so.
  */
 export type ShareOutcome = 'shared' | 'copied' | 'cancelled' | 'failed';
 
-/** Une feuille refermée sans choisir n'est pas une panne : rien à annoncer, rien à réessayer. */
+/** A sheet closed without choosing is not a breakdown: nothing to announce, nothing to retry. */
 const isCancel = (error: unknown) =>
 	error instanceof Error && (error.name === 'AbortError' || /cancel/i.test(error.message));
 

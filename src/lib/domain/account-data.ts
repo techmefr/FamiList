@@ -1,10 +1,10 @@
 /**
- * Emporter ses données, puis fermer son compte.
+ * Taking your data with you, then closing your account.
  *
- * Le geste de confirmation est la saisie de sa propre adresse de courriel. Une case à cocher se
- * coche sans lire, et un mot à recopier devrait être traduit dans dix langues — donc être lu dans
- * la bonne. L'adresse, elle, n'appartient qu'à la personne, ne se devine pas depuis l'écran d'un
- * autre, et la retaper prend le temps qu'il faut pour changer d'avis.
+ * The confirming gesture is typing your own email address. A checkbox gets ticked without reading, and a
+ * word to copy would have to be translated into ten languages — and therefore read in the right one. The
+ * address belongs to the person alone, cannot be guessed from somebody else's screen, and typing it again
+ * takes the time it takes to change your mind.
  */
 export type DeleteAccountErrorKey =
 	| 'security.deleteErrorLastAdmin'
@@ -13,10 +13,10 @@ export type DeleteAccountErrorKey =
 	| 'security.deleteErrorUnknown';
 
 /**
- * La comparaison ignore la casse et les espaces autour : une adresse de courriel n'est pas sensible
- * à la casse, et un clavier de téléphone ajoute volontiers une majuscule ou une espace finale. Ce
- * n'est pas un secret à deviner, c'est une confirmation à écrire — la durcir ne protégerait rien et
- * bloquerait la personne au moment où elle a le plus besoin que ça marche.
+ * The comparison ignores case and surrounding spaces: an email address is not case sensitive, and a phone
+ * keyboard happily adds a capital or a trailing space. This is not a secret to guess, it is a confirmation
+ * to write — hardening it would protect nothing and would block the person at the moment they most need it
+ * to work.
  */
 export function matchesConfirmation(typed: string, email: string | null): boolean {
 	const target = (email ?? '').trim().toLowerCase();
@@ -36,7 +36,7 @@ export function deleteAccountErrorKey(message: string): DeleteAccountErrorKey {
 	return 'security.deleteErrorUnknown';
 }
 
-/** Un nom de fichier qui se retrouve dans un dossier de téléchargements six mois plus tard. */
+/** A file name that still makes sense in a downloads folder six months later. */
 export function exportFileName(at: Date): string {
 	const day = [
 		at.getFullYear(),

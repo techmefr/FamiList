@@ -3,15 +3,14 @@ import { t } from '$lib/i18n/index.svelte';
 import { reportCrash } from '$lib/crash/reporter';
 
 /**
- * Les erreurs de rendu et de navigation.
+ * Rendering and navigation errors.
  *
- * SvelteKit les rattrape avant qu'elles atteignent la fenêtre : sans ce crochet, elles ne
- * déclencheraient jamais l'écouteur `error` du rapporteur, et c'est justement la famille la plus
- * grave — celle qui laisse un écran blanc là où il y avait une page.
+ * SvelteKit catches them before they reach the window: without this hook, they would never trigger the
+ * reporter's `error` listener, and they are precisely the most serious family — the one leaving a blank
+ * screen where there was a page.
  *
- * Le message rendu est traduit. Par défaut SvelteKit affiche « Internal Error », en anglais et
- * pour tout le monde ; on n'y gagne rien à montrer le vrai message, qui est technique et peut
- * porter des données du foyer.
+ * The message returned is translated. By default SvelteKit shows "Internal Error", in English and for
+ * everybody; we gain nothing by showing the real message, which is technical and may carry household data.
  */
 export const handleError: HandleClientError = ({ error, event }) => {
 	reportCrash(error, 'render', event.url.pathname);

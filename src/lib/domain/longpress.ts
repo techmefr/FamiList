@@ -1,18 +1,18 @@
 /**
- * L'appui long : maintenir le doigt sur une chose pour l'ouvrir, sans lui ajouter un bouton.
+ * The long press: holding a finger on a thing to open it, without adding a button to it.
  *
- * Le geste n'a de sens que s'il se distingue nettement de ses voisins. Trois d'entre eux passent
- * par le même doigt au même endroit : la tape, le glisser pour réordonner, et le défilement de la
- * liste. D'où les deux seuils ci-dessous, et la règle qui les relie — le moindre déplacement
- * franc annule l'appui, parce que c'est alors un glissement, pas une pression.
+ * The gesture only makes sense if it is clearly distinct from its neighbours. Three of them go through the
+ * same finger in the same place: the tap, the drag to reorder, and scrolling the list. Hence the two
+ * thresholds below, and the rule joining them — the slightest clear movement cancels the press, because it
+ * is then a swipe, not a press.
  */
 
-/** Le temps de maintien avant que le geste compte. */
+/** How long to hold before the gesture counts. */
 export const LONGPRESS_MS = 500;
 
 /**
- * Le déplacement toléré pendant ce temps, en pixels. Un doigt posé ne tient pas parfaitement
- * immobile ; au-delà, c'est que la personne fait défiler ou déplace la ligne.
+ * The movement tolerated during that time, in pixels. A resting finger does not hold perfectly still;
+ * beyond that, the person is scrolling or moving the row.
  */
 export const LONGPRESS_TOLERANCE = 10;
 

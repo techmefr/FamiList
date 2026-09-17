@@ -37,13 +37,12 @@
 	} from '@lucide/svelte';
 
 	/**
-	 * Les trois temps de la saisie. Une recette complète tient rarement sur un écran de téléphone,
-	 * et tout demander d'un coup — le nom, dix ingrédients, six étapes — donne un formulaire qu'on
-	 * referme avant de l'avoir commencé. On demande donc de quoi il s'agit, puis ce qu'il faut
-	 * acheter, puis comment on s'y prend : l'ordre dans lequel on écrit une recette pour de vrai.
+	 * The three stages of typing. A whole recipe rarely fits on a phone screen, and asking everything at
+	 * once — the name, ten ingredients, six steps — gives a form you close before starting it. So we ask
+	 * what it is, then what to buy, then how you go about it: the order a recipe is really written in.
 	 *
-	 * Les étapes sont un tableau et non trois booléens : l'indicateur en haut se déduit alors du
-	 * même état que le contenu, et aucun des deux ne peut se désynchroniser de l'autre.
+	 * The steps are an array and not three booleans: the indicator at the top is then derived from the same
+	 * state as the content, and neither can drift from the other.
 	 */
 	const ETAPES = ['recette', 'ingredients', 'etapes'] as const;
 	type Etape = (typeof ETAPES)[number];
@@ -60,13 +59,13 @@
 	let lines = $state<RecipeLine[]>([{ name: '', qty: '', unit: DEFAULT_UNIT }]);
 	let steps = $state<string[]>(['']);
 
-	/** La recette dont la génération est dépliée, et ce qu'on lui demande. */
+	/** The recipe whose generation is unfolded, and what is being asked of it. */
 	let genere = $state<string | null>(null);
 	let convives = $state(DEFAULT_SERVINGS);
 	let cible = $state('');
 	let aSupprimer = $state<string | null>(null);
 
-	/** L'import depuis un lien : l'adresse saisie, l'attente, le refus, et le fait d'avoir servi. */
+	/** The import from a link: the address typed, the wait, the refusal, and the fact of having served. */
 	let lien = $state('');
 	let importEnCours = $state(false);
 	let importRefus = $state<ImportError | null>(null);
@@ -75,7 +74,7 @@
 	const rang = $derived(ETAPES.indexOf(etape));
 	const derniere = $derived(rang === ETAPES.length - 1);
 
-	// Le bouton central amène ici pour créer : le formulaire doit être déjà déplié à l'arrivée.
+	// The central button brings you here to create: the form must already be unfolded on arrival.
 	$effect(() => {
 		if (createIntent.take('recipe')) ouvrir();
 	});
@@ -98,11 +97,11 @@
 	}
 
 	/**
-	 * Le motif de refus renvoyé par la fonction edge.
+	 * The reason for refusal returned by the edge function.
 	 *
-	 * `functions.invoke` ne lève pas sur un 4xx : il rend une erreur qui porte la réponse HTTP dans
-	 * `context`. Sans la relire, tous les refus se ressembleraient — « adresse illisible » et
-	 * « aucune recette sur cette page » demandent pourtant deux gestes opposés.
+	 * `functions.invoke` does not throw on a 4xx: it returns an error carrying the HTTP response in
+	 * `context`. Without re-reading it, every refusal would look alike — "unreadable address" and "no
+	 * recipe on this page" call for two opposite gestures.
 	 */
 	async function motifDuRefus(erreur: unknown): Promise<ImportError> {
 		const contexte = (erreur as { context?: unknown } | null)?.context;
@@ -117,12 +116,12 @@
 	}
 
 	/**
-	 * Pose la recette récupérée dans le formulaire, sans rien enregistrer.
+	 * Puts the fetched recipe into the form, saving nothing.
 	 *
-	 * C'est tout l'intérêt de la manœuvre : ce qui revient d'une page inconnue est un brouillon.
-	 * Les quantités sont découpées au mieux, certaines lignes repartent telles quelles, et le
-	 * nombre de parts est parfois absent. La personne relit, corrige, puis enregistre — comme si
-	 * elle avait saisi la recette elle-même, mais sans l'avoir tapée.
+	 * That is the whole point of the manoeuvre: what comes back from an unknown page is a draft. The
+	 * quantities are split as best we can, some lines come back as they are, and the number of servings is
+	 * sometimes missing. The person reads it, corrects it, then saves — as if they had typed the recipe
+	 * themselves, but without having typed it.
 	 */
 	function preRemplir(recette: ImportedRecipe) {
 		const importees = importedLines(recette.ingredients);
@@ -162,7 +161,7 @@
 			feedback.play('add');
 			preRemplir(recette);
 		} catch {
-			// Hors ligne, ou fonction indisponible : pour qui regarde l'écran, c'est la même chose.
+			// Offline, or function unavailable: for whoever is looking at the screen, it is the same thing.
 			importRefus = 'unreachable';
 		} finally {
 			importEnCours = false;
@@ -170,13 +169,12 @@
 	}
 
 	/**
-	 * Le formulaire s'ouvre sur une seule rangée, et c'est un bouton qui en ajoute d'autres, plutôt
-	 * qu'une rangée vide qui apparaîtrait dès qu'on remplit la dernière. Une recette compte trois
-	 * ingrédients aussi souvent que quinze : un formulaire qui s'allonge tout seul pendant qu'on
-	 * tape déplace ce qu'on est en train de lire, et n'annonce rien au lecteur d'écran.
+	 * The form opens on a single row, and a button adds more, rather than an empty row appearing as soon as
+	 * you fill the last one. A recipe has three ingredients as often as fifteen: a form that lengthens on
+	 * its own while you type moves what you are reading, and announces nothing to a screen reader.
 	 *
-	 * La dernière rangée ne se retire pas : un formulaire d'ingrédients sans champ ne se remplit
-	 * plus, et il faudrait un second bouton pour en faire réapparaître un.
+	 * The last row cannot be removed: an ingredient form with no field can no longer be filled, and it
+	 * would take a second button to make one reappear.
 	 */
 	function ajouterLigne() {
 		lines = [...lines, { name: '', qty: '', unit: DEFAULT_UNIT }];
@@ -199,9 +197,9 @@
 	}
 
 	/**
-	 * Le même bouton avance d'un temps ou enregistre, selon l'endroit où l'on se trouve. Un seul
-	 * `submit` pour les deux : la touche Entrée fait alors ce qu'on attend d'elle à chaque étape,
-	 * ce qu'un bouton « suivant » hors du formulaire ne donnerait pas.
+	 * The same button moves on a stage or saves, depending on where you are. A single `submit` for both:
+	 * the Enter key then does what you expect of it at each step, which a "next" button outside the form
+	 * would not give.
 	 */
 	function avancer(event: SubmitEvent) {
 		event.preventDefault();
@@ -232,8 +230,8 @@
 		}
 
 		genere = recipeId;
-		// On repart du nombre de parts de la recette : la plupart du temps, on cuisine pour ce
-		// nombre-là, et le champ est alors déjà juste.
+		// We start from the recipe's own number of servings: most of the time you cook for that number, and the
+		// field is then already right.
 		convives = data.recipe(recipeId)?.servings ?? DEFAULT_SERVINGS;
 		cible = '';
 	}
@@ -249,14 +247,13 @@
 </script>
 
 <!--
-	Les recettes du foyer.
+	The household's recipes.
 
-	Une recette est partagée dès qu'elle est écrite : le foyer est un cercle de partage, et tout ce
-	qui y entre s'y lit. Il n'y a donc aucun geste de partage sur cet écran — c'est son absence qui
-	est la fonctionnalité.
+	A recipe is shared as soon as it is written: the household is a sharing circle, and everything entering
+	it is read there. So there is no sharing gesture on this screen — its absence is the feature.
 
-	Ce qui sort d'une recette, c'est une liste de courses, pas un lien : les articles créés vivent
-	leur vie, on les coche et on les corrige devant le rayon sans que la recette bouge.
+	What comes out of a recipe is a shopping list, not a link: the items created live their own life, you
+	tick them and correct them in front of the aisle without the recipe moving.
 -->
 <svelte:head>
 	<title>{t('recipes.title')} — {t('app.name')}</title>
@@ -271,18 +268,18 @@
 		{t('create.recipe')}
 	</Button>
 
-	<!-- N'apparaît que si une clé d'IA est posée dans les réglages ; sinon, rien du tout. -->
+	<!-- Only appears if an AI key is set in the settings; otherwise, nothing at all. -->
 	<RecipeSuggestion />
 
 	<!--
-		L'import depuis un lien, posé sous la création manuelle et non à sa place : une recette de
-		famille ne vient d'aucune page web, et c'est elle que cet écran sert d'abord.
+		The import from a link, placed under manual creation and not in its place: a family recipe comes from
+		no web page, and that is what this screen serves first.
 
-		Ce que l'adresse révèle est écrit en clair au-dessus du champ. L'application est servie en
-		statique et ne parle à personne d'autre qu'à sa propre base ; aller chercher une page tierce
-		demande de confier cette adresse au serveur de l'instance, qui se présentera au site visité.
-		C'est la première sortie réseau du projet, elle ne part que sur un geste explicite, et le
-		dire est moins coûteux que de le faire découvrir.
+		What the address reveals is written in plain words above the field. The application is served
+		statically and talks to nobody but its own database; fetching a third-party page means entrusting that
+		address to the instance's server, which will introduce itself to the site visited. It is the project's
+		first way out to the network, it only leaves on an explicit gesture, and saying so costs less than
+		letting it be discovered.
 	-->
 	<form onsubmit={importer} class="bg-card mt-4 space-y-3 rounded-xl border p-4">
 		<h2 class="text-h2 font-semibold">{t('recipes.import.title')}</h2>
@@ -313,8 +310,8 @@
 		</Button>
 
 		<!--
-			Le refus est annoncé, pas seulement affiché : la personne vient de coller une adresse et
-			regarde le champ, pas le bas du bloc.
+			The refusal is announced, not only displayed: the person has just pasted an address and is looking at
+			the field, not at the bottom of the block.
 		-->
 		<p class="text-caption text-destructive" role="alert" data-test-id="recipe-import-error">
 			{#if importRefus}
@@ -328,10 +325,9 @@
 	<form onsubmit={avancer} class="bg-card mt-4 space-y-5 rounded-xl border p-4">
 		{#if importe}
 			<!--
-				Ce qui vient d'une page web est un brouillon, et l'écran doit le dire avant que la
-				personne n'enregistre. Les quantités sont découpées au mieux, les lignes qu'on n'a pas
-				su lire — « 2 cuillères à soupe d'huile » — sont revenues entières dans le champ du
-				nom, et rien de tout cela n'est écrit en base tant que le formulaire n'est pas validé.
+				What comes from a web page is a draft, and the screen must say so before the person saves. The
+				quantities are split as best we can, the lines we could not read — "2 tablespoons of oil" — have come
+				back whole in the name field, and none of it is written to the database until the form is submitted.
 			-->
 			<p
 				class="text-label rounded-lg bg-[var(--fl-primary-tint)] p-3"
@@ -342,9 +338,8 @@
 		{/if}
 
 		<!--
-			Où l'on en est, dit en toutes lettres et pas seulement par une barre colorée : « étape 2
-			sur 3 » se lit au lecteur d'écran comme à l'œil, et une barre seule ne dit ni combien il
-			en reste ni ce qu'elles contiennent.
+			Where you are, said in full and not only by a coloured bar: "step 2 of 3" reads to a screen reader as
+			much as to the eye, and a bar alone says neither how many are left nor what they contain.
 		-->
 		<ol class="flex flex-wrap gap-2" aria-label={t('recipes.stepper')}>
 			{#each ETAPES as id, index (id)}
@@ -394,10 +389,9 @@
 				</div>
 
 				<!--
-					Le nombre de parts n'est pas une décoration : c'est le dénominateur de la mise à
-					l'échelle. « 400 g de pâtes » ne veut rien dire tant qu'on ne sait pas pour combien
-					de personnes c'est écrit, et c'est lui qui permet de générer pour six une recette
-					notée pour quatre.
+					The number of servings is not decoration: it is the denominator of the scaling. "400 g of pasta" means
+					nothing until you know how many people it is written for, and it is what makes it possible to
+					generate for six a recipe written for four.
 				-->
 				<div>
 					<Label for="recipe-servings">{t('recipes.servings')}</Label>
@@ -639,8 +633,8 @@
 						</div>
 
 						<!--
-							La génération est posée sous la recette dont elle parle, pas dans une fenêtre :
-							on relit les ingrédients en décidant pour combien de personnes on cuisine.
+							Generation sits under the recipe it is about, not in a dialog: you read the ingredients again while
+							deciding how many people you are cooking for.
 						-->
 						{#if genere === recipe.id}
 							<div class="mt-4 space-y-3 border-t pt-4" data-test-class="recipe-generate-form">

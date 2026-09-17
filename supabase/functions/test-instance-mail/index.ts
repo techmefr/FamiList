@@ -1,21 +1,21 @@
 /**
- * Envoie un courriel de test a l administrateur qui vient de cliquer, et dit ce qui a echoue.
+ * Sends a test email to the administrator who has just clicked, and says what failed.
  *
- * Pourquoi cette fonction existe. L envoi reel est asynchrone et muet : `flush_admin_notifications`
- * reveille `notify-admins` toutes les cinq minutes, et un echec ne laisse qu une ligne dans des
- * journaux que personne qui n est pas developpeur n ira lire. Sans ce bouton, la seule facon de
- * savoir si la configuration marche serait d attendre qu un inconnu s inscrive.
+ * Why this function exists. Real sending is asynchronous and silent: `flush_admin_notifications` wakes
+ * `notify-admins` every five minutes, and a failure leaves only a line in logs nobody who is not a developer
+ * will go and read. Without this button, the only way of knowing whether the configuration works would be to
+ * wait for a stranger to sign up.
  *
- * Pourquoi elle repond en codes et non en messages. Le texte montre a l ecran est traduit dans dix
- * langues cote client ; renvoyer une phrase francaise d ici la rendrait intraduisible. Le code dit
- * la cause, l ecran dit la phrase.
+ * Why it answers in codes and not in messages. The text shown on screen is translated into ten languages on
+ * the client side; returning an English sentence from here would make it untranslatable. The code says the
+ * cause, the screen says the sentence.
  *
- * Pourquoi le destinataire n est pas dans la requete. `begin_instance_mail_test()` rend l adresse
- * du compte appelant, et c est la seule qu on serve. Un champ libre aurait fait de ce bouton un
- * formulaire d envoi pour qui detient un compte administrateur vole.
+ * Why the recipient is not in the request. `begin_instance_mail_test()` returns the calling account's
+ * address, and it is the only one we serve. A free field would have made this button a sending form for
+ * whoever holds a stolen administrator account.
  *
- * Ce qu elle ne rend jamais : la valeur d un reglage secret. La reponse ne porte que l issue, la
- * cle publique de la cause, et l adresse a laquelle le message est parti.
+ * What it never returns: the value of a secret setting. The answer carries only the outcome, the public key
+ * of the cause, and the address the message left for.
  */
 
 import { diagnoseMailFailure, type MailTestOutcome } from '../_shared/mail-diagnosis.ts';
@@ -36,9 +36,9 @@ function reply(outcome: MailTestOutcome, extra: Record<string, unknown> = {}): R
 Deno.serve(async (request) => {
 	if (request.method === 'OPTIONS') return new Response('ok', { headers: CORS });
 
-	// Le jeton de la personne, pas la cle de service : c est la base qui verifie le role et le
-	// deuxieme facteur, via `assert_admin_write()`. Une fonction edge qui trancherait elle-meme
-	// serait un deuxieme endroit ou la regle peut diverger.
+	// The person's token, not the service key: it is the database that checks the role and the second factor,
+	// through `assert_admin_write()`. An edge function deciding for itself would be a second place where the
+	// rule can diverge.
 	const token = request.headers.get('Authorization')?.replace(/^Bearer /i, '') ?? '';
 	if (token === '') return reply('failed', { reason: 'missing_token' });
 
@@ -51,8 +51,8 @@ Deno.serve(async (request) => {
 
 		if (reason.includes('plafond')) return reply('quota');
 
-		// Un refus de role ou d elevation remonte tel quel : l ecran sait deja traduire ces deux
-		// messages-la, il le fait pour toutes les autres ecritures du panneau.
+		// A role or elevation refusal is passed on as it is: the screen already knows how to translate those two
+		// messages, it does so for every other write of the panel.
 		return reply('failed', { reason });
 	}
 

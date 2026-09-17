@@ -1,19 +1,18 @@
 /**
- * Ouvre dans le suivi du depot une issue qui ne porte que le numero d un signalement.
+ * Opens an issue in the repository's tracker carrying only a report's number.
  *
- * Reveillee par `public.flush_bug_report_issues()` (pg_cron, chaque minute) : rien ici n est
- * declenche par une action d utilisateur, et rien ici ne peut donc faire echouer un signalement ou
- * bloquer l ecran d administration. La fonction repond toujours 200 — une erreur renvoyee ne
- * serait lue par personne, alors qu une ligne relachee sera reprise au tour suivant.
+ * Woken by `public.flush_bug_report_issues()` (pg_cron, every minute): nothing here is triggered by a user
+ * action, and nothing here can therefore make a report fail or block the administration screen. The function
+ * always answers 200 — an error returned would be read by nobody, whereas a released row will be taken again
+ * on the next round.
  *
- * Le jeton vit ici et nulle part ailleurs. Un jeton d ecriture sur un depot ne peut pas partir
- * dans le bundle client : le bundle est publie, le jeton le serait avec lui.
+ * The token lives here and nowhere else. A write token on a repository cannot travel in the client bundle:
+ * the bundle is published, and the token would be published with it.
  *
- * Configuration : les reglages d instance poses depuis `/admin` (#138), avec priorite aux secrets
- * de fonction quand ils existent — ISSUE_TRACKER_TOKEN, le jeton a portee minimale (issues: write
- * sur ce seul depot), et ISSUE_TRACKER_REPO au format `proprietaire/depot`. ISSUE_TRACKER_API n est
- * utile que pour une forge auto-hebergee. Tant que ni l un ni l autre ne repond, la fonction
- * relache ce qu elle a reclame et rien n est publie.
+ * Configuration: the instance settings set from `/admin` (#138), with priority to the function secrets when
+ * they exist — ISSUE_TRACKER_TOKEN, the token with minimal scope (issues: write on that repository alone),
+ * and ISSUE_TRACKER_REPO in `owner/repository` form. ISSUE_TRACKER_API is only useful for a self-hosted
+ * forge. While neither answers, the function releases what it has claimed and nothing is published.
  */
 
 import { callRpc, serviceKey } from '../_shared/rpc.ts';
@@ -31,8 +30,8 @@ async function loadTrackerSettings(): Promise<Record<string, string | undefined>
 	try {
 		stored = (await rpc<InstanceConfig>('instance_config', {})) ?? {};
 	} catch (error) {
-		// Une fonction deployee en avance sur la base ne doit pas cesser de publier : on retombe sur
-		// l environnement seul, qui etait tout ce qui existait avant cette migration.
+		// A function deployed ahead of the database must not stop publishing: we fall back on the environment
+		// alone, which was all that existed before this migration.
 		console.warn('instance_config indisponible', error);
 	}
 
@@ -54,8 +53,8 @@ async function openIssue(
 		headers: {
 			Accept: 'application/vnd.github+json',
 			'X-GitHub-Api-Version': '2022-11-28',
-			// L API refuse une requete sans agent, et le nom sert a se reconnaitre dans les journaux
-			// du depot le jour ou une issue arrive sans qu on comprenne d ou.
+			// The API refuses a request with no agent, and the name serves to recognise ourselves in the
+			// repository's logs the day an issue arrives with nobody understanding where from.
 			'User-Agent': 'familiste-publish-report-issues',
 			'Content-Type': 'application/json',
 			Authorization: `Bearer ${token}`
@@ -90,9 +89,9 @@ Deno.serve(async () => {
 		for (const report of reports) {
 			const issue = await openIssue(report, settings);
 
-			// Marquee une par une, et non en une fois a la fin : une coupure au milieu du lot ne doit
-			// pas faire rouvrir demain les issues deja creees. `mark_bug_report_issue` n ecrit que
-			// sur une ligne encore sans numero, un doublon reste donc sans effet.
+			// Marked one by one, and not all at once at the end: an interruption in the middle of the batch must
+			// not reopen tomorrow the issues already created. `mark_bug_report_issue` only writes on a row still
+			// without a number, so a duplicate has no effect.
 			await rpc('mark_bug_report_issue', {
 				target: report.id,
 				issue_number: issue.number,
@@ -106,8 +105,8 @@ Deno.serve(async () => {
 		return Response.json({ status: 'published', issues: published });
 	} catch (error) {
 		if (claimed.length > 0) {
-			// Relachees et non perdues : le prochain reveil les reprendra, et la demande reste visible
-			// dans /admin en attendant.
+			// Released and not lost: the next wake-up will take them again, and the request stays visible in /admin
+			// in the meantime.
 			await rpc('release_bug_report_issues', { ids: claimed }).catch(() => undefined);
 		}
 

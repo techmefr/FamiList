@@ -19,14 +19,13 @@
 	let aisleEmoji = $state('🛒');
 	let picker = $state<EmojiPicker | null>(null);
 
-	/** Le magasin ouvert en modification, et celui dont la suppression attend d'être confirmée. */
+	/** The shop open for editing, and the one whose deletion is waiting to be confirmed. */
 	let modifie = $state<string | null>(null);
 	let aSupprimer = $state<string | null>(null);
 
 	/**
-	 * Supprimer un magasin demande une confirmation, là où supprimer une carte n'en demande pas :
-	 * le parcours appris part avec lui, et il ne se retrouve pas — le refaire, c'est refaire ses
-	 * courses une fois en rangeant les rayons.
+	 * Deleting a shop asks for a confirmation, where deleting a card does not: the learned route goes with
+	 * it, and it is not found again — redoing it means doing the shopping once more while tidying the aisles.
 	 */
 	function supprimer(shop: Shop) {
 		feedback.play('remove');
@@ -113,8 +112,8 @@
 						</div>
 
 						<!--
-							La confirmation est posée là où on a cliqué, pas dans une fenêtre qui recouvre
-							l'écran : la question reste à côté du magasin dont elle parle.
+							The confirmation is placed where the click happened, not in a window covering the screen: the
+							question stays next to the shop it is about.
 						-->
 						{#if aSupprimer === shop.id}
 							<div
@@ -166,9 +165,8 @@
 		<div class="w-20">
 			<Label for="aisle-emoji">{t('aisles.emoji')}</Label>
 			<!--
-				Un champ texte pour un emoji suppose un clavier qui en propose : au bureau il n'y en a
-				pas, et il fallait aller en chercher un ailleurs pour le coller ici. Le bouton montre
-				celui qui est choisi et ouvre la palette.
+				A text field for an emoji assumes a keyboard offering them: at a desk there is none, and you had to go
+				and find one elsewhere to paste it here. The button shows the one chosen and opens the palette.
 			-->
 			<button
 				type="button"

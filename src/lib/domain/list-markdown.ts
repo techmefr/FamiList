@@ -1,20 +1,20 @@
 /**
- * Rendu d'une liste en markdown, pour la sortir de l'application et la coller ailleurs.
+ * Rendering a list as markdown, to send it out of the application and paste it elsewhere.
  *
- * Le texte part dans une messagerie, pas dans un lecteur de markdown : WhatsApp, Signal et les SMS
- * affichent les caractères tels quels. Tout est donc choisi pour rester lisible sans rendu — les
- * dièses et les tirets se lisent comme des puces, et les mêmes caractères deviennent un vrai
- * document si la personne colle dans un outil qui, lui, interprète le markdown.
+ * The text goes into a messaging app, not into a markdown reader: WhatsApp, Signal and SMS show the
+ * characters as they are. Everything is therefore chosen to stay readable without rendering — hashes and
+ * dashes read as bullets, and the same characters become a real document if the person pastes into a tool
+ * that does interpret markdown.
  *
- * Aucun mot de langue ici : les étiquettes (nom du rayon, unité) arrivent déjà traduites par
- * l'appelant. C'est ce qui rend la fonction pure, et testable sans démarrer l'i18n.
+ * No language words here: the labels (aisle name, unit) arrive already translated from the caller. That is
+ * what makes the function pure, and testable without starting the i18n.
  */
 
 export interface MarkdownItem {
 	name: string;
-	/** Quantité telle qu'elle a été saisie, vide quand personne n'en a mis. */
+	/** Quantity as it was typed, empty when nobody put one. */
 	qty: string;
-	/** Unité déjà traduite, jamais la clef. Vide si l'unité n'a pas de sens ici. */
+	/** Unit already translated, never the key. Empty if the unit makes no sense here. */
 	unit: string;
 	checked: boolean;
 	priority: boolean;
@@ -33,7 +33,7 @@ export interface MarkdownList {
 	aisles: MarkdownAisle[];
 }
 
-/** Ce qui suit le nom : « 1 kg », « 3 », ou rien. L'unité seule ne veut rien dire, on la tait. */
+/** What follows the name: "1 kg", "3", or nothing. A unit alone means nothing, so we leave it out. */
 function quantity(item: MarkdownItem): string {
 	const qty = item.qty.trim();
 	if (qty === '') return '';
@@ -54,17 +54,17 @@ function line(item: MarkdownItem): string {
 	const body = parts.join(' ');
 
 	/**
-	 * Un article déjà pris reste dans le texte, barré, plutôt que disparaître : la personne en face
-	 * reçoit souvent la liste au milieu des courses, et « déjà acheté » est une information qu'elle
-	 * n'a nulle part ailleurs. La case cochée suffit là où le barré n'est pas rendu.
+	 * An item already picked up stays in the text, struck through, rather than disappearing: the person on
+	 * the other end often receives the list in the middle of the shopping, and "already bought" is
+	 * information they have nowhere else. The ticked box is enough where the strikethrough is not rendered.
 	 */
 	if (item.checked) return `- [x] ~~${body}~~`;
 
-	/** L'étoile porte l'urgence, que la liste à puces seule aplatit. */
+	/** The star carries the urgency, which a bullet list alone flattens. */
 	return item.priority ? `- [ ] ⭐ ${body}` : `- [ ] ${body}`;
 }
 
-/** Un rayon créé à la main peut n'avoir aucun emoji : le titre ne doit pas garder son trou. */
+/** An aisle created by hand may have no emoji: the heading must not keep its gap. */
 function heading(level: string, emoji: string, name: string): string {
 	return [level, emoji.trim(), name.trim()].filter((part) => part !== '').join(' ');
 }
@@ -74,10 +74,10 @@ function aisleBlock(aisle: MarkdownAisle): string[] {
 }
 
 /**
- * La liste entière en un seul texte.
+ * The whole list as a single text.
  *
- * Le titre est un `#` et les rayons des `##` : c'est la hiérarchie réelle, et elle se lit même sans
- * rendu. Les rayons vides sont omis — un intitulé sans rien dessous ferait croire à un oubli.
+ * The title is a `#` and the aisles `##`: that is the real hierarchy, and it reads even without rendering.
+ * Empty aisles are omitted — a heading with nothing under it would look like an oversight.
  */
 export function listToMarkdown(list: MarkdownList): string {
 	const title = heading('#', list.emoji, list.name);

@@ -7,12 +7,12 @@
 	import { CloudOff, TriangleAlert } from '@lucide/svelte';
 
 	/**
-	 * Rien à afficher quand tout va bien : l'application est faite pour être utilisée en marchant,
-	 * un bandeau permanent n'apporterait qu'un encombrement. On ne parle que des deux cas où
-	 * l'utilisateur a besoin de savoir que ce qu'il fait n'est pas encore parti.
+	 * Nothing to show when all is well: the application is made to be used while walking, and a permanent
+	 * banner would only add clutter. We speak only of the two cases where the user needs to know that what
+	 * they are doing has not left yet.
 	 *
-	 * Le bandeau se déplie plutôt que d'apparaître d'un coup : surgir pousse la page vers le bas
-	 * sous le doigt, et fait rater la cible qu'on visait.
+	 * The banner unfolds rather than appearing at once: popping up pushes the page down under the finger, and
+	 * makes people miss the target they were aiming at.
 	 */
 	const trouble = $derived(sync.state === 'offline' || sync.state === 'error');
 </script>

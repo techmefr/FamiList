@@ -23,10 +23,9 @@
 	const langue = $derived(LOCALES.find(l => l.code === i18n.locale)?.native ?? 'français');
 
 	/**
-	 * Les produits déjà achetés, tels qu'ils partiront. Ce tableau est calculé une seule fois et
-	 * sert aux deux usages : la liste montrée avant l'envoi et la consigne envoyée. C'est la seule
-	 * façon d'être sûr que ce qui est affiché est ce qui part — deux calculs séparés finiraient par
-	 * diverger à la première modification.
+	 * The products already bought, as they will leave. This array is computed once and serves both uses: the
+	 * list shown before sending and the instruction sent. It is the only way of being sure that what is shown
+	 * is what leaves — two separate computations would end up diverging at the first change.
 	 */
 	const produits = $derived(shoppedProducts(data.items));
 	const consigne = $derived(recipePrompt(produits, { language: langue, servings: convives }));
@@ -61,11 +60,11 @@
 	}
 
 	/**
-	 * La proposition devient une vraie recette du foyer, dans le modèle qui existe déjà : elle se
-	 * relit, se modifie, et surtout `generateList` en tire une liste de courses. Une réponse
-	 * affichée en texte n'aurait donné aucun de ces trois gestes.
+	 * The suggestion becomes a real household recipe, in the model that already exists: it can be read again,
+	 * changed, and above all `generateList` turns it into a shopping list. An answer shown as text would have
+	 * given none of those three gestures.
 	 *
-	 * Elle n'est écrite que sur ce clic : rien n'entre dans le foyer sans que quelqu'un l'ait relu.
+	 * It is only written on this click: nothing enters the household without somebody having read it.
 	 */
 	function accepter() {
 		if (!proposition) return;
@@ -85,14 +84,14 @@
 </script>
 
 <!--
-	Une idée de recette à partir de ce que le foyer a déjà acheté.
+	A recipe idea from what the household has already bought.
 
-	Le bouton n'existe pas tant qu'aucune clé n'est posée : cette fonctionnalité passe par un tiers
-	payé par la personne, et l'annoncer sans pouvoir la rendre serait une promesse creuse.
+	The button does not exist while no key is set: this feature goes through a third party paid for by the
+	person, and announcing it without being able to deliver it would be an empty promise.
 
-	Rien ne part au dépliage. On montre d'abord la liste exacte des produits concernés, puis le
-	texte complet de la demande, et c'est un second geste qui envoie. L'ordre compte : un écran qui
-	enverrait d'abord et expliquerait ensuite ne laisserait pas le choix de refuser.
+	Nothing leaves on unfolding. We first show the exact list of the products concerned, then the full text of
+	the request, and it is a second gesture that sends. The order matters: a screen that sent first and
+	explained afterwards would leave no choice to refuse.
 -->
 {#if ai.configured}
 	<div class="mt-4" data-test-id="ai-suggest-block">
@@ -119,8 +118,8 @@
 							<p class="text-muted-foreground text-caption mt-1">{t('ai.willSendHint')}</p>
 
 							<!--
-								La liste est montrée en entier, pas résumée en « 40 produits » : consentir à
-								un nombre n'est pas consentir à son contenu, et c'est le contenu qui part.
+								The list is shown in full, not summarised as "40 products": consenting to a number is not consenting
+								to its contents, and it is the contents that leave.
 							-->
 							<ul class="mt-2 flex flex-wrap gap-1.5" data-test-id="ai-products">
 								{#each produits as produit (produit)}
@@ -186,9 +185,9 @@
 
 					{#if proposition}
 						<!--
-							La relecture avant écriture. La proposition vient d'un tiers : elle peut être
-							fausse, inutilisable, ou simplement sans intérêt, et rien ne doit entrer dans les
-							recettes du foyer sans qu'un humain l'ait vue en entier.
+							Reading before writing. The suggestion comes from a third party: it can be wrong, unusable, or
+							simply of no interest, and nothing must enter the household recipes without a human having seen it
+							in full.
 						-->
 						<div class="rounded-lg border p-4" data-test-id="ai-proposal">
 							<h3 class="text-h2 font-semibold">
