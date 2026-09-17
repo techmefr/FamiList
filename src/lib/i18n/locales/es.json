@@ -672,11 +672,15 @@
 		"demoHint": "La cuenta de demostración está abierta a todos. Reiníciala cuando se haya usado mucho.",
 		"reportsTitle": "Informes de errores",
 		"reportsEmpty": "Sin informes.",
+		"reportNumber": "Informe {number}",
 		"reportStatus": {
 			"open": "Abierto",
 			"resolved": "Resuelto"
 		},
 		"resolveReport": "Marcar como resuelto",
+		"publishReport": "Abrir una incidencia",
+		"reportIssuePending": "Publicación solicitada",
+		"reportIssue": "Incidencia n.º {number}",
 		"reportKind": {
 			"bug": "Error",
 			"suggestion": "Mejora"
@@ -852,6 +856,7 @@
 		"resume": "Retomar",
 		"minimizedHint": "Informe en curso. Reducido, le permite volver a ver la pantalla y hacer una captura.",
 		"success": "Gracias, tu informe se ha enviado.",
+		"reference": "Referencia: {number}",
 		"backHome": "Volver al inicio",
 		"title": {
 			"bug": "Informar de un problema",

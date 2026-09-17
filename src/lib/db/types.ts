@@ -34,6 +34,33 @@ export type Database = {
   }
   public: {
     Tables: {
+      admin_notifications: {
+        Row: {
+          claimed_at: string | null
+          created_at: string
+          id: string
+          kind: string
+          payload: Json
+          sent_at: string | null
+        }
+        Insert: {
+          claimed_at?: string | null
+          created_at?: string
+          id?: string
+          kind: string
+          payload?: Json
+          sent_at?: string | null
+        }
+        Update: {
+          claimed_at?: string | null
+          created_at?: string
+          id?: string
+          kind?: string
+          payload?: Json
+          sent_at?: string | null
+        }
+        Relationships: []
+      }
       aisles: {
         Row: {
           created_at: string
@@ -77,7 +104,13 @@ export type Database = {
           created_at: string
           description: string
           id: string
+          issue_claimed_at: string | null
+          issue_number: number | null
+          issue_published_at: string | null
+          issue_requested_at: string | null
+          issue_url: string | null
           kind: string
+          number: number
           path: string | null
           resolved_at: string | null
           screenshot: string | null
@@ -89,7 +122,13 @@ export type Database = {
           created_at?: string
           description: string
           id?: string
+          issue_claimed_at?: string | null
+          issue_number?: number | null
+          issue_published_at?: string | null
+          issue_requested_at?: string | null
+          issue_url?: string | null
           kind?: string
+          number?: number
           path?: string | null
           resolved_at?: string | null
           screenshot?: string | null
@@ -101,7 +140,13 @@ export type Database = {
           created_at?: string
           description?: string
           id?: string
+          issue_claimed_at?: string | null
+          issue_number?: number | null
+          issue_published_at?: string | null
+          issue_requested_at?: string | null
+          issue_url?: string | null
           kind?: string
+          number?: number
           path?: string | null
           resolved_at?: string | null
           screenshot?: string | null
@@ -926,15 +971,20 @@ export type Database = {
     }
     Functions: {
       admin_reset_mfa: { Args: { target: string }; Returns: undefined }
+      assert_admin_write: { Args: never; Returns: undefined }
       backup_codes_left: { Args: never; Returns: number }
       can_access_list: { Args: { target: string }; Returns: boolean }
       can_access_recipe: { Args: { target: string }; Returns: boolean }
       can_access_shop: { Args: { target: string }; Returns: boolean }
+      claim_admin_notifications: { Args: never; Returns: Json }
+      claim_bug_report_issues: { Args: never; Returns: Json }
       consume_backup_code: { Args: { code: string }; Returns: boolean }
       create_backup_codes: { Args: never; Returns: string[] }
       create_invite: { Args: never; Returns: string }
       demote_admin: { Args: { target: string }; Returns: undefined }
       ensure_household: { Args: { household_name?: string }; Returns: string }
+      flush_admin_notifications: { Args: never; Returns: undefined }
+      flush_bug_report_issues: { Args: never; Returns: undefined }
       household_profiles: {
         Args: never
         Returns: {
@@ -963,7 +1013,11 @@ export type Database = {
           description: string
           email: string
           id: string
+          issue_number: number
+          issue_requested_at: string
+          issue_url: string
           kind: string
+          number: number
           path: string
           screenshot: string
           status: string
@@ -971,6 +1025,14 @@ export type Database = {
         }[]
       }
       lock_household_membership: { Args: never; Returns: undefined }
+      mark_admin_notifications_sent: {
+        Args: { ids: string[] }
+        Returns: undefined
+      }
+      mark_bug_report_issue: {
+        Args: { issue_number: number; issue_url: string; target: string }
+        Returns: undefined
+      }
       my_sessions: {
         Args: never
         Returns: {
@@ -998,6 +1060,12 @@ export type Database = {
       }
       promote_admin: { Args: { target: string }; Returns: undefined }
       redeem_invite: { Args: { invite_code: string }; Returns: Json }
+      release_admin_notifications: {
+        Args: { ids: string[] }
+        Returns: undefined
+      }
+      release_bug_report_issues: { Args: { ids: string[] }; Returns: undefined }
+      request_bug_report_issue: { Args: { target: string }; Returns: undefined }
       reset_demo: { Args: never; Returns: undefined }
       resolve_bug_report: { Args: { target: string }; Returns: undefined }
       review_account: {
