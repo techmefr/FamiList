@@ -28,6 +28,7 @@ import { accountDecision } from '$domain/account-switch';
 import { guessAisleKind, FALLBACK_AISLE_KIND } from '$domain/guess-aisle';
 import { groupByAisle, learnedItemOrder } from '$domain/aisle-order';
 import { defaultCircle, ofCircle, resolveAisle, visibleLists } from '$domain/circle';
+import { session } from '$stores/session.svelte';
 import { sync } from '$lib/sync/index.svelte';
 import {
 	fromAisle,
@@ -941,7 +942,7 @@ class DataStore {
 
 	/** Mes conversations directes, la plus récemment animée en tête. */
 	get directs() {
-		return directSummaries(this.conversations, this.messages, this.userId);
+		return directSummaries(this.conversations, this.messages, this.me);
 	}
 
 	direct(conversationId: string) {
@@ -963,7 +964,7 @@ class DataStore {
 		const vus = new Set<string>();
 
 		return this.cachedMembers.filter((m) => {
-			if (m.id === this.userId || dejaVus.has(m.id) || vus.has(m.id)) return false;
+			if (m.id === this.me || dejaVus.has(m.id) || vus.has(m.id)) return false;
 
 			vus.add(m.id);
 			return true;
@@ -980,7 +981,7 @@ class DataStore {
 		const conversation = this.direct(conversationId);
 		if (!conversation) return undefined;
 
-		const otherId = otherParticipant(conversation, this.userId);
+		const otherId = otherParticipant(conversation, this.me);
 
 		return otherId ? this.member(otherId) : undefined;
 	}
@@ -1093,8 +1094,21 @@ class DataStore {
 		return this.circles.find((circle) => circle.id === circleId)?.name ?? '';
 	}
 
+	/**
+	 * Le compte connecté, tel que la session le connaît.
+	 *
+	 * `userId` n'en est qu'une copie, posée par `load()`. Entre une déconnexion suivie d'une
+	 * reconnexion sur un autre compte et la relecture qui suit, cette copie décrit encore le compte
+	 * précédent — l'écran désigne alors la mauvaise personne, et surtout un message direct part
+	 * signé de quelqu'un d'autre. La base le refuse, à juste titre : elle exige que l'auteur soit le
+	 * compte connecté. Le message était perdu sans que rien ne le dise.
+	 *
+	 * La session, elle, est mise à jour par `onAuthStateChange`, à l'instant du changement. On la
+	 * lit donc en premier, et `userId` ne sert plus que de repli quand la session n'a pas encore
+	 * répondu — au tout premier rendu, ou hors ligne.
+	 */
 	get me() {
-		return this.userId;
+		return session.user?.id ?? this.userId;
 	}
 
 	sendMessage(listId: string, body: string) {
@@ -1122,7 +1136,8 @@ class DataStore {
 	 * serveur, comme pour l'envoi d'un portrait.
 	 */
 	async startDirect(otherId: string) {
-		if (!this.userId || otherId === this.userId) return null;
+		const moi = this.me;
+		if (!moi || otherId === moi) return null;
 
 		const { data: conversationId, error } = await supabase.rpc('start_direct_conversation', {
 			other: otherId
@@ -1134,7 +1149,7 @@ class DataStore {
 		const conversation: Conversation = {
 			id: conversationId,
 			scope: 'direct',
-			participantIds: [this.userId, otherId],
+			participantIds: [moi, otherId],
 			createdAt: Date.now()
 		};
 
@@ -1155,7 +1170,7 @@ class DataStore {
 		const message: Message = {
 			id: crypto.randomUUID(),
 			conversationId,
-			userId: this.userId,
+			userId: this.me,
 			body: body.trim(),
 			isSystem: false,
 			createdAt: Date.now()
