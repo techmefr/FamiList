@@ -21,6 +21,7 @@
 	import EmojiPicker from '$components/app/EmojiPicker.svelte';
 	import EmptyState from '$components/app/EmptyState.svelte';
 	import IconField from '$components/app/IconField.svelte';
+	import RecipeSuggestion from '$components/app/RecipeSuggestion.svelte';
 	import {
 		CookingPot,
 		Hash,
@@ -269,6 +270,9 @@
 		<Plus size={18} aria-hidden="true" />
 		{t('create.recipe')}
 	</Button>
+
+	<!-- N'apparaît que si une clé d'IA est posée dans les réglages ; sinon, rien du tout. -->
+	<RecipeSuggestion />
 
 	<!--
 		L'import depuis un lien, posé sous la création manuelle et non à sa place : une recette de

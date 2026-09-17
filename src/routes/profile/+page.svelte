@@ -23,7 +23,7 @@
 	import { Label } from '$lib/components/ui/label';
 	import { Button } from '$lib/components/ui/button';
 	import { Switch } from '$lib/components/ui/switch';
-	import { Check, Volume2, Users, ShieldCheck } from '@lucide/svelte';
+	import { Check, Volume2, Users, ShieldCheck, Sparkles } from '@lucide/svelte';
 	import Avatar from '$components/app/Avatar.svelte';
 	import AvatarPicker from '$components/app/AvatarPicker.svelte';
 	import NameField from '$components/app/NameField.svelte';
@@ -420,6 +420,19 @@
 		<Button href="/profile/security" data-test-id="go-security" class="fl-press">
 			<ShieldCheck size={18} aria-hidden="true" />
 			{t('security.title')}
+		</Button>
+	</Card.Content>
+</Card.Root>
+
+<Card.Root class="mt-6">
+	<Card.Header>
+		<Card.Title class="text-h2">{t('ai.title')}</Card.Title>
+	</Card.Header>
+	<Card.Content class="flex flex-wrap items-center justify-between gap-4">
+		<p class="text-muted-foreground text-label">{t('ai.subtitle')}</p>
+		<Button href="/profile/ai" data-test-id="go-ai" class="fl-press">
+			<Sparkles size={18} aria-hidden="true" />
+			{t('ai.title')}
 		</Button>
 	</Card.Content>
 </Card.Root>

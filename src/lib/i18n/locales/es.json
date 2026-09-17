@@ -1011,5 +1011,63 @@
 			"shop": "Tiendas",
 			"card": "Tarjetas"
 		}
+	},
+	"ai": {
+		"title": "Inteligencia artificial",
+		"subtitle": "Tu proveedor y tu clave, para ideas de recetas.",
+		"privacyTitle": "Lo que sale de tu dispositivo",
+		"privacyBody": "Si añades una clave, las peticiones van de tu navegador directamente al proveedor que elijas. Es el único lugar de la aplicación donde el contenido de tu compra sale de tu dispositivo.",
+		"privacySent": "Lo que se envía: los nombres de los productos ya comprados. La lista exacta se te muestra antes de cada envío.",
+		"privacyNotSent": "Lo que no se envía: las cantidades, los precios, las notas, las tiendas, los nombres de los miembros y las propias listas.",
+		"privacyBill": "La clave es tuya: tu cuota y tu factura. Nadie más en el hogar puede leerla, ni siquiera un administrador.",
+		"privacyTerms": "El proveedor aplica sus propias condiciones a lo que recibe. Léelas antes de añadir una clave.",
+		"keyTitle": "Tu clave",
+		"stateOn": "Hay una clave guardada para esta cuenta.",
+		"stateOff": "Ninguna clave guardada. La sugerencia de receta no aparece.",
+		"provider": "Proveedor",
+		"providerHint": "Solo se ofrecen los proveedores accesibles desde un navegador.",
+		"whereKey": "Conseguir una clave en {provider}",
+		"key": "Clave de API",
+		"keyHint": "Solo tú puedes leerla, y no vuelve a mostrarse después de guardarla.",
+		"keyPlaceholder": "Pega tu clave",
+		"keyPlaceholderSet": "Pega una clave nueva para sustituirla",
+		"model": "Modelo",
+		"modelHint": "Déjalo como está si no sabes cuál elegir.",
+		"save": "Guardar",
+		"saved": "Clave guardada.",
+		"saveFailed": "No se ha podido guardar.",
+		"clear": "Quitar la clave",
+		"suggest": "Una idea de receta",
+		"suggestTitle": "Una idea a partir de tus compras",
+		"noProducts": "Todavía no hay ningún artículo marcado. Haz la compra y las ideas saldrán de ahí.",
+		"willSend": {
+			"one": "Se enviará 1 producto",
+			"other": "Se enviarán {count} productos"
+		},
+		"willSendHint": "No se envía nada más: ni cantidades, ni precios, ni nombres, ni listas.",
+		"seeExact": "Ver el texto exacto que se envía",
+		"sendingTo": "Destinatario: {provider}.",
+		"sendConfirm": "Enviar y preguntar",
+		"asking": "Preguntando…",
+		"added": "Receta añadida a las del hogar.",
+		"keep": "Guardar esta receta",
+		"retry": "Preguntar de nuevo",
+		"discard": "Descartar",
+		"error": {
+			"network": "La petición no ha podido salir. Comprueba tu conexión y vuelve a intentarlo.",
+			"networkDetail": "La petición no ha podido salir: {detail}",
+			"provider": "El proveedor ha rechazado la petición.",
+			"providerDetail": "El proveedor ha rechazado: {detail}",
+			"unreadable": "La respuesta no era utilizable. Pregunta de nuevo.",
+			"unreadableDetail": "La respuesta no era utilizable: {detail}"
+		},
+		"providers": {
+			"anthropic": "Anthropic (Claude)",
+			"gemini": "Google Gemini",
+			"mistral": "Mistral AI",
+			"groq": "Groq",
+			"openrouter": "OpenRouter",
+			"deepseek": "DeepSeek"
+		}
 	}
 }

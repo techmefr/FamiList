@@ -21,6 +21,7 @@
 	import { session } from '$stores/session.svelte';
 	import { feedback } from '$stores/feedback.svelte';
 	import { settings } from '$stores/settings.svelte';
+	import { ai } from '$stores/ai.svelte';
 	import { navDirection } from '$domain/motion';
 	import { pushAppearance, syncAppearance } from '$lib/sync/appearance';
 	import { registerServiceWorker } from '$native/pwa';
@@ -197,6 +198,24 @@
 
 	$effect(() => {
 		if (session.isApproved) data.load();
+	});
+
+	/**
+	 * La clé d'IA est relue à chaque compte, et oubliée entre deux.
+	 *
+	 * L'identifiant est lu dans l'effet pour qu'un changement de compte sur le même appareil le
+	 * redéclenche : sans lui, la clé de la personne précédente resterait en mémoire, et l'écran des
+	 * recettes proposerait de dépenser son crédit à quelqu'un d'autre.
+	 */
+	$effect(() => {
+		const id = session.user?.id;
+
+		if (!session.isApproved || !id) {
+			ai.reset();
+			return;
+		}
+
+		ai.load();
 	});
 
 	/**

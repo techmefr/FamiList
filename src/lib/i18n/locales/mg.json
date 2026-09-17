@@ -1011,5 +1011,63 @@
 			"shop": "Fivarotana",
 			"card": "Karatra"
 		}
+	},
+	"ai": {
+		"title": "Faharanitan-tsaina artifisialy",
+		"subtitle": "Ny mpamatsy sy ny lakilenao, hahazoana hevitra momba ny recette.",
+		"privacyTitle": "Izay mivoaka ny fitaovanao",
+		"privacyBody": "Raha mametraka lakile ianao, dia miainga mivantana avy amin ny navigateur-nao mankany amin ny mpamatsy nofidinao ny fangatahana. Io no hany toerana ao amin ny rindrambaiko ivoahan ny votoatin ny fividiananao amin ny fitaovanao.",
+		"privacySent": "Izay alefa : ny anaran ny vokatra efa novidina. Aseho anao ny lisitra marina alohan ny fandefasana tsirairay.",
+		"privacyNotSent": "Izay tsy alefa : ny habetsahana, ny vidiny, ny fanamarihana, ny fivarotana, ny anaran ny mpikambana, ary ny lisitra mihitsy.",
+		"privacyBill": "Anao ny lakile : ny anjaranao sy ny faktiorranao. Tsy misy olon-kafa ao an-tokantrano mahavaky azy, na dia ny mpitantana aza.",
+		"privacyTerms": "Mampihatra ny fepetrany manokana amin izay raisiny ny mpamatsy. Vakio ireo alohan ny hametrahana lakile.",
+		"keyTitle": "Ny lakilenao",
+		"stateOn": "Misy lakile voatahiry ho an ity kaonty ity.",
+		"stateOff": "Tsy misy lakile voatahiry. Tsy miseho ny soso-kevitra recette.",
+		"provider": "Mpamatsy",
+		"providerHint": "Ny mpamatsy azo antsoina avy amin ny navigateur ihany no aroso.",
+		"whereKey": "Maka lakile any amin ny {provider}",
+		"key": "Lakile API",
+		"keyHint": "Ianao irery no mahavaky azy, ary tsy aseho intsony aorian ny fitehirizana.",
+		"keyPlaceholder": "Apetaho eto ny lakilenao",
+		"keyPlaceholderSet": "Apetaho lakile vaovao hanoloana",
+		"model": "Modely",
+		"modelHint": "Avelao toy izao raha tsy fantatrao izay hofidina.",
+		"save": "Tehirizo",
+		"saved": "Voatahiry ny lakile.",
+		"saveFailed": "Tsy nahomby ny fitehirizana.",
+		"clear": "Esory ny lakile",
+		"suggest": "Hevitra recette",
+		"suggestTitle": "Hevitra avy amin izay novidinao",
+		"noProducts": "Mbola tsy misy entana voamarika. Mividiana aloha, avy eo no hipoiran ny hevitra.",
+		"willSend": {
+			"one": "Hisy vokatra 1 halefa",
+			"other": "Hisy vokatra {count} halefa"
+		},
+		"willSendHint": "Tsy misy zavatra hafa alefa : tsy misy habetsahana, na vidiny, na anarana, na lisitra.",
+		"seeExact": "Jereo ny lahatsoratra marina alefa",
+		"sendingTo": "Mpandray : {provider}.",
+		"sendConfirm": "Alefa ary anontanio",
+		"asking": "Eo am-panontaniana…",
+		"added": "Nampiana amin ny recette-n ny tokantrano ilay recette.",
+		"keep": "Tehirizo ity recette ity",
+		"retry": "Anontanio indray",
+		"discard": "Ario",
+		"error": {
+			"network": "Tsy afaka niainga ny fangatahana. Hamarino ny fifandraisanao, avy eo andramo indray.",
+			"networkDetail": "Tsy afaka niainga ny fangatahana : {detail}",
+			"provider": "Nolavin ny mpamatsy ny fangatahana.",
+			"providerDetail": "Nolavin ny mpamatsy : {detail}",
+			"unreadable": "Tsy azo nampiasaina ny valiny. Anontanio indray.",
+			"unreadableDetail": "Tsy azo nampiasaina ny valiny : {detail}"
+		},
+		"providers": {
+			"anthropic": "Anthropic (Claude)",
+			"gemini": "Google Gemini",
+			"mistral": "Mistral AI",
+			"groq": "Groq",
+			"openrouter": "OpenRouter",
+			"deepseek": "DeepSeek"
+		}
 	}
 }

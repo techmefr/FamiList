@@ -1011,5 +1011,63 @@
 			"shop": "Shops",
 			"card": "Cards"
 		}
+	},
+	"ai": {
+		"title": "Artificial intelligence",
+		"subtitle": "Your provider and your key, for recipe ideas.",
+		"privacyTitle": "What leaves your device",
+		"privacyBody": "If you add a key, requests go from your browser straight to the provider you choose. This is the only place in the app where the contents of your shopping leave your device.",
+		"privacySent": "What is sent: the names of products you have already bought. The exact list is shown to you before every send.",
+		"privacyNotSent": "What is not sent: quantities, prices, notes, shops, members’ names, and the lists themselves.",
+		"privacyBill": "The key is yours: your quota and your bill. Nobody else in the household can read it, not even an administrator.",
+		"privacyTerms": "The provider applies its own terms to what it receives. Read them before adding a key.",
+		"keyTitle": "Your key",
+		"stateOn": "A key is saved for this account.",
+		"stateOff": "No key saved. The recipe suggestion does not appear.",
+		"provider": "Provider",
+		"providerHint": "Only providers reachable from a browser are offered.",
+		"whereKey": "Get a key from {provider}",
+		"key": "API key",
+		"keyHint": "Only you can read it, and it is never shown again after saving.",
+		"keyPlaceholder": "Paste your key",
+		"keyPlaceholderSet": "Paste a new key to replace it",
+		"model": "Model",
+		"modelHint": "Leave it as is if you are not sure which to pick.",
+		"save": "Save",
+		"saved": "Key saved.",
+		"saveFailed": "Saving failed.",
+		"clear": "Remove the key",
+		"suggest": "A recipe idea",
+		"suggestTitle": "An idea from what you have bought",
+		"noProducts": "Nothing ticked off yet. Do some shopping, and the ideas will come from there.",
+		"willSend": {
+			"one": "1 product will be sent",
+			"other": "{count} products will be sent"
+		},
+		"willSendHint": "Nothing else is sent: no quantities, no prices, no names, no lists.",
+		"seeExact": "See the exact text that is sent",
+		"sendingTo": "Recipient: {provider}.",
+		"sendConfirm": "Send and ask",
+		"asking": "Asking…",
+		"added": "Recipe added to the household’s recipes.",
+		"keep": "Keep this recipe",
+		"retry": "Ask again",
+		"discard": "Discard",
+		"error": {
+			"network": "The request could not be sent. Check your connection, then try again.",
+			"networkDetail": "The request could not be sent: {detail}",
+			"provider": "The provider refused the request.",
+			"providerDetail": "The provider refused: {detail}",
+			"unreadable": "The answer was not usable. Ask again.",
+			"unreadableDetail": "The answer was not usable: {detail}"
+		},
+		"providers": {
+			"anthropic": "Anthropic (Claude)",
+			"gemini": "Google Gemini",
+			"mistral": "Mistral AI",
+			"groq": "Groq",
+			"openrouter": "OpenRouter",
+			"deepseek": "DeepSeek"
+		}
 	}
 }

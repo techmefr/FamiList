@@ -1010,5 +1010,63 @@
 			"shop": "Magasins",
 			"card": "Cartes"
 		}
+	},
+	"ai": {
+		"title": "Intelligence artificielle",
+		"subtitle": "Votre fournisseur et votre clé, pour des idées de recettes.",
+		"privacyTitle": "Ce qui sort de votre appareil",
+		"privacyBody": "Si vous posez une clé, les demandes partent de votre navigateur directement vers le fournisseur que vous choisissez. C’est le seul endroit de l’application où le contenu de vos courses sort de votre appareil.",
+		"privacySent": "Ce qui part : les noms des produits déjà achetés. La liste exacte vous est montrée avant chaque envoi.",
+		"privacyNotSent": "Ce qui ne part pas : les quantités, les prix, les notes, les magasins, les noms des membres, et les listes elles-mêmes.",
+		"privacyBill": "La clé est la vôtre : votre quota et votre facture. Personne d’autre dans le foyer ne peut la lire, pas même un administrateur.",
+		"privacyTerms": "Le fournisseur applique ses propres conditions à ce qu’il reçoit. Lisez-les avant de poser une clé.",
+		"keyTitle": "Votre clé",
+		"stateOn": "Une clé est enregistrée pour ce compte.",
+		"stateOff": "Aucune clé enregistrée. La suggestion de recette n’apparaît pas.",
+		"provider": "Fournisseur",
+		"providerHint": "Seuls les fournisseurs joignables depuis un navigateur sont proposés.",
+		"whereKey": "Obtenir une clé chez {provider}",
+		"key": "Clé d’API",
+		"keyHint": "Elle n’est lisible que par vous, et ne s’affiche plus après l’enregistrement.",
+		"keyPlaceholder": "Collez votre clé",
+		"keyPlaceholderSet": "Collez une nouvelle clé pour remplacer",
+		"model": "Modèle",
+		"modelHint": "Laissez tel quel si vous ne savez pas lequel choisir.",
+		"save": "Enregistrer",
+		"saved": "Clé enregistrée.",
+		"saveFailed": "L’enregistrement a échoué.",
+		"clear": "Retirer la clé",
+		"suggest": "Une idée de recette",
+		"suggestTitle": "Une idée à partir de vos achats",
+		"noProducts": "Aucun article coché pour l’instant. Faites vos courses, les idées viendront de là.",
+		"willSend": {
+			"one": "1 produit va être envoyé",
+			"other": "{count} produits vont être envoyés"
+		},
+		"willSendHint": "Rien d’autre ne part : ni quantités, ni prix, ni noms, ni listes.",
+		"seeExact": "Voir le texte exact envoyé",
+		"sendingTo": "Destinataire : {provider}.",
+		"sendConfirm": "Envoyer et demander",
+		"asking": "Demande en cours…",
+		"added": "Recette ajoutée à celles du foyer.",
+		"keep": "Garder cette recette",
+		"retry": "Redemander",
+		"discard": "Jeter",
+		"error": {
+			"network": "La demande n’a pas pu partir. Vérifiez votre connexion, puis réessayez.",
+			"networkDetail": "La demande n’a pas pu partir : {detail}",
+			"provider": "Le fournisseur a refusé la demande.",
+			"providerDetail": "Le fournisseur a refusé : {detail}",
+			"unreadable": "La réponse n’était pas exploitable. Redemandez.",
+			"unreadableDetail": "La réponse n’était pas exploitable : {detail}"
+		},
+		"providers": {
+			"anthropic": "Anthropic (Claude)",
+			"gemini": "Google Gemini",
+			"mistral": "Mistral AI",
+			"groq": "Groq",
+			"openrouter": "OpenRouter",
+			"deepseek": "DeepSeek"
+		}
 	}
 }
