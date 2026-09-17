@@ -29,6 +29,7 @@ describe('toShop / fromShop', () => {
 		expect(
 			toShop({
 				id: 's1',
+				household_id: 'h1',
 				name: 'Carrefour',
 				short: 'CRF',
 				tint: 'blue',
@@ -40,6 +41,7 @@ describe('toShop / fromShop', () => {
 			})
 		).toEqual({
 			id: 's1',
+			householdId: 'h1',
 			name: 'Carrefour',
 			short: 'CRF',
 			tint: 'blue',
@@ -86,9 +88,23 @@ describe('toShop / fromShop', () => {
 
 describe('toAisle / fromAisle', () => {
 	it('lit une ligne complète', () => {
-		expect(toAisle({ id: 'a1', name: 'Fruits', emoji: '🍎', position: 2, kind: 'produce' })).toEqual(
-			{ id: 'a1', name: 'Fruits', emoji: '🍎', position: 2, kind: 'produce' }
-		);
+		expect(
+			toAisle({
+				id: 'a1',
+				household_id: 'h1',
+				name: 'Fruits',
+				emoji: '🍎',
+				position: 2,
+				kind: 'produce'
+			})
+		).toEqual({
+			id: 'a1',
+			householdId: 'h1',
+			name: 'Fruits',
+			emoji: '🍎',
+			position: 2,
+			kind: 'produce'
+		});
 	});
 
 	it("retombe sur le caddie et la position zéro par défaut", () => {
@@ -238,12 +254,14 @@ describe('toCard / fromCard', () => {
 describe('toMember', () => {
 	it('affiche le nom du profil, avec ses initiales et sa photo', () => {
 		const member = toMember(
-			{ user_id: 'u1', role: 'owner', tint: 'green' },
+			{ household_id: 'h1', user_id: 'u1', role: 'owner', tint: 'green' },
 			{ display_name: 'Hélène Moreau', avatar: 'data:image/jpeg;base64,x' },
 			'someone-else'
 		);
 		expect(member).toEqual({
+			key: 'h1::u1',
 			id: 'u1',
+			householdId: 'h1',
 			name: 'Hélène Moreau',
 			firstName: '',
 			lastName: '',

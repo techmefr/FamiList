@@ -12,11 +12,14 @@
 	import { Button } from '$lib/components/ui/button';
 	import { Input } from '$lib/components/ui/input';
 	import { Label } from '$lib/components/ui/label';
-	import { Users, Copy, Check, KeyRound } from '@lucide/svelte';
+	import { Users, Copy, Check, KeyRound, CircleDot } from '@lucide/svelte';
 	import IconField from '$components/app/IconField.svelte';
 
 	let invite = $state<{ code: string; expires: string } | null>(null);
 	let joinCode = $state('');
+	let renaming = $state('');
+
+	const circleName = $derived(data.circleName(data.circle));
 	let error = $state<string | null>(null);
 	let secondFacteurRequis = $state(false);
 	let busy = $state(false);
@@ -98,6 +101,34 @@
 		joinCode = '';
 	}
 
+	/**
+	 * Le nom du cercle, que le sélecteur est le premier à rendre nécessaire : deux cercles créés à
+	 * l'inscription portent le même nom par défaut, et une liste de doublons ne se choisit pas.
+	 */
+	async function rename(event: SubmitEvent) {
+		event.preventDefault();
+
+		const nom = renaming.trim();
+		if (!nom || !sync.householdId) return;
+
+		busy = true;
+		error = null;
+
+		const { error: rpcError } = await supabase
+			.from('households')
+			.update({ name: nom })
+			.eq('id', sync.householdId);
+
+		busy = false;
+		if (rpcError) {
+			await montrerRefus(rpcError.message);
+			return;
+		}
+
+		renaming = '';
+		await sync.households();
+	}
+
 	async function leave() {
 		if (!sync.householdId) return;
 
@@ -144,6 +175,54 @@
 	</div>
 {/if}
 
+<!--
+	Les cercles, et celui qu'on regarde.
+
+	Un seul cercle est actif à la fois : c'est lui qui décide des listes, des magasins, des rayons et
+	des cartes affichés, et c'est dans lui qu'atterrit ce qu'on crée. Les autres restent lus et en
+	cache — basculer ne relit rien et marche sans réseau.
+
+	La carte disparaît quand il n'y a qu'un cercle : il n'y a alors rien à choisir, et une liste d'un
+	seul élément ne ferait que demander à quoi elle sert.
+-->
+{#if data.circles.length > 1}
+	<Card.Root class="mt-6">
+		<Card.Header>
+			<Card.Title class="text-h2 flex items-center gap-2">
+				<CircleDot size={20} aria-hidden="true" />
+				{t('household.circles')}
+			</Card.Title>
+		</Card.Header>
+		<Card.Content>
+			<p class="text-muted-foreground text-label">{t('household.circlesHint')}</p>
+
+			<ul class="mt-4 space-y-1">
+				{#each data.circles as circle (circle.id)}
+					{@const actif = circle.id === data.circle}
+					<li>
+						<button
+							type="button"
+							onclick={() => data.switchCircle(circle.id)}
+							aria-current={actif ? 'true' : undefined}
+							data-test-class="circle-option"
+							class="fl-press hover:bg-muted flex min-h-[max(3.5rem,56px)] w-full items-center gap-3 rounded-lg px-3 text-start"
+							class:bg-muted={actif}
+						>
+							<span class="text-product min-w-0 flex-1 font-medium">{circle.name}</span>
+							{#if actif}
+								<span class="text-secondary text-caption inline-flex shrink-0 items-center gap-1 font-semibold">
+									<Check size={16} aria-hidden="true" />
+									{t('household.circleShown')}
+								</span>
+							{/if}
+						</button>
+					</li>
+				{/each}
+			</ul>
+		</Card.Content>
+	</Card.Root>
+{/if}
+
 <Card.Root class="mt-6">
 	<Card.Header>
 		<Card.Title class="text-h2 flex items-center gap-2">
@@ -152,8 +231,28 @@
 		</Card.Title>
 	</Card.Header>
 	<Card.Content>
+		<!--
+			Le nom du cercle affiché. Il ne servait à rien tant qu'on n'en voyait qu'un ; il devient ce
+			qui distingue deux cercles dans le sélecteur, et tous naissent avec le même nom par défaut.
+		-->
+		<form onsubmit={rename} class="mb-6">
+			<Label for="circle-name">{t('household.nameLabel')}</Label>
+			<div class="mt-2 flex flex-wrap items-center gap-3">
+				<Input
+					id="circle-name"
+					value={renaming || circleName}
+					oninput={(event) => (renaming = event.currentTarget.value)}
+					data-test-id="circle-name"
+					class="min-w-0 flex-1 basis-[12rem]"
+				/>
+				<Button type="submit" variant="outline" disabled={busy} data-test-id="circle-rename">
+					{t('household.rename')}
+				</Button>
+			</div>
+		</form>
+
 		<ul class="space-y-2">
-			{#each data.members as member (member.id)}
+			{#each data.members as member (member.key)}
 				<li class="flex flex-wrap items-center gap-3" data-test-class="household-member">
 					<span
 						class="text-caption grid size-9 shrink-0 place-items-center rounded-full font-semibold text-white"
