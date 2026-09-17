@@ -2,6 +2,7 @@ import { browser } from '$app/environment';
 import { supabase } from '$db/supabase';
 import { db, type OutboxEntry } from '$db/schema';
 import { describeError } from './errors';
+import { defaultCircle } from '$domain/circle';
 import { reportCrash } from '$lib/crash/reporter';
 import {
 	toAisle,
@@ -36,6 +37,12 @@ const isPermanent = (code: string | undefined) => code !== undefined && PERMANEN
 
 export type SyncState = 'idle' | 'syncing' | 'offline' | 'error';
 
+/** Un cercle dont le compte est membre, tel que le sélecteur le nomme. */
+export interface Circle {
+	id: string;
+	name: string;
+}
+
 /**
  * Le serveur fait autorité, Dexie est le cache qui permet d'ouvrir l'application dans un magasin
  * sans réseau. Les écritures partent par une file : on répond tout de suite à l'écran, on pousse
@@ -43,7 +50,18 @@ export type SyncState = 'idle' | 'syncing' | 'offline' | 'error';
  * de tenir un journal de deltas — un mécanisme de moins à maintenir et à déboguer.
  */
 class SyncStore {
+	/**
+	 * Le cercle actif : celui que l'écran montre, et celui dans lequel ce qu'on crée atterrit.
+	 *
+	 * Le cache, lui, porte tous les cercles à la fois — voir `circles`. Distinguer les deux est ce
+	 * qui rend le changement de cercle instantané et utilisable hors réseau : il ne relit rien, il
+	 * change ce qu'on regarde.
+	 */
 	householdId = $state<string | null>(null);
+
+	/** Tous les cercles du compte, du plus ancien au plus récent. Tous sont lus, tous sont en cache. */
+	circles = $state<Circle[]>([]);
+
 	state = $state<SyncState>('idle');
 	lastError = $state<string | null>(null);
 
@@ -74,6 +92,29 @@ class SyncStore {
 
 	/** Vrai après le premier abonnement : les suivants sont des reprises après coupure. */
 	private subscribed = false;
+
+	/**
+	 * Numéro du cache courant, incrémenté par `stop()`.
+	 *
+	 * Une lecture partie avant un changement de compte ne doit pas s'écrire dans le cache du
+	 * suivant. On comparait pour cela le cercle affiché avant et après ; ce test est devenu faux le
+	 * jour où changer de cercle a cessé de vider le cache — il jetait alors une relecture ou un
+	 * évènement temps réel parfaitement valides, simplement parce qu'on avait basculé entre-temps.
+	 * Ce compteur ne bouge que quand le cache change vraiment de propriétaire.
+	 */
+	private generation = 0;
+
+	/**
+	 * Le cercle retenu est repris dès la construction, sans attendre le réseau.
+	 *
+	 * L'écran est scindé par cercle : sans cette reprise, la première hydratation depuis le cache
+	 * n'aurait aucun cercle actif et montrerait un écran vide jusqu'à la réponse du serveur — soit
+	 * indéfiniment dans un magasin sans réseau, ce que tout le reste du moteur s'attache à éviter.
+	 * `provision()` vérifie l'appartenance ensuite et corrige si besoin.
+	 */
+	constructor() {
+		if (browser) this.householdId = localStorage.getItem(HOUSEHOLD_KEY);
+	}
 
 	/**
 	 * Lance un travail qu'on ne peut pas attendre — la file poussée en arrière-plan, le réveil du
@@ -154,6 +195,8 @@ class SyncStore {
 		if (this.channel) supabase.removeChannel(this.channel);
 		this.channel = null;
 		this.householdId = null;
+		this.circles = [];
+		this.generation += 1;
 		this.state = 'idle';
 		// Changer de foyer ou de compte repart d'un cache qui ne dit plus rien du nouveau : ce qui
 		// attend la première synchronisation doit l'attendre de nouveau.
@@ -219,40 +262,63 @@ class SyncStore {
 	}
 
 	/**
-	 * Le foyer affiché, choisi explicitement.
+	 * Le cercle affiché, choisi explicitement.
 	 *
 	 * Rejoindre une famille ne fait plus quitter la sienne : `ensure_household` rendrait le plus
 	 * ancien, donc celui de l'inscription, et l'invitation n'aurait l'air d'avoir rien fait.
+	 *
+	 * Basculer d'un cercle à l'autre ne relit rien et ne vide rien : le cache les porte déjà tous,
+	 * seul change ce que l'écran en montre.
 	 */
 	adopt(householdId: string) {
 		this.householdId = householdId;
 		localStorage.setItem(HOUSEHOLD_KEY, householdId);
 	}
 
-	/** Les foyers dont le compte est membre, du plus ancien au plus récent. */
-	async households(): Promise<string[]> {
+	/** Les identifiants des cercles connus, dans l'ordre d'arrivée. */
+	get householdIds(): string[] {
+		return this.circles.map((circle) => circle.id);
+	}
+
+	/**
+	 * Les cercles dont le compte est membre, du plus ancien au plus récent, relus du serveur.
+	 *
+	 * Le nom vient de `households`, que la RLS n'ouvre qu'à ses propres membres : la jointure ne
+	 * rapporte donc jamais un cercle auquel on n'appartient pas, et un cercle sans nom lisible est
+	 * écarté plutôt que présenté vide dans le sélecteur.
+	 */
+	async households(): Promise<Circle[]> {
 		const { data: session } = await supabase.auth.getUser();
 		const moi = session.user?.id;
 		if (!moi) return [];
 
 		const { data, error } = await supabase
 			.from('household_members')
-			.select('household_id, joined_at')
+			.select('household_id, joined_at, households(name)')
 			.eq('user_id', moi)
 			.order('joined_at');
 
 		if (error) return [];
 
-		return (data ?? []).map((row) => row.household_id as string);
+		this.circles = (data ?? [])
+			.map((row) => ({
+				id: row.household_id as string,
+				name: ((row.households as { name?: string } | null)?.name ?? '').trim()
+			}))
+			.filter((circle) => circle.id !== '');
+
+		return this.circles;
 	}
 
 	private async provision() {
-		// Le foyer retenu la dernière fois passe avant : sans ça, un compte membre de plusieurs
-		// foyers reviendrait au plus ancien à chaque ouverture, quel que soit celui qu'il regardait.
-		// On vérifie quand même l'appartenance — on a pu en être sorti depuis un autre appareil.
-		const retenu = localStorage.getItem(HOUSEHOLD_KEY);
-		if (retenu && (await this.households()).includes(retenu)) {
-			this.householdId = retenu;
+		const connus = await this.households();
+
+		// Le cercle retenu la dernière fois passe avant : sans ça, un compte membre de plusieurs
+		// cercles reviendrait au plus ancien à chaque ouverture, quel que soit celui qu'il regardait.
+		// L'appartenance est vérifiée — on a pu en être sorti depuis un autre appareil.
+		const choisi = defaultCircle(connus, localStorage.getItem(HOUSEHOLD_KEY));
+		if (choisi) {
+			this.adopt(choisi);
 			return true;
 		}
 
@@ -264,15 +330,15 @@ class SyncStore {
 			return false;
 		}
 
-		this.householdId = data as unknown as string;
-		localStorage.setItem(HOUSEHOLD_KEY, this.householdId);
+		this.adopt(data as unknown as string);
+		await this.households();
 		return true;
 	}
 
 	/**
-	 * Relit le foyer entier et remplace le cache. Les tables sont vidées et réécrites dans une
-	 * seule transaction : un rayon supprimé sur un autre appareil disparaît vraiment ici, ce qu'un
-	 * simple bulkPut ne ferait pas.
+	 * Relit tous les cercles du compte et remplace le cache. Les tables sont vidées et réécrites dans
+	 * une seule transaction : un rayon supprimé sur un autre appareil disparaît vraiment ici, ce
+	 * qu'un simple bulkPut ne ferait pas.
 	 */
 	async pull() {
 		if (this.pulling) return this.pulling;
@@ -285,8 +351,14 @@ class SyncStore {
 	}
 
 	private async pullOnce() {
-		const household = this.householdId;
-		if (!household) return;
+		if (!this.householdId) return;
+
+		// Les appartenances sont relues d'abord : un cercle rejoint depuis un autre appareil doit
+		// entrer dans cette relecture-ci, pas à la suivante.
+		const cercles = (await this.households()).map((circle) => circle.id);
+		if (cercles.length === 0) return;
+
+		const generation = this.generation;
 
 		// Ce qui attend dans la file part d'abord. La relecture vide les tables et les réécrit
 		// depuis le serveur : lancée alors qu'une écriture n'est pas encore partie, elle efface de
@@ -317,24 +389,27 @@ class SyncStore {
 			recipeIngredients,
 			recipeSteps
 		] = await Promise.all([
-			supabase.from('shops').select('*').eq('household_id', household),
-			supabase.from('aisles').select('*').eq('household_id', household),
-			// Une liste personnelle n'a pas de cercle : la filtrer sur le cercle affiché la ferait
+			supabase.from('shops').select('*').in('household_id', cercles),
+			supabase.from('aisles').select('*').in('household_id', cercles),
+			// Une liste personnelle n'a pas de cercle : la filtrer sur les cercles la ferait
 			// disparaître de l'écran de son propre auteur. La RLS n'en laisse passer que les
 			// siennes, le `or` ne fait que ne pas les exclure.
-			supabase.from('lists').select('*').or(`household_id.is.null,household_id.eq.${household}`),
+			supabase
+				.from('lists')
+				.select('*')
+				.or(`household_id.is.null,household_id.in.(${cercles.join(',')})`),
 			supabase.from('list_members').select('*'),
 			supabase.from('items').select('*'),
-			supabase.from('loyalty_cards').select('*').eq('household_id', household),
-			supabase.from('household_members').select('*').eq('household_id', household),
+			supabase.from('loyalty_cards').select('*').in('household_id', cercles),
+			supabase.from('household_members').select('*').in('household_id', cercles),
 			supabase.from('shop_layouts').select('*'),
 			supabase.from('shop_item_orders').select('*'),
 			supabase.from('messages').select('*'),
 			supabase.from('polls').select('*'),
 			supabase.from('poll_options').select('*'),
 			supabase.from('poll_votes').select('*'),
-			supabase.from('item_prices').select('*').eq('household_id', household),
-			supabase.from('recipes').select('*').eq('household_id', household),
+			supabase.from('item_prices').select('*').in('household_id', cercles),
+			supabase.from('recipes').select('*').in('household_id', cercles),
 			// Les lignes d'une recette ne portent pas de foyer : la policy les filtre déjà par la
 			// recette dont elles dépendent, comme pour les articles d'une liste.
 			supabase.from('recipe_ingredients').select('*'),
@@ -386,9 +461,10 @@ class SyncStore {
 			membersByList.set(listId, [...(membersByList.get(listId) ?? []), row.user_id as string]);
 		}
 
-		// Le foyer a pu changer pendant ces lectures — on vient de rejoindre une famille, ou de la
-		// quitter. Écrire maintenant remplirait le cache avec le foyer précédent.
-		if (this.householdId !== household) return;
+		// Le compte a pu changer pendant ces lectures. Écrire maintenant remplirait le cache du
+		// nouveau avec les cercles du précédent. Basculer de cercle, en revanche, ne remet rien en
+		// cause : ce qu'on tient décrit tous les cercles, l'actif comme les autres.
+		if (this.generation !== generation) return;
 
 		await db.transaction(
 			'rw',
@@ -578,8 +654,11 @@ class SyncStore {
 	private listen() {
 		if (this.channel || !this.householdId) return;
 
+		// Un seul canal pour tous les cercles, et non un par cercle : l'abonnement ne filtre rien,
+		// c'est la RLS qui décide de ce qui arrive. Le nommer d'après le cercle affiché obligerait à
+		// le refaire à chaque bascule, pour écouter exactement la même chose.
 		this.channel = supabase
-			.channel(`household:${this.householdId}`)
+			.channel('familist:changes')
 			.on('postgres_changes', { event: '*', schema: 'public' }, (payload) =>
 				this.detach(this.receive(payload))
 			)
@@ -602,8 +681,9 @@ class SyncStore {
 	 * peut pas savoir : l'état de la file d'attente, celui du cache, et le foyer affiché.
 	 */
 	private async receive(payload: Record<string, unknown>) {
-		const household = this.householdId;
-		if (!household) return;
+		if (!this.householdId) return;
+
+		const generation = this.generation;
 
 		const event: RealtimeEvent = {
 			table: String(payload.table ?? ''),
@@ -618,6 +698,12 @@ class SyncStore {
 		// contre une lecture dont on ignore l'âge. Dans les deux cas la relecture tranche.
 		const busy = this.pulling !== null || (await db.outbox.count()) > 0;
 
+		/**
+		 * Le cache porte les listes de tous les cercles, pas seulement celles du cercle affiché :
+		 * c'est ce qui rend ce raccourci utilisable ici. Un article coché dans un cercle qu'on ne
+		 * regarde pas se pose donc directement, au lieu de retomber sur la relecture complète parce
+		 * que sa liste aurait l'air inconnue — et il est déjà juste quand on bascule.
+		 */
 		const plan = planRealtime(event, {
 			knownListIds: new Set((await db.lists.toCollection().primaryKeys()) as string[]),
 			applied: this.appliedAt,
@@ -631,9 +717,9 @@ class SyncStore {
 			return;
 		}
 
-		// Le foyer a pu changer pendant ces lectures, comme dans la relecture : écrire maintenant
-		// poserait une ligne de l'ancien foyer dans le cache du nouveau.
-		if (this.householdId !== household) return;
+		// Le compte a pu changer pendant ces lectures, comme dans la relecture : écrire maintenant
+		// poserait une ligne de l'ancien compte dans le cache du nouveau.
+		if (this.generation !== generation) return;
 
 		if (plan.kind === 'delete') {
 			// Supprimer un identifiant absent du cache ne fait rien : c'est exactement ce qu'on veut
