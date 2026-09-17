@@ -302,7 +302,10 @@ class SyncStore {
 		] = await Promise.all([
 			supabase.from('shops').select('*').eq('household_id', household),
 			supabase.from('aisles').select('*').eq('household_id', household),
-			supabase.from('lists').select('*').eq('household_id', household),
+			// Une liste personnelle n'a pas de cercle : la filtrer sur le cercle affiché la ferait
+			// disparaître de l'écran de son propre auteur. La RLS n'en laisse passer que les
+			// siennes, le `or` ne fait que ne pas les exclure.
+			supabase.from('lists').select('*').or(`household_id.is.null,household_id.eq.${household}`),
 			supabase.from('list_members').select('*'),
 			supabase.from('items').select('*'),
 			supabase.from('loyalty_cards').select('*').eq('household_id', household),
