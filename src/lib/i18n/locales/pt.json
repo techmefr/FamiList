@@ -838,7 +838,22 @@
 		"sessionSeen": "Vista a {date}",
 		"revoke": "Fechar",
 		"on": "em",
-		"unknownDevice": "Aparelho desconhecido"
+		"unknownDevice": "Aparelho desconhecido",
+		"dataTitle": "Os meus dados",
+		"dataBody": "Um ficheiro JSON com tudo o que a aplicação guarda sobre si: o seu perfil, os seus agregados, o que escreveu. O conteúdo de um agregado só aparece por inteiro se for o seu único membro — nos outros, as listas e as mensagens dos restantes continuam a ser deles.",
+		"dataExport": "Transferir os meus dados",
+		"dataError": "Não foi possível preparar o ficheiro. Tente novamente dentro de instantes.",
+		"deleteTitle": "Eliminar a minha conta",
+		"deleteBody": "A sua conta, o seu perfil e as suas preferências são apagados. Um agregado de que é o único membro desaparece com as suas listas. Num agregado partilhado, o agregado fica para os outros: as suas mensagens continuam legíveis mas deixam de ter o seu nome, e os seus votos são retirados.",
+		"deleteWarning": "Esta eliminação é definitiva. Não há forma de voltar atrás.",
+		"deleteStart": "Eliminar a minha conta",
+		"deleteConfirmLabel": "Para confirmar, escreva o seu endereço de correio eletrónico",
+		"deleteConfirmHint": "Voltamos a pedi-lo para termos a certeza de que é mesmo você.",
+		"deleteSubmit": "Eliminar definitivamente",
+		"deleteErrorLastAdmin": "É o único administrador. Nomeie outra pessoa antes de sair, caso contrário ninguém poderá validar as inscrições.",
+		"deleteErrorDemo": "A conta de demonstração não pode ser eliminada.",
+		"deleteErrorSecondFactor": "Confirme o seu segundo fator antes de eliminar a conta.",
+		"deleteErrorUnknown": "A eliminação não foi concluída. Nada foi apagado."
 	},
 	"bugReport": {
 		"button": "Reportar um problema",

@@ -838,7 +838,22 @@
 		"sessionSeen": "Vista el {date}",
 		"revoke": "Cerrar",
 		"on": "en",
-		"unknownDevice": "Aparato desconocido"
+		"unknownDevice": "Aparato desconocido",
+		"dataTitle": "Mis datos",
+		"dataBody": "Un archivo JSON con todo lo que la aplicación guarda sobre usted: su perfil, sus hogares, lo que ha escrito. El contenido de un hogar solo aparece completo si usted es su único miembro; en los demás, las listas y los mensajes de otros siguen siendo suyos.",
+		"dataExport": "Descargar mis datos",
+		"dataError": "No se ha podido preparar el archivo. Inténtelo de nuevo dentro de un momento.",
+		"deleteTitle": "Eliminar mi cuenta",
+		"deleteBody": "Se borran su cuenta, su perfil y sus preferencias. Un hogar del que usted es el único miembro desaparece con sus listas. En un hogar compartido, el hogar queda para los demás: sus mensajes siguen siendo legibles pero dejan de llevar su nombre, y sus votos se retiran.",
+		"deleteWarning": "Esta eliminación es definitiva. No hay vuelta atrás.",
+		"deleteStart": "Eliminar mi cuenta",
+		"deleteConfirmLabel": "Para confirmar, escriba su dirección de correo",
+		"deleteConfirmHint": "La pedimos de nuevo para asegurarnos de que es usted.",
+		"deleteSubmit": "Eliminar definitivamente",
+		"deleteErrorLastAdmin": "Usted es el único administrador. Nombre a otra persona antes de irse; si no, nadie podrá validar los registros.",
+		"deleteErrorDemo": "La cuenta de demostración no se puede eliminar.",
+		"deleteErrorSecondFactor": "Confirme su segundo factor antes de eliminar la cuenta.",
+		"deleteErrorUnknown": "La eliminación no se ha completado. No se ha borrado nada."
 	},
 	"bugReport": {
 		"button": "Informar de un error",

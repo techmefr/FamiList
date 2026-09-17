@@ -838,7 +838,22 @@
 		"sessionSeen": "Hita ny {date}",
 		"revoke": "Akatony",
 		"on": "amin'ny",
-		"unknownDevice": "Fitaovana tsy fantatra"
+		"unknownDevice": "Fitaovana tsy fantatra",
+		"dataTitle": "Ny angon-drakitro",
+		"dataBody": "Rakitra JSON misy izay rehetra tehirizin'ny rindrambaiko momba anao: ny mombamomba anao, ny tokantranonao, sy izay nosoratanao. Ny votoatin'ny tokantrano dia feno ihany raha ianao no hany mpikambana ao; any an-kafa, ny lisitra sy ny hafatry ny hafa dia azy ireo ihany.",
+		"dataExport": "Alaina ny angon-drakitro",
+		"dataError": "Tsy afaka novolavolaina ny rakitra. Andramo indray afaka kelikely.",
+		"deleteTitle": "Fafao ny kaontiko",
+		"deleteBody": "Voafafa ny kaontinao, ny mombamomba anao ary ny safidinao. Ny tokantrano izay ianao irery no mpikambana dia manjavona miaraka amin'ny lisitra ao. Ao amin'ny tokantrano iombonana kosa, mijanona ho an'ny hafa ny tokantrano: mbola vakiana ny hafatrao saingy tsy mitondra ny anaranao intsony, ary esorina ny vatonao.",
+		"deleteWarning": "Tsy misy fiverenana ity famafana ity.",
+		"deleteStart": "Fafao ny kaontiko",
+		"deleteConfirmLabel": "Mba hanamafisana, soraty ny adiresy mailakao",
+		"deleteConfirmHint": "Angatahinay indray izany mba hahazoana antoka fa ianao tokoa no manao izao.",
+		"deleteSubmit": "Fafao tanteraka",
+		"deleteErrorLastAdmin": "Ianao irery no mpitantana. Tendreo olon-kafa alohan'ny handehananao, raha tsy izany dia tsy hisy afaka hanamarina ny fisoratana anarana.",
+		"deleteErrorDemo": "Tsy voafafa ny kaonty fanehoana.",
+		"deleteErrorSecondFactor": "Hamafiso ny fanamarinana faharoa alohan'ny hamafana ny kaontinao.",
+		"deleteErrorUnknown": "Tsy tanteraka ny famafana. Tsy nisy voafafa."
 	},
 	"bugReport": {
 		"button": "Milaza olana",

@@ -838,7 +838,22 @@
 		"sessionSeen": "Seen {date}",
 		"revoke": "Close",
 		"on": "on",
-		"unknownDevice": "Unknown device"
+		"unknownDevice": "Unknown device",
+		"dataTitle": "My data",
+		"dataBody": "A JSON file with everything the app holds about you: your profile, your households, what you wrote. A household appears in full only where you are its sole member — elsewhere, other people’s lists and messages stay theirs.",
+		"dataExport": "Download my data",
+		"dataError": "The file could not be prepared. Try again in a moment.",
+		"deleteTitle": "Delete my account",
+		"deleteBody": "Your account, your profile and your preferences are erased. A household where you are the only member goes with it, lists included. In a shared household, the household stays with the others: your messages remain readable but no longer carry your name, and your votes are removed.",
+		"deleteWarning": "This deletion is final. There is no way back.",
+		"deleteStart": "Delete my account",
+		"deleteConfirmLabel": "To confirm, type your email address",
+		"deleteConfirmHint": "We ask for it again to be sure this really is you.",
+		"deleteSubmit": "Delete permanently",
+		"deleteErrorLastAdmin": "You are the only administrator. Appoint someone else before you leave, otherwise nobody will be able to approve new sign-ups.",
+		"deleteErrorDemo": "The demonstration account cannot be deleted.",
+		"deleteErrorSecondFactor": "Confirm your second factor before deleting your account.",
+		"deleteErrorUnknown": "The deletion did not go through. Nothing was erased."
 	},
 	"bugReport": {
 		"button": "Report a bug",

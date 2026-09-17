@@ -1,6 +1,12 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
 	import { session, type Factor, type OpenSession } from '$stores/session.svelte';
 	import { t, i18n } from '$lib/i18n/index.svelte';
+	import {
+		deleteAccountErrorKey,
+		exportFileName,
+		matchesConfirmation
+	} from '$domain/account-data';
 	import { feedback } from '$stores/feedback.svelte';
 	import { backupCodesText, formatBackupCode, isCompleteOtp, normalizeOtp } from '$domain/otp';
 	import { deviceLabel, deviceText } from '$domain/device';
@@ -22,7 +28,9 @@
 		Check,
 		Eye,
 		EyeOff,
-		TriangleAlert
+		TriangleAlert,
+		Download,
+		Trash2
 	} from '@lucide/svelte';
 
 	let facteurs = $state<Factor[]>([]);
@@ -248,6 +256,68 @@
 		motDePasseChange = true;
 		feedback.play('success');
 		await recharger();
+	}
+
+	let exportEnCours = $state(false);
+	let erreurExport = $state('');
+
+	/**
+	 * Le fichier est assemblé dans la page, comme les codes de secours : il n'y a pas de serveur à
+	 * nous où le déposer, et un stockage intermédiaire serait une copie de plus à purger ensuite.
+	 */
+	async function exporter() {
+		exportEnCours = true;
+		erreurExport = '';
+
+		const donnees = await session.exportData();
+		exportEnCours = false;
+
+		if (donnees === null) {
+			erreurExport = t('security.dataError');
+			return;
+		}
+
+		const lien = document.createElement('a');
+		lien.href = URL.createObjectURL(
+			new Blob([JSON.stringify(donnees, null, 2)], { type: 'application/json' })
+		);
+		lien.download = exportFileName(new Date());
+		lien.click();
+		URL.revokeObjectURL(lien.href);
+	}
+
+	/**
+	 * Deux gestes, pas un. Le premier ouvre le formulaire, le second demande de retaper son adresse :
+	 * un bouton unique sur un écran tactile, c'est un compte supprimé par un pouce qui a glissé.
+	 */
+	let suppressionOuverte = $state(false);
+	let confirmation = $state('');
+	let erreurSuppression = $state('');
+
+	const confirme = $derived(matchesConfirmation(confirmation, session.user?.email ?? null));
+
+	function annulerSuppression() {
+		suppressionOuverte = false;
+		confirmation = '';
+		erreurSuppression = '';
+	}
+
+	async function supprimer(event: SubmitEvent) {
+		event.preventDefault();
+		if (!confirme) return;
+
+		busy = true;
+		erreurSuppression = '';
+
+		const ok = await session.deleteAccount();
+		busy = false;
+
+		if (!ok) {
+			erreurSuppression = t(deleteAccountErrorKey(session.error ?? ''));
+			return;
+		}
+
+		goto('/');
 	}
 
 	const appareil = (agent: string | null) =>
@@ -592,6 +662,99 @@
 					</li>
 				{/each}
 			</ul>
+		{/if}
+	</Card.Content>
+</Card.Root>
+
+<Card.Root class="mt-6">
+	<Card.Header>
+		<Card.Title class="text-h2 flex items-center gap-2">
+			<Download size={22} aria-hidden="true" />
+			{t('security.dataTitle')}
+		</Card.Title>
+	</Card.Header>
+	<Card.Content class="space-y-4">
+		<p class="text-muted-foreground text-label">{t('security.dataBody')}</p>
+
+		{#if erreurExport}
+			<p class="text-destructive text-label" role="alert" data-test-id="export-error">
+				{erreurExport}
+			</p>
+		{/if}
+
+		<Button variant="outline" disabled={exportEnCours} onclick={exporter} data-test-id="export-data">
+			<Download size={18} aria-hidden="true" />
+			{exportEnCours ? t('common.loading') : t('security.dataExport')}
+		</Button>
+	</Card.Content>
+</Card.Root>
+
+<Card.Root class="mt-6 border-destructive/40">
+	<Card.Header>
+		<Card.Title class="text-h2 flex items-center gap-2">
+			<Trash2 size={22} class="text-destructive" aria-hidden="true" />
+			{t('security.deleteTitle')}
+		</Card.Title>
+	</Card.Header>
+	<Card.Content class="space-y-4">
+		<p class="text-muted-foreground text-label">{t('security.deleteBody')}</p>
+
+		<p
+			class="text-label text-destructive flex items-start gap-2 rounded-md bg-destructive/10 px-3.5 py-2.5 font-medium"
+			data-test-id="delete-warning"
+		>
+			<TriangleAlert size={18} class="mt-0.5 shrink-0" aria-hidden="true" />
+			<span>{t('security.deleteWarning')}</span>
+		</p>
+
+		{#if suppressionOuverte}
+			<form onsubmit={supprimer} class="space-y-4" data-test-id="delete-form">
+				<div>
+					<Label for="delete-confirm">{t('security.deleteConfirmLabel')}</Label>
+					<Input
+						id="delete-confirm"
+						type="email"
+						bind:value={confirmation}
+						autocomplete="off"
+						aria-describedby="delete-confirm-hint"
+						data-test-id="delete-confirm"
+						required
+					/>
+					<p id="delete-confirm-hint" class="text-muted-foreground text-caption mt-2">
+						{t('security.deleteConfirmHint')}
+					</p>
+				</div>
+
+				{#if erreurSuppression}
+					<p class="text-destructive text-label" role="alert" data-test-id="delete-error">
+						{erreurSuppression}
+					</p>
+				{/if}
+
+				<div class="flex flex-wrap gap-2">
+					<Button
+						type="submit"
+						variant="destructive"
+						class="fl-press"
+						disabled={busy || !confirme}
+						data-test-id="delete-submit"
+					>
+						{busy ? t('common.loading') : t('security.deleteSubmit')}
+					</Button>
+					<Button variant="outline" onclick={annulerSuppression} data-test-id="delete-cancel">
+						{t('common.cancel')}
+					</Button>
+				</div>
+			</form>
+		{:else}
+			<Button
+				variant="outline"
+				onclick={() => (suppressionOuverte = true)}
+				data-test-id="delete-start"
+			>
+				<Trash2 size={18} aria-hidden="true" />
+				{t('security.deleteStart')}
+			</Button>
 		{/if}
 	</Card.Content>
 </Card.Root>

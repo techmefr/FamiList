@@ -362,6 +362,40 @@ class SessionStore {
 		return true;
 	}
 
+	/**
+	 * Tout ce que l'app retient de ce compte, en JSON. `null` sur échec : un objet vide se lirait
+	 * comme « nous n'avons rien sur vous », ce qui serait un mensonge par accident.
+	 */
+	async exportData(): Promise<unknown | null> {
+		this.error = null;
+		const { data, error } = await supabase.rpc('export_account');
+
+		if (error) {
+			this.error = error.message;
+			return null;
+		}
+
+		return data;
+	}
+
+	/**
+	 * Ferme le compte, définitivement. La session locale est vidée dans la foulée : le jeton reste
+	 * valide quelques minutes après la suppression du compte, et une app qui continue d'afficher des
+	 * listes sur un appareil dont le compte n'existe plus n'est pas un état qu'on laisse s'installer.
+	 */
+	async deleteAccount(): Promise<boolean> {
+		this.error = null;
+		const { error } = await supabase.rpc('delete_account');
+
+		if (error) {
+			this.error = error.message;
+			return false;
+		}
+
+		await this.signOut();
+		return true;
+	}
+
 	async signOut() {
 		await supabase.auth.signOut();
 		this.user = null;
