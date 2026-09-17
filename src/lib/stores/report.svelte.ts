@@ -25,6 +25,9 @@ class ReportStore {
 	screenshot = $state<string | null>(null);
 	sent = $state(false);
 
+	/** Le numéro court rendu par la base, montré à la personne une fois le signalement déposé. */
+	number = $state<number | null>(null);
+
 	get hasDraft() {
 		return this.description.trim() !== '' || this.screenshot !== null;
 	}
@@ -44,6 +47,7 @@ class ReportStore {
 			this.description = '';
 			this.screenshot = null;
 			this.sent = false;
+			this.number = null;
 		}
 
 		this.open = true;
@@ -65,6 +69,7 @@ class ReportStore {
 		this.description = '';
 		this.screenshot = null;
 		this.sent = false;
+		this.number = null;
 	}
 }
 

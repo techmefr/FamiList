@@ -16,7 +16,9 @@
 		ShieldCheck,
 		ShieldOff,
 		KeyRound,
-		LifeBuoy
+		LifeBuoy,
+		CircleDot,
+		ExternalLink
 	} from '@lucide/svelte';
 	import EmptyState from '$components/app/EmptyState.svelte';
 
@@ -33,6 +35,7 @@
 
 	interface BugReport {
 		id: string;
+		number: number;
 		email: string | null;
 		description: string;
 		screenshot: string | null;
@@ -41,6 +44,9 @@
 		kind: string;
 		status: string;
 		created_at: string;
+		issue_number: number | null;
+		issue_url: string | null;
+		issue_requested_at: string | null;
 	}
 
 	let accounts = $state<PendingAccount[]>([]);
@@ -86,6 +92,25 @@
 
 	async function resolveReport(id: string) {
 		const { error: rpcError } = await supabase.rpc('resolve_bug_report', { target: id });
+		if (rpcError) {
+			refuser([rpcError.message]);
+			return;
+		}
+		await load();
+	}
+
+	/**
+	 * Demande l'ouverture d'une issue publique portant le seul numéro du signalement.
+	 *
+	 * Le geste est explicite, et non déclenché par le dépôt : n'importe quel compte approuvé peut
+	 * déposer vingt signalements par jour, et les publier d'office donnerait à chacun d'eux une
+	 * issue dans un dépôt public que personne ne pourrait retirer. Le tri est le filtre.
+	 *
+	 * L'issue n'est pas ouverte ici : la base note la demande, et une fonction edge qui détient le
+	 * jeton s'en charge dans la minute. L'écran montre donc d'abord une demande en attente.
+	 */
+	async function publishReport(id: string) {
+		const { error: rpcError } = await supabase.rpc('request_bug_report_issue', { target: id });
 		if (rpcError) {
 			refuser([rpcError.message]);
 			return;
@@ -339,7 +364,10 @@
 						<Card.Content class="space-y-3">
 							<div class="flex flex-wrap items-start justify-between gap-4">
 								<div class="min-w-0 flex-1 basis-[16rem]">
-									<p class="whitespace-pre-wrap">{report.description}</p>
+									<p class="text-label font-medium" data-test-class="bug-report-number">
+										{t('admin.reportNumber', { number: report.number })}
+									</p>
+									<p class="mt-1 whitespace-pre-wrap">{report.description}</p>
 									<p class="text-muted-foreground text-caption mt-1">
 										{report.email ?? '—'} · {report.path ?? '—'} · {formatDate(report.created_at)}
 									</p>
@@ -360,15 +388,48 @@
 								/>
 							{/if}
 
-							{#if report.status === 'open'}
-								<Button
-									variant="outline"
-									onclick={() => resolveReport(report.id)}
-									data-test-class="resolve-bug"
-								>
-									{t('admin.resolveReport')}
-								</Button>
-							{/if}
+							<div class="flex flex-wrap items-center gap-3">
+								{#if report.status === 'open'}
+									<Button
+										variant="outline"
+										onclick={() => resolveReport(report.id)}
+										data-test-class="resolve-bug"
+									>
+										{t('admin.resolveReport')}
+									</Button>
+								{/if}
+
+								<!--
+									Trois états, et un seul bouton : sans issue on peut en ouvrir une, la demande
+									posée on attend le prochain réveil, et une fois publiée le lien remplace le
+									bouton — republier le même signalement n'aurait aucun sens.
+								-->
+								{#if report.issue_number !== null}
+									<a
+										href={report.issue_url ?? '#'}
+										target="_blank"
+										rel="noreferrer"
+										class="text-label underline"
+										data-test-class="bug-issue-link"
+									>
+										<ExternalLink size={16} aria-hidden="true" class="inline" />
+										{t('admin.reportIssue', { number: report.issue_number })}
+									</a>
+								{:else if report.issue_requested_at !== null}
+									<p class="text-muted-foreground text-label" data-test-class="bug-issue-pending">
+										{t('admin.reportIssuePending')}
+									</p>
+								{:else}
+									<Button
+										variant="outline"
+										onclick={() => publishReport(report.id)}
+										data-test-class="publish-bug"
+									>
+										<CircleDot size={18} aria-hidden="true" />
+										{t('admin.publishReport')}
+									</Button>
+								{/if}
+							</div>
 						</Card.Content>
 					</Card.Root>
 				</li>
