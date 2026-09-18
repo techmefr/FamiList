@@ -1080,5 +1080,10 @@
 			"openrouter": "OpenRouter",
 			"deepseek": "DeepSeek"
 		}
+	},
+	"setup": {
+		"title": "Instance not configured",
+		"body": "This app does not know yet which database to talk to.",
+		"hint": "Set the Supabase address and the publishable key in config.js, next to the app, or in the container variables, then reload the page."
 	}
 }

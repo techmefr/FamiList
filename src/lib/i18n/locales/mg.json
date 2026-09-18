@@ -1080,5 +1080,10 @@
 			"openrouter": "OpenRouter",
 			"deepseek": "DeepSeek"
 		}
+	},
+	"setup": {
+		"title": "Tsy mbola voaomana ity instance ity",
+		"body": "Mbola tsy fantatr ity application ity izay base de données horesahiny.",
+		"hint": "Ampidiro ao amin ny config.js eo akaikin ny application, na ao amin ny variables an ny conteneur, ny adiresy Supabase sy ny lakile public, avy eo avereno alaina ny pejy."
 	}
 }

@@ -1080,5 +1080,10 @@
 			"openrouter": "OpenRouter",
 			"deepseek": "DeepSeek"
 		}
+	},
+	"setup": {
+		"title": "Instanz nicht konfiguriert",
+		"body": "Diese Anwendung weiß noch nicht, mit welcher Datenbank sie sprechen soll.",
+		"hint": "Tragen Sie die Supabase-Adresse und den öffentlichen Schlüssel in config.js neben der Anwendung oder in den Variablen des Containers ein und laden Sie die Seite neu."
 	}
 }

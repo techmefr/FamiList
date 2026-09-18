@@ -12,6 +12,11 @@
 		<link rel="manifest" href="%sveltekit.assets%/manifest.webmanifest" />
 		<meta name="mobile-web-app-capable" content="yes" />
 		<meta name="apple-mobile-web-app-status-bar-style" content="default" />
+		<!--
+			Which database this instance talks to. A separate file, loaded before the app, so that the same
+			build can be handed to anybody and pointed at their own Supabase on the machine that serves it.
+		-->
+		<script src="%sveltekit.assets%/config.js"></script>
 		<script>
 			// Applies the preferences before the first render: without this, a reload in dark theme, in large
 			// type or in Arabic causes a flash in the default settings.
