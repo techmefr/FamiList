@@ -299,7 +299,7 @@
 		{ href: '/magnifier', key: 'nav.magnifier', icon: ZoomIn, place: 'handheld' },
 		{ href: '/chat', key: 'nav.chat', icon: MessagesSquare, place: 'partout' },
 		{ href: '/cards', key: 'nav.cards', icon: CreditCard, place: 'partout' },
-		{ href: '/recipes', key: 'nav.recipes', icon: CookingPot, place: 'desktop' },
+		{ href: '/recipes', key: 'nav.recipes', icon: CookingPot, place: 'partout' },
 		{ href: '/shops', key: 'nav.shops', icon: Store, place: 'desktop' },
 		{ href: '/prices', key: 'nav.prices', icon: Tags, place: 'desktop' },
 		{ href: '/household', key: 'nav.household', icon: Users, place: 'desktop' },
