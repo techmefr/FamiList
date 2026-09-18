@@ -1,5 +1,10 @@
 # The app, served on port 8080 by default.
 #
+# The image is pulled, not built: `docker compose up` needs nothing but Docker, and the machine that runs
+# the app never compiles anything. To build it locally instead — a change of your own, or an architecture
+# nobody publishes for — add `build: .` to the service, or `docker build -t familiste .` and point `image`
+# at that name.
+#
 # The database is not declared here. Supabase is a dozen containers whose versions move together, and
 # copying their compose file into this repository would mean maintaining a stale fork of it. The project
 # already pins the Supabase CLI, which starts exactly that stack in Docker for you: `pnpm db:start` for a
@@ -7,7 +12,6 @@
 # you end up with the two values below.
 services:
   app:
-    build: .
     image: ghcr.io/techmefr/familiste:latest
     ports:
       - '${PORT:-8080}:80'

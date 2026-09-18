@@ -53,10 +53,17 @@ Put the address of your database and its public key in `.env`, then:
 docker compose up -d
 ```
 
-The app is on http://localhost:8080. The two values are read when the page opens, not baked into
-the build, so the same image serves any instance: to move to another database, change `.env` and
-restart. Started without them, the app shows a screen saying what is missing rather than a blank
-page.
+The app is on http://localhost:8080. Nothing is compiled on your machine: the image is published
+for amd64 and arm64, so a Raspberry Pi pulls it like anything else. The two values are read when
+the page opens, not baked into the build, so the same image serves any instance: to move to another
+database, change `.env` and restart. Started without them, the app shows a screen saying what is
+missing rather than a blank page.
+
+Updating is two commands:
+
+```bash
+docker compose pull && docker compose up -d
+```
 
 **The first account created becomes the administrator, approved on the spot.** Create yours right
 after going live — someone signing up before you would own the instance. Every following sign-up
