@@ -48,7 +48,7 @@ export const PROVIDERS: Provider[] = [
 		id: 'gemini',
 		dialect: 'gemini',
 		base: 'https://generativelanguage.googleapis.com/v1beta',
-		defaultModel: 'gemini-2.0-flash',
+		defaultModel: 'gemini-3.6-flash',
 		keysUrl: 'https://aistudio.google.com/apikey'
 	},
 	{
