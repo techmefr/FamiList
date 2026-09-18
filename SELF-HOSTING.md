@@ -90,6 +90,9 @@ docker compose up -d
 The app answers on http://localhost:8080 — change `PORT` in `.env` for another one. Put it behind
 your usual reverse proxy for a real domain and a certificate.
 
+Nothing is built here: the image comes from `ghcr.io/techmefr/familiste`, published for amd64 and
+arm64 on every change. Your machine downloads a folder of files and a web server, and that is all.
+
 These two values are read when the page opens, not written into the build. Changing database means
 editing `.env` and `docker compose up -d` again; there is nothing to rebuild.
 
@@ -136,11 +139,14 @@ visible in `/admin`, which is the authority.
 ```sh
 git pull
 pnpm exec supabase db push
-docker compose up -d --build
+docker compose pull
+docker compose up -d
 ```
 
 Redeploy the functions if they changed. Migrations only apply once: running `db push` again on an
 up-to-date database does nothing.
+
+`docker compose pull` fetches the image rebuilt by the project; nothing is compiled on your side.
 
 ## When it does not work
 
