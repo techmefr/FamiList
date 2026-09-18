@@ -1080,5 +1080,10 @@
 			"openrouter": "OpenRouter",
 			"deepseek": "DeepSeek"
 		}
+	},
+	"setup": {
+		"title": "Instancia sin configurar",
+		"body": "Esta aplicación todavía no sabe con qué base de datos hablar.",
+		"hint": "Indique la dirección de Supabase y la clave pública en config.js, junto a la aplicación, o en las variables del contenedor, y vuelva a cargar la página."
 	}
 }

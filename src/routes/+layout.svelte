@@ -38,6 +38,8 @@
 	import ReportPanel from '$components/app/ReportPanel.svelte';
 	import SearchSheet from '$components/app/SearchSheet.svelte';
 	import ListPanel from '$components/app/ListPanel.svelte';
+	import SetupNeeded from '$components/app/SetupNeeded.svelte';
+	import { isConfigured } from '$db/supabase';
 
 	let { children } = $props();
 
@@ -59,8 +61,11 @@
 	let navbarH = $state(0);
 
 	i18n.init();
-	session.init();
 	registerServiceWorker();
+
+	// The session is the first thing that calls the database. On an instance that has none, opening it
+	// would only produce failed requests behind the setup screen, and a session stuck on loading.
+	if (isConfigured) session.init();
 
 	/**
 	 * The error nets, set up before anything else on the page.
@@ -368,7 +373,9 @@
 
 <svelte:window onkeydown={surRaccourci} />
 
-{#if session.loading}
+{#if !isConfigured}
+	<SetupNeeded />
+{:else if session.loading}
 	<main class="grid min-h-dvh place-items-center px-4">
 		<p class="text-muted-foreground">{t('common.loading')}</p>
 	</main>

@@ -1,15 +1,29 @@
 import { createClient } from '@supabase/supabase-js';
-import { PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY } from '$env/static/public';
+import { readInstanceConfig } from '$domain/instance-config';
 import type { Database } from './types';
+
+/** What `config.js` said when the page opened, or null on an instance nobody has configured yet. */
+const instanceConfig = readInstanceConfig(globalThis.__FAMILIST_CONFIG__);
+
+export const isConfigured = instanceConfig !== null;
 
 /**
  * Single client, browser side only (the app is a static SPA, there is no server). The publishable key is
  * made to be delivered to the client: it is RLS that protects the data, not the secrecy of the key.
+ *
+ * Built even when nothing is configured, on an address that resolves nowhere: `createClient` refuses an
+ * empty URL, and this module is imported by every store at load time. Failing here would turn a missing
+ * variable into a blank page, whereas the layout reads `isConfigured` and says what is missing. Nothing
+ * calls this client in that state — the layout shows the setup screen instead of the app.
  */
-export const supabase = createClient<Database>(PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY, {
-	auth: {
-		persistSession: true,
-		autoRefreshToken: true,
-		detectSessionInUrl: true
+export const supabase = createClient<Database>(
+	instanceConfig?.url ?? 'http://unconfigured.invalid',
+	instanceConfig?.anonKey ?? 'unconfigured',
+	{
+		auth: {
+			persistSession: true,
+			autoRefreshToken: true,
+			detectSessionInUrl: true
+		}
 	}
-});
+);
