@@ -3,18 +3,17 @@
 The README speaks to someone developing the project. This page speaks to someone who wants to run
 it for their family, and will not open a terminal twice a week.
 
-There are **not two twin services** to run. There is a Supabase database, running in Docker
-containers, and a web app that is only a folder of static files — it executes nothing on the
-server.
+There are **not two twin services** to run. There is a Supabase database, and a web app that is
+only a folder of static files — it executes nothing on the server. The app is one container; the
+database is either somebody else's problem or a second stack on your machine.
 
 ## What you need
 
 | | |
 | --- | --- |
-| **Docker** | runs the database, authentication and storage |
-| **Node 24 or later** | builds the app |
+| **Docker** | runs the app, and the database if you host it yourself |
+| **Node 24 or later** | only to apply the schema, from the command line |
 | **pnpm** | installed by `corepack enable pnpm` |
-| a file host | Vercel, Netlify, an nginx — any of them |
 
 The Supabase CLI does not need installing separately: it is pinned in the project dependencies.
 
@@ -22,13 +21,14 @@ The Supabase CLI does not need installing separately: it is pinned in the projec
 
 Two paths, and the second is no more "pure" than the first.
 
-**Hosted Supabase**: create a project on supabase.com, link the repository, push the schema.
-Nothing to administer, a backed-up database. This is what the original instance does.
+**Hosted Supabase**: create a project on supabase.com, push the schema. Nothing to administer, a
+backed-up database. This is what the original instance does.
 
-**Everything at home**: Supabase runs in Docker on your own machine. You then have to handle
-backups, certificates and updates — which is real work, not a checkbox.
+**Everything at home**: Supabase runs in Docker on your own machine, started by the project's own
+CLI. You then have to handle backups, certificates and updates — which is real work, not a
+checkbox.
 
-What follows describes the first path, with the differences of the second noted along the way.
+Both end at the same place: an address and a public key.
 
 ## Setting up the database
 
@@ -38,11 +38,17 @@ cd Familiste
 pnpm install
 ```
 
-Link the Supabase project, then apply the schema:
+Hosted Supabase — link the project, then apply the schema:
 
 ```sh
 pnpm exec supabase link --project-ref <the-project-ref>
 pnpm exec supabase db push
+```
+
+At home, one command replaces both, and prints the address and the key when it is done:
+
+```sh
+pnpm db:start
 ```
 
 > **Never run `supabase/seed.sql` in production.** It creates a test account whose password is
@@ -59,10 +65,11 @@ pnpm exec supabase functions deploy import-recipe
 pnpm exec supabase functions deploy test-instance-mail
 ```
 
-For hosting at home, replace the first two commands with `pnpm exec supabase start`, and read the
-URL and the key it prints.
+## Starting the app
 
-## Building and publishing the app
+```sh
+cp .env.example .env
+```
 
 Two variables, the only ones in the project:
 
@@ -71,20 +78,30 @@ PUBLIC_SUPABASE_URL=
 PUBLIC_SUPABASE_ANON_KEY=
 ```
 
-They are public by construction: they ship in the file the browser downloads. Security rests on the
-database rules, not on keeping them secret. The `service_role` key, on the other hand, has no place
-here.
+On supabase.com they are in Project settings, API: the "Project URL" and the "anon public" key. At
+home, `pnpm db:start` printed them. They are public by construction: they ship in the file the
+browser downloads. Security rests on the database rules, not on keeping them secret. The
+`service_role` key, on the other hand, has no place here.
 
-```sh
-pnpm build
+```bash
+docker compose up -d
 ```
 
-The result is in `build/`. Any unknown route must be sent back to `index.html`, otherwise a link
-shared to a list will land on a missing page. On Vercel, `vercel.json` already takes care of it;
-elsewhere, it is one line of configuration to write.
+The app answers on http://localhost:8080 — change `PORT` in `.env` for another one. Put it behind
+your usual reverse proxy for a real domain and a certificate.
+
+These two values are read when the page opens, not written into the build. Changing database means
+editing `.env` and `docker compose up -d` again; there is nothing to rebuild.
 
 Finally, in the Supabase project authentication settings, set the site URL and the redirect URLs to
 the real domain. Without that, the link received by email leads somewhere else.
+
+### Without Docker
+
+`pnpm build` produces `build/`, to be served by any file host. Any unknown route must be sent back
+to `index.html`, otherwise a link shared to a list will land on a missing page. On Vercel,
+`vercel.json` already takes care of it; elsewhere, it is one line of configuration to write. The
+two variables are then read from the environment at build time.
 
 ## The first account
 
@@ -118,15 +135,17 @@ visible in `/admin`, which is the authority.
 
 ```sh
 git pull
-pnpm install
 pnpm exec supabase db push
-pnpm build
+docker compose up -d --build
 ```
 
-Redeploy the contents of `build/`, and redeploy the functions if they changed. Migrations only apply
-once: running `db push` again on an up-to-date database does nothing.
+Redeploy the functions if they changed. Migrations only apply once: running `db push` again on an
+up-to-date database does nothing.
 
 ## When it does not work
+
+**The app shows "instance not configured".** The container started without its two variables, or
+with an address that is not a URL. Check `.env`, then `docker compose up -d` again.
 
 **Installation fails on the Node version.** A dependency requires Node 24, and `.npmrc` refuses to
 override it. `node --version` must print 24 or later.
@@ -136,4 +155,5 @@ override it. `node --version` must print 24 or later.
 **Someone signed up and sees nothing.** That is the intended behaviour: their account is waiting for
 approval in `/admin`.
 
-**A reloaded page returns a 404.** The host does not rewrite to `index.html`.
+**A reloaded page returns a 404.** You are not going through the provided container, and the host
+does not rewrite to `index.html`.
