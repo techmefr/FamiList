@@ -1,0 +1,17 @@
+.git
+.github
+node_modules
+build
+.svelte-kit
+android
+ios
+coverage
+test-results
+playwright-report
+blob-report
+supabase/.temp
+.env
+.env.*
+!.env.example
+.vercel
+*.log
