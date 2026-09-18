@@ -38,14 +38,18 @@ cd Familiste
 pnpm install
 ```
 
-Hosted Supabase — link the project, then apply the schema:
+Hosted Supabase — one command links the project, applies the schema and deploys the functions:
 
-```sh
-pnpm exec supabase link --project-ref <the-project-ref>
-pnpm exec supabase db push
+```bash
+pnpm setup --ref <the-project-ref>
 ```
 
-At home, one command replaces both, and prints the address and the key when it is done:
+The reference is in the address of your project: `supabase.com/dashboard/project/<the-project-ref>`.
+`pnpm setup --dry-run` prints what it would run without running any of it, if you would rather do
+it by hand. It asks for your database password, because linking does.
+
+At home, nothing to link — one command starts the stack, applies the schema, and prints the address
+and the key when it is done:
 
 ```sh
 pnpm db:start
@@ -55,14 +59,11 @@ pnpm db:start
 > written in the repository, confirmed and approved outright. It only exists for the automated
 > tests.
 
-Some functions run on the server — email, publishing reports, importing a recipe. They are deployed
-once:
+Some functions run on the server — email, publishing reports, importing a recipe. `pnpm setup`
+deploys them all; on a stack at home they come with it. Deploying one on its own, after a change:
 
 ```sh
 pnpm exec supabase functions deploy notify-admins
-pnpm exec supabase functions deploy publish-report-issues
-pnpm exec supabase functions deploy import-recipe
-pnpm exec supabase functions deploy test-instance-mail
 ```
 
 ## Starting the app
@@ -105,6 +106,20 @@ the real domain. Without that, the link received by email leads somewhere else.
 to `index.html`, otherwise a link shared to a list will land on a missing page. On Vercel,
 `vercel.json` already takes care of it; elsewhere, it is one line of configuration to write. The
 two variables are then read from the environment at build time.
+
+### Fork, Vercel and hosted Supabase
+
+The path the original instance takes, and the one that costs nothing to try:
+
+1. Fork the repository, create a project on supabase.com.
+2. `pnpm setup --ref <the-project-ref>` from your clone.
+3. Import the fork into Vercel. `vercel.json` already carries the build command, the output folder,
+   the rewrite and the security headers; the only thing to set in the interface is
+   `PUBLIC_SUPABASE_URL` and `PUBLIC_SUPABASE_ANON_KEY`.
+4. Set the site URL and the redirect URLs in the Supabase authentication settings, then
+   `SUPABASE_SERVICE_ROLE_KEY=... pnpm admin create`.
+
+Nothing here is specific to Vercel beyond that one file: the build is a folder of static files.
 
 ## The first account
 

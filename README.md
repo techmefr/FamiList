@@ -200,6 +200,14 @@ On Vercel, `vercel.json` already carries the build command, the output folder, t
 security headers. The only setting to make in the interface is adding `PUBLIC_SUPABASE_URL` and
 `PUBLIC_SUPABASE_ANON_KEY` to the project environment variables.
 
+To point a fork at a project on supabase.com — schema, functions and all:
+
+```bash
+pnpm setup --ref <the-project-ref>
+```
+
+`pnpm setup --dry-run` prints what it would run without running it.
+
 ### Android app
 
 Capacitor wraps the web build (`webDir: 'build'`): there is no separate mobile code.
