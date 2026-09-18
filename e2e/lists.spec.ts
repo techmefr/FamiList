@@ -57,3 +57,47 @@ test('une liste sans article affiche un état vide illustré', async ({ signedIn
 
 	await expect(page.getByTestId('list-empty')).toBeVisible();
 });
+
+/**
+ * The local cache shows a list the instant it is created, before the server has said anything. So every
+ * assertion above passes on a write the database refused — which is exactly how a creation silently lost
+ * to an RLS policy went unnoticed. Emptying the cache and reloading is what separates the two: what comes
+ * back is what the server really holds.
+ */
+test('une liste créée survit à un cache local vidé', async ({ signedInPage: page }) => {
+	const name = listName();
+
+	await page.goto('/');
+	await page.getByTestId('nav-create').click();
+	await page.getByTestId('create-list').click();
+	await page.getByTestId('list-name').fill(name);
+	await page.getByTestId('list-create').click();
+
+	const card = page.locator('[data-test-class="list-card"]').filter({ hasText: name });
+	await expect(card).toBeVisible();
+
+	// Laisse la file partir : la carte est déjà là quand l'écriture n'a pas encore quitté le navigateur.
+	await expect(page.getByTestId('sync-error')).toHaveCount(0);
+	await page.waitForTimeout(2000);
+
+	await page.evaluate(async () => {
+		const names = await indexedDB.databases();
+		await Promise.all(
+			names.map(
+				(entry) =>
+					new Promise((resolve) => {
+						const request = indexedDB.deleteDatabase(entry.name as string);
+						request.onsuccess = resolve;
+						request.onerror = resolve;
+						request.onblocked = resolve;
+					})
+			)
+		);
+	});
+
+	await page.reload();
+
+	await expect(page.locator('[data-test-class="list-card"]').filter({ hasText: name })).toBeVisible({
+		timeout: 20_000
+	});
+});
