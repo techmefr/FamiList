@@ -1,10 +1,10 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { session, type Factor } from '$stores/session.svelte';
-	import { t } from '$lib/i18n/index.svelte';
+	import { t } from '$i18n/index.svelte';
 	import { isCompleteBackupCode, isCompleteOtp, normalizeBackupCode, normalizeOtp } from '$domain/otp';
-	import { Button } from '$lib/components/ui/button';
-	import * as Card from '$lib/components/ui/card';
+	import { Button } from '$components/ui/button';
+	import * as Card from '$components/ui/card';
 	import CodeField from '$components/app/CodeField.svelte';
 	import { ShieldCheck, LifeBuoy } from '@lucide/svelte';
 

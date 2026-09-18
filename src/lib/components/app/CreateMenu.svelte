@@ -6,7 +6,7 @@
 	import { feedback } from '$stores/feedback.svelte';
 	import { settings } from '$stores/settings.svelte';
 	import { createIntent, type CreateKind } from '$stores/create.svelte';
-	import { t } from '$lib/i18n/index.svelte';
+	import { t } from '$i18n/index.svelte';
 	import {
 		ShoppingBasket,
 		ListPlus,

@@ -1,6 +1,6 @@
 import type { HandleClientError } from '@sveltejs/kit';
-import { t } from '$lib/i18n/index.svelte';
-import { reportCrash } from '$lib/crash/reporter';
+import { t } from '$i18n/index.svelte';
+import { reportCrash } from '$crash/reporter';
 
 /**
  * Rendering and navigation errors.

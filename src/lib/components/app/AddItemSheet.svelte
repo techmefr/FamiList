@@ -3,7 +3,7 @@
 	import { data } from '$stores/data.svelte';
 	import { feedback } from '$stores/feedback.svelte';
 	import { settings } from '$stores/settings.svelte';
-	import { t } from '$lib/i18n/index.svelte';
+	import { t } from '$i18n/index.svelte';
 	import type { Item } from '$db/schema';
 	import {
 		DEFAULT_UNIT_GROUP,
@@ -13,9 +13,9 @@
 		type UnitGroupId,
 		type UnitId
 	} from '$domain/units';
-	import { Button } from '$lib/components/ui/button';
-	import { Input } from '$lib/components/ui/input';
-	import { Label } from '$lib/components/ui/label';
+	import { Button } from '$components/ui/button';
+	import { Input } from '$components/ui/input';
+	import { Label } from '$components/ui/label';
 	import { Plus, ShoppingBasket, Hash, LayoutList, X, StickyNote, Check } from '@lucide/svelte';
 	import IconField from '$components/app/IconField.svelte';
 

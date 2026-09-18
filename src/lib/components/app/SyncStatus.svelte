@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { slide } from 'svelte/transition';
 	import { cubicOut } from 'svelte/easing';
-	import { sync } from '$lib/sync/index.svelte';
+	import { sync } from '$sync/index.svelte';
 	import { motionMs } from '$stores/settings.svelte';
-	import { t } from '$lib/i18n/index.svelte';
+	import { t } from '$i18n/index.svelte';
 	import { CloudOff, TriangleAlert } from '@lucide/svelte';
 
 	/**

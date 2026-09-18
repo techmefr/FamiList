@@ -1,4 +1,5 @@
 import { browser } from '$app/environment';
+import type { AppearanceRow } from '$domain/appearance';
 import { isHand, type Hand } from '$domain/hand';
 import { animates, isMotionPreference, type MotionPreference } from '$domain/motion';
 import {
@@ -21,22 +22,9 @@ import {
 export { ACCENT_PRESETS, FONT_PRESETS, FONT_SCALE_PRESETS, type Theme };
 export { MOTION_PREFERENCES, type MotionPreference } from '$domain/motion';
 export { HANDS, type Hand } from '$domain/hand';
+export type { AppearanceRow } from '$domain/appearance';
 
 const THEMES: Theme[] = ['light', 'dark', 'system'];
-
-/** The appearance columns of `profiles`, in the shape the database expects. */
-export interface AppearanceRow {
-	theme: string;
-	accent_id: string;
-	type_scale: string;
-	font_id: string;
-	motion: string;
-	hand: string;
-	sound: boolean;
-	haptics: boolean;
-	nearby_cards: boolean;
-	has_seen_tour: boolean;
-}
 
 class Settings {
 	theme = $state<Theme>('system');

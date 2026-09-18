@@ -8,7 +8,7 @@
 	import { feedback } from '$stores/feedback.svelte';
 	import { motionMs } from '$stores/settings.svelte';
 	import { createIntent } from '$stores/create.svelte';
-	import { t } from '$lib/i18n/index.svelte';
+	import { t } from '$i18n/index.svelte';
 	import { CODE_TYPES, guessCodeType, isMatrixFormat, type CodeType } from '$domain/code-format';
 	import { linearCode } from '$domain/barcode';
 	import { CARD_GRADIENT_END, DEFAULT_TINT } from '$domain/tint';
@@ -17,9 +17,9 @@
 	import ScanButton from '$components/app/ScanButton.svelte';
 	import ImportCodeButton from '$components/app/ImportCodeButton.svelte';
 	import NewShopSheet from '$components/app/NewShopSheet.svelte';
-	import { Button } from '$lib/components/ui/button';
-	import { Input } from '$lib/components/ui/input';
-	import { Label } from '$lib/components/ui/label';
+	import { Button } from '$components/ui/button';
+	import { Input } from '$components/ui/input';
+	import { Label } from '$components/ui/label';
 	import { Plus, Trash2, ScanLine, CreditCard, Barcode, Star, Store } from '@lucide/svelte';
 	import IconField from '$components/app/IconField.svelte';
 	import EmptyState from '$components/app/EmptyState.svelte';

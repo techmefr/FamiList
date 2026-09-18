@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { data } from '$stores/data.svelte';
-	import { i18n, t } from '$lib/i18n/index.svelte';
+	import { i18n, t } from '$i18n/index.svelte';
 	import { formatAmount } from '$domain/price';
 	import { tintForWhiteText } from '$domain/tint';
-	import * as Card from '$lib/components/ui/card';
+	import * as Card from '$components/ui/card';
 	import EmptyState from '$components/app/EmptyState.svelte';
 
 	const products = $derived(data.pricedProducts);

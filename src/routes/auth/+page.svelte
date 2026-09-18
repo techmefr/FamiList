@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { t } from '$lib/i18n/index.svelte';
+	import { t } from '$i18n/index.svelte';
 	import Logo from '$components/app/Logo.svelte';
 	import AuthForm from '$components/app/AuthForm.svelte';
 

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import { i18n, t, LOCALES, type Locale } from '$lib/i18n/index.svelte';
-	import { flagForLocale } from '$lib/i18n/flags';
+	import { i18n, t, LOCALES, type Locale } from '$i18n/index.svelte';
+	import { flagForLocale } from '$i18n/flags';
 	import {
 		settings,
 		ACCENT_PRESETS,
@@ -10,8 +10,8 @@
 		type MotionPreference,
 		type Theme
 	} from '$stores/settings.svelte';
-	import { Button } from '$lib/components/ui/button';
-	import { Label } from '$lib/components/ui/label';
+	import { Button } from '$components/ui/button';
+	import { Label } from '$components/ui/label';
 	import AuthForm from '$components/app/AuthForm.svelte';
 	import { ArrowRight, Check } from '@lucide/svelte';
 

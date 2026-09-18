@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { session, type Factor, type OpenSession } from '$stores/session.svelte';
-	import { t, i18n } from '$lib/i18n/index.svelte';
+	import { t, i18n } from '$i18n/index.svelte';
 	import {
 		deleteAccountErrorKey,
 		exportFileName,
@@ -10,13 +10,13 @@
 	import { feedback } from '$stores/feedback.svelte';
 	import { backupCodesText, formatBackupCode, isCompleteOtp, normalizeOtp } from '$domain/otp';
 	import { deviceLabel, deviceText } from '$domain/device';
-	import * as Card from '$lib/components/ui/card';
-	import { Button } from '$lib/components/ui/button';
+	import * as Card from '$components/ui/card';
+	import { Button } from '$components/ui/button';
 	import CodeField from '$components/app/CodeField.svelte';
 	import EmptyState from '$components/app/EmptyState.svelte';
-	import { Input } from '$lib/components/ui/input';
-	import { Label } from '$lib/components/ui/label';
-	import { Switch } from '$lib/components/ui/switch';
+	import { Input } from '$components/ui/input';
+	import { Label } from '$components/ui/label';
+	import { Switch } from '$components/ui/switch';
 	import IconField from '$components/app/IconField.svelte';
 	import {
 		ShieldCheck,

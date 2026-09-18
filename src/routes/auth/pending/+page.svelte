@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { session } from '$stores/session.svelte';
-	import { t } from '$lib/i18n/index.svelte';
-	import { Button } from '$lib/components/ui/button';
-	import * as Card from '$lib/components/ui/card';
+	import { t } from '$i18n/index.svelte';
+	import { Button } from '$components/ui/button';
+	import * as Card from '$components/ui/card';
 	import { Clock, Ban } from '@lucide/svelte';
 
 	const rejected = $derived(session.profile?.status === 'rejected');

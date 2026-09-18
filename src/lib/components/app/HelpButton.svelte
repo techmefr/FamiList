@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/state';
-	import { t } from '$lib/i18n/index.svelte';
+	import { t } from '$i18n/index.svelte';
 	import { report } from '$stores/report.svelte';
 	import { settings } from '$stores/settings.svelte';
 	import { feedback } from '$stores/feedback.svelte';
@@ -27,7 +27,7 @@
 	 */
 	async function tour() {
 		hide();
-		const { startTour } = await import('$lib/tour');
+		const { startTour } = await import('$tour');
 		startTour(page.url.pathname, () => settings.setTourSeen(true));
 	}
 

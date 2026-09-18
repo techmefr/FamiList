@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { settings } from '$stores/settings.svelte';
-	import { t } from '$lib/i18n/index.svelte';
-	import type { Shop } from '$lib/db/schema';
+	import { t } from '$i18n/index.svelte';
+	import type { Shop } from '$db/schema';
 	import ShopForm from '$components/app/ShopForm.svelte';
 	import { X } from '@lucide/svelte';
 

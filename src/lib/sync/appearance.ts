@@ -1,5 +1,5 @@
 import { supabase } from '$db/supabase';
-import { settings } from '$stores/settings.svelte';
+import type { AppearanceStore } from '$domain/appearance';
 
 const COLUMNS =
 	'theme, accent_id, type_scale, font_id, motion, hand, sound, haptics, nearby_cards, has_seen_tour';
@@ -13,7 +13,7 @@ const COLUMNS =
  */
 let arbitrated: string | null = null;
 
-async function pull(userId: string) {
+async function pull(settings: AppearanceStore, userId: string) {
 	const { data, error } = await supabase
 		.from('profiles')
 		.select(COLUMNS)
@@ -25,7 +25,7 @@ async function pull(userId: string) {
 	settings.adoptRemote(data, userId);
 }
 
-async function push(userId: string) {
+async function push(settings: AppearanceStore, userId: string) {
 	const { error } = await supabase.from('profiles').update(settings.snapshot()).eq('id', userId);
 
 	// We only date the send if it went through, otherwise the change would be considered transmitted and the
@@ -43,19 +43,19 @@ async function push(userId: string) {
  * A network failure breaks nothing and reports nothing: the local settings stay in place and the next
  * start-up will try again. Nothing here is worth interrupting somebody for.
  */
-export async function syncAppearance(userId: string) {
+export async function syncAppearance(settings: AppearanceStore, userId: string) {
 	if (settings.localWins(userId)) {
-		await push(userId);
+		await push(settings, userId);
 	} else {
-		await pull(userId);
+		await pull(settings, userId);
 	}
 
 	arbitrated = userId;
 }
 
 /** Sends a setting changed from the interface, once the initial arbitration is past. */
-export async function pushAppearance(userId: string) {
+export async function pushAppearance(settings: AppearanceStore, userId: string) {
 	if (arbitrated !== userId || !settings.localWins(userId)) return;
 
-	await push(userId);
+	await push(settings, userId);
 }

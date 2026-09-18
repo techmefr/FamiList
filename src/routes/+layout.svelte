@@ -16,16 +16,16 @@
 		CookingPot,
 		Search
 	} from '@lucide/svelte';
-	import { i18n, t } from '$lib/i18n/index.svelte';
+	import { i18n, t } from '$i18n/index.svelte';
 	import { data } from '$stores/data.svelte';
 	import { session } from '$stores/session.svelte';
 	import { feedback } from '$stores/feedback.svelte';
 	import { settings } from '$stores/settings.svelte';
 	import { ai } from '$stores/ai.svelte';
 	import { navDirection } from '$domain/motion';
-	import { pushAppearance, syncAppearance } from '$lib/sync/appearance';
+	import { pushAppearance, syncAppearance } from '$sync/appearance';
 	import { registerServiceWorker } from '$native/pwa';
-	import { watchCrashes } from '$lib/crash/reporter';
+	import { watchCrashes } from '$crash/reporter';
 	import { install } from '$stores/install.svelte';
 	import { reminderPlans } from '$domain/reminder';
 	import { applyReminders } from '$native/reminders';
@@ -234,7 +234,7 @@
 
 		let cancelled = false;
 		const timer = setTimeout(async () => {
-			const { startTour } = await import('$lib/tour');
+			const { startTour } = await import('$tour');
 			if (cancelled) return;
 
 			startTour(page.url.pathname, () => settings.setTourSeen(true));
@@ -255,7 +255,7 @@
 	 */
 	$effect(() => {
 		const id = session.user?.id;
-		if (id) void syncAppearance(id);
+		if (id) void syncAppearance(settings, id);
 	});
 
 	/**
@@ -269,7 +269,7 @@
 		const id = session.user?.id;
 		if (!id) return;
 
-		const timer = setTimeout(() => void pushAppearance(id), 600);
+		const timer = setTimeout(() => void pushAppearance(settings, id), 600);
 		return () => clearTimeout(timer);
 	});
 

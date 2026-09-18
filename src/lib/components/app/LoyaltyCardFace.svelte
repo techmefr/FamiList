@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { LoyaltyCard } from '$db/schema';
 	import { isMatrixFormat } from '$domain/code-format';
-	import { i18n, t } from '$lib/i18n/index.svelte';
+	import { i18n, t } from '$i18n/index.svelte';
 	import { QrCode, Barcode, StickyNote } from '@lucide/svelte';
 
 	let { card }: { card: LoyaltyCard } = $props();

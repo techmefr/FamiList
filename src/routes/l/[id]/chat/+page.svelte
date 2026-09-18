@@ -1,11 +1,11 @@
 <script lang="ts">
 	import { page } from '$app/state';
 	import { data } from '$stores/data.svelte';
-	import { t, i18n } from '$lib/i18n/index.svelte';
+	import { t, i18n } from '$i18n/index.svelte';
 	import PollCard from '$components/app/PollCard.svelte';
-	import { Button } from '$lib/components/ui/button';
-	import { Input } from '$lib/components/ui/input';
-	import { Label } from '$lib/components/ui/label';
+	import { Button } from '$components/ui/button';
+	import { Input } from '$components/ui/input';
+	import { Label } from '$components/ui/label';
 	import {
 		ArrowLeft,
 		Send,

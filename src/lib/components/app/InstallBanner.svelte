@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { slide } from 'svelte/transition';
 	import { cubicOut } from 'svelte/easing';
-	import { t } from '$lib/i18n/index.svelte';
+	import { t } from '$i18n/index.svelte';
 	import { install } from '$stores/install.svelte';
 	import { settings, motionMs } from '$stores/settings.svelte';
 	import { feedback } from '$stores/feedback.svelte';

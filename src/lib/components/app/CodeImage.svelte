@@ -2,7 +2,7 @@
 	import { qrEncode } from '$domain/qr';
 	import { linearCode } from '$domain/barcode';
 	import { isMatrixFormat } from '$domain/code-format';
-	import { t } from '$lib/i18n/index.svelte';
+	import { t } from '$i18n/index.svelte';
 
 	let {
 		value,

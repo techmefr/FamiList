@@ -63,12 +63,21 @@ export default defineConfig(({ mode }) => ({
 			// would be of no use and might serve the previous version again after an application update.
 			serviceWorker: { register: false },
 
+			// One entry per folder of `src/lib`, so that no import has to choose between `$db/supabase` and
+			// `$lib/db/supabase` for the same file: a half-declared table gives two spellings for one module,
+			// and a search for the callers of something then only turns up half of them.
 			alias: {
 				$components: 'src/lib/components',
 				$domain: 'src/lib/domain',
 				$stores: 'src/lib/stores',
 				$db: 'src/lib/db',
-				$native: 'src/lib/native'
+				$native: 'src/lib/native',
+				$sync: 'src/lib/sync',
+				$i18n: 'src/lib/i18n',
+				$crash: 'src/lib/crash',
+				$scan: 'src/lib/scan',
+				$tour: 'src/lib/tour',
+				$utils: 'src/lib/utils.ts'
 			}
 		})
 	]

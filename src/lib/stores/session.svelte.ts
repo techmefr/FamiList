@@ -1,7 +1,7 @@
 import { browser } from '$app/environment';
 import { supabase } from '$db/supabase';
 import { OAUTH_PROVIDERS, type ProviderId } from '$domain/oauth';
-import { sync } from '$lib/sync/index.svelte';
+import { sync } from '$sync/index.svelte';
 import type { Session, User } from '@supabase/supabase-js';
 
 export type AccountStatus = 'pending' | 'approved' | 'rejected';

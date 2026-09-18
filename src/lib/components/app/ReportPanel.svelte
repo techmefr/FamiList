@@ -1,8 +1,8 @@
 <script lang="ts">
-	import { t } from '$lib/i18n/index.svelte';
+	import { t } from '$i18n/index.svelte';
 	import { report } from '$stores/report.svelte';
 	import { settings } from '$stores/settings.svelte';
-	import { Button } from '$lib/components/ui/button';
+	import { Button } from '$components/ui/button';
 	import ReportForm from '$components/app/ReportForm.svelte';
 	import { ChevronDown, ChevronUp, X } from '@lucide/svelte';
 

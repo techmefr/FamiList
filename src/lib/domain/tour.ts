@@ -2,7 +2,7 @@
  * The contents of the guided tour: which screen tells what, and in which order.
  *
  * Nothing here touches the document. The part that depends on the browser — knowing whether a marker is
- * really visible, and driving driver.js — lives in `$lib/tour`, and only comes down on demand. Separating
+ * really visible, and driving driver.js — lives in `$tour`, and only comes down on demand. Separating
  * the two makes it possible to check the choice of steps without a browser, where a test render could not
  * say what is visible anyway.
  */

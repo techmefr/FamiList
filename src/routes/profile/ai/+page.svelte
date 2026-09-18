@@ -1,12 +1,12 @@
 <script lang="ts">
-	import { t } from '$lib/i18n/index.svelte';
+	import { t } from '$i18n/index.svelte';
 	import { ai } from '$stores/ai.svelte';
 	import { feedback } from '$stores/feedback.svelte';
 	import { PROVIDERS, providerById } from '$domain/ai';
-	import * as Card from '$lib/components/ui/card';
-	import { Button } from '$lib/components/ui/button';
-	import { Input } from '$lib/components/ui/input';
-	import { Label } from '$lib/components/ui/label';
+	import * as Card from '$components/ui/card';
+	import { Button } from '$components/ui/button';
+	import { Input } from '$components/ui/input';
+	import { Label } from '$components/ui/label';
 	import IconField from '$components/app/IconField.svelte';
 	import { KeyRound, Cpu, Check, ExternalLink, TriangleAlert } from '@lucide/svelte';
 

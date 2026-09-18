@@ -2,7 +2,7 @@
 	import type { Item } from '$db/schema';
 	import { data } from '$stores/data.svelte';
 	import { feedback } from '$stores/feedback.svelte';
-	import { i18n, t } from '$lib/i18n/index.svelte';
+	import { i18n, t } from '$i18n/index.svelte';
 	import { unitKey } from '$domain/units';
 	import { slugify } from '$domain/slug';
 	import { formatAmount } from '$domain/price';

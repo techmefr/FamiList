@@ -1,6 +1,6 @@
 import { driver, type DriveStep } from 'driver.js';
 import 'driver.js/dist/driver.css';
-import { t } from '$lib/i18n/index.svelte';
+import { t } from '$i18n/index.svelte';
 import { settings } from '$stores/settings.svelte';
 import { pickSteps, screenSteps } from '$domain/tour';
 

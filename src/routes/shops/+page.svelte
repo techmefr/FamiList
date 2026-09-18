@@ -1,13 +1,13 @@
 <script lang="ts">
 	import { data } from '$stores/data.svelte';
-	import { t } from '$lib/i18n/index.svelte';
+	import { t } from '$i18n/index.svelte';
 	import { tintForWhiteText } from '$domain/tint';
-	import type { Shop } from '$lib/db/schema';
-	import { Button } from '$lib/components/ui/button';
-	import { Input } from '$lib/components/ui/input';
-	import { Label } from '$lib/components/ui/label';
-	import * as Card from '$lib/components/ui/card';
-	import { Badge } from '$lib/components/ui/badge';
+	import type { Shop } from '$db/schema';
+	import { Button } from '$components/ui/button';
+	import { Input } from '$components/ui/input';
+	import { Label } from '$components/ui/label';
+	import * as Card from '$components/ui/card';
+	import { Badge } from '$components/ui/badge';
 	import EmojiPicker from '$components/app/EmojiPicker.svelte';
 	import ShopForm from '$components/app/ShopForm.svelte';
 	import { feedback } from '$stores/feedback.svelte';
