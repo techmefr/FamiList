@@ -299,7 +299,7 @@
 								administrator sees that the action exists but does not apply here.
 							-->
 							{#if self}
-								<div class="ms-auto flex shrink-0 flex-wrap items-center gap-3">
+								<div class="ms-auto flex min-w-0 flex-wrap items-center gap-3">
 									<p
 										class="text-muted-foreground text-label flex items-center gap-2"
 										data-test-class="admin-self"
@@ -324,7 +324,7 @@
 									{/if}
 								</div>
 							{:else}
-								<div class="ms-auto flex shrink-0 flex-wrap items-center gap-3">
+								<div class="ms-auto flex min-w-0 flex-wrap items-center gap-3">
 									<Button
 										onclick={() => review(account.id, 'approved')}
 										disabled={account.status === 'approved'}
