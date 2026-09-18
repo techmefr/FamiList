@@ -611,6 +611,33 @@ class SyncStore {
 	}
 
 	/**
+	 * Sends one queued write: an upsert, falling back to an insert when the row does not exist yet.
+	 *
+	 * An upsert is `insert ... on conflict do update`, so Postgres asks the update policy as well as the
+	 * insert one. Several of ours are founded on membership of the row itself — `can_access_list` reads
+	 * `list_members` — and a row being created has no member yet: the trigger enrols them just after. The
+	 * policy therefore refuses the very row it exists to let through, and a creation never reaches the
+	 * database while the local cache goes on showing it.
+	 *
+	 * The second round trip is paid only on that refusal. An engine that inserted first would pay one on
+	 * every change instead, and ticking an item is far more common than creating something. Nothing is
+	 * conceded either way: an account that really may not write this row is refused twice rather than once.
+	 */
+	private async send(entry: OutboxEntry) {
+		const table = () => supabase.from(entry.table as 'items');
+
+		if (entry.op === 'delete') return table().delete().match(entry.match);
+
+		const upserted = await table().upsert(entry.payload as never);
+
+		if (upserted.error?.code !== '42501') return upserted;
+
+		const inserted = await table().insert(entry.payload as never);
+
+		return inserted.error ? upserted : inserted;
+	}
+
+	/**
 	 * Drains the queue in arrival order. Order matters: a list must exist before its items. A network
 	 * failure stops the loop and leaves everything pending. A final refusal from the server, on the other
 	 * hand, discards the write: keeping it would block the queue forever and the user would see nothing
@@ -636,12 +663,7 @@ class SyncStore {
 		let sent = 0;
 
 		for (const entry of pending) {
-			const query = supabase.from(entry.table as 'items');
-
-			const { error } =
-				entry.op === 'delete'
-					? await query.delete().match(entry.match)
-					: await query.upsert(entry.payload as never);
+			const { error } = await this.send(entry);
 
 			if (error && !isPermanent(error.code)) {
 				this.state = 'error';
