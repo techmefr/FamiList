@@ -38,8 +38,9 @@ folder of static files that executes nothing on a server.
 
 ## Run it yourself
 
-You need Docker, and somewhere for the database to live. The second is either a free project on
-supabase.com or a stack on your own machine — the guide covers both.
+You need Docker, and somewhere for the database to live. Either a free project on supabase.com, or
+a stack on your own machine — `pnpm selfhost` brings up Supabase's self-hosting stack, generates its
+secrets and applies the schema. The guide covers both.
 
 ```sh
 git clone https://github.com/techmefr/Familiste.git

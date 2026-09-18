@@ -66,3 +66,6 @@ repomix-output.*
 
 # Couverture
 /coverage/
+
+# La pile Supabase auto-hebergee : elle porte les secrets de votre instance.
+/supabase-stack/
