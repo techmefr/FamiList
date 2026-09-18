@@ -6,8 +6,8 @@ The list everyone in the house edits at once, in the order of the aisles of the 
 actually standing in, that keeps working when the supermarket has no signal, and that nobody sells
 anything from.
 
-[Try the demo](https://familiste.vercel.app) · [Run your own](#run-it-yourself) ·
-[Self-hosting guide](SELF-HOSTING.md)
+[What it looks like](https://techmefr.github.io/Familiste/) · [Try the demo](https://familiste.vercel.app) ·
+[Run your own](#run-it-yourself) · [Self-hosting guide](SELF-HOSTING.md)
 
 ## Why another shopping list
 
