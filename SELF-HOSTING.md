@@ -24,9 +24,8 @@ Two paths, and the second is no more "pure" than the first.
 **Hosted Supabase**: create a project on supabase.com, push the schema. Nothing to administer, a
 backed-up database. This is what the original instance does.
 
-**Everything at home**: Supabase runs in Docker on your own machine, started by the project's own
-CLI. You then have to handle backups, certificates and updates — which is real work, not a
-checkbox.
+**Everything at home**: Supabase runs in Docker on your own machine, with secrets generated for you.
+You then have to handle backups, certificates and updates — which is real work, not a checkbox.
 
 Both end at the same place: an address and a public key.
 
@@ -48,12 +47,24 @@ The reference is in the address of your project: `supabase.com/dashboard/project
 `pnpm setup --dry-run` prints what it would run without running any of it, if you would rather do
 it by hand. It asks for your database password, because linking does.
 
-At home, nothing to link — one command starts the stack, applies the schema, and prints the address
-and the key when it is done:
+At home, one command fetches the self-hosting stack, generates its secrets, starts it and applies
+the schema:
 
-```sh
-pnpm db:start
+```bash
+pnpm selfhost
 ```
+
+It lands in `./supabase-stack`, which is deliberately not versioned: that folder holds every secret
+of your instance. Back it up. `pnpm selfhost --schema` reapplies the schema to a stack already
+running — after a `git pull`, for instance.
+
+The stack itself is Supabase's own self-hosting bundle, fetched at a version pinned in
+`scripts/selfhost.mjs` rather than copied into this repository: a dozen containers whose versions
+move together, vendored here, would be a fork of theirs going stale, and the day that matters is
+the day a security fix lands upstream and not in the copy.
+
+> `pnpm db:start` is a different thing and stays: a development stack with fixed, public keys, meant
+> to be thrown away and rebuilt. Never put real data in it.
 
 > **Never run `supabase/seed.sql` in production.** It creates a test account whose password is
 > written in the repository, confirmed and approved outright. It only exists for the automated
