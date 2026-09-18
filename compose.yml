@@ -1,0 +1,17 @@
+# The app, served on port 8080 by default.
+#
+# The database is not declared here. Supabase is a dozen containers whose versions move together, and
+# copying their compose file into this repository would mean maintaining a stale fork of it. The project
+# already pins the Supabase CLI, which starts exactly that stack in Docker for you: `pnpm db:start` for a
+# machine at home, or a project on supabase.com if you would rather not administer a database. Either way
+# you end up with the two values below.
+services:
+  app:
+    build: .
+    image: ghcr.io/techmefr/familiste:latest
+    ports:
+      - '${PORT:-8080}:80'
+    environment:
+      PUBLIC_SUPABASE_URL: ${PUBLIC_SUPABASE_URL}
+      PUBLIC_SUPABASE_ANON_KEY: ${PUBLIC_SUPABASE_ANON_KEY}
+    restart: unless-stopped
