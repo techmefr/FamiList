@@ -1,12 +1,12 @@
 <script lang="ts">
 	import { supabase } from '$db/supabase';
-	import { t } from '$lib/i18n/index.svelte';
+	import { t } from '$i18n/index.svelte';
 	import { feedback } from '$stores/feedback.svelte';
 	import { report } from '$stores/report.svelte';
 	import { SCREENSHOT_MAX_DIM, SCREENSHOT_MAX_BYTES, fitWithin } from '$domain/screenshot';
 	import { readReportOutcome } from '$domain/report-outcome';
-	import { Button } from '$lib/components/ui/button';
-	import { Label } from '$lib/components/ui/label';
+	import { Button } from '$components/ui/button';
+	import { Label } from '$components/ui/label';
 	import IconField from '$components/app/IconField.svelte';
 	import { Camera, ImageOff, MessageSquareWarning } from '@lucide/svelte';
 

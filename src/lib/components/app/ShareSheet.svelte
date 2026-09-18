@@ -3,8 +3,8 @@
 	import { feedback } from '$stores/feedback.svelte';
 	import { settings } from '$stores/settings.svelte';
 	import Avatar from '$components/app/Avatar.svelte';
-	import { t } from '$lib/i18n/index.svelte';
-	import { Button } from '$lib/components/ui/button';
+	import { t } from '$i18n/index.svelte';
+	import { Button } from '$components/ui/button';
 	import { X } from '@lucide/svelte';
 
 	let { listId }: { listId: string } = $props();

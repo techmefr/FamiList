@@ -1,12 +1,12 @@
 <script lang="ts">
 	import { supabase } from '$db/supabase';
 	import { session } from '$stores/session.svelte';
-	import { t, i18n } from '$lib/i18n/index.svelte';
-	import { Button } from '$lib/components/ui/button';
-	import * as Card from '$lib/components/ui/card';
-	import { Badge } from '$lib/components/ui/badge';
-	import { Label } from '$lib/components/ui/label';
-	import { Switch } from '$lib/components/ui/switch';
+	import { t, i18n } from '$i18n/index.svelte';
+	import { Button } from '$components/ui/button';
+	import * as Card from '$components/ui/card';
+	import { Badge } from '$components/ui/badge';
+	import { Label } from '$components/ui/label';
+	import { Switch } from '$components/ui/switch';
 	import { adminErrorKey, needsElevation } from '$domain/admin-error';
 	import {
 		Check,

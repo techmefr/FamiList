@@ -2,11 +2,11 @@
 	import { goto } from '$app/navigation';
 	import { session } from '$stores/session.svelte';
 	import { enabledProviders, type ProviderId } from '$domain/oauth';
-	import { t } from '$lib/i18n/index.svelte';
-	import { Button } from '$lib/components/ui/button';
-	import { Input } from '$lib/components/ui/input';
-	import { Label } from '$lib/components/ui/label';
-	import * as Card from '$lib/components/ui/card';
+	import { t } from '$i18n/index.svelte';
+	import { Button } from '$components/ui/button';
+	import { Input } from '$components/ui/input';
+	import { Label } from '$components/ui/label';
+	import * as Card from '$components/ui/card';
 	import { CheckCircle2, User, Mail, Lock, Eye, EyeOff, KeyRound } from '@lucide/svelte';
 	import IconField from '$components/app/IconField.svelte';
 	import CodeField from '$components/app/CodeField.svelte';

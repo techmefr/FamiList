@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/state';
-	import { t } from '$lib/i18n/index.svelte';
+	import { t } from '$i18n/index.svelte';
 	import { data } from '$stores/data.svelte';
 
 	/**

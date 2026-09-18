@@ -1,8 +1,8 @@
 <script lang="ts">
 	import type { Poll } from '$db/schema';
 	import { data } from '$stores/data.svelte';
-	import { t } from '$lib/i18n/index.svelte';
-	import { Button } from '$lib/components/ui/button';
+	import { t } from '$i18n/index.svelte';
+	import { Button } from '$components/ui/button';
 	import { Check, CalendarCheck, ListPlus, Pencil } from '@lucide/svelte';
 
 	let { poll, listId }: { poll: Poll; listId: string } = $props();

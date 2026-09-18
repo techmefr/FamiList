@@ -2,9 +2,9 @@
 	import { goto } from '$app/navigation';
 	import { data } from '$stores/data.svelte';
 	import { settings } from '$stores/settings.svelte';
-	import { i18n, t } from '$lib/i18n/index.svelte';
-	import * as Card from '$lib/components/ui/card';
-	import { Button } from '$lib/components/ui/button';
+	import { i18n, t } from '$i18n/index.svelte';
+	import * as Card from '$components/ui/card';
+	import { Button } from '$components/ui/button';
 	import Avatar from '$components/app/Avatar.svelte';
 	import EmptyState from '$components/app/EmptyState.svelte';
 	import { MessagesSquare, Plus } from '@lucide/svelte';

@@ -3,12 +3,12 @@
 	import { onDestroy, tick } from 'svelte';
 	import { slide } from 'svelte/transition';
 	import { cubicOut } from 'svelte/easing';
-	import { scan, scanSupport, type ScanResult } from '$lib/scan/scanner';
+	import { scan, scanSupport, type ScanResult } from '$scan/scanner';
 	import { SCAN_SUGGEST_MS, scanOutcome } from '$domain/scan-timing';
 	import { feedback } from '$stores/feedback.svelte';
 	import { motionMs } from '$stores/settings.svelte';
-	import { t } from '$lib/i18n/index.svelte';
-	import { Button } from '$lib/components/ui/button';
+	import { t } from '$i18n/index.svelte';
+	import { Button } from '$components/ui/button';
 	import { ScanLine, X, Zap } from '@lucide/svelte';
 
 	/**

@@ -3,9 +3,9 @@
 	import type { LoyaltyCard } from '$db/schema';
 	import { data } from '$stores/data.svelte';
 	import { motionMs } from '$stores/settings.svelte';
-	import { t } from '$lib/i18n/index.svelte';
+	import { t } from '$i18n/index.svelte';
 	import CodeImage from './CodeImage.svelte';
-	import { Button } from '$lib/components/ui/button';
+	import { Button } from '$components/ui/button';
 	import { X, Sun } from '@lucide/svelte';
 
 	let { card, onClose }: { card: LoyaltyCard; onClose: () => void } = $props();

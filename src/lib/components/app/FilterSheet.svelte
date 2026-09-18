@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { settings } from '$stores/settings.svelte';
 	import { feedback } from '$stores/feedback.svelte';
-	import { t } from '$lib/i18n/index.svelte';
-	import { Button } from '$lib/components/ui/button';
+	import { t } from '$i18n/index.svelte';
+	import { Button } from '$components/ui/button';
 	import { X } from '@lucide/svelte';
 
 	let {

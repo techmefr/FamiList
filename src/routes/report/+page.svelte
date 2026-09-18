@@ -1,10 +1,10 @@
 <script lang="ts">
 	import { page } from '$app/state';
 	import { untrack } from 'svelte';
-	import { t } from '$lib/i18n/index.svelte';
+	import { t } from '$i18n/index.svelte';
 	import { report } from '$stores/report.svelte';
 	import { isReportKind } from '$domain/bug-report';
-	import { Button } from '$lib/components/ui/button';
+	import { Button } from '$components/ui/button';
 	import ReportForm from '$components/app/ReportForm.svelte';
 
 	/**

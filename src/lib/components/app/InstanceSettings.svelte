@@ -13,11 +13,11 @@
 	 */
 
 	import { supabase } from '$db/supabase';
-	import { t, i18n } from '$lib/i18n/index.svelte';
-	import { Button } from '$lib/components/ui/button';
-	import * as Card from '$lib/components/ui/card';
-	import { Input } from '$lib/components/ui/input';
-	import { Label } from '$lib/components/ui/label';
+	import { t, i18n } from '$i18n/index.svelte';
+	import { Button } from '$components/ui/button';
+	import * as Card from '$components/ui/card';
+	import { Input } from '$components/ui/input';
+	import { Label } from '$components/ui/label';
 	import { adminErrorKey } from '$domain/admin-error';
 	import {
 		type SettingField,

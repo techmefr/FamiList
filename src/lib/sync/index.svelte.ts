@@ -3,7 +3,7 @@ import { supabase } from '$db/supabase';
 import { db, type OutboxEntry } from '$db/schema';
 import { describeError } from './errors';
 import { defaultCircle } from '$domain/circle';
-import { reportCrash } from '$lib/crash/reporter';
+import { reportCrash } from '$crash/reporter';
 import {
 	toAisle,
 	toCard,

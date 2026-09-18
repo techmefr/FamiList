@@ -3,7 +3,7 @@
 	import { feedback } from '$stores/feedback.svelte';
 	import { settings } from '$stores/settings.svelte';
 	import { tintForWhiteText } from '$domain/tint';
-	import { t } from '$lib/i18n/index.svelte';
+	import { t } from '$i18n/index.svelte';
 	import { X, Check, Plus, Route } from '@lucide/svelte';
 
 	let dialog = $state<HTMLDialogElement | null>(null);

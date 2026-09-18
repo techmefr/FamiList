@@ -4,7 +4,7 @@
 	import { data } from '$stores/data.svelte';
 	import { feedback } from '$stores/feedback.svelte';
 	import { createIntent } from '$stores/create.svelte';
-	import { t } from '$lib/i18n/index.svelte';
+	import { t } from '$i18n/index.svelte';
 	import { DEFAULT_SERVINGS, MAX_SERVINGS, MIN_SERVINGS, type RecipeLine } from '$domain/recipe';
 	import {
 		importErrorOf,
@@ -14,10 +14,10 @@
 		type ImportedRecipe
 	} from '$domain/recipe-import';
 	import { UNITS, DEFAULT_UNIT } from '$domain/units';
-	import { Button } from '$lib/components/ui/button';
-	import { Input } from '$lib/components/ui/input';
-	import { Label } from '$lib/components/ui/label';
-	import * as Card from '$lib/components/ui/card';
+	import { Button } from '$components/ui/button';
+	import { Input } from '$components/ui/input';
+	import { Label } from '$components/ui/label';
+	import * as Card from '$components/ui/card';
 	import EmojiPicker from '$components/app/EmojiPicker.svelte';
 	import EmptyState from '$components/app/EmptyState.svelte';
 	import IconField from '$components/app/IconField.svelte';

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { data } from '$stores/data.svelte';
-	import { t } from '$lib/i18n/index.svelte';
+	import { t } from '$i18n/index.svelte';
 	import { tintForWhiteText } from '$domain/tint';
 	import ShopPicker from '$components/app/ShopPicker.svelte';
 	import { ChevronDown, Route } from '@lucide/svelte';

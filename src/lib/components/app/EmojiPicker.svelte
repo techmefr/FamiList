@@ -2,10 +2,10 @@
 	import { tick } from 'svelte';
 	import { feedback } from '$stores/feedback.svelte';
 	import { settings } from '$stores/settings.svelte';
-	import { t } from '$lib/i18n/index.svelte';
+	import { t } from '$i18n/index.svelte';
 	import { EMOJIS, EMOJI_GROUPS, customEmoji, searchEmojis, type EmojiEntry } from '$domain/emoji';
-	import { Input } from '$lib/components/ui/input';
-	import { Label } from '$lib/components/ui/label';
+	import { Input } from '$components/ui/input';
+	import { Label } from '$components/ui/label';
 	import { Search, X } from '@lucide/svelte';
 	import IconField from '$components/app/IconField.svelte';
 

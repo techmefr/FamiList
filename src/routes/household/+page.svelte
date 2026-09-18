@@ -5,13 +5,13 @@
 	import { householdErrorKey } from '$domain/household-error';
 	import { readInviteOutcome } from '$domain/invite-outcome';
 	import { data } from '$stores/data.svelte';
-	import { sync } from '$lib/sync/index.svelte';
-	import { t, i18n } from '$lib/i18n/index.svelte';
+	import { sync } from '$sync/index.svelte';
+	import { t, i18n } from '$i18n/index.svelte';
 	import { tintForWhiteText } from '$domain/tint';
-	import * as Card from '$lib/components/ui/card';
-	import { Button } from '$lib/components/ui/button';
-	import { Input } from '$lib/components/ui/input';
-	import { Label } from '$lib/components/ui/label';
+	import * as Card from '$components/ui/card';
+	import { Button } from '$components/ui/button';
+	import { Input } from '$components/ui/input';
+	import { Label } from '$components/ui/label';
 	import { Users, Copy, Check, KeyRound, CircleDot } from '@lucide/svelte';
 	import IconField from '$components/app/IconField.svelte';
 

@@ -1,10 +1,10 @@
 <script lang="ts">
 	import { data } from '$stores/data.svelte';
 	import { feedback } from '$stores/feedback.svelte';
-	import { t } from '$lib/i18n/index.svelte';
+	import { t } from '$i18n/index.svelte';
 	import { AVATAR_SIZE, AVATAR_MAX_BYTES, coverSquare } from '$domain/avatar';
 	import Avatar from '$components/app/Avatar.svelte';
-	import { Button } from '$lib/components/ui/button';
+	import { Button } from '$components/ui/button';
 	import { Camera, Trash2 } from '@lucide/svelte';
 
 	let input = $state<HTMLInputElement | null>(null);

@@ -29,7 +29,7 @@ import { guessAisleKind, FALLBACK_AISLE_KIND } from '$domain/guess-aisle';
 import { groupByAisle, learnedItemOrder } from '$domain/aisle-order';
 import { defaultCircle, ofCircle, resolveAisle, visibleLists } from '$domain/circle';
 import { session } from '$stores/session.svelte';
-import { sync } from '$lib/sync/index.svelte';
+import { sync } from '$sync/index.svelte';
 import {
 	fromAisle,
 	fromCard,
@@ -45,7 +45,7 @@ import {
 	fromRecipeIngredient,
 	fromRecipeStep,
 	fromShop
-} from '$lib/sync/mapping';
+} from '$sync/mapping';
 import { copiedItem, copyName } from '$domain/duplicate';
 import { directSummaries, otherParticipant } from '$domain/direct-conversation';
 import { slugify } from '$domain/slug';
@@ -62,7 +62,7 @@ import { trigram } from '$domain/trigram';
 import { trigramSource } from '$domain/place';
 import { DEFAULT_UNIT } from '$domain/units';
 import { TINTS } from '$domain/tint';
-import { i18n, t } from '$lib/i18n/index.svelte';
+import { i18n, t } from '$i18n/index.svelte';
 
 /**
  * The active shop is remembered per circle: shops belong to a circle, and a single key for all of

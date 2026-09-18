@@ -1,8 +1,8 @@
 <script lang="ts">
-	import { scanImage, type ScanResult } from '$lib/scan/scanner';
+	import { scanImage, type ScanResult } from '$scan/scanner';
 	import { feedback } from '$stores/feedback.svelte';
-	import { t } from '$lib/i18n/index.svelte';
-	import { Button } from '$lib/components/ui/button';
+	import { t } from '$i18n/index.svelte';
+	import { Button } from '$components/ui/button';
 	import { Camera, ImageUp, LoaderCircle } from '@lucide/svelte';
 
 	/**

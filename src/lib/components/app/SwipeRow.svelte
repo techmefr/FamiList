@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { Component, Snippet } from 'svelte';
-	import { i18n } from '$lib/i18n/index.svelte';
+	import { i18n } from '$i18n/index.svelte';
 	import { motionMs } from '$stores/settings.svelte';
 	import {
 		isHorizontalGesture,

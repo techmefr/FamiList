@@ -3,7 +3,7 @@
 	import { slide } from 'svelte/transition';
 	import { cubicOut } from 'svelte/easing';
 	import { motionMs } from '$stores/settings.svelte';
-	import { t } from '$lib/i18n/index.svelte';
+	import { t } from '$i18n/index.svelte';
 	import { ArrowDown, ArrowUp, ChevronDown, GripVertical } from '@lucide/svelte';
 
 	let {

@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { page } from '$app/state';
 	import { data } from '$stores/data.svelte';
-	import { t, i18n } from '$lib/i18n/index.svelte';
-	import { Button } from '$lib/components/ui/button';
-	import { Input } from '$lib/components/ui/input';
+	import { t, i18n } from '$i18n/index.svelte';
+	import { Button } from '$components/ui/button';
+	import { Input } from '$components/ui/input';
 	import { ArrowLeft, Send } from '@lucide/svelte';
 	import Avatar from '$components/app/Avatar.svelte';
 	import EmptyState from '$components/app/EmptyState.svelte';

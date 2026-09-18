@@ -1,15 +1,15 @@
 <script lang="ts">
-	import { i18n, t, LOCALES } from '$lib/i18n/index.svelte';
+	import { i18n, t, LOCALES } from '$i18n/index.svelte';
 	import { ai } from '$stores/ai.svelte';
 	import { data } from '$stores/data.svelte';
 	import { feedback } from '$stores/feedback.svelte';
 	import { recipePrompt, shoppedProducts, type SuggestedRecipe } from '$domain/ai-recipe';
 	import { DEFAULT_SERVINGS, MAX_SERVINGS, MIN_SERVINGS } from '$domain/recipe';
 	import { unitKey } from '$domain/units';
-	import { Button } from '$lib/components/ui/button';
-	import { Input } from '$lib/components/ui/input';
-	import { Label } from '$lib/components/ui/label';
-	import * as Card from '$lib/components/ui/card';
+	import { Button } from '$components/ui/button';
+	import { Input } from '$components/ui/input';
+	import { Label } from '$components/ui/label';
+	import * as Card from '$components/ui/card';
 	import IconField from '$components/app/IconField.svelte';
 	import { Sparkles, Users, Send, RotateCcw, Check } from '@lucide/svelte';
 

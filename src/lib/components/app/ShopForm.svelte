@@ -1,14 +1,14 @@
 <script lang="ts">
 	import { untrack } from 'svelte';
 	import { data } from '$stores/data.svelte';
-	import { sync } from '$lib/sync/index.svelte';
+	import { sync } from '$sync/index.svelte';
 	import { feedback } from '$stores/feedback.svelte';
-	import { t } from '$lib/i18n/index.svelte';
+	import { t } from '$i18n/index.svelte';
 	import { TINTS } from '$domain/tint';
-	import type { Shop } from '$lib/db/schema';
-	import { Button } from '$lib/components/ui/button';
-	import { Input } from '$lib/components/ui/input';
-	import { Label } from '$lib/components/ui/label';
+	import type { Shop } from '$db/schema';
+	import { Button } from '$components/ui/button';
+	import { Input } from '$components/ui/input';
+	import { Label } from '$components/ui/label';
 	import IconField from '$components/app/IconField.svelte';
 	import { Plus, Store, Building2, MapPin, RefreshCw, Check } from '@lucide/svelte';
 

@@ -1,10 +1,10 @@
 <script lang="ts">
 	import { data } from '$stores/data.svelte';
 	import { feedback } from '$stores/feedback.svelte';
-	import { t } from '$lib/i18n/index.svelte';
-	import { Button } from '$lib/components/ui/button';
-	import { Input } from '$lib/components/ui/input';
-	import { Label } from '$lib/components/ui/label';
+	import { t } from '$i18n/index.svelte';
+	import { Button } from '$components/ui/button';
+	import { Input } from '$components/ui/input';
+	import { Label } from '$components/ui/label';
 	import { Check } from '@lucide/svelte';
 
 	const me = $derived(data.members.find((m) => m.id === data.me));

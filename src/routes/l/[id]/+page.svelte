@@ -7,7 +7,7 @@
 	import { createIntent } from '$stores/create.svelte';
 	import { feedback } from '$stores/feedback.svelte';
 	import { motionMs, settings } from '$stores/settings.svelte';
-	import { i18n, t } from '$lib/i18n/index.svelte';
+	import { i18n, t } from '$i18n/index.svelte';
 	import { listToMarkdown } from '$domain/list-markdown';
 	import { unitKey } from '$domain/units';
 	import { shareText, type ShareOutcome } from '$native/share';
@@ -20,7 +20,7 @@
 	import ShareSheet from '$components/app/ShareSheet.svelte';
 	import FilterSheet from '$components/app/FilterSheet.svelte';
 	import { createReorder, move } from '$components/app/reorder.svelte';
-	import { Button } from '$lib/components/ui/button';
+	import { Button } from '$components/ui/button';
 	import EmptyState from '$components/app/EmptyState.svelte';
 	import {
 		ArrowLeft,
