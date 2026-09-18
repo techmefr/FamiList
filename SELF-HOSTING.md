@@ -108,10 +108,24 @@ two variables are then read from the environment at build time.
 
 ## The first account
 
-**The first account created becomes the administrator, and it is approved on the spot.** Every
-following one arrives pending and sees nothing until it is approved.
+Name it, from the command line:
 
-So: create your own account **immediately** after going live. Someone else signing up before you
+```bash
+SUPABASE_SERVICE_ROLE_KEY=... pnpm admin create
+```
+
+It asks for an email and a password, and creates the account confirmed, approved and administrator.
+`pnpm admin promote <email>` promotes an account that has already signed up instead.
+
+The service key is on supabase.com in Project settings, API — the `service_role` one — and is
+printed by `pnpm db:start` at home. Pass it on that one command and nowhere else: it bypasses every
+RLS policy, and it has no business in `.env`, which is read by the browser.
+
+The account is confirmed without an email being sent, deliberately: sending is configured from
+`/admin`, which needs an administrator, which is this command.
+
+Failing that, **the first account created becomes the administrator**, approved on the spot. It
+keeps a fresh database from being a dead end, but it is a race: someone else signing up before you
 would become the administrator of your instance.
 
 Later sign-ups are approved from `/admin`. An administrator cannot approve their own account — that

@@ -65,9 +65,21 @@ Updating is two commands:
 docker compose pull && docker compose up -d
 ```
 
-**The first account created becomes the administrator, approved on the spot.** Create yours right
-after going live — someone signing up before you would own the instance. Every following sign-up
-arrives pending and sees nothing until it is approved from `/admin`.
+Then name the administrator, rather than racing for it:
+
+```bash
+SUPABASE_SERVICE_ROLE_KEY=... pnpm admin create
+```
+
+It asks for an email and a password and creates the account confirmed, approved, administrator.
+`pnpm admin promote <email>` does the same to an account that already signed up. The service key is
+passed for the length of that one command and never written to `.env`: it bypasses every RLS policy,
+and the app must never hold it.
+
+Failing that, **the first account created becomes the administrator**, approved on the spot — which
+keeps a fresh database from being a dead end, but is a race: someone signing up before you would own
+the instance. Every following sign-up arrives pending and sees nothing until it is approved from
+`/admin`.
 
 The rest is set from inside the app, with no terminal: sending email, and a GitHub token if you
 want a bug report to open an issue. [SELF-HOSTING.md](SELF-HOSTING.md) walks through all of it.
