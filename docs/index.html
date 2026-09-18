@@ -1,0 +1,440 @@
+<!doctype html>
+<html lang="fr">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<title>FamiList — la liste de courses de la maison, sur votre base</title>
+		<meta
+			name="description"
+			content="Liste de courses partagée : rayons dans l'ordre du magasin, fonctionne sans réseau, hébergée chez vous. Libre, sans publicité, une commande Docker."
+		/>
+		<link rel="icon" href="favicon.svg" />
+		<style>
+			:root {
+				--ground: #f2ede7;
+				--card: #fffdfb;
+				--ink: #1b1917;
+				--muted: #6b635c;
+				--accent: #b4410f;
+				--accent-soft: #f3dfd4;
+				--line: #e0d8cf;
+				color-scheme: light;
+			}
+
+			@media (prefers-color-scheme: dark) {
+				:root {
+					--ground: #171513;
+					--card: #221f1c;
+					--ink: #f4efe9;
+					--muted: #a79d94;
+					--accent: #e8703a;
+					--accent-soft: #3a261c;
+					--line: #332d28;
+					color-scheme: dark;
+				}
+			}
+
+			* {
+				box-sizing: border-box;
+			}
+
+			body {
+				margin: 0;
+				background: var(--ground);
+				color: var(--ink);
+				font-family:
+					ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+				line-height: 1.6;
+				-webkit-font-smoothing: antialiased;
+			}
+
+			.wrap {
+				max-width: 62rem;
+				margin: 0 auto;
+				padding: 0 1.25rem;
+			}
+
+			a {
+				color: var(--accent);
+			}
+
+			header {
+				padding-block: clamp(3rem, 9vw, 6rem) clamp(2rem, 6vw, 4rem);
+				text-align: center;
+			}
+
+			.mark {
+				display: inline-flex;
+				align-items: center;
+				gap: 0.55rem;
+				font-weight: 700;
+				font-size: 1.15rem;
+				letter-spacing: -0.01em;
+			}
+
+			.mark img {
+				width: 1.6rem;
+				height: 1.6rem;
+			}
+
+			h1 {
+				font-size: clamp(2.1rem, 6vw, 3.6rem);
+				line-height: 1.1;
+				letter-spacing: -0.03em;
+				margin: 1.6rem 0 0;
+				text-wrap: balance;
+			}
+
+			.lede {
+				font-size: clamp(1.05rem, 2.2vw, 1.3rem);
+				color: var(--muted);
+				max-width: 40rem;
+				margin: 1.1rem auto 0;
+				text-wrap: pretty;
+			}
+
+			.actions {
+				display: flex;
+				flex-wrap: wrap;
+				gap: 0.75rem;
+				justify-content: center;
+				margin-top: 2rem;
+			}
+
+			.btn {
+				display: inline-block;
+				padding: 0.7rem 1.4rem;
+				border-radius: 999px;
+				text-decoration: none;
+				font-weight: 600;
+				border: 1px solid transparent;
+			}
+
+			.btn-primary {
+				background: var(--accent);
+				color: #fff;
+			}
+
+			.btn-ghost {
+				border-color: var(--line);
+				color: var(--ink);
+				background: var(--card);
+			}
+
+			.note {
+				margin-top: 0.9rem;
+				font-size: 0.9rem;
+				color: var(--muted);
+			}
+
+			section {
+				padding-block: clamp(2.5rem, 7vw, 4.5rem);
+			}
+
+			h2 {
+				font-size: clamp(1.5rem, 3.4vw, 2.1rem);
+				letter-spacing: -0.02em;
+				margin: 0 0 0.6rem;
+				text-wrap: balance;
+			}
+
+			.sub {
+				color: var(--muted);
+				max-width: 44rem;
+				margin: 0 0 2rem;
+			}
+
+			.why {
+				background: var(--card);
+				border-block: 1px solid var(--line);
+			}
+
+			.why p {
+				max-width: 44rem;
+				font-size: 1.05rem;
+			}
+
+			.grid {
+				display: grid;
+				gap: 1rem;
+				grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+			}
+
+			.feature {
+				background: var(--card);
+				border: 1px solid var(--line);
+				border-radius: 1rem;
+				padding: 1.15rem 1.25rem;
+			}
+
+			.feature h3 {
+				margin: 0 0 0.35rem;
+				font-size: 1.05rem;
+			}
+
+			.feature p {
+				margin: 0;
+				color: var(--muted);
+				font-size: 0.95rem;
+			}
+
+			.shots {
+				display: grid;
+				gap: 1.5rem;
+				grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
+			}
+
+			figure {
+				margin: 0;
+			}
+
+			figure img {
+				width: 100%;
+				height: auto;
+				display: block;
+				border-radius: 1.1rem;
+				border: 1px solid var(--line);
+				background: var(--card);
+			}
+
+			figcaption {
+				margin-top: 0.6rem;
+				font-size: 0.9rem;
+				color: var(--muted);
+			}
+
+			pre {
+				background: var(--card);
+				border: 1px solid var(--line);
+				border-radius: 0.9rem;
+				padding: 1rem 1.1rem;
+				overflow-x: auto;
+				font-size: 0.92rem;
+				line-height: 1.55;
+			}
+
+			code {
+				font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+			}
+
+			.steps {
+				display: grid;
+				gap: 1.25rem;
+				grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+				align-items: start;
+			}
+
+			.callout {
+				border-left: 3px solid var(--accent);
+				background: var(--accent-soft);
+				padding: 0.9rem 1.1rem;
+				border-radius: 0 0.7rem 0.7rem 0;
+				margin-top: 1.5rem;
+			}
+
+			footer {
+				border-top: 1px solid var(--line);
+				padding-block: 2.5rem;
+				color: var(--muted);
+				font-size: 0.92rem;
+			}
+
+			footer ul {
+				list-style: none;
+				padding: 0;
+				margin: 0 0 1rem;
+				display: flex;
+				flex-wrap: wrap;
+				gap: 1.25rem;
+			}
+		</style>
+	</head>
+	<body>
+		<header>
+			<div class="wrap">
+				<p class="mark"><img src="favicon.svg" alt="" /> FamiList</p>
+				<h1>La liste de courses de la maison, sur votre propre base</h1>
+				<p class="lede">
+					Tout le monde écrit dessus en même temps, les rayons sont dans l'ordre du magasin où vous
+					êtes vraiment, et ça continue de marcher quand le supermarché n'a pas de réseau. Personne
+					ne vend rien avec.
+				</p>
+				<p class="actions">
+					<a class="btn btn-primary" href="https://familiste.vercel.app">Essayer la démo</a>
+					<a class="btn btn-ghost" href="#installer">L'installer chez soi</a>
+					<a class="btn btn-ghost" href="https://github.com/techmefr/Familiste">Le code</a>
+				</p>
+				<p class="note">Libre, sans publicité, sans compte chez qui que ce soit.</p>
+			</div>
+		</header>
+
+		<section class="why">
+			<div class="wrap">
+				<h2>Pourquoi encore une liste de courses</h2>
+				<p>
+					La plupart sont l'une de deux choses. Une note partagée dans une messagerie, que personne
+					ne peut réordonner et qui perd la moitié de ce qui a été tapé. Ou une application gratuite
+					qui lit la liste pour vendre ce qu'il y a dessus.
+				</p>
+				<p>
+					FamiList est la troisième option : une commande Docker et une base que vous possédez. Rien
+					n'en sort, il n'y a pas de compte à créer ailleurs, pas de publicité, pas de suggestion de
+					produit payée par une marque. Les données sont dans <em>votre</em> Supabase — hébergé ou
+					sur une machine à la maison — et l'application n'est qu'un dossier de fichiers qui
+					n'exécute rien sur un serveur.
+				</p>
+			</div>
+		</section>
+
+		<section>
+			<div class="wrap">
+				<h2>Ce que ça fait</h2>
+				<p class="sub">Des captures de l'application, prises telle qu'elle tourne.</p>
+				<div class="shots">
+					<figure>
+						<img
+							src="shots/list.png"
+							alt="Une liste dont les articles sont regroupés par rayon : Fruits &amp; Légumes, Boulangerie, Produits laitiers, Épicerie."
+						/>
+						<figcaption>
+							Les articles se rangent tout seuls par rayon, dans l'ordre de votre magasin.
+						</figcaption>
+					</figure>
+					<figure>
+						<img src="shots/lists.png" alt="L'écran des listes, avec le nombre d'articles restants." />
+						<figcaption>Une liste par occasion, et ce qu'il reste à prendre d'un coup d'œil.</figcaption>
+					</figure>
+					<figure>
+						<img
+							src="shots/shops.png"
+							alt="L'écran des magasins : enseigne, nom, adresse, et la liste des rayons."
+						/>
+						<figcaption>
+							Un parcours par magasin. L'application apprend le vôtre au fil des courses.
+						</figcaption>
+					</figure>
+					<figure>
+						<img
+							src="shots/appearance.png"
+							alt="L'étape d'accueil qui propose thème clair, sombre ou système, six couleurs et trois réglages d'animation."
+						/>
+						<figcaption>
+							Taille, police, contraste, animations, gaucher ou droitier : réglé dès l'accueil.
+						</figcaption>
+					</figure>
+				</div>
+			</div>
+		</section>
+
+		<section class="why">
+			<div class="wrap">
+				<h2>Le reste</h2>
+				<div class="grid">
+					<div class="feature">
+						<h3>À plusieurs, en direct</h3>
+						<p>Une modification apparaît tout de suite sur les autres téléphones.</p>
+					</div>
+					<div class="feature">
+						<h3>Sans réseau</h3>
+						<p>
+							Tout est écrit en local d'abord et envoyé au retour du signal. Un sous-sol de
+							supermarché ne change rien.
+						</p>
+					</div>
+					<div class="feature">
+						<h3>Code-barres et QR</h3>
+						<p>Ajouter un article ou une carte de fidélité sans rien taper.</p>
+					</div>
+					<div class="feature">
+						<h3>Cartes de fidélité</h3>
+						<p>Le plastique reste à la maison.</p>
+					</div>
+					<div class="feature">
+						<h3>Une discussion par liste</h3>
+						<p>
+							Avec sondages de date et répartition de qui apporte quoi — la partie qui vit
+							d'habitude dans un groupe à part.
+						</p>
+					</div>
+					<div class="feature">
+						<h3>Une loupe</h3>
+						<p>Pour lire une étiquette en rayon, avec lumière, gel de l'image et contraste.</p>
+					</div>
+					<div class="feature">
+						<h3>Dix langues</h3>
+						<p>
+							Français, anglais, allemand, espagnol, italien, portugais, russe, chinois, arabe, malgache —
+							chacune dans sa propre écriture.
+						</p>
+					</div>
+					<div class="feature">
+						<h3>Application Android</h3>
+						<p>Le même build, emballé par Capacitor.</p>
+					</div>
+					<div class="feature">
+						<h3>Accessibilité de série</h3>
+						<p>Taille de texte, police, mouvement réduit, disposition gaucher : intégrés, pas ajoutés.</p>
+					</div>
+				</div>
+			</div>
+		</section>
+
+		<section id="installer">
+			<div class="wrap">
+				<h2>L'installer chez soi</h2>
+				<p class="sub">
+					Il faut Docker, et un endroit où loger la base : un projet gratuit sur supabase.com, ou une
+					pile sur votre propre machine. Le guide couvre les deux.
+				</p>
+				<div class="steps">
+					<div>
+						<h3>1. Récupérer le projet</h3>
+						<pre><code>git clone https://github.com/techmefr/Familiste.git
+cd Familiste
+cp .env.example .env</code></pre>
+					</div>
+					<div>
+						<h3>2. Dire où est la base</h3>
+						<p class="sub">
+							Deux valeurs dans <code>.env</code> : l'adresse de votre base et sa clé publique.
+						</p>
+					</div>
+					<div>
+						<h3>3. Démarrer</h3>
+						<pre><code>docker compose up -d</code></pre>
+						<p class="sub">L'application répond sur http://localhost:8080.</p>
+					</div>
+				</div>
+				<div class="callout">
+					<strong>Le premier compte créé devient l'administrateur</strong>, approuvé sur-le-champ.
+					Créez le vôtre juste après la mise en ligne. Les suivants arrivent en attente et ne voient
+					rien tant qu'ils ne sont pas approuvés depuis <code>/admin</code>. Le reste — l'envoi des
+					e-mails, le jeton GitHub — se règle depuis l'application, sans terminal.
+				</div>
+				<p class="actions">
+					<a class="btn btn-primary" href="https://github.com/techmefr/Familiste/blob/main/SELF-HOSTING.md"
+						>Le guide complet</a
+					>
+					<a class="btn btn-ghost" href="https://github.com/techmefr/Familiste#readme">Le README</a>
+				</p>
+			</div>
+		</section>
+
+		<footer>
+			<div class="wrap">
+				<ul>
+					<li><a href="https://familiste.vercel.app">Démo</a></li>
+					<li><a href="https://github.com/techmefr/Familiste">Code source</a></li>
+					<li>
+						<a href="https://github.com/techmefr/Familiste/blob/main/SELF-HOSTING.md">Hébergement</a>
+					</li>
+					<li><a href="https://github.com/techmefr/Familiste/issues">Signaler un problème</a></li>
+				</ul>
+				<p>
+					SvelteKit servi en fichiers statiques, données dans Supabase, cache IndexedDB local. Le même
+					build alimente le web et l'application Android.
+				</p>
+			</div>
+		</footer>
+	</body>
+</html>
