@@ -600,7 +600,22 @@
 		"code": "Code received",
 		"codeHint": "Six digits. The email also holds a link, which works just as well.",
 		"verify": "Confirm",
-		"resend": "Send another code"
+		"resend": "Send another code",
+		"forgotPassword": "Forgot password?",
+		"forgotPasswordTitle": "Forgot password",
+		"forgotPasswordBody": "Enter your email address and we'll send you a link to choose a new one.",
+		"forgotPasswordSubmit": "Send reset link",
+		"resetSentTitle": "Email sent",
+		"resetSentBody": "If {email} matches an account, a link to choose a new password is on its way.",
+		"backToSignIn": "Back to sign in",
+		"resetTitle": "New password",
+		"resetBody": "Choose the password that will replace the old one.",
+		"resetNewPassword": "New password",
+		"resetSubmit": "Save password",
+		"resetInvalidTitle": "Invalid or expired link",
+		"resetInvalidBody": "This reset link is no longer valid. Ask for a new one from the sign-in screen.",
+		"resetDoneTitle": "Password updated",
+		"resetDoneBody": "You can now sign in with your new password."
 	},
 	"welcome": {
 		"title": "Welcome",

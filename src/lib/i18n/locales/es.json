@@ -600,7 +600,22 @@
 		"code": "Código recibido",
 		"codeHint": "Seis cifras. El correo también trae un enlace, que sirve igual.",
 		"verify": "Validar",
-		"resend": "Enviar otro código"
+		"resend": "Enviar otro código",
+		"forgotPassword": "¿Olvidaste tu contraseña?",
+		"forgotPasswordTitle": "Contraseña olvidada",
+		"forgotPasswordBody": "Indica tu correo electrónico y te enviaremos un enlace para elegir una nueva.",
+		"forgotPasswordSubmit": "Enviar enlace",
+		"resetSentTitle": "Correo enviado",
+		"resetSentBody": "Si {email} corresponde a una cuenta, un enlace para elegir una nueva contraseña esta en camino.",
+		"backToSignIn": "Volver al inicio de sesión",
+		"resetTitle": "Nueva contraseña",
+		"resetBody": "Elige la contraseña que reemplazará a la anterior.",
+		"resetNewPassword": "Nueva contraseña",
+		"resetSubmit": "Guardar contraseña",
+		"resetInvalidTitle": "Enlace no válido o caducado",
+		"resetInvalidBody": "Este enlace de restablecimiento ya no es válido. Solicita uno nuevo desde la pantalla de inicio de sesión.",
+		"resetDoneTitle": "Contraseña actualizada",
+		"resetDoneBody": "Ya puedes iniciar sesión con tu nueva contraseña."
 	},
 	"welcome": {
 		"title": "Bienvenido",

@@ -600,7 +600,22 @@
 		"code": "Código recebido",
 		"codeHint": "Seis algarismos. A mensagem traz também uma ligação, que serve na mesma.",
 		"verify": "Validar",
-		"resend": "Enviar outro código"
+		"resend": "Enviar outro código",
+		"forgotPassword": "Esqueceu a senha?",
+		"forgotPasswordTitle": "Senha esquecida",
+		"forgotPasswordBody": "Informe o seu e-mail e enviaremos um link para escolher uma nova.",
+		"forgotPasswordSubmit": "Enviar link",
+		"resetSentTitle": "E-mail enviado",
+		"resetSentBody": "Se {email} corresponder a uma conta, um link para escolher uma nova senha está a caminho.",
+		"backToSignIn": "Voltar ao login",
+		"resetTitle": "Nova senha",
+		"resetBody": "Escolha a senha que substituirá a anterior.",
+		"resetNewPassword": "Nova senha",
+		"resetSubmit": "Guardar senha",
+		"resetInvalidTitle": "Link inválido ou expirado",
+		"resetInvalidBody": "Este link de redefinição já não é válido. Peça um novo na tela de login.",
+		"resetDoneTitle": "Senha atualizada",
+		"resetDoneBody": "Agora você pode entrar com a sua nova senha."
 	},
 	"welcome": {
 		"title": "Bem-vindo",

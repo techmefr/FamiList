@@ -187,6 +187,34 @@ class SessionStore {
 	}
 
 	/**
+	 * Sends the password-reset email. The redirect is built from `location.origin`, like the OAuth and
+	 * passwordless flows above: whatever domain this instance runs on, the link it sends out points back
+	 * at itself.
+	 */
+	async sendPasswordReset(email: string) {
+		this.error = null;
+		const { error } = await supabase.auth.resetPasswordForEmail(email, {
+			redirectTo: `${location.origin}/auth/reset`
+		});
+
+		if (error) this.error = error.message;
+		return !error;
+	}
+
+	/**
+	 * Sets a new password from a reset link. Supabase turns the link's token into a session before this
+	 * screen loads — `updateUser` is enough, there is no old password to check as there is for
+	 * `changePassword`: the link itself is the proof of identity.
+	 */
+	async completePasswordReset(next: string) {
+		this.error = null;
+		const { error } = await supabase.auth.updateUser({ password: next });
+
+		if (error) this.error = error.message;
+		return !error;
+	}
+
+	/**
 	 * Changes the password, after re-checking the old one.
 	 *
 	 * Supabase does not ask for the old one: `updateUser` accepts a new password on the strength of the
