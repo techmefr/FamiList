@@ -533,7 +533,17 @@
 				</div>
 			</header>
 
-			<main class="mx-auto w-full max-w-5xl px-4 pt-2 pb-36 md:pb-10">
+			<!--
+				The bottom padding used to be a flat `pb-36`: close enough to clear the create button most of the
+				time, but the button's own footprint — the navigation bar plus its 58 px disc and margin — is not
+				a constant, it grows with the text size just like `--fl-navbar-h` does. A page whose last card
+				landed right at that boundary (the avatar hint on `/profile`, the join button on `/household`, a
+				busy poll's last option) ended up with it half hidden behind the disc. The formula mirrors
+				`fl-above-nav`'s so the two amounts cannot drift apart.
+			-->
+			<main
+				class="mx-auto w-full max-w-5xl px-4 pt-2 pb-[calc(var(--fl-navbar-h,4rem)+58px+1.5rem)] md:pb-10"
+			>
 				{@render children()}
 			</main>
 		</div>

@@ -273,11 +273,16 @@
 		></div>
 	</div>
 
-	<div class="mt-3 flex flex-wrap items-center gap-x-5">
+	<!--
+		Padding rather than a bare line of text: at the shared touch-target size (44 px), an underlined label on
+		its own line height came out closer to 20 px tall, well under what the nav, the header icons and the
+		checkboxes already guarantee. The links keep reading as text — only the tappable box grows.
+	-->
+	<div class="mt-1 flex flex-wrap items-center gap-x-3 -ms-2">
 		<a
 			href="/l/{listId}/chat"
 			data-test-id="open-chat"
-			class="text-primary text-label inline-flex min-h-[max(2.75rem,44px)] items-center gap-2 underline"
+			class="text-primary text-label inline-flex items-center gap-2 rounded-md px-2 py-3 underline"
 		>
 			<MessagesSquare size={16} aria-hidden="true" />
 			{t('chat.open')}
@@ -288,7 +293,7 @@
 			onclick={() => share?.show()}
 			data-test-id="open-share"
 			aria-haspopup="dialog"
-			class="text-primary text-label inline-flex min-h-[max(2.75rem,44px)] items-center gap-2 underline"
+			class="text-primary text-label inline-flex items-center gap-2 rounded-md px-2 py-3 underline"
 		>
 			<UsersRound size={16} aria-hidden="true" />
 			{t('share.open')}
@@ -298,7 +303,7 @@
 			type="button"
 			onclick={send}
 			data-test-id="send-list"
-			class="text-primary text-label inline-flex min-h-[max(2.75rem,44px)] items-center gap-2 underline"
+			class="text-primary text-label inline-flex items-center gap-2 rounded-md px-2 py-3 underline"
 		>
 			<Send size={16} aria-hidden="true" />
 			{t('share.send')}
@@ -312,7 +317,7 @@
 		<a
 			href="/prices"
 			data-test-id="open-prices"
-			class="text-primary text-label inline-flex min-h-[max(2.75rem,44px)] items-center gap-2 underline"
+			class="text-primary text-label inline-flex items-center gap-2 rounded-md px-2 py-3 underline"
 		>
 			<Tags size={16} aria-hidden="true" />
 			{t('prices.open')}
