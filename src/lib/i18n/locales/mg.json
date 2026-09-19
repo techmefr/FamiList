@@ -1103,8 +1103,7 @@
 			"deepseek": "DeepSeek"
 		},
 		"photoGenerate": "Mamorona sary",
-		"photoGenerating": "Mamorona…",
-		"photoCost": "Lafo kokoa noho ny lahatsoratra ny famoronana sary isaky ny antso, ka ny quota manokana anao no ampiasaina."
+		"photoGenerating": "Mamorona…"
 	},
 	"setup": {
 		"title": "Tsy mbola voaomana ity instance ity",

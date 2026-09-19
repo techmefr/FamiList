@@ -1103,8 +1103,7 @@
 			"deepseek": "DeepSeek"
 		},
 		"photoGenerate": "Foto erzeugen",
-		"photoGenerating": "Wird erzeugt…",
-		"photoCost": "Die Bilderzeugung kostet pro Anfrage deutlich mehr als Text — es wird Ihr eigenes Kontingent genutzt."
+		"photoGenerating": "Wird erzeugt…"
 	},
 	"setup": {
 		"title": "Instanz nicht konfiguriert",

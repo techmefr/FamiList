@@ -8,13 +8,7 @@ import {
 	providerById
 } from '$domain/ai';
 import { parseRecipeSuggestion, type SuggestedRecipe } from '$domain/ai-recipe';
-import {
-	buildImageRequest,
-	IMAGE_PROVIDER_ID,
-	parseImageReply,
-	recipePhotoPath,
-	type GeneratedImage
-} from '$domain/ai-image';
+import { pollinationsImageUrl, recipePhotoPath } from '$domain/ai-image';
 
 /**
  * The three outcomes of a request, told apart because they call for three different gestures: a network
@@ -208,9 +202,9 @@ class AiStore {
 		return { ok: true, recipe };
 	}
 
-	/** Whether the photo button has anything to call: only Gemini speaks image generation among the six. */
+	/** Photo generation needs no key or provider choice: Pollinations is free and keyless. */
 	get canGeneratePhoto(): boolean {
-		return this.configured && this.provider === IMAGE_PROVIDER_ID;
+		return true;
 	}
 
 	/**
@@ -219,63 +213,43 @@ class AiStore {
 	 * The image is decorative and never blocks saving a recipe (#186): every failure here — network, refusal,
 	 * an unreadable answer, an upload error — returns `{ ok: false }` and leaves today's plain card standing,
 	 * with no message the caller is required to show.
-	 *
-	 * ATTENTION — appel non verifie : contrairement aux six fournisseurs de `ai.ts`, la reponse reelle de
-	 * `:generateContent` sur `gemini-2.5-flash-image` n'a pas ete verifiee en conditions de navigateur (pas de
-	 * cle Gemini reelle disponible pour le test). Rien ne garantit que l'en-tete
-	 * `access-control-allow-origin` est present sur cette reponse comme il l'est sur celle du texte : si ce
-	 * n'est pas le cas, cet appel echouera silencieusement (erreur reseau indiscernable d'un CORS refuse) et
-	 * il faudra le faire transiter par un relais serveur plutot que depuis le navigateur.
 	 */
 	async generateRecipePhoto(
 		householdId: string,
 		recipeId: string,
 		prompt: string
 	): Promise<PhotoOutcome> {
-		const provider = providerById(this.provider);
-		if (!provider || provider.id !== IMAGE_PROVIDER_ID || !this.#apiKey) {
-			return { ok: false };
-		}
-
-		const request = buildImageRequest(provider, this.#apiKey, prompt);
-
 		let response: Response;
 		try {
-			response = await fetch(request.url, {
-				method: 'POST',
-				headers: request.headers,
-				body: request.body
-			});
+			response = await fetch(pollinationsImageUrl(prompt));
 		} catch {
 			return { ok: false };
 		}
 
 		if (!response.ok) return { ok: false };
 
-		const payload: unknown = await response.json().catch(() => null);
-		const image: GeneratedImage | null = parseImageReply(payload);
-		if (image === null) return { ok: false };
+		let bytes: Uint8Array;
+		try {
+			bytes = new Uint8Array(await response.arrayBuffer());
+		} catch {
+			return { ok: false };
+		}
 
-		return this.#uploadPhoto(householdId, recipeId, image);
+		const mimeType = response.headers.get('content-type') ?? 'image/jpeg';
+		return this.#uploadPhoto(householdId, recipeId, bytes, mimeType);
 	}
 
 	async #uploadPhoto(
 		householdId: string,
 		recipeId: string,
-		image: GeneratedImage
+		bytes: Uint8Array,
+		mimeType: string
 	): Promise<PhotoOutcome> {
-		const path = recipePhotoPath(householdId, recipeId, image.mimeType);
-
-		let bytes: Uint8Array;
-		try {
-			bytes = Uint8Array.from(atob(image.base64), (char) => char.charCodeAt(0));
-		} catch {
-			return { ok: false };
-		}
+		const path = recipePhotoPath(householdId, recipeId, mimeType);
 
 		const { error } = await supabase.storage
 			.from('recipe-photos')
-			.upload(path, bytes, { contentType: image.mimeType, upsert: true });
+			.upload(path, bytes, { contentType: mimeType, upsert: true });
 
 		if (error) return { ok: false };
 

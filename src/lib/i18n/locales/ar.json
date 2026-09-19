@@ -1143,8 +1143,7 @@
 			"deepseek": "DeepSeek"
 		},
 		"photoGenerate": "إنشاء صورة",
-		"photoGenerating": "جارٍ الإنشاء…",
-		"photoCost": "توليد صورة أغلى بكثير من توليد نص في كل طلب، وسيُستخدم رصيدك الخاص."
+		"photoGenerating": "جارٍ الإنشاء…"
 	},
 	"setup": {
 		"title": "لم تُضبط هذه النسخة بعد",
