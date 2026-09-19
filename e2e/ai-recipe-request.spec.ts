@@ -11,7 +11,7 @@ import type { Page } from '@playwright/test';
  * `beforeEach`/cleanup as `e2e/ai.spec.ts`.
  */
 const FAKE_RECIPE = {
-	name: 'Curry de poulet e2e',
+	name: `Curry de poulet e2e ${Date.now()}`,
 	emoji: '🍛',
 	servings: 4,
 	ingredients: [
@@ -20,6 +20,11 @@ const FAKE_RECIPE = {
 	],
 	steps: ['Faire revenir le poulet.', 'Ajouter le lait de coco et laisser mijoter.']
 };
+
+// The discard test must never see a card left behind by the accept test — the fixture account is shared
+// and the accept test never deletes what it creates, so a name reused across tests would make the discard
+// assertion depend on run order instead of on what discard itself does.
+const DISCARD_RECIPE = { ...FAKE_RECIPE, name: `Dessert rapide e2e ${Date.now()}` };
 
 async function mockAnthropic(page: Page, recipe: unknown) {
 	await page.route('https://api.anthropic.com/v1/messages', async (route) => {
@@ -46,6 +51,10 @@ async function setFakeKey(page: Page) {
 
 async function clearKey(page: Page) {
 	await page.goto('/profile/ai');
+	// Called right after heavy interaction (recipe creation, list/chat navigation), unlike setFakeKey's
+	// first call on a fresh page — waiting for the state label first avoids reading `ai-clear`'s count
+	// before the store has hydrated from the just-settled navigation.
+	await expect(page.getByTestId('ai-state')).toBeVisible();
 	const remove = page.getByTestId('ai-clear');
 	if ((await remove.count()) > 0) await remove.click();
 	await expect(page.getByTestId('ai-state')).toHaveAttribute('data-test-state', 'off');
@@ -85,7 +94,7 @@ test.describe('demande de recette en texte libre', () => {
 	});
 
 	test('discard efface la proposition sans creer de recette', async ({ signedInPage: page }) => {
-		await mockAnthropic(page, FAKE_RECIPE);
+		await mockAnthropic(page, DISCARD_RECIPE);
 
 		await page.goto('/recipes');
 		await page.getByTestId('ai-request-open').click();
@@ -96,7 +105,7 @@ test.describe('demande de recette en texte libre', () => {
 		await page.getByTestId('ai-proposal-discard').click();
 		await expect(page.getByTestId('ai-proposal')).toHaveCount(0);
 
-		const card = page.locator('[data-test-class="recipe-card"]').filter({ hasText: FAKE_RECIPE.name });
+		const card = page.locator('[data-test-class="recipe-card"]').filter({ hasText: DISCARD_RECIPE.name });
 		await expect(card).toHaveCount(0);
 	});
 
