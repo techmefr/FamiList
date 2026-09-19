@@ -229,6 +229,8 @@ export interface Recipe {
 	emoji: string;
 	servings: number;
 	notes?: string;
+	/** Path of the generated photo in the `recipe-photos` bucket, or none: the image is decorative only. */
+	photoPath?: string;
 	createdBy?: string;
 	createdAt: number;
 }

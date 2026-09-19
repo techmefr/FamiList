@@ -407,7 +407,8 @@
 		"servingsCount": {
 			"one": "Pour 1 personne",
 			"other": "Pour {count} personnes"
-		}
+		},
+		"photoAlt": "Photo générée de {name}"
 	},
 	"aisles": {
 		"title": "Rayons",
@@ -606,7 +607,22 @@
 		"code": "Code reçu",
 		"codeHint": "Six chiffres. Le courriel contient aussi un lien, qui marche tout autant.",
 		"verify": "Valider",
-		"resend": "Renvoyer un code"
+		"resend": "Renvoyer un code",
+		"forgotPassword": "Mot de passe oublié ?",
+		"forgotPasswordTitle": "Mot de passe oublié",
+		"forgotPasswordBody": "Indiquez votre adresse e-mail, nous vous enverrons un lien pour en choisir un nouveau.",
+		"forgotPasswordSubmit": "Envoyer le lien",
+		"resetSentTitle": "E-mail envoyé",
+		"resetSentBody": "Si {email} correspond à un compte, un lien pour choisir un nouveau mot de passe vient de partir.",
+		"backToSignIn": "Retour à la connexion",
+		"resetTitle": "Nouveau mot de passe",
+		"resetBody": "Choisissez le mot de passe qui remplacera l’ancien.",
+		"resetNewPassword": "Nouveau mot de passe",
+		"resetSubmit": "Enregistrer le mot de passe",
+		"resetInvalidTitle": "Lien invalide ou expiré",
+		"resetInvalidBody": "Ce lien de réinitialisation n'est plus valable. Demandez-en un nouveau depuis l'écran de connexion.",
+		"resetDoneTitle": "Mot de passe mis à jour",
+		"resetDoneBody": "Vous pouvez maintenant vous connecter avec votre nouveau mot de passe."
 	},
 	"welcome": {
 		"title": "Bienvenue",
@@ -1084,7 +1100,10 @@
 			"groq": "Groq",
 			"openrouter": "OpenRouter",
 			"deepseek": "DeepSeek"
-		}
+		},
+		"photoGenerate": "Générer une photo",
+		"photoGenerating": "Génération en cours…",
+		"photoCost": "La génération d'image coûte bien plus cher par appel qu'un texte : c'est votre quota qui est utilisé."
 	},
 	"setup": {
 		"title": "Instance non configurée",

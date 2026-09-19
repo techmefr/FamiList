@@ -419,7 +419,8 @@
 			"few": "لـ {count} أشخاص",
 			"many": "لـ {count} شخصًا",
 			"other": "لـ {count} شخص"
-		}
+		},
+		"photoAlt": "صورة تم إنشاؤها لـ {name}"
 	},
 	"aisles": {
 		"title": "الأقسام",
@@ -618,7 +619,22 @@
 		"code": "الرمز المستلم",
 		"codeHint": "ستة أرقام. الرسالة تحوي أيضًا رابطًا يؤدي الغرض نفسه.",
 		"verify": "تأكيد",
-		"resend": "إرسال رمز جديد"
+		"resend": "إرسال رمز جديد",
+		"forgotPassword": "نسيت كلمة المرور؟",
+		"forgotPasswordTitle": "نسيت كلمة المرور",
+		"forgotPasswordBody": "أدخل بريدك الإلكتروني وسنرسل لك رابطًا لاختيار كلمة مرور جديدة.",
+		"forgotPasswordSubmit": "إرسال الرابط",
+		"resetSentTitle": "تم إرسال البريد",
+		"resetSentBody": "إذا كان {email} يطابق حسابًا، فإن رابطًا لاختيار كلمة مرور جديدة في طريقه.",
+		"backToSignIn": "العودة إلى تسجيل الدخول",
+		"resetTitle": "كلمة مرور جديدة",
+		"resetBody": "اختر كلمة المرور التي ستحل محل القديمة.",
+		"resetNewPassword": "كلمة مرور جديدة",
+		"resetSubmit": "حفظ كلمة المرور",
+		"resetInvalidTitle": "رابط غير صالح أو منتهي الصلاحية",
+		"resetInvalidBody": "رابط إعادة التعيين هذا لم يعد صالحًا. اطلب رابطًا جديدًا من شاشة تسجيل الدخول.",
+		"resetDoneTitle": "تم تحديث كلمة المرور",
+		"resetDoneBody": "يمكنك الآن تسجيل الدخول بكلمة المرور الجديدة."
 	},
 	"welcome": {
 		"title": "مرحبًا",
@@ -1125,7 +1141,10 @@
 			"groq": "Groq",
 			"openrouter": "OpenRouter",
 			"deepseek": "DeepSeek"
-		}
+		},
+		"photoGenerate": "إنشاء صورة",
+		"photoGenerating": "جارٍ الإنشاء…",
+		"photoCost": "توليد صورة أغلى بكثير من توليد نص في كل طلب، وسيُستخدم رصيدك الخاص."
 	},
 	"setup": {
 		"title": "لم تُضبط هذه النسخة بعد",

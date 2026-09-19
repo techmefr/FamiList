@@ -407,7 +407,8 @@
 		"servingsCount": {
 			"one": "Für 1 Person",
 			"other": "Für {count} Personen"
-		}
+		},
+		"photoAlt": "Generiertes Foto von {name}"
 	},
 	"aisles": {
 		"title": "Abteilungen",
@@ -606,7 +607,22 @@
 		"code": "Erhaltener Code",
 		"codeHint": "Sechs Ziffern. Die E-Mail enthält auch einen Link, der genauso funktioniert.",
 		"verify": "Bestätigen",
-		"resend": "Neuen Code senden"
+		"resend": "Neuen Code senden",
+		"forgotPassword": "Passwort vergessen?",
+		"forgotPasswordTitle": "Passwort vergessen",
+		"forgotPasswordBody": "Geben Sie Ihre E-Mail-Adresse ein, wir senden Ihnen einen Link zum Festlegen eines neuen Passworts.",
+		"forgotPasswordSubmit": "Link senden",
+		"resetSentTitle": "E-Mail gesendet",
+		"resetSentBody": "Falls {email} zu einem Konto gehört, ist ein Link zum Festlegen eines neuen Passworts unterwegs.",
+		"backToSignIn": "Zurück zur Anmeldung",
+		"resetTitle": "Neues Passwort",
+		"resetBody": "Wählen Sie das Passwort, das das alte ersetzt.",
+		"resetNewPassword": "Neues Passwort",
+		"resetSubmit": "Passwort speichern",
+		"resetInvalidTitle": "Ungültiger oder abgelaufener Link",
+		"resetInvalidBody": "Dieser Link zum Zurücksetzen ist nicht mehr gültig. Fordern Sie einen neuen über die Anmeldeseite an.",
+		"resetDoneTitle": "Passwort aktualisiert",
+		"resetDoneBody": "Sie können sich jetzt mit Ihrem neuen Passwort anmelden."
 	},
 	"welcome": {
 		"title": "Willkommen",
@@ -1085,7 +1101,10 @@
 			"groq": "Groq",
 			"openrouter": "OpenRouter",
 			"deepseek": "DeepSeek"
-		}
+		},
+		"photoGenerate": "Foto erzeugen",
+		"photoGenerating": "Wird erzeugt…",
+		"photoCost": "Die Bilderzeugung kostet pro Anfrage deutlich mehr als Text — es wird Ihr eigenes Kontingent genutzt."
 	},
 	"setup": {
 		"title": "Instanz nicht konfiguriert",

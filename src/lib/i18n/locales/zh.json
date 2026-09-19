@@ -404,7 +404,8 @@
 		"deleteYes": "删除",
 		"servingsCount": {
 			"other": "{count} 人份"
-		}
+		},
+		"photoAlt": "{name} 的生成图片"
 	},
 	"aisles": {
 		"title": "货区",
@@ -603,7 +604,22 @@
 		"code": "收到的验证码",
 		"codeHint": "六位数字。邮件里也有一个链接，点开一样能进。",
 		"verify": "确认",
-		"resend": "重新发送"
+		"resend": "重新发送",
+		"forgotPassword": "忘记密码？",
+		"forgotPasswordTitle": "忘记密码",
+		"forgotPasswordBody": "请输入您的电子邮件地址，我们将向您发送一个链接以设置新密码。",
+		"forgotPasswordSubmit": "发送链接",
+		"resetSentTitle": "邮件已发送",
+		"resetSentBody": "如果 {email} 对应一个账户，用于设置新密码的链接即将到达。",
+		"backToSignIn": "返回登录",
+		"resetTitle": "新密码",
+		"resetBody": "请选择将取代旧密码的新密码。",
+		"resetNewPassword": "新密码",
+		"resetSubmit": "保存密码",
+		"resetInvalidTitle": "链接无效或已过期",
+		"resetInvalidBody": "此重置链接已失效。请从登录页面重新申请。",
+		"resetDoneTitle": "密码已更新",
+		"resetDoneBody": "您现在可以使用新密码登录。"
 	},
 	"welcome": {
 		"title": "欢迎",
@@ -1075,7 +1091,10 @@
 			"groq": "Groq",
 			"openrouter": "OpenRouter",
 			"deepseek": "DeepSeek"
-		}
+		},
+		"photoGenerate": "生成图片",
+		"photoGenerating": "生成中…",
+		"photoCost": "每次生成图片的成本远高于生成文字，将使用您自己的额度。"
 	},
 	"setup": {
 		"title": "实例尚未配置",

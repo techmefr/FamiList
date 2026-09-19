@@ -407,7 +407,8 @@
 		"servingsCount": {
 			"one": "Per 1 persona",
 			"other": "Per {count} persone"
-		}
+		},
+		"photoAlt": "Foto generata di {name}"
 	},
 	"aisles": {
 		"title": "Reparti",
@@ -606,7 +607,22 @@
 		"code": "Codice ricevuto",
 		"codeHint": "Sei cifre. Il messaggio contiene anche un collegamento, che vale altrettanto.",
 		"verify": "Convalidare",
-		"resend": "Inviare un altro codice"
+		"resend": "Inviare un altro codice",
+		"forgotPassword": "Password dimenticata?",
+		"forgotPasswordTitle": "Password dimenticata",
+		"forgotPasswordBody": "Indica il tuo indirizzo e-mail e ti invieremo un link per sceglierne una nuova.",
+		"forgotPasswordSubmit": "Invia link",
+		"resetSentTitle": "E-mail inviata",
+		"resetSentBody": "Se {email} corrisponde a un account, un link per scegliere una nuova password sta arrivando.",
+		"backToSignIn": "Torna al login",
+		"resetTitle": "Nuova password",
+		"resetBody": "Scegli la password che sostituirà quella precedente.",
+		"resetNewPassword": "Nuova password",
+		"resetSubmit": "Salva password",
+		"resetInvalidTitle": "Link non valido o scaduto",
+		"resetInvalidBody": "Questo link di reimpostazione non è più valido. Richiedine uno nuovo dalla schermata di accesso.",
+		"resetDoneTitle": "Password aggiornata",
+		"resetDoneBody": "Ora puoi accedere con la tua nuova password."
 	},
 	"welcome": {
 		"title": "Benvenuto",
@@ -1085,7 +1101,10 @@
 			"groq": "Groq",
 			"openrouter": "OpenRouter",
 			"deepseek": "DeepSeek"
-		}
+		},
+		"photoGenerate": "Genera una foto",
+		"photoGenerating": "Generazione in corso…",
+		"photoCost": "Generare un'immagine costa molto più di un testo per chiamata: viene usata la tua quota."
 	},
 	"setup": {
 		"title": "Istanza non configurata",

@@ -407,7 +407,8 @@
 		"servingsCount": {
 			"one": "Ho an olona 1",
 			"other": "Ho an olona {count}"
-		}
+		},
+		"photoAlt": "Sary noforonina an'ny {name}"
 	},
 	"aisles": {
 		"title": "Faritra",
@@ -606,7 +607,22 @@
 		"code": "Kaody voaray",
 		"codeHint": "Isa enina. Misy rohy koa ao anaty mailaka, mitovy ihany ny vokany.",
 		"verify": "Hamarino",
-		"resend": "Handefa kaody hafa"
+		"resend": "Handefa kaody hafa",
+		"forgotPassword": "Hadinonao ny tenimiafina?",
+		"forgotPasswordTitle": "Tenimiafina hadino",
+		"forgotPasswordBody": "Ampidiro ny mailakao, dia handefa rohy aminao izahay hifidianao tenimiafina vaovao.",
+		"forgotPasswordSubmit": "Alefaso ny rohy",
+		"resetSentTitle": "Nalefa ny mailaka",
+		"resetSentBody": "Raha mifanaraka amin'ny kaonty i {email}, dia efa nalefa ny rohy hifidianao tenimiafina vaovao.",
+		"backToSignIn": "Miverina any amin ny fidirana",
+		"resetTitle": "Tenimiafina vaovao",
+		"resetBody": "Fidio ny tenimiafina hisolo ilay teo aloha.",
+		"resetNewPassword": "Tenimiafina vaovao",
+		"resetSubmit": "Tehirizo ny tenimiafina",
+		"resetInvalidTitle": "Rohy tsy mety na efa lany daty",
+		"resetInvalidBody": "Tsy mihatra intsony io rohy famerenana io. Mangataha rohy vaovao eo amin'ny efijery fidirana.",
+		"resetDoneTitle": "Voavaozina ny tenimiafina",
+		"resetDoneBody": "Afaka miditra amin ny tenimiafina vaovao ianao izao."
 	},
 	"welcome": {
 		"title": "Tongasoa",
@@ -1085,7 +1101,10 @@
 			"groq": "Groq",
 			"openrouter": "OpenRouter",
 			"deepseek": "DeepSeek"
-		}
+		},
+		"photoGenerate": "Mamorona sary",
+		"photoGenerating": "Mamorona…",
+		"photoCost": "Lafo kokoa noho ny lahatsoratra ny famoronana sary isaky ny antso, ka ny quota manokana anao no ampiasaina."
 	},
 	"setup": {
 		"title": "Tsy mbola voaomana ity instance ity",
