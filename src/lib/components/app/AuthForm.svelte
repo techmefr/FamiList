@@ -149,7 +149,7 @@
 	 */
 	const segmentClass =
 		'has-checked:bg-card has-checked:text-primary has-checked:shadow-fl-1 ' +
-		'flex min-h-[max(2.5rem,40px)] cursor-pointer items-center justify-center rounded-md ' +
+		'flex min-h-[max(2.5rem,40px)] cursor-pointer items-center justify-center rounded-full ' +
 		'px-3 text-center font-medium transition-colors';
 </script>
 
@@ -186,7 +186,7 @@
 	{:else}
 		<form
 			onsubmit={sendReset}
-			class="bg-card shadow-fl-1 mt-6 space-y-5 rounded-xl border p-5"
+			class="fl-auth-card mt-6 space-y-5"
 			data-test-id="auth-forgot-form"
 		>
 			<div class="space-y-2">
@@ -219,7 +219,7 @@
 				type="submit"
 				disabled={busy}
 				data-test-id="auth-forgot-submit"
-				class="fl-press w-full"
+				class="fl-press fl-auth-submit w-full"
 			>
 				{busy ? t('common.loading') : t('auth.forgotPasswordSubmit')}
 			</Button>
@@ -238,7 +238,7 @@
 	{/if}
 {:else}
 	<fieldset
-		class="border-input mt-6 grid grid-cols-2 gap-1 rounded-lg border bg-[var(--muted)]/60 p-1"
+		class="border-input mt-6 grid grid-cols-2 gap-1 rounded-full border bg-[var(--muted)]/60 p-1"
 		data-test-id="auth-mode"
 	>
 		<legend class="sr-only">{t('auth.mode')}</legend>
@@ -285,7 +285,7 @@
 	{#if withoutPassword}
 		<form
 			onsubmit={codeSent ? submitCode : sendCode}
-			class="bg-card shadow-fl-1 mt-4 space-y-5 rounded-xl border p-5"
+			class="fl-auth-card mt-4 space-y-5"
 			data-test-id="auth-code-form"
 		>
 			<div>
@@ -332,7 +332,7 @@
 				type="submit"
 				disabled={busy || (codeSent && !isCompleteOtp(code))}
 				data-test-id="auth-code-submit"
-				class="fl-press w-full"
+				class="fl-press fl-auth-submit w-full"
 			>
 				{busy ? t('common.loading') : codeSent ? t('auth.verify') : t('auth.sendCode')}
 			</Button>
@@ -357,7 +357,7 @@
 	{:else}
 	<form
 		onsubmit={submit}
-		class="bg-card shadow-fl-1 mt-4 space-y-5 rounded-xl border p-5"
+		class="fl-auth-card mt-4 space-y-5"
 		data-test-id="auth-form"
 	>
 		{#if mode === 'signup'}
@@ -459,7 +459,7 @@
 			</p>
 		{/if}
 
-		<Button type="submit" disabled={busy} data-test-id="auth-submit" class="fl-press w-full">
+		<Button type="submit" disabled={busy} data-test-id="auth-submit" class="fl-press fl-auth-submit w-full">
 			{busy ? t('common.loading') : mode === 'signin' ? t('auth.signIn') : t('auth.signUp')}
 		</Button>
 

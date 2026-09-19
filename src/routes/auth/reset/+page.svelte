@@ -55,10 +55,13 @@
 	<title>{t('auth.resetTitle')} — {t('app.name')}</title>
 </svelte:head>
 
-<p class="text-h2 text-primary flex items-center justify-center gap-2.5 font-semibold">
-	<Logo />
-	{t('app.name')}
-</p>
+<div class="fl-auth-glow" aria-hidden="true"></div>
+
+<div
+	class="bg-primary text-primary-foreground shadow-fl-2 mx-auto flex size-16 items-center justify-center rounded-[1.375rem]"
+>
+	<Logo class="h-8" />
+</div>
 
 {#if status === 'checking'}
 	<p class="text-muted-foreground mt-8 text-center">{t('common.loading')}</p>
@@ -96,12 +99,12 @@
 		{t('auth.backToSignIn')}
 	</Button>
 {:else}
-	<h1 class="text-h1 mt-8 text-center font-semibold">{t('auth.resetTitle')}</h1>
+	<h1 class="text-display mt-6 text-center leading-tight font-semibold tracking-tight">{t('auth.resetTitle')}</h1>
 	<p class="text-muted-foreground mt-2 text-center text-balance">{t('auth.resetBody')}</p>
 
 	<form
 		onsubmit={submit}
-		class="bg-card shadow-fl-1 mt-4 space-y-5 rounded-xl border p-5"
+		class="fl-auth-card mt-4 space-y-5"
 		data-test-id="reset-form"
 	>
 		<div>
@@ -150,7 +153,12 @@
 			</p>
 		{/if}
 
-		<Button type="submit" disabled={busy} data-test-id="reset-submit" class="fl-press w-full">
+		<Button
+		type="submit"
+		disabled={busy}
+		data-test-id="reset-submit"
+		class="fl-press fl-auth-submit w-full"
+	>
 			{busy ? t('common.loading') : t('auth.resetSubmit')}
 		</Button>
 	</form>
