@@ -157,6 +157,94 @@ test.describe('accessibilite', () => {
 	});
 
 	/**
+	 * The list detail screen with real content: an item, its price field once ticked, and the route hint —
+	 * none of that exists on the empty list already covered above.
+	 */
+	test('detail de liste avec un article', async ({ signedInPage: page }) => {
+		const listName = `A11y detail ${Date.now()}`;
+		const itemName = `A11y article ${Date.now()}`;
+
+		await page.goto('/');
+		await page.getByTestId('nav-create').click();
+		await page.getByTestId('create-list').click();
+		await page.getByTestId('list-name').fill(listName);
+		await page.getByTestId('list-create').click();
+
+		await page
+			.locator('[data-test-class="list-card"]')
+			.filter({ hasText: listName })
+			.getByRole('link')
+			.first()
+			.click();
+		await expect(page).toHaveURL(/\/l\//);
+
+		await page.getByTestId('nav-create').click();
+		await page.getByTestId('create-item').click();
+		await page.getByTestId('add-name').fill(itemName);
+		await page.getByTestId('add-submit').click();
+
+		const row = page.locator('[data-test-class="item-row"]').filter({ hasText: itemName });
+		await row.locator('[data-test-class="item-check"]').check();
+		await expect(row.locator('[data-test-class="item-price"]')).toBeVisible();
+
+		await expectNoNewViolations(page, 'detail-de-liste-avec-article');
+	});
+
+	/** The price screen once something has actually been priced, not only its empty state. */
+	test('prix avec un produit tarife', async ({ signedInPage: page }) => {
+		const listName = `A11y prix ${Date.now()}`;
+		const itemName = `A11y prix produit ${Date.now()}`;
+
+		await page.goto('/');
+		await page.getByTestId('nav-create').click();
+		await page.getByTestId('create-list').click();
+		await page.getByTestId('list-name').fill(listName);
+		await page.getByTestId('list-create').click();
+
+		await page
+			.locator('[data-test-class="list-card"]')
+			.filter({ hasText: listName })
+			.getByRole('link')
+			.first()
+			.click();
+		await expect(page).toHaveURL(/\/l\//);
+
+		await page.getByTestId('nav-create').click();
+		await page.getByTestId('create-item').click();
+		await page.getByTestId('add-name').fill(itemName);
+		await page.getByTestId('add-submit').click();
+
+		const row = page.locator('[data-test-class="item-row"]').filter({ hasText: itemName });
+		await row.locator('[data-test-class="item-check"]').check();
+		const priceField = row.locator('[data-test-class="item-price"]');
+		await priceField.fill('4.20');
+		await priceField.blur();
+
+		await page.getByTestId('open-prices').click();
+		await expect(page).toHaveURL(/\/prices/);
+		await expect(
+			page.locator('[data-test-class="price-product"]').filter({ hasText: itemName })
+		).toBeVisible();
+
+		await expectNoNewViolations(page, 'prix-avec-produit');
+	});
+
+	/**
+	 * The welcome journey, on the very first launch — no signed-in account here, it plays before one exists.
+	 * Steps 1 and 2 are the ones with their own controls (language, text size); step 4 only reuses the
+	 * ordinary sign-up form already covered by `connexion`.
+	 */
+	test('bienvenue au premier lancement', async ({ page }) => {
+		await page.goto('/welcome');
+		await expect(page.getByTestId('welcome-step')).toBeVisible();
+		await expectNoNewViolations(page, 'bienvenue-langue');
+
+		await page.getByTestId('welcome-next').click();
+		await expect(page.getByTestId('welcome-size')).toBeVisible();
+		await expectNoNewViolations(page, 'bienvenue-taille');
+	});
+
+	/**
 	 * Dark theme and the largest font step: that is where contrast regressions come from, and enlarged text
 	 * can also make two elements overlap. One screen each — the rest of the pages share the same colour
 	 * tokens.
