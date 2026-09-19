@@ -349,6 +349,12 @@
 			"submit": "Importer la recette",
 			"loading": "Lecture de la page…",
 			"review": "Recette récupérée. Relisez tout avant d’enregistrer : les lignes qui n’ont pas pu être découpées sont revenues telles quelles.",
+			"ai": {
+				"offer": "Cette page ne publie pas de recette lisible. Son texte peut être envoyé à votre fournisseur d’IA configuré pour tenter d’en extraire une recette.",
+				"privacy": "Le texte de la page ne part de votre appareil que si vous cliquez ci-dessous, directement vers le fournisseur déjà configuré dans vos réglages IA. Rien n’est envoyé autrement.",
+				"submit": "Essayer avec l’IA",
+				"loading": "Lecture en cours…"
+			},
 			"social": "Instagram et TikTok ne publient pas de recette lisible : leurs liens ne peuvent pas être importés.",
 			"error": {
 				"invalid": "Cette adresse n’est pas lisible.",

@@ -90,6 +90,37 @@ function flatten(value: unknown, depth = 0): string[] {
 	return single ? [single] : [];
 }
 
+/**
+ * Blocks whose content is never prose: scripts run code, styles describe layout, `nav`/`header`/`footer`
+ * repeat the same chrome on every page of a site. None of it belongs in a prompt.
+ */
+const BOILERPLATE = /<(script|style|noscript|nav|header|footer|svg)\b[^>]*>[\s\S]*?<\/\1>/gi;
+const ANY_TAG = /<[^>]*>/g;
+
+/** Enough to describe a recipe to a model, not enough to bill for a whole site's boilerplate. */
+export const MAX_READABLE_CHARS = 8_000;
+
+/**
+ * The page's readable text, for the person's own AI provider to read when no JSON-LD `Recipe` was found.
+ *
+ * Not raw HTML: a model reading markup spends its budget on tags instead of the recipe, and the SSRF guard
+ * in `url.ts` already decided what page we trust enough to fetch — it says nothing about what leaves this
+ * function afterwards, which is why the text is capped here too.
+ */
+export function readableText(html: string): string {
+	const withoutBoilerplate = html.replace(BOILERPLATE, ' ');
+
+	const plain = withoutBoilerplate
+		.replace(ANY_TAG, ' ')
+		.replace(/&nbsp;/gi, ' ')
+		.replace(/&amp;/gi, '&')
+		.replace(/&#(\d+);/g, (_, code) => String.fromCodePoint(Number(code)))
+		.replace(/\s+/g, ' ')
+		.trim();
+
+	return plain.slice(0, MAX_READABLE_CHARS);
+}
+
 /** The recipe carried by a page, or null if it publishes none. */
 export function extractRecipe(html: string): ImportedRecipe | null {
 	SCRIPT.lastIndex = 0;

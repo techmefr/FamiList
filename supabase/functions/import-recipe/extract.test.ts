@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { extractRecipe } from './extract.ts';
+import { extractRecipe, MAX_READABLE_CHARS, readableText } from './extract.ts';
 
 const page = (jsonLd: unknown): string =>
 	`<html><head><title>x</title><script type="application/ld+json">${
@@ -108,5 +108,47 @@ describe('extractRecipe', () => {
 	it('trouve le bloc quel que soit l ordre des attributs du script', () => {
 		const html = `<script data-x="1" TYPE='application/ld+json' defer>${JSON.stringify(gratin)}</script>`;
 		expect(extractRecipe(html)?.name).toBe('Gratin de courgettes');
+	});
+});
+
+describe('readableText', () => {
+	it('retire les scripts, styles et la navigation', () => {
+		const html =
+			'<html><head><style>.x{color:red}</style></head><body>' +
+			'<nav>Accueil Recettes Contact</nav>' +
+			'<script>console.log("x")</script>' +
+			'<p>Gratin de courgettes</p>' +
+			'</body></html>';
+
+		const text = readableText(html);
+		expect(text).toContain('Gratin de courgettes');
+		expect(text).not.toContain('Accueil');
+		expect(text).not.toContain('console.log');
+		expect(text).not.toContain('color:red');
+	});
+
+	it('retire aussi l en-tete et le pied de page', () => {
+		const html = '<header>Menu</header><p>Recette</p><footer>Copyright 2026</footer>';
+		const text = readableText(html);
+		expect(text).toBe('Recette');
+	});
+
+	it('deplie les entites et les espaces comme extractRecipe', () => {
+		const html = '<p>600&nbsp;g de courgettes &amp; sel</p>';
+		expect(readableText(html)).toBe('600 g de courgettes & sel');
+	});
+
+	it('ne garde que le texte, sans les balises', () => {
+		const html = '<div><p>Une   phrase</p><p>Une autre</p></div>';
+		expect(readableText(html)).toBe('Une phrase Une autre');
+	});
+
+	it('plafonne la longueur du texte rendu', () => {
+		const html = `<p>${'a'.repeat(MAX_READABLE_CHARS + 500)}</p>`;
+		expect(readableText(html)).toHaveLength(MAX_READABLE_CHARS);
+	});
+
+	it('rend une chaine vide pour une page sans texte', () => {
+		expect(readableText('<script>1</script><style>.a{}</style>')).toBe('');
 	});
 });

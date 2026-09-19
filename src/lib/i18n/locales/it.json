@@ -349,6 +349,12 @@
 			"submit": "Importa la ricetta",
 			"loading": "Lettura della pagina…",
 			"review": "Ricetta recuperata. Rileggi tutto prima di salvare: le righe che non si sono potute suddividere sono tornate così come erano.",
+			"ai": {
+				"offer": "Questa pagina non pubblica una ricetta leggibile. Il suo testo può essere inviato al tuo fornitore di IA configurato per provare a estrarne una.",
+				"privacy": "Il testo della pagina lascia il tuo dispositivo solo se clicchi qui sotto, direttamente verso il fornitore già configurato nelle tue impostazioni IA. Altrimenti non viene inviato nulla.",
+				"submit": "Prova con l’IA",
+				"loading": "Lettura in corso…"
+			},
 			"social": "Instagram e TikTok non pubblicano alcuna ricetta leggibile: i loro link non si possono importare.",
 			"error": {
 				"invalid": "Questo indirizzo non è leggibile.",
