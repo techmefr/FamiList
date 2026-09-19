@@ -7,6 +7,8 @@
 	import { ArrowLeft, Send } from '@lucide/svelte';
 	import Avatar from '$components/app/Avatar.svelte';
 	import EmptyState from '$components/app/EmptyState.svelte';
+	import AiRecipeRequest from '$components/app/AiRecipeRequest.svelte';
+	import type { SuggestedRecipe } from '$domain/ai-recipe';
 
 	const conversationId = $derived(page.params.id!);
 	const conversation = $derived(data.direct(conversationId));
@@ -28,6 +30,14 @@
 		new Intl.DateTimeFormat(i18n.locale, { timeStyle: 'short' }).format(new Date(at));
 
 	const otherName = $derived(other?.name ?? t('chat.someone'));
+
+	/**
+	 * A message logs the recipe having been added, so the person on the other end understands the new card
+	 * that just appeared on the recipes screen without having to go and look for it.
+	 */
+	async function onRecipeAccepted(recipe: SuggestedRecipe) {
+		await data.sendDirectMessage(conversationId, t('chat.recipeAdded', { name: recipe.name }));
+	}
 </script>
 
 <svelte:head>
@@ -83,7 +93,12 @@
 		</ol>
 	{/if}
 
-	<form onsubmit={send} class="mt-6 flex gap-2" data-test-id="direct-form">
+	<!-- Only appears if an AI key is set in the settings; otherwise, nothing at all. -->
+	<div class="mt-6">
+		<AiRecipeRequest onAccepted={onRecipeAccepted} />
+	</div>
+
+	<form onsubmit={send} class="mt-4 flex gap-2" data-test-id="direct-form">
 		<Input
 			bind:value={body}
 			aria-label={t('chat.messageLabel')}

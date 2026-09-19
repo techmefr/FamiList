@@ -121,6 +121,33 @@ export function recipeExtractionPrompt(pageText: string, options: PromptOptions)
 	].join('\n');
 }
 
+/**
+ * The request sent when the person simply types what they want ("un curry de poulet pour 4"), rather than
+ * starting from what the household has bought or from a page's text: the same shape as `recipePrompt` and
+ * `recipeExtractionPrompt`, asked from a free-text description instead.
+ *
+ * `userText` is the only thing this function sends on: no household context, no product list, nothing but
+ * the words the person themselves typed and is shown before it leaves.
+ */
+export function recipeFromRequestPrompt(userText: string, options: PromptOptions): string {
+	const servings = clampServings(options.servings);
+
+	return [
+		`Voici une demande de recette de cuisine, ecrite par une personne :`,
+		userText,
+		'',
+		`Ecris une recette qui y repond, en ${options.language}.`,
+		`Si la demande ne precise pas de nombre de personnes, prevois-la pour ${servings} personnes.`,
+		'Reponds uniquement par un objet JSON, sans texte autour et sans bloc de code.',
+		'Forme exacte attendue :',
+		'{"name":"","emoji":"","servings":0,"ingredients":[{"name":"","qty":"","unit":""}],"steps":[""]}',
+		'"emoji" est un seul caractere emoji.',
+		`"unit" vaut obligatoirement l'une de ces valeurs : ${UNITS.join(', ')}.`,
+		'"qty" est un nombre ecrit en chiffres, ou une chaine vide si la quantite ne se compte pas.',
+		'"steps" contient les etapes de preparation, une par entree, dans l ordre.'
+	].join('\n');
+}
+
 const clampServings = (value: number): number => {
 	if (!Number.isFinite(value)) return DEFAULT_SERVINGS;
 

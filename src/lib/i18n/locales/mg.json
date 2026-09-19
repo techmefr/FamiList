@@ -849,7 +849,8 @@
 		"directFailed": "Tsy afaka nosokafana ny resaka. Andramo indray.",
 		"backToChats": "Hiverina amin’ny resaka",
 		"directNotFound": "Tsy hita io resaka io.",
-		"someone": "Olona iray"
+		"someone": "Olona iray",
+		"recipeAdded": "Nampidirina tao amin ny recette ny {name}."
 	},
 	"household": {
 		"title": "Ny ankohonako",
@@ -1103,7 +1104,13 @@
 			"deepseek": "DeepSeek"
 		},
 		"photoGenerate": "Mamorona sary",
-		"photoGenerating": "Mamorona…"
+		"photoGenerating": "Mamorona…",
+		"request": {
+			"trigger": "Anontanio ny AI hanome recette",
+			"title": "Recette inona no tianao?",
+			"placeholder": "ohatra: curry akoho ho an ny olona 4",
+			"submit": "Anontanio"
+		}
 	},
 	"setup": {
 		"title": "Tsy mbola voaomana ity instance ity",

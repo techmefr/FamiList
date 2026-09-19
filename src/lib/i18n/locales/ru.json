@@ -863,7 +863,8 @@
 		"directFailed": "Не удалось открыть беседу. Попробуйте ещё раз.",
 		"backToChats": "Назад к обсуждениям",
 		"directNotFound": "Эта беседа не найдена.",
-		"someone": "Кто-то"
+		"someone": "Кто-то",
+		"recipeAdded": "{name} добавлен в рецепты."
 	},
 	"household": {
 		"title": "Моя семья",
@@ -1123,7 +1124,13 @@
 			"deepseek": "DeepSeek"
 		},
 		"photoGenerate": "Сгенерировать фото",
-		"photoGenerating": "Генерация…"
+		"photoGenerating": "Генерация…",
+		"request": {
+			"trigger": "Спросить рецепт у ИИ",
+			"title": "Какой рецепт вы хотите?",
+			"placeholder": "напр. куриное карри на 4 персоны",
+			"submit": "Спросить"
+		}
 	},
 	"setup": {
 		"title": "Экземпляр не настроен",

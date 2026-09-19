@@ -24,6 +24,7 @@
 	import EmptyState from '$components/app/EmptyState.svelte';
 	import IconField from '$components/app/IconField.svelte';
 	import RecipeSuggestion from '$components/app/RecipeSuggestion.svelte';
+	import AiRecipeRequest from '$components/app/AiRecipeRequest.svelte';
 	import RecipePhoto from '$components/app/RecipePhoto.svelte';
 	import {
 		CookingPot,
@@ -341,6 +342,10 @@
 
 	<!-- Only appears if an AI key is set in the settings; otherwise, nothing at all. -->
 	<RecipeSuggestion />
+
+	<div class="mt-4">
+		<AiRecipeRequest />
+	</div>
 
 	<!--
 		The import from a link, placed under manual creation and not in its place: a family recipe comes from
