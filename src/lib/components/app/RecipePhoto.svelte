@@ -66,9 +66,8 @@
 		data-test-class="recipe-photo"
 		class="mb-3 aspect-video w-full rounded-lg object-cover"
 	/>
-{:else if ai.canGeneratePhoto}
+{:else}
 	<div class="mb-3 space-y-2" data-test-class="recipe-photo-generate">
-		<p class="text-muted-foreground text-caption">{t('ai.photoCost')}</p>
 		<Button
 			variant="outline"
 			size="sm"

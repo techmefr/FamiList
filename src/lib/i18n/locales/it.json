@@ -1103,8 +1103,7 @@
 			"deepseek": "DeepSeek"
 		},
 		"photoGenerate": "Genera una foto",
-		"photoGenerating": "Generazione in corso…",
-		"photoCost": "Generare un'immagine costa molto più di un testo per chiamata: viene usata la tua quota."
+		"photoGenerating": "Generazione in corso…"
 	},
 	"setup": {
 		"title": "Istanza non configurata",

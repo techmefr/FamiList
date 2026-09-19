@@ -1103,8 +1103,7 @@
 			"deepseek": "DeepSeek"
 		},
 		"photoGenerate": "Generate a photo",
-		"photoGenerating": "Generating…",
-		"photoCost": "Image generation costs much more per call than text — this uses your own quota."
+		"photoGenerating": "Generating…"
 	},
 	"setup": {
 		"title": "Instance not configured",
