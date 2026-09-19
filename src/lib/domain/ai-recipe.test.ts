@@ -3,6 +3,7 @@ import {
 	MAX_PRODUCTS,
 	parseRecipeSuggestion,
 	recipeExtractionPrompt,
+	recipeFromRequestPrompt,
 	recipePrompt,
 	shoppedProducts,
 	type Purchase
@@ -118,6 +119,44 @@ describe('recipeExtractionPrompt', () => {
 		expect(recipeExtractionPrompt('texte', { language: 'fr', servings: 5000 })).toContain(
 			'99 personnes'
 		);
+	});
+});
+
+describe('recipeFromRequestPrompt', () => {
+	it('contient la demande de la personne et la langue demandee', () => {
+		const prompt = recipeFromRequestPrompt('un curry de poulet pour 4', {
+			language: 'français',
+			servings: 4
+		});
+
+		expect(prompt).toContain('un curry de poulet pour 4');
+		expect(prompt).toContain('français');
+	});
+
+	it('impose la meme forme JSON que les autres invites', () => {
+		const prompt = recipeFromRequestPrompt('des pancakes', { language: 'français', servings: 4 });
+
+		expect(prompt).toContain(
+			'{"name":"","emoji":"","servings":0,"ingredients":[{"name":"","qty":"","unit":""}],"steps":[""]}'
+		);
+	});
+
+	it('ramene un nombre de parts absurde dans les bornes', () => {
+		expect(recipeFromRequestPrompt('texte', { language: 'fr', servings: 0 })).toContain(
+			'1 personnes'
+		);
+		expect(recipeFromRequestPrompt('texte', { language: 'fr', servings: 5000 })).toContain(
+			'99 personnes'
+		);
+	});
+
+	it('ne contient rien d autre que ce qu on lui donne', () => {
+		const prompt = recipeFromRequestPrompt('un curry de poulet', {
+			language: 'français',
+			servings: 4
+		});
+
+		expect(prompt).not.toContain('Lardons');
 	});
 });
 

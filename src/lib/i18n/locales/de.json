@@ -850,7 +850,8 @@
 		"directFailed": "Das Gespräch konnte nicht geöffnet werden. Bitte erneut versuchen.",
 		"backToChats": "Zurück zu den Gesprächen",
 		"directNotFound": "Dieses Gespräch wurde nicht gefunden.",
-		"someone": "Jemand"
+		"someone": "Jemand",
+		"recipeAdded": "{name} wurde zu den Rezepten hinzugefügt."
 	},
 	"household": {
 		"title": "Mein Haushalt",
@@ -1104,7 +1105,13 @@
 			"deepseek": "DeepSeek"
 		},
 		"photoGenerate": "Foto erzeugen",
-		"photoGenerating": "Wird erzeugt…"
+		"photoGenerating": "Wird erzeugt…",
+		"request": {
+			"trigger": "KI nach einem Rezept fragen",
+			"title": "Welches Rezept möchtest du?",
+			"placeholder": "z. B. ein Hähnchen-Curry für 4",
+			"submit": "Fragen"
+		}
 	},
 	"setup": {
 		"title": "Instanz nicht konfiguriert",

@@ -850,7 +850,8 @@
 		"directFailed": "La conversation n'a pas pu s'ouvrir. Réessayez.",
 		"backToChats": "Retour aux discussions",
 		"directNotFound": "Cette conversation est introuvable.",
-		"someone": "Quelqu’un"
+		"someone": "Quelqu’un",
+		"recipeAdded": "{name} a été ajoutée aux recettes."
 	},
 	"household": {
 		"title": "Mon foyer",
@@ -1103,7 +1104,13 @@
 			"deepseek": "DeepSeek"
 		},
 		"photoGenerate": "Générer une photo",
-		"photoGenerating": "Génération en cours…"
+		"photoGenerating": "Génération en cours…",
+		"request": {
+			"trigger": "Demander une recette à l’IA",
+			"title": "Quelle recette souhaitez-vous ?",
+			"placeholder": "ex. un curry de poulet pour 4",
+			"submit": "Demander"
+		}
 	},
 	"setup": {
 		"title": "Instance non configurée",

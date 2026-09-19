@@ -843,7 +843,8 @@
 		"directFailed": "无法打开对话，请重试。",
 		"backToChats": "返回对话列表",
 		"directNotFound": "找不到这个对话。",
-		"someone": "某人"
+		"someone": "某人",
+		"recipeAdded": "已将{name}添加到食谱。"
 	},
 	"household": {
 		"title": "我的家庭",
@@ -1094,7 +1095,13 @@
 			"deepseek": "DeepSeek"
 		},
 		"photoGenerate": "生成图片",
-		"photoGenerating": "生成中…"
+		"photoGenerating": "生成中…",
+		"request": {
+			"trigger": "向AI询问食谱",
+			"title": "您想要什么食谱？",
+			"placeholder": "例如：4人份鸡肉咖喱",
+			"submit": "询问"
+		}
 	},
 	"setup": {
 		"title": "实例尚未配置",
