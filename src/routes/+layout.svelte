@@ -472,7 +472,7 @@
 								<Icon size={22} class="relative" aria-hidden="true" />
 							</span>
 							<!-- The weight repeats the active tab: colour must not say it on its own. -->
-							<span class="relative {active ? 'font-medium' : ''}">{t(key)}</span>
+							<span class="fl-nav-label relative {active ? 'font-medium' : ''}">{t(key)}</span>
 						</a>
 					</li>
 				{/each}

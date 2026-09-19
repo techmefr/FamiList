@@ -915,6 +915,17 @@ textarea {
 		gap: 0.25rem;
 		overflow-y: auto;
 	}
+
+	/*
+	 * The column is barely wider than a label's longest word — "Unterhaltungen", "Discussions" — and a break
+	 * with no hyphen there reads as broken text, not as a wrap. `<html lang>` already tracks the active
+	 * locale (see the i18n store), so `hyphens: auto` finds the right dictionary on its own; the same pairing
+	 * already fixes the identical case at the Comfort step's `.fl-choice`.
+	 */
+	.fl-nav-label {
+		hyphens: auto;
+		overflow-wrap: break-word;
+	}
 }
 /*
  * The list panel, mail-client style: it lives only in the widest regime and does not exist at all
