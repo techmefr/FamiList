@@ -408,7 +408,8 @@
 			"one": "Serves 1",
 			"other": "Serves {count}"
 		},
-		"photoAlt": "Generated photo of {name}"
+		"photoAlt": "Generated photo of {name}",
+		"mealPlanLink": "Build a weekly meal plan"
 	},
 	"aisles": {
 		"title": "Aisles",
@@ -1109,5 +1110,42 @@
 		"title": "Instance not configured",
 		"body": "This app does not know yet which database to talk to.",
 		"hint": "Set the Supabase address and the publishable key in config.js, next to the app, or in the container variables, then reload the page."
+	},
+	"mealPlan": {
+		"defaultName": "This week’s menu",
+		"title": "Meal plans",
+		"intro": "Pick several recipes for the week, and generate one shopping list from all of them.",
+		"new": "New meal plan",
+		"empty": "No meal plan yet. Create one and pick the week’s recipes.",
+		"recipeCount": {
+			"one": "{count} recipe",
+			"other": "{count} recipes"
+		},
+		"pickRecipes": "Pick recipes",
+		"noRecipes": "No recipe saved yet. Write one before building a meal plan.",
+		"back": "Back to meal plans",
+		"name": "Meal plan name",
+		"notFound": "This meal plan does not exist, or not anymore.",
+		"noneYet": "No recipe in this meal plan yet. Pick one.",
+		"removeRecipe": "Remove {name} from the plan",
+		"people": "For how many people",
+		"day": {
+			"0": "Monday",
+			"1": "Tuesday",
+			"2": "Wednesday",
+			"3": "Thursday",
+			"4": "Friday",
+			"5": "Saturday",
+			"6": "Sunday",
+			"label": "Day",
+			"none": "Not scheduled"
+		},
+		"generate": "Shopping list",
+		"target": "Where to add the items",
+		"targetNew": "In a new list",
+		"generateSubmit": "Generate the list",
+		"delete": "Delete the meal plan",
+		"deleteConfirm": "Delete {name}? Lists already generated will not change.",
+		"deleteYes": "Delete"
 	}
 }

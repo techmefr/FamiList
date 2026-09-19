@@ -37,7 +37,8 @@
 		Check,
 		Link2,
 		Download,
-		Sparkles
+		Sparkles,
+		CalendarDays
 	} from '@lucide/svelte';
 
 	/**
@@ -332,6 +333,20 @@
 
 <h1 class="text-h1 font-semibold">{t('recipes.title')}</h1>
 <p class="text-muted-foreground text-label mt-1">{t('recipes.intro')}</p>
+
+<!--
+	The meal plan is a separate screen, not a mode of this one: picking several recipes for the week is a
+	different gesture from writing one, and folding it in here would push what this page does first further
+	down.
+-->
+<a
+	href="/meal-plan"
+	data-test-id="recipes-meal-plan-link"
+	class="text-accent-foreground text-label mt-2 inline-flex items-center gap-1 font-medium"
+>
+	<CalendarDays size={18} aria-hidden="true" />
+	{t('recipes.mealPlanLink')}
+</a>
 
 {#if !creating}
 	<Button onclick={open} data-test-id="recipe-new" class="fl-press mt-4">

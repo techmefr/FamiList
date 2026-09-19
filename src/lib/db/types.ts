@@ -673,6 +673,86 @@ export type Database = {
           },
         ]
       }
+      meal_plan_recipes: {
+        Row: {
+          created_at: string
+          day_index: number | null
+          id: string
+          meal_plan_id: string
+          people: number
+          position: number
+          recipe_id: string
+        }
+        Insert: {
+          created_at?: string
+          day_index?: number | null
+          id?: string
+          meal_plan_id: string
+          people?: number
+          position?: number
+          recipe_id: string
+        }
+        Update: {
+          created_at?: string
+          day_index?: number | null
+          id?: string
+          meal_plan_id?: string
+          people?: number
+          position?: number
+          recipe_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "meal_plan_recipes_meal_plan_id_fkey"
+            columns: ["meal_plan_id"]
+            isOneToOne: false
+            referencedRelation: "meal_plans"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "meal_plan_recipes_recipe_id_fkey"
+            columns: ["recipe_id"]
+            isOneToOne: false
+            referencedRelation: "recipes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      meal_plans: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          household_id: string
+          id: string
+          name: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          household_id: string
+          id?: string
+          name?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          household_id?: string
+          id?: string
+          name?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "meal_plans_household_id_fkey"
+            columns: ["household_id"]
+            isOneToOne: false
+            referencedRelation: "households"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       messages: {
         Row: {
           body: string | null
@@ -1149,6 +1229,7 @@ export type Database = {
       backup_codes_left: { Args: never; Returns: number }
       begin_instance_mail_test: { Args: never; Returns: string }
       can_access_list: { Args: { target: string }; Returns: boolean }
+      can_access_meal_plan: { Args: { target: string }; Returns: boolean }
       can_access_message: { Args: { target: string }; Returns: boolean }
       can_access_recipe: { Args: { target: string }; Returns: boolean }
       can_access_shop: { Args: { target: string }; Returns: boolean }

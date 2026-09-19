@@ -257,6 +257,34 @@ export interface RecipeStep {
 }
 
 /**
+ * A meal plan: several recipes picked together, so that one consolidated shopping list can be generated
+ * from all of them at once instead of one per recipe. Like a recipe, generation from it copies into the
+ * list rather than linking to it — see `generateMealPlanList`.
+ */
+export interface MealPlan {
+	id: string;
+	householdId: string;
+	name: string;
+	createdBy?: string;
+	createdAt: number;
+	updatedAt: number;
+}
+
+/**
+ * A recipe's place inside a meal plan: how many people it is scaled for here (independently of the
+ * recipe's own `servings` and of every other recipe in the plan), and where it sits in the week.
+ */
+export interface MealPlanRecipe {
+	id: string;
+	mealPlanId: string;
+	recipeId: string;
+	people: number;
+	/** 0 (Monday) to 6 (Sunday), absent when the recipe has not been assigned a day yet. */
+	dayIndex?: number;
+	position: number;
+}
+
+/**
  * A local write not yet confirmed by the server. This is what makes it possible to tick an item in a shop
  * with no network: the change leaves the queue as soon as the connection comes back.
  */
@@ -302,6 +330,8 @@ class FamiListDatabase extends Dexie {
 	recipes!: EntityTable<Recipe, 'id'>;
 	recipeIngredients!: EntityTable<RecipeIngredient, 'id'>;
 	recipeSteps!: EntityTable<RecipeStep, 'id'>;
+	mealPlans!: EntityTable<MealPlan, 'id'>;
+	mealPlanRecipes!: EntityTable<MealPlanRecipe, 'id'>;
 
 	constructor() {
 		super('familist');
@@ -372,6 +402,12 @@ class FamiListDatabase extends Dexie {
 		this.version(8).stores({
 			conversations: 'id',
 			messages: 'id, listId, conversationId, createdAt'
+		});
+
+		// Like the recipe child tables, meal_plan_recipes is always queried by its plan, never by its own id.
+		this.version(9).stores({
+			mealPlans: 'id',
+			mealPlanRecipes: 'id, mealPlanId'
 		});
 	}
 }

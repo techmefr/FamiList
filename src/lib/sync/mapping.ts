@@ -13,6 +13,8 @@ import type {
 	Recipe,
 	RecipeIngredient,
 	RecipeStep,
+	MealPlan,
+	MealPlanRecipe,
 	Shop,
 	ShopItemOrder,
 	ShopLayout
@@ -416,4 +418,38 @@ export const fromRecipeStep = (step: RecipeStep) => ({
 	recipe_id: step.recipeId,
 	body: step.body,
 	position: step.position
+});
+
+export const toMealPlan = (row: Row): MealPlan => ({
+	id: text(row.id),
+	householdId: text(row.household_id),
+	name: text(row.name, 'Menu de la semaine'),
+	createdBy: typeof row.created_by === 'string' ? row.created_by : undefined,
+	createdAt: Date.parse(text(row.created_at)) || 0,
+	updatedAt: Date.parse(text(row.updated_at)) || 0
+});
+
+export const fromMealPlan = (plan: MealPlan, householdId: string) => ({
+	id: plan.id,
+	household_id: householdId,
+	created_by: plan.createdBy ?? null,
+	name: plan.name
+});
+
+export const toMealPlanRecipe = (row: Row): MealPlanRecipe => ({
+	id: text(row.id),
+	mealPlanId: text(row.meal_plan_id),
+	recipeId: text(row.recipe_id),
+	people: typeof row.people === 'number' && row.people > 0 ? row.people : DEFAULT_SERVINGS,
+	dayIndex: typeof row.day_index === 'number' ? row.day_index : undefined,
+	position: typeof row.position === 'number' ? row.position : 0
+});
+
+export const fromMealPlanRecipe = (entry: MealPlanRecipe) => ({
+	id: entry.id,
+	meal_plan_id: entry.mealPlanId,
+	recipe_id: entry.recipeId,
+	people: entry.people,
+	day_index: entry.dayIndex ?? null,
+	position: entry.position
 });

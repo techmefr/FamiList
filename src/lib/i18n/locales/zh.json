@@ -405,7 +405,8 @@
 		"servingsCount": {
 			"other": "{count} 人份"
 		},
-		"photoAlt": "{name} 的生成图片"
+		"photoAlt": "{name} 的生成图片",
+		"mealPlanLink": "制定本周用餐计划"
 	},
 	"aisles": {
 		"title": "货区",
@@ -1099,5 +1100,41 @@
 		"title": "实例尚未配置",
 		"body": "此应用还不知道要连接哪个数据库。",
 		"hint": "请在应用旁边的 config.js 中，或在容器的环境变量中，填写 Supabase 地址和公开密钥，然后重新加载页面。"
+	},
+	"mealPlan": {
+		"defaultName": "本周菜单",
+		"title": "用餐计划",
+		"intro": "为本周挑选多个食谱，一次生成一份购物清单。",
+		"new": "新建用餐计划",
+		"empty": "还没有用餐计划。创建一个并选择本周的食谱。",
+		"recipeCount": {
+			"other": "{count} 个食谱"
+		},
+		"pickRecipes": "选择食谱",
+		"noRecipes": "还没有保存的食谱。先写一个食谱，再创建计划。",
+		"back": "返回用餐计划",
+		"name": "计划名称",
+		"notFound": "此计划不存在，或已被删除。",
+		"noneYet": "此计划中还没有食谱。选择一个吧。",
+		"removeRecipe": "从计划中移除{name}",
+		"people": "为多少人准备",
+		"day": {
+			"0": "周一",
+			"1": "周二",
+			"2": "周三",
+			"3": "周四",
+			"4": "周五",
+			"5": "周六",
+			"6": "周日",
+			"label": "日期",
+			"none": "未安排"
+		},
+		"generate": "购物清单",
+		"target": "添加到哪个清单",
+		"targetNew": "新建清单",
+		"generateSubmit": "生成清单",
+		"delete": "删除计划",
+		"deleteConfirm": "删除{name}？已生成的清单不会改变。",
+		"deleteYes": "删除"
 	}
 }
