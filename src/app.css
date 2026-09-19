@@ -1537,6 +1537,47 @@ button[data-slot='switch'][data-state='checked'] {
 	background: var(--secondary);
 }
 
+/**
+ * The welcome journey's backdrop.
+ *
+ * Where the sign-in screen behind two loose blurred lights, the walkthrough runs longer and deserves
+ * something with more body: a soft dot-grid drawn as a CSS background image — no request, no binary asset —
+ * standing in for a photograph, graded by a diagonal wash of both brand colours blended over it. A last,
+ * near-opaque layer of the page's own background keeps the whole thing quiet enough that the card and its
+ * text never fight it for contrast.
+ *
+ * Fixed and behind everything (`-z-10`), like `.fl-auth-glow`: it never intercepts a tap and never moves
+ * with the wizard's own height changes between steps. `aria-hidden` on the element keeps it out of the
+ * accessibility tree.
+ */
+.fl-welcome-scene {
+	position: fixed;
+	inset: 0;
+	z-index: -1;
+	overflow: hidden;
+	pointer-events: none;
+	background-color: var(--background);
+	background-image: radial-gradient(var(--fl-border-strong) 1px, transparent 1px);
+	background-size: 20px 20px;
+}
+
+.fl-welcome-scene::before {
+	content: '';
+	position: absolute;
+	inset: 0;
+	background-image:
+		linear-gradient(160deg, var(--primary) 0%, transparent 55%),
+		linear-gradient(-20deg, var(--secondary) 0%, transparent 55%);
+	opacity: 0.18;
+}
+
+.fl-welcome-scene::after {
+	content: '';
+	position: absolute;
+	inset: 0;
+	background: color-mix(in srgb, var(--background) 55%, transparent);
+}
+
 /*
  * The creation sheet, opened by the central button.
  *

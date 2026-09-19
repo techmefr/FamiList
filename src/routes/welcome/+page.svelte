@@ -69,6 +69,8 @@
 	<title>{t('welcome.title')} — {t('app.name')}</title>
 </svelte:head>
 
+<div class="fl-welcome-scene" aria-hidden="true"></div>
+
 <p class="text-muted-foreground text-caption" data-test-id="welcome-step">
 	{t('welcome.step', { current: step, total: STEPS })}
 </p>
@@ -88,10 +90,16 @@
 </div>
 
 <!--
-	The heading changes at every step and takes focus: it is what announces where you are. `tabindex` at -1
-	makes it focusable without inserting it into the tab order.
+	The heading changes at every step and takes focus: it is what announces where you are. `tabindex` at
+	-1 makes it focusable without inserting it into the tab order. Steps 1 to 3 settle inside the same
+	premium card as the auth screens; the last step hands off to `AuthForm`, which already brings its own
+	card — nesting the two would stack a shadow on a shadow.
 -->
-<h1 bind:this={heading} tabindex="-1" class="text-h1 mt-3 font-semibold outline-none">
+<h1
+	bind:this={heading}
+	tabindex="-1"
+	class="text-h1 mt-6 font-semibold outline-none {step < STEPS ? 'px-1' : ''}"
+>
 	{#if step === 1}
 		{t('welcome.langTitle')}
 	{:else if step === 2}
@@ -104,15 +112,15 @@
 </h1>
 
 {#if step === 1}
+	<p class="text-muted-foreground mt-2 px-1">{t('welcome.langBody')}</p>
+
 	<!--
 		Language comes before everything else, and it is the only step whose content does not depend on the
 		current language: each name is written in its own language. Somebody opening the application in a
 		language they cannot read cannot understand "Settings" in order to go and change it — but they
 		recognise "Malagasy" in a list, and that is enough.
 	-->
-	<p class="text-muted-foreground mt-2">{t('welcome.langBody')}</p>
-
-	<fieldset class="mt-6">
+	<fieldset class="fl-auth-card fl-rise mt-4">
 		<legend class="sr-only">{t('profile.language')}</legend>
 		<div class="flex flex-wrap gap-2">
 			{#each LOCALES as locale (locale.code)}
@@ -135,120 +143,122 @@
 		</div>
 	</fieldset>
 {:else if step === 2}
-	<p class="text-muted-foreground mt-2">{t('welcome.sizeBody')}</p>
+	<p class="text-muted-foreground mt-2 px-1">{t('welcome.sizeBody')}</p>
 
-	<div class="bg-card mt-6 rounded-xl border p-4">
+	<div class="fl-auth-card fl-rise mt-4">
 		{#key settings.fontScaleId}
 			<p class="text-product fl-pop-in font-medium" data-test-id="welcome-preview">
 				{t('profile.previewItem')}
 			</p>
 		{/key}
 		<p class="text-muted-foreground text-caption mt-1">{t('profile.previewNote')}</p>
-	</div>
 
-	<div class="mt-6 flex items-center gap-3">
-		<input
-			type="range"
-			min="0"
-			max={FONT_SCALE_PRESETS.length - 1}
-			step="1"
-			value={scaleIndex}
-			oninput={(event) => chooseScale(Number(event.currentTarget.value))}
-			aria-label={t('profile.textSize')}
-			aria-valuetext={scaleLabel}
-			data-test-id="welcome-size"
-			class="h-[44px] min-w-0 flex-1 accent-[var(--primary)]"
-		/>
-
-		{#if !sizeTouched}
-			<ArrowRight
-				size={22}
-				class="fl-nudge text-primary shrink-0"
-				aria-hidden="true"
-				data-test-id="welcome-nudge"
+		<div class="mt-6 flex items-center gap-3">
+			<input
+				type="range"
+				min="0"
+				max={FONT_SCALE_PRESETS.length - 1}
+				step="1"
+				value={scaleIndex}
+				oninput={(event) => chooseScale(Number(event.currentTarget.value))}
+				aria-label={t('profile.textSize')}
+				aria-valuetext={scaleLabel}
+				data-test-id="welcome-size"
+				class="h-[44px] min-w-0 flex-1 accent-[var(--primary)]"
 			/>
-		{/if}
+
+			{#if !sizeTouched}
+				<ArrowRight
+					size={22}
+					class="fl-nudge text-primary shrink-0"
+					aria-hidden="true"
+					data-test-id="welcome-nudge"
+				/>
+			{/if}
+		</div>
+
+		<p class="text-label mt-2 font-medium" data-test-id="welcome-size-label">{scaleLabel}</p>
+		<p class="text-muted-foreground text-caption mt-1">{t('welcome.sizeHint')}</p>
 	</div>
-
-	<p class="text-label mt-2 font-medium" data-test-id="welcome-size-label">{scaleLabel}</p>
-	<p class="text-muted-foreground text-caption mt-1">{t('welcome.sizeHint')}</p>
 {:else if step === 3}
-	<p class="text-muted-foreground mt-2">{t('welcome.lookBody')}</p>
+	<p class="text-muted-foreground mt-2 px-1">{t('welcome.lookBody')}</p>
 
-	<fieldset class="mt-6">
-		<legend class="text-label mb-2 font-medium">{t('profile.theme')}</legend>
-		<div class="flex flex-wrap gap-2">
-			{#each themes as value (value)}
-				<Label class={optionClass}>
-					<input
-						type="radio"
-						name="welcome-theme"
-						checked={settings.theme === value}
-						onchange={() => settings.setTheme(value)}
-						data-test-id="welcome-theme-{value}"
-						class="sr-only"
-					/>
-					{t(`theme.${value}`)}
-				</Label>
-			{/each}
-		</div>
-	</fieldset>
+	<div class="fl-auth-card fl-rise mt-4">
+		<fieldset>
+			<legend class="text-label mb-2 font-medium">{t('profile.theme')}</legend>
+			<div class="flex flex-wrap gap-2">
+				{#each themes as value (value)}
+					<Label class={optionClass}>
+						<input
+							type="radio"
+							name="welcome-theme"
+							checked={settings.theme === value}
+							onchange={() => settings.setTheme(value)}
+							data-test-id="welcome-theme-{value}"
+							class="sr-only"
+						/>
+						{t(`theme.${value}`)}
+					</Label>
+				{/each}
+			</div>
+		</fieldset>
 
-	<fieldset class="mt-6">
-		<legend class="text-label mb-2 font-medium">{t('profile.accent')}</legend>
-		<div class="flex flex-wrap gap-2">
-			{#each ACCENT_PRESETS as accent (accent.id)}
-				{@const active = settings.accentId === accent.id}
-				<Label class={optionClass}>
-					<input
-						type="radio"
-						name="welcome-accent"
-						checked={active}
-						onchange={() => settings.setAccent(accent.id)}
-						data-test-id="welcome-accent-{accent.id}"
-						class="sr-only"
-					/>
-					<span
-						class="fl-swatch-{accent.id} grid size-6 place-items-center rounded-full"
-						aria-hidden="true"
-					>
-						{#if active}
-							<Check size={14} color="var(--primary-foreground)" />
-						{/if}
-					</span>
-					{t(accent.label)}
-				</Label>
-			{/each}
-		</div>
-	</fieldset>
+		<fieldset class="mt-6">
+			<legend class="text-label mb-2 font-medium">{t('profile.accent')}</legend>
+			<div class="flex flex-wrap gap-2">
+				{#each ACCENT_PRESETS as accent (accent.id)}
+					{@const active = settings.accentId === accent.id}
+					<Label class={optionClass}>
+						<input
+							type="radio"
+							name="welcome-accent"
+							checked={active}
+							onchange={() => settings.setAccent(accent.id)}
+							data-test-id="welcome-accent-{accent.id}"
+							class="sr-only"
+						/>
+						<span
+							class="fl-swatch-{accent.id} grid size-6 place-items-center rounded-full"
+							aria-hidden="true"
+						>
+							{#if active}
+								<Check size={14} color="var(--primary-foreground)" />
+							{/if}
+						</span>
+						{t(accent.label)}
+					</Label>
+				{/each}
+			</div>
+		</fieldset>
 
-	<!--
-		Motion is set here and not in a separate accessibility screen. Somebody who is made queasy by sliding
-		does not have to cross the whole application to find the switch: the system setting is already honoured
-		by default, and this choice serves those whose device does not carry it, or who want the opposite here
-		precisely.
-	-->
-	<fieldset class="mt-6">
-		<legend class="text-label mb-2 font-medium">{t('profile.motion')}</legend>
-		<div class="flex flex-wrap gap-2">
-			{#each MOTION_PREFERENCES as value (value)}
-				<Label class={optionClass}>
-					<input
-						type="radio"
-						name="welcome-motion"
-						checked={settings.motion === value}
-						onchange={() => settings.setMotion(value as MotionPreference)}
-						data-test-id="welcome-motion-{value}"
-						class="sr-only"
-					/>
-					{t(`motion.${value}`)}
-				</Label>
-			{/each}
-		</div>
-		<p class="text-muted-foreground text-caption mt-2">{t('profile.motionHint')}</p>
-	</fieldset>
+		<!--
+			Motion is set here and not in a separate accessibility screen. Somebody who is made queasy by
+			sliding does not have to cross the whole application to find the switch: the system setting is
+			already honoured by default, and this choice serves those whose device does not carry it, or who
+			want the opposite here precisely.
+		-->
+		<fieldset class="mt-6">
+			<legend class="text-label mb-2 font-medium">{t('profile.motion')}</legend>
+			<div class="flex flex-wrap gap-2">
+				{#each MOTION_PREFERENCES as value (value)}
+					<Label class={optionClass}>
+						<input
+							type="radio"
+							name="welcome-motion"
+							checked={settings.motion === value}
+							onchange={() => settings.setMotion(value as MotionPreference)}
+							data-test-id="welcome-motion-{value}"
+							class="sr-only"
+						/>
+						{t(`motion.${value}`)}
+					</Label>
+				{/each}
+			</div>
+			<p class="text-muted-foreground text-caption mt-2">{t('profile.motionHint')}</p>
+		</fieldset>
+	</div>
 {:else}
-	<p class="text-muted-foreground mt-2">{t('welcome.accountBody')}</p>
+	<p class="text-muted-foreground mt-2 px-1">{t('welcome.accountBody')}</p>
 
 	<AuthForm mode="signup" />
 {/if}
@@ -266,7 +276,11 @@
 	{/if}
 
 	{#if step < STEPS}
-		<Button class="fl-press flex-auto" onclick={() => go(step + 1)} data-test-id="welcome-next">
+		<Button
+			class="fl-press fl-auth-submit flex-auto"
+			onclick={() => go(step + 1)}
+			data-test-id="welcome-next"
+		>
 			{t('welcome.next')}
 		</Button>
 	{/if}
