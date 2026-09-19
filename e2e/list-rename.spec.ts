@@ -35,11 +35,15 @@ test('renommer une liste, au bouton comme à l appui long', async ({ signedInPag
 
 	// The long press on the card: the same sheet, prefilled — and it does not follow the link.
 	//
-	// The app's own threshold is 500ms (`LONGPRESS_MS`, `$domain/longpress.ts`). Holding for 700ms left
-	// only 200ms of margin, which a CI runner under heavy concurrent load could eat into: the browser's
-	// event loop, not just the test's clock, has to actually run the `setTimeout` callback within that
-	// window. 1500ms keeps the gesture realistic while leaving three times the threshold as slack.
+	// The app's own threshold is 500ms (`LONGPRESS_MS`, `$domain/longpress.ts`). 1500ms keeps the
+	// gesture realistic while leaving three times the threshold as slack against CI scheduling delays.
+	//
+	// Scrolled into view first: the fixture household accumulates a list per past run of this and other
+	// specs, and a card past the fold has real viewport coordinates that a stationary mouse never reaches
+	// — mouse.down() at an off-screen point never fires the app's own pointerdown, so the long press never
+	// starts, whatever margin the hold time is given.
 	const link = corrected.getByRole('link').first();
+	await link.scrollIntoViewIfNeeded();
 	const box = await link.boundingBox();
 	await page.mouse.move(box!.x + box!.width / 2, box!.y + box!.height / 2);
 	await page.mouse.down();
