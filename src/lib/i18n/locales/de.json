@@ -401,7 +401,8 @@
 		"servingsCount": {
 			"one": "Für 1 Person",
 			"other": "Für {count} Personen"
-		}
+		},
+		"photoAlt": "Generiertes Foto von {name}"
 	},
 	"aisles": {
 		"title": "Abteilungen",
@@ -1079,7 +1080,10 @@
 			"groq": "Groq",
 			"openrouter": "OpenRouter",
 			"deepseek": "DeepSeek"
-		}
+		},
+		"photoGenerate": "Foto erzeugen",
+		"photoGenerating": "Wird erzeugt…",
+		"photoCost": "Die Bilderzeugung kostet pro Anfrage deutlich mehr als Text — es wird Ihr eigenes Kontingent genutzt."
 	},
 	"setup": {
 		"title": "Instanz nicht konfiguriert",

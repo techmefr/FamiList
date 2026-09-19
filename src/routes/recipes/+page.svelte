@@ -22,6 +22,7 @@
 	import EmptyState from '$components/app/EmptyState.svelte';
 	import IconField from '$components/app/IconField.svelte';
 	import RecipeSuggestion from '$components/app/RecipeSuggestion.svelte';
+	import RecipePhoto from '$components/app/RecipePhoto.svelte';
 	import {
 		CookingPot,
 		Hash,
@@ -585,6 +586,13 @@
 					</Card.Header>
 
 					<Card.Content>
+						<RecipePhoto
+							recipeId={recipe.id}
+							recipeName={recipe.name}
+							ingredientNames={ingredients.map((line) => line.name)}
+							photoPath={recipe.photoPath}
+						/>
+
 						{#if ingredients.length}
 							<h3 class="text-label font-medium">{t('recipes.step.ingredients')}</h3>
 							<ul class="text-label text-muted-foreground mt-1 space-y-1">

@@ -368,6 +368,7 @@ export const toRecipe = (row: Row): Recipe => ({
 	// absurd, and the recipe would still be displayed.
 	servings: typeof row.servings === 'number' && row.servings > 0 ? row.servings : DEFAULT_SERVINGS,
 	notes: typeof row.notes === 'string' ? row.notes : undefined,
+	photoPath: typeof row.photo_path === 'string' ? row.photo_path : undefined,
 	createdBy: typeof row.created_by === 'string' ? row.created_by : undefined,
 	createdAt: Date.parse(text(row.created_at)) || 0
 });
@@ -379,7 +380,8 @@ export const fromRecipe = (recipe: Recipe, householdId: string) => ({
 	name: recipe.name,
 	emoji: recipe.emoji,
 	servings: recipe.servings,
-	notes: recipe.notes ?? null
+	notes: recipe.notes ?? null,
+	photo_path: recipe.photoPath ?? null
 });
 
 export const toRecipeIngredient = (row: Row): RecipeIngredient => ({
