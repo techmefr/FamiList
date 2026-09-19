@@ -29,24 +29,37 @@ export default defineConfig({
 		testIdAttribute: 'data-test-id'
 	},
 	/**
-	 * Two projects that do not play the same files, rather than the same suite twice.
+	 * Three projects that do not play the same files, rather than the same suite three times.
 	 *
 	 * The application really changes shape under 48rem — bottom bar instead of the column, different tabs,
 	 * floating create button on the thumb's side, swiping with the finger — and none of that was exercised.
 	 * But replaying the lists, the shops or the 2FA in a phone viewport as well would double the integration
 	 * time to recheck journeys that do not depend on the screen. `e2e/mobile.spec.ts` therefore carries what
 	 * does depend on it, and it alone runs on the emulated phone.
+	 *
+	 * A tablet held in portrait is a third shape again, not a midpoint between the other two: it is `rail`
+	 * in `app.css` (see the comment there), a narrow column fixed to the dominant hand's edge, carrying the
+	 * phone's set of destinations rather than the desktop's. `e2e/tablet.spec.ts` carries only what depends
+	 * on that shape, for the same reason `mobile.spec.ts` is kept separate from the rest.
 	 */
 	projects: [
 		{
 			name: 'chromium',
 			use: { ...devices['Desktop Chrome'] },
-			testIgnore: /mobile\.spec\.ts/
+			testIgnore: [/mobile\.spec\.ts/, /tablet\.spec\.ts/]
 		},
 		{
 			name: 'mobile',
 			use: { ...devices['Pixel 7'] },
 			testMatch: /mobile\.spec\.ts/
+		},
+		{
+			name: 'tablet',
+			// A custom viewport rather than `devices['iPad Mini']`: that preset defaults to WebKit, and CI
+			// only installs Chromium. 768x1024 portrait is the exact width/orientation the `rail` regime in
+			// `app.css` switches on, mirroring a real tablet held in two hands rather than laid flat.
+			use: { ...devices['Desktop Chrome'], viewport: { width: 768, height: 1024 }, hasTouch: true },
+			testMatch: /tablet\.spec\.ts/
 		}
 	],
 	webServer: {
