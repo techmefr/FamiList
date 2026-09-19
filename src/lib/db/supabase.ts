@@ -7,6 +7,9 @@ const instanceConfig = readInstanceConfig(globalThis.__FAMILIST_CONFIG__);
 
 export const isConfigured = instanceConfig !== null;
 
+/** DSN Sentry propre a cette instance, ou null si l'installateur n'en a defini aucun. */
+export const sentryDsn = instanceConfig?.sentryDsn ?? null;
+
 /**
  * Single client, browser side only (the app is a static SPA, there is no server). The publishable key is
  * made to be delivered to the client: it is RLS that protects the data, not the secrecy of the key.

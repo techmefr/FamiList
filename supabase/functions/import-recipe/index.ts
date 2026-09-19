@@ -13,7 +13,7 @@
  */
 
 import { checkUrl } from './url.ts';
-import { extractRecipe } from './extract.ts';
+import { extractRecipe, readableText } from './extract.ts';
 
 const CORS = {
 	'Access-Control-Allow-Origin': '*',
@@ -125,7 +125,11 @@ Deno.serve(async (request) => {
 	if (html === null) return json({ error: 'too_large' }, 413);
 
 	const recipe = extractRecipe(html);
-	if (!recipe) return json({ error: 'no_recipe' }, 422);
+	if (!recipe) {
+		// No structured data found: the client may still offer its own AI fallback with this text, but only the
+		// client decides that, with the person's own key. Nothing here calls an AI provider.
+		return json({ error: 'no_recipe', text: readableText(html) }, 422);
+	}
 
 	return json(recipe);
 });

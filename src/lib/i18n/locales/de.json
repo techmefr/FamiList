@@ -349,6 +349,12 @@
 			"submit": "Rezept importieren",
 			"loading": "Seite wird gelesen…",
 			"review": "Rezept übernommen. Lesen Sie alles vor dem Speichern durch: Zeilen, die sich nicht aufteilen ließen, stehen unverändert da.",
+			"ai": {
+				"offer": "Diese Seite veröffentlicht kein lesbares Rezept. Ihr Text kann an Ihren konfigurierten KI-Anbieter gesendet werden, um eines zu extrahieren.",
+				"privacy": "Der Seitentext verlässt Ihr Gerät nur, wenn Sie unten klicken, direkt an den in Ihren KI-Einstellungen bereits konfigurierten Anbieter. Andernfalls wird nichts gesendet.",
+				"submit": "Mit KI versuchen",
+				"loading": "Wird gelesen…"
+			},
 			"social": "Instagram und TikTok veröffentlichen kein lesbares Rezept: Ihre Links lassen sich nicht importieren.",
 			"error": {
 				"invalid": "Diese Adresse ist nicht lesbar.",

@@ -476,7 +476,7 @@
 								<Icon size={22} class="relative" aria-hidden="true" />
 							</span>
 							<!-- The weight repeats the active tab: colour must not say it on its own. -->
-							<span class="relative {active ? 'font-medium' : ''}">{t(key)}</span>
+							<span class="fl-nav-label relative {active ? 'font-medium' : ''}">{t(key)}</span>
 						</a>
 					</li>
 				{/each}
@@ -498,7 +498,7 @@
 				and the profile. A setting is looked for at the top of the screen; a round trip is made with the
 				thumb, on the edge.
 			-->
-			<header class="mx-auto flex w-full max-w-3xl items-center justify-between gap-4 px-4 pt-3">
+			<header class="mx-auto flex w-full max-w-5xl items-center justify-between gap-4 px-4 pt-3">
 				<p class="text-h2 flex items-center gap-2 font-semibold full:hidden">
 					<Logo />
 					{t('app.name')}
@@ -537,7 +537,7 @@
 				</div>
 			</header>
 
-			<main class="mx-auto w-full max-w-3xl px-4 pt-2 pb-36 md:pb-10">
+			<main class="mx-auto w-full max-w-5xl px-4 pt-2 pb-36 md:pb-10">
 				{@render children()}
 			</main>
 		</div>

@@ -14,5 +14,5 @@ escape() {
 }
 
 cat > /usr/share/nginx/html/config.js <<EOF
-window.__FAMILIST_CONFIG__ = { "url": "$(escape "${PUBLIC_SUPABASE_URL}")", "anonKey": "$(escape "${PUBLIC_SUPABASE_ANON_KEY}")" };
+window.__FAMILIST_CONFIG__ = { "url": "$(escape "${PUBLIC_SUPABASE_URL}")", "anonKey": "$(escape "${PUBLIC_SUPABASE_ANON_KEY}")", "sentryDsn": "$(escape "${PUBLIC_SENTRY_DSN}")" };
 EOF

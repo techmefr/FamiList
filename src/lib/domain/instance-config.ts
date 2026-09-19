@@ -12,6 +12,8 @@
 export type InstanceConfig = {
 	url: string;
 	anonKey: string;
+	/** DSN Sentry de l'instance, ou absent : le sinistre reste alors uniquement dans `client_errors`. */
+	sentryDsn?: string;
 };
 
 /**
@@ -38,7 +40,10 @@ export function readInstanceConfig(source: unknown): InstanceConfig | null {
 	if (!url || !anonKey) return null;
 	if (!isHttpUrl(url)) return null;
 
-	return { url, anonKey };
+	// Le DSN Sentry est facultatif : une chaine vide ou un placeholder oublie vaut absence, pas erreur.
+	const sentryDsn = clean(raw.sentryDsn);
+
+	return sentryDsn ? { url, anonKey, sentryDsn } : { url, anonKey };
 }
 
 function clean(value: unknown): string {
