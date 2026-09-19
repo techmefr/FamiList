@@ -573,27 +573,50 @@
 			{@const ingredients = data.ingredientsOf(recipe.id)}
 			{@const recipeSteps = data.stepsOf(recipe.id)}
 			<li>
-				<Card.Root data-test-class="recipe-card">
-					<Card.Header>
-						<Card.Title class="text-product break-words">
-							<span aria-hidden="true">{recipe.emoji}</span>
-							{recipe.name}
-						</Card.Title>
-						<Card.Description>
-							{t('recipes.servingsCount', { count: recipe.servings })}
-						</Card.Description>
+				<Card.Root data-test-class="recipe-card" class="overflow-hidden">
+					<!--
+						A recipe card, not a data record: the emoji is the illustration this app can afford,
+						enlarged and given room, and the number of people it feeds sits next to the title as a
+						badge rather than a caption — it is read before the ingredients, never after.
+					-->
+					<Card.Header
+						class="border-b bg-[var(--fl-primary-tint)] pt-(--card-spacing)"
+						data-test-class="recipe-card-header"
+					>
+						<div class="flex items-start gap-3">
+							<span class="text-4xl leading-none" aria-hidden="true">{recipe.emoji}</span>
+							<div class="min-w-0 flex-1">
+								<Card.Title class="text-product break-words">{recipe.name}</Card.Title>
+								<span
+									class="bg-primary text-primary-foreground text-caption mt-1.5 inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 font-semibold"
+								>
+									<Users size={12} aria-hidden="true" />
+									{t('recipes.servingsCount', { count: recipe.servings })}
+								</span>
+							</div>
+						</div>
 					</Card.Header>
 
 					<Card.Content>
 						{#if ingredients.length}
-							<h3 class="text-label font-medium">{t('recipes.step.ingredients')}</h3>
-							<ul class="text-label text-muted-foreground mt-1 space-y-1">
+							<h3
+								class="text-label text-muted-foreground flex items-center gap-1.5 font-semibold tracking-wide uppercase"
+							>
+								<ShoppingBasket size={14} aria-hidden="true" />
+								{t('recipes.step.ingredients')}
+							</h3>
+							<ul class="text-label mt-2 space-y-1.5">
 								{#each ingredients as ingredient (ingredient.id)}
-									<li data-test-class="recipe-ingredient">
-										{ingredient.name}
+									<li
+										data-test-class="recipe-ingredient"
+										class="flex items-baseline gap-2 border-b border-dashed pb-1.5 last:border-0 last:pb-0"
+									>
+										<span class="min-w-0 flex-1">{ingredient.name}</span>
 										{#if ingredient.qty}
-											— {ingredient.qty}
-											{t(`units.${ingredient.unit}`)}
+											<span class="text-muted-foreground text-caption shrink-0 font-medium">
+												{ingredient.qty}
+												{t(`units.${ingredient.unit}`)}
+											</span>
 										{/if}
 									</li>
 								{/each}
@@ -601,10 +624,27 @@
 						{/if}
 
 						{#if recipeSteps.length}
-							<h3 class="text-label mt-4 font-medium">{t('recipes.step.steps')}</h3>
-							<ol class="text-label text-muted-foreground mt-1 list-decimal space-y-1 ps-5">
-								{#each recipeSteps as step (step.id)}
-									<li data-test-class="recipe-step-body">{step.body}</li>
+							<h3
+								class="text-label text-muted-foreground mt-5 flex items-center gap-1.5 font-semibold tracking-wide uppercase"
+							>
+								<CookingPot size={14} aria-hidden="true" />
+								{t('recipes.step.steps')}
+							</h3>
+							<!--
+								"Cooking mode" reading: a step is looked at with wet or floury hands, from arm's
+								length, one at a time — so the number carries the weight, not the bullet.
+							-->
+							<ol class="mt-2 space-y-3">
+								{#each recipeSteps as step, index (step.id)}
+									<li data-test-class="recipe-step-body" class="flex items-start gap-3">
+										<span
+											class="bg-muted text-foreground text-label grid size-7 shrink-0 place-items-center rounded-full font-bold"
+											aria-hidden="true"
+										>
+											{index + 1}
+										</span>
+										<span class="text-label pt-0.5">{step.body}</span>
+									</li>
 								{/each}
 							</ol>
 						{/if}
