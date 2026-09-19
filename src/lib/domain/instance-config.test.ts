@@ -36,4 +36,17 @@ describe('readInstanceConfig', () => {
 		expect(readInstanceConfig({ url: 'PUBLIC_SUPABASE_URL', anonKey: 'ey.key' })).toBeNull();
 		expect(readInstanceConfig({ url: 'postgres://db:5432', anonKey: 'ey.key' })).toBeNull();
 	});
+
+	it('garde le DSN Sentry quand il est renseigne', () => {
+		expect(readInstanceConfig({ ...VALID, sentryDsn: 'https://key@sentry.example/1' })).toEqual({
+			...VALID,
+			sentryDsn: 'https://key@sentry.example/1'
+		});
+	});
+
+	it('omet le DSN Sentry quand il est absent ou vide', () => {
+		expect(readInstanceConfig(VALID)).toEqual(VALID);
+		expect(readInstanceConfig({ ...VALID, sentryDsn: '' })).toEqual(VALID);
+		expect(readInstanceConfig({ ...VALID, sentryDsn: '  ' })).toEqual(VALID);
+	});
 });

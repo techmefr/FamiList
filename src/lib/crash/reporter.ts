@@ -1,8 +1,9 @@
 import { browser } from '$app/environment';
-import { supabase } from '$db/supabase';
+import { supabase, sentryDsn } from '$db/supabase';
 import { buildCrash, type CrashSource } from '$domain/crash';
 import { CrashThrottle } from '$domain/crash-throttle';
 import { readCrashOutcome } from '$domain/crash-outcome';
+import { forwardToSentry } from '$crash/sentry';
 
 /**
  * The crash reporter.
@@ -24,6 +25,11 @@ async function send(cause: unknown, source: CrashSource, path: string) {
 	if (!crash) return;
 
 	if (!throttle.allow(crash.fingerprint, Date.now())) return;
+
+	// Second sinistre facultatif : seul le proprietaire qui a rempli `PUBLIC_SENTRY_DSN` le recoit, sur le
+	// meme evenement deja scrubbe. Sans DSN, `sentryDsn` vaut `null` et cette ligne ne fait rien de plus
+	// qu'un appel de fonction qui retourne aussitot — aucun appel reseau supplementaire.
+	if (sentryDsn) forwardToSentry(sentryDsn, crash);
 
 	// With no session, the call would be refused: `report_crash` is only granted to `authenticated`. We
 	// prefer to send nothing rather than hold crashes waiting for a sign-in that may never come — keeping

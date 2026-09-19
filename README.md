@@ -158,19 +158,26 @@ pnpm exec playwright install --with-deps chromium
 
 ### Configuration
 
-Two variables, the only ones in the project:
+Two required variables, plus one optional one:
 
 ```
 PUBLIC_SUPABASE_URL=
 PUBLIC_SUPABASE_ANON_KEY=
+PUBLIC_SENTRY_DSN=
 ```
 
-Both are public by construction: they ship in what the browser downloads, and security rests on the
-RLS policies, not on keeping them secret. The `service_role` key has no place here.
+All three are public by construction: they ship in what the browser downloads, and security rests on
+the RLS policies, not on keeping them secret. The `service_role` key has no place here.
 
 They are read at start-up from `config.js`, served next to the app: in development a Vite plugin
 serves it from the environment, in the container the entrypoint writes it. Nothing is inlined in
 the bundle, which is what lets one published image serve any instance.
+
+`PUBLIC_SENTRY_DSN` is optional and instance-specific. The app already reports its own crashes for
+free, with nothing leaving the server (`client_errors`, thirty-day retention, no identities). Setting
+this variable on your own instance additionally forwards the same, already-scrubbed crash events to
+your Sentry project. Leave it unset — the default for every instance, including the published image
+— and nothing changes: no second sink, no extra network call.
 
 ### Writing a migration
 

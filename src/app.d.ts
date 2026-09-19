@@ -10,7 +10,7 @@ declare global {
 	}
 
 	/** Written by `config.js`, served beside the app and replaced by whoever hosts it. */
-	var __FAMILIST_CONFIG__: { url?: string; anonKey?: string } | undefined;
+	var __FAMILIST_CONFIG__: { url?: string; anonKey?: string; sentryDsn?: string } | undefined;
 }
 
 export {};

@@ -3,9 +3,11 @@
 	import { supabase } from '$db/supabase';
 	import { data } from '$stores/data.svelte';
 	import { feedback } from '$stores/feedback.svelte';
+	import { ai } from '$stores/ai.svelte';
 	import { createIntent } from '$stores/create.svelte';
-	import { t } from '$i18n/index.svelte';
+	import { i18n, t, LOCALES } from '$i18n/index.svelte';
 	import { DEFAULT_SERVINGS, MAX_SERVINGS, MIN_SERVINGS, type RecipeLine } from '$domain/recipe';
+	import { recipeExtractionPrompt, type SuggestedRecipe } from '$domain/ai-recipe';
 	import {
 		importErrorOf,
 		importedLines,
@@ -34,7 +36,8 @@
 		ChevronRight,
 		Check,
 		Link2,
-		Download
+		Download,
+		Sparkles
 	} from '@lucide/svelte';
 
 	/**
@@ -72,8 +75,17 @@
 	let importRefusal = $state<ImportError | null>(null);
 	let fromImport = $state(false);
 
+	/**
+	 * The AI fallback (#182): the page's readable text, kept only when JSON-LD failed and the person has their
+	 * own key set, and only ever sent to their own provider on a second, explicit gesture.
+	 */
+	let pageText = $state<string | null>(null);
+	let aiExtracting = $state(false);
+	let aiExtractError = $state('');
+
 	const rank = $derived(STEPS.indexOf(step));
 	const isLast = $derived(rank === STEPS.length - 1);
+	const language = $derived(LOCALES.find((l) => l.code === i18n.locale)?.native ?? 'français');
 
 	// The central button brings you here to create: the form must already be unfolded on arrival.
 	$effect(() => {
@@ -95,24 +107,30 @@
 		steps = [''];
 		fromImport = false;
 		importRefusal = null;
+		pageText = null;
+		aiExtractError = '';
 	}
 
 	/**
-	 * The reason for refusal returned by the edge function.
+	 * The reason for refusal returned by the edge function, and the page's readable text when it came with
+	 * one — only on `no_recipe`, and only kept here for the person to decide whether to send it on.
 	 *
 	 * `functions.invoke` does not throw on a 4xx: it returns an error carrying the HTTP response in
 	 * `context`. Without re-reading it, every refusal would look alike — "unreadable address" and "no
 	 * recipe on this page" call for two opposite gestures.
 	 */
-	async function refusalReason(error: unknown): Promise<ImportError> {
+	async function refusalReason(error: unknown): Promise<{ reason: ImportError; text: string | null }> {
 		const context = (error as { context?: unknown } | null)?.context;
-		if (!(context instanceof Response)) return 'unreachable';
+		if (!(context instanceof Response)) return { reason: 'unreachable', text: null };
 
 		try {
 			const body = await context.json();
-			return importErrorOf(body?.error);
+			return {
+				reason: importErrorOf(body?.error),
+				text: typeof body?.text === 'string' && body.text ? body.text : null
+			};
 		} catch {
-			return 'unreachable';
+			return { reason: 'unreachable', text: null };
 		}
 	}
 
@@ -139,6 +157,24 @@
 		link = '';
 	}
 
+	/**
+	 * Puts an AI-drafted recipe into the form (#182), the same gesture as `prefill`: nothing is written to
+	 * the database here, the person reads it and corrects it like any other draft.
+	 */
+	function prefillFromSuggestion(recipe: SuggestedRecipe) {
+		name = recipe.name;
+		emoji = recipe.emoji;
+		servings = recipe.servings;
+		lines = recipe.ingredients.length ? recipe.ingredients : [{ name: '', qty: '', unit: DEFAULT_UNIT }];
+		steps = recipe.steps.length ? recipe.steps : [''];
+
+		creating = true;
+		step = 'recipe';
+		fromImport = true;
+		link = '';
+		pageText = null;
+	}
+
 	async function importUrl(event: SubmitEvent) {
 		event.preventDefault();
 
@@ -147,6 +183,8 @@
 
 		importing = true;
 		importRefusal = null;
+		pageText = null;
+		aiExtractError = '';
 
 		try {
 			const { data: recipe, error } = await supabase.functions.invoke<ImportedRecipe>(
@@ -155,7 +193,11 @@
 			);
 
 			if (error || !recipe) {
-				importRefusal = await refusalReason(error);
+				const refusal = await refusalReason(error);
+				importRefusal = refusal.reason;
+				// Kept only when there is somewhere for it to go: with no key configured, this app offers no AI
+				// fallback at all, and holding the text in memory for nothing would be pointless.
+				pageText = refusal.reason === 'no_recipe' && ai.configured ? refusal.text : null;
 				return;
 			}
 
@@ -167,6 +209,34 @@
 		} finally {
 			importing = false;
 		}
+	}
+
+	/**
+	 * The one gesture that sends the page's text out to the person's own AI provider (#182).
+	 *
+	 * It only exists after the screen has shown, in plain words, that this text is about to leave the device
+	 * for the provider they already trust with their own key — the same rule `RecipeSuggestion.svelte`
+	 * follows for the products already bought.
+	 */
+	async function tryAiExtraction() {
+		if (!pageText || aiExtracting) return;
+
+		aiExtracting = true;
+		aiExtractError = '';
+
+		const prompt = recipeExtractionPrompt(pageText, { language, servings: DEFAULT_SERVINGS });
+		const issue = await ai.suggestRecipe(prompt);
+		aiExtracting = false;
+
+		if (!issue.ok) {
+			aiExtractError = issue.detail
+				? t(`ai.error.${issue.reason}Detail`, { detail: issue.detail })
+				: t(`ai.error.${issue.reason}`);
+			return;
+		}
+
+		feedback.play('add');
+		prefillFromSuggestion(issue.recipe);
 	}
 
 	/**
@@ -319,6 +389,38 @@
 				{t(`recipes.import.error.${importRefusal}`)}
 			{/if}
 		</p>
+
+		<!--
+			Offered only when the page had no structured recipe AND the person already has their own key: with
+			no key, this app has no AI feature at all, and there is nothing to offer.
+		-->
+		{#if pageText}
+			<div
+				class="space-y-2 rounded-lg border p-3"
+				data-test-id="recipe-import-ai-fallback"
+			>
+				<p class="text-caption">{t('recipes.import.ai.offer')}</p>
+				<p class="text-muted-foreground text-caption">{t('recipes.import.ai.privacy')}</p>
+
+				<Button
+					type="button"
+					variant="outline"
+					disabled={aiExtracting}
+					onclick={tryAiExtraction}
+					data-test-id="recipe-import-ai-try"
+					class="fl-press"
+				>
+					<Sparkles size={18} aria-hidden="true" />
+					{aiExtracting ? t('recipes.import.ai.loading') : t('recipes.import.ai.submit')}
+				</Button>
+
+				{#if aiExtractError}
+					<p class="text-caption text-destructive" role="alert" data-test-id="recipe-import-ai-error">
+						{aiExtractError}
+					</p>
+				{/if}
+			</div>
+		{/if}
 
 		<p class="text-muted-foreground text-caption">{t('recipes.import.social')}</p>
 	</form>
@@ -574,15 +676,28 @@
 			{@const ingredients = data.ingredientsOf(recipe.id)}
 			{@const recipeSteps = data.stepsOf(recipe.id)}
 			<li>
-				<Card.Root data-test-class="recipe-card">
-					<Card.Header>
-						<Card.Title class="text-product break-words">
-							<span aria-hidden="true">{recipe.emoji}</span>
-							{recipe.name}
-						</Card.Title>
-						<Card.Description>
-							{t('recipes.servingsCount', { count: recipe.servings })}
-						</Card.Description>
+				<Card.Root data-test-class="recipe-card" class="overflow-hidden">
+					<!--
+						A recipe card, not a data record: the emoji is the illustration this app can afford,
+						enlarged and given room, and the number of people it feeds sits next to the title as a
+						badge rather than a caption — it is read before the ingredients, never after.
+					-->
+					<Card.Header
+						class="border-b bg-[var(--fl-primary-tint)] pt-(--card-spacing)"
+						data-test-class="recipe-card-header"
+					>
+						<div class="flex items-start gap-3">
+							<span class="text-4xl leading-none" aria-hidden="true">{recipe.emoji}</span>
+							<div class="min-w-0 flex-1">
+								<Card.Title class="text-product break-words">{recipe.name}</Card.Title>
+								<span
+									class="bg-primary text-primary-foreground text-caption mt-1.5 inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 font-semibold"
+								>
+									<Users size={12} aria-hidden="true" />
+									{t('recipes.servingsCount', { count: recipe.servings })}
+								</span>
+							</div>
+						</div>
 					</Card.Header>
 
 					<Card.Content>
@@ -594,14 +709,24 @@
 						/>
 
 						{#if ingredients.length}
-							<h3 class="text-label font-medium">{t('recipes.step.ingredients')}</h3>
-							<ul class="text-label text-muted-foreground mt-1 space-y-1">
+							<h3
+								class="text-label text-muted-foreground flex items-center gap-1.5 font-semibold tracking-wide uppercase"
+							>
+								<ShoppingBasket size={14} aria-hidden="true" />
+								{t('recipes.step.ingredients')}
+							</h3>
+							<ul class="text-label mt-2 space-y-1.5">
 								{#each ingredients as ingredient (ingredient.id)}
-									<li data-test-class="recipe-ingredient">
-										{ingredient.name}
+									<li
+										data-test-class="recipe-ingredient"
+										class="flex items-baseline gap-2 border-b border-dashed pb-1.5 last:border-0 last:pb-0"
+									>
+										<span class="min-w-0 flex-1">{ingredient.name}</span>
 										{#if ingredient.qty}
-											— {ingredient.qty}
-											{t(`units.${ingredient.unit}`)}
+											<span class="text-muted-foreground text-caption shrink-0 font-medium">
+												{ingredient.qty}
+												{t(`units.${ingredient.unit}`)}
+											</span>
 										{/if}
 									</li>
 								{/each}
@@ -609,10 +734,27 @@
 						{/if}
 
 						{#if recipeSteps.length}
-							<h3 class="text-label mt-4 font-medium">{t('recipes.step.steps')}</h3>
-							<ol class="text-label text-muted-foreground mt-1 list-decimal space-y-1 ps-5">
-								{#each recipeSteps as step (step.id)}
-									<li data-test-class="recipe-step-body">{step.body}</li>
+							<h3
+								class="text-label text-muted-foreground mt-5 flex items-center gap-1.5 font-semibold tracking-wide uppercase"
+							>
+								<CookingPot size={14} aria-hidden="true" />
+								{t('recipes.step.steps')}
+							</h3>
+							<!--
+								"Cooking mode" reading: a step is looked at with wet or floury hands, from arm's
+								length, one at a time — so the number carries the weight, not the bullet.
+							-->
+							<ol class="mt-2 space-y-3">
+								{#each recipeSteps as step, index (step.id)}
+									<li data-test-class="recipe-step-body" class="flex items-start gap-3">
+										<span
+											class="bg-muted text-foreground text-label grid size-7 shrink-0 place-items-center rounded-full font-bold"
+											aria-hidden="true"
+										>
+											{index + 1}
+										</span>
+										<span class="text-label pt-0.5">{step.body}</span>
+									</li>
 								{/each}
 							</ol>
 						{/if}
