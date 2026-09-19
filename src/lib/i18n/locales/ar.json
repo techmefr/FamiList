@@ -419,7 +419,8 @@
 			"few": "لـ {count} أشخاص",
 			"many": "لـ {count} شخصًا",
 			"other": "لـ {count} شخص"
-		}
+		},
+		"photoAlt": "صورة تم إنشاؤها لـ {name}"
 	},
 	"aisles": {
 		"title": "الأقسام",
@@ -1125,7 +1126,10 @@
 			"groq": "Groq",
 			"openrouter": "OpenRouter",
 			"deepseek": "DeepSeek"
-		}
+		},
+		"photoGenerate": "إنشاء صورة",
+		"photoGenerating": "جارٍ الإنشاء…",
+		"photoCost": "توليد صورة أغلى بكثير من توليد نص في كل طلب، وسيُستخدم رصيدك الخاص."
 	},
 	"setup": {
 		"title": "لم تُضبط هذه النسخة بعد",

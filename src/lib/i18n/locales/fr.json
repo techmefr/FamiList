@@ -407,7 +407,8 @@
 		"servingsCount": {
 			"one": "Pour 1 personne",
 			"other": "Pour {count} personnes"
-		}
+		},
+		"photoAlt": "Photo générée de {name}"
 	},
 	"aisles": {
 		"title": "Rayons",
@@ -1084,7 +1085,10 @@
 			"groq": "Groq",
 			"openrouter": "OpenRouter",
 			"deepseek": "DeepSeek"
-		}
+		},
+		"photoGenerate": "Générer une photo",
+		"photoGenerating": "Génération en cours…",
+		"photoCost": "La génération d'image coûte bien plus cher par appel qu'un texte : c'est votre quota qui est utilisé."
 	},
 	"setup": {
 		"title": "Instance non configurée",

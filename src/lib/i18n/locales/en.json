@@ -407,7 +407,8 @@
 		"servingsCount": {
 			"one": "Serves 1",
 			"other": "Serves {count}"
-		}
+		},
+		"photoAlt": "Generated photo of {name}"
 	},
 	"aisles": {
 		"title": "Aisles",
@@ -1085,7 +1086,10 @@
 			"groq": "Groq",
 			"openrouter": "OpenRouter",
 			"deepseek": "DeepSeek"
-		}
+		},
+		"photoGenerate": "Generate a photo",
+		"photoGenerating": "Generating…",
+		"photoCost": "Image generation costs much more per call than text — this uses your own quota."
 	},
 	"setup": {
 		"title": "Instance not configured",

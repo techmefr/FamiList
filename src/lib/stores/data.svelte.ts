@@ -1414,6 +1414,23 @@ class DataStore {
 	}
 
 	/**
+	 * Attaches a generated photo to a recipe, or clears it on failure.
+	 *
+	 * The image is decorative, never data: this call never blocks saving the recipe itself, and a missing or
+	 * failed photo simply leaves `photoPath` unset — the card then shows exactly what it shows today.
+	 */
+	setRecipePhoto(id: string, photoPath: string | undefined) {
+		const recipe = this.cachedRecipes.find((r) => r.id === id);
+		if (!recipe) return;
+
+		recipe.photoPath = photoPath;
+
+		const snapshot = $state.snapshot(recipe) as Recipe;
+		db.recipes.put(snapshot);
+		this.push('recipes', snapshot, fromRecipe);
+	}
+
+	/**
 	 * The server deletes the lines and the steps itself — `on delete cascade` on the recipe. We therefore
 	 * only queue the recipe, and empty the local cache by hand so the screen is right before the next
 	 * re-read.

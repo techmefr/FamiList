@@ -407,7 +407,8 @@
 		"servingsCount": {
 			"one": "Ho an olona 1",
 			"other": "Ho an olona {count}"
-		}
+		},
+		"photoAlt": "Sary noforonina an'ny {name}"
 	},
 	"aisles": {
 		"title": "Faritra",
@@ -1085,7 +1086,10 @@
 			"groq": "Groq",
 			"openrouter": "OpenRouter",
 			"deepseek": "DeepSeek"
-		}
+		},
+		"photoGenerate": "Mamorona sary",
+		"photoGenerating": "Mamorona…",
+		"photoCost": "Lafo kokoa noho ny lahatsoratra ny famoronana sary isaky ny antso, ka ny quota manokana anao no ampiasaina."
 	},
 	"setup": {
 		"title": "Tsy mbola voaomana ity instance ity",
