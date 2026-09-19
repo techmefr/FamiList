@@ -849,7 +849,8 @@
 		"directFailed": "The conversation could not be opened. Try again.",
 		"backToChats": "Back to chats",
 		"directNotFound": "This conversation cannot be found.",
-		"someone": "Someone"
+		"someone": "Someone",
+		"recipeAdded": "{name} was added to the recipes."
 	},
 	"household": {
 		"title": "My household",
@@ -1103,7 +1104,13 @@
 			"deepseek": "DeepSeek"
 		},
 		"photoGenerate": "Generate a photo",
-		"photoGenerating": "Generating…"
+		"photoGenerating": "Generating…",
+		"request": {
+			"trigger": "Ask AI for a recipe",
+			"title": "What recipe would you like?",
+			"placeholder": "e.g. a chicken curry for 4",
+			"submit": "Ask"
+		}
 	},
 	"setup": {
 		"title": "Instance not configured",

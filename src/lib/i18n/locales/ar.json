@@ -877,7 +877,8 @@
 		"directFailed": "تعذّر فتح المحادثة. حاول مرة أخرى.",
 		"backToChats": "العودة إلى المحادثات",
 		"directNotFound": "لم يتم العثور على هذه المحادثة.",
-		"someone": "شخص ما"
+		"someone": "شخص ما",
+		"recipeAdded": "تمت إضافة {name} إلى الوصفات."
 	},
 	"household": {
 		"title": "منزلي",
@@ -1143,7 +1144,13 @@
 			"deepseek": "DeepSeek"
 		},
 		"photoGenerate": "إنشاء صورة",
-		"photoGenerating": "جارٍ الإنشاء…"
+		"photoGenerating": "جارٍ الإنشاء…",
+		"request": {
+			"trigger": "اسأل الذكاء الاصطناعي عن وصفة",
+			"title": "ما الوصفة التي تريدها؟",
+			"placeholder": "مثال: كاري دجاج لـ 4 أشخاص",
+			"submit": "اسأل"
+		}
 	},
 	"setup": {
 		"title": "لم تُضبط هذه النسخة بعد",

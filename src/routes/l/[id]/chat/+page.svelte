@@ -16,6 +16,8 @@
 	} from '@lucide/svelte';
 	import IconField from '$components/app/IconField.svelte';
 	import EmptyState from '$components/app/EmptyState.svelte';
+	import AiRecipeRequest from '$components/app/AiRecipeRequest.svelte';
+	import type { SuggestedRecipe } from '$domain/ai-recipe';
 
 	const listId = $derived(page.params.id!);
 	const list = $derived(data.list(listId));
@@ -48,6 +50,14 @@
 
 		data.sendMessage(listId, body);
 		body = '';
+	}
+
+	/**
+	 * A message logs the recipe having been added, so the rest of the household understands the new card
+	 * that just appeared on the recipes screen without having to go and look for it.
+	 */
+	function onRecipeAccepted(recipe: SuggestedRecipe) {
+		data.sendMessage(listId, t('chat.recipeAdded', { name: recipe.name }));
 	}
 
 	function openPoll(kind: 'date' | 'apport') {
@@ -208,6 +218,11 @@
 			</Button>
 		</div>
 	{/if}
+
+	<!-- Only appears if an AI key is set in the settings; otherwise, nothing at all. -->
+	<div class="mt-4">
+		<AiRecipeRequest onAccepted={onRecipeAccepted} />
+	</div>
 
 	<!--
 		aria-label and not only the placeholder: the latter is not an accessible name, and it disappears at the
