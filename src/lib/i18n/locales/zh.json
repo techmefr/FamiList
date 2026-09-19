@@ -1093,8 +1093,7 @@
 			"deepseek": "DeepSeek"
 		},
 		"photoGenerate": "生成图片",
-		"photoGenerating": "生成中…",
-		"photoCost": "每次生成图片的成本远高于生成文字，将使用您自己的额度。"
+		"photoGenerating": "生成中…"
 	},
 	"setup": {
 		"title": "实例尚未配置",

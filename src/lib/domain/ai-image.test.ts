@@ -1,14 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import {
-	buildImageRequest,
-	dishPhotoPrompt,
-	IMAGE_MODEL,
-	parseImageReply,
-	recipePhotoPath
-} from './ai-image';
-import { providerById } from './ai';
-
-const KEY = 'secret-de-la-personne';
+import { dishPhotoPrompt, pollinationsImageUrl, recipePhotoPath } from './ai-image';
 
 describe('dishPhotoPrompt', () => {
 	it("nomme le plat et ses ingredients", () => {
@@ -23,32 +14,11 @@ describe('dishPhotoPrompt', () => {
 	});
 });
 
-describe('buildImageRequest', () => {
-	it('appelle le bon modele avec la cle en en-tete, jamais dans l’adresse', () => {
-		const gemini = providerById('gemini')!;
-		const request = buildImageRequest(gemini, KEY, 'un plat');
+describe('pollinationsImageUrl', () => {
+	it('encode le prompt dans le chemin, sans cle ni corps', () => {
+		const url = pollinationsImageUrl('un plat & sa sauce');
 
-		expect(request.url).toBe(`${gemini.base}/models/${IMAGE_MODEL}:generateContent`);
-		expect(request.url).not.toContain(KEY);
-		expect(request.headers['x-goog-api-key']).toBe(KEY);
-	});
-});
-
-describe('parseImageReply', () => {
-	it('lit les octets en base64 et le type mime', () => {
-		const payload = {
-			candidates: [
-				{ content: { parts: [{ inlineData: { data: 'QQ==', mimeType: 'image/png' } }] } }
-			]
-		};
-
-		expect(parseImageReply(payload)).toEqual({ base64: 'QQ==', mimeType: 'image/png' });
-	});
-
-	it("renvoie null si la forme ne correspond pas a une image", () => {
-		expect(parseImageReply({ candidates: [{ content: { parts: [{ text: 'pas une image' }] } }] })).toBeNull();
-		expect(parseImageReply(null)).toBeNull();
-		expect(parseImageReply({})).toBeNull();
+		expect(url).toBe('https://image.pollinations.ai/prompt/un%20plat%20%26%20sa%20sauce');
 	});
 });
 
