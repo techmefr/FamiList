@@ -18,6 +18,8 @@ import {
 	type Recipe,
 	type RecipeIngredient,
 	type RecipeStep,
+	type MealPlan,
+	type MealPlanRecipe,
 	type Shop,
 	type ShopItemOrder,
 	type ShopLayout
@@ -44,6 +46,8 @@ import {
 	fromRecipe,
 	fromRecipeIngredient,
 	fromRecipeStep,
+	fromMealPlan,
+	fromMealPlanRecipe,
 	fromShop
 } from '$sync/mapping';
 import { copiedItem, copyName } from '$domain/duplicate';
@@ -58,6 +62,7 @@ import {
 	sameDay
 } from '$domain/price';
 import { DEFAULT_SERVINGS, generatedItems, scalingFactor, type RecipeLine } from '$domain/recipe';
+import { generatedItemsForPlan } from '$domain/meal-plan';
 import { trigram } from '$domain/trigram';
 import { trigramSource } from '$domain/place';
 import { DEFAULT_UNIT } from '$domain/units';
@@ -97,6 +102,7 @@ class DataStore {
 	private cachedMembers = $state<Member[]>([]);
 	private cachedPrices = $state<Price[]>([]);
 	private cachedRecipes = $state<Recipe[]>([]);
+	private cachedMealPlans = $state<MealPlan[]>([]);
 
 	// What is read per list, per shop or per recipe is not filtered here: the foreign key already does
 	// it, and those tables have no circle of their own.
@@ -110,6 +116,7 @@ class DataStore {
 	pollVotes = $state<PollVote[]>([]);
 	recipeIngredients = $state<RecipeIngredient[]>([]);
 	recipeSteps = $state<RecipeStep[]>([]);
+	mealPlanRecipes = $state<MealPlanRecipe[]>([]);
 
 	activeShopId = $state<string>('');
 	ready = $state(false);
@@ -126,6 +133,7 @@ class DataStore {
 	members = $derived(ofCircle(this.cachedMembers, this.circle));
 	prices = $derived(ofCircle(this.cachedPrices, this.circle));
 	recipes = $derived(ofCircle(this.cachedRecipes, this.circle));
+	mealPlans = $derived(ofCircle(this.cachedMealPlans, this.circle));
 	lists = $derived(visibleLists(this.cachedLists, this.circle));
 
 	activeShop = $derived(this.shops.find((s) => s.id === this.activeShopId) ?? this.shops[0]);
@@ -194,6 +202,8 @@ class DataStore {
 			recipes,
 			recipeIngredients,
 			recipeSteps,
+			mealPlans,
+			mealPlanRecipes,
 			conversations
 		] = await Promise.all([
 			db.shops.toArray(),
@@ -212,6 +222,8 @@ class DataStore {
 			db.recipes.toArray(),
 			db.recipeIngredients.toArray(),
 			db.recipeSteps.toArray(),
+			db.mealPlans.toArray(),
+			db.mealPlanRecipes.toArray(),
 			db.conversations.toArray()
 		]);
 
@@ -231,6 +243,8 @@ class DataStore {
 		this.cachedRecipes = recipes;
 		this.recipeIngredients = recipeIngredients;
 		this.recipeSteps = recipeSteps;
+		this.cachedMealPlans = mealPlans;
+		this.mealPlanRecipes = mealPlanRecipes;
 		this.conversations = conversations;
 
 		this.restoreActiveShop();
@@ -1488,6 +1502,158 @@ class DataStore {
 		return { listId: list.id, added: articles.length };
 	}
 
+	mealPlan(id: string) {
+		return this.mealPlans.find((p) => p.id === id);
+	}
+
+	/** A plan's recipes, in the order they were added or arranged. */
+	recipesInPlan(mealPlanId: string) {
+		return this.mealPlanRecipes
+			.filter((entry) => entry.mealPlanId === mealPlanId)
+			.toSorted((a, b) => a.position - b.position);
+	}
+
+	/**
+	 * A new, empty meal plan. Recipes are picked into it afterwards, one gesture at a time — see
+	 * `addRecipeToPlan` — rather than all at once here, so the same picking screen also serves an existing
+	 * plan being edited.
+	 */
+	addMealPlan(name: string) {
+		const plan: MealPlan = {
+			id: crypto.randomUUID(),
+			householdId: this.circle,
+			name: name.trim() || 'Menu de la semaine',
+			createdBy: this.userId || undefined,
+			createdAt: Date.now(),
+			updatedAt: Date.now()
+		};
+
+		this.cachedMealPlans = [...this.cachedMealPlans, plan];
+		db.mealPlans.add(plan);
+		this.push('meal_plans', plan, fromMealPlan);
+
+		return plan;
+	}
+
+	renameMealPlan(id: string, name: string) {
+		const plan = this.cachedMealPlans.find((p) => p.id === id);
+		if (!plan) return;
+
+		plan.name = name.trim() || plan.name;
+		plan.updatedAt = Date.now();
+
+		const snapshot = $state.snapshot(plan) as MealPlan;
+		db.mealPlans.put(snapshot);
+		this.push('meal_plans', snapshot, fromMealPlan);
+	}
+
+	/**
+	 * The server deletes `meal_plan_recipes` itself — `on delete cascade` on the plan, exactly like a
+	 * recipe's own children.
+	 */
+	removeMealPlan(id: string) {
+		const entries = this.mealPlanRecipes.filter((entry) => entry.mealPlanId === id).map((e) => e.id);
+
+		this.cachedMealPlans = this.cachedMealPlans.filter((p) => p.id !== id);
+		this.mealPlanRecipes = this.mealPlanRecipes.filter((entry) => entry.mealPlanId !== id);
+
+		db.mealPlans.delete(id);
+		db.mealPlanRecipes.bulkDelete(entries);
+		sync.enqueue({ table: 'meal_plans', op: 'delete', match: { id } });
+	}
+
+	/**
+	 * Adds a recipe to a plan, scaled for the given number of people — independent from that recipe's own
+	 * `servings` and from every other recipe already in the plan. A recipe already present is not
+	 * duplicated: its servings and day are updated in place instead, since picking it again almost always
+	 * means "no, actually cook this many" rather than "cook it twice".
+	 */
+	addRecipeToPlan(mealPlanId: string, recipeId: string, people: number, dayIndex?: number) {
+		const already = this.mealPlanRecipes.find(
+			(entry) => entry.mealPlanId === mealPlanId && entry.recipeId === recipeId
+		);
+		if (already) {
+			this.updateMealPlanRecipe(already.id, { people, dayIndex });
+			return already;
+		}
+
+		const entry: MealPlanRecipe = {
+			id: crypto.randomUUID(),
+			mealPlanId,
+			recipeId,
+			people: people > 0 ? Math.round(people) : DEFAULT_SERVINGS,
+			dayIndex,
+			position: this.recipesInPlan(mealPlanId).length
+		};
+
+		this.mealPlanRecipes = [...this.mealPlanRecipes, entry];
+		db.mealPlanRecipes.add(entry);
+		this.push('meal_plan_recipes', entry, fromMealPlanRecipe);
+
+		return entry;
+	}
+
+	updateMealPlanRecipe(id: string, changes: { people?: number; dayIndex?: number | null }) {
+		const entry = this.mealPlanRecipes.find((e) => e.id === id);
+		if (!entry) return;
+
+		if (changes.people !== undefined && changes.people > 0) entry.people = Math.round(changes.people);
+		if (changes.dayIndex !== undefined) entry.dayIndex = changes.dayIndex ?? undefined;
+
+		const snapshot = $state.snapshot(entry) as MealPlanRecipe;
+		db.mealPlanRecipes.put(snapshot);
+		this.push('meal_plan_recipes', snapshot, fromMealPlanRecipe);
+	}
+
+	removeRecipeFromPlan(id: string) {
+		this.mealPlanRecipes = this.mealPlanRecipes.filter((entry) => entry.id !== id);
+		db.mealPlanRecipes.delete(id);
+		sync.enqueue({ table: 'meal_plan_recipes', op: 'delete', match: { id } });
+	}
+
+	/**
+	 * The whole plan's shopping list, in one gesture: every recipe it holds, each already scaled by its own
+	 * `people`, merged into a single set of items — see `generatedItemsForPlan` for the merge rule.
+	 *
+	 * Same copy-not-link philosophy as `generateList`: with no target list, a new one is created named
+	 * after the plan.
+	 */
+	generateMealPlanList(mealPlanId: string, targetListId?: string) {
+		const plan = this.mealPlan(mealPlanId);
+		if (!plan) return null;
+
+		const entries = this.recipesInPlan(mealPlanId);
+		const sources = entries
+			.map((entry) => {
+				const recipe = this.recipe(entry.recipeId);
+				if (!recipe) return null;
+
+				return {
+					lines: this.ingredientsOf(recipe.id),
+					factor: scalingFactor(recipe.servings, entry.people)
+				};
+			})
+			.filter((source) => source !== null);
+
+		const target = targetListId ? this.list(targetListId) : null;
+		const list =
+			target ??
+			this.addList({
+				name: plan.name,
+				emoji: '🗓️',
+				color: TINTS[this.cachedLists.length % TINTS.length]
+			});
+
+		const articles = generatedItemsForPlan(
+			sources,
+			this.itemsOf(list.id).map((item) => item.name)
+		);
+
+		for (const article of articles) this.addItem(list.id, article);
+
+		return { listId: list.id, added: articles.length };
+	}
+
 	/**
 	 * The household tables all take the same path: we write the whole row, and the server-side upsert takes
 	 * care of knowing whether it already existed.
@@ -1585,6 +1751,8 @@ class DataStore {
 			db.recipes.clear(),
 			db.recipeIngredients.clear(),
 			db.recipeSteps.clear(),
+			db.mealPlans.clear(),
+			db.mealPlanRecipes.clear(),
 			db.conversations.clear()
 		]);
 

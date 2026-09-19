@@ -408,7 +408,8 @@
 			"one": "Para 1 persona",
 			"other": "Para {count} personas"
 		},
-		"photoAlt": "Foto generada de {name}"
+		"photoAlt": "Foto generada de {name}",
+		"mealPlanLink": "Crear un plan de comida semanal"
 	},
 	"aisles": {
 		"title": "Secciones",
@@ -1116,5 +1117,42 @@
 		"title": "Instancia sin configurar",
 		"body": "Esta aplicación todavía no sabe con qué base de datos hablar.",
 		"hint": "Indique la dirección de Supabase y la clave pública en config.js, junto a la aplicación, o en las variables del contenedor, y vuelva a cargar la página."
+	},
+	"mealPlan": {
+		"defaultName": "Menú de la semana",
+		"title": "Planes de comida",
+		"intro": "Elige varias recetas para la semana y genera una sola lista de la compra con todas.",
+		"new": "Nuevo plan de comida",
+		"empty": "Todavía no hay ningún plan. Crea uno y elige las recetas de la semana.",
+		"recipeCount": {
+			"one": "{count} receta",
+			"other": "{count} recetas"
+		},
+		"pickRecipes": "Elegir recetas",
+		"noRecipes": "Todavía no hay ninguna receta guardada. Escribe una antes de crear un plan.",
+		"back": "Volver a los planes de comida",
+		"name": "Nombre del plan",
+		"notFound": "Este plan no existe, o ya no existe.",
+		"noneYet": "Todavía no hay ninguna receta en este plan. Elige una.",
+		"removeRecipe": "Quitar {name} del plan",
+		"people": "Para cuántas personas",
+		"day": {
+			"0": "Lunes",
+			"1": "Martes",
+			"2": "Miércoles",
+			"3": "Jueves",
+			"4": "Viernes",
+			"5": "Sábado",
+			"6": "Domingo",
+			"label": "Día",
+			"none": "Sin planificar"
+		},
+		"generate": "Lista de la compra",
+		"target": "Dónde añadir los artículos",
+		"targetNew": "En una lista nueva",
+		"generateSubmit": "Generar la lista",
+		"delete": "Eliminar el plan",
+		"deleteConfirm": "¿Eliminar {name}? Las listas ya generadas no cambiarán.",
+		"deleteYes": "Eliminar"
 	}
 }

@@ -408,7 +408,8 @@
 			"one": "Ho an olona 1",
 			"other": "Ho an olona {count}"
 		},
-		"photoAlt": "Sary noforonina an'ny {name}"
+		"photoAlt": "Sary noforonina an'ny {name}",
+		"mealPlanLink": "Mamorona drafitra sakafo isan-kerinandro"
 	},
 	"aisles": {
 		"title": "Faritra",
@@ -1116,5 +1117,42 @@
 		"title": "Tsy mbola voaomana ity instance ity",
 		"body": "Mbola tsy fantatr ity application ity izay base de données horesahiny.",
 		"hint": "Ampidiro ao amin ny config.js eo akaikin ny application, na ao amin ny variables an ny conteneur, ny adiresy Supabase sy ny lakile public, avy eo avereno alaina ny pejy."
+	},
+	"mealPlan": {
+		"defaultName": "Sakafon’ny herinandro",
+		"title": "Drafitra sakafo",
+		"intro": "Mifidiana recette maromaro ho an’ny herinandro, dia mamorona lisitra fividianana iray ihany.",
+		"new": "Drafitra sakafo vaovao",
+		"empty": "Mbola tsy misy drafitra sakafo. Mamoròna iray ary mifidiana ny recette-n’ny herinandro.",
+		"recipeCount": {
+			"one": "Recette {count}",
+			"other": "Recette {count}"
+		},
+		"pickRecipes": "Mifidy recette",
+		"noRecipes": "Mbola tsy misy recette voatahiry. Manorata iray alohan’ny hamoronana drafitra.",
+		"back": "Miverina any amin’ny drafitra sakafo",
+		"name": "Anaran’ny drafitra",
+		"notFound": "Tsy misy io drafitra io, na tsy misy intsony.",
+		"noneYet": "Mbola tsy misy recette amin’ity drafitra ity. Mifidiana iray.",
+		"removeRecipe": "Esory {name} amin’ny drafitra",
+		"people": "Ho an’ny olona firy",
+		"day": {
+			"0": "Alatsinainy",
+			"1": "Talata",
+			"2": "Alarobia",
+			"3": "Alakamisy",
+			"4": "Zoma",
+			"5": "Sabotsy",
+			"6": "Alahady",
+			"label": "Andro",
+			"none": "Tsy voatondro"
+		},
+		"generate": "Lisitra fividianana",
+		"target": "Aiza no hanampiana ny entana",
+		"targetNew": "Ao amin’ny lisitra vaovao",
+		"generateSubmit": "Mamorona ny lisitra",
+		"delete": "Fafao ny drafitra",
+		"deleteConfirm": "Fafao {name}? Tsy hiova ny lisitra efa noforonina.",
+		"deleteYes": "Fafao"
 	}
 }

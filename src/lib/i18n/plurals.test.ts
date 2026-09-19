@@ -67,7 +67,8 @@ describe('formes plurielles', () => {
 			'chat.pushed',
 			'security.backupLeft',
 			'search.count',
-			'ai.willSend'
+			'ai.willSend',
+			'mealPlan.recipeCount'
 		]);
 	});
 

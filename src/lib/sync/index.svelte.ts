@@ -21,6 +21,8 @@ import {
 	toRecipe,
 	toRecipeIngredient,
 	toRecipeStep,
+	toMealPlan,
+	toMealPlanRecipe,
 	toShop
 } from './mapping';
 import { planRealtime, rowKey, type RealtimeEvent } from './realtime';
@@ -395,6 +397,8 @@ class SyncStore {
 			recipes,
 			recipeIngredients,
 			recipeSteps,
+			mealPlans,
+			mealPlanRecipes,
 			conversations,
 			conversationParticipants
 		] = await Promise.all([
@@ -422,6 +426,9 @@ class SyncStore {
 			// as for a list's items.
 			supabase.from('recipe_ingredients').select('*'),
 			supabase.from('recipe_steps').select('*'),
+			supabase.from('meal_plans').select('*').in('household_id', cercles),
+			// A meal plan's recipes carry no household of their own, same reason as recipe_ingredients.
+			supabase.from('meal_plan_recipes').select('*'),
 			// A direct conversation attaches to no circle: filtering on the displayed household would make it
 			// disappear. RLS only lets through the ones you take part in.
 			supabase.from('conversations').select('*'),
@@ -446,6 +453,8 @@ class SyncStore {
 			recipes,
 			recipeIngredients,
 			recipeSteps,
+			mealPlans,
+			mealPlanRecipes,
 			conversations,
 			conversationParticipants
 		]
@@ -509,6 +518,8 @@ class SyncStore {
 				db.recipes,
 				db.recipeIngredients,
 				db.recipeSteps,
+				db.mealPlans,
+				db.mealPlanRecipes,
 				db.conversations
 			],
 			async () => {
@@ -545,6 +556,8 @@ class SyncStore {
 					db.recipes.clear(),
 					db.recipeIngredients.clear(),
 					db.recipeSteps.clear(),
+					db.mealPlans.clear(),
+					db.mealPlanRecipes.clear(),
 					db.conversations.clear()
 				]);
 
@@ -573,6 +586,8 @@ class SyncStore {
 						(recipeIngredients.data ?? []).map(toRecipeIngredient)
 					),
 					db.recipeSteps.bulkAdd((recipeSteps.data ?? []).map(toRecipeStep)),
+					db.mealPlans.bulkAdd((mealPlans.data ?? []).map(toMealPlan)),
+					db.mealPlanRecipes.bulkAdd((mealPlanRecipes.data ?? []).map(toMealPlanRecipe)),
 					db.conversations.bulkAdd(
 						(conversations.data ?? []).map((row) =>
 							toConversation(row, participantsByConversation.get(row.id as string) ?? [])

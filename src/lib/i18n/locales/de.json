@@ -408,7 +408,8 @@
 			"one": "Für 1 Person",
 			"other": "Für {count} Personen"
 		},
-		"photoAlt": "Generiertes Foto von {name}"
+		"photoAlt": "Generiertes Foto von {name}",
+		"mealPlanLink": "Einen Essensplan für die Woche erstellen"
 	},
 	"aisles": {
 		"title": "Abteilungen",
@@ -1116,5 +1117,42 @@
 		"title": "Instanz nicht konfiguriert",
 		"body": "Diese Anwendung weiß noch nicht, mit welcher Datenbank sie sprechen soll.",
 		"hint": "Tragen Sie die Supabase-Adresse und den öffentlichen Schlüssel in config.js neben der Anwendung oder in den Variablen des Containers ein und laden Sie die Seite neu."
+	},
+	"mealPlan": {
+		"defaultName": "Menü der Woche",
+		"title": "Essensplaner",
+		"intro": "Wählen Sie mehrere Rezepte für die Woche und erstellen Sie daraus eine Einkaufsliste.",
+		"new": "Neuer Essensplan",
+		"empty": "Noch kein Essensplan. Erstellen Sie einen und wählen Sie die Rezepte der Woche.",
+		"recipeCount": {
+			"one": "{count} Rezept",
+			"other": "{count} Rezepte"
+		},
+		"pickRecipes": "Rezepte auswählen",
+		"noRecipes": "Noch kein Rezept gespeichert. Schreiben Sie eines, bevor Sie einen Plan erstellen.",
+		"back": "Zurück zu den Essensplänen",
+		"name": "Name des Essensplans",
+		"notFound": "Dieser Essensplan existiert nicht, oder nicht mehr.",
+		"noneYet": "Noch kein Rezept in diesem Plan. Wählen Sie eines aus.",
+		"removeRecipe": "{name} aus dem Plan entfernen",
+		"people": "Für wie viele Personen",
+		"day": {
+			"0": "Montag",
+			"1": "Dienstag",
+			"2": "Mittwoch",
+			"3": "Donnerstag",
+			"4": "Freitag",
+			"5": "Samstag",
+			"6": "Sonntag",
+			"label": "Tag",
+			"none": "Nicht geplant"
+		},
+		"generate": "Einkaufsliste",
+		"target": "Wohin die Artikel hinzufügen",
+		"targetNew": "In eine neue Liste",
+		"generateSubmit": "Liste erstellen",
+		"delete": "Essensplan löschen",
+		"deleteConfirm": "{name} löschen? Bereits erstellte Listen ändern sich nicht.",
+		"deleteYes": "Löschen"
 	}
 }

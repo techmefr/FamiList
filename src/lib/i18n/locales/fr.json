@@ -408,7 +408,8 @@
 			"one": "Pour 1 personne",
 			"other": "Pour {count} personnes"
 		},
-		"photoAlt": "Photo générée de {name}"
+		"photoAlt": "Photo générée de {name}",
+		"mealPlanLink": "Composer un menu de la semaine"
 	},
 	"aisles": {
 		"title": "Rayons",
@@ -1115,5 +1116,42 @@
 		"title": "Instance non configurée",
 		"body": "Cette application ne sait pas encore à quelle base de données parler.",
 		"hint": "Renseignez l'adresse Supabase et la clé publique dans config.js, à côté de l'application, ou dans les variables du conteneur, puis rechargez la page."
+	},
+	"mealPlan": {
+		"defaultName": "Menu de la semaine",
+		"title": "Menus",
+		"intro": "Choisissez plusieurs recettes pour la semaine, et générez-en une seule liste de courses.",
+		"new": "Nouveau menu",
+		"empty": "Aucun menu. Créez-en un et choisissez-y les recettes de la semaine.",
+		"recipeCount": {
+			"one": "{count} recette",
+			"other": "{count} recettes"
+		},
+		"pickRecipes": "Choisir des recettes",
+		"noRecipes": "Aucune recette enregistrée. Écrivez-en une avant de composer un menu.",
+		"back": "Retour aux menus",
+		"name": "Nom du menu",
+		"notFound": "Ce menu n’existe pas, ou plus.",
+		"noneYet": "Aucune recette dans ce menu pour l’instant. Choisissez-en une.",
+		"removeRecipe": "Retirer {name} du menu",
+		"people": "Pour combien de personnes",
+		"day": {
+			"0": "Lundi",
+			"1": "Mardi",
+			"2": "Mercredi",
+			"3": "Jeudi",
+			"4": "Vendredi",
+			"5": "Samedi",
+			"6": "Dimanche",
+			"label": "Jour",
+			"none": "Non planifié"
+		},
+		"generate": "Liste de courses",
+		"target": "Où ajouter les articles",
+		"targetNew": "Dans une nouvelle liste",
+		"generateSubmit": "Générer la liste",
+		"delete": "Supprimer le menu",
+		"deleteConfirm": "Supprimer {name} ? Les listes déjà générées ne changeront pas.",
+		"deleteYes": "Supprimer"
 	}
 }
