@@ -415,31 +415,37 @@
 		number says better. Read aloud, a slider announces "2.5"; `aria-valuetext` makes it "2.5x", which is
 		the real unit.
 	-->
-	<div
-		class="absolute end-[16px] top-1/2 flex -translate-y-1/2 flex-col items-center gap-3
-			rounded-full border border-white/15 bg-black/55 px-[10px] py-[16px] backdrop-blur-lg"
-	>
-		<span
-			class="text-label font-semibold tabular-nums text-white"
-			data-test-id="magnifier-level"
+	<!--
+		Hidden outside `live`: without a stream there is nothing to zoom, and left in place it sat behind the
+		denied/unsupported card, cutting its text off against the slider's rounded pill.
+	-->
+	{#if status === 'live'}
+		<div
+			class="absolute end-[16px] top-1/2 flex -translate-y-1/2 flex-col items-center gap-3
+				rounded-full border border-white/15 bg-black/55 px-[10px] py-[16px] backdrop-blur-lg"
 		>
-			{zoom.toFixed(1)}×
-		</span>
+			<span
+				class="text-label font-semibold tabular-nums text-white"
+				data-test-id="magnifier-level"
+			>
+				{zoom.toFixed(1)}×
+			</span>
 
-		<input
-			id="magnifier-zoom"
-			type="range"
-			min={ZOOM_MIN}
-			max={ZOOM_MAX}
-			step="0.1"
-			bind:value={zoom}
-			oninput={() => (touched = true)}
-			aria-label={t('magnifier.zoom')}
-			aria-valuetext="{zoom.toFixed(1)}×"
-			data-test-id="magnifier-slider"
-			class="fl-range-vertical accent-[var(--primary)]"
-		/>
-	</div>
+			<input
+				id="magnifier-zoom"
+				type="range"
+				min={ZOOM_MIN}
+				max={ZOOM_MAX}
+				step="0.1"
+				bind:value={zoom}
+				oninput={() => (touched = true)}
+				aria-label={t('magnifier.zoom')}
+				aria-valuetext="{zoom.toFixed(1)}×"
+				data-test-id="magnifier-slider"
+				class="fl-range-vertical accent-[var(--primary)]"
+			/>
+		</div>
+	{/if}
 
 	<!--
 		The controls carry their name in full. An icon alone has to be guessed — a lightning bolt, a
