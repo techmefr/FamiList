@@ -45,6 +45,13 @@
 	let codeSent = $state(false);
 	let code = $state('');
 
+	/**
+	 * The forgot-password path. It only sends an email — the redirect it carries is the one that leads
+	 * back here, to `/auth/reset`, where the actual password change happens.
+	 */
+	let forgotPassword = $state(false);
+	let resetSent = $state(false);
+
 	const providers = enabledProviders();
 
 	const MODES = ['signin', 'signup'] as const;
@@ -86,6 +93,28 @@
 		codeSent = false;
 		code = '';
 		session.error = null;
+	}
+
+	function openForgotPassword() {
+		forgotPassword = true;
+		resetSent = false;
+		session.error = null;
+	}
+
+	function closeForgotPassword() {
+		forgotPassword = false;
+		resetSent = false;
+		session.error = null;
+	}
+
+	async function sendReset(event: SubmitEvent) {
+		event.preventDefault();
+		busy = true;
+
+		const ok = await session.sendPasswordReset(email);
+		busy = false;
+
+		if (ok) resetSent = true;
 	}
 
 	async function submit(event: SubmitEvent) {
@@ -134,6 +163,79 @@
 			</div>
 		</Card.Content>
 	</Card.Root>
+{:else if forgotPassword}
+	{#if resetSent}
+		<Card.Root class="fl-pop-in mt-6">
+			<Card.Content class="flex gap-3">
+				<CheckCircle2 class="text-primary mt-0.5 shrink-0" size={22} aria-hidden="true" />
+				<div class="space-y-2">
+					<p class="text-product font-medium">{t('auth.resetSentTitle')}</p>
+					<p class="text-muted-foreground">{t('auth.resetSentBody', { email })}</p>
+				</div>
+			</Card.Content>
+		</Card.Root>
+
+		<Button
+			variant="ghost"
+			class="mt-2 w-full"
+			onclick={closeForgotPassword}
+			data-test-id="auth-forgot-back"
+		>
+			{t('auth.backToSignIn')}
+		</Button>
+	{:else}
+		<form
+			onsubmit={sendReset}
+			class="bg-card shadow-fl-1 mt-6 space-y-5 rounded-xl border p-5"
+			data-test-id="auth-forgot-form"
+		>
+			<div class="space-y-2">
+				<p class="text-product font-medium">{t('auth.forgotPasswordTitle')}</p>
+				<p class="text-muted-foreground text-label">{t('auth.forgotPasswordBody')}</p>
+			</div>
+
+			<div>
+				<Label for="auth-forgot-email">{t('auth.email')}</Label>
+				<IconField icon={Mail}>
+					<Input
+						id="auth-forgot-email"
+						type="email"
+						bind:value={email}
+						data-test-id="auth-forgot-email"
+						autocomplete="email"
+						required
+						placeholder={t('auth.emailPlaceholder')}
+					/>
+				</IconField>
+			</div>
+
+			{#if session.error}
+				<p class="text-destructive text-label" role="alert" data-test-id="auth-error">
+					{session.error}
+				</p>
+			{/if}
+
+			<Button
+				type="submit"
+				disabled={busy}
+				data-test-id="auth-forgot-submit"
+				class="fl-press w-full"
+			>
+				{busy ? t('common.loading') : t('auth.forgotPasswordSubmit')}
+			</Button>
+
+			<Button
+				type="button"
+				variant="ghost"
+				class="w-full"
+				disabled={busy}
+				onclick={closeForgotPassword}
+				data-test-id="auth-forgot-cancel"
+			>
+				{t('auth.backToSignIn')}
+			</Button>
+		</form>
+	{/if}
 {:else}
 	<fieldset
 		class="border-input mt-6 grid grid-cols-2 gap-1 rounded-lg border bg-[var(--muted)]/60 p-1"
@@ -289,7 +391,19 @@
 		</div>
 
 		<div>
-			<Label for="auth-password">{t('auth.password')}</Label>
+			<div class="flex items-baseline justify-between gap-3">
+				<Label for="auth-password">{t('auth.password')}</Label>
+				{#if mode === 'signin'}
+					<button
+						type="button"
+						class="text-caption text-primary hover:underline"
+						onclick={openForgotPassword}
+						data-test-id="auth-forgot-password"
+					>
+						{t('auth.forgotPassword')}
+					</button>
+				{/if}
+			</div>
 			<!--
 				The type changes, not the field: rewriting the element would make it lose focus and the cursor in the
 				middle of typing.

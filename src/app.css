@@ -300,6 +300,17 @@
 	--fl-font-scale: 2.3;
 }
 
+/*
+ * At the three largest text sizes, a two-column form (first name / last name / display name /
+ * save) no longer has room for the label above each input without wrapping mid-word. One field
+ * per line stays readable; two columns of unreadable text does not.
+ */
+[data-scale='xl'] .name-form,
+[data-scale='xxl'] .name-form,
+[data-scale='comfort'] .name-form {
+	grid-template-columns: 1fr;
+}
+
 @theme inline {
 	--color-background: var(--background);
 	--color-foreground: var(--foreground);

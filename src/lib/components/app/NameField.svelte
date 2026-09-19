@@ -92,8 +92,18 @@
 	which stays short. The badge initials are computed again from these fields, they have nothing to enter on
 	their own side.
 -->
-<form onsubmit={save} class="flex flex-wrap items-end gap-3" data-test-id="name-form">
-	<div class="min-w-0 flex-1 basis-40">
+<!--
+	A grid rather than a wrapping flex row: the display name carries a caption underneath it that the
+	other two fields don't have, and bottom-aligning mismatched heights shifted their inputs out of line
+	with each other. A grid's cells size independently, so the caption no longer drags on its neighbours.
+
+	Two explicit columns rather than however many fit: an unpredictable wrap point (three across, then
+	two, then one) reads as broken layout more than a deliberate one. At the largest text sizes the
+	labels and inputs need the full row's width to stay legible, so those scales fall back to one field
+	per line below.
+-->
+<form onsubmit={save} class="name-form grid grid-cols-2 items-start gap-3" data-test-id="name-form">
+	<div class="min-w-0">
 		<Label for="first-name">{t('profile.firstName')}</Label>
 		<Input
 			id="first-name"
@@ -105,7 +115,7 @@
 		/>
 	</div>
 
-	<div class="min-w-0 flex-1 basis-40">
+	<div class="min-w-0">
 		<Label for="last-name">{t('profile.lastName')}</Label>
 		<Input
 			id="last-name"
@@ -117,7 +127,7 @@
 		/>
 	</div>
 
-	<div class="min-w-0 flex-1 basis-48">
+	<div class="min-w-0">
 		<Label for="display-name">{t('profile.name')}</Label>
 		<Input
 			id="display-name"
@@ -131,17 +141,23 @@
 		<p class="text-muted-foreground text-caption mt-1">{t('profile.nameHint')}</p>
 	</div>
 
-	<Button type="submit" disabled={busy || !changed} data-test-id="name-save" class="fl-press">
-		{#if saved}
-			<Check size={18} aria-hidden="true" data-test-id="name-saved" />
-			{t('profile.nameSaved')}
-		{:else}
-			{t('profile.nameSave')}
-		{/if}
-	</Button>
+	<div class="flex min-w-0 items-start">
+		<Button type="submit" disabled={busy || !changed} data-test-id="name-save" class="fl-press">
+			{#if saved}
+				<Check size={18} aria-hidden="true" data-test-id="name-saved" />
+				{t('profile.nameSaved')}
+			{:else}
+				{t('profile.nameSave')}
+			{/if}
+		</Button>
+	</div>
 
 	{#if error}
-		<p class="text-destructive text-caption basis-full" role="alert" data-test-id="name-error">
+		<p
+			class="text-destructive text-caption col-span-2"
+			role="alert"
+			data-test-id="name-error"
+		>
 			{t('profile.nameFailed')}
 		</p>
 	{/if}
