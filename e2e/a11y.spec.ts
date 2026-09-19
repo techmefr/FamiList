@@ -35,6 +35,27 @@ test.describe('accessibilite', () => {
 		await expectNoNewViolations(page, 'connexion');
 	});
 
+	test('mot de passe oublie', async ({ page }) => {
+		await presetAppearance(page);
+		await page.goto('/auth');
+		await page.getByTestId('auth-forgot-password').click();
+		await expect(page.getByTestId('auth-forgot-form')).toBeVisible();
+
+		await expectNoNewViolations(page, 'mot-de-passe-oublie');
+	});
+
+	/**
+	 * With no session and no recovery hash, the screen has nothing to work with: this is the invalid-link
+	 * state, reachable without going through a real email.
+	 */
+	test('reinitialisation lien invalide', async ({ page }) => {
+		await presetAppearance(page);
+		await page.goto('/auth/reset');
+		await expect(page.getByTestId('reset-back-to-auth')).toBeVisible({ timeout: 15_000 });
+
+		await expectNoNewViolations(page, 'reinitialisation-lien-invalide');
+	});
+
 	for (const { screen, path, ready } of ROUTES) {
 		test(screen, async ({ signedInPage: page }) => {
 			await page.goto(path);

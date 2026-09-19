@@ -153,7 +153,7 @@
 
 	// Exact comparison: /auth/pending speaks about an account, so it assumes a session. A
 	// startsWith('/auth') would make it public and leave the waiting screen up after a sign-out.
-	const PUBLIC_ROUTES = ['/auth', '/welcome'];
+	const PUBLIC_ROUTES = ['/auth', '/auth/reset', '/welcome'];
 	const isPublic = $derived(PUBLIC_ROUTES.includes(page.url.pathname));
 
 	/**
@@ -192,6 +192,10 @@
 			if (page.url.pathname !== '/auth/pending') goto('/auth/pending');
 			return;
 		}
+
+		// A recovery link signs a person in on purpose, to let them set a new password — sending them
+		// straight to '/' would skip the one screen the link was for.
+		if (page.url.pathname === '/auth/reset') return;
 
 		if (isPublic || page.url.pathname.startsWith('/auth')) goto('/');
 	});
