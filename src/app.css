@@ -1476,6 +1476,67 @@ button[data-slot='switch'][data-state='checked'] {
 	transform: translateX(calc(-1 * var(--fl-switch-travel)));
 }
 
+/**
+ * The sign-in/sign-up panel.
+ *
+ * A deeper radius and a softer, wider shadow than the rest of the app's cards: this screen has exactly one
+ * job, so it gets to look like it — the single focal surface on an otherwise empty page, closer to a modern
+ * paid app's welcome screen than to a settings list.
+ */
+.fl-auth-card {
+	background: var(--card);
+	border: 1px solid var(--border);
+	border-radius: 1.75rem;
+	padding: 1.75rem 1.375rem;
+	box-shadow: var(--fl-shadow-3);
+}
+
+/**
+ * The primary action on that screen: full width, pill-shaped, and taller than the app's usual button —
+ * the one thing a thumb should never hesitate to find.
+ */
+.fl-auth-submit {
+	border-radius: 9999px;
+	min-height: max(3.25rem, 52px);
+	font-size: 1.0625rem;
+}
+
+/**
+ * Two soft, blurred colour fields behind the sign-in screen. Fixed and behind everything (`-z-10`), so they
+ * never intercept a tap and never move with the form's own height changes (password reveal, error text,
+ * mode switch). Pure decoration — `aria-hidden` on the element itself keeps it out of the accessibility tree.
+ */
+.fl-auth-glow {
+	position: fixed;
+	inset: 0;
+	z-index: -1;
+	overflow: hidden;
+	pointer-events: none;
+}
+
+.fl-auth-glow::before,
+.fl-auth-glow::after {
+	content: '';
+	position: absolute;
+	width: 24rem;
+	height: 24rem;
+	border-radius: 9999px;
+	filter: blur(70px);
+	opacity: 0.32;
+}
+
+.fl-auth-glow::before {
+	top: -9rem;
+	inset-inline-end: -7rem;
+	background: var(--primary);
+}
+
+.fl-auth-glow::after {
+	bottom: -11rem;
+	inset-inline-start: -9rem;
+	background: var(--secondary);
+}
+
 /*
  * The creation sheet, opened by the central button.
  *

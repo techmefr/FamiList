@@ -17,16 +17,23 @@
 	<title>{title} — {t('app.name')}</title>
 </svelte:head>
 
+<div class="fl-auth-glow" aria-hidden="true"></div>
+
 <!--
-	The brand before everything else: this is the application's first screen, and until now nothing on it said
-	where you were. Decorative twice over — the name is written beside it, and the title says it again.
+	The brand mark, on its own, in a coloured badge: a single focal point at the top of an otherwise empty
+	screen, the way a paid app's welcome screen introduces itself before asking anything.
 -->
-<p class="text-h2 text-primary flex items-center justify-center gap-2.5 font-semibold">
-	<Logo />
+<div
+	class="bg-primary text-primary-foreground shadow-fl-2 mx-auto flex size-16 items-center justify-center rounded-[1.375rem]"
+>
+	<Logo class="h-8" />
+</div>
+
+<p class="text-muted-foreground text-label mt-4 text-center font-medium tracking-wide uppercase">
 	{t('app.name')}
 </p>
 
-<h1 class="text-h1 mt-8 text-center font-semibold">{title}</h1>
+<h1 class="text-display mt-2 text-center leading-tight font-semibold tracking-tight">{title}</h1>
 <p class="text-muted-foreground mt-2 text-center text-balance">{body}</p>
 
 <AuthForm bind:mode />
