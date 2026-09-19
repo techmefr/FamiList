@@ -93,6 +93,34 @@ export function recipePrompt(products: string[], options: PromptOptions): string
 	].join('\n');
 }
 
+/**
+ * The request sent when a page publishes no schema.org `Recipe` (#182): the same shape as `recipePrompt`,
+ * asked from the page's own readable text instead of the household's purchases.
+ *
+ * This text has already left the instance's edge function once, guarded against SSRF and capped in size by
+ * `readableText`; sending it on to the person's own provider is a second, explicit step the screen must
+ * announce before it happens, exactly like `recipePrompt`'s sending screen.
+ */
+export function recipeExtractionPrompt(pageText: string, options: PromptOptions): string {
+	const servings = clampServings(options.servings);
+
+	return [
+		`Voici le texte d une page web qui publie une recette de cuisine.`,
+		'Texte de la page :',
+		pageText,
+		'',
+		`Ecris la recette qu elle decrit, en ${options.language}.`,
+		`Si le texte ne precise pas de nombre de personnes, prevois-la pour ${servings} personnes.`,
+		'Reponds uniquement par un objet JSON, sans texte autour et sans bloc de code.',
+		'Forme exacte attendue :',
+		'{"name":"","emoji":"","servings":0,"ingredients":[{"name":"","qty":"","unit":""}],"steps":[""]}',
+		'"emoji" est un seul caractere emoji.',
+		`"unit" vaut obligatoirement l'une de ces valeurs : ${UNITS.join(', ')}.`,
+		'"qty" est un nombre ecrit en chiffres, ou une chaine vide si la quantite ne se compte pas.',
+		'"steps" contient les etapes de preparation, une par entree, dans l ordre.'
+	].join('\n');
+}
+
 const clampServings = (value: number): number => {
 	if (!Number.isFinite(value)) return DEFAULT_SERVINGS;
 

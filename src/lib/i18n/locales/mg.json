@@ -349,6 +349,12 @@
 			"submit": "Ampidiro ny fomba fahandroana",
 			"loading": "Mamaky ny pejy…",
 			"review": "Voaray ny fomba fahandroana. Vakio tsara alohan'ny hitahiry: ny andalana tsy vita zaraina dia niverina araka ny nanoratana azy.",
+			"ai": {
+				"offer": "Ity pejy ity dia tsy mamoaka fahandro azo vakiana. Azo alefa amin’ny mpamatsy AI voafaritrao ny lahatsoratr’ity pejy ity mba hanandramana mamoaka fahandro avy amin’izany.",
+				"privacy": "Ny lahatsoratry ny pejy dia tsy hiala amin’ny fitaovanao raha tsy manindry ny bokotra etsy ambany ianao, mankany amin’ny mpamatsy efa voafaritra ao amin’ny fandrindrana AI-nao. Raha tsy izany dia tsy misy alefa.",
+				"submit": "Andramo amin’ny AI",
+				"loading": "Mamaky..."
+			},
 			"social": "Tsy mamoaka fomba fahandroana azo vakiana ny Instagram sy ny TikTok: tsy azo ampidirina ny rohiny.",
 			"error": {
 				"invalid": "Tsy azo vakiana ity adiresy ity.",

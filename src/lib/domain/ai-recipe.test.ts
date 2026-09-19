@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest';
 import {
 	MAX_PRODUCTS,
 	parseRecipeSuggestion,
+	recipeExtractionPrompt,
 	recipePrompt,
 	shoppedProducts,
 	type Purchase
@@ -90,6 +91,33 @@ describe('recipePrompt', () => {
 		const prompt = recipePrompt(['Courgettes'], { language: 'français', servings: 4 });
 
 		expect(prompt).not.toContain('Lardons');
+	});
+});
+
+describe('recipeExtractionPrompt', () => {
+	it('contient le texte de la page et la langue demandee', () => {
+		const prompt = recipeExtractionPrompt('600 g de courgettes, enfourner 30 minutes', {
+			language: 'français',
+			servings: 4
+		});
+
+		expect(prompt).toContain('600 g de courgettes, enfourner 30 minutes');
+		expect(prompt).toContain('français');
+	});
+
+	it('impose la meme forme JSON que recipePrompt', () => {
+		const prompt = recipeExtractionPrompt('texte', { language: 'français', servings: 4 });
+
+		expect(prompt).toContain(
+			'{"name":"","emoji":"","servings":0,"ingredients":[{"name":"","qty":"","unit":""}],"steps":[""]}'
+		);
+	});
+
+	it('ramene un nombre de parts absurde dans les bornes', () => {
+		expect(recipeExtractionPrompt('texte', { language: 'fr', servings: 0 })).toContain('1 personnes');
+		expect(recipeExtractionPrompt('texte', { language: 'fr', servings: 5000 })).toContain(
+			'99 personnes'
+		);
 	});
 });
 
