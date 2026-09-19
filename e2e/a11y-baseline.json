@@ -3,11 +3,14 @@
 	"accueil-confort": {},
 	"accueil-sombre": {},
 	"administration": {},
+	"bienvenue-langue": {},
+	"bienvenue-taille": {},
 	"cartes": {},
 	"connexion": {},
 	"creation-de-liste": {},
 	"creation-de-recette": {},
 	"detail-de-liste": {},
+	"detail-de-liste-avec-article": {},
 	"discussion": {},
 	"foyer": {},
 	"installation": {},
@@ -16,8 +19,10 @@
 	"magasins": {},
 	"messages-prives": {},
 	"prix": {},
+	"prix-avec-produit": {},
 	"profil": {},
 	"recettes": {},
 	"securite": {},
-	"signalement": {}
+	"signalement": {},
+	"suppression-de-compte": {}
 }
