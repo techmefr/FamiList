@@ -22,7 +22,9 @@ function instanceConfig(mode: string): Plugin {
 
 		return `window.__FAMILIST_CONFIG__ = ${JSON.stringify({
 			url: env.PUBLIC_SUPABASE_URL ?? '',
-			anonKey: env.PUBLIC_SUPABASE_ANON_KEY ?? ''
+			anonKey: env.PUBLIC_SUPABASE_ANON_KEY ?? '',
+			// Facultatif : DSN Sentry propre a cette instance. Absent partout ailleurs, il ne change rien.
+			sentryDsn: env.PUBLIC_SENTRY_DSN ?? ''
 		})};\n`;
 	};
 
