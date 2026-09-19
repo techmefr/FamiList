@@ -7,7 +7,7 @@
 	import { motionMs, settings } from '$stores/settings.svelte';
 	import { createIntent } from '$stores/create.svelte';
 	import { i18n, t } from '$i18n/index.svelte';
-	import { TINTS } from '$domain/tint';
+	import { TINTS, DEFAULT_TINT } from '$domain/tint';
 	import { reminderStatus } from '$domain/reminder';
 	import { remindersSupported, requestReminderPermission } from '$native/reminders';
 	import * as Card from '$components/ui/card';
@@ -26,7 +26,8 @@
 		ListChecks,
 		CalendarDays,
 		Users,
-		Lock
+		Lock,
+		Check
 	} from '@lucide/svelte';
 	import IconField from '$components/app/IconField.svelte';
 	import EmptyState from '$components/app/EmptyState.svelte';
@@ -170,6 +171,18 @@
 	const STAGGER_MS = 45;
 	const STAGGER_MAX = 6;
 	const delay = (index: number) => Math.min(index, STAGGER_MAX) * STAGGER_MS;
+
+	/** The shape of the stack while it loads: three cards, the usual size of a household's home. */
+	const SKELETON_COUNT = 3;
+
+	const actionClass =
+		'fl-press text-muted-foreground hover:text-foreground hover:bg-muted grid size-11 min-w-[44px] ' +
+		'place-items-center rounded-full transition-colors';
+
+	function openCreate() {
+		feedback.play('tap');
+		creating = true;
+	}
 </script>
 
 <svelte:head>
@@ -182,7 +195,7 @@
 	<form
 		onsubmit={create}
 		transition:slide={{ duration: motionMs(220), easing: cubicOut }}
-		class="bg-card mt-6 space-y-3 rounded-xl border p-4"
+		class="fl-home-card bg-card mt-6 space-y-3 p-4"
 	>
 		<div class="grid gap-3 sm:grid-cols-[auto_1fr]">
 			<div class="w-20">
@@ -229,14 +242,16 @@
 			</p>
 		</div>
 		<div class="flex flex-wrap items-stretch gap-2">
-			<Button type="submit" data-test-id="list-create" class="fl-press">{t('common.save')}</Button>
+			<Button type="submit" data-test-id="list-create" class="fl-press flex-auto rounded-full">
+				{t('common.save')}
+			</Button>
 			{#if renamed}
 				<Button
 					type="button"
 					variant="outline"
 					onclick={cancel}
 					data-test-id="list-rename-cancel"
-					class="fl-press"
+					class="fl-press rounded-full"
 				>
 					{t('common.cancel')}
 				</Button>
@@ -257,9 +272,46 @@
 {/if}
 
 {#if !data.ready}
-	<p class="text-muted-foreground mt-6">{t('common.loading')}</p>
+	<!--
+		The placeholders draw the stack that is about to appear, so the screen does not jump from a sentence
+		to three cards. The sentence stays for the screen reader, which cannot read a shape.
+	-->
+	<p class="sr-only" role="status">{t('common.loading')}</p>
+	<ul class="mt-6 space-y-3" aria-hidden="true">
+		{#each { length: SKELETON_COUNT } as _, index (index)}
+			<li class="fl-home-card bg-card flex items-center gap-4 p-4">
+				<span class="fl-home-skeleton size-12 shrink-0 rounded-2xl"></span>
+				<span class="flex-1 space-y-2.5">
+					<span class="fl-home-skeleton block h-4 w-2/5"></span>
+					<span class="fl-home-skeleton block h-3 w-3/5"></span>
+				</span>
+			</li>
+		{/each}
+	</ul>
 {:else if data.lists.length === 0}
-	<EmptyState illustration="lists" text={t('lists.empty')} testId="lists-empty" />
+	<!--
+		The first screen of a new household. It borrows the sign-in screen's glow and card: the person has just
+		come from there, and the home should feel like the same product welcoming them, not a blank table. The
+		one thing to do is a real button, not a dashed outline at the bottom of nothing.
+	-->
+	<div class="fl-auth-glow" aria-hidden="true"></div>
+	<div class="fl-auth-card fl-rise mt-6">
+		<EmptyState illustration="lists" text={t('lists.empty')} testId="lists-empty">
+			{#snippet action()}
+				{#if !creating}
+					<Button
+						type="button"
+						onclick={openCreate}
+						data-test-id="new-list-card"
+						class="fl-press fl-auth-submit mt-2 w-full max-w-xs"
+					>
+						<Plus size={20} aria-hidden="true" />
+						{t('lists.new')}
+					</Button>
+				{/if}
+			{/snippet}
+		</EmptyState>
+	</div>
 {:else}
 	<ul class="mt-6 space-y-3">
 		{#each data.lists as list, index (list.id)}
@@ -270,7 +322,7 @@
 				animate:flip={{ duration: motionMs(280), easing: cubicOut }}
 				out:slide={{ duration: motionMs(180), easing: cubicOut }}
 			>
-				<Card.Root data-test-class="list-card" class="fl-press">
+				<Card.Root data-test-class="list-card" class="fl-home-card fl-press ring-0">
 					<Card.Content class="flex flex-wrap items-center gap-x-4 gap-y-3">
 						<!--
 							The long press opens renaming: it is the thumb's gesture, and it avoids adding a third button to a
@@ -282,9 +334,15 @@
 							use:longpress={() => rename(list)}
 							class="flex min-w-0 flex-auto flex-wrap items-center gap-4"
 						>
-							<span class="text-h1" aria-hidden="true">{list.emoji}</span>
+							<span
+								class="fl-home-emoji text-h1"
+								style="--fl-home-tint: {list.color || DEFAULT_TINT}"
+								aria-hidden="true"
+							>
+								{list.emoji}
+							</span>
 							<span class="min-w-0 flex-1 basis-[6rem]">
-								<span class="text-product block font-medium break-words">{list.name}</span>
+								<span class="text-product block font-semibold break-words">{list.name}</span>
 								<span class="text-muted-foreground text-label block">
 									{t('lists.progress', { done, total })}
 								</span>
@@ -314,14 +372,30 @@
 							fell alone onto the next one, on the left: the most destructive action ended up in the most visible
 							place.
 						-->
-						<div class="ms-auto flex shrink-0 items-center gap-2">
-							<Badge variant="secondary">{t('lists.remaining', { count: total - done })}</Badge>
+						<div class="ms-auto flex shrink-0 items-center gap-1.5">
+							<!--
+								A finished list earns its tick: "0 remaining" is true but reads like an error, where the green
+								pill says the errand is done. The number keeps speaking for every other state.
+							-->
+							{#if total > 0 && done === total}
+								<Badge
+									variant="secondary"
+									class="text-secondary gap-1 rounded-full bg-[var(--fl-secondary-tint)] font-semibold"
+								>
+									<Check size={12} aria-hidden="true" />
+									{t('lists.remaining', { count: 0 })}
+								</Badge>
+							{:else}
+								<Badge variant="secondary" class="rounded-full">
+									{t('lists.remaining', { count: total - done })}
+								</Badge>
+							{/if}
 							<button
 								type="button"
 								onclick={() => rename(list)}
 								aria-label={t('lists.rename', { name: list.name })}
 								data-test-class="list-rename"
-								class="fl-press text-muted-foreground hover:text-foreground grid size-11 min-w-[44px] place-items-center rounded-md transition-colors"
+								class={actionClass}
 							>
 								<Pencil size={18} aria-hidden="true" />
 							</button>
@@ -338,7 +412,7 @@
 								}}
 								aria-label={t('lists.duplicate', { name: list.name })}
 								data-test-class="list-duplicate"
-								class="fl-press text-muted-foreground hover:text-foreground grid size-11 min-w-[44px] place-items-center rounded-md transition-colors"
+								class={actionClass}
 							>
 								<Copy size={18} aria-hidden="true" />
 							</button>
@@ -350,7 +424,7 @@
 								}}
 								aria-label={t('lists.delete', { name: list.name })}
 								data-test-class="list-delete"
-								class="fl-press text-muted-foreground hover:text-destructive grid size-11 min-w-[44px] place-items-center rounded-md transition-colors"
+								class="{actionClass} hover:text-destructive"
 							>
 								<Trash2 size={18} aria-hidden="true" />
 							</button>
@@ -399,15 +473,12 @@
 	you have. The dashed outline tells it from the real ones without making it one more control to ignore;
 	it disappears when the form is already open, so as not to offer the same thing twice.
 -->
-{#if data.ready && !creating}
+{#if data.ready && !creating && data.lists.length > 0}
 	<button
 		type="button"
-		onclick={() => {
-			feedback.play('tap');
-			creating = true;
-		}}
+		onclick={openCreate}
 		data-test-id="new-list-card"
-		class="fl-press border-input text-primary text-label mt-3 flex min-h-[max(3.5rem,56px)] w-full items-center justify-center gap-2 rounded-xl border border-dashed font-medium"
+		class="fl-press border-input text-primary text-label hover:bg-[var(--fl-primary-tint)] mt-3 flex min-h-[max(3.5rem,56px)] w-full items-center justify-center gap-2 rounded-[1.375rem] border border-dashed font-medium transition-colors"
 	>
 		<Plus size={20} aria-hidden="true" />
 		{t('lists.new')}

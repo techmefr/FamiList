@@ -1578,6 +1578,64 @@ button[data-slot='switch'][data-state='checked'] {
 	background: color-mix(in srgb, var(--background) 55%, transparent);
 }
 
+/**
+ * The home screen's surfaces: a list card, and the form that creates one.
+ *
+ * The same family as `.fl-auth-card` — deep corners, a soft shadow instead of a hairline ring — but one step
+ * lighter: there are several of them on the screen, and a stack of focal surfaces is no longer focal. The
+ * shadow deepens under the pointer where there is one; a thumb never hovers, and the press already speaks.
+ */
+.fl-home-card {
+	border: 1px solid var(--border);
+	border-radius: 1.375rem;
+	box-shadow: var(--fl-shadow-2);
+	transition:
+		box-shadow var(--fl-dur-tap) var(--fl-ease),
+		transform var(--fl-dur-tap) var(--fl-ease);
+}
+
+@media (hover: hover) {
+	.fl-home-card:hover {
+		box-shadow: var(--fl-shadow-3);
+	}
+}
+
+/**
+ * The list's emoji on a disc of its own tint.
+ *
+ * Every list has carried a colour since its creation, and the home screen had never shown it. The disc
+ * gives each card an identity at a glance — the birthday list and the weekly run no longer look like two
+ * rows of the same table. Sized in `em` so it grows with the text setting instead of squeezing the emoji.
+ */
+.fl-home-emoji {
+	--fl-home-tint: var(--primary);
+	display: grid;
+	place-items: center;
+	inline-size: 1.65em;
+	block-size: 1.65em;
+	flex: none;
+	border-radius: 0.55em;
+	line-height: 1;
+	background: color-mix(in srgb, var(--fl-home-tint) 16%, var(--card));
+}
+
+/** A placeholder card, while the lists are still on their way: the shape of what is coming, not a sentence. */
+.fl-home-skeleton {
+	background: var(--muted);
+	border-radius: 9999px;
+	animation: fl-shimmer 1.4s var(--fl-ease) infinite;
+}
+
+@keyframes fl-shimmer {
+	0%,
+	100% {
+		opacity: 0.55;
+	}
+	50% {
+		opacity: 1;
+	}
+}
+
 /*
  * The creation sheet, opened by the central button.
  *
