@@ -23,6 +23,15 @@
 	let target = $state('');
 	let toDelete = $state(false);
 
+	// Both are per-plan choices, not per-component: without this, navigating from one plan straight to
+	// another (the route reuses the same component instance) could show the delete confirmation for the
+	// plan just left, or keep a target list selected that has nothing to do with the new one.
+	$effect(() => {
+		void planId;
+		target = '';
+		toDelete = false;
+	});
+
 	function recipeOf(recipeId: string) {
 		return data.recipe(recipeId);
 	}
