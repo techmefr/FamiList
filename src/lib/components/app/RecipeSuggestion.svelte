@@ -3,7 +3,7 @@
 	import { ai } from '$stores/ai.svelte';
 	import { data } from '$stores/data.svelte';
 	import { feedback } from '$stores/feedback.svelte';
-	import { recipePrompt, shoppedProducts, type SuggestedRecipe } from '$domain/ai-recipe';
+	import { recipePrompt, restrictionsOf, shoppedProducts, type SuggestedRecipe } from '$domain/ai-recipe';
 	import { DEFAULT_SERVINGS, MAX_SERVINGS, MIN_SERVINGS } from '$domain/recipe';
 	import { Button } from '$components/ui/button';
 	import { Input } from '$components/ui/input';
@@ -28,7 +28,10 @@
 	 * is what leaves — two separate computations would end up diverging at the first change.
 	 */
 	const products = $derived(shoppedProducts(data.items));
-	const prompt = $derived(recipePrompt(products, { language: language, servings: servings }));
+	const restrictions = $derived(restrictionsOf(data.householdPersons));
+	const prompt = $derived(
+		recipePrompt(products, { language: language, servings: servings, restrictions })
+	);
 
 	function toggle() {
 		isOpen = !isOpen;

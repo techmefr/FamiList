@@ -860,6 +860,13 @@
 	"household": {
 		"title": "A minha casa",
 		"members": "Membros",
+		"people": "Pessoas do lar",
+		"peopleHint": "Adicione as pessoas do lar que não têm conta — crianças, convidados — e anote as restrições alimentares ou alergias de cada uma. Elas são consideradas nas sugestões de receitas.",
+		"personNameLabel": "Nome",
+		"personAdd": "Adicionar",
+		"personRemove": "Remover",
+		"dietaryNotesLabel": "Restrições alimentares",
+		"dietaryNotesPlaceholder": "Ex. alergia a nozes, sem lactose…",
 		"circles": "Os meus círculos",
 		"circlesHint": "Só se vê um círculo de cada vez: é ele que decide as listas, as lojas e os cartões que aparecem. As suas listas pessoais acompanham-no em todos.",
 		"circleShown": "Apresentado",

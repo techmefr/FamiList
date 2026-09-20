@@ -7,7 +7,7 @@
 	import { createIntent } from '$stores/create.svelte';
 	import { i18n, t, LOCALES } from '$i18n/index.svelte';
 	import { DEFAULT_SERVINGS, MAX_SERVINGS, MIN_SERVINGS, type RecipeLine } from '$domain/recipe';
-	import { recipeExtractionPrompt, type SuggestedRecipe } from '$domain/ai-recipe';
+	import { recipeExtractionPrompt, restrictionsOf, type SuggestedRecipe } from '$domain/ai-recipe';
 	import {
 		importErrorOf,
 		importedLines,
@@ -231,7 +231,11 @@
 		aiExtracting = true;
 		aiExtractError = '';
 
-		const prompt = recipeExtractionPrompt(text, { language, servings: DEFAULT_SERVINGS });
+		const prompt = recipeExtractionPrompt(text, {
+			language,
+			servings: DEFAULT_SERVINGS,
+			restrictions: restrictionsOf(data.householdPersons)
+		});
 		const issue = await ai.suggestRecipe(prompt);
 		aiExtracting = false;
 

@@ -20,6 +20,7 @@ import {
 	type RecipeStep,
 	type MealPlan,
 	type MealPlanRecipe,
+	type HouseholdPerson,
 	type Shop,
 	type ShopItemOrder,
 	type ShopLayout
@@ -48,6 +49,7 @@ import {
 	fromRecipeStep,
 	fromMealPlan,
 	fromMealPlanRecipe,
+	fromHouseholdPerson,
 	fromShop
 } from '$sync/mapping';
 import { copiedItem, copyName } from '$domain/duplicate';
@@ -109,6 +111,7 @@ class DataStore {
 	private cachedPrices = $state<Price[]>([]);
 	private cachedRecipes = $state<Recipe[]>([]);
 	private cachedMealPlans = $state<MealPlan[]>([]);
+	private cachedHouseholdPersons = $state<HouseholdPerson[]>([]);
 
 	// What is read per list, per shop or per recipe is not filtered here: the foreign key already does
 	// it, and those tables have no circle of their own.
@@ -140,6 +143,7 @@ class DataStore {
 	prices = $derived(ofCircle(this.cachedPrices, this.circle));
 	recipes = $derived(ofCircle(this.cachedRecipes, this.circle));
 	mealPlans = $derived(ofCircle(this.cachedMealPlans, this.circle));
+	householdPersons = $derived(ofCircle(this.cachedHouseholdPersons, this.circle));
 	lists = $derived(visibleLists(this.cachedLists, this.circle));
 
 	activeShop = $derived(this.shops.find((s) => s.id === this.activeShopId) ?? this.shops[0]);
@@ -210,6 +214,7 @@ class DataStore {
 			recipeSteps,
 			mealPlans,
 			mealPlanRecipes,
+			householdPersons,
 			conversations
 		] = await Promise.all([
 			db.shops.toArray(),
@@ -230,6 +235,7 @@ class DataStore {
 			db.recipeSteps.toArray(),
 			db.mealPlans.toArray(),
 			db.mealPlanRecipes.toArray(),
+			db.householdPersons.toArray(),
 			db.conversations.toArray()
 		]);
 
@@ -251,6 +257,7 @@ class DataStore {
 		this.recipeSteps = recipeSteps;
 		this.cachedMealPlans = mealPlans;
 		this.mealPlanRecipes = mealPlanRecipes;
+		this.cachedHouseholdPersons = householdPersons;
 		this.conversations = conversations;
 
 		this.restoreActiveShop();
@@ -1617,6 +1624,48 @@ class DataStore {
 		this.mealPlanRecipes = this.mealPlanRecipes.filter((entry) => entry.id !== id);
 		db.mealPlanRecipes.delete(id);
 		sync.enqueue({ table: 'meal_plan_recipes', op: 'delete', match: { id } });
+	}
+
+	/**
+	 * A person the household plans meals around, account or not. `linkedUserId` is set when this row
+	 * stands for an existing member — see `HouseholdPerson` for why an adult's allergy is not a second,
+	 * disconnected entity from their `household_members` row.
+	 */
+	addHouseholdPerson(input: { name: string; dietaryNotes?: string; linkedUserId?: string }) {
+		const person: HouseholdPerson = {
+			id: crypto.randomUUID(),
+			householdId: this.circle,
+			name: input.name.trim(),
+			createdBy: this.userId || undefined,
+			linkedUserId: input.linkedUserId,
+			dietaryNotes: input.dietaryNotes?.trim() || undefined,
+			createdAt: Date.now()
+		};
+
+		this.cachedHouseholdPersons = [...this.cachedHouseholdPersons, person];
+		db.householdPersons.add(person);
+		this.push('household_persons', person, fromHouseholdPerson);
+
+		return person;
+	}
+
+	updateHouseholdPerson(id: string, changes: { name?: string; dietaryNotes?: string }) {
+		const person = this.cachedHouseholdPersons.find((p) => p.id === id);
+		if (!person) return;
+
+		if (changes.name !== undefined && changes.name.trim()) person.name = changes.name.trim();
+		if (changes.dietaryNotes !== undefined)
+			person.dietaryNotes = changes.dietaryNotes.trim() || undefined;
+
+		const snapshot = $state.snapshot(person) as HouseholdPerson;
+		db.householdPersons.put(snapshot);
+		this.push('household_persons', snapshot, fromHouseholdPerson);
+	}
+
+	removeHouseholdPerson(id: string) {
+		this.cachedHouseholdPersons = this.cachedHouseholdPersons.filter((p) => p.id !== id);
+		db.householdPersons.delete(id);
+		sync.enqueue({ table: 'household_persons', op: 'delete', match: { id } });
 	}
 
 	/**

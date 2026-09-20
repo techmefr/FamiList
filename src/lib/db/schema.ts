@@ -285,6 +285,20 @@ export interface MealPlanRecipe {
 }
 
 /**
+ * Someone the household plans meals around, whether or not they hold an account: a child, a guest, or an
+ * adult already in `members` (via `linkedUserId`, so their allergy is not a second disconnected entity).
+ */
+export interface HouseholdPerson {
+	id: string;
+	householdId: string;
+	name: string;
+	createdBy?: string;
+	linkedUserId?: string;
+	dietaryNotes?: string;
+	createdAt: number;
+}
+
+/**
  * A local write not yet confirmed by the server. This is what makes it possible to tick an item in a shop
  * with no network: the change leaves the queue as soon as the connection comes back.
  */
@@ -332,6 +346,7 @@ class FamiListDatabase extends Dexie {
 	recipeSteps!: EntityTable<RecipeStep, 'id'>;
 	mealPlans!: EntityTable<MealPlan, 'id'>;
 	mealPlanRecipes!: EntityTable<MealPlanRecipe, 'id'>;
+	householdPersons!: EntityTable<HouseholdPerson, 'id'>;
 
 	constructor() {
 		super('familist');
@@ -415,6 +430,9 @@ class FamiListDatabase extends Dexie {
 			mealPlans: 'id',
 			mealPlanRecipes: 'id, mealPlanId'
 		});
+
+		// Queried per household, like the other circle tables.
+		this.version(11).stores({ householdPersons: 'id, householdId' });
 	}
 }
 

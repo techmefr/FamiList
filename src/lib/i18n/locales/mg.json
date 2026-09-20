@@ -860,6 +860,13 @@
 	"household": {
 		"title": "Ny ankohonako",
 		"members": "Mpikambana",
+		"people": "Olona ao an-tokantrano",
+		"peopleHint": "Ampio ireo olona ao an-tokantrano tsy manana kaonty — ankizy, vahiny — ary soraty ny fameperana sy alerjy ara-tsakafo an'ny tsirairay. Ampiasaina amin'ny tolo-kevitra recette izany.",
+		"personNameLabel": "Anarana",
+		"personAdd": "Ampio",
+		"personRemove": "Esory",
+		"dietaryNotesLabel": "Fameperana ara-tsakafo",
+		"dietaryNotesPlaceholder": "Oh. alerjy voanjo, tsy misy lactose…",
 		"circles": "Ny faribolako",
 		"circlesHint": "Faribolana iray no aseho amin'ny fotoana iray: izy no manapaka ny lisitra, ny fivarotana ary ny karatra hitanao. Ny lisitrao manokana kosa manaraka anao hatraiza hatraiza.",
 		"circleShown": "Aseho",

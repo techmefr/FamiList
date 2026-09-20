@@ -15,6 +15,7 @@ import type {
 	RecipeStep,
 	MealPlan,
 	MealPlanRecipe,
+	HouseholdPerson,
 	Shop,
 	ShopItemOrder,
 	ShopLayout
@@ -452,4 +453,23 @@ export const fromMealPlanRecipe = (entry: MealPlanRecipe) => ({
 	people: entry.people,
 	day_index: entry.dayIndex ?? null,
 	position: entry.position
+});
+
+export const toHouseholdPerson = (row: Row): HouseholdPerson => ({
+	id: text(row.id),
+	householdId: text(row.household_id),
+	name: text(row.name),
+	createdBy: typeof row.created_by === 'string' ? row.created_by : undefined,
+	linkedUserId: typeof row.linked_user_id === 'string' ? row.linked_user_id : undefined,
+	dietaryNotes: typeof row.dietary_notes === 'string' ? row.dietary_notes : undefined,
+	createdAt: Date.parse(text(row.created_at)) || 0
+});
+
+export const fromHouseholdPerson = (person: HouseholdPerson, householdId: string) => ({
+	id: person.id,
+	household_id: householdId,
+	created_by: person.createdBy ?? null,
+	linked_user_id: person.linkedUserId ?? null,
+	name: person.name,
+	dietary_notes: person.dietaryNotes ?? null
 });

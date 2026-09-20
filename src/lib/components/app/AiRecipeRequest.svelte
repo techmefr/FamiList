@@ -5,7 +5,7 @@
 	import { feedback } from '$stores/feedback.svelte';
 	import { DEFAULT_SERVINGS } from '$domain/recipe';
 	import { aiRecipeConversation } from '$stores/ai-recipe-conversation.svelte';
-	import type { SuggestedRecipe } from '$domain/ai-recipe';
+	import { restrictionsOf, type SuggestedRecipe } from '$domain/ai-recipe';
 	import { Button } from '$components/ui/button';
 	import { Input } from '$components/ui/input';
 	import * as Card from '$components/ui/card';
@@ -42,7 +42,11 @@
 		const text = message;
 		message = '';
 
-		await conversation.ask(text, { language, servings: DEFAULT_SERVINGS });
+		await conversation.ask(text, {
+			language,
+			servings: DEFAULT_SERVINGS,
+			restrictions: restrictionsOf(data.householdPersons)
+		});
 
 		const last = conversation.turns.at(-1);
 		if (last?.role === 'assistant' && last.recipe) feedback.play('success');
