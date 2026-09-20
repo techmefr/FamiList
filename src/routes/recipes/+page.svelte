@@ -82,6 +82,7 @@
 	 * own key set, and only ever sent to their own provider on a second, explicit gesture.
 	 */
 	let pageText = $state<string | null>(null);
+	let pastedText = $state('');
 	let aiExtracting = $state(false);
 	let aiExtractError = $state('');
 
@@ -110,6 +111,7 @@
 		fromImport = false;
 		importRefusal = null;
 		pageText = null;
+		pastedText = '';
 		aiExtractError = '';
 	}
 
@@ -175,6 +177,7 @@
 		fromImport = true;
 		link = '';
 		pageText = null;
+		pastedText = '';
 	}
 
 	async function importUrl(event: SubmitEvent) {
@@ -186,6 +189,7 @@
 		importing = true;
 		importRefusal = null;
 		pageText = null;
+		pastedText = '';
 		aiExtractError = '';
 
 		try {
@@ -214,19 +218,20 @@
 	}
 
 	/**
-	 * The one gesture that sends the page's text out to the person's own AI provider (#182).
+	 * The one gesture that sends the page's text out to the person's own AI provider (#182, #222).
 	 *
 	 * It only exists after the screen has shown, in plain words, that this text is about to leave the device
 	 * for the provider they already trust with their own key — the same rule `RecipeSuggestion.svelte`
 	 * follows for the products already bought.
 	 */
 	async function tryAiExtraction() {
-		if (!pageText || aiExtracting) return;
+		const text = pageText || pastedText.trim();
+		if (!text || aiExtracting) return;
 
 		aiExtracting = true;
 		aiExtractError = '';
 
-		const prompt = recipeExtractionPrompt(pageText, { language, servings: DEFAULT_SERVINGS });
+		const prompt = recipeExtractionPrompt(text, { language, servings: DEFAULT_SERVINGS });
 		const issue = await ai.suggestRecipe(prompt);
 		aiExtracting = false;
 
@@ -426,6 +431,43 @@
 					type="button"
 					variant="outline"
 					disabled={aiExtracting}
+					onclick={tryAiExtraction}
+					data-test-id="recipe-import-ai-try"
+					class="fl-press"
+				>
+					<Sparkles size={18} aria-hidden="true" />
+					{aiExtracting ? t('recipes.import.ai.loading') : t('recipes.import.ai.submit')}
+				</Button>
+
+				{#if aiExtractError}
+					<p class="text-caption text-destructive" role="alert" data-test-id="recipe-import-ai-error">
+						{aiExtractError}
+					</p>
+				{/if}
+			</div>
+		{:else if importRefusal === 'unreachable' && ai.configured}
+			<div
+				class="space-y-3 rounded-lg border p-3"
+				data-test-id="recipe-import-ai-fallback"
+			>
+				<p class="text-caption">{t('recipes.import.ai.unreachableOffer')}</p>
+				<div class="space-y-1">
+					<Label for="recipe-import-paste">{t('recipes.import.ai.pasteLabel')}</Label>
+					<textarea
+						id="recipe-import-paste"
+						bind:value={pastedText}
+						rows={4}
+						placeholder={t('recipes.import.ai.pastePlaceholder')}
+						data-test-id="recipe-import-paste-input"
+						class="border-input bg-background w-full rounded-md border p-2 text-sm"
+					></textarea>
+				</div>
+				<p class="text-muted-foreground text-caption">{t('recipes.import.ai.privacy')}</p>
+
+				<Button
+					type="button"
+					variant="outline"
+					disabled={aiExtracting || !pastedText.trim()}
 					onclick={tryAiExtraction}
 					data-test-id="recipe-import-ai-try"
 					class="fl-press"

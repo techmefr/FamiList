@@ -51,7 +51,8 @@
 		"reminderWeb": "提醒仅在已安装的应用中送达。在浏览器里日期仍会显示，但不会发出通知。",
 		"reminderDenied": "通知已被拒绝：日期已保存，但不会发出提醒。可在手机设置中重新允许。",
 		"reminderTitle": "{name}就在明天",
-		"reminderBody": "{date}之前还有物品没买。"
+		"reminderBody": "{date}之前还有物品没买。",
+		"mealPlanSuggestion": "想要规划本周食谱吗？"
 	},
 	"profile": {
 		"title": "我的",
@@ -351,7 +352,10 @@
 				"offer": "此页面未发布可读取的食谱。可以将其文本发送给您已配置的人工智能提供商，尝试提取食谱。",
 				"privacy": "只有在您点击下方按钮后，页面文本才会离开您的设备，直接发送给您在人工智能设置中已配置的提供商。否则不会发送任何内容。",
 				"submit": "尝试使用人工智能",
-				"loading": "正在读取…"
+				"loading": "正在读取…",
+				"unreachableOffer": "无法自动获取该页面。您可以在下方粘贴食谱文本，由配置的 AI 提供商提取食谱。",
+				"pasteLabel": "食谱文本",
+				"pastePlaceholder": "在此粘贴配料和步骤…"
 			},
 			"social": "Instagram 和 TikTok 不提供可读取的菜谱数据，其链接无法导入。",
 			"error": {

@@ -52,7 +52,8 @@
 		"reminderWeb": "Tonga ao amin’ny rindrambaiko voapetraka ihany ny fampahatsiahivana. Ao amin’ny navigateur dia mbola hita ny daty, saingy tsy hisy fampandrenesana handeha.",
 		"reminderDenied": "Lavina ny fampandrenesana : voatahiry ny daty, fa tsy hisy fampahatsiahivana handeha. Azo avela indray ao amin’ny kirakira an’ny finday.",
 		"reminderTitle": "{name}, rahampitso izany",
-		"reminderBody": "Mbola misy entana halaina alohan’ny {date}."
+		"reminderBody": "Mbola misy entana halaina alohan’ny {date}.",
+		"mealPlanSuggestion": "Te handamina ny sakafo amin'ity herinandro ity ve ianao?"
 	},
 	"profile": {
 		"title": "Mombamomba",
@@ -353,7 +354,10 @@
 				"offer": "Ity pejy ity dia tsy mamoaka fahandro azo vakiana. Azo alefa amin’ny mpamatsy AI voafaritrao ny lahatsoratr’ity pejy ity mba hanandramana mamoaka fahandro avy amin’izany.",
 				"privacy": "Ny lahatsoratry ny pejy dia tsy hiala amin’ny fitaovanao raha tsy manindry ny bokotra etsy ambany ianao, mankany amin’ny mpamatsy efa voafaritra ao amin’ny fandrindrana AI-nao. Raha tsy izany dia tsy misy alefa.",
 				"submit": "Andramo amin’ny AI",
-				"loading": "Mamaky..."
+				"loading": "Mamaky...",
+				"unreachableOffer": "Tsy azo ho azy ny pejy. Azonao apetaka eto ambany ny lahatsoratry ny fomba fahandro mba hahafahan'ny AI maka ny fomba fahandro.",
+				"pasteLabel": "Lahatsoratry ny fomba fahandro",
+				"pastePlaceholder": "Apetaho eto ny akora sy ny dingana…"
 			},
 			"social": "Tsy mamoaka fomba fahandroana azo vakiana ny Instagram sy ny TikTok: tsy azo ampidirina ny rohiny.",
 			"error": {

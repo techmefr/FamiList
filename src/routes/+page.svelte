@@ -308,6 +308,16 @@
 						<Plus size={20} aria-hidden="true" />
 						{t('lists.new')}
 					</Button>
+					{#if data.recipes.length > 0}
+						<a
+							href="/meal-plan"
+							data-test-id="lists-empty-meal-plan-link"
+							class="text-accent-foreground text-label mt-3 inline-flex items-center gap-1 font-medium"
+						>
+							<CalendarDays size={18} aria-hidden="true" />
+							{t('lists.mealPlanSuggestion')}
+						</a>
+					{/if}
 				{/if}
 			{/snippet}
 		</EmptyState>

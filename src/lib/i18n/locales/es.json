@@ -52,7 +52,8 @@
 		"reminderWeb": "Los recordatorios solo llegan en la aplicación instalada. En un navegador la fecha se sigue viendo, pero no se enviará ninguna notificación.",
 		"reminderDenied": "Notificaciones rechazadas: la fecha se guarda, pero no se enviará ningún recordatorio. Puedes permitirlas de nuevo en los ajustes del teléfono.",
 		"reminderTitle": "{name} es mañana",
-		"reminderBody": "Aún quedan artículos por comprar antes del {date}."
+		"reminderBody": "Aún quedan artículos por comprar antes del {date}.",
+		"mealPlanSuggestion": "¿Quieres planificar la semana?"
 	},
 	"profile": {
 		"title": "Perfil",
@@ -353,7 +354,10 @@
 				"offer": "Esta página no publica una receta legible. Su texto puede enviarse a su proveedor de IA configurado para intentar extraer una.",
 				"privacy": "El texto de la página solo sale de su dispositivo si hace clic abajo, directamente al proveedor ya configurado en sus ajustes de IA. De lo contrario, no se envía nada.",
 				"submit": "Probar con IA",
-				"loading": "Leyendo…"
+				"loading": "Leyendo…",
+				"unreachableOffer": "La página no se pudo recuperar automáticamente. Puedes pegar el texto de la receta a continuación para que tu proveedor de IA configurado extraiga una receta.",
+				"pasteLabel": "Texto de la receta",
+				"pastePlaceholder": "Pega aquí los ingredientes y las instrucciones de la receta…"
 			},
 			"social": "Instagram y TikTok no publican ninguna receta legible: sus enlaces no se pueden importar.",
 			"error": {

@@ -52,7 +52,8 @@
 		"reminderWeb": "Erinnerungen kommen nur in der installierten App an. Im Browser bleibt das Datum sichtbar, aber es wird keine Benachrichtigung gesendet.",
 		"reminderDenied": "Benachrichtigungen abgelehnt: das Datum ist gespeichert, aber es kommt keine Erinnerung. In den Telefoneinstellungen wieder erlauben.",
 		"reminderTitle": "{name} ist morgen",
-		"reminderBody": "Vor dem {date} fehlen noch Artikel."
+		"reminderBody": "Vor dem {date} fehlen noch Artikel.",
+		"mealPlanSuggestion": "Möchten Sie die Woche planen?"
 	},
 	"profile": {
 		"title": "Profil",
@@ -353,7 +354,10 @@
 				"offer": "Diese Seite veröffentlicht kein lesbares Rezept. Ihr Text kann an Ihren konfigurierten KI-Anbieter gesendet werden, um eines zu extrahieren.",
 				"privacy": "Der Seitentext verlässt Ihr Gerät nur, wenn Sie unten klicken, direkt an den in Ihren KI-Einstellungen bereits konfigurierten Anbieter. Andernfalls wird nichts gesendet.",
 				"submit": "Mit KI versuchen",
-				"loading": "Wird gelesen…"
+				"loading": "Wird gelesen…",
+				"unreachableOffer": "Die Seite konnte nicht automatisch abgerufen werden. Sie können den Rezepttext unten einfügen, damit Ihr konfigurierter KI-Anbieter ein Rezept daraus extrahiert.",
+				"pasteLabel": "Rezepttext",
+				"pastePlaceholder": "Zutaten und Zubereitungsschritte hier einfügen…"
 			},
 			"social": "Instagram und TikTok veröffentlichen kein lesbares Rezept: Ihre Links lassen sich nicht importieren.",
 			"error": {
