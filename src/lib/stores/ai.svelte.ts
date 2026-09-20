@@ -5,7 +5,8 @@ import {
 	isProvider,
 	parseError,
 	parseReply,
-	providerById
+	providerById,
+	type ConversationTurn
 } from '$domain/ai';
 import { parseRecipeSuggestion, type SuggestedRecipe } from '$domain/ai-recipe';
 import { pollinationsImageUrl, recipePhotoPath } from '$domain/ai-image';
@@ -163,12 +164,30 @@ class AiStore {
 	 * before sending would stop being what leaves.
 	 */
 	async suggestRecipe(prompt: string): Promise<SuggestOutcome> {
+		return this.#ask(prompt);
+	}
+
+	/**
+	 * A follow-up in an ongoing conversation (#226): `turns` is the whole history so far, oldest first,
+	 * ending with the person's newest message — the same call as `suggestRecipe`, except the provider is
+	 * given every earlier exchange instead of a single prompt, so that "et si je remplace le poulet par du
+	 * tofu ?" is understood against what was already discussed.
+	 *
+	 * Every assistant turn is expected to restate the complete recipe as the same JSON object `suggestRecipe`
+	 * already asks for, never a plain-text reply: that is what lets this reuse `parseRecipeSuggestion`
+	 * unchanged, and it is the prompts in `ai-recipe.ts` that carry this instruction on every turn.
+	 */
+	async continueRecipeConversation(turns: ConversationTurn[]): Promise<SuggestOutcome> {
+		return this.#ask(turns);
+	}
+
+	async #ask(promptOrTurns: string | ConversationTurn[]): Promise<SuggestOutcome> {
 		const provider = providerById(this.provider);
 		if (!provider || !this.#apiKey) {
 			return { ok: false, reason: 'provider', detail: '' };
 		}
 
-		const request = buildRequest(provider, this.#apiKey, this.model, prompt);
+		const request = buildRequest(provider, this.#apiKey, this.model, promptOrTurns);
 
 		let response: Response;
 		try {

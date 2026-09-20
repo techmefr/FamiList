@@ -1114,7 +1114,8 @@
 			"trigger": "Chiedi una ricetta all’IA",
 			"title": "Che ricetta vorresti?",
 			"placeholder": "es. un curry di pollo per 4",
-			"submit": "Chiedi"
+			"submit": "Chiedi",
+			"followUpPlaceholder": "es. più piccante, o sostituisci il pollo con il tofu"
 		}
 	},
 	"setup": {

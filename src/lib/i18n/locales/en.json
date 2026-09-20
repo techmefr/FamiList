@@ -1114,7 +1114,8 @@
 			"trigger": "Ask AI for a recipe",
 			"title": "What recipe would you like?",
 			"placeholder": "e.g. a chicken curry for 4",
-			"submit": "Ask"
+			"submit": "Ask",
+			"followUpPlaceholder": "e.g. spicier, or swap the chicken for tofu"
 		}
 	},
 	"setup": {
