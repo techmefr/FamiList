@@ -89,6 +89,65 @@ export const providerById = (id: string): Provider | null =>
 export const isProvider = (value: unknown): value is string =>
 	typeof value === 'string' && PROVIDERS.some(p => p.id === value);
 
+/**
+ * One saved provider row, key omitted: this shape is what the store keeps for resolving "which one is
+ * active" and what the profile screen lists — never the key itself, which stays in the store's own map.
+ */
+export interface AiCredentialRow {
+	provider: string;
+	model: string;
+	isActive: boolean;
+}
+
+/**
+ * The row currently in charge of every call, or null if none is. Pulled out as its own function because
+ * the partial unique index only guarantees at most one active row server-side — the client still has to
+ * find it in whatever `load()` returned, and every getter the screens read (`provider`, `model`,
+ * `configured`) goes through this same lookup.
+ */
+export function resolveActiveCredential(credentials: AiCredentialRow[]): AiCredentialRow | null {
+	return credentials.find(c => c.isActive) ?? null;
+}
+
+/**
+ * What the list becomes once `provider`'s row is gone.
+ *
+ * Removing the active row when exactly one other remains activates it on its own: there is nothing to
+ * choose between two options that do not exist, so asking would only interrupt for no real decision.
+ * Removing it when several remain, or when none do, leaves the list with nobody active — a guess between
+ * several candidates would silently start billing a provider the person did not pick, which is worse than
+ * a screen that asks them to choose.
+ */
+export function afterRemoval(
+	credentials: AiCredentialRow[],
+	provider: string
+): { remaining: AiCredentialRow[]; autoActivated: string | null } {
+	const removed = credentials.find(c => c.provider === provider);
+	const remaining = credentials.filter(c => c.provider !== provider);
+
+	if (removed?.isActive && remaining.length === 1) {
+		const [only] = remaining;
+		return { remaining: [{ ...only, isActive: true }], autoActivated: only.provider };
+	}
+
+	return { remaining, autoActivated: null };
+}
+
+/** The list with exactly `provider`'s row active and every other one not, for an optimistic local update. */
+export function withActive(credentials: AiCredentialRow[], provider: string): AiCredentialRow[] {
+	return credentials.map(c => ({ ...c, isActive: c.provider === provider }));
+}
+
+/**
+ * Whether a freshly saved row for `provider` should start active: the first row an account ever saves has
+ * nothing to compete with, so it becomes active on its own. A later provider joining an already non-empty
+ * list starts inactive — switching to it is a deliberate choice made from the list, not a side effect of
+ * typing a second key.
+ */
+export function activatesOnFirstSave(credentials: AiCredentialRow[]): boolean {
+	return credentials.length === 0;
+}
+
 /** The model actually called: the one chosen, otherwise the provider's. */
 export function modelFor(provider: Provider, chosen: string): string {
 	return chosen.trim() || provider.defaultModel;

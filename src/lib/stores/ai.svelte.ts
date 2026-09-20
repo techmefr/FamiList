@@ -1,11 +1,16 @@
 import { supabase } from '$db/supabase';
 import {
+	afterRemoval,
 	buildRequest,
 	DEFAULT_PROVIDER,
 	isProvider,
 	parseError,
 	parseReply,
 	providerById,
+	resolveActiveCredential,
+	withActive,
+	activatesOnFirstSave,
+	type AiCredentialRow,
 	type ConversationTurn
 } from '$domain/ai';
 import { parseRecipeSuggestion, type SuggestedRecipe } from '$domain/ai-recipe';
@@ -23,34 +28,50 @@ export type SuggestOutcome =
 /** A photo is decorative: the only outcomes a caller acts on are "got one" and "did not", never a detail. */
 export type PhotoOutcome = { ok: true; path: string } | { ok: false };
 
+/** One saved provider row, as the screen lists it. The key never leaves this shape. */
+export type Credential = AiCredentialRow;
+
 /**
- * The API key the person has set, and the call it allows.
+ * The account's saved AI keys, and the one currently in charge of every call.
  *
  * Only two things leave this store towards the outside: the request built by `buildRequest`, and nothing
- * else. In particular the key never crosses the interface — the screens read `configured`, `provider` and
- * `model`, never `#apiKey`. That is the reason for the private field: a component cannot show it by
- * distraction, and a report screenshot (#12) cannot take it away.
+ * else. In particular a key never crosses the interface — the screens read `configured`, `provider`,
+ * `model` and `credentials`, never a raw `apiKey`. `credentials` itself carries no key, for the same
+ * reason: a component cannot show what is not there, and a report screenshot (#12) cannot take it away.
  *
  * There is no instance key in this application: with no key set here, there is no feature at all, and the
  * screens show nothing.
  */
 class AiStore {
-	provider = $state<string>(DEFAULT_PROVIDER);
-	model = $state('');
-
-	/** A key is saved for this account. It is what the screens consult. */
-	configured = $state(false);
+	/** Every saved row for this account, key omitted. What the profile screen lists. */
+	credentials = $state<Credential[]>([]);
 
 	/** While this is true, no screen concludes "no key": it concludes nothing. */
 	loading = $state(true);
 
 	error = $state<string | null>(null);
 
-	#apiKey = '';
+	/** Provider -> key, kept apart from `credentials` so the key never has to travel with the list. */
+	#keys = new Map<string, string>();
+
+	#active = $derived(resolveActiveCredential(this.credentials));
+
+	get provider(): string {
+		return this.#active?.provider ?? DEFAULT_PROVIDER;
+	}
+
+	get model(): string {
+		return this.#active?.model ?? '';
+	}
+
+	/** A key is saved and active for this account. It is what the screens consult. */
+	get configured(): boolean {
+		return this.#active !== null;
+	}
 
 	/**
-	 * Reads the account's row again. `maybeSingle` and not `single`: the absence of a key is the normal case
-	 * on the first pass, and `single` would turn it into an error shown to somebody who asked for nothing.
+	 * Reads the account's rows again. The account may hold none, one, or several — every provider it has
+	 * saved a key for, at most one of them active.
 	 */
 	async load() {
 		this.loading = true;
@@ -58,8 +79,8 @@ class AiStore {
 
 		const { data, error } = await supabase
 			.from('ai_credentials')
-			.select('provider, api_key, model')
-			.maybeSingle();
+			.select('provider, api_key, model, is_active')
+			.order('provider');
 
 		this.loading = false;
 
@@ -68,20 +89,19 @@ class AiStore {
 			return;
 		}
 
-		if (!data) {
-			this.#apiKey = '';
-			this.configured = false;
-			return;
-		}
-
-		this.provider = isProvider(data.provider) ? data.provider : DEFAULT_PROVIDER;
-		this.model = data.model;
-		this.#apiKey = data.api_key;
-		this.configured = true;
+		this.#keys.clear();
+		this.credentials = (data ?? [])
+			.filter(row => isProvider(row.provider))
+			.map(row => {
+				this.#keys.set(row.provider, row.api_key);
+				return { provider: row.provider, model: row.model, isActive: row.is_active };
+			});
 	}
 
 	/**
-	 * Saves the signed-in account's key.
+	 * Saves a key for `provider`, replacing it if that provider was already saved. A first saved key
+	 * becomes active on its own — there is otherwise nothing to switch to; a later one for an already
+	 * represented provider keeps whatever activation state that row already had.
 	 *
 	 * `user_id` is set explicitly rather than left to a default: the policy compares it to `auth.uid()`, and a
 	 * missing column would make the write fail on an RLS violation rather than on an understandable message.
@@ -99,15 +119,21 @@ class AiStore {
 			return false;
 		}
 
+		const wasKnown = this.credentials.some(c => c.provider === provider);
+		const isActive = wasKnown
+			? (this.credentials.find(c => c.provider === provider)?.isActive ?? false)
+			: activatesOnFirstSave(this.credentials);
+
 		const { error } = await supabase.from('ai_credentials').upsert(
 			{
 				user_id: userId,
 				provider,
 				api_key: key,
 				model: model.trim(),
+				is_active: isActive,
 				updated_at: new Date().toISOString()
 			},
-			{ onConflict: 'user_id' }
+			{ onConflict: 'user_id,provider' }
 		);
 
 		if (error) {
@@ -115,40 +141,112 @@ class AiStore {
 			return false;
 		}
 
-		this.provider = provider;
-		this.model = model.trim();
-		this.#apiKey = key;
-		this.configured = true;
+		this.#keys.set(provider, key);
+		const trimmedModel = model.trim();
+		if (wasKnown) {
+			this.credentials = this.credentials.map(c =>
+				c.provider === provider ? { ...c, model: trimmedModel } : c
+			);
+		} else {
+			this.credentials = [...this.credentials, { provider, model: trimmedModel, isActive }];
+		}
 		return true;
 	}
 
-	async clear(): Promise<boolean> {
+	/**
+	 * Removes the saved key for one provider. If that provider was the active one and exactly one other
+	 * remains, that one becomes active on its own — there is nothing to choose between two options that do
+	 * not exist. Otherwise (none left, or several candidates left) nobody is made active without the person
+	 * saying which: a guess here would silently start billing a provider they did not pick.
+	 */
+	async clear(provider: string): Promise<boolean> {
 		this.error = null;
 
 		const { data: auth } = await supabase.auth.getUser();
 		const userId = auth.user?.id;
 		if (!userId) return false;
 
-		const { error } = await supabase.from('ai_credentials').delete().eq('user_id', userId);
+		const { error } = await supabase
+			.from('ai_credentials')
+			.delete()
+			.eq('user_id', userId)
+			.eq('provider', provider);
 
 		if (error) {
 			this.error = error.message;
 			return false;
 		}
 
-		this.#apiKey = '';
-		this.model = '';
-		this.configured = false;
+		this.#keys.delete(provider);
+		const { remaining, autoActivated } = afterRemoval(this.credentials, provider);
+
+		if (autoActivated) {
+			const activated = await this.#activateRow(userId, autoActivated);
+			if (!activated) return false;
+		}
+
+		this.credentials = remaining;
+		return true;
+	}
+
+	/**
+	 * Switches which provider answers every call. Two plain updates rather than an RPC: the partial unique
+	 * index (`ai_credentials_one_active`) is what actually guarantees "at most one active row", not the
+	 * order of these two statements, so a stored procedure would buy no stronger a guarantee — only the
+	 * same one with an extra round trip removed. Unsetting first and setting second, so a failure between
+	 * the two leaves "nobody active" rather than briefly violating the index and getting rejected mid-flight.
+	 */
+	async setActive(provider: string): Promise<boolean> {
+		if (!this.credentials.some(c => c.provider === provider)) return false;
+
+		this.error = null;
+
+		const { data: auth } = await supabase.auth.getUser();
+		const userId = auth.user?.id;
+		if (!userId) return false;
+
+		const previouslyActive = this.#active?.provider;
+		if (previouslyActive === provider) return true;
+
+		if (previouslyActive) {
+			const { error } = await supabase
+				.from('ai_credentials')
+				.update({ is_active: false })
+				.eq('user_id', userId)
+				.eq('provider', previouslyActive);
+			if (error) {
+				this.error = error.message;
+				return false;
+			}
+		}
+
+		const activated = await this.#activateRow(userId, provider);
+		if (!activated) return false;
+
+		this.credentials = withActive(this.credentials, provider);
+		return true;
+	}
+
+	async #activateRow(userId: string, provider: string): Promise<boolean> {
+		const { error } = await supabase
+			.from('ai_credentials')
+			.update({ is_active: true })
+			.eq('user_id', userId)
+			.eq('provider', provider);
+
+		if (error) {
+			this.error = error.message;
+			return false;
+		}
 		return true;
 	}
 
 	/** The account has changed: what is left in memory belongs to somebody else. */
 	reset() {
-		this.#apiKey = '';
-		this.model = '';
-		this.provider = DEFAULT_PROVIDER;
-		this.configured = false;
+		this.#keys.clear();
+		this.credentials = [];
 		this.loading = true;
+		this.error = null;
 	}
 
 	/**
@@ -182,12 +280,14 @@ class AiStore {
 	}
 
 	async #ask(promptOrTurns: string | ConversationTurn[]): Promise<SuggestOutcome> {
-		const provider = providerById(this.provider);
-		if (!provider || !this.#apiKey) {
+		const active = this.#active;
+		const provider = active ? providerById(active.provider) : null;
+		const apiKey = active ? this.#keys.get(active.provider) : undefined;
+		if (!provider || !apiKey) {
 			return { ok: false, reason: 'provider', detail: '' };
 		}
 
-		const request = buildRequest(provider, this.#apiKey, this.model, promptOrTurns);
+		const request = buildRequest(provider, apiKey, active?.model ?? '', promptOrTurns);
 
 		let response: Response;
 		try {

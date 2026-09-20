@@ -8,27 +8,26 @@
 	import { Input } from '$components/ui/input';
 	import { Label } from '$components/ui/label';
 	import IconField from '$components/app/IconField.svelte';
-	import { KeyRound, Cpu, Check, ExternalLink, TriangleAlert } from '@lucide/svelte';
+	import { KeyRound, Cpu, Check, ExternalLink, TriangleAlert, Trash2 } from '@lucide/svelte';
 
-	let provider = $state(ai.provider);
+	/** Providers not yet saved for this account: the only ones the "add" form still offers. */
+	const available = $derived(
+		PROVIDERS.filter(p => !ai.credentials.some(c => c.provider === p.id))
+	);
+
+	let provider = $state(PROVIDERS[0]?.id ?? '');
 	let key = $state('');
-	let model = $state(ai.model);
+	let model = $state('');
 	let busy = $state(false);
 	let saved = $state(false);
 	let error = $state('');
 
 	const selected = $derived(providerById(provider));
 
-	/**
-	 * The model field follows the provider while it has not been written by hand. Without that, changing
-	 * provider would leave the previous one's model name in the field — a value neither of them knows, and an
-	 * incomprehensible refusal on the first call.
-	 */
-	let modelTouched = $state(false);
-	const shownModel = $derived(modelTouched ? model : ai.model || (selected?.defaultModel ?? ''));
-
 	$effect(() => {
-		if (!ai.loading) provider = ai.provider;
+		if (!ai.loading && available.length > 0 && !available.some(p => p.id === provider)) {
+			provider = available[0].id;
+		}
 	});
 
 	async function save(event: SubmitEvent) {
@@ -38,7 +37,7 @@
 		error = '';
 		saved = false;
 
-		const ok = await ai.save(provider, key, modelTouched ? model : '');
+		const ok = await ai.save(provider, key, model.trim());
 		busy = false;
 
 		if (!ok) {
@@ -46,18 +45,18 @@
 			return;
 		}
 
-		// The key leaves the screen as soon as it is saved: it has no business in a field any more, and the form
-		// now only serves to replace it.
+		// The key leaves the screen as soon as it is saved: it has no business in a field any more.
 		key = '';
+		model = '';
 		saved = true;
 		feedback.play('success');
 	}
 
-	async function remove() {
+	async function remove(providerId: string) {
 		busy = true;
 		error = '';
 
-		const ok = await ai.clear();
+		const ok = await ai.clear(providerId);
 		busy = false;
 
 		if (!ok) {
@@ -65,16 +64,23 @@
 			return;
 		}
 
-		key = '';
-		model = '';
-		modelTouched = false;
 		saved = false;
 		feedback.play('remove');
+	}
+
+	async function activate(providerId: string) {
+		busy = true;
+		error = '';
+
+		const ok = await ai.setActive(providerId);
+		busy = false;
+
+		if (!ok) error = ai.error ?? t('ai.saveFailed');
 	}
 </script>
 
 <!--
-	The person's AI key, and theirs alone.
+	The person's AI keys, and theirs alone.
 
 	This screen is the only place in the application from which a call leaves for a third party, and that is
 	why it says what leaves before offering anything. The repository refused geocoding so as not to let an
@@ -130,103 +136,152 @@
 				{ai.configured ? t('ai.stateOn') : t('ai.stateOff')}
 			</p>
 
-			<form onsubmit={save} class="space-y-4" data-test-id="ai-form">
-				<div>
-					<Label for="ai-provider">{t('ai.provider')}</Label>
-					<!--
-						A native dropdown: it is short, it needs no ornament, and it is the only control whose workings the
-						screen reader and the physical keyboard already know without our having to rewrite them.
-					-->
-					<select
-						id="ai-provider"
-						bind:value={provider}
-						data-test-id="ai-provider"
-						class="border-input bg-background focus-visible:ring-ring text-label min-h-[max(2.75rem,44px)]
-							w-full rounded-lg border px-3 focus-visible:ring-2 focus-visible:outline-none"
-					>
-						{#each PROVIDERS as provider (provider.id)}
-							<option value={provider.id}>{t(`ai.providers.${provider.id}`)}</option>
-						{/each}
-					</select>
-					<p class="text-muted-foreground text-caption mt-2">{t('ai.providerHint')}</p>
-				</div>
-
-				{#if selected}
-					<p class="text-caption">
-						<a
-							href={selected.keysUrl}
-							target="_blank"
-							rel="noreferrer noopener"
-							class="text-primary inline-flex items-center gap-1 underline"
-							data-test-id="ai-keys-link"
+			{#if ai.credentials.length > 0}
+				<ul class="space-y-2" data-test-id="ai-credential-list">
+					{#each ai.credentials as credential (credential.provider)}
+						<li
+							class="flex flex-wrap items-center justify-between gap-2 rounded-lg border px-3 py-2"
+							data-test-id="ai-credential-row"
+							data-test-provider={credential.provider}
 						>
-							{t('ai.whereKey', { provider: t(`ai.providers.${selected.id}`) })}
-							<ExternalLink size={14} aria-hidden="true" />
-						</a>
-					</p>
-				{/if}
+							<div>
+								<p class="text-label font-medium">{t(`ai.providers.${credential.provider}`)}</p>
+								<p class="text-muted-foreground text-caption">
+									{credential.model || providerById(credential.provider)?.defaultModel}
+								</p>
+							</div>
+							<div class="flex items-center gap-2">
+								{#if credential.isActive}
+									<span
+										class="text-secondary text-label flex items-center gap-1"
+										data-test-id="ai-active-badge"
+									>
+										<Check size={16} aria-hidden="true" />
+										{t('ai.active')}
+									</span>
+								{:else}
+									<Button
+										type="button"
+										variant="outline"
+										size="sm"
+										disabled={busy}
+										onclick={() => activate(credential.provider)}
+										data-test-id="ai-activate"
+									>
+										{t('ai.useThisOne')}
+									</Button>
+								{/if}
+								<Button
+									type="button"
+									variant="outline"
+									size="sm"
+									disabled={busy}
+									onclick={() => remove(credential.provider)}
+									data-test-id="ai-clear"
+									aria-label={t('ai.clear')}
+								>
+									<Trash2 size={16} aria-hidden="true" />
+								</Button>
+							</div>
+						</li>
+					{/each}
+				</ul>
+			{/if}
 
-				<div>
-					<Label for="ai-key">{t('ai.key')}</Label>
-					<!--
-						`type="password"` and not a field to reveal: unlike a password, an API key is pasted from a manager
-						and never read back. Showing it would help nobody and would leave it on the screen of a phone lying
-						on the table.
-					-->
-					<IconField icon={KeyRound}>
-						<Input
-							id="ai-key"
-							type="password"
-							bind:value={key}
-							autocomplete="off"
-							spellcheck="false"
-							aria-describedby="ai-key-hint"
-							data-test-id="ai-key"
-							placeholder={ai.configured ? t('ai.keyPlaceholderSet') : t('ai.keyPlaceholder')}
-						/>
-					</IconField>
-					<p id="ai-key-hint" class="text-muted-foreground text-caption mt-2">
-						{t('ai.keyHint')}
-					</p>
-				</div>
+			{#if available.length > 0}
+				<form onsubmit={save} class="space-y-4" data-test-id="ai-form">
+					<div>
+						<Label for="ai-provider">{t('ai.provider')}</Label>
+						<!--
+							A native dropdown: it is short, it needs no ornament, and it is the only control whose workings the
+							screen reader and the physical keyboard already know without our having to rewrite them.
+						-->
+						<select
+							id="ai-provider"
+							bind:value={provider}
+							data-test-id="ai-provider"
+							class="border-input bg-background focus-visible:ring-ring text-label min-h-[max(2.75rem,44px)]
+								w-full rounded-lg border px-3 focus-visible:ring-2 focus-visible:outline-none"
+						>
+							{#each available as candidate (candidate.id)}
+								<option value={candidate.id}>{t(`ai.providers.${candidate.id}`)}</option>
+							{/each}
+						</select>
+						<p class="text-muted-foreground text-caption mt-2">{t('ai.providerHint')}</p>
+					</div>
 
-				<div>
-					<Label for="ai-model">{t('ai.model')}</Label>
-					<IconField icon={Cpu}>
-						<Input
-							id="ai-model"
-							value={shownModel}
-							oninput={event => {
-								modelTouched = true;
-								model = event.currentTarget.value;
-							}}
-							autocomplete="off"
-							spellcheck="false"
-							aria-describedby="ai-model-hint"
-							data-test-id="ai-model"
-						/>
-					</IconField>
-					<p id="ai-model-hint" class="text-muted-foreground text-caption mt-2">
-						{t('ai.modelHint')}
-					</p>
-				</div>
+					{#if selected}
+						<p class="text-caption">
+							<a
+								href={selected.keysUrl}
+								target="_blank"
+								rel="noreferrer noopener"
+								class="text-primary inline-flex items-center gap-1 underline"
+								data-test-id="ai-keys-link"
+							>
+								{t('ai.whereKey', { provider: t(`ai.providers.${selected.id}`) })}
+								<ExternalLink size={14} aria-hidden="true" />
+							</a>
+						</p>
+					{/if}
 
-				{#if error}
-					<p class="text-destructive text-label" role="alert" data-test-id="ai-error">{error}</p>
-				{/if}
+					<div>
+						<Label for="ai-key">{t('ai.key')}</Label>
+						<!--
+							`type="password"` and not a field to reveal: unlike a password, an API key is pasted from a manager
+							and never read back. Showing it would help nobody and would leave it on the screen of a phone lying
+							on the table.
+						-->
+						<IconField icon={KeyRound}>
+							<Input
+								id="ai-key"
+								type="password"
+								bind:value={key}
+								autocomplete="off"
+								spellcheck="false"
+								aria-describedby="ai-key-hint"
+								data-test-id="ai-key"
+								placeholder={t('ai.keyPlaceholder')}
+							/>
+						</IconField>
+						<p id="ai-key-hint" class="text-muted-foreground text-caption mt-2">
+							{t('ai.keyHint')}
+						</p>
+					</div>
 
-				{#if saved}
-					<p
-						class="text-secondary text-label flex items-center gap-2"
-						role="status"
-						data-test-id="ai-saved"
-					>
-						<Check size={18} aria-hidden="true" />
-						{t('ai.saved')}
-					</p>
-				{/if}
+					<div>
+						<Label for="ai-model">{t('ai.model')}</Label>
+						<IconField icon={Cpu}>
+							<Input
+								id="ai-model"
+								bind:value={model}
+								autocomplete="off"
+								spellcheck="false"
+								placeholder={selected?.defaultModel ?? ''}
+								aria-describedby="ai-model-hint"
+								data-test-id="ai-model"
+							/>
+						</IconField>
+						<p id="ai-model-hint" class="text-muted-foreground text-caption mt-2">
+							{t('ai.modelHint')}
+						</p>
+					</div>
 
-				<div class="flex flex-wrap gap-2">
+					{#if error}
+						<p class="text-destructive text-label" role="alert" data-test-id="ai-error">{error}</p>
+					{/if}
+
+					{#if saved}
+						<p
+							class="text-secondary text-label flex items-center gap-2"
+							role="status"
+							data-test-id="ai-saved"
+						>
+							<Check size={18} aria-hidden="true" />
+							{t('ai.saved')}
+						</p>
+					{/if}
+
 					<Button
 						type="submit"
 						class="fl-press"
@@ -235,14 +290,8 @@
 					>
 						{busy ? t('common.loading') : t('ai.save')}
 					</Button>
-
-					{#if ai.configured}
-						<Button variant="outline" disabled={busy} onclick={remove} data-test-id="ai-clear">
-							{t('ai.clear')}
-						</Button>
-					{/if}
-				</div>
-			</form>
+				</form>
+			{/if}
 		{/if}
 	</Card.Content>
 </Card.Root>
