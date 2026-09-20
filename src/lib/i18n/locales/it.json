@@ -52,7 +52,8 @@
 		"reminderWeb": "I promemoria arrivano solo sull’app installata. Nel browser la data resta visibile, ma non partirà alcuna notifica.",
 		"reminderDenied": "Notifiche rifiutate: la data è salvata, ma non partirà alcun promemoria. Puoi riattivarle nelle impostazioni del telefono.",
 		"reminderTitle": "{name} è domani",
-		"reminderBody": "Mancano ancora degli articoli prima del {date}."
+		"reminderBody": "Mancano ancora degli articoli prima del {date}.",
+		"mealPlanSuggestion": "Vuoi pianificare la settimana?"
 	},
 	"profile": {
 		"title": "Profilo",
@@ -353,7 +354,10 @@
 				"offer": "Questa pagina non pubblica una ricetta leggibile. Il suo testo può essere inviato al tuo fornitore di IA configurato per provare a estrarne una.",
 				"privacy": "Il testo della pagina lascia il tuo dispositivo solo se clicchi qui sotto, direttamente verso il fornitore già configurato nelle tue impostazioni IA. Altrimenti non viene inviato nulla.",
 				"submit": "Prova con l’IA",
-				"loading": "Lettura in corso…"
+				"loading": "Lettura in corso…",
+				"unreachableOffer": "La pagina non è stata recuperata automaticamente. Puoi incollare il testo della ricetta qui sotto affinché il provider IA configurato possa estrarre una ricetta.",
+				"pasteLabel": "Testo della ricetta",
+				"pastePlaceholder": "Incolla qui gli ingredienti e le istruzioni della ricetta…"
 			},
 			"social": "Instagram e TikTok non pubblicano alcuna ricetta leggibile: i loro link non si possono importare.",
 			"error": {

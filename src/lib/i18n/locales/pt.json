@@ -52,7 +52,8 @@
 		"reminderWeb": "Os lembretes só chegam na aplicação instalada. Num navegador a data continua visível, mas nenhuma notificação será enviada.",
 		"reminderDenied": "Notificações recusadas: a data fica guardada, mas nenhum lembrete será enviado. Pode autorizar de novo nas definições do telemóvel.",
 		"reminderTitle": "{name} é amanhã",
-		"reminderBody": "Ainda faltam artigos para comprar antes de {date}."
+		"reminderBody": "Ainda faltam artigos para comprar antes de {date}.",
+		"mealPlanSuggestion": "Quer planear a semana?"
 	},
 	"profile": {
 		"title": "Perfil",
@@ -353,7 +354,10 @@
 				"offer": "Esta página não publica uma receita legível. O seu texto pode ser enviado ao seu fornecedor de IA configurado para tentar extrair uma.",
 				"privacy": "O texto da página só sai do seu dispositivo se clicar abaixo, diretamente para o fornecedor já configurado nas suas definições de IA. Caso contrário, nada é enviado.",
 				"submit": "Tentar com IA",
-				"loading": "A ler…"
+				"loading": "A ler…",
+				"unreachableOffer": "A página não pôde ser recuperada automaticamente. Pode colar o texto da receita abaixo para que o seu fornecedor de IA configurado extraia uma receita.",
+				"pasteLabel": "Texto da receita",
+				"pastePlaceholder": "Cole aqui os ingredientes e as instruções da receita…"
 			},
 			"social": "O Instagram e o TikTok não publicam nenhuma receita legível: as suas ligações não podem ser importadas.",
 			"error": {

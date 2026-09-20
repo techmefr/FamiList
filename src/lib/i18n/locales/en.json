@@ -41,6 +41,7 @@
 		"namePlaceholder": "Weekly shop",
 		"emoji": "Emoji",
 		"empty": "No lists yet.",
+		"mealPlanSuggestion": "Want to plan the week?",
 		"delete": "Delete list {name}",
 		"rename": "Rename {name}",
 		"duplicate": "Duplicate {name}",
@@ -351,6 +352,9 @@
 			"review": "Recipe retrieved. Read it over before saving: any line that could not be split came back as written.",
 			"ai": {
 				"offer": "This page does not publish a readable recipe. Its text can be sent to your configured AI provider to try to extract one.",
+				"unreachableOffer": "The page could not be fetched automatically. You can paste the recipe text below so your configured AI provider can extract a recipe from it.",
+				"pasteLabel": "Recipe text",
+				"pastePlaceholder": "Paste recipe ingredients and instructions here…",
 				"privacy": "The page text leaves your device only if you click below, straight to the provider already set in your AI settings. Nothing is sent otherwise.",
 				"submit": "Try with AI",
 				"loading": "Reading in progress…"

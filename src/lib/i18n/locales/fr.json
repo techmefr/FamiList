@@ -41,6 +41,7 @@
 		"namePlaceholder": "Courses de la semaine",
 		"emoji": "Emoji",
 		"empty": "Aucune liste pour l'instant.",
+		"mealPlanSuggestion": "Envie de planifier la semaine ?",
 		"delete": "Supprimer la liste {name}",
 		"rename": "Renommer {name}",
 		"duplicate": "Dupliquer {name}",
@@ -351,6 +352,9 @@
 			"review": "Recette récupérée. Relisez tout avant d’enregistrer : les lignes qui n’ont pas pu être découpées sont revenues telles quelles.",
 			"ai": {
 				"offer": "Cette page ne publie pas de recette lisible. Son texte peut être envoyé à votre fournisseur d’IA configuré pour tenter d’en extraire une recette.",
+				"unreachableOffer": "La page n’a pas pu être récupérée automatiquement. Vous pouvez coller le texte de la recette ci-dessous pour que votre fournisseur d’IA configuré en extraie une recette.",
+				"pasteLabel": "Texte de la recette",
+				"pastePlaceholder": "Collez ici les ingrédients et les étapes de la recette…",
 				"privacy": "Le texte de la page ne part de votre appareil que si vous cliquez ci-dessous, directement vers le fournisseur déjà configuré dans vos réglages IA. Rien n’est envoyé autrement.",
 				"submit": "Essayer avec l’IA",
 				"loading": "Lecture en cours…"
