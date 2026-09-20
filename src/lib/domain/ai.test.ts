@@ -1,12 +1,17 @@
 import { describe, it, expect } from 'vitest';
 import {
+	activatesOnFirstSave,
+	afterRemoval,
 	buildRequest,
 	isProvider,
 	modelFor,
 	parseError,
 	parseReply,
 	providerById,
-	PROVIDERS
+	PROVIDERS,
+	resolveActiveCredential,
+	withActive,
+	type AiCredentialRow
 } from './ai';
 
 const KEY = 'secret-de-la-personne';
@@ -192,5 +197,83 @@ describe('parseError', () => {
 		expect(parseError({})).toBeNull();
 		expect(parseError({ error: {} })).toBeNull();
 		expect(parseError(null)).toBeNull();
+	});
+});
+
+const row = (provider: string, isActive: boolean, model = ''): AiCredentialRow => ({
+	provider,
+	model,
+	isActive
+});
+
+describe('resolveActiveCredential', () => {
+	it("trouve la ligne active parmi plusieurs fournisseurs enregistres", () => {
+		const credentials = [row('anthropic', false), row('gemini', true), row('mistral', false)];
+		expect(resolveActiveCredential(credentials)?.provider).toBe('gemini');
+	});
+
+	it("rend null quand aucune ligne n est active", () => {
+		const credentials = [row('anthropic', false), row('mistral', false)];
+		expect(resolveActiveCredential(credentials)).toBeNull();
+	});
+
+	it('rend null sur une liste vide', () => {
+		expect(resolveActiveCredential([])).toBeNull();
+	});
+});
+
+describe('withActive', () => {
+	it('active exactement le fournisseur choisi et desactive tous les autres', () => {
+		const credentials = [row('anthropic', true), row('gemini', false), row('mistral', false)];
+		const next = withActive(credentials, 'mistral');
+		expect(next.map(c => [c.provider, c.isActive])).toEqual([
+			['anthropic', false],
+			['gemini', false],
+			['mistral', true]
+		]);
+	});
+});
+
+describe('afterRemoval', () => {
+	it("active automatiquement l unique ligne restante quand celle qui etait active est retiree", () => {
+		const credentials = [row('anthropic', true), row('gemini', false)];
+		const { remaining, autoActivated } = afterRemoval(credentials, 'anthropic');
+
+		expect(autoActivated).toBe('gemini');
+		expect(remaining).toEqual([{ provider: 'gemini', model: '', isActive: true }]);
+	});
+
+	it("ne choisit rien quand plusieurs fournisseurs restent apres avoir retire l actif", () => {
+		const credentials = [row('anthropic', true), row('gemini', false), row('mistral', false)];
+		const { remaining, autoActivated } = afterRemoval(credentials, 'anthropic');
+
+		expect(autoActivated).toBeNull();
+		expect(remaining.every(c => !c.isActive)).toBe(true);
+		expect(remaining.map(c => c.provider)).toEqual(['gemini', 'mistral']);
+	});
+
+	it("ne choisit rien quand la ligne retiree n etait pas active", () => {
+		const credentials = [row('anthropic', true), row('gemini', false)];
+		const { remaining, autoActivated } = afterRemoval(credentials, 'gemini');
+
+		expect(autoActivated).toBeNull();
+		expect(remaining).toEqual([row('anthropic', true)]);
+	});
+
+	it("laisse une liste vide quand la derniere ligne est retiree", () => {
+		const { remaining, autoActivated } = afterRemoval([row('anthropic', true)], 'anthropic');
+
+		expect(autoActivated).toBeNull();
+		expect(remaining).toEqual([]);
+	});
+});
+
+describe('activatesOnFirstSave', () => {
+	it('active la toute premiere ligne enregistree', () => {
+		expect(activatesOnFirstSave([])).toBe(true);
+	});
+
+	it("n active pas une ligne qui rejoint une liste deja non vide", () => {
+		expect(activatesOnFirstSave([row('anthropic', true)])).toBe(false);
 	});
 });

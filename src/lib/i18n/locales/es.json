@@ -1085,6 +1085,8 @@
 		"saved": "Clave guardada.",
 		"saveFailed": "No se ha podido guardar.",
 		"clear": "Quitar la clave",
+		"active": "Activo",
+		"useThisOne": "Usar este",
 		"suggest": "Una idea de receta",
 		"suggestTitle": "Una idea a partir de tus compras",
 		"noProducts": "Todavía no hay ningún artículo marcado. Haz la compra y las ideas saldrán de ahí.",

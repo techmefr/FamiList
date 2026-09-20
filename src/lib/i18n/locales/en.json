@@ -1085,6 +1085,8 @@
 		"saved": "Key saved.",
 		"saveFailed": "Saving failed.",
 		"clear": "Remove the key",
+		"active": "Active",
+		"useThisOne": "Use this one",
 		"suggest": "A recipe idea",
 		"suggestTitle": "An idea from what you have bought",
 		"noProducts": "Nothing ticked off yet. Do some shopping, and the ideas will come from there.",

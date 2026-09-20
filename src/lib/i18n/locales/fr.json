@@ -1084,6 +1084,8 @@
 		"saved": "Clé enregistrée.",
 		"saveFailed": "L’enregistrement a échoué.",
 		"clear": "Retirer la clé",
+		"active": "Actif",
+		"useThisOne": "Utiliser celui-ci",
 		"suggest": "Une idée de recette",
 		"suggestTitle": "Une idée à partir de vos achats",
 		"noProducts": "Aucun article coché pour l’instant. Faites vos courses, les idées viendront de là.",

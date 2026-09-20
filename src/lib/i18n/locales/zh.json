@@ -1076,6 +1076,8 @@
 		"saved": "密钥已保存。",
 		"saveFailed": "保存失败。",
 		"clear": "移除密钥",
+		"active": "已启用",
+		"useThisOne": "使用此项",
 		"suggest": "菜谱灵感",
 		"suggestTitle": "根据你买过的东西想一道菜",
 		"noProducts": "还没有勾选任何商品。先去采购，灵感就从那里来。",
