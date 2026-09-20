@@ -383,29 +383,35 @@ class FamiListDatabase extends Dexie {
 		 * table therefore carries its `householdId`, and members change key — the same account appears once
 		 * per circle.
 		 *
-		 * The affected tables are emptied rather than migrated row by row: they are fully re-read from the
-		 * server on the first sync, and guessing a circle for rows that carried none would produce a wrong
-		 * cache until then.
+		 * `members`'s primary key itself changes shape (`id` becomes `key`), and IndexedDB has no in-place
+		 * way to do that: a store's keyPath is fixed at creation. Dropping it here and recreating it fresh
+		 * in the next version is the only way Dexie supports the change — folding both into one `.stores()`
+		 * call throws `UpgradeError: Not yet support for changing primary key` on every device whose local
+		 * cache predates this version, which is exactly what shipped the first time around.
+		 *
+		 * The other affected tables are emptied rather than migrated row by row: they are fully re-read from
+		 * the server on the first sync, and guessing a circle for rows that carried none would produce a
+		 * wrong cache until then.
 		 */
 		this.version(7)
-			.stores({ members: 'key, id, householdId' })
+			.stores({ members: null })
 			.upgrade(async (tx) => {
 				await Promise.all(
-					['shops', 'aisles', 'cards', 'members', 'prices', 'recipes'].map((name) =>
-						tx.table(name).clear()
-					)
+					['shops', 'aisles', 'cards', 'prices', 'recipes'].map((name) => tx.table(name).clear())
 				);
 			});
 
+		this.version(8).stores({ members: 'key, id, householdId' });
+
 		// Messages are now also queried by conversation. The old `listId` index stays: a list keeps its
 		// messages, only the direct scope is added beside it.
-		this.version(8).stores({
+		this.version(9).stores({
 			conversations: 'id',
 			messages: 'id, listId, conversationId, createdAt'
 		});
 
 		// Like the recipe child tables, meal_plan_recipes is always queried by its plan, never by its own id.
-		this.version(9).stores({
+		this.version(10).stores({
 			mealPlans: 'id',
 			mealPlanRecipes: 'id, mealPlanId'
 		});
