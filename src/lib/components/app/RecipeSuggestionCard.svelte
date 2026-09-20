@@ -55,7 +55,7 @@
 
 		{#if suggestion.steps.some(Boolean)}
 			<h4 class="text-label text-muted-foreground mt-5 font-semibold tracking-wide uppercase">
-				{t('recipes.step.etapes')}
+				{t('recipes.step.steps')}
 			</h4>
 			<ol class="mt-2 space-y-3">
 				{#each suggestion.steps.filter(Boolean) as step, index (index)}
