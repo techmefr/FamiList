@@ -202,11 +202,6 @@ class AiStore {
 		return { ok: true, recipe };
 	}
 
-	/** Photo generation needs no key or provider choice: Pollinations is free and keyless. */
-	get canGeneratePhoto(): boolean {
-		return true;
-	}
-
 	/**
 	 * Generates a dish photo and uploads it to the household's `recipe-photos` bucket.
 	 *

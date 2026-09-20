@@ -61,7 +61,13 @@ import {
 	pricedProducts,
 	sameDay
 } from '$domain/price';
-import { DEFAULT_SERVINGS, generatedItems, scalingFactor, type RecipeLine } from '$domain/recipe';
+import {
+	DEFAULT_SERVINGS,
+	MAX_SERVINGS,
+	generatedItems,
+	scalingFactor,
+	type RecipeLine
+} from '$domain/recipe';
 import { generatedItemsForPlan } from '$domain/meal-plan';
 import { trigram } from '$domain/trigram';
 import { trigramSource } from '$domain/place';
@@ -1386,7 +1392,8 @@ class DataStore {
 			householdId: this.circle,
 			name: input.name.trim(),
 			emoji: input.emoji,
-			servings: input.servings > 0 ? Math.round(input.servings) : DEFAULT_SERVINGS,
+			servings:
+				input.servings > 0 ? Math.min(MAX_SERVINGS, Math.round(input.servings)) : DEFAULT_SERVINGS,
 			notes: input.notes?.trim() || undefined,
 			createdBy: this.userId || undefined,
 			createdAt: Date.now()
@@ -1581,7 +1588,7 @@ class DataStore {
 			id: crypto.randomUUID(),
 			mealPlanId,
 			recipeId,
-			people: people > 0 ? Math.round(people) : DEFAULT_SERVINGS,
+			people: people > 0 ? Math.min(MAX_SERVINGS, Math.round(people)) : DEFAULT_SERVINGS,
 			dayIndex,
 			position: this.recipesInPlan(mealPlanId).length
 		};
@@ -1597,7 +1604,8 @@ class DataStore {
 		const entry = this.mealPlanRecipes.find((e) => e.id === id);
 		if (!entry) return;
 
-		if (changes.people !== undefined && changes.people > 0) entry.people = Math.round(changes.people);
+		if (changes.people !== undefined && changes.people > 0)
+			entry.people = Math.min(MAX_SERVINGS, Math.round(changes.people));
 		if (changes.dayIndex !== undefined) entry.dayIndex = changes.dayIndex ?? undefined;
 
 		const snapshot = $state.snapshot(entry) as MealPlanRecipe;
