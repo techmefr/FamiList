@@ -50,6 +50,17 @@ class SessionStore {
 	isSignedIn = $derived(this.user !== null);
 
 	/**
+	 * A recovery link signed this session in on purpose, to let the person set a new password — not
+	 * because they proved they know one.
+	 *
+	 * Set from the auth event itself, not from the current route: relying on "did we land on
+	 * `/auth/reset`" alone means any place the link's redirect actually lands (a misconfigured Supabase
+	 * redirect-URL allowlist falls back to the site's root) grants full access with no password ever
+	 * asked for. Cleared once the new password is set, or if the person signs in normally afterwards.
+	 */
+	isPasswordRecovery = $state(false);
+
+	/**
 	 * The account asks for a second factor and this session has not given it yet.
 	 *
 	 * It is not only a screen: the database already refuses every read in this state (see
@@ -70,7 +81,10 @@ class SessionStore {
 		const { data } = await supabase.auth.getSession();
 		await this.apply(data.session);
 
-		supabase.auth.onAuthStateChange((_event, session) => {
+		supabase.auth.onAuthStateChange((event, session) => {
+			if (event === 'PASSWORD_RECOVERY') this.isPasswordRecovery = true;
+			else if (event === 'SIGNED_IN' || event === 'SIGNED_OUT') this.isPasswordRecovery = false;
+
 			this.apply(session);
 		});
 
@@ -210,8 +224,14 @@ class SessionStore {
 		this.error = null;
 		const { error } = await supabase.auth.updateUser({ password: next });
 
-		if (error) this.error = error.message;
-		return !error;
+		if (error) {
+			this.error = error.message;
+			return false;
+		}
+
+		// `updateUser` fires `USER_UPDATED`, not `SIGNED_IN` — nothing else would clear the flag here.
+		this.isPasswordRecovery = false;
+		return true;
 	}
 
 	/**

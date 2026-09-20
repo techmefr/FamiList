@@ -176,6 +176,19 @@
 		}
 
 		/**
+		 * A recovery link signs a person in on purpose, to let them set a new password — not because they
+		 * proved they know one. This session is confined to that one screen regardless of where the link's
+		 * redirect actually landed: checking the current route alone (`pathname === '/auth/reset'`) would
+		 * only protect a person who happens to already be there, and grant full access to anyone who isn't
+		 * — a misconfigured redirect-URL allowlist on the Supabase project, for one, falls back to the
+		 * site's root.
+		 */
+		if (session.isPasswordRecovery) {
+			if (page.url.pathname !== '/auth/reset') goto('/auth/reset');
+			return;
+		}
+
+		/**
 		 * The session exists but stopped at the password, while the account requires a second factor. This
 		 * is not an account awaiting approval: sending them to the waiting screen would tell them something
 		 * false, and above all would not give them the field to type their code in.
@@ -192,10 +205,6 @@
 			if (page.url.pathname !== '/auth/pending') goto('/auth/pending');
 			return;
 		}
-
-		// A recovery link signs a person in on purpose, to let them set a new password — sending them
-		// straight to '/' would skip the one screen the link was for.
-		if (page.url.pathname === '/auth/reset') return;
 
 		if (isPublic || page.url.pathname.startsWith('/auth')) goto('/');
 	});
