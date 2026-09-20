@@ -11,6 +11,7 @@
 		"shops": "Lojas",
 		"admin": "Contas",
 		"household": "Casa",
+		"mealPlan": "Plano",
 		"magnifier": "Lupa",
 		"create": "Criar",
 		"chat": "Conversas",
@@ -24,7 +25,8 @@
 		"aisle": "Nova secção",
 		"shop": "Nova loja",
 		"card": "Novo cartão de fidelização",
-		"recipe": "Nova receita"
+		"recipe": "Nova receita",
+		"mealPlan": "Novo plano de refeições semanal"
 	},
 	"lists": {
 		"title": "As minhas listas",

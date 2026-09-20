@@ -14,6 +14,7 @@
 		ShieldCheck,
 		Tags,
 		CookingPot,
+		CalendarDays,
 		Search
 	} from '@lucide/svelte';
 	import { i18n, t } from '$i18n/index.svelte';
@@ -305,10 +306,11 @@
 	 * and the profile, in the column they get their tab like the rest.
 	 *
 	 * `tablet-and-desktop`: the rail and the full column, not the phone. The household — its members, diets,
-	 * the switcher between households — is a rarer stop than the four daily ones but not as rare as the
-	 * accounts or the profile settings, and unlike them it stays reachable from a thumb: a tablet held with
-	 * both hands can spare a sixth icon, a phone held in one cannot. On the phone it stays where it always
-	 * was, tucked under the profile.
+	 * the switcher between households — and the weekly meal plan are rarer stops than the four daily ones
+	 * but not as rare as the accounts or the profile settings, and unlike them they stay reachable from a
+	 * thumb: a tablet held with both hands can spare the extra icons, a phone held in one cannot. On the
+	 * phone they stay where they always were — the household tucked under the profile, the meal plan reached
+	 * from the recipes screen and the create menu.
 	 *
 	 * The magnifier comes second, against the lists: it is the tool you open in the aisle, one hand on the
 	 * trolley, and the edge of the thumb reaches it without crossing the bar.
@@ -322,6 +324,7 @@
 		{ href: '/shops', key: 'nav.shops', icon: Store, place: 'desktop' },
 		{ href: '/prices', key: 'nav.prices', icon: Tags, place: 'desktop' },
 		{ href: '/household', key: 'nav.household', icon: Users, place: 'tablet-and-desktop' },
+		{ href: '/meal-plan', key: 'nav.mealPlan', icon: CalendarDays, place: 'tablet-and-desktop' },
 		{ href: '/admin', key: 'nav.admin', icon: ShieldCheck, place: 'desktop', admin: true },
 		{ href: '/profile', key: 'nav.profile', icon: User, place: 'desktop' }
 	] as const;

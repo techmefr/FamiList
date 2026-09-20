@@ -23,6 +23,16 @@ async function createRecipe(page: Page, name: string, ingredient: string, qty: s
 }
 
 test.describe('menu de la semaine', () => {
+	test('le bouton de creation propose le menu de la semaine', async ({ signedInPage: page }) => {
+		await page.goto('/');
+
+		await page.getByTestId('nav-create').click();
+		await expect(page.getByTestId('create-menu')).toBeVisible();
+
+		await page.getByTestId('create-mealPlan').click();
+		await expect(page).toHaveURL(/\/meal-plan$/);
+	});
+
 	test('creer un plan, y ajouter des recettes, les editer et generer la liste', async ({
 		signedInPage: page
 	}) => {

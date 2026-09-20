@@ -6,7 +6,7 @@
  * the screen has to know we are coming in order to unfold them. Hence this relay, rather than a URL
  * parameter that would stay in the address bar and reopen the form on every reload.
  */
-export type CreateKind = 'item' | 'list' | 'aisle' | 'shop' | 'card' | 'recipe';
+export type CreateKind = 'item' | 'list' | 'aisle' | 'shop' | 'card' | 'recipe' | 'mealPlan';
 
 class CreateIntent {
 	#kind = $state<CreateKind | null>(null);

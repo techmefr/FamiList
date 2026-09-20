@@ -11,6 +11,7 @@
 		"shops": "Shops",
 		"admin": "Accounts",
 		"household": "Household",
+		"mealPlan": "Meal plan",
 		"magnifier": "Magnifier",
 		"create": "Create",
 		"chat": "Chats",
@@ -24,7 +25,8 @@
 		"aisle": "New aisle",
 		"shop": "New shop",
 		"card": "New loyalty card",
-		"recipe": "New recipe"
+		"recipe": "New recipe",
+		"mealPlan": "New meal plan"
 	},
 	"lists": {
 		"title": "My lists",

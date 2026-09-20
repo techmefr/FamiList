@@ -11,6 +11,7 @@
 		"shops": "门店",
 		"admin": "账号",
 		"household": "家庭",
+		"mealPlan": "菜单",
 		"magnifier": "放大镜",
 		"create": "新建",
 		"chat": "讨论",
@@ -24,7 +25,8 @@
 		"aisle": "新建货区",
 		"shop": "新建门店",
 		"card": "新建会员卡",
-		"recipe": "新建食谱"
+		"recipe": "新建食谱",
+		"mealPlan": "新建本周菜单"
 	},
 	"lists": {
 		"title": "我的清单",

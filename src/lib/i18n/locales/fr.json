@@ -11,6 +11,7 @@
 		"shops": "Magasins",
 		"admin": "Comptes",
 		"household": "Foyer",
+		"mealPlan": "Menu",
 		"magnifier": "Loupe",
 		"create": "Créer",
 		"chat": "Discussions",
@@ -24,7 +25,8 @@
 		"aisle": "Nouveau rayon",
 		"shop": "Nouveau magasin",
 		"card": "Nouvelle carte de fidélité",
-		"recipe": "Nouvelle recette"
+		"recipe": "Nouvelle recette",
+		"mealPlan": "Nouveau menu de la semaine"
 	},
 	"lists": {
 		"title": "Mes listes",
