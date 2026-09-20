@@ -860,6 +860,13 @@
 	"household": {
 		"title": "Mon foyer",
 		"members": "Membres",
+		"people": "Personnes du foyer",
+		"peopleHint": "Ajoutez les personnes du foyer qui n’ont pas de compte — enfants, invités — et notez les restrictions alimentaires ou allergies de chacun. Elles sont prises en compte dans les suggestions de recettes.",
+		"personNameLabel": "Nom",
+		"personAdd": "Ajouter",
+		"personRemove": "Retirer",
+		"dietaryNotesLabel": "Restrictions alimentaires",
+		"dietaryNotesPlaceholder": "Ex. allergie aux noix, sans lactose…",
 		"circles": "Mes cercles",
 		"circlesHint": "Un seul cercle est affiché à la fois : c’est lui qui décide des listes, des magasins et des cartes que vous voyez. Vos listes personnelles vous suivent partout.",
 		"circleShown": "Affiché",

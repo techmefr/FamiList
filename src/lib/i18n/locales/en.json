@@ -860,6 +860,13 @@
 	"household": {
 		"title": "My household",
 		"members": "Members",
+		"people": "Household people",
+		"peopleHint": "Add household members who have no account — children, guests — and note each one’s dietary restrictions or allergies. They feed into recipe suggestions.",
+		"personNameLabel": "Name",
+		"personAdd": "Add",
+		"personRemove": "Remove",
+		"dietaryNotesLabel": "Dietary restrictions",
+		"dietaryNotesPlaceholder": "E.g. nut allergy, lactose-free…",
 		"circles": "My circles",
 		"circlesHint": "One circle is shown at a time: it decides which lists, shops and cards you see. Your personal lists follow you everywhere.",
 		"circleShown": "Shown",

@@ -12,12 +12,14 @@
 	import { Button } from '$components/ui/button';
 	import { Input } from '$components/ui/input';
 	import { Label } from '$components/ui/label';
-	import { Users, Copy, Check, KeyRound, CircleDot } from '@lucide/svelte';
+	import { Users, Copy, Check, KeyRound, CircleDot, Salad, Trash2 } from '@lucide/svelte';
 	import IconField from '$components/app/IconField.svelte';
 
 	let invite = $state<{ code: string; expires: string } | null>(null);
 	let joinCode = $state('');
 	let renaming = $state('');
+	let newPersonName = $state('');
+	let newPersonNotes = $state('');
 
 	const circleName = $derived(data.circleName(data.circle));
 	let error = $state<string | null>(null);
@@ -147,6 +149,25 @@
 		await data.reload();
 		busy = false;
 	}
+
+	/**
+	 * A member of the household who does not necessarily hold an account — a child, a guest — added so
+	 * their dietary restrictions can feed the AI recipe suggestions the same way an adult's do.
+	 */
+	function addPerson(event: SubmitEvent) {
+		event.preventDefault();
+
+		const name = newPersonName.trim();
+		if (!name) return;
+
+		data.addHouseholdPerson({ name, dietaryNotes: newPersonNotes });
+		newPersonName = '';
+		newPersonNotes = '';
+	}
+
+	function updateDietaryNotes(id: string, value: string) {
+		data.updateHouseholdPerson(id, { dietaryNotes: value });
+	}
 </script>
 
 <svelte:head>
@@ -273,6 +294,67 @@
 				{t('household.leave')}
 			</Button>
 		{/if}
+	</Card.Content>
+</Card.Root>
+
+<Card.Root class="mt-6">
+	<Card.Header>
+		<Card.Title class="text-h2 flex items-center gap-2">
+			<Salad size={20} aria-hidden="true" />
+			{t('household.people')}
+		</Card.Title>
+	</Card.Header>
+	<Card.Content>
+		<p class="text-muted-foreground text-label">{t('household.peopleHint')}</p>
+
+		<ul class="mt-4 space-y-4">
+			{#each data.householdPersons as person (person.id)}
+				<li class="space-y-2" data-test-class="household-person">
+					<div class="flex flex-wrap items-center gap-3">
+						<span class="text-product min-w-0 flex-1 basis-[8rem] font-medium">{person.name}</span>
+						<Button
+							variant="ghost"
+							size="icon"
+							onclick={() => data.removeHouseholdPerson(person.id)}
+							data-test-id="household-person-remove-{person.id}"
+							aria-label={t('household.personRemove')}
+						>
+							<Trash2 size={16} aria-hidden="true" />
+						</Button>
+					</div>
+					<Input
+						value={person.dietaryNotes ?? ''}
+						oninput={(event) => updateDietaryNotes(person.id, event.currentTarget.value)}
+						placeholder={t('household.dietaryNotesPlaceholder')}
+						data-test-id="household-person-notes-{person.id}"
+					/>
+				</li>
+			{/each}
+		</ul>
+
+		<form onsubmit={addPerson} class="mt-6 space-y-3" data-test-id="household-person-form">
+			<div>
+				<Label for="new-person-name">{t('household.personNameLabel')}</Label>
+				<Input
+					id="new-person-name"
+					bind:value={newPersonName}
+					data-test-id="household-person-name"
+					class="mt-2"
+					required
+				/>
+			</div>
+			<div>
+				<Label for="new-person-notes">{t('household.dietaryNotesLabel')}</Label>
+				<Input
+					id="new-person-notes"
+					bind:value={newPersonNotes}
+					data-test-id="household-person-new-notes"
+					class="mt-2"
+					placeholder={t('household.dietaryNotesPlaceholder')}
+				/>
+			</div>
+			<Button type="submit" data-test-id="household-person-add">{t('household.personAdd')}</Button>
+		</form>
 	</Card.Content>
 </Card.Root>
 

@@ -62,6 +62,28 @@ export interface PromptOptions {
 	/** The language the recipe must be written in, written in that language. */
 	language: string;
 	servings: number;
+	/**
+	 * The household's dietary restrictions and allergies, gathered from `household_persons.dietary_notes`.
+	 * Absent or empty adds no instruction: most households have none, and an empty "Avoid: " line would be
+	 * a strange thing to send.
+	 */
+	restrictions?: string[];
+}
+
+/** The instruction line added to a prompt when the household has dietary restrictions, or none at all. */
+function restrictionsLine(restrictions?: string[]): string[] {
+	const kept = (restrictions ?? []).map((r) => r.trim()).filter(Boolean);
+	if (kept.length === 0) return [];
+
+	return [`Eviter absolument : ${kept.join(', ')}. Ne les inclure dans aucun ingredient.`];
+}
+
+/**
+ * The household's dietary restrictions, gathered from every `household_persons.dietary_notes` — account
+ * holder or not, since an allergy is an allergy regardless of who carries it.
+ */
+export function restrictionsOf(people: { dietaryNotes?: string }[]): string[] {
+	return people.map((p) => p.dietaryNotes?.trim()).filter((n): n is string => !!n);
 }
 
 /**
@@ -83,6 +105,7 @@ export function recipePrompt(products: string[], options: PromptOptions): string
 		products.join(', ') || '(aucun)',
 		'',
 		`La recette est pour ${servings} personnes.`,
+		...restrictionsLine(options.restrictions),
 		'Reponds uniquement par un objet JSON, sans texte autour et sans bloc de code.',
 		'Forme exacte attendue :',
 		'{"name":"","emoji":"","servings":0,"ingredients":[{"name":"","qty":"","unit":""}],"steps":[""]}',
@@ -111,6 +134,7 @@ export function recipeExtractionPrompt(pageText: string, options: PromptOptions)
 		'',
 		`Ecris la recette qu elle decrit, en ${options.language}.`,
 		`Si le texte ne precise pas de nombre de personnes, prevois-la pour ${servings} personnes.`,
+		...restrictionsLine(options.restrictions),
 		'Reponds uniquement par un objet JSON, sans texte autour et sans bloc de code.',
 		'Forme exacte attendue :',
 		'{"name":"","emoji":"","servings":0,"ingredients":[{"name":"","qty":"","unit":""}],"steps":[""]}',
@@ -138,6 +162,7 @@ export function recipeFromRequestPrompt(userText: string, options: PromptOptions
 		'',
 		`Ecris une recette qui y repond, en ${options.language}.`,
 		`Si la demande ne precise pas de nombre de personnes, prevois-la pour ${servings} personnes.`,
+		...restrictionsLine(options.restrictions),
 		'Reponds uniquement par un objet JSON, sans texte autour et sans bloc de code.',
 		'Forme exacte attendue :',
 		'{"name":"","emoji":"","servings":0,"ingredients":[{"name":"","qty":"","unit":""}],"steps":[""]}',

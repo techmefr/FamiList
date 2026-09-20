@@ -860,6 +860,13 @@
 	"household": {
 		"title": "La mia casa",
 		"members": "Membri",
+		"people": "Persone del nucleo",
+		"peopleHint": "Aggiungi le persone del nucleo che non hanno un account — bambini, ospiti — e annota le restrizioni alimentari o le allergie di ciascuna. Vengono considerate nei suggerimenti di ricette.",
+		"personNameLabel": "Nome",
+		"personAdd": "Aggiungi",
+		"personRemove": "Rimuovi",
+		"dietaryNotesLabel": "Restrizioni alimentari",
+		"dietaryNotesPlaceholder": "Es. allergia alla frutta secca, senza lattosio…",
 		"circles": "I miei cerchi",
 		"circlesHint": "Si vede un cerchio alla volta: decide quali liste, negozi e carte compaiono. Le tue liste personali ti seguono ovunque.",
 		"circleShown": "Visualizzato",

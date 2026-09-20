@@ -860,6 +860,13 @@
 	"household": {
 		"title": "Mein Haushalt",
 		"members": "Mitglieder",
+		"people": "Personen im Haushalt",
+		"peopleHint": "Fügen Sie Haushaltsmitglieder ohne Konto hinzu — Kinder, Gäste — und notieren Sie deren Ernährungseinschränkungen oder Allergien. Sie fließen in die Rezeptvorschläge ein.",
+		"personNameLabel": "Name",
+		"personAdd": "Hinzufügen",
+		"personRemove": "Entfernen",
+		"dietaryNotesLabel": "Ernährungseinschränkungen",
+		"dietaryNotesPlaceholder": "Z. B. Nussallergie, laktosefrei…",
 		"circles": "Meine Kreise",
 		"circlesHint": "Es wird immer nur ein Kreis angezeigt: Er bestimmt, welche Listen, Geschäfte und Karten Sie sehen. Ihre persönlichen Listen begleiten Sie überall.",
 		"circleShown": "Angezeigt",

@@ -5,6 +5,7 @@ import {
 	recipeExtractionPrompt,
 	recipeFromRequestPrompt,
 	recipePrompt,
+	restrictionsOf,
 	shoppedProducts,
 	type Purchase
 } from './ai-recipe';
@@ -93,6 +94,44 @@ describe('recipePrompt', () => {
 
 		expect(prompt).not.toContain('Lardons');
 	});
+
+	it('ajoute les restrictions alimentaires quand il y en a', () => {
+		const prompt = recipePrompt(['Courgettes'], {
+			language: 'français',
+			servings: 4,
+			restrictions: ['arachides', 'crustaces']
+		});
+
+		expect(prompt).toContain('Eviter absolument : arachides, crustaces');
+	});
+
+	it('n ajoute aucune instruction quand il n y a pas de restriction', () => {
+		expect(recipePrompt(['Courgettes'], { language: 'français', servings: 4 })).not.toContain(
+			'Eviter absolument'
+		);
+		expect(
+			recipePrompt(['Courgettes'], { language: 'français', servings: 4, restrictions: [] })
+		).not.toContain('Eviter absolument');
+		expect(
+			recipePrompt(['Courgettes'], {
+				language: 'français',
+				servings: 4,
+				restrictions: ['  ', '']
+			})
+		).not.toContain('Eviter absolument');
+	});
+});
+
+describe('restrictionsOf', () => {
+	it('garde les notes non vides de toutes les personnes', () => {
+		expect(
+			restrictionsOf([{ dietaryNotes: 'Arachides' }, { dietaryNotes: '  ' }, { dietaryNotes: undefined }])
+		).toEqual(['Arachides']);
+	});
+
+	it('rend un tableau vide quand personne n a de note', () => {
+		expect(restrictionsOf([{ dietaryNotes: undefined }, {}])).toEqual([]);
+	});
 });
 
 describe('recipeExtractionPrompt', () => {
@@ -118,6 +157,15 @@ describe('recipeExtractionPrompt', () => {
 		expect(recipeExtractionPrompt('texte', { language: 'fr', servings: 0 })).toContain('1 personnes');
 		expect(recipeExtractionPrompt('texte', { language: 'fr', servings: 5000 })).toContain(
 			'99 personnes'
+		);
+	});
+
+	it('ajoute les restrictions alimentaires quand il y en a, sinon aucune instruction', () => {
+		expect(
+			recipeExtractionPrompt('texte', { language: 'fr', servings: 4, restrictions: ['gluten'] })
+		).toContain('Eviter absolument : gluten');
+		expect(recipeExtractionPrompt('texte', { language: 'fr', servings: 4 })).not.toContain(
+			'Eviter absolument'
 		);
 	});
 });
@@ -157,6 +205,15 @@ describe('recipeFromRequestPrompt', () => {
 		});
 
 		expect(prompt).not.toContain('Lardons');
+	});
+
+	it('ajoute les restrictions alimentaires quand il y en a, sinon aucune instruction', () => {
+		expect(
+			recipeFromRequestPrompt('texte', { language: 'fr', servings: 4, restrictions: ['lactose'] })
+		).toContain('Eviter absolument : lactose');
+		expect(recipeFromRequestPrompt('texte', { language: 'fr', servings: 4 })).not.toContain(
+			'Eviter absolument'
+		);
 	});
 });
 

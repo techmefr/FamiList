@@ -348,6 +348,44 @@ export type Database = {
           },
         ]
       }
+      household_persons: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          dietary_notes: string | null
+          household_id: string
+          id: string
+          linked_user_id: string | null
+          name: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          dietary_notes?: string | null
+          household_id: string
+          id?: string
+          linked_user_id?: string | null
+          name: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          dietary_notes?: string | null
+          household_id?: string
+          id?: string
+          linked_user_id?: string | null
+          name?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "household_persons_household_id_fkey"
+            columns: ["household_id"]
+            isOneToOne: false
+            referencedRelation: "households"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       households: {
         Row: {
           created_at: string

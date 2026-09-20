@@ -4,7 +4,7 @@
 	import { data } from '$stores/data.svelte';
 	import { feedback } from '$stores/feedback.svelte';
 	import { DEFAULT_SERVINGS } from '$domain/recipe';
-	import { recipeFromRequestPrompt, type SuggestedRecipe } from '$domain/ai-recipe';
+	import { recipeFromRequestPrompt, restrictionsOf, type SuggestedRecipe } from '$domain/ai-recipe';
 	import { Button } from '$components/ui/button';
 	import { Input } from '$components/ui/input';
 	import * as Card from '$components/ui/card';
@@ -53,7 +53,11 @@
 		reset();
 		lastRequest = userText;
 
-		const prompt = recipeFromRequestPrompt(userText, { language, servings: DEFAULT_SERVINGS });
+		const prompt = recipeFromRequestPrompt(userText, {
+			language,
+			servings: DEFAULT_SERVINGS,
+			restrictions: restrictionsOf(data.householdPersons)
+		});
 		const issue = await ai.suggestRecipe(prompt);
 		busy = false;
 

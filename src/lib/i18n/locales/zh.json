@@ -853,6 +853,13 @@
 	"household": {
 		"title": "我的家庭",
 		"members": "成员",
+		"people": "家庭成员",
+		"peopleHint": "添加没有账号的家庭成员——孩子、访客——并记录每个人的饮食限制或过敏情况。这些信息会用于生成菜谱建议。",
+		"personNameLabel": "姓名",
+		"personAdd": "添加",
+		"personRemove": "移除",
+		"dietaryNotesLabel": "饮食限制",
+		"dietaryNotesPlaceholder": "例如坚果过敏、无乳糖…",
 		"circles": "我的圈子",
 		"circlesHint": "一次只显示一个圈子：它决定你看到哪些清单、商店和卡片。你的个人清单在每个圈子里都能看到。",
 		"circleShown": "正在显示",
