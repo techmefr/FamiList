@@ -1121,7 +1121,8 @@
 			"trigger": "KI nach einem Rezept fragen",
 			"title": "Welches Rezept möchtest du?",
 			"placeholder": "z. B. ein Hähnchen-Curry für 4",
-			"submit": "Fragen"
+			"submit": "Fragen",
+			"followUpPlaceholder": "z. B. schärfer, oder Hähnchen durch Tofu ersetzen"
 		}
 	},
 	"setup": {

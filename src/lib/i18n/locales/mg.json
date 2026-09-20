@@ -1121,7 +1121,8 @@
 			"trigger": "Anontanio ny AI hanome recette",
 			"title": "Recette inona no tianao?",
 			"placeholder": "ohatra: curry akoho ho an ny olona 4",
-			"submit": "Anontanio"
+			"submit": "Anontanio",
+			"followUpPlaceholder": "ohatra: mafy kokoa, na soloy tôfo ny akoho"
 		}
 	},
 	"setup": {

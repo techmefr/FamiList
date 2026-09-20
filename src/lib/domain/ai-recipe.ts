@@ -173,6 +173,38 @@ export function recipeFromRequestPrompt(userText: string, options: PromptOptions
 	].join('\n');
 }
 
+/**
+ * A follow-up message in an ongoing conversation (#226) — "et si je remplace le poulet par du tofu ?",
+ * "plus epice" — sent alongside the earlier turns so the provider keeps what was already discussed.
+ *
+ * Design decision: every assistant turn, including this one's answer, is required to restate the complete
+ * recipe as the same JSON object the very first turn asks for, never a plain-text reply on its own. A
+ * follow-up rarely produces a fresh full recipe by itself ("plus epice" says nothing about the other
+ * ingredients), so without this instruction repeated on every turn a model would drift towards answering
+ * only the delta in prose. Restating the whole object keeps `parseRecipeSuggestion` and
+ * `RecipeSuggestionCard` completely unchanged for every turn of the thread, one-shot or not — the
+ * alternative (accepting plain-text turns) would need a second reply shape and a second review UI for no
+ * benefit, since the person only ever wants a complete, acceptable recipe out of the exchange.
+ */
+export function recipeFollowUpPrompt(userText: string, options: PromptOptions): string {
+	const servings = clampServings(options.servings);
+
+	return [
+		`Voici une suite a la conversation, ecrite par la meme personne :`,
+		userText,
+		'',
+		`Mets a jour la recette en tenant compte de cette demande, en ${options.language}.`,
+		`Garde ${servings} personnes sauf si la demande dit le contraire.`,
+		'Reponds de nouveau par la recette complete, uniquement par un objet JSON, sans texte autour et sans bloc de code.',
+		'Forme exacte attendue :',
+		'{"name":"","emoji":"","servings":0,"ingredients":[{"name":"","qty":"","unit":""}],"steps":[""]}',
+		'"emoji" est un seul caractere emoji.',
+		`"unit" vaut obligatoirement l'une de ces valeurs : ${UNITS.join(', ')}.`,
+		'"qty" est un nombre ecrit en chiffres, ou une chaine vide si la quantite ne se compte pas.',
+		'"steps" contient les etapes de preparation, une par entree, dans l ordre.'
+	].join('\n');
+}
+
 const clampServings = (value: number): number => {
 	if (!Number.isFinite(value)) return DEFAULT_SERVINGS;
 

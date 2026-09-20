@@ -1120,7 +1120,8 @@
 			"trigger": "Demander une recette à l’IA",
 			"title": "Quelle recette souhaitez-vous ?",
 			"placeholder": "ex. un curry de poulet pour 4",
-			"submit": "Demander"
+			"submit": "Demander",
+			"followUpPlaceholder": "ex. plus épicé, ou remplacer le poulet par du tofu"
 		}
 	},
 	"setup": {

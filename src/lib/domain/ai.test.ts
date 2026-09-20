@@ -105,6 +105,48 @@ describe('buildRequest', () => {
 	});
 });
 
+describe('buildRequest avec un historique de conversation (#226)', () => {
+	const turns = [
+		{ role: 'user' as const, content: 'un curry de poulet pour 4' },
+		{ role: 'assistant' as const, content: '{"name":"Curry de poulet"}' },
+		{ role: 'user' as const, content: 'et si je remplace le poulet par du tofu ?' }
+	];
+
+	it('un prompt seul reste un historique a un seul tour, pour compatibilite', () => {
+		const single = buildRequest(providerById('anthropic')!, KEY, '', 'bonjour');
+		const asHistory = buildRequest(providerById('anthropic')!, KEY, '', [
+			{ role: 'user', content: 'bonjour' }
+		]);
+		expect(JSON.parse(single.body).messages).toEqual(JSON.parse(asHistory.body).messages);
+	});
+
+	it('serialise chaque tour dans l ordre pour anthropic, en gardant les roles user/assistant', () => {
+		const request = buildRequest(providerById('anthropic')!, KEY, '', turns);
+		expect(JSON.parse(request.body).messages).toEqual(turns);
+	});
+
+	it('serialise chaque tour dans l ordre pour le dialecte openai', () => {
+		const request = buildRequest(providerById('groq')!, KEY, '', turns);
+		expect(JSON.parse(request.body).messages).toEqual(turns);
+	});
+
+	it('traduit les tours vers la forme contents/parts de gemini, role assistant devient model', () => {
+		const request = buildRequest(providerById('gemini')!, KEY, '', turns);
+		expect(JSON.parse(request.body).contents).toEqual([
+			{ role: 'user', parts: [{ text: turns[0].content }] },
+			{ role: 'model', parts: [{ text: turns[1].content }] },
+			{ role: 'user', parts: [{ text: turns[2].content }] }
+		]);
+	});
+
+	it('n envoie jamais la cle dans l adresse, meme avec un historique', () => {
+		for (const provider of PROVIDERS) {
+			const request = buildRequest(provider, KEY, '', turns);
+			expect(request.url).not.toContain(KEY);
+		}
+	});
+});
+
 describe('parseReply', () => {
 	it('lit la reponse anthropic', () => {
 		const reply = parseReply(providerById('anthropic')!, {

@@ -100,19 +100,36 @@ export interface ProviderRequest {
 	body: string;
 }
 
+/** One exchange in a conversation, in the order it happened. */
+export interface ConversationTurn {
+	role: 'user' | 'assistant';
+	content: string;
+}
+
+/** A single prompt is a conversation of exactly one turn. */
+const toTurns = (promptOrTurns: string | ConversationTurn[]): ConversationTurn[] =>
+	typeof promptOrTurns === 'string' ? [{ role: 'user', content: promptOrTurns }] : promptOrTurns;
+
 /**
  * The request to send, in a shape `fetch` takes as it is.
  *
  * A pure function, and that is intended: this is where the key is put in a header rather than in an address,
  * and it is the only thing in this whole file a test can check with no network.
+ *
+ * `promptOrTurns` accepts either a single string, for a one-shot request, or the full history of a
+ * conversation so far (oldest first) — each provider's real API already supports sending prior turns back
+ * so that it keeps the context, so this is a straight passthrough to their native shape rather than a
+ * home-grown one: `messages: [{role, content}, ...]` for the OpenAI/Anthropic-shaped dialects, and
+ * `contents: [{role, parts}, ...]` for Gemini, whose dialect names the assistant's role `model`.
  */
 export function buildRequest(
 	provider: Provider,
 	apiKey: string,
 	model: string,
-	prompt: string
+	promptOrTurns: string | ConversationTurn[]
 ): ProviderRequest {
 	const name = modelFor(provider, model);
+	const turns = toTurns(promptOrTurns);
 
 	if (provider.dialect === 'anthropic') {
 		return {
@@ -129,7 +146,7 @@ export function buildRequest(
 			body: JSON.stringify({
 				model: name,
 				max_tokens: MAX_TOKENS,
-				messages: [{ role: 'user', content: prompt }]
+				messages: turns.map(turn => ({ role: turn.role, content: turn.content }))
 			})
 		};
 	}
@@ -138,7 +155,12 @@ export function buildRequest(
 		return {
 			url: `${provider.base}/models/${name}:generateContent`,
 			headers: { 'content-type': 'application/json', 'x-goog-api-key': apiKey },
-			body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+			body: JSON.stringify({
+				contents: turns.map(turn => ({
+					role: turn.role === 'assistant' ? 'model' : 'user',
+					parts: [{ text: turn.content }]
+				}))
+			})
 		};
 	}
 
@@ -148,7 +170,7 @@ export function buildRequest(
 		body: JSON.stringify({
 			model: name,
 			max_tokens: MAX_TOKENS,
-			messages: [{ role: 'user', content: prompt }]
+			messages: turns.map(turn => ({ role: turn.role, content: turn.content }))
 		})
 	};
 }
