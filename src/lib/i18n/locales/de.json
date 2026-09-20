@@ -11,6 +11,7 @@
 		"shops": "Geschäfte",
 		"admin": "Konten",
 		"household": "Haushalt",
+		"mealPlan": "Essensplan",
 		"magnifier": "Lupe",
 		"create": "Erstellen",
 		"chat": "Unterhaltungen",
@@ -24,7 +25,8 @@
 		"aisle": "Neue Abteilung",
 		"shop": "Neues Geschäft",
 		"card": "Neue Kundenkarte",
-		"recipe": "Neues Rezept"
+		"recipe": "Neues Rezept",
+		"mealPlan": "Neuer Essensplan"
 	},
 	"lists": {
 		"title": "Meine Listen",

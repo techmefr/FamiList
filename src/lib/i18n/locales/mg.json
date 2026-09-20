@@ -11,6 +11,7 @@
 		"shops": "Fivarotana",
 		"admin": "Kaonty",
 		"household": "Ankohonana",
+		"mealPlan": "Sakafo",
 		"magnifier": "Fitarafana",
 		"create": "Hamorona",
 		"chat": "Resaka",
@@ -24,7 +25,8 @@
 		"aisle": "Faritra vaovao",
 		"shop": "Fivarotana vaovao",
 		"card": "Karatra vaovao",
-		"recipe": "Recettes vaovao"
+		"recipe": "Recettes vaovao",
+		"mealPlan": "Drafitra sakafo vaovao"
 	},
 	"lists": {
 		"title": "Ny lisitro",

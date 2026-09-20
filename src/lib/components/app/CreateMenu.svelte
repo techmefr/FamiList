@@ -14,6 +14,7 @@
 		Store,
 		CreditCard,
 		CookingPot,
+		CalendarDays,
 		X
 	} from '@lucide/svelte';
 
@@ -58,6 +59,7 @@
 			target: () => '/recipes',
 			field: '[data-test-id="recipe-name"]'
 		},
+		{ kind: 'mealPlan', icon: CalendarDays, target: () => '/meal-plan', field: null },
 		{ kind: 'aisle', icon: LayoutList, target: () => '/shops', field: '[data-test-id="aisle-name"]' },
 		{ kind: 'shop', icon: Store, target: () => '/shops', field: '[data-test-id="shop-name"]' },
 		{ kind: 'card', icon: CreditCard, target: () => '/cards', field: '[data-test-id="card-name"]' }

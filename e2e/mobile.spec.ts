@@ -78,10 +78,11 @@ test('sur téléphone, la navigation est une barre en bas et non une colonne', a
 	expect(box!.y + box!.height).toBeGreaterThan(height - 2);
 	expect(box!.height).toBeLessThan(height / 3);
 
-	// The magnifier only has a tab on a phone, the household and the shops only on a large screen: five
-	// targets is the most a thumb can hold.
+	// The magnifier only has a tab on a phone, the household, the meal plan and the shops only on a large
+	// screen: five targets is the most a thumb can hold.
 	await expect(page.getByTestId('nav-/magnifier')).toBeVisible();
 	await expect(page.getByTestId('nav-/household')).toBeHidden();
+	await expect(page.getByTestId('nav-/meal-plan')).toBeHidden();
 	await expect(page.getByTestId('nav-/shops')).toBeHidden();
 
 	// What the bar no longer carries, the header carries: otherwise the profile would be unreachable.

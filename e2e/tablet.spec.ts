@@ -36,11 +36,12 @@ test('sur tablette en portrait, la navigation est un rail sur le bord et non une
 	expect(box!.x + box!.width).toBeGreaterThan(width - 2);
 	expect(box!.width).toBeLessThan(width / 3);
 
-	// Same destination set as the phone, plus one: the magnifier has a rail entry like on the phone, and
-	// the household gets its own — a hand is free to hold the tablet, unlike the phone. The shops still
-	// do not: a narrow column has no room for nine destinations either.
+	// Same destination set as the phone, plus two: the magnifier has a rail entry like on the phone, and
+	// the household and the meal plan get their own — a hand is free to hold the tablet, unlike the
+	// phone. The shops still do not: a narrow column has no room for nine destinations either.
 	await expect(page.getByTestId('nav-/magnifier')).toBeVisible();
 	await expect(page.getByTestId('nav-/household')).toBeVisible();
+	await expect(page.getByTestId('nav-/meal-plan')).toBeVisible();
 	await expect(page.getByTestId('nav-/shops')).toBeHidden();
 
 	// What the rail no longer carries, the header carries: otherwise the profile would be unreachable.
