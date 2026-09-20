@@ -3,6 +3,7 @@ import {
 	MAX_PRODUCTS,
 	parseRecipeSuggestion,
 	recipeExtractionPrompt,
+	recipeFollowUpPrompt,
 	recipeFromRequestPrompt,
 	recipePrompt,
 	shoppedProducts,
@@ -157,6 +158,33 @@ describe('recipeFromRequestPrompt', () => {
 		});
 
 		expect(prompt).not.toContain('Lardons');
+	});
+});
+
+describe('recipeFollowUpPrompt (#226)', () => {
+	it('contient le message de suivi et la langue demandee', () => {
+		const prompt = recipeFollowUpPrompt('et si je remplace le poulet par du tofu ?', {
+			language: 'français',
+			servings: 4
+		});
+
+		expect(prompt).toContain('et si je remplace le poulet par du tofu ?');
+		expect(prompt).toContain('français');
+	});
+
+	it('exige de nouveau la recette complete au meme format JSON', () => {
+		const prompt = recipeFollowUpPrompt('plus epice', { language: 'français', servings: 4 });
+
+		expect(prompt).toContain(
+			'{"name":"","emoji":"","servings":0,"ingredients":[{"name":"","qty":"","unit":""}],"steps":[""]}'
+		);
+	});
+
+	it('ramene un nombre de parts absurde dans les bornes', () => {
+		expect(recipeFollowUpPrompt('texte', { language: 'fr', servings: 0 })).toContain('1 personnes');
+		expect(recipeFollowUpPrompt('texte', { language: 'fr', servings: 5000 })).toContain(
+			'99 personnes'
+		);
 	});
 });
 
