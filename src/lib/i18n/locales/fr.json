@@ -208,6 +208,7 @@
 		"loading": "Chargement…",
 		"close": "Fermer",
 		"edit": "Modifier",
+		"delete": "Supprimer",
 		"crashed": "Cet écran n'a pas pu s'afficher. Le problème a été noté."
 	},
 	"list": {

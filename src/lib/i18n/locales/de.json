@@ -208,6 +208,7 @@
 		"loading": "Wird geladen…",
 		"close": "Schließen",
 		"edit": "Bearbeiten",
+		"delete": "Löschen",
 		"crashed": "Dieser Bildschirm konnte nicht angezeigt werden. Das Problem wurde erfasst."
 	},
 	"list": {

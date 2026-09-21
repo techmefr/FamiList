@@ -208,6 +208,7 @@
 		"loading": "Loading…",
 		"close": "Close",
 		"edit": "Edit",
+		"delete": "Delete",
 		"crashed": "This screen could not be displayed. The problem has been logged."
 	},
 	"list": {
