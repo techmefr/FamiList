@@ -192,7 +192,7 @@
 			<p class="text-label">{t('mealPlan.deleteConfirm', { name: plan.name })}</p>
 			<div class="mt-2 flex flex-wrap gap-2">
 				<Button
-					variant="outline"
+					variant="destructive"
 					onclick={removePlan}
 					data-test-id="meal-plan-delete-confirm"
 					class="fl-press"
@@ -205,7 +205,7 @@
 			</div>
 		{:else}
 			<Button
-				variant="outline"
+				variant="destructive"
 				onclick={() => (toDelete = true)}
 				data-test-id="meal-plan-delete"
 				class="fl-press"

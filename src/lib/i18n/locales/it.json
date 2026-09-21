@@ -208,6 +208,7 @@
 		"loading": "Caricamento…",
 		"close": "Chiudi",
 		"edit": "Modifica",
+		"delete": "Elimina",
 		"crashed": "Questa schermata non è stata visualizzata. Il problema è stato registrato."
 	},
 	"list": {
