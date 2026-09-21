@@ -29,6 +29,7 @@ import { supabase } from '$db/supabase';
 import { initialsFor } from '$domain/avatar';
 import { accountDecision } from '$domain/account-switch';
 import { guessAisleKind, FALLBACK_AISLE_KIND } from '$domain/guess-aisle';
+import { PendingWrites } from '$domain/pending-writes';
 import { groupByAisle, learnedItemOrder } from '$domain/aisle-order';
 import { defaultCircle, ofCircle, resolveAisle, visibleLists } from '$domain/circle';
 import { session } from '$stores/session.svelte';
@@ -158,6 +159,15 @@ class DataStore {
 	private userId = $state('');
 	private userIdKnown = false;
 
+	/**
+	 * Tracks Dexie writes still in flight — see `$domain/pending-writes`. A mutator updates the in-memory
+	 * cache synchronously and writes to Dexie without awaiting it; `hydrate()` re-reads the whole table on
+	 * every sync round-trip and would otherwise wholesale-clobber a write that has not landed yet. Only
+	 * `addCard` reports through it for now — see `hydrate()`'s `cachedCards` guard for why wiring the other
+	 * mutators is cheap here but not on the `hydrate()` side.
+	 */
+	#pendingWrites = new PendingWrites();
+
 	async load() {
 		if (!browser) return;
 
@@ -243,7 +253,14 @@ class DataStore {
 		this.cachedAisles = aisles;
 		this.cachedLists = lists;
 		this.items = items;
-		this.cachedCards = cards;
+
+		// `addCard` writes to Dexie without awaiting it, so a card can be in-memory-visible while its write is
+		// still on its way. If a write is still in flight, this read of `db.cards` may have missed it — replacing
+		// `cachedCards` now would clobber the optimistic card until some later cycle picks it up. Skipping this
+		// cycle costs nothing: `hydrate()` runs again on the next sync round-trip, by which point the write has
+		// settled and the read will see it.
+		if (this.#pendingWrites.count === 0) this.cachedCards = cards;
+
 		this.cachedMembers = members;
 		this.layouts = layouts;
 		this.itemOrders = itemOrders;
@@ -820,7 +837,7 @@ class DataStore {
 	addCard(input: Omit<LoyaltyCard, 'id' | 'householdId'>) {
 		const card: LoyaltyCard = { ...input, id: crypto.randomUUID(), householdId: this.circle };
 		this.cachedCards = [...this.cachedCards, card];
-		db.cards.add(card);
+		void this.#pendingWrites.track(db.cards.add(card));
 		this.push('loyalty_cards', card, fromCard);
 		return card;
 	}
