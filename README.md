@@ -1,5 +1,7 @@
 # FamiList
 
+![version](https://img.shields.io/badge/version-0.1.0-blue) · [Changelog](CHANGELOG.md)
+
 A shared shopping list for a household, on your own database.
 
 The list everyone in the house edits at once, in the order of the aisles of the shop you are
@@ -30,6 +32,14 @@ folder of static files that executes nothing on a server.
 - **Loyalty cards**, so the plastic stays at home.
 - **One conversation per list**, with date polls and a split of who brings what — the part that
   normally lives in a separate group chat.
+- **Recipes**, imported from a link, asked for in plain words, or written by hand — each one turns
+  into a shopping list scaled to how many people are eating.
+- **Weekly meal plans**: pick several recipes, generate one consolidated list instead of one per
+  recipe.
+- **AI is entirely optional and always the person's own key.** Nothing is sent anywhere unless
+  someone configures their own provider (Anthropic, Gemini, Mistral, Groq, OpenRouter, DeepSeek —
+  several can be saved at once and switched between) and asks for it explicitly. Dish photos use a
+  free, keyless provider instead.
 - **A magnifier**, and a whole appearance section: type size, font, contrast, reduced motion,
   left- or right-handed layout. Built in, not bolted on.
 - **Ten languages**: French, English, German, Spanish, Italian, Portuguese, Russian, Chinese,
