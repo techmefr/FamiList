@@ -6,6 +6,7 @@
 	import { ai } from '$stores/ai.svelte';
 	import { createIntent } from '$stores/create.svelte';
 	import { i18n, t, LOCALES } from '$i18n/index.svelte';
+	import { motionMs } from '$stores/settings.svelte';
 	import { DEFAULT_SERVINGS, MAX_SERVINGS, MIN_SERVINGS, type RecipeLine } from '$domain/recipe';
 	import type { Recipe } from '$db/schema';
 	import { recipeExtractionPrompt, restrictionsOf, type SuggestedRecipe } from '$domain/ai-recipe';
@@ -21,6 +22,8 @@
 	import { Input } from '$components/ui/input';
 	import { Label } from '$components/ui/label';
 	import * as Card from '$components/ui/card';
+	import { slide } from 'svelte/transition';
+	import { cubicOut } from 'svelte/easing';
 	import EmojiPicker from '$components/app/EmojiPicker.svelte';
 	import EmptyState from '$components/app/EmptyState.svelte';
 	import IconField from '$components/app/IconField.svelte';
@@ -28,6 +31,7 @@
 	import AiRecipeRequest from '$components/app/AiRecipeRequest.svelte';
 	import RecipePhoto from '$components/app/RecipePhoto.svelte';
 	import RecipeShareSheet from '$components/app/RecipeShareSheet.svelte';
+	import RecipeCover from '$components/app/RecipeCover.svelte';
 	import {
 		CookingPot,
 		Hash,
@@ -85,6 +89,23 @@
 	function share(recipeId: string) {
 		sharingId = recipeId;
 		shareSheet?.show();
+	}
+
+	/**
+	 * Which cards are unfolded, in the Pinterest grid below. A `Set` and not a single id: unlike the
+	 * generation form or the delete confirmation, which only ever make sense for one recipe at a time,
+	 * reading two recipes open side by side is a normal thing to want in a grid.
+	 */
+	let expandedIds = $state(new Set<string>());
+
+	function toggleExpanded(recipeId: string) {
+		const next = new Set(expandedIds);
+		if (next.has(recipeId)) {
+			next.delete(recipeId);
+		} else {
+			next.add(recipeId);
+		}
+		expandedIds = next;
 	}
 
 	/** The import from a link: the address typed, the wait, the refusal, and the fact of having served. */
@@ -372,6 +393,12 @@
 		data.removeRecipe(id);
 		toDelete = null;
 		if (generatingFor === id) generatingFor = null;
+
+		if (expandedIds.has(id)) {
+			const next = new Set(expandedIds);
+			next.delete(id);
+			expandedIds = next;
+		}
 	}
 
 	function toggleGeneration(recipeId: string) {
@@ -806,104 +833,120 @@
 {#if data.recipes.length === 0}
 	<EmptyState illustration="cart" text={t('recipes.empty')} testId="recipes-empty" />
 {:else}
-	<ul class="mt-6 space-y-3">
+	<!--
+		A Pinterest-style wall, not a stack: a recipe is a photo before it is a document, and a single column
+		of fully unfolded cards buried that photo under ingredients nobody was reading yet. `columns` packs
+		cards of uneven height into that wall in plain CSS — `break-inside-avoid` on each card is what keeps
+		one from being split across two columns, no masonry library needed. Column count follows this app's
+		own `phone`/`full` breakpoints rather than an invented one: two on a phone or a portrait tablet, four
+		once there is a real desktop-width landscape screen to fill.
+	-->
+	<ul class="fl-recipe-grid mt-6 columns-2 gap-3.5 full:columns-4">
 		{#each data.recipes as recipe (recipe.id)}
 			{@const ingredients = data.ingredientsOf(recipe.id)}
 			{@const recipeSteps = data.stepsOf(recipe.id)}
 			{@const owned = recipe.householdId === data.circle}
-			<li>
-				<Card.Root data-test-class="recipe-card" class="overflow-hidden">
+			{@const isExpanded = expandedIds.has(recipe.id)}
+			<li class="mb-3.5 break-inside-avoid">
+				<Card.Root data-test-class="recipe-card" class="fl-home-card overflow-hidden p-0">
 					<!--
-						A recipe card, not a data record: the emoji is the illustration this app can afford,
-						enlarged and given room, and the number of people it feeds sits next to the title as a
-						badge rather than a caption — it is read before the ingredients, never after.
+						Collapsed, a card is only its photo (or its emoji, when there is none) and its name: nothing
+						else is worth showing at rest in a wall this dense. The whole header is the summary's own
+						toggle, so a tap anywhere on the photo or the name opens it, not only on a chevron nobody
+						asked for.
 					-->
-					<Card.Header
-						class="border-b bg-[var(--fl-primary-tint)] pt-(--card-spacing)"
+					<button
+						type="button"
+						onclick={() => toggleExpanded(recipe.id)}
+						aria-expanded={isExpanded}
+						aria-controls="recipe-panel-{recipe.id}"
 						data-test-class="recipe-card-header"
+						class="fl-press block w-full text-left"
 					>
-						<div class="flex items-start gap-3">
-							<span class="text-4xl leading-none" aria-hidden="true">{recipe.emoji}</span>
-							<div class="min-w-0 flex-1">
-								<Card.Title class="text-product break-words">{recipe.name}</Card.Title>
-								<div class="mt-1.5 flex flex-wrap items-center gap-1.5">
-									<span
-										class="bg-primary text-primary-foreground text-caption inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 font-semibold"
-									>
-										<Users size={12} aria-hidden="true" />
-										{t('recipes.servingsCount', { count: recipe.servings })}
-									</span>
-									{#if !owned}
-										<span
-											class="bg-muted text-muted-foreground text-caption inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 font-semibold"
-											data-test-class="recipe-shared-badge"
-										>
-											{t('recipes.sharedFrom', { circle: data.circleName(recipe.householdId) })}
-										</span>
-									{/if}
-								</div>
-							</div>
-						</div>
-					</Card.Header>
-
-					<Card.Content>
-						<RecipePhoto
-							recipeId={recipe.id}
-							recipeName={recipe.name}
-							ingredientNames={ingredients.map((line) => line.name)}
-							photoPath={recipe.photoPath}
-						/>
-
-						{#if ingredients.length}
-							<h3
-								class="text-label text-muted-foreground flex items-center gap-1.5 font-semibold tracking-wide uppercase"
+						<RecipeCover recipeName={recipe.name} emoji={recipe.emoji} photoPath={recipe.photoPath} />
+						<span class="flex flex-wrap items-start gap-2 p-3">
+							<Card.Title class="text-product min-w-0 flex-1 break-words">{recipe.name}</Card.Title>
+							<span
+								class="bg-primary text-primary-foreground text-caption mt-0.5 inline-flex shrink-0 items-center gap-1 rounded-full px-2 py-0.5 font-semibold"
 							>
-								<ShoppingBasket size={14} aria-hidden="true" />
-								{t('recipes.step.ingredients')}
-							</h3>
-							<ul class="text-label mt-2 space-y-1.5">
-								{#each ingredients as ingredient (ingredient.id)}
-									<li
-										data-test-class="recipe-ingredient"
-										class="flex items-baseline gap-2 border-b border-dashed pb-1.5 last:border-0 last:pb-0"
-									>
-										<span class="min-w-0 flex-1">{ingredient.name}</span>
-										{#if ingredient.qty}
-											<span class="text-muted-foreground text-caption shrink-0 font-medium">
-												{ingredient.qty}
-												{t(`units.${ingredient.unit}`)}
-											</span>
-										{/if}
-									</li>
-								{/each}
-							</ul>
-						{/if}
+								<Users size={12} aria-hidden="true" />
+								{recipe.servings}
+							</span>
+							{#if !owned}
+								<span
+									class="bg-muted text-muted-foreground text-caption mt-0.5 inline-flex shrink-0 items-center gap-1.5 rounded-full px-2 py-0.5 font-semibold"
+									data-test-class="recipe-shared-badge"
+								>
+									{t('recipes.sharedFrom', { circle: data.circleName(recipe.householdId) })}
+								</span>
+							{/if}
+						</span>
+					</button>
 
-						{#if recipeSteps.length}
-							<h3
-								class="text-label text-muted-foreground mt-5 flex items-center gap-1.5 font-semibold tracking-wide uppercase"
-							>
-								<CookingPot size={14} aria-hidden="true" />
-								{t('recipes.step.steps')}
-							</h3>
-							<!--
-								"Cooking mode" reading: a step is looked at with wet or floury hands, from arm's
-								length, one at a time — so the number carries the weight, not the bullet.
-							-->
-							<ol class="mt-2 space-y-3">
-								{#each recipeSteps as step, index (step.id)}
-									<li data-test-class="recipe-step-body" class="flex items-start gap-3">
-										<span
-											class="bg-muted text-foreground text-label grid size-7 shrink-0 place-items-center rounded-full font-bold"
-											aria-hidden="true"
-										>
-											{index + 1}
-										</span>
-										<span class="text-label pt-0.5">{step.body}</span>
-									</li>
-								{/each}
-							</ol>
-						{/if}
+					{#if isExpanded}
+						<div
+							id="recipe-panel-{recipe.id}"
+							data-test-class="recipe-card-panel"
+							transition:slide={{ duration: motionMs(220), easing: cubicOut }}
+						>
+							<Card.Content class="border-t pt-4">
+								<RecipePhoto
+									recipeId={recipe.id}
+									recipeName={recipe.name}
+									ingredientNames={ingredients.map((line) => line.name)}
+									photoPath={recipe.photoPath}
+								/>
+
+								{#if ingredients.length}
+									<h3
+										class="text-label text-muted-foreground flex items-center gap-1.5 font-semibold tracking-wide uppercase"
+									>
+										<ShoppingBasket size={14} aria-hidden="true" />
+										{t('recipes.step.ingredients')}
+									</h3>
+									<ul class="text-label mt-2 space-y-1.5">
+										{#each ingredients as ingredient (ingredient.id)}
+											<li
+												data-test-class="recipe-ingredient"
+												class="flex items-baseline gap-2 border-b border-dashed pb-1.5 last:border-0 last:pb-0"
+											>
+												<span class="min-w-0 flex-1">{ingredient.name}</span>
+												{#if ingredient.qty}
+													<span class="text-muted-foreground text-caption shrink-0 font-medium">
+														{ingredient.qty}
+														{t(`units.${ingredient.unit}`)}
+													</span>
+												{/if}
+											</li>
+										{/each}
+									</ul>
+								{/if}
+
+								{#if recipeSteps.length}
+									<h3
+										class="text-label text-muted-foreground mt-5 flex items-center gap-1.5 font-semibold tracking-wide uppercase"
+									>
+										<CookingPot size={14} aria-hidden="true" />
+										{t('recipes.step.steps')}
+									</h3>
+									<!--
+										"Cooking mode" reading: a step is looked at with wet or floury hands, from arm's
+										length, one at a time — so the number carries the weight, not the bullet.
+									-->
+									<ol class="mt-2 space-y-3">
+										{#each recipeSteps as step, index (step.id)}
+											<li data-test-class="recipe-step-body" class="flex items-start gap-3">
+												<span
+													class="bg-muted text-foreground text-label grid size-7 shrink-0 place-items-center rounded-full font-bold"
+													aria-hidden="true"
+												>
+													{index + 1}
+												</span>
+												<span class="text-label pt-0.5">{step.body}</span>
+											</li>
+										{/each}
+									</ol>
+								{/if}
 
 						<div class="mt-4 flex flex-wrap items-center gap-3">
 							<Button
@@ -1007,21 +1050,23 @@
 							<div class="mt-4 space-y-3 border-t pt-4">
 								<p class="text-label">{t('recipes.deleteConfirm', { name: recipe.name })}</p>
 								<div class="flex flex-wrap gap-2">
-									<Button
-										variant="destructive"
-										onclick={() => remove(recipe.id)}
-										data-test-class="recipe-delete-confirm"
-										class="fl-press"
-									>
-										{t('recipes.deleteYes')}
-									</Button>
-									<Button variant="outline" onclick={() => (toDelete = null)} class="fl-press">
-										{t('common.cancel')}
-									</Button>
-								</div>
-							</div>
-						{/if}
-					</Card.Content>
+											<Button
+												variant="destructive"
+												onclick={() => remove(recipe.id)}
+												data-test-class="recipe-delete-confirm"
+												class="fl-press"
+											>
+												{t('recipes.deleteYes')}
+											</Button>
+											<Button variant="outline" onclick={() => (toDelete = null)} class="fl-press">
+												{t('common.cancel')}
+											</Button>
+										</div>
+									</div>
+								{/if}
+							</Card.Content>
+						</div>
+					{/if}
 				</Card.Root>
 			</li>
 		{/each}
