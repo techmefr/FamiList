@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { defaultCircle, ofCircle, resolveAisle, visibleLists } from './circle';
+import { defaultCircle, ofCircle, resolveAisle, visibleLists, visibleRecipes } from './circle';
 
 describe('ofCircle', () => {
 	it('ne garde que ce qui appartient au cercle actif', () => {
@@ -36,6 +36,35 @@ describe('visibleLists', () => {
 		expect(visibleLists([{ id: 'cadeaux' }, { id: 'famille', householdId: 'a' }], '')).toEqual([
 			{ id: 'cadeaux' }
 		]);
+	});
+});
+
+describe('visibleRecipes', () => {
+	const recipes = [
+		{ id: 'gratin', householdId: 'a' },
+		{ id: 'tarte', householdId: 'b' },
+		{ id: 'soupe', householdId: 'a' }
+	];
+
+	it('montre les recettes possédées par le cercle actif', () => {
+		expect(visibleRecipes(recipes, [], 'a').map((r) => r.id)).toEqual(['gratin', 'soupe']);
+	});
+
+	it('ajoute celles partagées avec le cercle actif sans les retirer à leur propriétaire', () => {
+		const shares = [{ recipeId: 'tarte', householdId: 'a' }];
+
+		expect(visibleRecipes(recipes, shares, 'a').map((r) => r.id)).toEqual(['gratin', 'tarte', 'soupe']);
+		// The owning circle keeps seeing it too — sharing never reassigns it.
+		expect(visibleRecipes(recipes, shares, 'b').map((r) => r.id)).toEqual(['tarte']);
+	});
+
+	it('ignore un partage qui ne vise pas le cercle actif', () => {
+		const shares = [{ recipeId: 'tarte', householdId: 'c' }];
+		expect(visibleRecipes(recipes, shares, 'a').map((r) => r.id)).toEqual(['gratin', 'soupe']);
+	});
+
+	it('ne montre rien tant qu’aucun cercle n’est actif', () => {
+		expect(visibleRecipes(recipes, [{ recipeId: 'tarte', householdId: '' }], '')).toEqual([]);
 	});
 });
 

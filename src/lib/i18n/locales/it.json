@@ -418,7 +418,10 @@
 			"other": "Per {count} persone"
 		},
 		"photoAlt": "Foto generata di {name}",
-		"mealPlanLink": "Crea un piano dei pasti settimanale"
+		"mealPlanLink": "Crea un piano dei pasti settimanale",
+		"share": "Condividi",
+		"shareAria": "Condividi la ricetta {name}",
+		"sharedFrom": "Condivisa da {circle}"
 	},
 	"aisles": {
 		"title": "Reparti",
@@ -1173,5 +1176,11 @@
 		"delete": "Elimina il piano",
 		"deleteConfirm": "Eliminare {name}? Le liste già generate non cambieranno.",
 		"deleteYes": "Elimina"
+	},
+	"recipeShare": {
+		"title": "Condividi questa ricetta",
+		"note": "Attiva un cerchio per permettergli di vedere questa ricetta e usarla per generare liste. Resta tua: l’altro cerchio la legge soltanto.",
+		"empty": "Non hai ancora un altro cerchio con cui condividere.",
+		"sharedWith": "Condivisa con {name}"
 	}
 }

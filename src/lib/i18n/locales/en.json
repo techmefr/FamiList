@@ -418,7 +418,10 @@
 			"other": "Serves {count}"
 		},
 		"photoAlt": "Generated photo of {name}",
-		"mealPlanLink": "Build a weekly meal plan"
+		"mealPlanLink": "Build a weekly meal plan",
+		"share": "Share",
+		"shareAria": "Share recipe {name}",
+		"sharedFrom": "Shared from {circle}"
 	},
 	"aisles": {
 		"title": "Aisles",
@@ -1173,5 +1176,11 @@
 		"delete": "Delete the meal plan",
 		"deleteConfirm": "Delete {name}? Lists already generated will not change.",
 		"deleteYes": "Delete"
+	},
+	"recipeShare": {
+		"title": "Share this recipe",
+		"note": "Turn on a circle to let it see this recipe and use it to generate lists. It stays yours — the other circle only reads it.",
+		"empty": "You have no other circle to share with yet.",
+		"sharedWith": "Shared with {name}"
 	}
 }

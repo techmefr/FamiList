@@ -30,6 +30,7 @@
 	import RecipeSuggestion from '$components/app/RecipeSuggestion.svelte';
 	import AiRecipeRequest from '$components/app/AiRecipeRequest.svelte';
 	import RecipePhoto from '$components/app/RecipePhoto.svelte';
+	import RecipeShareSheet from '$components/app/RecipeShareSheet.svelte';
 	import RecipeCover from '$components/app/RecipeCover.svelte';
 	import {
 		CookingPot,
@@ -45,7 +46,8 @@
 		Download,
 		Sparkles,
 		CalendarDays,
-		Pencil
+		Pencil,
+		Share2
 	} from '@lucide/svelte';
 
 	/**
@@ -79,6 +81,15 @@
 	let guestCount = $state(DEFAULT_SERVINGS);
 	let target = $state('');
 	let toDelete = $state<string | null>(null);
+
+	/** The recipe sharing sheet, and which recipe it is currently open for. */
+	let shareSheet = $state<RecipeShareSheet | null>(null);
+	let sharingId = $state('');
+
+	function share(recipeId: string) {
+		sharingId = recipeId;
+		shareSheet?.show();
+	}
 
 	/**
 	 * Which cards are unfolded, in the Pinterest grid below. A `Set` and not a single id: unlike the
@@ -834,6 +845,7 @@
 		{#each data.recipes as recipe (recipe.id)}
 			{@const ingredients = data.ingredientsOf(recipe.id)}
 			{@const recipeSteps = data.stepsOf(recipe.id)}
+			{@const owned = recipe.householdId === data.circle}
 			{@const isExpanded = expandedIds.has(recipe.id)}
 			<li class="mb-3.5 break-inside-avoid">
 				<Card.Root data-test-class="recipe-card" class="fl-home-card overflow-hidden p-0">
@@ -852,7 +864,7 @@
 						class="fl-press block w-full text-left"
 					>
 						<RecipeCover recipeName={recipe.name} emoji={recipe.emoji} photoPath={recipe.photoPath} />
-						<span class="flex items-start gap-2 p-3">
+						<span class="flex flex-wrap items-start gap-2 p-3">
 							<Card.Title class="text-product min-w-0 flex-1 break-words">{recipe.name}</Card.Title>
 							<span
 								class="bg-primary text-primary-foreground text-caption mt-0.5 inline-flex shrink-0 items-center gap-1 rounded-full px-2 py-0.5 font-semibold"
@@ -860,6 +872,14 @@
 								<Users size={12} aria-hidden="true" />
 								{recipe.servings}
 							</span>
+							{#if !owned}
+								<span
+									class="bg-muted text-muted-foreground text-caption mt-0.5 inline-flex shrink-0 items-center gap-1.5 rounded-full px-2 py-0.5 font-semibold"
+									data-test-class="recipe-shared-badge"
+								>
+									{t('recipes.sharedFrom', { circle: data.circleName(recipe.householdId) })}
+								</span>
+							{/if}
 						</span>
 					</button>
 
@@ -928,95 +948,108 @@
 									</ol>
 								{/if}
 
-								<div class="mt-4 flex flex-wrap items-center gap-3">
-									<Button
-										onclick={() => toggleGeneration(recipe.id)}
-										disabled={ingredients.length === 0}
-										data-test-class="recipe-generate"
-										class="fl-press"
-									>
-										<ShoppingBasket size={18} aria-hidden="true" />
-										{t('recipes.generate')}
-									</Button>
+						<div class="mt-4 flex flex-wrap items-center gap-3">
+							<Button
+								onclick={() => toggleGeneration(recipe.id)}
+								disabled={ingredients.length === 0}
+								data-test-class="recipe-generate"
+								class="fl-press"
+							>
+								<ShoppingBasket size={18} aria-hidden="true" />
+								{t('recipes.generate')}
+							</Button>
 
-									<Button
-										variant="outline"
-										onclick={() => edit(recipe)}
-										aria-label={t('recipes.edit', { name: recipe.name })}
-										data-test-class="recipe-edit"
-										class="fl-press"
-									>
-										<Pencil size={18} aria-hidden="true" />
-										{t('common.edit')}
-									</Button>
+							{#if owned}
+								<Button
+									variant="outline"
+									onclick={() => edit(recipe)}
+									aria-label={t('recipes.edit', { name: recipe.name })}
+									data-test-class="recipe-edit"
+									class="fl-press"
+								>
+									<Pencil size={18} aria-hidden="true" />
+									{t('common.edit')}
+								</Button>
 
-									<Button
-										variant="destructive"
-										onclick={() => (toDelete = toDelete === recipe.id ? null : recipe.id)}
-										aria-label={t('recipes.delete', { name: recipe.name })}
-										data-test-class="recipe-delete"
-										class="fl-press"
-									>
-										<Trash2 size={18} aria-hidden="true" />
-										{t('common.delete')}
-									</Button>
+								<Button
+									variant="outline"
+									onclick={() => share(recipe.id)}
+									aria-label={t('recipes.shareAria', { name: recipe.name })}
+									data-test-class="recipe-share"
+									class="fl-press"
+								>
+									<Share2 size={18} aria-hidden="true" />
+									{t('recipes.share')}
+								</Button>
+
+								<Button
+									variant="destructive"
+									onclick={() => (toDelete = toDelete === recipe.id ? null : recipe.id)}
+									aria-label={t('recipes.delete', { name: recipe.name })}
+									data-test-class="recipe-delete"
+									class="fl-press"
+								>
+									<Trash2 size={18} aria-hidden="true" />
+									{t('common.delete')}
+								</Button>
+							{/if}
+						</div>
+
+						<!--
+							Generation sits under the recipe it is about, not in a dialog: you read the ingredients again while
+							deciding how many people you are cooking for.
+						-->
+						{#if generatingFor === recipe.id}
+							<div class="mt-4 space-y-3 border-t pt-4" data-test-class="recipe-generate-form">
+								<div>
+									<Label for="generate-people-{recipe.id}">{t('recipes.people')}</Label>
+									<IconField icon={Users}>
+										<Input
+											id="generate-people-{recipe.id}"
+											type="number"
+											bind:value={guestCount}
+											min={MIN_SERVINGS}
+											max={MAX_SERVINGS}
+											data-test-class="generate-people"
+										/>
+									</IconField>
+									<p class="text-muted-foreground text-caption">
+										{t('recipes.peopleHint', { servings: recipe.servings })}
+									</p>
 								</div>
 
-								<!--
-									Generation sits under the recipe it is about, not in a dialog: you read the ingredients again while
-									deciding how many people you are cooking for.
-								-->
-								{#if generatingFor === recipe.id}
-									<div class="mt-4 space-y-3 border-t pt-4" data-test-class="recipe-generate-form">
-										<div>
-											<Label for="generate-people-{recipe.id}">{t('recipes.people')}</Label>
-											<IconField icon={Users}>
-												<Input
-													id="generate-people-{recipe.id}"
-													type="number"
-													bind:value={guestCount}
-													min={MIN_SERVINGS}
-													max={MAX_SERVINGS}
-													data-test-class="generate-people"
-												/>
-											</IconField>
-											<p class="text-muted-foreground text-caption">
-												{t('recipes.peopleHint', { servings: recipe.servings })}
-											</p>
-										</div>
-
-										<div>
-											<Label for="generate-target-{recipe.id}">{t('recipes.target')}</Label>
-											<IconField icon={Hash}>
-												<select
-													id="generate-target-{recipe.id}"
-													bind:value={target}
-													data-test-class="generate-target"
-													class="border-input bg-background min-h-[max(2.75rem,44px)] w-full rounded-md border"
-												>
-													<option value="">{t('recipes.targetNew')}</option>
-													{#each data.lists as list (list.id)}
-														<option value={list.id}>{list.emoji} {list.name}</option>
-													{/each}
-												</select>
-											</IconField>
-										</div>
-
-										<Button
-											onclick={() => generate(recipe.id)}
-											data-test-class="generate-submit"
-											class="fl-press"
+								<div>
+									<Label for="generate-target-{recipe.id}">{t('recipes.target')}</Label>
+									<IconField icon={Hash}>
+										<select
+											id="generate-target-{recipe.id}"
+											bind:value={target}
+											data-test-class="generate-target"
+											class="border-input bg-background min-h-[max(2.75rem,44px)] w-full rounded-md border"
 										>
-											<ShoppingBasket size={18} aria-hidden="true" />
-											{t('recipes.generateSubmit')}
-										</Button>
-									</div>
-								{/if}
+											<option value="">{t('recipes.targetNew')}</option>
+											{#each data.lists as list (list.id)}
+												<option value={list.id}>{list.emoji} {list.name}</option>
+											{/each}
+										</select>
+									</IconField>
+								</div>
 
-								{#if toDelete === recipe.id}
-									<div class="mt-4 space-y-3 border-t pt-4">
-										<p class="text-label">{t('recipes.deleteConfirm', { name: recipe.name })}</p>
-										<div class="flex flex-wrap gap-2">
+								<Button
+									onclick={() => generate(recipe.id)}
+									data-test-class="generate-submit"
+									class="fl-press"
+								>
+									<ShoppingBasket size={18} aria-hidden="true" />
+									{t('recipes.generateSubmit')}
+								</Button>
+							</div>
+						{/if}
+
+						{#if toDelete === recipe.id}
+							<div class="mt-4 space-y-3 border-t pt-4">
+								<p class="text-label">{t('recipes.deleteConfirm', { name: recipe.name })}</p>
+								<div class="flex flex-wrap gap-2">
 											<Button
 												variant="destructive"
 												onclick={() => remove(recipe.id)}
@@ -1041,3 +1074,5 @@
 {/if}
 
 <EmojiPicker bind:this={picker} value={emoji} onpick={(chosen) => (emoji = chosen)} />
+
+<RecipeShareSheet bind:this={shareSheet} recipeId={sharingId} />

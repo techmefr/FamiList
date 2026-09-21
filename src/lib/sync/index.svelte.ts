@@ -20,6 +20,7 @@ import {
 	toPrice,
 	toRecipe,
 	toRecipeIngredient,
+	toRecipeShare,
 	toRecipeStep,
 	toMealPlan,
 	toMealPlanRecipe,
@@ -398,6 +399,7 @@ class SyncStore {
 			recipes,
 			recipeIngredients,
 			recipeSteps,
+			recipeShares,
 			mealPlans,
 			mealPlanRecipes,
 			householdPersons,
@@ -423,11 +425,18 @@ class SyncStore {
 			supabase.from('poll_options').select('*'),
 			supabase.from('poll_votes').select('*'),
 			supabase.from('item_prices').select('*').in('household_id', cercles),
-			supabase.from('recipes').select('*').in('household_id', cercles),
+			// No household filter: can_access_recipe now also admits a household a recipe was shared into, which
+			// may not be one of `cercles`' owner — it is a circle the recipe's OWNING household chose, not
+			// necessarily one this account's other circles sit alongside. RLS alone decides what comes back, the
+			// same way `conversations` below relies on its own policy rather than a client-side filter.
+			supabase.from('recipes').select('*'),
 			// A recipe's lines carry no household: the policy already filters them by the recipe they depend on,
 			// as for a list's items.
 			supabase.from('recipe_ingredients').select('*'),
 			supabase.from('recipe_steps').select('*'),
+			// Same reasoning as `recipes`: a share into one of `cercles` may originate from a household we are
+			// not otherwise a member of, so RLS is the only filter.
+			supabase.from('recipe_shares').select('*'),
 			supabase.from('meal_plans').select('*').in('household_id', cercles),
 			// A meal plan's recipes carry no household of their own, same reason as recipe_ingredients.
 			supabase.from('meal_plan_recipes').select('*'),
@@ -456,6 +465,7 @@ class SyncStore {
 			recipes,
 			recipeIngredients,
 			recipeSteps,
+			recipeShares,
 			mealPlans,
 			mealPlanRecipes,
 			householdPersons,
@@ -522,6 +532,7 @@ class SyncStore {
 				db.recipes,
 				db.recipeIngredients,
 				db.recipeSteps,
+				db.recipeShares,
 				db.mealPlans,
 				db.mealPlanRecipes,
 				db.householdPersons,
@@ -561,6 +572,7 @@ class SyncStore {
 					db.recipes.clear(),
 					db.recipeIngredients.clear(),
 					db.recipeSteps.clear(),
+					db.recipeShares.clear(),
 					db.mealPlans.clear(),
 					db.mealPlanRecipes.clear(),
 					db.householdPersons.clear(),
@@ -592,6 +604,7 @@ class SyncStore {
 						(recipeIngredients.data ?? []).map(toRecipeIngredient)
 					),
 					db.recipeSteps.bulkAdd((recipeSteps.data ?? []).map(toRecipeStep)),
+					db.recipeShares.bulkAdd((recipeShares.data ?? []).map(toRecipeShare)),
 					db.mealPlans.bulkAdd((mealPlans.data ?? []).map(toMealPlan)),
 					db.mealPlanRecipes.bulkAdd((mealPlanRecipes.data ?? []).map(toMealPlanRecipe)),
 					db.householdPersons.bulkAdd(

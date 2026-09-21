@@ -418,7 +418,10 @@
 			"other": "Ho an olona {count}"
 		},
 		"photoAlt": "Sary noforonina an'ny {name}",
-		"mealPlanLink": "Mamorona drafitra sakafo isan-kerinandro"
+		"mealPlanLink": "Mamorona drafitra sakafo isan-kerinandro",
+		"share": "Zarao",
+		"shareAria": "Zarao ny mahandro {name}",
+		"sharedFrom": "Nozaraina avy amin'ny {circle}"
 	},
 	"aisles": {
 		"title": "Faritra",
@@ -1173,5 +1176,11 @@
 		"delete": "Fafao ny drafitra",
 		"deleteConfirm": "Fafao {name}? Tsy hiova ny lisitra efa noforonina.",
 		"deleteYes": "Fafao"
+	},
+	"recipeShare": {
+		"title": "Zarao ity mahandro ity",
+		"note": "Alefaso ny faribolana iray mba hahafahany mahita ity mahandro ity sy hampiasa azy hamoronana lisitra. Anao foana izy — ny faribolana hafa dia mamaky azy fotsiny.",
+		"empty": "Mbola tsy manana faribolana hafa hizarana ianao.",
+		"sharedWith": "Nozaraina tamin'ny {name}"
 	}
 }

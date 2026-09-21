@@ -1139,6 +1139,42 @@ export type Database = {
           },
         ]
       }
+      recipe_shares: {
+        Row: {
+          created_at: string
+          household_id: string
+          recipe_id: string
+          shared_by: string | null
+        }
+        Insert: {
+          created_at?: string
+          household_id: string
+          recipe_id: string
+          shared_by?: string | null
+        }
+        Update: {
+          created_at?: string
+          household_id?: string
+          recipe_id?: string
+          shared_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "recipe_shares_household_id_fkey"
+            columns: ["household_id"]
+            isOneToOne: false
+            referencedRelation: "households"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "recipe_shares_recipe_id_fkey"
+            columns: ["recipe_id"]
+            isOneToOne: false
+            referencedRelation: "recipes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       shop_item_orders: {
         Row: {
           aisle_id: string
