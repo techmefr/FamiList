@@ -885,7 +885,6 @@
 
 						<div class="mt-4 flex flex-wrap items-center gap-3">
 							<Button
-								variant="outline"
 								onclick={() => toggleGeneration(recipe.id)}
 								disabled={ingredients.length === 0}
 								data-test-class="recipe-generate"
@@ -903,16 +902,18 @@
 								class="fl-press"
 							>
 								<Pencil size={18} aria-hidden="true" />
+								{t('common.edit')}
 							</Button>
 
 							<Button
-								variant="outline"
+								variant="destructive"
 								onclick={() => (toDelete = toDelete === recipe.id ? null : recipe.id)}
 								aria-label={t('recipes.delete', { name: recipe.name })}
 								data-test-class="recipe-delete"
 								class="fl-press"
 							>
 								<Trash2 size={18} aria-hidden="true" />
+								{t('common.delete')}
 							</Button>
 						</div>
 
@@ -972,7 +973,7 @@
 								<p class="text-label">{t('recipes.deleteConfirm', { name: recipe.name })}</p>
 								<div class="flex flex-wrap gap-2">
 									<Button
-										variant="outline"
+										variant="destructive"
 										onclick={() => remove(recipe.id)}
 										data-test-class="recipe-delete-confirm"
 										class="fl-press"
