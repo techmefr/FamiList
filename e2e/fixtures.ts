@@ -1,5 +1,5 @@
 import { test as base, expect, type Page } from '@playwright/test';
-import { version as appVersion } from '../package.json';
+import { version as appVersion } from '../package.json' with { type: 'json' };
 
 /** The accounts set by `supabase/seed.sql`, confirmed and approved from `supabase db reset` onwards. */
 export const FIXTURE_EMAIL = 'e2e@familist.test';
