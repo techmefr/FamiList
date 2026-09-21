@@ -43,6 +43,16 @@ class Settings {
 	 * does not go to the database, unlike the guided tour's.
 	 */
 	hasSeenWelcome = $state(false);
+
+	/**
+	 * The last app version whose "what's new" modal this device has acknowledged.
+	 *
+	 * Stays on the device, like `hasSeenWelcome`: a synced, per-account marker would need a migration and
+	 * would show the modal again on a fresh device that already knows the account, which defeats its point
+	 * — this is about *this browser or install* having seen the notice, not the person.
+	 */
+	lastSeenChangelogVersion = $state('');
+
 	#prefersDark = $state(false);
 	#prefersReducedMotion = $state(false);
 
@@ -83,6 +93,8 @@ class Settings {
 			if (typeof saved.nearbyCards === 'boolean') this.nearbyCards = saved.nearbyCards;
 			if (typeof saved.hasSeenTour === 'boolean') this.hasSeenTour = saved.hasSeenTour;
 			if (typeof saved.hasSeenWelcome === 'boolean') this.hasSeenWelcome = saved.hasSeenWelcome;
+			if (typeof saved.lastSeenChangelogVersion === 'string')
+				this.lastSeenChangelogVersion = saved.lastSeenChangelogVersion;
 			if (typeof saved.changedAt === 'number') this.#changedAt = saved.changedAt;
 			if (typeof saved.syncedAt === 'number') this.#syncedAt = saved.syncedAt;
 			if (typeof saved.syncedFor === 'string') this.#syncedFor = saved.syncedFor;
@@ -132,6 +144,7 @@ class Settings {
 						nearbyCards: this.nearbyCards,
 						hasSeenTour: this.hasSeenTour,
 						hasSeenWelcome: this.hasSeenWelcome,
+						lastSeenChangelogVersion: this.lastSeenChangelogVersion,
 						changedAt: this.#changedAt,
 						syncedAt: this.#syncedAt,
 						syncedFor: this.#syncedFor
@@ -204,6 +217,10 @@ class Settings {
 
 	setWelcomeSeen(seen: boolean) {
 		this.hasSeenWelcome = seen;
+	}
+
+	setChangelogSeen(version: string) {
+		this.lastSeenChangelogVersion = version;
 	}
 
 	/**

@@ -130,7 +130,16 @@ class I18n {
 	number(value: number, options?: Intl.NumberFormatOptions) {
 		return new Intl.NumberFormat(this.locale, options).format(value);
 	}
+
+	/** Same lookup as `t`, for a key whose value is an array of strings rather than one string. */
+	list(key: string): string[] {
+		const path = key.split('.');
+		const node = lookup(this.#messages, path) ?? lookup(this.#fallback, path);
+
+		return Array.isArray(node) ? (node as unknown as string[]) : [];
+	}
 }
 
 export const i18n = new I18n();
 export const t = (key: string, params?: Record<string, string | number>) => i18n.t(key, params);
+export const tList = (key: string) => i18n.list(key);
