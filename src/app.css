@@ -1601,6 +1601,15 @@ button[data-slot='switch'][data-state='checked'] {
 }
 
 /**
+ * The recipe wall's masonry: `columns` packs cards of uneven photo height into balanced columns in plain
+ * CSS, no library needed. `column-fill: balance` is what keeps the columns roughly level instead of filling
+ * the first one all the way down before starting the next.
+ */
+.fl-recipe-grid {
+	column-fill: balance;
+}
+
+/**
  * The list's emoji on a disc of its own tint.
  *
  * Every list has carried a colour since its creation, and the home screen had never shown it. The disc

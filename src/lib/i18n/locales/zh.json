@@ -415,7 +415,10 @@
 			"other": "{count} 人份"
 		},
 		"photoAlt": "{name} 的生成图片",
-		"mealPlanLink": "制定本周用餐计划"
+		"mealPlanLink": "制定本周用餐计划",
+		"share": "分享",
+		"shareAria": "分享食谱 {name}",
+		"sharedFrom": "来自 {circle} 的分享"
 	},
 	"aisles": {
 		"title": "货区",
@@ -1179,5 +1182,11 @@
 		"delete": "删除计划",
 		"deleteConfirm": "删除{name}？已生成的清单不会改变。",
 		"deleteYes": "删除"
+	},
+	"recipeShare": {
+		"title": "分享此食谱",
+		"note": "开启某个圈子后，该圈子即可查看此食谱并用它生成清单。食谱仍归你所有——对方圈子只能查看。",
+		"empty": "你还没有其他可以分享的圈子。",
+		"sharedWith": "已与 {name} 分享"
 	}
 }

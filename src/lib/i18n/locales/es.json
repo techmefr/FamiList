@@ -418,7 +418,10 @@
 			"other": "Para {count} personas"
 		},
 		"photoAlt": "Foto generada de {name}",
-		"mealPlanLink": "Crear un plan de comida semanal"
+		"mealPlanLink": "Crear un plan de comida semanal",
+		"share": "Compartir",
+		"shareAria": "Compartir la receta {name}",
+		"sharedFrom": "Compartida desde {circle}"
 	},
 	"aisles": {
 		"title": "Secciones",
@@ -1190,5 +1193,11 @@
 		"delete": "Eliminar el plan",
 		"deleteConfirm": "¿Eliminar {name}? Las listas ya generadas no cambiarán.",
 		"deleteYes": "Eliminar"
+	},
+	"recipeShare": {
+		"title": "Compartir esta receta",
+		"note": "Activa un círculo para que pueda ver esta receta y usarla para generar listas. Sigue siendo tuya: el otro círculo solo la lee.",
+		"empty": "Todavía no tienes otro círculo con quien compartir.",
+		"sharedWith": "Compartida con {name}"
 	}
 }

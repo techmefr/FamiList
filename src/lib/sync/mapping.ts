@@ -12,6 +12,7 @@ import type {
 	Price,
 	Recipe,
 	RecipeIngredient,
+	RecipeShare,
 	RecipeStep,
 	MealPlan,
 	MealPlanRecipe,
@@ -20,7 +21,7 @@ import type {
 	ShopItemOrder,
 	ShopLayout
 } from '$db/schema';
-import { itemOrderKey, memberKey, pollVoteKey } from '$db/schema';
+import { itemOrderKey, memberKey, pollVoteKey, recipeShareKey } from '$db/schema';
 import { CODE_TYPES, type CodeType } from '$domain/code-format';
 import { DEFAULT_MEMBER_TINT, DEFAULT_TINT } from '$domain/tint';
 import { DEFAULT_UNIT } from '$domain/units';
@@ -405,6 +406,20 @@ export const fromRecipeIngredient = (ingredient: RecipeIngredient) => ({
 	qty: toNumber(ingredient.qty),
 	unit: ingredient.unit,
 	position: ingredient.position
+});
+
+export const toRecipeShare = (row: Row): RecipeShare => ({
+	key: recipeShareKey(text(row.recipe_id), text(row.household_id)),
+	recipeId: text(row.recipe_id),
+	householdId: text(row.household_id),
+	sharedBy: typeof row.shared_by === 'string' ? row.shared_by : undefined,
+	createdAt: Date.parse(text(row.created_at)) || 0
+});
+
+export const fromRecipeShare = (share: RecipeShare) => ({
+	recipe_id: share.recipeId,
+	household_id: share.householdId,
+	shared_by: share.sharedBy ?? null
 });
 
 export const toRecipeStep = (row: Row): RecipeStep => ({

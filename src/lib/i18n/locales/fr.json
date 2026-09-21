@@ -418,7 +418,10 @@
 			"other": "Pour {count} personnes"
 		},
 		"photoAlt": "Photo générée de {name}",
-		"mealPlanLink": "Composer un menu de la semaine"
+		"mealPlanLink": "Composer un menu de la semaine",
+		"share": "Partager",
+		"shareAria": "Partager la recette {name}",
+		"sharedFrom": "Partagée depuis {circle}"
 	},
 	"aisles": {
 		"title": "Rayons",
@@ -1189,5 +1192,11 @@
 		"delete": "Supprimer le menu",
 		"deleteConfirm": "Supprimer {name} ? Les listes déjà générées ne changeront pas.",
 		"deleteYes": "Supprimer"
+	},
+	"recipeShare": {
+		"title": "Partager cette recette",
+		"note": "Activez un cercle pour lui permettre de voir cette recette et de l’utiliser pour générer des listes. Elle reste la vôtre : l’autre cercle ne fait que la lire.",
+		"empty": "Vous n’avez pas encore d’autre cercle avec qui partager.",
+		"sharedWith": "Partagée avec {name}"
 	}
 }

@@ -418,7 +418,10 @@
 			"other": "Für {count} Personen"
 		},
 		"photoAlt": "Generiertes Foto von {name}",
-		"mealPlanLink": "Einen Essensplan für die Woche erstellen"
+		"mealPlanLink": "Einen Essensplan für die Woche erstellen",
+		"share": "Teilen",
+		"shareAria": "Rezept {name} teilen",
+		"sharedFrom": "Geteilt von {circle}"
 	},
 	"aisles": {
 		"title": "Abteilungen",
@@ -1190,5 +1193,11 @@
 		"delete": "Essensplan löschen",
 		"deleteConfirm": "{name} löschen? Bereits erstellte Listen ändern sich nicht.",
 		"deleteYes": "Löschen"
+	},
+	"recipeShare": {
+		"title": "Dieses Rezept teilen",
+		"note": "Aktiviere einen Kreis, damit er dieses Rezept sehen und daraus Listen erstellen kann. Es bleibt deins — der andere Kreis liest es nur.",
+		"empty": "Du hast noch keinen anderen Kreis zum Teilen.",
+		"sharedWith": "Geteilt mit {name}"
 	}
 }

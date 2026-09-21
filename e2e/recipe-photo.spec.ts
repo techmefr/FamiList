@@ -40,6 +40,9 @@ test.describe('photo de recette Pollinations', () => {
 
 		const card = await createRecipe(page, name);
 
+		// The card is a collapsed accordion by default (#246): photo and actions only show once opened.
+		await card.locator('[data-test-class="recipe-card-header"]').click();
+
 		// No AI key is configured for this account (the whole point of #186): the button must be there anyway.
 		const generateButton = card.locator('[data-test-class="recipe-photo-button"]');
 		await expect(generateButton).toBeVisible();
