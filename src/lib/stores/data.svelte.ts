@@ -17,7 +17,9 @@ import {
 	type Price,
 	type Recipe,
 	type RecipeIngredient,
+	type RecipeShare,
 	type RecipeStep,
+	recipeShareKey,
 	type MealPlan,
 	type MealPlanRecipe,
 	type HouseholdPerson,
@@ -31,7 +33,7 @@ import { accountDecision } from '$domain/account-switch';
 import { guessAisleKind, FALLBACK_AISLE_KIND } from '$domain/guess-aisle';
 import { PendingWrites } from '$domain/pending-writes';
 import { groupByAisle, learnedItemOrder } from '$domain/aisle-order';
-import { defaultCircle, ofCircle, resolveAisle, visibleLists } from '$domain/circle';
+import { defaultCircle, ofCircle, resolveAisle, visibleLists, visibleRecipes } from '$domain/circle';
 import { session } from '$stores/session.svelte';
 import { sync } from '$sync/index.svelte';
 import {
@@ -47,6 +49,7 @@ import {
 	fromPrice,
 	fromRecipe,
 	fromRecipeIngredient,
+	fromRecipeShare,
 	fromRecipeStep,
 	fromMealPlan,
 	fromMealPlanRecipe,
@@ -126,6 +129,7 @@ class DataStore {
 	pollVotes = $state<PollVote[]>([]);
 	recipeIngredients = $state<RecipeIngredient[]>([]);
 	recipeSteps = $state<RecipeStep[]>([]);
+	recipeShares = $state<RecipeShare[]>([]);
 	mealPlanRecipes = $state<MealPlanRecipe[]>([]);
 
 	activeShopId = $state<string>('');
@@ -142,7 +146,7 @@ class DataStore {
 	cards = $derived(ofCircle(this.cachedCards, this.circle));
 	members = $derived(ofCircle(this.cachedMembers, this.circle));
 	prices = $derived(ofCircle(this.cachedPrices, this.circle));
-	recipes = $derived(ofCircle(this.cachedRecipes, this.circle));
+	recipes = $derived(visibleRecipes(this.cachedRecipes, this.recipeShares, this.circle));
 	mealPlans = $derived(ofCircle(this.cachedMealPlans, this.circle));
 	householdPersons = $derived(ofCircle(this.cachedHouseholdPersons, this.circle));
 	lists = $derived(visibleLists(this.cachedLists, this.circle));
@@ -222,6 +226,7 @@ class DataStore {
 			recipes,
 			recipeIngredients,
 			recipeSteps,
+			recipeShares,
 			mealPlans,
 			mealPlanRecipes,
 			householdPersons,
@@ -243,6 +248,7 @@ class DataStore {
 			db.recipes.toArray(),
 			db.recipeIngredients.toArray(),
 			db.recipeSteps.toArray(),
+			db.recipeShares.toArray(),
 			db.mealPlans.toArray(),
 			db.mealPlanRecipes.toArray(),
 			db.householdPersons.toArray(),
@@ -272,6 +278,7 @@ class DataStore {
 		this.cachedRecipes = recipes;
 		this.recipeIngredients = recipeIngredients;
 		this.recipeSteps = recipeSteps;
+		this.recipeShares = recipeShares;
 		this.cachedMealPlans = mealPlans;
 		this.mealPlanRecipes = mealPlanRecipes;
 		this.cachedHouseholdPersons = householdPersons;
@@ -1563,6 +1570,53 @@ class DataStore {
 		db.recipeIngredients.bulkDelete(rows);
 		db.recipeSteps.bulkDelete(steps);
 		sync.enqueue({ table: 'recipes', op: 'delete', match: { id } });
+	}
+
+	/** The circles a recipe was shared into, besides its own. */
+	sharesOf(recipeId: string) {
+		return this.recipeShares.filter((share) => share.recipeId === recipeId);
+	}
+
+	/**
+	 * Opens a recipe to another circle, without moving it there.
+	 *
+	 * Unlike `setListMember`, this never touches `householdId`: the recipe keeps its owner, and the row
+	 * added to `recipe_shares` is the only thing that changes. RLS refuses the insert to anyone outside the
+	 * owning household, so a caller in a shared-into circle simply has nothing to gain from calling this —
+	 * the UI does not offer the entry point there in the first place.
+	 */
+	shareRecipe(recipeId: string, householdId: string) {
+		const key = recipeShareKey(recipeId, householdId);
+		if (this.recipeShares.some((share) => share.key === key)) return;
+
+		const share: RecipeShare = {
+			key,
+			recipeId,
+			householdId,
+			sharedBy: this.me || undefined,
+			createdAt: Date.now()
+		};
+
+		this.recipeShares = [...this.recipeShares, share];
+		db.recipeShares.put(share);
+		sync.enqueue({
+			table: 'recipe_shares',
+			op: 'upsert',
+			match: { recipe_id: recipeId, household_id: householdId },
+			payload: fromRecipeShare(share)
+		});
+	}
+
+	/** Withdraws a share: the receiving circle loses the recipe, the owning one keeps it untouched. */
+	unshareRecipe(recipeId: string, householdId: string) {
+		const key = recipeShareKey(recipeId, householdId);
+		this.recipeShares = this.recipeShares.filter((share) => share.key !== key);
+		db.recipeShares.delete(key);
+		sync.enqueue({
+			table: 'recipe_shares',
+			op: 'delete',
+			match: { recipe_id: recipeId, household_id: householdId }
+		});
 	}
 
 	/**

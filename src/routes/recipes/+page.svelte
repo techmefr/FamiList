@@ -27,6 +27,7 @@
 	import RecipeSuggestion from '$components/app/RecipeSuggestion.svelte';
 	import AiRecipeRequest from '$components/app/AiRecipeRequest.svelte';
 	import RecipePhoto from '$components/app/RecipePhoto.svelte';
+	import RecipeShareSheet from '$components/app/RecipeShareSheet.svelte';
 	import {
 		CookingPot,
 		Hash,
@@ -41,7 +42,8 @@
 		Download,
 		Sparkles,
 		CalendarDays,
-		Pencil
+		Pencil,
+		Share2
 	} from '@lucide/svelte';
 
 	/**
@@ -75,6 +77,15 @@
 	let guestCount = $state(DEFAULT_SERVINGS);
 	let target = $state('');
 	let toDelete = $state<string | null>(null);
+
+	/** The recipe sharing sheet, and which recipe it is currently open for. */
+	let shareSheet = $state<RecipeShareSheet | null>(null);
+	let sharingId = $state('');
+
+	function share(recipeId: string) {
+		sharingId = recipeId;
+		shareSheet?.show();
+	}
 
 	/** The import from a link: the address typed, the wait, the refusal, and the fact of having served. */
 	let link = $state('');
@@ -799,6 +810,7 @@
 		{#each data.recipes as recipe (recipe.id)}
 			{@const ingredients = data.ingredientsOf(recipe.id)}
 			{@const recipeSteps = data.stepsOf(recipe.id)}
+			{@const owned = recipe.householdId === data.circle}
 			<li>
 				<Card.Root data-test-class="recipe-card" class="overflow-hidden">
 					<!--
@@ -814,12 +826,22 @@
 							<span class="text-4xl leading-none" aria-hidden="true">{recipe.emoji}</span>
 							<div class="min-w-0 flex-1">
 								<Card.Title class="text-product break-words">{recipe.name}</Card.Title>
-								<span
-									class="bg-primary text-primary-foreground text-caption mt-1.5 inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 font-semibold"
-								>
-									<Users size={12} aria-hidden="true" />
-									{t('recipes.servingsCount', { count: recipe.servings })}
-								</span>
+								<div class="mt-1.5 flex flex-wrap items-center gap-1.5">
+									<span
+										class="bg-primary text-primary-foreground text-caption inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 font-semibold"
+									>
+										<Users size={12} aria-hidden="true" />
+										{t('recipes.servingsCount', { count: recipe.servings })}
+									</span>
+									{#if !owned}
+										<span
+											class="bg-muted text-muted-foreground text-caption inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 font-semibold"
+											data-test-class="recipe-shared-badge"
+										>
+											{t('recipes.sharedFrom', { circle: data.circleName(recipe.householdId) })}
+										</span>
+									{/if}
+								</div>
 							</div>
 						</div>
 					</Card.Header>
@@ -894,27 +916,40 @@
 								{t('recipes.generate')}
 							</Button>
 
-							<Button
-								variant="outline"
-								onclick={() => edit(recipe)}
-								aria-label={t('recipes.edit', { name: recipe.name })}
-								data-test-class="recipe-edit"
-								class="fl-press"
-							>
-								<Pencil size={18} aria-hidden="true" />
-								{t('common.edit')}
-							</Button>
+							{#if owned}
+								<Button
+									variant="outline"
+									onclick={() => edit(recipe)}
+									aria-label={t('recipes.edit', { name: recipe.name })}
+									data-test-class="recipe-edit"
+									class="fl-press"
+								>
+									<Pencil size={18} aria-hidden="true" />
+									{t('common.edit')}
+								</Button>
 
-							<Button
-								variant="destructive"
-								onclick={() => (toDelete = toDelete === recipe.id ? null : recipe.id)}
-								aria-label={t('recipes.delete', { name: recipe.name })}
-								data-test-class="recipe-delete"
-								class="fl-press"
-							>
-								<Trash2 size={18} aria-hidden="true" />
-								{t('common.delete')}
-							</Button>
+								<Button
+									variant="outline"
+									onclick={() => share(recipe.id)}
+									aria-label={t('recipes.shareAria', { name: recipe.name })}
+									data-test-class="recipe-share"
+									class="fl-press"
+								>
+									<Share2 size={18} aria-hidden="true" />
+									{t('recipes.share')}
+								</Button>
+
+								<Button
+									variant="destructive"
+									onclick={() => (toDelete = toDelete === recipe.id ? null : recipe.id)}
+									aria-label={t('recipes.delete', { name: recipe.name })}
+									data-test-class="recipe-delete"
+									class="fl-press"
+								>
+									<Trash2 size={18} aria-hidden="true" />
+									{t('common.delete')}
+								</Button>
+							{/if}
 						</div>
 
 						<!--
@@ -994,3 +1029,5 @@
 {/if}
 
 <EmojiPicker bind:this={picker} value={emoji} onpick={(chosen) => (emoji = chosen)} />
+
+<RecipeShareSheet bind:this={shareSheet} recipeId={sharingId} />

@@ -42,6 +42,37 @@ export const ofCircle = <T extends CircleScoped>(rows: readonly T[], circle: str
 export const visibleLists = <T extends CircleScoped>(lists: readonly T[], circle: string): T[] =>
 	lists.filter((list) => !list.householdId || list.householdId === circle);
 
+export interface RecipeShared {
+	id: string;
+	householdId: string;
+}
+
+export interface RecipeShareRow {
+	recipeId: string;
+	householdId: string;
+}
+
+/**
+ * The visible recipes: those owned by the active circle, and those shared into it by another circle the
+ * account also belongs to.
+ *
+ * Unlike a personal list, a shared recipe never loses its `householdId` — sharing does not reassign it, it
+ * only adds a row to `recipe_shares`. So the owned half is filtered the same way as every other circle
+ * table (`ofCircle`), and the shared-in half is found by matching that join table instead of by an absent
+ * `householdId`.
+ */
+export const visibleRecipes = <T extends RecipeShared>(
+	recipes: readonly T[],
+	shares: readonly RecipeShareRow[],
+	circle: string
+): T[] => {
+	if (circle === '') return [];
+	const sharedInIds = new Set(
+		shares.filter((share) => share.householdId === circle).map((share) => share.recipeId)
+	);
+	return recipes.filter((recipe) => recipe.householdId === circle || sharedInIds.has(recipe.id));
+};
+
 /**
  * The aisle to show for an item.
  *

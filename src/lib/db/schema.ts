@@ -257,6 +257,23 @@ export interface RecipeStep {
 }
 
 /**
+ * A recipe opened to another circle, without leaving its owning household.
+ *
+ * Unlike a list, a recipe is never reassigned: it keeps its own `householdId`, and each share is a row of
+ * its own, so several circles can see it at once. Keyed like `PollVote` and `Member` — the pair
+ * (recipe, household) has no single id of its own on this side.
+ */
+export interface RecipeShare {
+	key: string;
+	recipeId: string;
+	householdId: string;
+	sharedBy?: string;
+	createdAt: number;
+}
+
+export const recipeShareKey = (recipeId: string, householdId: string) => `${recipeId}::${householdId}`;
+
+/**
  * A meal plan: several recipes picked together, so that one consolidated shopping list can be generated
  * from all of them at once instead of one per recipe. Like a recipe, generation from it copies into the
  * list rather than linking to it — see `generateMealPlanList`.
@@ -347,6 +364,7 @@ class FamiListDatabase extends Dexie {
 	mealPlans!: EntityTable<MealPlan, 'id'>;
 	mealPlanRecipes!: EntityTable<MealPlanRecipe, 'id'>;
 	householdPersons!: EntityTable<HouseholdPerson, 'id'>;
+	recipeShares!: EntityTable<RecipeShare, 'key'>;
 
 	constructor() {
 		super('familist');
@@ -433,6 +451,11 @@ class FamiListDatabase extends Dexie {
 
 		// Queried per household, like the other circle tables.
 		this.version(11).stores({ householdPersons: 'id, householdId' });
+
+		// New table, safe to add alongside an existing `.stores()` call: only changing an EXISTING table's
+		// primary key in one call is the forbidden pattern (see version 7). Queried both by recipe (does this
+		// one carry a share) and by household (what was shared into this circle).
+		this.version(12).stores({ recipeShares: 'key, recipeId, householdId' });
 	}
 }
 
