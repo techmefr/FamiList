@@ -162,6 +162,7 @@
 		"points": "Treuepunkte",
 		"pointsPlaceholder": "120",
 		"delete": "Karte {name} löschen",
+		"edit": "Karte {name} bearbeiten",
 		"secretNotice": "Passwörter von Treuekonten werden hier nie gespeichert.",
 		"loyalty": "TREUE",
 		"tapHint": "Tippen Sie auf eine Karte, um sie an der Kasse groß anzuzeigen.",
@@ -408,6 +409,7 @@
 		"target": "Wohin die Artikel kommen",
 		"targetNew": "In eine neue Liste",
 		"delete": "Rezept {name} löschen",
+		"edit": "Rezept {name} bearbeiten",
 		"deleteConfirm": "{name} löschen? Bereits erzeugte Listen bleiben unverändert.",
 		"deleteYes": "Löschen",
 		"servingsCount": {

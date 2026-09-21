@@ -162,6 +162,7 @@
 		"points": "isa fahatokisana",
 		"pointsPlaceholder": "120",
 		"delete": "Fafao ny karatra {name}",
+		"edit": "Ovay ny karatra {name}",
 		"secretNotice": "Tsy voatahiry eto mihitsy ny tenimiafina momba ny kaonty fahatokisana.",
 		"loyalty": "FAHATOKIANA",
 		"tapHint": "Tsindrio ny karatra mba haseho lehibe eo amin’ny kaisy.",
@@ -408,6 +409,7 @@
 		"target": "Aiza no hanampiana ireo entana",
 		"targetNew": "Amin ny lisitra vaovao",
 		"delete": "Fafao ny recette {name}",
+		"edit": "Ovay ny fomba fahandro {name}",
 		"deleteConfirm": "Fafao ny {name}? Tsy hiova ireo lisitra efa noforonina.",
 		"deleteYes": "Fafao",
 		"servingsCount": {

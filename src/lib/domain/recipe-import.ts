@@ -21,6 +21,7 @@ export interface ImportedRecipe {
 	ingredients: string[];
 	steps: string[];
 	servings: string | null;
+	image: string | null;
 }
 
 /** The refusal reasons the edge function can return, and the matching message key. */

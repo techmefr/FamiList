@@ -21,7 +21,8 @@ describe('extractRecipe', () => {
 			name: 'Gratin de courgettes',
 			servings: '4 personnes',
 			ingredients: ['600 g de courgettes', '20 cl de creme', 'Sel'],
-			steps: ['Laver les courgettes.', 'Enfourner 30 minutes.']
+			steps: ['Laver les courgettes.', 'Enfourner 30 minutes.'],
+			image: null
 		});
 	});
 
@@ -108,6 +109,44 @@ describe('extractRecipe', () => {
 	it('trouve le bloc quel que soit l ordre des attributs du script', () => {
 		const html = `<script data-x="1" TYPE='application/ld+json' defer>${JSON.stringify(gratin)}</script>`;
 		expect(extractRecipe(html)?.name).toBe('Gratin de courgettes');
+	});
+
+	describe('image', () => {
+		it('lit une image donnee comme simple chaine', () => {
+			const found = extractRecipe(page({ ...gratin, image: 'https://x.test/photo.jpg' }));
+			expect(found?.image).toBe('https://x.test/photo.jpg');
+		});
+
+		it('lit la premiere image d un tableau de chaines', () => {
+			const found = extractRecipe(
+				page({ ...gratin, image: ['https://x.test/a.jpg', 'https://x.test/b.jpg'] })
+			);
+			expect(found?.image).toBe('https://x.test/a.jpg');
+		});
+
+		it('lit l url d un ImageObject', () => {
+			const found = extractRecipe(
+				page({ ...gratin, image: { '@type': 'ImageObject', url: 'https://x.test/obj.jpg' } })
+			);
+			expect(found?.image).toBe('https://x.test/obj.jpg');
+		});
+
+		it('lit la premiere url d un tableau d ImageObject', () => {
+			const found = extractRecipe(
+				page({
+					...gratin,
+					image: [
+						{ '@type': 'ImageObject', url: 'https://x.test/first.jpg' },
+						{ '@type': 'ImageObject', url: 'https://x.test/second.jpg' }
+					]
+				})
+			);
+			expect(found?.image).toBe('https://x.test/first.jpg');
+		});
+
+		it('rend null quand le Recipe ne publie aucune image', () => {
+			expect(extractRecipe(page(gratin))?.image).toBeNull();
+		});
 	});
 });
 

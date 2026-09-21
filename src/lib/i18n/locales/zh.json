@@ -161,6 +161,7 @@
 		"points": "积分",
 		"pointsPlaceholder": "120",
 		"delete": "删除会员卡 {name}",
+		"edit": "编辑卡片 {name}",
 		"secretNotice": "会员账户密码永远不会保存在这里。",
 		"loyalty": "会员",
 		"tapHint": "点按卡片可在收银台放大显示。",
@@ -406,6 +407,7 @@
 		"target": "把条目加到哪里",
 		"targetNew": "加到新清单",
 		"delete": "删除食谱 {name}",
+		"edit": "编辑食谱 {name}",
 		"deleteConfirm": "删除 {name}？已经生成的清单不会改变。",
 		"deleteYes": "删除",
 		"servingsCount": {
