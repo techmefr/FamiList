@@ -7,6 +7,7 @@
 	import { createIntent } from '$stores/create.svelte';
 	import { i18n, t, LOCALES } from '$i18n/index.svelte';
 	import { DEFAULT_SERVINGS, MAX_SERVINGS, MIN_SERVINGS, type RecipeLine } from '$domain/recipe';
+	import type { Recipe } from '$db/schema';
 	import { recipeExtractionPrompt, restrictionsOf, type SuggestedRecipe } from '$domain/ai-recipe';
 	import {
 		importErrorOf,
@@ -39,7 +40,8 @@
 		Link2,
 		Download,
 		Sparkles,
-		CalendarDays
+		CalendarDays,
+		Pencil
 	} from '@lucide/svelte';
 
 	/**
@@ -59,6 +61,9 @@
 	let step = $state<Step>('recipe');
 	let picker = $state<EmojiPicker | null>(null);
 
+	/** `null` means the open form, if any, is creating a recipe. Set, it is rewriting the recipe of this id. */
+	let editingId = $state<string | null>(null);
+
 	let name = $state('');
 	let emoji = $state(DEFAULT_EMOJI);
 	let servings = $state(DEFAULT_SERVINGS);
@@ -76,6 +81,13 @@
 	let importing = $state(false);
 	let importRefusal = $state<ImportError | null>(null);
 	let fromImport = $state(false);
+
+	/**
+	 * The page's own photo, carried along the draft (#236). It has nowhere to live until the recipe itself
+	 * is saved and gets an id — `recipe-photos` paths are keyed by recipe — so it is fetched and attached
+	 * right after that save, the same review-then-save gesture already covering the rest of the draft.
+	 */
+	let importedImage = $state<string | null>(null);
 
 	/**
 	 * The AI fallback (#182): the page's readable text, kept only when JSON-LD failed and the person has their
@@ -102,6 +114,7 @@
 
 	function reset() {
 		creating = false;
+		editingId = null;
 		step = 'recipe';
 		name = '';
 		emoji = DEFAULT_EMOJI;
@@ -113,6 +126,31 @@
 		pageText = null;
 		pastedText = '';
 		aiExtractError = '';
+		importedImage = null;
+	}
+
+	/**
+	 * Opens the same multi-step form the recipe was written in, prefilled from what is saved, and turns its
+	 * next save into a rewrite instead of a new recipe. Ingredients and steps come from the same source the
+	 * card already reads them from (`ingredientsOf`/`stepsOf`), in their saved order.
+	 */
+	function edit(recipe: Recipe) {
+		editingId = recipe.id;
+		name = recipe.name;
+		emoji = recipe.emoji;
+		servings = recipe.servings;
+
+		const existingLines = data
+			.ingredientsOf(recipe.id)
+			.map((line) => ({ name: line.name, qty: line.qty, unit: line.unit }));
+		lines = existingLines.length ? existingLines : [{ name: '', qty: '', unit: DEFAULT_UNIT }];
+
+		const existingSteps = data.stepsOf(recipe.id).map((step) => step.body);
+		steps = existingSteps.length ? existingSteps : [''];
+
+		creating = true;
+		step = 'recipe';
+		fromImport = false;
 	}
 
 	/**
@@ -158,6 +196,7 @@
 		creating = true;
 		step = 'recipe';
 		fromImport = true;
+		importedImage = recipe.image;
 		link = '';
 	}
 
@@ -294,8 +333,27 @@
 		if (!name.trim()) return;
 
 		feedback.play('add');
-		data.addRecipe({ name, emoji, servings, ingredients: lines, steps });
+		if (editingId) {
+			data.updateRecipe(editingId, { name, emoji, servings, ingredients: lines, steps });
+		} else {
+			const recipe = data.addRecipe({ name, emoji, servings, ingredients: lines, steps });
+			attachImportedPhoto(recipe.id);
+		}
 		reset();
+	}
+
+	/**
+	 * Fetches the page's own photo and attaches it, the same upload path a generated photo already uses
+	 * (`ai.fetchRecipePhoto` → `data.setRecipePhoto`). Decorative only, like the generated photo: a failure
+	 * here leaves the plain card standing, with nothing surfaced to the person.
+	 */
+	function attachImportedPhoto(recipeId: string) {
+		const imageUrl = importedImage;
+		if (!imageUrl) return;
+
+		void ai.fetchRecipePhoto(data.circle, recipeId, imageUrl).then((outcome) => {
+			if (outcome.ok) data.setRecipePhoto(recipeId, outcome.path);
+		});
 	}
 
 	function remove(id: string) {
@@ -835,6 +893,16 @@
 							>
 								<ShoppingBasket size={18} aria-hidden="true" />
 								{t('recipes.generate')}
+							</Button>
+
+							<Button
+								variant="outline"
+								onclick={() => edit(recipe)}
+								aria-label={t('recipes.edit', { name: recipe.name })}
+								data-test-class="recipe-edit"
+								class="fl-press"
+							>
+								<Pencil size={18} aria-hidden="true" />
 							</Button>
 
 							<Button

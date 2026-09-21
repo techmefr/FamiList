@@ -162,6 +162,7 @@
 		"points": "puntos de fidelidad",
 		"pointsPlaceholder": "120",
 		"delete": "Eliminar la tarjeta {name}",
+		"edit": "Editar la tarjeta {name}",
 		"secretNotice": "Las contraseñas de las cuentas de fidelidad nunca se guardan aquí.",
 		"loyalty": "FIDELIDAD",
 		"tapHint": "Toca una tarjeta para mostrarla en grande en la caja.",
@@ -408,6 +409,7 @@
 		"target": "Dónde añadir los artículos",
 		"targetNew": "En una lista nueva",
 		"delete": "Eliminar la receta {name}",
+		"edit": "Editar la receta {name}",
 		"deleteConfirm": "¿Eliminar {name}? Las listas ya generadas no cambiarán.",
 		"deleteYes": "Eliminar",
 		"servingsCount": {

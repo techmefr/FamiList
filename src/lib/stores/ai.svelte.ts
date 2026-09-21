@@ -353,6 +353,37 @@ class AiStore {
 		return this.#uploadPhoto(householdId, recipeId, bytes, mimeType);
 	}
 
+	/**
+	 * Fetches a photo already published at a URL — an imported recipe's own picture — and uploads it to the
+	 * household's `recipe-photos` bucket, the same way a generated one is (#236). Both paths converge on
+	 * `#uploadPhoto`: a photo stored this way is indistinguishable from a generated one afterwards, and
+	 * nothing downstream needs to know where it came from.
+	 */
+	async fetchRecipePhoto(
+		householdId: string,
+		recipeId: string,
+		imageUrl: string
+	): Promise<PhotoOutcome> {
+		let response: Response;
+		try {
+			response = await fetch(imageUrl);
+		} catch {
+			return { ok: false };
+		}
+
+		if (!response.ok) return { ok: false };
+
+		let bytes: Uint8Array;
+		try {
+			bytes = new Uint8Array(await response.arrayBuffer());
+		} catch {
+			return { ok: false };
+		}
+
+		const mimeType = response.headers.get('content-type') ?? 'image/jpeg';
+		return this.#uploadPhoto(householdId, recipeId, bytes, mimeType);
+	}
+
 	async #uploadPhoto(
 		householdId: string,
 		recipeId: string,

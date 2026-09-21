@@ -1459,6 +1459,77 @@ class DataStore {
 	}
 
 	/**
+	 * Rewrites a recipe in place: its own fields, plus a full replacement of its ingredients and steps.
+	 *
+	 * The lines and steps are not diffed against what was there before — they are deleted and rewritten
+	 * whole, the same way `addRecipe` builds them from the form's state in the first place. The form already
+	 * holds the complete list at save time, so there is no partial information to reconcile, and a diff
+	 * would only add complexity for no benefit the person could see.
+	 */
+	updateRecipe(
+		id: string,
+		input: {
+			name: string;
+			emoji: string;
+			servings: number;
+			notes?: string;
+			ingredients: RecipeLine[];
+			steps: string[];
+		}
+	) {
+		const recipe = this.cachedRecipes.find((r) => r.id === id);
+		if (!recipe) return;
+
+		recipe.name = input.name.trim();
+		recipe.emoji = input.emoji;
+		recipe.servings =
+			input.servings > 0 ? Math.min(MAX_SERVINGS, Math.round(input.servings)) : DEFAULT_SERVINGS;
+		recipe.notes = input.notes?.trim() || undefined;
+
+		const oldRows = this.recipeIngredients.filter((line) => line.recipeId === id).map((l) => l.id);
+		const oldSteps = this.recipeSteps.filter((step) => step.recipeId === id).map((s) => s.id);
+
+		const rows: RecipeIngredient[] = input.ingredients
+			.filter((line) => line.name.trim())
+			.map((line, position) => ({
+				id: crypto.randomUUID(),
+				recipeId: id,
+				name: line.name.trim(),
+				qty: line.qty.trim(),
+				unit: line.unit || DEFAULT_UNIT,
+				position
+			}));
+
+		const steps: RecipeStep[] = input.steps
+			.filter((body) => body.trim())
+			.map((body, position) => ({
+				id: crypto.randomUUID(),
+				recipeId: id,
+				body: body.trim(),
+				position
+			}));
+
+		this.recipeIngredients = [
+			...this.recipeIngredients.filter((line) => line.recipeId !== id),
+			...rows
+		];
+		this.recipeSteps = [...this.recipeSteps.filter((step) => step.recipeId !== id), ...steps];
+
+		const snapshot = $state.snapshot(recipe) as Recipe;
+		db.recipes.put(snapshot);
+		db.recipeIngredients.bulkDelete(oldRows);
+		db.recipeSteps.bulkDelete(oldSteps);
+		db.recipeIngredients.bulkAdd(rows);
+		db.recipeSteps.bulkAdd(steps);
+
+		this.push('recipes', snapshot, fromRecipe);
+		for (const rowId of oldRows) sync.enqueue({ table: 'recipe_ingredients', op: 'delete', match: { id: rowId } });
+		for (const stepId of oldSteps) sync.enqueue({ table: 'recipe_steps', op: 'delete', match: { id: stepId } });
+		for (const row of rows) this.push('recipe_ingredients', row, fromRecipeIngredient);
+		for (const step of steps) this.push('recipe_steps', step, fromRecipeStep);
+	}
+
+	/**
 	 * Attaches a generated photo to a recipe, or clears it on failure.
 	 *
 	 * The image is decorative, never data: this call never blocks saving the recipe itself, and a missing or

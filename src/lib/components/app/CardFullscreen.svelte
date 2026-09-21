@@ -6,9 +6,13 @@
 	import { t } from '$i18n/index.svelte';
 	import CodeImage from './CodeImage.svelte';
 	import { Button } from '$components/ui/button';
-	import { X, Sun } from '@lucide/svelte';
+	import { X, Sun, Pencil } from '@lucide/svelte';
 
-	let { card, onClose }: { card: LoyaltyCard; onClose: () => void } = $props();
+	let {
+		card,
+		onClose,
+		onEdit
+	}: { card: LoyaltyCard; onClose: () => void; onEdit: (card: LoyaltyCard) => void } = $props();
 
 	/**
 	 * `null` means "not editing". Starting again from the card at every opening of the editor stops a draft
@@ -57,7 +61,15 @@
 			<X size={20} aria-hidden="true" />
 		</button>
 		<p class="text-product flex-1 text-center font-semibold break-words">{card.name}</p>
-		<span class="size-11 shrink-0" aria-hidden="true"></span>
+		<button
+			type="button"
+			onclick={() => onEdit(card)}
+			aria-label={t('cards.edit', { name: card.name })}
+			data-test-id="card-edit"
+			class="grid size-11 min-w-[44px] shrink-0 place-items-center rounded-full border border-white/20 bg-white/10"
+		>
+			<Pencil size={20} aria-hidden="true" />
+		</button>
 	</div>
 
 	<div class="px-5 pb-10">

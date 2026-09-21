@@ -10,6 +10,7 @@
 	import { createIntent } from '$stores/create.svelte';
 	import { t } from '$i18n/index.svelte';
 	import { CODE_TYPES, guessCodeType, isMatrixFormat, type CodeType } from '$domain/code-format';
+	import type { LoyaltyCard } from '$db/schema';
 	import { linearCode } from '$domain/barcode';
 	import { CARD_GRADIENT_END, DEFAULT_TINT } from '$domain/tint';
 	import LoyaltyCardFace from '$components/app/LoyaltyCardFace.svelte';
@@ -20,12 +21,15 @@
 	import { Button } from '$components/ui/button';
 	import { Input } from '$components/ui/input';
 	import { Label } from '$components/ui/label';
-	import { Plus, Trash2, ScanLine, CreditCard, Barcode, Star, Store } from '@lucide/svelte';
+	import { Plus, Trash2, ScanLine, CreditCard, Barcode, Star, Store, Pencil } from '@lucide/svelte';
 	import IconField from '$components/app/IconField.svelte';
 	import EmptyState from '$components/app/EmptyState.svelte';
 
 	let openCardId = $state<string | null>(null);
 	let adding = $state(false);
+
+	/** `null` means the form, when open, is creating a card. Set, it is rewriting the card of this id. */
+	let editingId = $state<string | null>(null);
 
 	/**
 	 * The central button announces what it comes for. The card form stays folded until it is asked for:
@@ -134,6 +138,7 @@
 
 	function reset() {
 		adding = false;
+		editingId = null;
 		name = '';
 		code = '';
 		codeType = '';
@@ -142,12 +147,30 @@
 		attach = '';
 	}
 
+	/**
+	 * Opens the create form prefilled from an existing card, and turns its next submit into a rewrite. The
+	 * same form the card was born from is what corrects it: a second editing surface would duplicate every
+	 * field's rules — the code format guess, the attachment list — for no gain over this one, already tested.
+	 */
+	function editCard(card: LoyaltyCard) {
+		editingId = card.id;
+		name = card.name;
+		code = card.code;
+		codeType = card.codeType;
+		points = String(card.points);
+		notes = card.notes ?? '';
+		attach = card.shopId ? `shop:${card.shopId}` : card.brand ? `brand:${card.brand}` : '';
+		adding = true;
+		openCardId = null;
+	}
+
 	function submit(event: SubmitEvent) {
 		event.preventDefault();
 		if (!label || !code.trim() || invalidCode) return;
 
 		feedback.play('add');
-		data.addCard({
+
+		const fields = {
 			shopId: shop?.id ?? '',
 			brand: brand,
 			name: label,
@@ -158,7 +181,13 @@
 			notes: notes.trim(),
 			tint,
 			grad: `linear-gradient(135deg, ${tint} 0%, ${CARD_GRADIENT_END} 100%)`
-		});
+		};
+
+		if (editingId) {
+			data.updateCard(editingId, fields);
+		} else {
+			data.addCard(fields);
+		}
 
 		reset();
 	}
@@ -201,6 +230,15 @@
 						data-test-class="card-open"
 					>
 						<LoyaltyCardFace {card} />
+					</button>
+					<button
+						type="button"
+						onclick={() => editCard(card)}
+						aria-label={t('cards.edit', { name: card.name })}
+						data-test-class="card-edit"
+						class="fl-press absolute end-13 bottom-2 grid size-11 min-w-[44px] place-items-center text-white/70"
+					>
+						<Pencil size={18} aria-hidden="true" />
 					</button>
 					<button
 						type="button"
@@ -378,7 +416,9 @@
 			</div>
 
 			<div class="flex flex-wrap gap-2">
-				<Button type="submit" data-test-id="card-submit" class="fl-press">{t('cards.save')}</Button>
+				<Button type="submit" data-test-id="card-submit" class="fl-press">
+					{editingId ? t('common.save') : t('cards.save')}
+				</Button>
 				<Button type="button" variant="outline" onclick={reset}>{t('common.cancel')}</Button>
 			</div>
 		</form>
@@ -401,7 +441,7 @@
 {/if}
 
 {#if openCard}
-	<CardFullscreen card={openCard} onClose={() => (openCardId = null)} />
+	<CardFullscreen card={openCard} onClose={() => (openCardId = null)} onEdit={editCard} />
 {/if}
 
 <!-- The missing shop is created here, and immediately becomes the card's attachment. -->

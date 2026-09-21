@@ -162,6 +162,7 @@
 		"points": "loyalty points",
 		"pointsPlaceholder": "120",
 		"delete": "Delete card {name}",
+		"edit": "Edit card {name}",
 		"secretNotice": "Loyalty account passwords are never stored here.",
 		"loyalty": "LOYALTY",
 		"tapHint": "Tap a card to show it full screen at the till.",
@@ -408,6 +409,7 @@
 		"target": "Where to add the items",
 		"targetNew": "In a new list",
 		"delete": "Delete recipe {name}",
+		"edit": "Edit recipe {name}",
 		"deleteConfirm": "Delete {name}? Lists already generated will not change.",
 		"deleteYes": "Delete",
 		"servingsCount": {

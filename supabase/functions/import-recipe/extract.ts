@@ -20,6 +20,8 @@ export type ImportedRecipe = {
 	steps: string[];
 	/** The number of servings as written: "4 people", "6". Interpretation is the client's. */
 	servings: string | null;
+	/** The page's own photo of the dish, when it published one. */
+	image: string | null;
 };
 
 const SCRIPT = /<script\b[^>]*type\s*=\s*["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/gi;
@@ -91,6 +93,27 @@ function flatten(value: unknown, depth = 0): string[] {
 }
 
 /**
+ * A `Recipe`'s `image` per schema.org: a URL string, an array of URL strings, an `ImageObject` (its URL in
+ * `url`), or an array of `ImageObject`s. All four are in real use across cooking sites — we take the first
+ * URL found and normalize to a single string, since the client attaches at most one photo.
+ */
+function imageUrl(value: unknown, depth = 0): string | null {
+	if (depth > 3) return null;
+
+	if (Array.isArray(value)) {
+		for (const entry of value) {
+			const found = imageUrl(entry, depth + 1);
+			if (found) return found;
+		}
+		return null;
+	}
+
+	if (isRecord(value)) return text(value.url);
+
+	return text(value);
+}
+
+/**
  * Blocks whose content is never prose: scripts run code, styles describe layout, `nav`/`header`/`footer`
  * repeat the same chrome on every page of a site. None of it belongs in a prompt.
  */
@@ -149,7 +172,8 @@ export function extractRecipe(html: string): ImportedRecipe | null {
 			name,
 			ingredients,
 			steps,
-			servings: flatten(recipe.recipeYield)[0] ?? null
+			servings: flatten(recipe.recipeYield)[0] ?? null,
+			image: imageUrl(recipe.image)
 		};
 	}
 
