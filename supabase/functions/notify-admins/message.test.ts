@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { type AdminNotification, buildAdminMail } from './message.ts';
+import { type AdminNotification, buildAdminMail, buildApprovalMail } from './message.ts';
 
 const ADMIN_URL = 'https://familiste.app/admin';
 
@@ -90,5 +90,14 @@ describe('buildAdminMail', () => {
 		const mail = buildAdminMail([report({ excerpt: '' })], ADMIN_URL);
 
 		expect(mail.text).toContain('(sans description)');
+	});
+});
+
+describe('buildApprovalMail', () => {
+	it('renvoie vers l application', () => {
+		const mail = buildApprovalMail('https://familiste.app');
+
+		expect(mail.subject).toContain('valide');
+		expect(mail.text).toContain('https://familiste.app');
 	});
 });
