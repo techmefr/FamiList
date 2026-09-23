@@ -1135,7 +1135,11 @@
 			"title": "Recette inona no tianao?",
 			"placeholder": "ohatra: curry akoho ho an ny olona 4",
 			"submit": "Anontanio",
-			"followUpPlaceholder": "ohatra: mafy kokoa, na soloy tôfo ny akoho"
+			"followUpPlaceholder": "ohatra: mafy kokoa, na soloy tôfo ny akoho",
+			"dictate": "Tononina am-bava",
+			"stopDictate": "Atsaharo ny fitononana",
+			"listening": "Mihaino…",
+			"dictateError": "Tsy nahomby ny fitononana am-bava. Andramo indray na soraty ny lahatsoratra."
 		}
 	},
 	"setup": {
