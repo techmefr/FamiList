@@ -1242,5 +1242,12 @@
 		"note": "Alefaso ny faribolana iray mba hahafahany mahita ity mahandro ity sy hampiasa azy hamoronana lisitra. Anao foana izy — ny faribolana hafa dia mamaky azy fotsiny.",
 		"empty": "Mbola tsy manana faribolana hafa hizarana ianao.",
 		"sharedWith": "Nozaraina tamin'ny {name}"
+	},
+	"offline": {
+		"title": "Ny lisitrao, tsy misy kaonty",
+		"body": "Mamorona lisitry ny fividianana amin ity fitaovana ity, tsy misy backend voalamina. Tsy misy miala raha tsy misy tafiditra ny backend eo ambony.",
+		"listPlaceholder": "Fividianana amin'ny herinandro",
+		"itemPlaceholder": "Voatabia",
+		"back": "Miverina any amin'ny lisitra"
 	}
 }

@@ -1242,5 +1242,12 @@
 		"note": "Attiva un cerchio per permettergli di vedere questa ricetta e usarla per generare liste. Resta tua: l’altro cerchio la legge soltanto.",
 		"empty": "Non hai ancora un altro cerchio con cui condividere.",
 		"sharedWith": "Condivisa con {name}"
+	},
+	"offline": {
+		"title": "Le tue liste, senza account",
+		"body": "Crea liste della spesa su questo dispositivo senza backend configurato. Nulla parte finché non colleghi un istanza qui sopra.",
+		"listPlaceholder": "Spesa della settimana",
+		"itemPlaceholder": "Pomodori",
+		"back": "Torna alle liste"
 	}
 }

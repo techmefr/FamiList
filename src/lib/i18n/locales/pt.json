@@ -1242,5 +1242,12 @@
 		"note": "Ative um círculo para lhe permitir ver esta receita e usá-la para gerar listas. Continua a ser sua: o outro círculo apenas a lê.",
 		"empty": "Ainda não tem outro círculo com quem partilhar.",
 		"sharedWith": "Partilhada com {name}"
+	},
+	"offline": {
+		"title": "As suas listas, sem conta",
+		"body": "Crie listas de compras neste aparelho sem um backend configurado. Nada sai daqui até ligar uma instância acima.",
+		"listPlaceholder": "Compras da semana",
+		"itemPlaceholder": "Tomates",
+		"back": "Voltar às listas"
 	}
 }
