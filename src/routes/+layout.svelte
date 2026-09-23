@@ -456,13 +456,13 @@
 			aria-hidden="true"
 		>
 			<div
-				class="bg-primary-foreground/15 text-primary-foreground flex size-20 items-center justify-center rounded-[1.75rem] backdrop-blur"
+				class="flex size-20 items-center justify-center rounded-[1.75rem] bg-white/10 text-white backdrop-blur"
 			>
 				<Logo class="h-10" />
 			</div>
 			<div>
-				<p class="text-h1 text-primary-foreground font-semibold tracking-tight">{t('app.name')}</p>
-				<p class="text-primary-foreground/85 mt-3 max-w-xs text-balance">
+				<p class="text-h1 font-semibold tracking-tight text-white">{t('app.name')}</p>
+				<p class="mt-3 max-w-xs text-balance text-white/70">
 					{t('auth.brandTagline')}
 				</p>
 			</div>
