@@ -464,6 +464,12 @@ class SessionStore {
 		// open the previous one's lists.
 		const { data } = await import('$stores/data.svelte');
 		await data.forget();
+
+		// Same reasoning for the appearance bookkeeping: left in place, the next account on this device would
+		// inherit a `hasSeenTour` and a `syncedFor` that were never theirs, and the guided tour would silently
+		// stay off for someone who has never seen it here.
+		const { settings } = await import('$stores/settings.svelte');
+		settings.forgetAccount();
 	}
 }
 
