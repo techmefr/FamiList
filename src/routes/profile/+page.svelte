@@ -147,7 +147,7 @@
 		<Card.Content>
 			<div class="flex flex-wrap items-center justify-between gap-4">
 				<p class="text-muted-foreground text-label">{t('profile.adminHint')}</p>
-				<Button href="/admin" data-test-id="go-admin" class="fl-press">
+				<Button href="/profile/admin" data-test-id="go-admin" class="fl-press">
 					<ShieldCheck size={18} aria-hidden="true" />
 					{t('nav.admin')}
 				</Button>
