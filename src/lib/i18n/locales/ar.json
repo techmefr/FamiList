@@ -433,7 +433,17 @@
 		"mealPlanLink": "إنشاء خطة وجبات أسبوعية",
 		"share": "مشاركة",
 		"shareAria": "مشاركة وصفة {name}",
-		"sharedFrom": "مُشاركة من {circle}"
+		"sharedFrom": "مُشاركة من {circle}",
+		"cookAlong": {
+			"start": "متابعة الوصفة",
+			"title": "متابعة {name}",
+			"position": "الخطوة {current} من {total}",
+			"previous": "السابقة",
+			"next": "التالية",
+			"mute": "كتم الصوت",
+			"unmute": "تفعيل الصوت",
+			"empty": "لا توجد خطوات لهذه الوصفة."
+		}
 	},
 	"aisles": {
 		"title": "الأقسام",

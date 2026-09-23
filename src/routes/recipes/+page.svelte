@@ -48,8 +48,10 @@
 		Sparkles,
 		CalendarDays,
 		Pencil,
-		Share2
+		Share2,
+		Mic
 	} from '@lucide/svelte';
+	import CookAlong from '$components/app/CookAlong.svelte';
 
 	/**
 	 * The three stages of typing. A whole recipe rarely fits on a phone screen, and asking everything at
@@ -86,6 +88,9 @@
 	/** The recipe sharing sheet, and which recipe it is currently open for. */
 	let shareSheet = $state<RecipeShareSheet | null>(null);
 	let sharingId = $state('');
+
+	/** The recipe whose "cook-along" mode is currently open, if any. */
+	let cookAlongFor = $state<string | null>(null);
 
 	function share(recipeId: string) {
 		sharingId = recipeId;
@@ -951,6 +956,16 @@
 											</li>
 										{/each}
 									</ol>
+
+									<Button
+										variant="outline"
+										onclick={() => (cookAlongFor = recipe.id)}
+										data-test-class="recipe-cook-along"
+										class="fl-press mt-3"
+									>
+										<Mic size={18} aria-hidden="true" />
+										{t('recipes.cookAlong.start')}
+									</Button>
 								{/if}
 
 						<div class="mt-4 flex flex-wrap items-center gap-3">
@@ -1081,3 +1096,14 @@
 <EmojiPicker bind:this={picker} value={emoji} onpick={(chosen) => (emoji = chosen)} />
 
 <RecipeShareSheet bind:this={shareSheet} recipeId={sharingId} />
+
+{#if cookAlongFor}
+	{@const cookAlongRecipe = data.recipes.find((recipe) => recipe.id === cookAlongFor)}
+	{#if cookAlongRecipe}
+		<CookAlong
+			recipeName={cookAlongRecipe.name}
+			steps={data.stepsOf(cookAlongRecipe.id).map((step) => step.body)}
+			onClose={() => (cookAlongFor = null)}
+		/>
+	{/if}
+{/if}

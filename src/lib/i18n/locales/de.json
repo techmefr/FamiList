@@ -421,7 +421,17 @@
 		"mealPlanLink": "Einen Essensplan für die Woche erstellen",
 		"share": "Teilen",
 		"shareAria": "Rezept {name} teilen",
-		"sharedFrom": "Geteilt von {circle}"
+		"sharedFrom": "Geteilt von {circle}",
+		"cookAlong": {
+			"start": "Rezept begleiten",
+			"title": "{name} begleiten",
+			"position": "Schritt {current} von {total}",
+			"previous": "Zurück",
+			"next": "Weiter",
+			"mute": "Stimme stummschalten",
+			"unmute": "Stimme aktivieren",
+			"empty": "Dieses Rezept hat keine Schritte."
+		}
 	},
 	"aisles": {
 		"title": "Abteilungen",
