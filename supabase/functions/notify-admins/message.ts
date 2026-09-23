@@ -11,7 +11,7 @@
  * No Deno dependency here, so that the formatting stays testable by vitest.
  */
 
-export const NOTIFICATION_KINDS = ['signup', 'bug_report'] as const;
+export const NOTIFICATION_KINDS = ['signup', 'bug_report', 'approved'] as const;
 export type NotificationKind = (typeof NOTIFICATION_KINDS)[number];
 
 export type AdminNotification = {
@@ -60,10 +60,29 @@ function describeBugReport(notification: AdminNotification): string {
 }
 
 /**
+ * The one email sent to the person themselves, once their account clears review. Written in French like the
+ * rest of what this file sends: `profiles` carries no language column, so there is no preference to honour —
+ * see the note at the top of this file.
+ */
+export function buildApprovalMail(appUrl: string): AdminMail {
+	const name = 'FamiList';
+
+	return {
+		subject: `${name} — votre compte est valide`,
+		text: [
+			`Votre compte a ete valide : vous pouvez maintenant vous connecter et retrouver votre foyer.`,
+			'',
+			appUrl
+		].join('\n')
+	};
+}
+
+/**
  * A single email for everything the buffer held, even when both kinds are mixed in it: two simultaneous
  * emails would cost the administrator the same attention as one.
  */
 export function buildAdminMail(notifications: AdminNotification[], adminUrl: string): AdminMail {
+	// `approved` rows are routed to the account itself by the caller, never grouped into this one.
 	const signups = notifications.filter((n) => n.kind === 'signup');
 	const reports = notifications.filter((n) => n.kind === 'bug_report');
 

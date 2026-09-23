@@ -15,7 +15,7 @@
 
 import { isMailConfigured, loadMailSettings, sendMail } from '../_shared/mail.ts';
 import { callRpc, serviceKey } from '../_shared/rpc.ts';
-import { type AdminNotification, buildAdminMail } from './message.ts';
+import { type AdminNotification, buildAdminMail, buildApprovalMail } from './message.ts';
 
 type ClaimResult = {
 	recipients: string[];
@@ -24,6 +24,13 @@ type ClaimResult = {
 
 const rpc = <T>(name: string, args: Record<string, unknown>): Promise<T> =>
 	callRpc<T>(name, args, serviceKey());
+
+/** One SMTP send costs one slot of the daily cap; a refusal is an error like any other send failure. */
+async function claimSendOrThrow(): Promise<void> {
+	if (!(await rpc<boolean>('claim_instance_mail', { amount: 1 }))) {
+		throw new Error('plafond d envoi journalier atteint');
+	}
+}
 
 Deno.serve(async () => {
 	let claimed: string[] = [];
@@ -39,20 +46,37 @@ Deno.serve(async () => {
 		const settings = await loadMailSettings();
 		if (!isMailConfigured(settings)) throw new Error('SMTP non configure');
 
-		// The daily cap is claimed before opening the session, and the refusal is an error like any other: the
-		// rows go back to the buffer and will leave again tomorrow, rather than being marked as sent when nothing
-		// has left.
-		if (!(await rpc<boolean>('claim_instance_mail', { amount: 1 }))) {
-			throw new Error("plafond d envoi journalier atteint");
+		// `approved` notifications go one by one to the account itself; everything else is still the
+		// administrators' single grouped email.
+		const approvals = notifications.filter((notification) => notification.kind === 'approved');
+		const rest = notifications.filter((notification) => notification.kind !== 'approved');
+
+		const appUrl = Deno.env.get('ADMIN_MAIL_APP_URL') ?? 'https://familiste.app';
+		const sentIds: string[] = [];
+
+		for (const approval of approvals) {
+			const email = approval.payload.email;
+			if (typeof email !== 'string' || email.trim() === '') continue;
+
+			await claimSendOrThrow();
+			const mail = buildApprovalMail(appUrl);
+			await sendMail(settings, [email], mail.subject, mail.text);
+			sentIds.push(approval.id);
 		}
 
-		const adminUrl = `${Deno.env.get('ADMIN_MAIL_APP_URL') ?? 'https://familiste.app'}/admin`;
-		const mail = buildAdminMail(notifications, adminUrl);
-		await sendMail(settings, recipients, mail.subject, mail.text);
+		if (rest.length > 0) {
+			await claimSendOrThrow();
+			const mail = buildAdminMail(rest, `${appUrl}/admin`);
+			await sendMail(settings, recipients, mail.subject, mail.text);
+			sentIds.push(...rest.map((notification) => notification.id));
+		}
 
-		await rpc('mark_admin_notifications_sent', { ids: claimed });
+		await rpc('mark_admin_notifications_sent', { ids: sentIds });
 
-		return Response.json({ status: 'sent', notifications: claimed.length });
+		const unsent = claimed.filter((id) => !sentIds.includes(id));
+		if (unsent.length > 0) await rpc('release_admin_notifications', { ids: unsent }).catch(() => undefined);
+
+		return Response.json({ status: 'sent', notifications: sentIds.length });
 	} catch (error) {
 		if (claimed.length > 0) {
 			// Released and not lost: the next wake-up will take them again, and the buffer keeps the trace of what
