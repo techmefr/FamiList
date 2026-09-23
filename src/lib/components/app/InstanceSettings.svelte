@@ -72,7 +72,10 @@
 		testOutcome = null;
 
 		for (const field of fieldsOf(group)) {
-			const draft = (drafts[field.key] ?? '').trim();
+			// The port field binds to a `type="number"` input, which Svelte gives back as a number rather
+			// than a string — `.trim()` on it throws, silently in an unhandled rejection, and the save never
+			// reaches the database.
+			const draft = String(drafts[field.key] ?? '').trim();
 			const current = rowOf(field.key);
 
 			if (field.isSecret && draft === '') continue;
