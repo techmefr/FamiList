@@ -1,5 +1,5 @@
 import { browser } from '$app/environment';
-import type { AppearanceRow } from '$domain/appearance';
+import { localWins as arbitrate, type AppearanceRow } from '$domain/appearance';
 import { isHand, type Hand } from '$domain/hand';
 import { animates, isMotionPreference, type MotionPreference } from '$domain/motion';
 import {
@@ -207,17 +207,29 @@ class Settings {
 	}
 
 	/**
-	 * Who is right, the device or the database, when this account opens here.
+	 * Forgets which account this device last arbitrated its appearance for.
 	 *
-	 * The device wins in two cases: the settings were touched without any account ever having received a
-	 * send — that is the welcome journey, where you pick your size before creating your account — or they
-	 * changed since the last successful send for this same account, offline for instance. Everywhere else,
-	 * it is the database: you are arriving on a new device.
+	 * Called on sign-out, alongside the local data cache being emptied: without it, a shared device hands
+	 * the next account the previous one's `hasSeenTour` and sync bookkeeping. `localWins` would then read
+	 * a `syncedFor` that matches neither account and a `hasSeenTour` that was never this account's to
+	 * begin with — the guided tour silently skips itself for someone who has genuinely never seen it here,
+	 * until (if ever) a later pull happens to correct it. Resetting the bookkeeping to its pre-sync state
+	 * forces a clean pull for whoever signs in next.
 	 */
-	localWins(userId: string) {
-		if (this.#syncedFor === null) return this.#changedAt > 0;
+	forgetAccount() {
+		this.hasSeenTour = false;
+		this.#changedAt = 0;
+		this.#syncedAt = 0;
+		this.#syncedFor = null;
+		this.persist();
+	}
 
-		return this.#syncedFor === userId && this.#changedAt > this.#syncedAt;
+	/** See `localWins` in `$domain/appearance` — kept there so the arbitration itself is testable without a store. */
+	localWins(userId: string) {
+		return arbitrate(
+			{ changedAt: this.#changedAt, syncedAt: this.#syncedAt, syncedFor: this.#syncedFor },
+			userId
+		);
 	}
 
 	snapshot(): AppearanceRow {

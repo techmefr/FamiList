@@ -247,12 +247,23 @@
 		if (page.url.pathname !== '/') return;
 
 		let cancelled = false;
-		const timer = setTimeout(async () => {
-			const { startTour } = await import('$tour');
-			if (cancelled) return;
+		let timer: ReturnType<typeof setTimeout>;
 
-			startTour(page.url.pathname, () => settings.setTourSeen(true));
-		}, 700);
+		// Up to five tries, three quarters of a second apart: `startTour` reports back when it found no
+		// target at all, which happens when the delay landed before the navigation bar had finished
+		// painting. Giving up after one silent miss would leave the account stuck without a tour and no way
+		// to know it — retrying a few times covers a slow first paint without polling forever.
+		const attempt = (triesLeft: number) => {
+			timer = setTimeout(async () => {
+				const { startTour } = await import('$tour');
+				if (cancelled) return;
+
+				const started = startTour(page.url.pathname, () => settings.setTourSeen(true));
+				if (!started && triesLeft > 1) attempt(triesLeft - 1);
+			}, 700);
+		};
+
+		attempt(5);
 
 		return () => {
 			cancelled = true;

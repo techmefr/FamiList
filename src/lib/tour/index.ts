@@ -28,7 +28,7 @@ function visible(selector: string): boolean {
  * Shown therefore counts as seen, abandoning included. Someone who cut it by accident starts it again from
  * the question mark, which is there on every screen.
  */
-export function startTour(pathname: string, onShown: () => void) {
+export function startTour(pathname: string, onShown: () => void): boolean {
 	const steps: DriveStep[] = pickSteps(screenSteps(pathname), visible).map((step) => ({
 		element: step.selector,
 		popover: {
@@ -37,9 +37,9 @@ export function startTour(pathname: string, onShown: () => void) {
 		}
 	}));
 
-	// No target: the page is not the one we think, or it has not finished painting. We record nothing, the
-	// next attempt will start again from scratch.
-	if (steps.length === 0) return;
+	// No target: the page is not the one we think, or it has not finished painting. We record nothing and
+	// tell the caller so it can retry — driver.js does the same on the next attempt with fresh targets.
+	if (steps.length === 0) return false;
 
 	driver({
 		steps,
@@ -56,4 +56,5 @@ export function startTour(pathname: string, onShown: () => void) {
 	}).drive();
 
 	onShown();
+	return true;
 }
