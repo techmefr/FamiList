@@ -601,6 +601,7 @@
 	},
 	"auth": {
 		"title": "Connexion",
+		"brandTagline": "Vos courses, ensemble.",
 		"signInBody": "Retrouvez vos listes et celles de votre foyer.",
 		"signUpBody": "Quelques secondes suffisent, et vos réglages vous suivront.",
 		"signIn": "Se connecter",
@@ -1156,7 +1157,7 @@
 			"deepseek": "DeepSeek"
 		},
 		"photoGenerate": "Générer une photo",
-			"photoRegenerate": "Régénérer la photo",
+		"photoRegenerate": "Régénérer la photo",
 		"photoGenerating": "Génération en cours…",
 		"photoSearch": "Chercher une image",
 		"photoSearching": "Recherche en cours…",

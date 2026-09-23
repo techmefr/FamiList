@@ -601,6 +601,7 @@
 	},
 	"auth": {
 		"title": "Entrar",
+		"brandTagline": "As compras, em família.",
 		"signInBody": "Volte às suas listas e às da sua casa.",
 		"signUpBody": "Demora um instante, e as suas definições acompanham-no.",
 		"signIn": "Entrar",
@@ -1157,7 +1158,7 @@
 			"deepseek": "DeepSeek"
 		},
 		"photoGenerate": "Gerar uma foto",
-			"photoRegenerate": "Gerar novamente a foto",
+		"photoRegenerate": "Gerar novamente a foto",
 		"photoGenerating": "A gerar…",
 		"photoSearch": "Procurar uma imagem",
 		"photoSearching": "A procurar…",

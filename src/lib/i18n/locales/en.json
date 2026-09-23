@@ -601,6 +601,7 @@
 	},
 	"auth": {
 		"title": "Sign in",
+		"brandTagline": "Your groceries, together.",
 		"signInBody": "Pick your lists back up, and your household's.",
 		"signUpBody": "It only takes a moment, and your settings come with you.",
 		"signIn": "Sign in",
@@ -1157,7 +1158,7 @@
 			"deepseek": "DeepSeek"
 		},
 		"photoGenerate": "Generate a photo",
-			"photoRegenerate": "Regenerate the photo",
+		"photoRegenerate": "Regenerate the photo",
 		"photoGenerating": "Generating…",
 		"photoSearch": "Search for an image",
 		"photoSearching": "Searching…",

@@ -431,9 +431,28 @@
 		height, the alignment falls back to the top instead of cutting off the start, which happens as soon
 		as a software keyboard opens.
 	-->
-	<main class="fl-rise mx-auto flex min-h-dvh w-full max-w-md flex-col justify-center-safe px-4 py-10">
-		{@render children()}
-	</main>
+	<div class="grid min-h-dvh w-full md:grid-cols-2">
+		<div
+			class="fl-auth-brand relative hidden flex-col items-center justify-center gap-6 overflow-hidden p-12 text-center md:flex"
+			aria-hidden="true"
+		>
+			<div
+				class="bg-primary-foreground/15 text-primary-foreground flex size-20 items-center justify-center rounded-[1.75rem] backdrop-blur"
+			>
+				<Logo class="h-10" />
+			</div>
+			<div>
+				<p class="text-h1 text-primary-foreground font-semibold tracking-tight">{t('app.name')}</p>
+				<p class="text-primary-foreground/85 mt-3 max-w-xs text-balance">
+					{t('auth.brandTagline')}
+				</p>
+			</div>
+		</div>
+
+		<main class="fl-rise mx-auto flex w-full max-w-md flex-col justify-center-safe px-4 py-10">
+			{@render children()}
+		</main>
+	</div>
 {:else}
 	<div class="fl-shell" style="--fl-navbar-measured: {navbarH}px">
 		<nav
