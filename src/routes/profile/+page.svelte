@@ -27,6 +27,7 @@
 	import Avatar from '$components/app/Avatar.svelte';
 	import AvatarPicker from '$components/app/AvatarPicker.svelte';
 	import NameField from '$components/app/NameField.svelte';
+	import InstallEntry from '$components/app/InstallEntry.svelte';
 
 	const themes: Theme[] = ['light', 'dark', 'system'];
 
@@ -138,6 +139,8 @@
 
 	</Card.Content>
 </Card.Root>
+
+<InstallEntry />
 
 {#if session.isAdmin}
 	<Card.Root class="mt-6">

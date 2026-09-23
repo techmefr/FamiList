@@ -1045,6 +1045,8 @@
 		"iosTitle": "Auf iPhone und iPad",
 		"iosShare": "Tippen Sie unten in Safari auf „Teilen“",
 		"iosAdd": "Wählen Sie „Zum Home-Bildschirm“",
+		"genericTitle": "Über das Browsermenü",
+		"genericBody": "Öffnen Sie das Menü Ihres Browsers (oft ⋮ oder ⋯) und wählen Sie „App installieren“ oder „Zum Startbildschirm hinzufügen“.",
 		"note": "Es wird nichts aus einem App-Store heruntergeladen, und Ihr Konto und Ihre Listen bleiben unverändert."
 	},
 	"search": {

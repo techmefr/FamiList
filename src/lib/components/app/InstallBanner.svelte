@@ -151,6 +151,19 @@
 					</li>
 				</ol>
 			</div>
+		{:else if install.route === 'none'}
+			<!--
+				No `beforeinstallprompt` was captured and this isn't iOS Safari: the gesture still exists, it is
+				just the browser's own menu rather than ours to trigger. Naming it beats a button that would do
+				nothing.
+			-->
+			<div class="bg-muted mt-4 rounded-lg p-3">
+				<p class="text-label flex items-center gap-2 font-medium">
+					<Download size={18} aria-hidden="true" />
+					{t('install.genericTitle')}
+				</p>
+				<p class="text-caption text-muted-foreground mt-2">{t('install.genericBody')}</p>
+			</div>
 		{:else}
 			<button
 				type="button"

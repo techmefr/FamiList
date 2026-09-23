@@ -1037,6 +1037,8 @@
 		"iosTitle": "在 iPhone 和 iPad 上",
 		"iosShare": "点按 Safari 底部的「分享」按钮",
 		"iosAdd": "选择「添加到主屏幕」",
+		"genericTitle": "通过浏览器菜单",
+		"genericBody": "打开浏览器菜单（通常是 ⋮ 或 ⋯），选择「安装应用」或「添加到主屏幕」。",
 		"note": "不会从应用商店下载任何东西，你的账户和清单也原封不动。"
 	},
 	"search": {

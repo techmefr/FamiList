@@ -1045,6 +1045,8 @@
 		"iosTitle": "On iPhone and iPad",
 		"iosShare": "Tap the Share button, at the bottom of Safari",
 		"iosAdd": "Choose “Add to Home Screen”",
+		"genericTitle": "From the browser menu",
+		"genericBody": "Open your browser's menu (often ⋮ or ⋯) and choose “Install app” or “Add to Home screen”.",
 		"note": "Nothing is downloaded from an app store, and you find your account and your lists exactly as they were."
 	},
 	"search": {

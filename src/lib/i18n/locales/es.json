@@ -1045,6 +1045,8 @@
 		"iosTitle": "En iPhone y iPad",
 		"iosShare": "Toca el botón Compartir, en la parte inferior de Safari",
 		"iosAdd": "Elige «Añadir a pantalla de inicio»",
+		"genericTitle": "Desde el menú del navegador",
+		"genericBody": "Abre el menú de tu navegador (a menudo ⋮ o ⋯) y elige «Instalar aplicación» o «Añadir a pantalla de inicio».",
 		"note": "No se descarga nada de una tienda de aplicaciones, y encuentras tu cuenta y tus listas tal cual."
 	},
 	"search": {

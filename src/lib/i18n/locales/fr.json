@@ -1044,6 +1044,8 @@
 		"iosTitle": "Sur iPhone et iPad",
 		"iosShare": "Touchez le bouton Partager, en bas de Safari",
 		"iosAdd": "Choisissez « Sur l'écran d'accueil »",
+		"genericTitle": "Depuis le menu du navigateur",
+		"genericBody": "Ouvrez le menu de votre navigateur (souvent ⋮ ou ⋯) et choisissez « Installer l'application » ou « Ajouter à l'écran d'accueil ».",
 		"note": "Rien n'est téléchargé depuis un magasin d'applications, et vous retrouvez votre compte et vos listes tels quels."
 	},
 	"search": {
