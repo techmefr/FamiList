@@ -1045,6 +1045,8 @@
 		"iosTitle": "Su iPhone e iPad",
 		"iosShare": "Tocca il pulsante Condividi, in basso in Safari",
 		"iosAdd": "Scegli «Aggiungi a Home»",
+		"genericTitle": "Dal menu del browser",
+		"genericBody": "Apri il menu del tuo browser (spesso ⋮ o ⋯) e scegli «Installa app» o «Aggiungi a schermata Home».",
 		"note": "Non si scarica nulla da uno store, e ritrovi il tuo account e le tue liste così come sono."
 	},
 	"search": {

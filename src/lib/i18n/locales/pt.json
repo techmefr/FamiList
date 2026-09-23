@@ -1045,6 +1045,8 @@
 		"iosTitle": "No iPhone e no iPad",
 		"iosShare": "Toque no botão Partilhar, na parte de baixo do Safari",
 		"iosAdd": "Escolha «Adicionar ao ecrã principal»",
+		"genericTitle": "A partir do menu do navegador",
+		"genericBody": "Abra o menu do seu navegador (normalmente ⋮ ou ⋯) e escolha «Instalar aplicação» ou «Adicionar ao ecrã principal».",
 		"note": "Nada é transferido de uma loja de aplicações, e encontra a sua conta e as suas listas tal como estavam."
 	},
 	"search": {

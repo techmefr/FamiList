@@ -100,3 +100,17 @@ export function shouldOffer(context: InstallContext): boolean {
 export function canExplain(context: Pick<InstallContext, 'isNative' | 'isInstalled' | 'route'>) {
 	return !context.isNative && !context.isInstalled && context.route !== 'none';
 }
+
+/**
+ * Whether the profile page should keep a manual install entry point on screen.
+ *
+ * `shouldOffer` waits for a third opening and goes quiet for six months after a refusal — right for an
+ * interruption, wrong for a permanent fallback. `beforeinstallprompt` itself is inconsistent: it can fire
+ * for one account on a device and never for another signed in right next to it, on the same browser. The
+ * only thing worth gating here is whether installing still means anything at all.
+ */
+export function canOfferManualInstall(
+	context: Pick<InstallContext, 'isNative' | 'isInstalled'>
+): boolean {
+	return !context.isNative && !context.isInstalled;
+}
