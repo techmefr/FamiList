@@ -1141,7 +1141,18 @@
 	"setup": {
 		"title": "Instância não configurada",
 		"body": "Esta aplicação ainda não sabe com que base de dados falar.",
-		"hint": "Indique o endereço Supabase e a chave pública em config.js, ao lado da aplicação, ou nas variáveis do contentor, e recarregue a página."
+		"hint": "Indique abaixo o endereço Supabase e a chave pública, ou em config.js ao lado da aplicação, ou ainda nas variáveis do contentor, e recarregue a página.",
+		"form": {
+			"url": "Endereço Supabase",
+			"anonKey": "Chave pública (anon)",
+			"invalid": "Endereço ou chave inválidos.",
+			"save": "Guardar e recarregar",
+			"reset": "Repor a configuração predefinida"
+		}
+	},
+	"connection": {
+		"title": "Ligação",
+		"subtitle": "Altere a base de dados Supabase usada por esta aplicação, sem a reconstruir."
 	},
 	"mealPlan": {
 		"defaultName": "Menu da semana",

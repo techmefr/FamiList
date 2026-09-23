@@ -1141,7 +1141,18 @@
 	"setup": {
 		"title": "Tsy mbola voaomana ity instance ity",
 		"body": "Mbola tsy fantatr ity application ity izay base de données horesahiny.",
-		"hint": "Ampidiro ao amin ny config.js eo akaikin ny application, na ao amin ny variables an ny conteneur, ny adiresy Supabase sy ny lakile public, avy eo avereno alaina ny pejy."
+		"hint": "Ampidiro eto ambany, na ao amin ny config.js eo akaikin ny application, na ao amin ny variables an ny conteneur, ny adiresy Supabase sy ny lakile public, avy eo avereno alaina ny pejy.",
+		"form": {
+			"url": "Adiresy Supabase",
+			"anonKey": "Lakile miharihary (anon)",
+			"invalid": "Adiresy na lakile tsy mety.",
+			"save": "Tehirizo ary avereno alaina",
+			"reset": "Avereno amin'ny laoniny ny fandrindrana"
+		}
+	},
+	"connection": {
+		"title": "Fifandraisana",
+		"subtitle": "Ovay ilay tahiry Supabase itenenan'ity application ity, tsy mila mamorona indray ilay application."
 	},
 	"mealPlan": {
 		"defaultName": "Sakafon’ny herinandro",

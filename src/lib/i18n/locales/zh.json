@@ -1131,7 +1131,18 @@
 	"setup": {
 		"title": "实例尚未配置",
 		"body": "此应用还不知道要连接哪个数据库。",
-		"hint": "请在应用旁边的 config.js 中，或在容器的环境变量中，填写 Supabase 地址和公开密钥，然后重新加载页面。"
+		"hint": "请在下方，或在应用旁边的 config.js 中，或在容器的环境变量中，填写 Supabase 地址和公开密钥，然后重新加载页面。",
+		"form": {
+			"url": "Supabase 地址",
+			"anonKey": "公开密钥 (anon)",
+			"invalid": "地址或密钥无效。",
+			"save": "保存并重新加载",
+			"reset": "恢复默认配置"
+		}
+	},
+	"connection": {
+		"title": "连接",
+		"subtitle": "更改此应用连接的 Supabase 数据库，无需重新构建应用。"
 	},
 	"mealPlan": {
 		"defaultName": "本周菜单",
