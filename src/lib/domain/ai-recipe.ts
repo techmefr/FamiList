@@ -205,6 +205,30 @@ export function recipeFollowUpPrompt(userText: string, options: PromptOptions): 
 	].join('\n');
 }
 
+/**
+ * The request sent alongside a photo (#266): a page photographed from a book, or a handwritten/printed
+ * recipe. The image itself is not built here — `ai.svelte.ts` attaches it to the request in the shape its
+ * provider's dialect expects — but the text instruction travelling with it is, for the same reason every
+ * other prompt in this file is: so the screen can show what is asked before it leaves, text and photo alike.
+ */
+export function recipeFromPhotoPrompt(options: PromptOptions): string {
+	const servings = clampServings(options.servings);
+
+	return [
+		`Voici la photo d une page de livre ou d une recette de cuisine ecrite ou imprimee.`,
+		`Lis-la et ecris la recette qu elle decrit, en ${options.language}.`,
+		`Si la photo ne precise pas de nombre de personnes, prevois-la pour ${servings} personnes.`,
+		...restrictionsLine(options.restrictions),
+		'Reponds uniquement par un objet JSON, sans texte autour et sans bloc de code.',
+		'Forme exacte attendue :',
+		'{"name":"","emoji":"","servings":0,"ingredients":[{"name":"","qty":"","unit":""}],"steps":[""]}',
+		'"emoji" est un seul caractere emoji.',
+		`"unit" vaut obligatoirement l'une de ces valeurs : ${UNITS.join(', ')}.`,
+		'"qty" est un nombre ecrit en chiffres, ou une chaine vide si la quantite ne se compte pas.',
+		'"steps" contient les etapes de preparation, une par entree, dans l ordre.'
+	].join('\n');
+}
+
 const clampServings = (value: number): number => {
 	if (!Number.isFinite(value)) return DEFAULT_SERVINGS;
 

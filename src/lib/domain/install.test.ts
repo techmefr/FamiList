@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
 	canExplain,
+	canOfferManualInstall,
 	installRoute,
 	isIosSafari,
 	isRefusalExpired,
@@ -137,5 +138,19 @@ describe('canExplain', () => {
 
 	it('disparaît quand aucun chemin ne mène à une installation', () => {
 		expect(canExplain({ isNative: false, isInstalled: false, route: 'none' })).toBe(false);
+	});
+});
+
+describe('canOfferManualInstall', () => {
+	it("reste offert même sans invite capturée, tant que rien n'est installé", () => {
+		expect(canOfferManualInstall({ isNative: false, isInstalled: false })).toBe(true);
+	});
+
+	it('disparaît dans la coquille Capacitor', () => {
+		expect(canOfferManualInstall({ isNative: true, isInstalled: false })).toBe(false);
+	});
+
+	it("disparaît une fois l'application installée", () => {
+		expect(canOfferManualInstall({ isNative: false, isInstalled: true })).toBe(false);
 	});
 });

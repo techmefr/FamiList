@@ -2,6 +2,7 @@ import { supabase } from '$db/supabase';
 import {
 	afterRemoval,
 	buildRequest,
+	buildVisionRequest,
 	DEFAULT_PROVIDER,
 	isProvider,
 	parseError,
@@ -11,7 +12,9 @@ import {
 	withActive,
 	activatesOnFirstSave,
 	type AiCredentialRow,
-	type ConversationTurn
+	type ConversationTurn,
+	type Provider,
+	type ProviderRequest
 } from '$domain/ai';
 import { parseRecipeSuggestion, type SuggestedRecipe } from '$domain/ai-recipe';
 import { pollinationsImageUrl, recipePhotoPath } from '$domain/ai-image';
@@ -23,7 +26,7 @@ import { pollinationsImageUrl, recipePhotoPath } from '$domain/ai-image';
  */
 export type SuggestOutcome =
 	| { ok: true; recipe: SuggestedRecipe }
-	| { ok: false; reason: 'network' | 'provider' | 'unreadable'; detail: string };
+	| { ok: false; reason: 'network' | 'provider' | 'unreadable' | 'unsupported'; detail: string };
 
 /** A photo is decorative: the only outcomes a caller acts on are "got one" and "did not", never a detail. */
 export type PhotoOutcome = { ok: true; path: string } | { ok: false };
@@ -67,6 +70,16 @@ class AiStore {
 	/** A key is saved and active for this account. It is what the screens consult. */
 	get configured(): boolean {
 		return this.#active !== null;
+	}
+
+	/**
+	 * Whether the active provider reads an image (#266). The "create a recipe by photo" entry point checks
+	 * this before it ever shows its button, and `suggestRecipeFromPhoto` checks it again on its own so that a
+	 * provider switched mid-screen cannot slip a photo through — see `Provider.supportsVision` for what this
+	 * is and is not a promise about.
+	 */
+	get supportsVision(): boolean {
+		return this.#active ? (providerById(this.#active.provider)?.supportsVision ?? false) : false;
 	}
 
 	/**
@@ -279,6 +292,42 @@ class AiStore {
 		return this.#ask(turns);
 	}
 
+	/**
+	 * Reads a photo of a book page or a written/printed recipe (#266) and turns it into the same suggestion
+	 * shape every other entry point produces, so the review screen (`RecipeSuggestionCard`) does not need to
+	 * know where the recipe came from.
+	 *
+	 * Declined with `{ reason: 'unsupported' }`, before anything leaves the browser, when the active provider
+	 * cannot read an image — the caller is expected to point the person at Profil -> IA rather than let the
+	 * provider fail on its own terms.
+	 */
+	async suggestRecipeFromPhoto(
+		imageBase64: string,
+		mimeType: string,
+		prompt: string
+	): Promise<SuggestOutcome> {
+		const active = this.#active;
+		const provider = active ? providerById(active.provider) : null;
+		const apiKey = active ? this.#keys.get(active.provider) : undefined;
+		if (!provider || !apiKey) {
+			return { ok: false, reason: 'provider', detail: '' };
+		}
+		if (!provider.supportsVision) {
+			return { ok: false, reason: 'unsupported', detail: '' };
+		}
+
+		const request = buildVisionRequest(
+			provider,
+			apiKey,
+			active?.model ?? '',
+			prompt,
+			imageBase64,
+			mimeType
+		);
+
+		return this.#send(provider, request);
+	}
+
 	async #ask(promptOrTurns: string | ConversationTurn[]): Promise<SuggestOutcome> {
 		const active = this.#active;
 		const provider = active ? providerById(active.provider) : null;
@@ -289,6 +338,10 @@ class AiStore {
 
 		const request = buildRequest(provider, apiKey, active?.model ?? '', promptOrTurns);
 
+		return this.#send(provider, request);
+	}
+
+	async #send(provider: Provider, request: ProviderRequest): Promise<SuggestOutcome> {
 		let response: Response;
 		try {
 			response = await fetch(request.url, {
@@ -331,11 +384,12 @@ class AiStore {
 	async generateRecipePhoto(
 		householdId: string,
 		recipeId: string,
-		prompt: string
+		prompt: string,
+		seed = Math.floor(Math.random() * 2 ** 31)
 	): Promise<PhotoOutcome> {
 		let response: Response;
 		try {
-			response = await fetch(pollinationsImageUrl(prompt));
+			response = await fetch(pollinationsImageUrl(prompt, seed));
 		} catch {
 			return { ok: false };
 		}

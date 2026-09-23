@@ -418,7 +418,17 @@
 		"mealPlanLink": "制定本周用餐计划",
 		"share": "分享",
 		"shareAria": "分享食谱 {name}",
-		"sharedFrom": "来自 {circle} 的分享"
+		"sharedFrom": "来自 {circle} 的分享",
+		"cookAlong": {
+			"start": "跟着食谱做",
+			"title": "正在跟做 {name}",
+			"position": "第 {current} 步，共 {total} 步",
+			"previous": "上一步",
+			"next": "下一步",
+			"mute": "静音",
+			"unmute": "取消静音",
+			"empty": "这个食谱没有步骤。"
+		}
 	},
 	"aisles": {
 		"title": "货区",
@@ -1054,6 +1064,8 @@
 		"iosTitle": "在 iPhone 和 iPad 上",
 		"iosShare": "点按 Safari 底部的「分享」按钮",
 		"iosAdd": "选择「添加到主屏幕」",
+		"genericTitle": "通过浏览器菜单",
+		"genericBody": "打开浏览器菜单（通常是 ⋮ 或 ⋯），选择「安装应用」或「添加到主屏幕」。",
 		"note": "不会从应用商店下载任何东西，你的账户和清单也原封不动。"
 	},
 	"search": {
@@ -1122,7 +1134,9 @@
 			"provider": "服务商拒绝了这次请求。",
 			"providerDetail": "服务商拒绝了：{detail}",
 			"unreadable": "返回的内容无法使用。请再问一次。",
-			"unreadableDetail": "返回的内容无法使用：{detail}"
+			"unreadableDetail": "返回的内容无法使用：{detail}",
+			"unsupported": "该提供商无法读取图片。",
+			"unsupportedDetail": "该提供商无法读取图片：{detail}"
 		},
 		"providers": {
 			"anthropic": "Anthropic (Claude)",
@@ -1133,19 +1147,43 @@
 			"deepseek": "DeepSeek"
 		},
 		"photoGenerate": "生成图片",
+			"photoRegenerate": "重新生成图片",
 		"photoGenerating": "生成中…",
+		"photo": {
+			"trigger": "通过照片创建食谱",
+			"title": "拍摄食谱照片",
+			"hint": "拍摄书页照片，或手写/印刷的食谱。",
+			"pick": "拍照或导入照片",
+			"reading": "正在读取照片…",
+			"unsupported": "当前提供商无法读取图片。请在个人资料 → AI 中切换提供商以使用此功能。"
+		},
 		"request": {
 			"trigger": "向AI询问食谱",
 			"title": "您想要什么食谱？",
 			"placeholder": "例如：4人份鸡肉咖喱",
 			"submit": "询问",
-			"followUpPlaceholder": "例如：更辣一点，或把鸡肉换成豆腐"
+			"followUpPlaceholder": "例如：更辣一点，或把鸡肉换成豆腐",
+			"dictate": "语音口述",
+			"stopDictate": "停止口述",
+			"listening": "正在聆听…",
+			"dictateError": "语音口述失败。请重试或手动输入文字。"
 		}
 	},
 	"setup": {
 		"title": "实例尚未配置",
 		"body": "此应用还不知道要连接哪个数据库。",
-		"hint": "请在应用旁边的 config.js 中，或在容器的环境变量中，填写 Supabase 地址和公开密钥，然后重新加载页面。"
+		"hint": "请在下方，或在应用旁边的 config.js 中，或在容器的环境变量中，填写 Supabase 地址和公开密钥，然后重新加载页面。",
+		"form": {
+			"url": "Supabase 地址",
+			"anonKey": "公开密钥 (anon)",
+			"invalid": "地址或密钥无效。",
+			"save": "保存并重新加载",
+			"reset": "恢复默认配置"
+		}
+	},
+	"connection": {
+		"title": "连接",
+		"subtitle": "更改此应用连接的 Supabase 数据库，无需重新构建应用。"
 	},
 	"mealPlan": {
 		"defaultName": "本周菜单",

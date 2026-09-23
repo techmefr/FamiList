@@ -1,9 +1,18 @@
 import { createClient } from '@supabase/supabase-js';
-import { readInstanceConfig } from '$domain/instance-config';
+import { readInstanceConfig, resolveInstanceConfig } from '$domain/instance-config';
+import { loadLocalInstanceConfig } from './local-instance-config';
 import type { Database } from './types';
 
-/** What `config.js` said when the page opened, or null on an instance nobody has configured yet. */
-const instanceConfig = readInstanceConfig(globalThis.__FAMILIST_CONFIG__);
+/**
+ * What the app talks to: whatever was saved from the in-app connection screen on this device, or failing
+ * that what `config.js` said when the page opened. Read once, at load time — the client below is built
+ * from it immediately after, and changing the connection takes a reload, the same way changing `config.js`
+ * already did.
+ */
+const instanceConfig = resolveInstanceConfig(
+	readInstanceConfig(globalThis.__FAMILIST_CONFIG__),
+	loadLocalInstanceConfig()
+);
 
 export const isConfigured = instanceConfig !== null;
 

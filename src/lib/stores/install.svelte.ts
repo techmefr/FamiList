@@ -1,6 +1,12 @@
 import { browser } from '$app/environment';
 import { Capacitor } from '@capacitor/core';
-import { canExplain, installRoute, isIosSafari, shouldOffer } from '$domain/install';
+import {
+	canExplain,
+	canOfferManualInstall,
+	installRoute,
+	isIosSafari,
+	shouldOffer
+} from '$domain/install';
 
 /**
  * The install prompt of Chrome and Edge. It is not in the type library: the specification is only carried
@@ -87,6 +93,15 @@ class InstallStore {
 				refusedAt: this.#refusedAt,
 				now: this.#startedAt
 			})
+	);
+
+	/**
+	 * The always-visible fallback shown in the profile page, regardless of openings or a past refusal —
+	 * see `canOfferManualInstall`.
+	 */
+	canInstallManually = $derived(
+		this.#ready &&
+			canOfferManualInstall({ isNative: this.#isNative, isInstalled: this.#isInstalled })
 	);
 
 	/**

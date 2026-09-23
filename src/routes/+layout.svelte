@@ -248,12 +248,23 @@
 		if (page.url.pathname !== '/') return;
 
 		let cancelled = false;
-		const timer = setTimeout(async () => {
-			const { startTour } = await import('$tour');
-			if (cancelled) return;
+		let timer: ReturnType<typeof setTimeout>;
 
-			startTour(page.url.pathname, () => settings.setTourSeen(true));
-		}, 700);
+		// Up to five tries, three quarters of a second apart: `startTour` reports back when it found no
+		// target at all, which happens when the delay landed before the navigation bar had finished
+		// painting. Giving up after one silent miss would leave the account stuck without a tour and no way
+		// to know it — retrying a few times covers a slow first paint without polling forever.
+		const attempt = (triesLeft: number) => {
+			timer = setTimeout(async () => {
+				const { startTour } = await import('$tour');
+				if (cancelled) return;
+
+				const started = startTour(page.url.pathname, () => settings.setTourSeen(true));
+				if (!started && triesLeft > 1) attempt(triesLeft - 1);
+			}, 700);
+		};
+
+		attempt(5);
 
 		return () => {
 			cancelled = true;
@@ -335,6 +346,17 @@
 
 	const isActive = (href: string) =>
 		href === '/' ? page.url.pathname === '/' : page.url.pathname.startsWith(href);
+
+	/**
+	 * Icons-only tabs, on a phone, at the three largest text sizes.
+	 *
+	 * Five labels fit under their icon up to `lg`; past that a two-line label pushes its neighbours and
+	 * the bar's five tabs stop lining up under the thumb — the same crowding that already forces
+	 * `.name-form` to a single column at these sizes (see app.css). The label is not removed, only made
+	 * `sr-only`: a screen reader still gets it, and every page carries an `<h1>` that names where the icon
+	 * led, so nothing that was said out loud goes missing.
+	 */
+	const iconOnlyNav = $derived(['xl', 'xxl', 'comfort'].includes(settings.fontScaleId));
 
 	/**
 	 * Ctrl+K, ⌘K on Mac: the shortcut everyone already tries in order to search. It doubles the header
@@ -496,7 +518,10 @@
 								<Icon size={22} class="relative" aria-hidden="true" />
 							</span>
 							<!-- The weight repeats the active tab: colour must not say it on its own. -->
-							<span class="fl-nav-label relative {active ? 'font-medium' : ''}">{t(key)}</span>
+							<span
+								class="fl-nav-label relative {active ? 'font-medium' : ''} {iconOnlyNav ? 'phone:sr-only' : ''}"
+								>{t(key)}</span
+							>
 						</a>
 					</li>
 				{/each}

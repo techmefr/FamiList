@@ -421,7 +421,17 @@
 		"mealPlanLink": "Composer un menu de la semaine",
 		"share": "Partager",
 		"shareAria": "Partager la recette {name}",
-		"sharedFrom": "Partagée depuis {circle}"
+		"sharedFrom": "Partagée depuis {circle}",
+		"cookAlong": {
+			"start": "Suivre la recette",
+			"title": "Suivre la recette {name}",
+			"position": "Étape {current} sur {total}",
+			"previous": "Précédente",
+			"next": "Suivante",
+			"mute": "Couper la voix",
+			"unmute": "Réactiver la voix",
+			"empty": "Cette recette n’a pas d’étape à suivre."
+		}
 	},
 	"aisles": {
 		"title": "Rayons",
@@ -1061,6 +1071,8 @@
 		"iosTitle": "Sur iPhone et iPad",
 		"iosShare": "Touchez le bouton Partager, en bas de Safari",
 		"iosAdd": "Choisissez « Sur l'écran d'accueil »",
+		"genericTitle": "Depuis le menu du navigateur",
+		"genericBody": "Ouvrez le menu de votre navigateur (souvent ⋮ ou ⋯) et choisissez « Installer l'application » ou « Ajouter à l'écran d'accueil ».",
 		"note": "Rien n'est téléchargé depuis un magasin d'applications, et vous retrouvez votre compte et vos listes tels quels."
 	},
 	"search": {
@@ -1131,7 +1143,9 @@
 			"provider": "Le fournisseur a refusé la demande.",
 			"providerDetail": "Le fournisseur a refusé : {detail}",
 			"unreadable": "La réponse n’était pas exploitable. Redemandez.",
-			"unreadableDetail": "La réponse n’était pas exploitable : {detail}"
+			"unreadableDetail": "La réponse n’était pas exploitable : {detail}",
+			"unsupported": "Ce fournisseur ne lit pas les images.",
+			"unsupportedDetail": "Ce fournisseur ne lit pas les images : {detail}"
 		},
 		"providers": {
 			"anthropic": "Anthropic (Claude)",
@@ -1142,19 +1156,43 @@
 			"deepseek": "DeepSeek"
 		},
 		"photoGenerate": "Générer une photo",
+			"photoRegenerate": "Régénérer la photo",
 		"photoGenerating": "Génération en cours…",
+		"photo": {
+			"trigger": "Créer une recette par photo",
+			"title": "Prenez une photo de la recette",
+			"hint": "Photographiez une page de livre, ou une recette écrite ou imprimée.",
+			"pick": "Prendre ou importer une photo",
+			"reading": "Lecture de la photo…",
+			"unsupported": "Le fournisseur actif ne lit pas les images. Changez de fournisseur dans Profil → IA pour utiliser cette fonction."
+		},
 		"request": {
 			"trigger": "Demander une recette à l’IA",
 			"title": "Quelle recette souhaitez-vous ?",
 			"placeholder": "ex. un curry de poulet pour 4",
 			"submit": "Demander",
-			"followUpPlaceholder": "ex. plus épicé, ou remplacer le poulet par du tofu"
+			"followUpPlaceholder": "ex. plus épicé, ou remplacer le poulet par du tofu",
+			"dictate": "Dicter au vocal",
+			"stopDictate": "Arrêter la dictée",
+			"listening": "Écoute en cours…",
+			"dictateError": "La dictée vocale a échoué. Réessayez ou saisissez le texte."
 		}
 	},
 	"setup": {
 		"title": "Instance non configurée",
 		"body": "Cette application ne sait pas encore à quelle base de données parler.",
-		"hint": "Renseignez l'adresse Supabase et la clé publique dans config.js, à côté de l'application, ou dans les variables du conteneur, puis rechargez la page."
+		"hint": "Renseignez l'adresse Supabase et la clé publique ci-dessous, ou dans config.js à côté de l'application, ou encore dans les variables du conteneur, puis rechargez la page.",
+		"form": {
+			"url": "Adresse Supabase",
+			"anonKey": "Clé publique (anon)",
+			"invalid": "Adresse ou clé invalide.",
+			"save": "Enregistrer et recharger",
+			"reset": "Revenir à la configuration par défaut"
+		}
+	},
+	"connection": {
+		"title": "Connexion",
+		"subtitle": "Changez la base Supabase utilisée par cette application, sans reconstruire l'application."
 	},
 	"mealPlan": {
 		"defaultName": "Menu de la semaine",

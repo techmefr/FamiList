@@ -421,7 +421,17 @@
 		"mealPlanLink": "Mamorona drafitra sakafo isan-kerinandro",
 		"share": "Zarao",
 		"shareAria": "Zarao ny mahandro {name}",
-		"sharedFrom": "Nozaraina avy amin'ny {circle}"
+		"sharedFrom": "Nozaraina avy amin'ny {circle}",
+		"cookAlong": {
+			"start": "Arahao ny fahandroana",
+			"title": "Manaraka an'i {name}",
+			"position": "Dingana {current} amin'ny {total}",
+			"previous": "Teo aloha",
+			"next": "Manaraka",
+			"mute": "Ampitsahatra ny feo",
+			"unmute": "Alefaso ny feo",
+			"empty": "Tsy misy dingana harahina amin'ity fahandroana ity."
+		}
 	},
 	"aisles": {
 		"title": "Faritra",
@@ -1062,6 +1072,8 @@
 		"iosTitle": "Amin'ny iPhone sy iPad",
 		"iosShare": "Tsindrio ny bokotra Zarao, eo ambanin'ny Safari",
 		"iosAdd": "Fidio ny «Eo amin'ny efijery fandraisana»",
+		"genericTitle": "Avy amin'ny lisitry ny mpitety",
+		"genericBody": "Sokafy ny lisitry ny mpitetezanao (matetika ⋮ na ⋯) ary fidio ny «Apetraho ny rindranasa» na «Ampidiro eo amin'ny efijery fandraisana».",
 		"note": "Tsy misy zavatra alaina avy amin'ny fivarotana rindranasa, ary hitanao toy ny teo ihany ny kaontinao sy ny lisitrao."
 	},
 	"search": {
@@ -1132,7 +1144,9 @@
 			"provider": "Nolavin ny mpamatsy ny fangatahana.",
 			"providerDetail": "Nolavin ny mpamatsy : {detail}",
 			"unreadable": "Tsy azo nampiasaina ny valiny. Anontanio indray.",
-			"unreadableDetail": "Tsy azo nampiasaina ny valiny : {detail}"
+			"unreadableDetail": "Tsy azo nampiasaina ny valiny : {detail}",
+			"unsupported": "Tsy mahavaky sary io mpampiantrano io.",
+			"unsupportedDetail": "Tsy mahavaky sary io mpampiantrano io : {detail}"
 		},
 		"providers": {
 			"anthropic": "Anthropic (Claude)",
@@ -1143,19 +1157,43 @@
 			"deepseek": "DeepSeek"
 		},
 		"photoGenerate": "Mamorona sary",
+			"photoRegenerate": "Mamorona sary indray",
 		"photoGenerating": "Mamorona…",
+		"photo": {
+			"trigger": "Mamorona lasopy amin'ny sary",
+			"title": "Alao sary ny lasopy",
+			"hint": "Alao sary pejin-boky, na lasopy voasoratra na vita pirinty.",
+			"pick": "Maka na mampiditra sary",
+			"reading": "Mamaky ny sary…",
+			"unsupported": "Tsy mahavaky sary ny mpampiantrano miasa. Ovay ny mpampiantrano ao amin'ny Mombamomba → AI mba hampiasana io tarigetra io."
+		},
 		"request": {
 			"trigger": "Anontanio ny AI hanome recette",
 			"title": "Recette inona no tianao?",
 			"placeholder": "ohatra: curry akoho ho an ny olona 4",
 			"submit": "Anontanio",
-			"followUpPlaceholder": "ohatra: mafy kokoa, na soloy tôfo ny akoho"
+			"followUpPlaceholder": "ohatra: mafy kokoa, na soloy tôfo ny akoho",
+			"dictate": "Tononina am-bava",
+			"stopDictate": "Atsaharo ny fitononana",
+			"listening": "Mihaino…",
+			"dictateError": "Tsy nahomby ny fitononana am-bava. Andramo indray na soraty ny lahatsoratra."
 		}
 	},
 	"setup": {
 		"title": "Tsy mbola voaomana ity instance ity",
 		"body": "Mbola tsy fantatr ity application ity izay base de données horesahiny.",
-		"hint": "Ampidiro ao amin ny config.js eo akaikin ny application, na ao amin ny variables an ny conteneur, ny adiresy Supabase sy ny lakile public, avy eo avereno alaina ny pejy."
+		"hint": "Ampidiro eto ambany, na ao amin ny config.js eo akaikin ny application, na ao amin ny variables an ny conteneur, ny adiresy Supabase sy ny lakile public, avy eo avereno alaina ny pejy.",
+		"form": {
+			"url": "Adiresy Supabase",
+			"anonKey": "Lakile miharihary (anon)",
+			"invalid": "Adiresy na lakile tsy mety.",
+			"save": "Tehirizo ary avereno alaina",
+			"reset": "Avereno amin'ny laoniny ny fandrindrana"
+		}
+	},
+	"connection": {
+		"title": "Fifandraisana",
+		"subtitle": "Ovay ilay tahiry Supabase itenenan'ity application ity, tsy mila mamorona indray ilay application."
 	},
 	"mealPlan": {
 		"defaultName": "Sakafon’ny herinandro",

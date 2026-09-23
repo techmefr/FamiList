@@ -421,7 +421,17 @@
 		"mealPlanLink": "Build a weekly meal plan",
 		"share": "Share",
 		"shareAria": "Share recipe {name}",
-		"sharedFrom": "Shared from {circle}"
+		"sharedFrom": "Shared from {circle}",
+		"cookAlong": {
+			"start": "Follow the recipe",
+			"title": "Following {name}",
+			"position": "Step {current} of {total}",
+			"previous": "Previous",
+			"next": "Next",
+			"mute": "Mute voice",
+			"unmute": "Unmute voice",
+			"empty": "This recipe has no step to follow."
+		}
 	},
 	"aisles": {
 		"title": "Aisles",
@@ -1062,6 +1072,8 @@
 		"iosTitle": "On iPhone and iPad",
 		"iosShare": "Tap the Share button, at the bottom of Safari",
 		"iosAdd": "Choose “Add to Home Screen”",
+		"genericTitle": "From the browser menu",
+		"genericBody": "Open your browser's menu (often ⋮ or ⋯) and choose “Install app” or “Add to Home screen”.",
 		"note": "Nothing is downloaded from an app store, and you find your account and your lists exactly as they were."
 	},
 	"search": {
@@ -1132,7 +1144,9 @@
 			"provider": "The provider refused the request.",
 			"providerDetail": "The provider refused: {detail}",
 			"unreadable": "The answer was not usable. Ask again.",
-			"unreadableDetail": "The answer was not usable: {detail}"
+			"unreadableDetail": "The answer was not usable: {detail}",
+			"unsupported": "This provider cannot read images.",
+			"unsupportedDetail": "This provider cannot read images: {detail}"
 		},
 		"providers": {
 			"anthropic": "Anthropic (Claude)",
@@ -1143,19 +1157,43 @@
 			"deepseek": "DeepSeek"
 		},
 		"photoGenerate": "Generate a photo",
+			"photoRegenerate": "Regenerate the photo",
 		"photoGenerating": "Generating…",
+		"photo": {
+			"trigger": "Create a recipe by photo",
+			"title": "Take a photo of the recipe",
+			"hint": "Photograph a book page, or a written or printed recipe.",
+			"pick": "Take or import a photo",
+			"reading": "Reading the photo…",
+			"unsupported": "The active provider cannot read images. Switch provider in Profile → AI to use this feature."
+		},
 		"request": {
 			"trigger": "Ask AI for a recipe",
 			"title": "What recipe would you like?",
 			"placeholder": "e.g. a chicken curry for 4",
 			"submit": "Ask",
-			"followUpPlaceholder": "e.g. spicier, or swap the chicken for tofu"
+			"followUpPlaceholder": "e.g. spicier, or swap the chicken for tofu",
+			"dictate": "Dictate by voice",
+			"stopDictate": "Stop dictation",
+			"listening": "Listening…",
+			"dictateError": "Voice dictation failed. Try again or type the text."
 		}
 	},
 	"setup": {
 		"title": "Instance not configured",
 		"body": "This app does not know yet which database to talk to.",
-		"hint": "Set the Supabase address and the publishable key in config.js, next to the app, or in the container variables, then reload the page."
+		"hint": "Set the Supabase address and the publishable key below, or in config.js next to the app, or in the container variables, then reload the page.",
+		"form": {
+			"url": "Supabase URL",
+			"anonKey": "Anon public key",
+			"invalid": "Invalid URL or key.",
+			"save": "Save and reload",
+			"reset": "Reset to the default configuration"
+		}
+	},
+	"connection": {
+		"title": "Connection",
+		"subtitle": "Change the Supabase database this app talks to, without rebuilding the app."
 	},
 	"mealPlan": {
 		"defaultName": "This week’s menu",

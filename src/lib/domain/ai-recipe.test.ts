@@ -4,6 +4,7 @@ import {
 	parseRecipeSuggestion,
 	recipeExtractionPrompt,
 	recipeFollowUpPrompt,
+	recipeFromPhotoPrompt,
 	recipeFromRequestPrompt,
 	recipePrompt,
 	restrictionsOf,
@@ -340,5 +341,38 @@ describe('parseRecipeSuggestion', () => {
 		);
 
 		expect(recipe?.steps).toEqual(['']);
+	});
+});
+
+describe('recipeFromPhotoPrompt (#266)', () => {
+	it('demande de lire la photo et repond dans la langue demandee', () => {
+		const prompt = recipeFromPhotoPrompt({ language: 'italien', servings: 4 });
+
+		expect(prompt).toContain('italien');
+		expect(prompt).toContain('photo');
+	});
+
+	it('reprend le nombre de personnes demande quand la photo n en precise pas', () => {
+		const prompt = recipeFromPhotoPrompt({ language: 'français', servings: 6 });
+
+		expect(prompt).toContain('6 personnes');
+	});
+
+	it('ajoute la ligne des restrictions alimentaires, comme les autres prompts', () => {
+		const prompt = recipeFromPhotoPrompt({
+			language: 'français',
+			servings: 4,
+			restrictions: ['arachides']
+		});
+
+		expect(prompt).toContain('arachides');
+	});
+
+	it('demande le meme objet JSON que les autres prompts, pour reutiliser le meme parseur', () => {
+		const prompt = recipeFromPhotoPrompt({ language: 'français', servings: 4 });
+
+		expect(prompt).toContain(
+			'{"name":"","emoji":"","servings":0,"ingredients":[{"name":"","qty":"","unit":""}],"steps":[""]}'
+		);
 	});
 });

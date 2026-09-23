@@ -26,3 +26,25 @@ export interface AppearanceStore {
 	adoptRemote(row: Partial<AppearanceRow>, userId: string): void;
 	markSynced(userId: string): void;
 }
+
+/** The sync bookkeeping `localWins` arbitrates on, kept outside the store so it can be tested without one. */
+export interface SyncBookkeeping {
+	changedAt: number;
+	syncedAt: number;
+	syncedFor: string | null;
+}
+
+/**
+ * Who is right, the device or the database, when this account opens here.
+ *
+ * The device wins in two cases: the settings were touched without any account ever having received a
+ * send — that is the welcome journey, where you pick your size before creating your account — or they
+ * changed since the last successful send for this same account, offline for instance. Everywhere else, it
+ * is the database: you are arriving on a new device, or `syncedFor` names a different account than the one
+ * signing in now (a shared device the previous account signed out of without its bookkeeping being reset).
+ */
+export function localWins(bookkeeping: SyncBookkeeping, userId: string): boolean {
+	if (bookkeeping.syncedFor === null) return bookkeeping.changedAt > 0;
+
+	return bookkeeping.syncedFor === userId && bookkeeping.changedAt > bookkeeping.syncedAt;
+}
