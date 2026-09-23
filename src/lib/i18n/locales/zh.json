@@ -598,6 +598,7 @@
 	},
 	"auth": {
 		"title": "登录",
+		"brandTagline": "购物清单，一起管理。",
 		"signInBody": "回到你的清单，以及家里的清单。",
 		"signUpBody": "只需片刻，你的设置也会一起带走。",
 		"signIn": "登录",
@@ -1147,7 +1148,7 @@
 			"deepseek": "DeepSeek"
 		},
 		"photoGenerate": "生成图片",
-			"photoRegenerate": "重新生成图片",
+		"photoRegenerate": "重新生成图片",
 		"photoGenerating": "生成中…",
 		"photoSearch": "搜索图片",
 		"photoSearching": "搜索中…",

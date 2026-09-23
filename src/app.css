@@ -1502,6 +1502,15 @@ button[data-slot='switch'][data-state='checked'] {
 }
 
 /**
+ * The brand half of the sign-in/sign-up/welcome screens, from `md` up. A diagonal wash of both brand colours
+ * behind the mark and the tagline — the card's own half stays on the plain background so the form keeps its
+ * usual contrast.
+ */
+.fl-auth-brand {
+	background: linear-gradient(135deg, var(--primary), var(--secondary));
+}
+
+/**
  * Two soft, blurred colour fields behind the sign-in screen. Fixed and behind everything (`-z-10`), so they
  * never intercept a tap and never move with the form's own height changes (password reveal, error text,
  * mode switch). Pure decoration — `aria-hidden` on the element itself keeps it out of the accessibility tree.

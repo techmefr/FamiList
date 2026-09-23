@@ -613,6 +613,7 @@
 	},
 	"auth": {
 		"title": "تسجيل الدخول",
+		"brandTagline": "تسوّقكم، معًا.",
 		"signInBody": "عد إلى قوائمك وقوائم أسرتك.",
 		"signUpBody": "لن يستغرق الأمر سوى لحظة، وإعداداتك تبقى معك.",
 		"signIn": "تسجيل الدخول",
@@ -1197,7 +1198,7 @@
 			"deepseek": "DeepSeek"
 		},
 		"photoGenerate": "إنشاء صورة",
-			"photoRegenerate": "إعادة إنشاء الصورة",
+		"photoRegenerate": "إعادة إنشاء الصورة",
 		"photoGenerating": "جارٍ الإنشاء…",
 		"photoSearch": "البحث عن صورة",
 		"photoSearching": "جارٍ البحث…",

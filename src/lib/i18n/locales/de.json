@@ -601,6 +601,7 @@
 	},
 	"auth": {
 		"title": "Anmelden",
+		"brandTagline": "Euer Einkauf, gemeinsam.",
 		"signInBody": "Zurück zu Ihren Listen und denen Ihres Haushalts.",
 		"signUpBody": "Das dauert nur einen Moment, und Ihre Einstellungen kommen mit.",
 		"signIn": "Anmelden",
@@ -1157,7 +1158,7 @@
 			"deepseek": "DeepSeek"
 		},
 		"photoGenerate": "Foto erzeugen",
-			"photoRegenerate": "Foto neu erzeugen",
+		"photoRegenerate": "Foto neu erzeugen",
 		"photoGenerating": "Wird erzeugt…",
 		"photoSearch": "Nach einem Bild suchen",
 		"photoSearching": "Suche läuft…",

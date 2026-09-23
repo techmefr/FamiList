@@ -601,6 +601,7 @@
 	},
 	"auth": {
 		"title": "Accedi",
+		"brandTagline": "La spesa, insieme.",
 		"signInBody": "Ritrova le tue liste e quelle della tua famiglia.",
 		"signUpBody": "Bastano pochi istanti, e le tue impostazioni ti seguono.",
 		"signIn": "Accedi",
@@ -1157,7 +1158,7 @@
 			"deepseek": "DeepSeek"
 		},
 		"photoGenerate": "Genera una foto",
-			"photoRegenerate": "Rigenera la foto",
+		"photoRegenerate": "Rigenera la foto",
 		"photoGenerating": "Generazione in corso…",
 		"photoSearch": "Cerca un'immagine",
 		"photoSearching": "Ricerca in corso…",

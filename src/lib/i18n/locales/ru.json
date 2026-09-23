@@ -607,6 +607,7 @@
 	},
 	"auth": {
 		"title": "Вход",
+		"brandTagline": "Покупки — вместе.",
 		"signInBody": "Вернитесь к своим спискам и спискам вашей семьи.",
 		"signUpBody": "Это займёт минуту, а настройки останутся с вами.",
 		"signIn": "Войти",
@@ -1177,7 +1178,7 @@
 			"deepseek": "DeepSeek"
 		},
 		"photoGenerate": "Сгенерировать фото",
-			"photoRegenerate": "Сгенерировать фото заново",
+		"photoRegenerate": "Сгенерировать фото заново",
 		"photoGenerating": "Генерация…",
 		"photoSearch": "Найти изображение",
 		"photoSearching": "Поиск…",
