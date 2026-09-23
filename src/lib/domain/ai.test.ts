@@ -3,6 +3,7 @@ import {
 	activatesOnFirstSave,
 	afterRemoval,
 	buildRequest,
+	buildVisionRequest,
 	isProvider,
 	modelFor,
 	parseError,
@@ -149,6 +150,89 @@ describe('buildRequest avec un historique de conversation (#226)', () => {
 			const request = buildRequest(provider, KEY, '', turns);
 			expect(request.url).not.toContain(KEY);
 		}
+	});
+});
+
+describe('supportsVision (#266)', () => {
+	it("indique quels fournisseurs lisent une image par defaut", () => {
+		expect(providerById('anthropic')?.supportsVision).toBe(true);
+		expect(providerById('gemini')?.supportsVision).toBe(true);
+		expect(providerById('mistral')?.supportsVision).toBe(false);
+		expect(providerById('groq')?.supportsVision).toBe(false);
+		expect(providerById('openrouter')?.supportsVision).toBe(false);
+		expect(providerById('deepseek')?.supportsVision).toBe(false);
+	});
+});
+
+describe('buildVisionRequest (#266)', () => {
+	const IMAGE = 'ZmF1eC1qcGVn';
+	const MIME = 'image/jpeg';
+
+	it("ne met jamais la cle dans l'adresse, pour aucun fournisseur", () => {
+		for (const provider of PROVIDERS) {
+			const request = buildVisionRequest(provider, KEY, '', 'lis cette photo', IMAGE, MIME);
+			expect(request.url).not.toContain(KEY);
+		}
+	});
+
+	it('met la cle dans un en-tete, pour chaque fournisseur', () => {
+		for (const provider of PROVIDERS) {
+			const request = buildVisionRequest(provider, KEY, '', 'lis cette photo', IMAGE, MIME);
+			expect(Object.values(request.headers).join(' ')).toContain(KEY);
+		}
+	});
+
+	it('joint le texte et l image en base64 pour anthropic', () => {
+		const request = buildVisionRequest(
+			providerById('anthropic')!,
+			KEY,
+			'modele-x',
+			'lis cette photo',
+			IMAGE,
+			MIME
+		);
+		const body = JSON.parse(request.body);
+
+		expect(body.model).toBe('modele-x');
+		expect(body.messages[0].content).toEqual([
+			{ type: 'image', source: { type: 'base64', media_type: MIME, data: IMAGE } },
+			{ type: 'text', text: 'lis cette photo' }
+		]);
+	});
+
+	it('joint le texte et l image en inlineData pour gemini', () => {
+		const request = buildVisionRequest(
+			providerById('gemini')!,
+			KEY,
+			'gemini-test',
+			'lis cette photo',
+			IMAGE,
+			MIME
+		);
+		const body = JSON.parse(request.body);
+
+		expect(request.url).toContain('gemini-test:generateContent');
+		expect(body.contents[0].parts).toEqual([
+			{ inlineData: { mimeType: MIME, data: IMAGE } },
+			{ text: 'lis cette photo' }
+		]);
+	});
+
+	it('joint le texte et une image_url en donnee pour le dialecte openai', () => {
+		const request = buildVisionRequest(
+			providerById('mistral')!,
+			KEY,
+			'',
+			'lis cette photo',
+			IMAGE,
+			MIME
+		);
+		const body = JSON.parse(request.body);
+
+		expect(body.messages[0].content).toEqual([
+			{ type: 'image_url', image_url: { url: `data:${MIME};base64,${IMAGE}` } },
+			{ type: 'text', text: 'lis cette photo' }
+		]);
 	});
 });
 

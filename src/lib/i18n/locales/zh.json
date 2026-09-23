@@ -1107,7 +1107,9 @@
 			"provider": "服务商拒绝了这次请求。",
 			"providerDetail": "服务商拒绝了：{detail}",
 			"unreadable": "返回的内容无法使用。请再问一次。",
-			"unreadableDetail": "返回的内容无法使用：{detail}"
+			"unreadableDetail": "返回的内容无法使用：{detail}",
+			"unsupported": "该提供商无法读取图片。",
+			"unsupportedDetail": "该提供商无法读取图片：{detail}"
 		},
 		"providers": {
 			"anthropic": "Anthropic (Claude)",
@@ -1120,6 +1122,14 @@
 		"photoGenerate": "生成图片",
 			"photoRegenerate": "重新生成图片",
 		"photoGenerating": "生成中…",
+		"photo": {
+			"trigger": "通过照片创建食谱",
+			"title": "拍摄食谱照片",
+			"hint": "拍摄书页照片，或手写/印刷的食谱。",
+			"pick": "拍照或导入照片",
+			"reading": "正在读取照片…",
+			"unsupported": "当前提供商无法读取图片。请在个人资料 → AI 中切换提供商以使用此功能。"
+		},
 		"request": {
 			"trigger": "向AI询问食谱",
 			"title": "您想要什么食谱？",

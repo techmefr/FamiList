@@ -17,7 +17,7 @@ export interface ThreadTurn {
 	role: 'user' | 'assistant';
 	text: string;
 	recipe?: SuggestedRecipe;
-	error?: { reason: 'network' | 'provider' | 'unreadable'; detail: string };
+	error?: { reason: 'network' | 'provider' | 'unreadable' | 'unsupported'; detail: string };
 	/** The person discarded this suggestion; kept in place, on the record, but no longer shown as a card. */
 	discarded?: boolean;
 	/** The person already turned this suggestion into a household recipe. */

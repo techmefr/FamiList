@@ -29,6 +29,7 @@
 	import IconField from '$components/app/IconField.svelte';
 	import RecipeSuggestion from '$components/app/RecipeSuggestion.svelte';
 	import AiRecipeRequest from '$components/app/AiRecipeRequest.svelte';
+	import AiRecipePhoto from '$components/app/AiRecipePhoto.svelte';
 	import RecipePhoto from '$components/app/RecipePhoto.svelte';
 	import RecipeShareSheet from '$components/app/RecipeShareSheet.svelte';
 	import RecipeCover from '$components/app/RecipeCover.svelte';
@@ -465,6 +466,10 @@
 
 	<div class="mt-4">
 		<AiRecipeRequest />
+	</div>
+
+	<div class="mt-4">
+		<AiRecipePhoto />
 	</div>
 
 	<!--

@@ -1117,7 +1117,9 @@
 			"provider": "The provider refused the request.",
 			"providerDetail": "The provider refused: {detail}",
 			"unreadable": "The answer was not usable. Ask again.",
-			"unreadableDetail": "The answer was not usable: {detail}"
+			"unreadableDetail": "The answer was not usable: {detail}",
+			"unsupported": "This provider cannot read images.",
+			"unsupportedDetail": "This provider cannot read images: {detail}"
 		},
 		"providers": {
 			"anthropic": "Anthropic (Claude)",
@@ -1130,6 +1132,14 @@
 		"photoGenerate": "Generate a photo",
 			"photoRegenerate": "Regenerate the photo",
 		"photoGenerating": "Generating…",
+		"photo": {
+			"trigger": "Create a recipe by photo",
+			"title": "Take a photo of the recipe",
+			"hint": "Photograph a book page, or a written or printed recipe.",
+			"pick": "Take or import a photo",
+			"reading": "Reading the photo…",
+			"unsupported": "The active provider cannot read images. Switch provider in Profile → AI to use this feature."
+		},
 		"request": {
 			"trigger": "Ask AI for a recipe",
 			"title": "What recipe would you like?",
