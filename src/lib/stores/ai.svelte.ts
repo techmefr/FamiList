@@ -331,11 +331,12 @@ class AiStore {
 	async generateRecipePhoto(
 		householdId: string,
 		recipeId: string,
-		prompt: string
+		prompt: string,
+		seed = Math.floor(Math.random() * 2 ** 31)
 	): Promise<PhotoOutcome> {
 		let response: Response;
 		try {
-			response = await fetch(pollinationsImageUrl(prompt));
+			response = await fetch(pollinationsImageUrl(prompt, seed));
 		} catch {
 			return { ok: false };
 		}

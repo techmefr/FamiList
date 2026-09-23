@@ -1126,6 +1126,7 @@
 			"deepseek": "DeepSeek"
 		},
 		"photoGenerate": "Mamorona sary",
+			"photoRegenerate": "Mamorona sary indray",
 		"photoGenerating": "Mamorona…",
 		"request": {
 			"trigger": "Anontanio ny AI hanome recette",

@@ -60,12 +60,25 @@
 </script>
 
 {#if signedUrl}
-	<img
-		src={signedUrl}
-		alt={t('recipes.photoAlt', { name: recipeName })}
-		data-test-class="recipe-photo"
-		class="mb-3 aspect-video w-full rounded-lg object-cover"
-	/>
+	<div class="mb-3 space-y-2">
+		<img
+			src={signedUrl}
+			alt={t('recipes.photoAlt', { name: recipeName })}
+			data-test-class="recipe-photo"
+			class="aspect-video w-full rounded-lg object-cover"
+		/>
+		<Button
+			variant="outline"
+			size="sm"
+			onclick={generate}
+			disabled={busy}
+			data-test-class="recipe-photo-regenerate"
+			class="fl-press"
+		>
+			<ImagePlus size={18} aria-hidden="true" />
+			{busy ? t('ai.photoGenerating') : t('ai.photoRegenerate')}
+		</Button>
+	</div>
 {:else}
 	<div class="mb-3 space-y-2" data-test-class="recipe-photo-generate">
 		<Button

@@ -1166,6 +1166,7 @@
 			"deepseek": "DeepSeek"
 		},
 		"photoGenerate": "إنشاء صورة",
+			"photoRegenerate": "إعادة إنشاء الصورة",
 		"photoGenerating": "جارٍ الإنشاء…",
 		"request": {
 			"trigger": "اسأل الذكاء الاصطناعي عن وصفة",

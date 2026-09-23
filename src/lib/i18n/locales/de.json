@@ -1126,6 +1126,7 @@
 			"deepseek": "DeepSeek"
 		},
 		"photoGenerate": "Foto erzeugen",
+			"photoRegenerate": "Foto neu erzeugen",
 		"photoGenerating": "Wird erzeugt…",
 		"request": {
 			"trigger": "KI nach einem Rezept fragen",

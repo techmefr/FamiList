@@ -1126,6 +1126,7 @@
 			"deepseek": "DeepSeek"
 		},
 		"photoGenerate": "Generar una foto",
+			"photoRegenerate": "Regenerar la foto",
 		"photoGenerating": "Generando…",
 		"request": {
 			"trigger": "Pedir una receta a la IA",
