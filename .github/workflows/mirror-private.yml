@@ -1,0 +1,20 @@
+name: Mirror to private deploy repo
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  mirror:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Push main to techmefr/familiste
+        run: |
+          git remote add private "https://x-access-token:${SYNC_TOKEN}@github.com/techmefr/familiste.git"
+          git push private HEAD:main
+        env:
+          SYNC_TOKEN: ${{ secrets.SYNC_TOKEN }}
