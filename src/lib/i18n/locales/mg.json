@@ -421,7 +421,17 @@
 		"mealPlanLink": "Mamorona drafitra sakafo isan-kerinandro",
 		"share": "Zarao",
 		"shareAria": "Zarao ny mahandro {name}",
-		"sharedFrom": "Nozaraina avy amin'ny {circle}"
+		"sharedFrom": "Nozaraina avy amin'ny {circle}",
+		"cookAlong": {
+			"start": "Arahao ny fahandroana",
+			"title": "Manaraka an'i {name}",
+			"position": "Dingana {current} amin'ny {total}",
+			"previous": "Teo aloha",
+			"next": "Manaraka",
+			"mute": "Ampitsahatra ny feo",
+			"unmute": "Alefaso ny feo",
+			"empty": "Tsy misy dingana harahina amin'ity fahandroana ity."
+		}
 	},
 	"aisles": {
 		"title": "Faritra",

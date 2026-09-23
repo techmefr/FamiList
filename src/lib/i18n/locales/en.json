@@ -421,7 +421,17 @@
 		"mealPlanLink": "Build a weekly meal plan",
 		"share": "Share",
 		"shareAria": "Share recipe {name}",
-		"sharedFrom": "Shared from {circle}"
+		"sharedFrom": "Shared from {circle}",
+		"cookAlong": {
+			"start": "Follow the recipe",
+			"title": "Following {name}",
+			"position": "Step {current} of {total}",
+			"previous": "Previous",
+			"next": "Next",
+			"mute": "Mute voice",
+			"unmute": "Unmute voice",
+			"empty": "This recipe has no step to follow."
+		}
 	},
 	"aisles": {
 		"title": "Aisles",

@@ -421,7 +421,17 @@
 		"mealPlanLink": "Crea un piano dei pasti settimanale",
 		"share": "Condividi",
 		"shareAria": "Condividi la ricetta {name}",
-		"sharedFrom": "Condivisa da {circle}"
+		"sharedFrom": "Condivisa da {circle}",
+		"cookAlong": {
+			"start": "Segui la ricetta",
+			"title": "Stai seguendo {name}",
+			"position": "Passo {current} di {total}",
+			"previous": "Precedente",
+			"next": "Successivo",
+			"mute": "Disattiva voce",
+			"unmute": "Attiva voce",
+			"empty": "Questa ricetta non ha passaggi da seguire."
+		}
 	},
 	"aisles": {
 		"title": "Reparti",

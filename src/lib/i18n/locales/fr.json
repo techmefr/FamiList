@@ -421,7 +421,17 @@
 		"mealPlanLink": "Composer un menu de la semaine",
 		"share": "Partager",
 		"shareAria": "Partager la recette {name}",
-		"sharedFrom": "Partagée depuis {circle}"
+		"sharedFrom": "Partagée depuis {circle}",
+		"cookAlong": {
+			"start": "Suivre la recette",
+			"title": "Suivre la recette {name}",
+			"position": "Étape {current} sur {total}",
+			"previous": "Précédente",
+			"next": "Suivante",
+			"mute": "Couper la voix",
+			"unmute": "Réactiver la voix",
+			"empty": "Cette recette n’a pas d’étape à suivre."
+		}
 	},
 	"aisles": {
 		"title": "Rayons",

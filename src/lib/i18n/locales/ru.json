@@ -427,7 +427,17 @@
 		"mealPlanLink": "Составить план питания на неделю",
 		"share": "Поделиться",
 		"shareAria": "Поделиться рецептом {name}",
-		"sharedFrom": "Доступен из круга {circle}"
+		"sharedFrom": "Доступен из круга {circle}",
+		"cookAlong": {
+			"start": "Готовить по шагам",
+			"title": "Готовим: {name}",
+			"position": "Шаг {current} из {total}",
+			"previous": "Назад",
+			"next": "Далее",
+			"mute": "Выключить голос",
+			"unmute": "Включить голос",
+			"empty": "В этом рецепте нет шагов."
+		}
 	},
 	"aisles": {
 		"title": "Отделы",

@@ -418,7 +418,17 @@
 		"mealPlanLink": "制定本周用餐计划",
 		"share": "分享",
 		"shareAria": "分享食谱 {name}",
-		"sharedFrom": "来自 {circle} 的分享"
+		"sharedFrom": "来自 {circle} 的分享",
+		"cookAlong": {
+			"start": "跟着食谱做",
+			"title": "正在跟做 {name}",
+			"position": "第 {current} 步，共 {total} 步",
+			"previous": "上一步",
+			"next": "下一步",
+			"mute": "静音",
+			"unmute": "取消静音",
+			"empty": "这个食谱没有步骤。"
+		}
 	},
 	"aisles": {
 		"title": "货区",
