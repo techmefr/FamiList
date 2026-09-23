@@ -1116,6 +1116,7 @@
 			"deepseek": "DeepSeek"
 		},
 		"photoGenerate": "生成图片",
+			"photoRegenerate": "重新生成图片",
 		"photoGenerating": "生成中…",
 		"request": {
 			"trigger": "向AI询问食谱",

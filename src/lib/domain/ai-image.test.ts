@@ -16,9 +16,16 @@ describe('dishPhotoPrompt', () => {
 
 describe('pollinationsImageUrl', () => {
 	it('encode le prompt dans le chemin, sans cle ni corps', () => {
-		const url = pollinationsImageUrl('un plat & sa sauce');
+		const url = pollinationsImageUrl('un plat & sa sauce', 42);
 
-		expect(url).toBe('https://image.pollinations.ai/prompt/un%20plat%20%26%20sa%20sauce');
+		expect(url).toBe('https://image.pollinations.ai/prompt/un%20plat%20%26%20sa%20sauce?seed=42');
+	});
+
+	it('change quand le seed change, pour permettre de regenerer', () => {
+		const first = pollinationsImageUrl('nems', 1);
+		const second = pollinationsImageUrl('nems', 2);
+
+		expect(first).not.toBe(second);
 	});
 });
 

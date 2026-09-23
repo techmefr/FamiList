@@ -1146,6 +1146,7 @@
 			"deepseek": "DeepSeek"
 		},
 		"photoGenerate": "Сгенерировать фото",
+			"photoRegenerate": "Сгенерировать фото заново",
 		"photoGenerating": "Генерация…",
 		"request": {
 			"trigger": "Спросить рецепт у ИИ",
