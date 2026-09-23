@@ -1502,12 +1502,39 @@ button[data-slot='switch'][data-state='checked'] {
 }
 
 /**
- * The brand half of the sign-in/sign-up/welcome screens, from `md` up. A diagonal wash of both brand colours
- * behind the mark and the tagline — the card's own half stays on the plain background so the form keeps its
- * usual contrast.
+ * The brand half of the sign-in/sign-up/welcome screens, from `md` up. A near-black ground rather than a flat
+ * wash of the two brand colours — the raw diagonal gradient read as a generic template rather than this
+ * app's own terracotta and forest. Two soft blurred fields in those same colours give it depth instead, the
+ * same device as `.fl-auth-glow` on the card's own half. Always the dark theme's ink, regardless of the
+ * person's light/dark setting: this panel carries no text that needs to follow it.
  */
 .fl-auth-brand {
-	background: linear-gradient(135deg, var(--primary), var(--secondary));
+	position: relative;
+	overflow: hidden;
+	background: #0a0907;
+}
+
+.fl-auth-brand::before,
+.fl-auth-brand::after {
+	content: '';
+	position: absolute;
+	width: 26rem;
+	height: 26rem;
+	border-radius: 9999px;
+	filter: blur(90px);
+	opacity: 0.35;
+}
+
+.fl-auth-brand::before {
+	top: -8rem;
+	inset-inline-start: -9rem;
+	background: #a94008;
+}
+
+.fl-auth-brand::after {
+	bottom: -10rem;
+	inset-inline-end: -8rem;
+	background: #1f5c3a;
 }
 
 /**
