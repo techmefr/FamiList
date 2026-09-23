@@ -1145,7 +1145,11 @@
 			"title": "您想要什么食谱？",
 			"placeholder": "例如：4人份鸡肉咖喱",
 			"submit": "询问",
-			"followUpPlaceholder": "例如：更辣一点，或把鸡肉换成豆腐"
+			"followUpPlaceholder": "例如：更辣一点，或把鸡肉换成豆腐",
+			"dictate": "语音口述",
+			"stopDictate": "停止口述",
+			"listening": "正在聆听…",
+			"dictateError": "语音口述失败。请重试或手动输入文字。"
 		}
 	},
 	"setup": {

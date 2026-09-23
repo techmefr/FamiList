@@ -1155,7 +1155,11 @@
 			"title": "What recipe would you like?",
 			"placeholder": "e.g. a chicken curry for 4",
 			"submit": "Ask",
-			"followUpPlaceholder": "e.g. spicier, or swap the chicken for tofu"
+			"followUpPlaceholder": "e.g. spicier, or swap the chicken for tofu",
+			"dictate": "Dictate by voice",
+			"stopDictate": "Stop dictation",
+			"listening": "Listening…",
+			"dictateError": "Voice dictation failed. Try again or type the text."
 		}
 	},
 	"setup": {

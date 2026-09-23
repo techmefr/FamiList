@@ -1155,7 +1155,11 @@
 			"title": "Que receita gostaria?",
 			"placeholder": "ex. um curry de frango para 4",
 			"submit": "Perguntar",
-			"followUpPlaceholder": "ex. mais picante, ou troque o frango por tofu"
+			"followUpPlaceholder": "ex. mais picante, ou troque o frango por tofu",
+			"dictate": "Ditar por voz",
+			"stopDictate": "Parar o ditado",
+			"listening": "A ouvir…",
+			"dictateError": "O ditado por voz falhou. Tente novamente ou escreva o texto."
 		}
 	},
 	"setup": {

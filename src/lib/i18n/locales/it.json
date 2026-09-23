@@ -1155,7 +1155,11 @@
 			"title": "Che ricetta vorresti?",
 			"placeholder": "es. un curry di pollo per 4",
 			"submit": "Chiedi",
-			"followUpPlaceholder": "es. più piccante, o sostituisci il pollo con il tofu"
+			"followUpPlaceholder": "es. più piccante, o sostituisci il pollo con il tofu",
+			"dictate": "Detta a voce",
+			"stopDictate": "Ferma la dettatura",
+			"listening": "In ascolto…",
+			"dictateError": "La dettatura vocale non è riuscita. Riprova o scrivi il testo."
 		}
 	},
 	"setup": {

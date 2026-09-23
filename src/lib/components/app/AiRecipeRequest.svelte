@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { browser } from '$app/environment';
 	import { i18n, t, LOCALES } from '$i18n/index.svelte';
 	import { ai } from '$stores/ai.svelte';
 	import { data } from '$stores/data.svelte';
@@ -6,11 +7,18 @@
 	import { DEFAULT_SERVINGS } from '$domain/recipe';
 	import { aiRecipeConversation } from '$stores/ai-recipe-conversation.svelte';
 	import { restrictionsOf, type SuggestedRecipe } from '$domain/ai-recipe';
+	import {
+		appendTranscript,
+		bcp47LocaleOf,
+		isSpeechRecognitionSupported,
+		speechRecognitionCtor,
+		type SpeechRecognitionGlobals
+	} from '$domain/speech-dictation';
 	import { Button } from '$components/ui/button';
 	import { Input } from '$components/ui/input';
 	import * as Card from '$components/ui/card';
 	import RecipeSuggestionCard from '$components/app/RecipeSuggestionCard.svelte';
-	import { Sparkles, Send, X } from '@lucide/svelte';
+	import { Sparkles, Send, X, Mic, MicOff } from '@lucide/svelte';
 
 	interface Props {
 		/** Called once the person keeps a suggestion, in addition to it being saved as a household recipe. */
@@ -32,9 +40,77 @@
 	const conversation = aiRecipeConversation;
 	const language = $derived(LOCALES.find(l => l.code === i18n.locale)?.native ?? 'français');
 
+	/**
+	 * Voice dictation for the field above (#265): entirely the browser's own `SpeechRecognition`, so a
+	 * transcript never leaves the device on its own — it only lands in `message`, exactly as if it had been
+	 * typed, and goes through the very same "ask the AI" flow once submitted.
+	 */
+	interface SpeechRecognitionResultLike {
+		0?: { transcript?: string };
+	}
+	interface SpeechRecognitionEventLike {
+		results: ArrayLike<SpeechRecognitionResultLike>;
+	}
+	interface SpeechRecognitionLike {
+		lang: string;
+		interimResults: boolean;
+		continuous: boolean;
+		onresult: ((event: SpeechRecognitionEventLike) => void) | null;
+		onerror: (() => void) | null;
+		onend: (() => void) | null;
+		start(): void;
+		stop(): void;
+	}
+
+	const dictationSupported =
+		browser && isSpeechRecognitionSupported(window as unknown as SpeechRecognitionGlobals);
+	let listening = $state(false);
+	let dictationError = $state(false);
+	let recognition: SpeechRecognitionLike | null = null;
+
+	function startDictation() {
+		const Ctor = speechRecognitionCtor(window as unknown as SpeechRecognitionGlobals);
+		if (!Ctor) return;
+
+		dictationError = false;
+		recognition = new Ctor() as unknown as SpeechRecognitionLike;
+		recognition.lang = bcp47LocaleOf(i18n.locale);
+		recognition.interimResults = false;
+		recognition.continuous = false;
+
+		recognition.onresult = (event) => {
+			const transcript = Array.from(event.results)
+				.map(result => result[0]?.transcript ?? '')
+				.join(' ');
+			message = appendTranscript(message, transcript);
+		};
+		recognition.onerror = () => {
+			dictationError = true;
+			listening = false;
+		};
+		recognition.onend = () => {
+			listening = false;
+		};
+
+		listening = true;
+		recognition.start();
+	}
+
+	function stopDictation() {
+		recognition?.stop();
+	}
+
+	function toggleDictation() {
+		if (listening) stopDictation();
+		else startDictation();
+	}
+
 	function toggle() {
 		isOpen = !isOpen;
-		if (!isOpen) conversation.reset();
+		if (!isOpen) {
+			conversation.reset();
+			stopDictation();
+		}
 	}
 
 	async function submit(event: SubmitEvent) {
@@ -135,6 +211,18 @@
 						</p>
 					{/if}
 
+					{#if listening}
+						<p class="text-muted-foreground text-label" role="status" data-test-id="ai-request-listening">
+							{t('ai.request.listening')}
+						</p>
+					{/if}
+
+					{#if dictationError}
+						<p class="text-destructive text-label" role="alert" data-test-id="ai-request-dictate-error">
+							{t('ai.request.dictateError')}
+						</p>
+					{/if}
+
 					<form onsubmit={submit} class="flex gap-2">
 						<Input
 							bind:value={message}
@@ -145,6 +233,24 @@
 							data-test-id="ai-request-input"
 							required
 						/>
+						{#if dictationSupported}
+							<Button
+								type="button"
+								variant={listening ? 'default' : 'outline'}
+								class="min-w-[44px]"
+								disabled={conversation.busy}
+								onclick={toggleDictation}
+								aria-pressed={listening}
+								data-test-id="ai-request-dictate"
+								aria-label={listening ? t('ai.request.stopDictate') : t('ai.request.dictate')}
+							>
+								{#if listening}
+									<MicOff size={18} aria-hidden="true" />
+								{:else}
+									<Mic size={18} aria-hidden="true" />
+								{/if}
+							</Button>
+						{/if}
 						<Button
 							type="submit"
 							class="min-w-[44px]"

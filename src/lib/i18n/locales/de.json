@@ -1155,7 +1155,11 @@
 			"title": "Welches Rezept möchtest du?",
 			"placeholder": "z. B. ein Hähnchen-Curry für 4",
 			"submit": "Fragen",
-			"followUpPlaceholder": "z. B. schärfer, oder Hähnchen durch Tofu ersetzen"
+			"followUpPlaceholder": "z. B. schärfer, oder Hähnchen durch Tofu ersetzen",
+			"dictate": "Per Sprache diktieren",
+			"stopDictate": "Diktat beenden",
+			"listening": "Höre zu…",
+			"dictateError": "Die Sprachdiktatur ist fehlgeschlagen. Erneut versuchen oder Text eingeben."
 		}
 	},
 	"setup": {
