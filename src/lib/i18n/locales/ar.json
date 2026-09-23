@@ -1170,6 +1170,10 @@
 		"photoGenerate": "إنشاء صورة",
 			"photoRegenerate": "إعادة إنشاء الصورة",
 		"photoGenerating": "جارٍ الإنشاء…",
+		"photoSearch": "البحث عن صورة",
+		"photoSearching": "جارٍ البحث…",
+		"photoSearchNotFound": "لم يتم العثور على صورة",
+		"photoGenerateFallback": "إنشاء صورة بالذكاء الاصطناعي",
 		"request": {
 			"trigger": "اسأل الذكاء الاصطناعي عن وصفة",
 			"title": "ما الوصفة التي تريدها؟",

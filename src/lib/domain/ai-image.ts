@@ -30,3 +30,60 @@ export function recipePhotoPath(householdId: string, recipeId: string, mimeType:
 	const extension = mimeType === 'image/jpeg' ? 'jpg' : 'png';
 	return `${householdId}/${recipeId}.${extension}`;
 }
+
+/**
+ * What is typed into the free-image search: the dish name plus its two or three main ingredients, so a
+ * query stays specific ("Poulet basquaise poivron tomate") rather than the single word a household actually
+ * named the recipe ("Poulet"), which returns whatever stock photo of chicken the bank happens to rank first.
+ */
+const MAX_SEARCH_INGREDIENTS = 3;
+
+export function recipeImageSearchQuery(recipeName: string, ingredientNames: string[]): string {
+	const dish = recipeName.trim();
+	const ingredients = ingredientNames
+		.map(name => name.trim())
+		.filter(Boolean)
+		.slice(0, MAX_SEARCH_INGREDIENTS);
+
+	return [dish, ...ingredients].filter(Boolean).join(' ');
+}
+
+/**
+ * Openverse (api.openverse.org): a keyless, CORS-open index of openly licensed images, queried straight from
+ * the browser like Pollinations already is — no server of our own to hide a key behind, so a keyless provider
+ * is the only kind that fits here. `license_type=commercial,modification` keeps results a household can
+ * actually put on a recipe card without a usage question hanging over it.
+ */
+export function openverseSearchUrl(query: string): string {
+	const params = new URLSearchParams({
+		q: query,
+		page_size: '1',
+		license_type: 'commercial,modification'
+	});
+	return `https://api.openverse.org/v1/images/?${params.toString()}`;
+}
+
+/** One Openverse search hit, trimmed to what `pickImageResult` needs. */
+export interface OpenverseResult {
+	id?: string;
+	thumbnail?: string;
+	url?: string;
+}
+
+interface OpenverseSearchResponse {
+	results?: OpenverseResult[];
+}
+
+/**
+ * The thumbnail is preferred over the original `url`: it is served from Openverse's own domain with CORS
+ * open to any origin, while the original sits on whatever third-party site it was indexed from and may
+ * refuse a cross-origin browser fetch entirely. `url` is kept as a fallback for a result Openverse returns
+ * without a thumbnail.
+ */
+export function pickImageResult(payload: unknown): string | null {
+	const results = (payload as OpenverseSearchResponse | null)?.results;
+	if (!Array.isArray(results) || results.length === 0) return null;
+
+	const first = results[0];
+	return first?.thumbnail ?? first?.url ?? null;
+}

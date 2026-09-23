@@ -1130,6 +1130,10 @@
 		"photoGenerate": "Generar una foto",
 			"photoRegenerate": "Regenerar la foto",
 		"photoGenerating": "Generando…",
+		"photoSearch": "Buscar una imagen",
+		"photoSearching": "Buscando…",
+		"photoSearchNotFound": "No se encontró ninguna imagen",
+		"photoGenerateFallback": "Generar una imagen con IA",
 		"request": {
 			"trigger": "Pedir una receta a la IA",
 			"title": "¿Qué receta te gustaría?",

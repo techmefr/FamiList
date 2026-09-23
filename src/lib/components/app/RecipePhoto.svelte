@@ -3,9 +3,9 @@
 	import { t } from '$i18n/index.svelte';
 	import { ai } from '$stores/ai.svelte';
 	import { data } from '$stores/data.svelte';
-	import { dishPhotoPrompt } from '$domain/ai-image';
+	import { dishPhotoPrompt, recipeImageSearchQuery } from '$domain/ai-image';
 	import { Button } from '$components/ui/button';
-	import { ImagePlus } from '@lucide/svelte';
+	import { ImagePlus, Search } from '@lucide/svelte';
 
 	interface Props {
 		recipeId: string;
@@ -21,6 +21,13 @@
 
 	let busy = $state(false);
 	let signedUrl = $state<string | null>(null);
+
+	/**
+	 * Set the moment a search comes back empty: it is what turns the AI button's label from the plain "Generate
+	 * a photo" into an explicit "Generate an image with AI" fallback, so the switch from one source to the
+	 * other stays visible instead of happening silently behind a single button.
+	 */
+	let searchFailed = $state(false);
 
 	$effect(() => {
 		if (!photoPath) {
@@ -57,6 +64,23 @@
 
 		if (outcome.ok) data.setRecipePhoto(recipeId, outcome.path);
 	}
+
+	async function search() {
+		if (busy) return;
+
+		busy = true;
+		const householdId = data.circle;
+		const query = recipeImageSearchQuery(recipeName, ingredientNames);
+		const outcome = await ai.searchRecipePhoto(householdId, recipeId, query);
+		busy = false;
+
+		if (outcome.ok) {
+			searchFailed = false;
+			data.setRecipePhoto(recipeId, outcome.path);
+		} else {
+			searchFailed = true;
+		}
+	}
 </script>
 
 {#if signedUrl}
@@ -81,16 +105,34 @@
 	</div>
 {:else}
 	<div class="mb-3 space-y-2" data-test-class="recipe-photo-generate">
-		<Button
-			variant="outline"
-			size="sm"
-			onclick={generate}
-			disabled={busy}
-			data-test-class="recipe-photo-button"
-			class="fl-press"
-		>
-			<ImagePlus size={18} aria-hidden="true" />
-			{busy ? t('ai.photoGenerating') : t('ai.photoGenerate')}
-		</Button>
+		<div class="flex flex-wrap gap-2">
+			<Button
+				variant="outline"
+				size="sm"
+				onclick={search}
+				disabled={busy}
+				data-test-class="recipe-photo-search-button"
+				class="fl-press"
+			>
+				<Search size={18} aria-hidden="true" />
+				{busy ? t('ai.photoSearching') : t('ai.photoSearch')}
+			</Button>
+			<Button
+				variant="outline"
+				size="sm"
+				onclick={generate}
+				disabled={busy}
+				data-test-class="recipe-photo-button"
+				class="fl-press"
+			>
+				<ImagePlus size={18} aria-hidden="true" />
+				{busy ? t('ai.photoGenerating') : searchFailed ? t('ai.photoGenerateFallback') : t('ai.photoGenerate')}
+			</Button>
+		</div>
+		{#if searchFailed}
+			<p class="text-muted-foreground text-sm" data-test-class="recipe-photo-search-not-found">
+				{t('ai.photoSearchNotFound')}
+			</p>
+		{/if}
 	</div>
 {/if}

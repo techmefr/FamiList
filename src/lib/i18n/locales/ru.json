@@ -1150,6 +1150,10 @@
 		"photoGenerate": "Сгенерировать фото",
 			"photoRegenerate": "Сгенерировать фото заново",
 		"photoGenerating": "Генерация…",
+		"photoSearch": "Найти изображение",
+		"photoSearching": "Поиск…",
+		"photoSearchNotFound": "Изображение не найдено",
+		"photoGenerateFallback": "Сгенерировать изображение с помощью ИИ",
 		"request": {
 			"trigger": "Спросить рецепт у ИИ",
 			"title": "Какой рецепт вы хотите?",

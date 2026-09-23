@@ -1120,6 +1120,10 @@
 		"photoGenerate": "生成图片",
 			"photoRegenerate": "重新生成图片",
 		"photoGenerating": "生成中…",
+		"photoSearch": "搜索图片",
+		"photoSearching": "搜索中…",
+		"photoSearchNotFound": "未找到图片",
+		"photoGenerateFallback": "用AI生成图片",
 		"request": {
 			"trigger": "向AI询问食谱",
 			"title": "您想要什么食谱？",

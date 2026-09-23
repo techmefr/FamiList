@@ -1130,6 +1130,10 @@
 		"photoGenerate": "Generate a photo",
 			"photoRegenerate": "Regenerate the photo",
 		"photoGenerating": "Generating…",
+		"photoSearch": "Search for an image",
+		"photoSearching": "Searching…",
+		"photoSearchNotFound": "No image found",
+		"photoGenerateFallback": "Generate an image with AI",
 		"request": {
 			"trigger": "Ask AI for a recipe",
 			"title": "What recipe would you like?",
