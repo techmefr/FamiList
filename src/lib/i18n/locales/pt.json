@@ -421,7 +421,17 @@
 		"mealPlanLink": "Criar um plano de refeições semanal",
 		"share": "Partilhar",
 		"shareAria": "Partilhar a receita {name}",
-		"sharedFrom": "Partilhada de {circle}"
+		"sharedFrom": "Partilhada de {circle}",
+		"cookAlong": {
+			"start": "Seguir a receita",
+			"title": "A seguir {name}",
+			"position": "Passo {current} de {total}",
+			"previous": "Anterior",
+			"next": "Seguinte",
+			"mute": "Silenciar voz",
+			"unmute": "Ativar voz",
+			"empty": "Esta receita não tem passos a seguir."
+		}
 	},
 	"aisles": {
 		"title": "Secções",
@@ -1117,7 +1127,9 @@
 			"provider": "O fornecedor recusou o pedido.",
 			"providerDetail": "O fornecedor recusou: {detail}",
 			"unreadable": "A resposta não era utilizável. Pergunte de novo.",
-			"unreadableDetail": "A resposta não era utilizável: {detail}"
+			"unreadableDetail": "A resposta não era utilizável: {detail}",
+			"unsupported": "Este fornecedor não consegue ler imagens.",
+			"unsupportedDetail": "Este fornecedor não consegue ler imagens: {detail}"
 		},
 		"providers": {
 			"anthropic": "Anthropic (Claude)",
@@ -1134,12 +1146,24 @@
 		"photoSearching": "A procurar…",
 		"photoSearchNotFound": "Nenhuma imagem encontrada",
 		"photoGenerateFallback": "Gerar uma imagem com IA",
+		"photo": {
+			"trigger": "Criar uma receita por foto",
+			"title": "Tire uma foto da receita",
+			"hint": "Fotografe uma página de um livro, ou uma receita escrita ou impressa.",
+			"pick": "Tirar ou importar uma foto",
+			"reading": "A ler a foto…",
+			"unsupported": "O fornecedor ativo não consegue ler imagens. Mude de fornecedor em Perfil → IA para usar esta função."
+		},
 		"request": {
 			"trigger": "Pedir uma receita à IA",
 			"title": "Que receita gostaria?",
 			"placeholder": "ex. um curry de frango para 4",
 			"submit": "Perguntar",
-			"followUpPlaceholder": "ex. mais picante, ou troque o frango por tofu"
+			"followUpPlaceholder": "ex. mais picante, ou troque o frango por tofu",
+			"dictate": "Ditar por voz",
+			"stopDictate": "Parar o ditado",
+			"listening": "A ouvir…",
+			"dictateError": "O ditado por voz falhou. Tente novamente ou escreva o texto."
 		}
 	},
 	"setup": {

@@ -421,7 +421,17 @@
 		"mealPlanLink": "Build a weekly meal plan",
 		"share": "Share",
 		"shareAria": "Share recipe {name}",
-		"sharedFrom": "Shared from {circle}"
+		"sharedFrom": "Shared from {circle}",
+		"cookAlong": {
+			"start": "Follow the recipe",
+			"title": "Following {name}",
+			"position": "Step {current} of {total}",
+			"previous": "Previous",
+			"next": "Next",
+			"mute": "Mute voice",
+			"unmute": "Unmute voice",
+			"empty": "This recipe has no step to follow."
+		}
 	},
 	"aisles": {
 		"title": "Aisles",
@@ -1117,7 +1127,9 @@
 			"provider": "The provider refused the request.",
 			"providerDetail": "The provider refused: {detail}",
 			"unreadable": "The answer was not usable. Ask again.",
-			"unreadableDetail": "The answer was not usable: {detail}"
+			"unreadableDetail": "The answer was not usable: {detail}",
+			"unsupported": "This provider cannot read images.",
+			"unsupportedDetail": "This provider cannot read images: {detail}"
 		},
 		"providers": {
 			"anthropic": "Anthropic (Claude)",
@@ -1134,12 +1146,24 @@
 		"photoSearching": "Searching…",
 		"photoSearchNotFound": "No image found",
 		"photoGenerateFallback": "Generate an image with AI",
+		"photo": {
+			"trigger": "Create a recipe by photo",
+			"title": "Take a photo of the recipe",
+			"hint": "Photograph a book page, or a written or printed recipe.",
+			"pick": "Take or import a photo",
+			"reading": "Reading the photo…",
+			"unsupported": "The active provider cannot read images. Switch provider in Profile → AI to use this feature."
+		},
 		"request": {
 			"trigger": "Ask AI for a recipe",
 			"title": "What recipe would you like?",
 			"placeholder": "e.g. a chicken curry for 4",
 			"submit": "Ask",
-			"followUpPlaceholder": "e.g. spicier, or swap the chicken for tofu"
+			"followUpPlaceholder": "e.g. spicier, or swap the chicken for tofu",
+			"dictate": "Dictate by voice",
+			"stopDictate": "Stop dictation",
+			"listening": "Listening…",
+			"dictateError": "Voice dictation failed. Try again or type the text."
 		}
 	},
 	"setup": {

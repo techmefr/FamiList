@@ -421,7 +421,17 @@
 		"mealPlanLink": "Crear un plan de comida semanal",
 		"share": "Compartir",
 		"shareAria": "Compartir la receta {name}",
-		"sharedFrom": "Compartida desde {circle}"
+		"sharedFrom": "Compartida desde {circle}",
+		"cookAlong": {
+			"start": "Seguir la receta",
+			"title": "Siguiendo {name}",
+			"position": "Paso {current} de {total}",
+			"previous": "Anterior",
+			"next": "Siguiente",
+			"mute": "Silenciar voz",
+			"unmute": "Activar voz",
+			"empty": "Esta receta no tiene pasos a seguir."
+		}
 	},
 	"aisles": {
 		"title": "Secciones",
@@ -1117,7 +1127,9 @@
 			"provider": "El proveedor ha rechazado la petición.",
 			"providerDetail": "El proveedor ha rechazado: {detail}",
 			"unreadable": "La respuesta no era utilizable. Pregunta de nuevo.",
-			"unreadableDetail": "La respuesta no era utilizable: {detail}"
+			"unreadableDetail": "La respuesta no era utilizable: {detail}",
+			"unsupported": "Este proveedor no puede leer imágenes.",
+			"unsupportedDetail": "Este proveedor no puede leer imágenes: {detail}"
 		},
 		"providers": {
 			"anthropic": "Anthropic (Claude)",
@@ -1134,12 +1146,24 @@
 		"photoSearching": "Buscando…",
 		"photoSearchNotFound": "No se encontró ninguna imagen",
 		"photoGenerateFallback": "Generar una imagen con IA",
+		"photo": {
+			"trigger": "Crear una receta por foto",
+			"title": "Tome una foto de la receta",
+			"hint": "Fotografíe una página de un libro, o una receta escrita o impresa.",
+			"pick": "Tomar o importar una foto",
+			"reading": "Leyendo la foto…",
+			"unsupported": "El proveedor activo no puede leer imágenes. Cambie de proveedor en Perfil → IA para usar esta función."
+		},
 		"request": {
 			"trigger": "Pedir una receta a la IA",
 			"title": "¿Qué receta te gustaría?",
 			"placeholder": "ej. un curry de pollo para 4",
 			"submit": "Preguntar",
-			"followUpPlaceholder": "ej. más picante, o cambia el pollo por tofu"
+			"followUpPlaceholder": "ej. más picante, o cambia el pollo por tofu",
+			"dictate": "Dictar por voz",
+			"stopDictate": "Detener el dictado",
+			"listening": "Escuchando…",
+			"dictateError": "El dictado por voz falló. Intenta de nuevo o escribe el texto."
 		}
 	},
 	"setup": {

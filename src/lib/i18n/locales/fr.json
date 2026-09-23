@@ -421,7 +421,17 @@
 		"mealPlanLink": "Composer un menu de la semaine",
 		"share": "Partager",
 		"shareAria": "Partager la recette {name}",
-		"sharedFrom": "Partagée depuis {circle}"
+		"sharedFrom": "Partagée depuis {circle}",
+		"cookAlong": {
+			"start": "Suivre la recette",
+			"title": "Suivre la recette {name}",
+			"position": "Étape {current} sur {total}",
+			"previous": "Précédente",
+			"next": "Suivante",
+			"mute": "Couper la voix",
+			"unmute": "Réactiver la voix",
+			"empty": "Cette recette n’a pas d’étape à suivre."
+		}
 	},
 	"aisles": {
 		"title": "Rayons",
@@ -1116,7 +1126,9 @@
 			"provider": "Le fournisseur a refusé la demande.",
 			"providerDetail": "Le fournisseur a refusé : {detail}",
 			"unreadable": "La réponse n’était pas exploitable. Redemandez.",
-			"unreadableDetail": "La réponse n’était pas exploitable : {detail}"
+			"unreadableDetail": "La réponse n’était pas exploitable : {detail}",
+			"unsupported": "Ce fournisseur ne lit pas les images.",
+			"unsupportedDetail": "Ce fournisseur ne lit pas les images : {detail}"
 		},
 		"providers": {
 			"anthropic": "Anthropic (Claude)",
@@ -1133,12 +1145,24 @@
 		"photoSearching": "Recherche en cours…",
 		"photoSearchNotFound": "Aucune image trouvée",
 		"photoGenerateFallback": "Générer une image par IA",
+		"photo": {
+			"trigger": "Créer une recette par photo",
+			"title": "Prenez une photo de la recette",
+			"hint": "Photographiez une page de livre, ou une recette écrite ou imprimée.",
+			"pick": "Prendre ou importer une photo",
+			"reading": "Lecture de la photo…",
+			"unsupported": "Le fournisseur actif ne lit pas les images. Changez de fournisseur dans Profil → IA pour utiliser cette fonction."
+		},
 		"request": {
 			"trigger": "Demander une recette à l’IA",
 			"title": "Quelle recette souhaitez-vous ?",
 			"placeholder": "ex. un curry de poulet pour 4",
 			"submit": "Demander",
-			"followUpPlaceholder": "ex. plus épicé, ou remplacer le poulet par du tofu"
+			"followUpPlaceholder": "ex. plus épicé, ou remplacer le poulet par du tofu",
+			"dictate": "Dicter au vocal",
+			"stopDictate": "Arrêter la dictée",
+			"listening": "Écoute en cours…",
+			"dictateError": "La dictée vocale a échoué. Réessayez ou saisissez le texte."
 		}
 	},
 	"setup": {

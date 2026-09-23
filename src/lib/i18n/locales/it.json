@@ -421,7 +421,17 @@
 		"mealPlanLink": "Crea un piano dei pasti settimanale",
 		"share": "Condividi",
 		"shareAria": "Condividi la ricetta {name}",
-		"sharedFrom": "Condivisa da {circle}"
+		"sharedFrom": "Condivisa da {circle}",
+		"cookAlong": {
+			"start": "Segui la ricetta",
+			"title": "Stai seguendo {name}",
+			"position": "Passo {current} di {total}",
+			"previous": "Precedente",
+			"next": "Successivo",
+			"mute": "Disattiva voce",
+			"unmute": "Attiva voce",
+			"empty": "Questa ricetta non ha passaggi da seguire."
+		}
 	},
 	"aisles": {
 		"title": "Reparti",
@@ -1117,7 +1127,9 @@
 			"provider": "Il fornitore ha rifiutato la richiesta.",
 			"providerDetail": "Il fornitore ha rifiutato: {detail}",
 			"unreadable": "La risposta non era utilizzabile. Chiedi di nuovo.",
-			"unreadableDetail": "La risposta non era utilizzabile: {detail}"
+			"unreadableDetail": "La risposta non era utilizzabile: {detail}",
+			"unsupported": "Questo fornitore non può leggere le immagini.",
+			"unsupportedDetail": "Questo fornitore non può leggere le immagini: {detail}"
 		},
 		"providers": {
 			"anthropic": "Anthropic (Claude)",
@@ -1134,12 +1146,24 @@
 		"photoSearching": "Ricerca in corso…",
 		"photoSearchNotFound": "Nessuna immagine trovata",
 		"photoGenerateFallback": "Genera un'immagine con l'IA",
+		"photo": {
+			"trigger": "Crea una ricetta con una foto",
+			"title": "Scatta una foto della ricetta",
+			"hint": "Fotografa una pagina di un libro, o una ricetta scritta o stampata.",
+			"pick": "Scatta o importa una foto",
+			"reading": "Lettura della foto…",
+			"unsupported": "Il fornitore attivo non può leggere le immagini. Cambia fornitore in Profilo → IA per usare questa funzione."
+		},
 		"request": {
 			"trigger": "Chiedi una ricetta all’IA",
 			"title": "Che ricetta vorresti?",
 			"placeholder": "es. un curry di pollo per 4",
 			"submit": "Chiedi",
-			"followUpPlaceholder": "es. più piccante, o sostituisci il pollo con il tofu"
+			"followUpPlaceholder": "es. più piccante, o sostituisci il pollo con il tofu",
+			"dictate": "Detta a voce",
+			"stopDictate": "Ferma la dettatura",
+			"listening": "In ascolto…",
+			"dictateError": "La dettatura vocale non è riuscita. Riprova o scrivi il testo."
 		}
 	},
 	"setup": {

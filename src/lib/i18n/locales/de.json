@@ -421,7 +421,17 @@
 		"mealPlanLink": "Einen Essensplan für die Woche erstellen",
 		"share": "Teilen",
 		"shareAria": "Rezept {name} teilen",
-		"sharedFrom": "Geteilt von {circle}"
+		"sharedFrom": "Geteilt von {circle}",
+		"cookAlong": {
+			"start": "Rezept begleiten",
+			"title": "{name} begleiten",
+			"position": "Schritt {current} von {total}",
+			"previous": "Zurück",
+			"next": "Weiter",
+			"mute": "Stimme stummschalten",
+			"unmute": "Stimme aktivieren",
+			"empty": "Dieses Rezept hat keine Schritte."
+		}
 	},
 	"aisles": {
 		"title": "Abteilungen",
@@ -1117,7 +1127,9 @@
 			"provider": "Der Anbieter hat die Anfrage abgelehnt.",
 			"providerDetail": "Der Anbieter hat abgelehnt: {detail}",
 			"unreadable": "Die Antwort war nicht verwertbar. Frag noch einmal.",
-			"unreadableDetail": "Die Antwort war nicht verwertbar: {detail}"
+			"unreadableDetail": "Die Antwort war nicht verwertbar: {detail}",
+			"unsupported": "Dieser Anbieter kann keine Bilder lesen.",
+			"unsupportedDetail": "Dieser Anbieter kann keine Bilder lesen: {detail}"
 		},
 		"providers": {
 			"anthropic": "Anthropic (Claude)",
@@ -1134,12 +1146,24 @@
 		"photoSearching": "Suche läuft…",
 		"photoSearchNotFound": "Kein Bild gefunden",
 		"photoGenerateFallback": "Bild mit KI erzeugen",
+		"photo": {
+			"trigger": "Rezept per Foto erstellen",
+			"title": "Foto des Rezepts aufnehmen",
+			"hint": "Fotografieren Sie eine Buchseite oder ein geschriebenes oder gedrucktes Rezept.",
+			"pick": "Foto aufnehmen oder importieren",
+			"reading": "Foto wird gelesen…",
+			"unsupported": "Der aktive Anbieter kann keine Bilder lesen. Wechseln Sie den Anbieter unter Profil → KI, um diese Funktion zu nutzen."
+		},
 		"request": {
 			"trigger": "KI nach einem Rezept fragen",
 			"title": "Welches Rezept möchtest du?",
 			"placeholder": "z. B. ein Hähnchen-Curry für 4",
 			"submit": "Fragen",
-			"followUpPlaceholder": "z. B. schärfer, oder Hähnchen durch Tofu ersetzen"
+			"followUpPlaceholder": "z. B. schärfer, oder Hähnchen durch Tofu ersetzen",
+			"dictate": "Per Sprache diktieren",
+			"stopDictate": "Diktat beenden",
+			"listening": "Höre zu…",
+			"dictateError": "Die Sprachdiktatur ist fehlgeschlagen. Erneut versuchen oder Text eingeben."
 		}
 	},
 	"setup": {

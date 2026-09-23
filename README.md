@@ -1,6 +1,6 @@
 # FamiList
 
-![version](https://img.shields.io/badge/version-0.1.0-blue) · [Changelog](CHANGELOG.md)
+![version](https://img.shields.io/badge/version-0.1.0-blue) · [Changelog](CHANGELOG.md) · [License: AGPL-3.0](LICENSE)
 
 A shared shopping list for a household, on your own database.
 
