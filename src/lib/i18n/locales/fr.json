@@ -1137,7 +1137,18 @@
 	"setup": {
 		"title": "Instance non configurée",
 		"body": "Cette application ne sait pas encore à quelle base de données parler.",
-		"hint": "Renseignez l'adresse Supabase et la clé publique dans config.js, à côté de l'application, ou dans les variables du conteneur, puis rechargez la page."
+		"hint": "Renseignez l'adresse Supabase et la clé publique ci-dessous, ou dans config.js à côté de l'application, ou encore dans les variables du conteneur, puis rechargez la page.",
+		"form": {
+			"url": "Adresse Supabase",
+			"anonKey": "Clé publique (anon)",
+			"invalid": "Adresse ou clé invalide.",
+			"save": "Enregistrer et recharger",
+			"reset": "Revenir à la configuration par défaut"
+		}
+	},
+	"connection": {
+		"title": "Connexion",
+		"subtitle": "Changez la base Supabase utilisée par cette application, sans reconstruire l'application."
 	},
 	"mealPlan": {
 		"defaultName": "Menu de la semaine",

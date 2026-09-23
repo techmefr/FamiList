@@ -1138,7 +1138,18 @@
 	"setup": {
 		"title": "Instanz nicht konfiguriert",
 		"body": "Diese Anwendung weiß noch nicht, mit welcher Datenbank sie sprechen soll.",
-		"hint": "Tragen Sie die Supabase-Adresse und den öffentlichen Schlüssel in config.js neben der Anwendung oder in den Variablen des Containers ein und laden Sie die Seite neu."
+		"hint": "Tragen Sie unten die Supabase-Adresse und den öffentlichen Schlüssel ein, oder in config.js neben der Anwendung, oder in den Variablen des Containers, und laden Sie die Seite neu.",
+		"form": {
+			"url": "Supabase-Adresse",
+			"anonKey": "Öffentlicher Schlüssel (anon)",
+			"invalid": "Ungültige Adresse oder ungültiger Schlüssel.",
+			"save": "Speichern und neu laden",
+			"reset": "Standardkonfiguration wiederherstellen"
+		}
+	},
+	"connection": {
+		"title": "Verbindung",
+		"subtitle": "Ändern Sie die von dieser App verwendete Supabase-Datenbank, ohne die App neu zu bauen."
 	},
 	"mealPlan": {
 		"defaultName": "Menü der Woche",

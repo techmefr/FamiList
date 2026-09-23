@@ -46,6 +46,47 @@ export function readInstanceConfig(source: unknown): InstanceConfig | null {
 	return sentryDsn ? { url, anonKey, sentryDsn } : { url, anonKey };
 }
 
+/**
+ * What somebody typed into the in-app connection screen, kept separate from `InstanceConfig` on purpose:
+ * this pair never carries a Sentry DSN. The screen that sets it does not offer that field, and a value
+ * saved locally must not be able to silently redirect crash reports for an operator who only meant to
+ * change where the data lives.
+ */
+export type LocalInstanceConfig = Pick<InstanceConfig, 'url' | 'anonKey'>;
+
+/**
+ * Same shape check as `readInstanceConfig`, restricted to the two fields the in-app screen can set.
+ * Reused rather than duplicated: a URL typed by hand deserves the same scrutiny as one baked in at build
+ * time, and the two must never drift into accepting different things.
+ */
+export function readLocalInstanceConfig(source: unknown): LocalInstanceConfig | null {
+	const parsed = readInstanceConfig(source);
+	if (!parsed) return null;
+
+	return { url: parsed.url, anonKey: parsed.anonKey };
+}
+
+/**
+ * Which configuration wins: what was saved in-app, on this device, or what the build shipped with.
+ *
+ * The in-app value takes precedence when present — it is the more recent, more deliberate choice, made by
+ * whoever is sitting in front of the screen right now, whereas the build value may just be whatever image
+ * was published. Falling back to the build value keeps every existing Docker deployment working exactly as
+ * before: nothing changes for an operator who has never opened the connection screen.
+ *
+ * The Sentry DSN always comes from the build, never from the local override: it is an operational setting,
+ * not something the connection screen exposes.
+ */
+export function resolveInstanceConfig(
+	build: InstanceConfig | null,
+	local: unknown
+): InstanceConfig | null {
+	const override = readLocalInstanceConfig(local);
+	if (override) return { ...override, sentryDsn: build?.sentryDsn };
+
+	return build;
+}
+
 function clean(value: unknown): string {
 	const text = typeof value === 'string' ? value.trim() : '';
 	return PLACEHOLDERS.has(text.toLowerCase()) ? '' : text;

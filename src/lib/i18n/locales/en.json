@@ -1138,7 +1138,18 @@
 	"setup": {
 		"title": "Instance not configured",
 		"body": "This app does not know yet which database to talk to.",
-		"hint": "Set the Supabase address and the publishable key in config.js, next to the app, or in the container variables, then reload the page."
+		"hint": "Set the Supabase address and the publishable key below, or in config.js next to the app, or in the container variables, then reload the page.",
+		"form": {
+			"url": "Supabase URL",
+			"anonKey": "Anon public key",
+			"invalid": "Invalid URL or key.",
+			"save": "Save and reload",
+			"reset": "Reset to the default configuration"
+		}
+	},
+	"connection": {
+		"title": "Connection",
+		"subtitle": "Change the Supabase database this app talks to, without rebuilding the app."
 	},
 	"mealPlan": {
 		"defaultName": "This week’s menu",

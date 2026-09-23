@@ -23,7 +23,7 @@
 	import { Label } from '$components/ui/label';
 	import { Button } from '$components/ui/button';
 	import { Switch } from '$components/ui/switch';
-	import { Check, Volume2, Users, ShieldCheck, Sparkles } from '@lucide/svelte';
+	import { Check, Volume2, Users, ShieldCheck, Sparkles, PlugZap } from '@lucide/svelte';
 	import Avatar from '$components/app/Avatar.svelte';
 	import AvatarPicker from '$components/app/AvatarPicker.svelte';
 	import NameField from '$components/app/NameField.svelte';
@@ -432,6 +432,19 @@
 		<Button href="/profile/ai" data-test-id="go-ai" class="fl-press">
 			<Sparkles size={18} aria-hidden="true" />
 			{t('ai.title')}
+		</Button>
+	</Card.Content>
+</Card.Root>
+
+<Card.Root class="mt-6">
+	<Card.Header>
+		<Card.Title class="text-h2">{t('connection.title')}</Card.Title>
+	</Card.Header>
+	<Card.Content class="flex flex-wrap items-center justify-between gap-4">
+		<p class="text-muted-foreground text-label">{t('connection.subtitle')}</p>
+		<Button href="/profile/connection" data-test-id="go-connection" class="fl-press">
+			<PlugZap size={18} aria-hidden="true" />
+			{t('connection.title')}
 		</Button>
 	</Card.Content>
 </Card.Root>

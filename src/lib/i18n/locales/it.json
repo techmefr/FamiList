@@ -1138,7 +1138,18 @@
 	"setup": {
 		"title": "Istanza non configurata",
 		"body": "Questa applicazione non sa ancora con quale banca dati parlare.",
-		"hint": "Inserisci l'indirizzo Supabase e la chiave pubblica in config.js, accanto all'applicazione, o nelle variabili del contenitore, poi ricarica la pagina."
+		"hint": "Inserisci qui sotto l'indirizzo Supabase e la chiave pubblica, oppure in config.js accanto all'applicazione, o nelle variabili del contenitore, poi ricarica la pagina.",
+		"form": {
+			"url": "Indirizzo Supabase",
+			"anonKey": "Chiave pubblica (anon)",
+			"invalid": "Indirizzo o chiave non validi.",
+			"save": "Salva e ricarica",
+			"reset": "Ripristina la configurazione predefinita"
+		}
+	},
+	"connection": {
+		"title": "Connessione",
+		"subtitle": "Cambia il database Supabase usato da questa app, senza ricompilarla."
 	},
 	"mealPlan": {
 		"defaultName": "Menù della settimana",
