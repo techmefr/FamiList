@@ -16,10 +16,30 @@ android {
             ignoreAssetsPattern = '!.svn:!.git:!.ds_store:!*.scc:.*:!CVS:!thumbs.db:!picasa.ini:!*~'
         }
     }
+    // The release keystore never lives in the repository: CI decodes it from a secret into
+    // RELEASE_STORE_FILE before this file is read, and the four properties below come from the
+    // environment rather than from a committed file. Building `release` locally with none of them set
+    // still produces an APK — Gradle then falls back to a v1-only debug-style signature, which is not
+    // installable on a store but is enough to sanity-check the build itself.
+    def releaseStoreFile = System.getenv("RELEASE_STORE_FILE")
+    if (releaseStoreFile != null) {
+        signingConfigs {
+            release {
+                storeFile file(releaseStoreFile)
+                storePassword System.getenv("RELEASE_STORE_PASSWORD")
+                keyAlias System.getenv("RELEASE_KEY_ALIAS")
+                keyPassword System.getenv("RELEASE_KEY_PASSWORD")
+            }
+        }
+    }
+
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            if (releaseStoreFile != null) {
+                signingConfig signingConfigs.release
+            }
         }
     }
 }
