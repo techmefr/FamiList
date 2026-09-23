@@ -17,7 +17,7 @@ import {
 	type ProviderRequest
 } from '$domain/ai';
 import { parseRecipeSuggestion, type SuggestedRecipe } from '$domain/ai-recipe';
-import { pollinationsImageUrl, recipePhotoPath } from '$domain/ai-image';
+import { openverseSearchUrl, pickImageResult, pollinationsImageUrl, recipePhotoPath } from '$domain/ai-image';
 
 /**
  * The three outcomes of a request, told apart because they call for three different gestures: a network
@@ -405,6 +405,34 @@ class AiStore {
 
 		const mimeType = response.headers.get('content-type') ?? 'image/jpeg';
 		return this.#uploadPhoto(householdId, recipeId, bytes, mimeType);
+	}
+
+	/**
+	 * Looks up a real photo for the dish in a free-image bank (Openverse) before anyone reaches for the AI
+	 * generator: a real picture of the actual dish beats a generated approximation of it whenever one exists.
+	 * `{ ok: false }` means "no usable result", exactly like a generation failure — the caller (`RecipePhoto`)
+	 * is the one that decides to then offer the AI fallback; this store never chains into it on its own, so
+	 * the switch from "found" to "falling back to AI" stays visible to the person instead of happening quietly.
+	 */
+	async searchRecipePhoto(
+		householdId: string,
+		recipeId: string,
+		query: string
+	): Promise<PhotoOutcome> {
+		let response: Response;
+		try {
+			response = await fetch(openverseSearchUrl(query));
+		} catch {
+			return { ok: false };
+		}
+
+		if (!response.ok) return { ok: false };
+
+		const payload: unknown = await response.json().catch(() => null);
+		const imageUrl = pickImageResult(payload);
+		if (!imageUrl) return { ok: false };
+
+		return this.fetchRecipePhoto(householdId, recipeId, imageUrl);
 	}
 
 	/**

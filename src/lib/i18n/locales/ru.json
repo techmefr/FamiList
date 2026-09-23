@@ -1179,6 +1179,10 @@
 		"photoGenerate": "Сгенерировать фото",
 			"photoRegenerate": "Сгенерировать фото заново",
 		"photoGenerating": "Генерация…",
+		"photoSearch": "Найти изображение",
+		"photoSearching": "Поиск…",
+		"photoSearchNotFound": "Изображение не найдено",
+		"photoGenerateFallback": "Сгенерировать изображение с помощью ИИ",
 		"photo": {
 			"trigger": "Создать рецепт по фото",
 			"title": "Сфотографируйте рецепт",

@@ -1149,6 +1149,10 @@
 		"photoGenerate": "生成图片",
 			"photoRegenerate": "重新生成图片",
 		"photoGenerating": "生成中…",
+		"photoSearch": "搜索图片",
+		"photoSearching": "搜索中…",
+		"photoSearchNotFound": "未找到图片",
+		"photoGenerateFallback": "用AI生成图片",
 		"photo": {
 			"trigger": "通过照片创建食谱",
 			"title": "拍摄食谱照片",

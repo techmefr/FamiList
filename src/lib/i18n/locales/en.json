@@ -1159,6 +1159,10 @@
 		"photoGenerate": "Generate a photo",
 			"photoRegenerate": "Regenerate the photo",
 		"photoGenerating": "Generating…",
+		"photoSearch": "Search for an image",
+		"photoSearching": "Searching…",
+		"photoSearchNotFound": "No image found",
+		"photoGenerateFallback": "Generate an image with AI",
 		"photo": {
 			"trigger": "Create a recipe by photo",
 			"title": "Take a photo of the recipe",

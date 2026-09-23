@@ -1199,6 +1199,10 @@
 		"photoGenerate": "إنشاء صورة",
 			"photoRegenerate": "إعادة إنشاء الصورة",
 		"photoGenerating": "جارٍ الإنشاء…",
+		"photoSearch": "البحث عن صورة",
+		"photoSearching": "جارٍ البحث…",
+		"photoSearchNotFound": "لم يتم العثور على صورة",
+		"photoGenerateFallback": "إنشاء صورة بالذكاء الاصطناعي",
 		"photo": {
 			"trigger": "إنشاء وصفة عبر صورة",
 			"title": "التقط صورة للوصفة",

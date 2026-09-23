@@ -1159,6 +1159,10 @@
 		"photoGenerate": "Foto erzeugen",
 			"photoRegenerate": "Foto neu erzeugen",
 		"photoGenerating": "Wird erzeugt…",
+		"photoSearch": "Nach einem Bild suchen",
+		"photoSearching": "Suche läuft…",
+		"photoSearchNotFound": "Kein Bild gefunden",
+		"photoGenerateFallback": "Bild mit KI erzeugen",
 		"photo": {
 			"trigger": "Rezept per Foto erstellen",
 			"title": "Foto des Rezepts aufnehmen",

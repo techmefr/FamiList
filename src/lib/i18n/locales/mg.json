@@ -1159,6 +1159,10 @@
 		"photoGenerate": "Mamorona sary",
 			"photoRegenerate": "Mamorona sary indray",
 		"photoGenerating": "Mamorona…",
+		"photoSearch": "Mikaroka sary",
+		"photoSearching": "Mikaroka…",
+		"photoSearchNotFound": "Tsy nisy sary hita",
+		"photoGenerateFallback": "Mamorona sary amin'ny AI",
 		"photo": {
 			"trigger": "Mamorona lasopy amin'ny sary",
 			"title": "Alao sary ny lasopy",
