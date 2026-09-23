@@ -1116,7 +1116,9 @@
 			"provider": "Le fournisseur a refusé la demande.",
 			"providerDetail": "Le fournisseur a refusé : {detail}",
 			"unreadable": "La réponse n’était pas exploitable. Redemandez.",
-			"unreadableDetail": "La réponse n’était pas exploitable : {detail}"
+			"unreadableDetail": "La réponse n’était pas exploitable : {detail}",
+			"unsupported": "Ce fournisseur ne lit pas les images.",
+			"unsupportedDetail": "Ce fournisseur ne lit pas les images : {detail}"
 		},
 		"providers": {
 			"anthropic": "Anthropic (Claude)",
@@ -1129,6 +1131,14 @@
 		"photoGenerate": "Générer une photo",
 			"photoRegenerate": "Régénérer la photo",
 		"photoGenerating": "Génération en cours…",
+		"photo": {
+			"trigger": "Créer une recette par photo",
+			"title": "Prenez une photo de la recette",
+			"hint": "Photographiez une page de livre, ou une recette écrite ou imprimée.",
+			"pick": "Prendre ou importer une photo",
+			"reading": "Lecture de la photo…",
+			"unsupported": "Le fournisseur actif ne lit pas les images. Changez de fournisseur dans Profil → IA pour utiliser cette fonction."
+		},
 		"request": {
 			"trigger": "Demander une recette à l’IA",
 			"title": "Quelle recette souhaitez-vous ?",

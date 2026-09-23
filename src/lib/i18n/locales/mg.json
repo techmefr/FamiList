@@ -1117,7 +1117,9 @@
 			"provider": "Nolavin ny mpamatsy ny fangatahana.",
 			"providerDetail": "Nolavin ny mpamatsy : {detail}",
 			"unreadable": "Tsy azo nampiasaina ny valiny. Anontanio indray.",
-			"unreadableDetail": "Tsy azo nampiasaina ny valiny : {detail}"
+			"unreadableDetail": "Tsy azo nampiasaina ny valiny : {detail}",
+			"unsupported": "Tsy mahavaky sary io mpampiantrano io.",
+			"unsupportedDetail": "Tsy mahavaky sary io mpampiantrano io : {detail}"
 		},
 		"providers": {
 			"anthropic": "Anthropic (Claude)",
@@ -1130,6 +1132,14 @@
 		"photoGenerate": "Mamorona sary",
 			"photoRegenerate": "Mamorona sary indray",
 		"photoGenerating": "Mamorona…",
+		"photo": {
+			"trigger": "Mamorona lasopy amin'ny sary",
+			"title": "Alao sary ny lasopy",
+			"hint": "Alao sary pejin-boky, na lasopy voasoratra na vita pirinty.",
+			"pick": "Maka na mampiditra sary",
+			"reading": "Mamaky ny sary…",
+			"unsupported": "Tsy mahavaky sary ny mpampiantrano miasa. Ovay ny mpampiantrano ao amin'ny Mombamomba → AI mba hampiasana io tarigetra io."
+		},
 		"request": {
 			"trigger": "Anontanio ny AI hanome recette",
 			"title": "Recette inona no tianao?",

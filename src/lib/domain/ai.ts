@@ -34,6 +34,16 @@ export interface Provider {
 	defaultModel: string;
 	/** Where the person goes to get their key. Shown as it is, never translated. */
 	keysUrl: string;
+	/**
+	 * Whether the *default model* of this provider reads an image. This is a statement about the model named
+	 * in `defaultModel`, not about the provider's whole catalogue — someone who typed a different model in
+	 * the profile screen may have picked one with different capabilities either way, and there is no
+	 * reachable, key-free endpoint that would tell us which. Anthropic's and Gemini's default models both
+	 * read images natively. OpenRouter proxies many catalogues under one dialect, and its own default model
+	 * also reads images. Mistral, Groq and DeepSeek's default models here are text-only, so the photo feature
+	 * is declined for them rather than sent and left to fail on their side.
+	 */
+	supportsVision: boolean;
 }
 
 export const PROVIDERS: Provider[] = [
@@ -42,42 +52,48 @@ export const PROVIDERS: Provider[] = [
 		dialect: 'anthropic',
 		base: 'https://api.anthropic.com/v1',
 		defaultModel: 'claude-3-5-haiku-latest',
-		keysUrl: 'https://console.anthropic.com/settings/keys'
+		keysUrl: 'https://console.anthropic.com/settings/keys',
+		supportsVision: true
 	},
 	{
 		id: 'gemini',
 		dialect: 'gemini',
 		base: 'https://generativelanguage.googleapis.com/v1beta',
 		defaultModel: 'gemini-3.6-flash',
-		keysUrl: 'https://aistudio.google.com/apikey'
+		keysUrl: 'https://aistudio.google.com/apikey',
+		supportsVision: true
 	},
 	{
 		id: 'mistral',
 		dialect: 'openai',
 		base: 'https://api.mistral.ai/v1',
 		defaultModel: 'mistral-small-latest',
-		keysUrl: 'https://console.mistral.ai/api-keys'
+		keysUrl: 'https://console.mistral.ai/api-keys',
+		supportsVision: false
 	},
 	{
 		id: 'groq',
 		dialect: 'openai',
 		base: 'https://api.groq.com/openai/v1',
 		defaultModel: 'llama-3.3-70b-versatile',
-		keysUrl: 'https://console.groq.com/keys'
+		keysUrl: 'https://console.groq.com/keys',
+		supportsVision: false
 	},
 	{
 		id: 'openrouter',
 		dialect: 'openai',
 		base: 'https://openrouter.ai/api/v1',
 		defaultModel: 'meta-llama/llama-3.3-70b-instruct',
-		keysUrl: 'https://openrouter.ai/settings/keys'
+		keysUrl: 'https://openrouter.ai/settings/keys',
+		supportsVision: false
 	},
 	{
 		id: 'deepseek',
 		dialect: 'openai',
 		base: 'https://api.deepseek.com',
 		defaultModel: 'deepseek-chat',
-		keysUrl: 'https://platform.deepseek.com/api_keys'
+		keysUrl: 'https://platform.deepseek.com/api_keys',
+		supportsVision: false
 	}
 ];
 
@@ -230,6 +246,89 @@ export function buildRequest(
 			model: name,
 			max_tokens: MAX_TOKENS,
 			messages: turns.map(turn => ({ role: turn.role, content: turn.content }))
+		})
+	};
+}
+
+/**
+ * The request to send an image alongside a prompt, in whichever multimodal shape the provider's dialect
+ * expects — three different shapes for three dialects, none of them the same as `buildRequest`'s text-only
+ * body:
+ *  - anthropic: a `content` array mixing an `image` block (base64 `source`) and a `text` block;
+ *  - gemini: a `parts` array mixing `inlineData` (base64) and `text`;
+ *  - the openai dialect: a `content` array mixing `image_url` (a `data:` URI) and `text`.
+ *
+ * Only called for a provider whose `supportsVision` is true — callers must check that first, this function
+ * does not refuse on their behalf.
+ */
+export function buildVisionRequest(
+	provider: Provider,
+	apiKey: string,
+	model: string,
+	prompt: string,
+	imageBase64: string,
+	mimeType: string
+): ProviderRequest {
+	const name = modelFor(provider, model);
+
+	if (provider.dialect === 'anthropic') {
+		return {
+			url: `${provider.base}/messages`,
+			headers: {
+				'content-type': 'application/json',
+				'x-api-key': apiKey,
+				'anthropic-version': '2023-06-01',
+				'anthropic-dangerous-direct-browser-access': 'true'
+			},
+			body: JSON.stringify({
+				model: name,
+				max_tokens: MAX_TOKENS,
+				messages: [
+					{
+						role: 'user',
+						content: [
+							{
+								type: 'image',
+								source: { type: 'base64', media_type: mimeType, data: imageBase64 }
+							},
+							{ type: 'text', text: prompt }
+						]
+					}
+				]
+			})
+		};
+	}
+
+	if (provider.dialect === 'gemini') {
+		return {
+			url: `${provider.base}/models/${name}:generateContent`,
+			headers: { 'content-type': 'application/json', 'x-goog-api-key': apiKey },
+			body: JSON.stringify({
+				contents: [
+					{
+						role: 'user',
+						parts: [{ inlineData: { mimeType, data: imageBase64 } }, { text: prompt }]
+					}
+				]
+			})
+		};
+	}
+
+	return {
+		url: `${provider.base}/chat/completions`,
+		headers: { 'content-type': 'application/json', authorization: `Bearer ${apiKey}` },
+		body: JSON.stringify({
+			model: name,
+			max_tokens: MAX_TOKENS,
+			messages: [
+				{
+					role: 'user',
+					content: [
+						{ type: 'image_url', image_url: { url: `data:${mimeType};base64,${imageBase64}` } },
+						{ type: 'text', text: prompt }
+					]
+				}
+			]
 		})
 	};
 }
