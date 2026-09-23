@@ -1039,6 +1039,23 @@
 		"suggestion": "Propor uma melhoria",
 		"bug": "Reportar um problema"
 	},
+	"changelog": {
+		"title": "Novidades",
+		"entryTitle": "Versão {version}",
+		"acknowledge": "Entendi",
+		"replayTour": "Rever todo o guia",
+		"dismissOnce": "Agora não",
+		"dismissUntilNextUpdate": "Não mostrar até a próxima atualização",
+		"v0_1_0": {
+			"items": [
+				"Menu semanal: planeie as suas refeições e obtenha a lista de compras correspondente.",
+				"O agregado familiar já pode registar os seus membros e as respetivas restrições alimentares.",
+				"Peça uma receita à IA por conversa, mesmo quando a importação de uma página falha.",
+				"Já é possível guardar várias chaves de IA na mesma conta.",
+				"Após uma atualização surge um cartão de novidades, com acesso rápido ao guia."
+			]
+		}
+	},
 	"install": {
 		"title": "Familiste no seu ecrã principal",
 		"body": "Depois de instalada, a aplicação abre a partir de um ícone, sem passar pelo navegador, e arranca mesmo sem rede.",

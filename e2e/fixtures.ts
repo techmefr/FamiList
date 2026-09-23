@@ -1,4 +1,7 @@
 import { test as base, expect, type Page } from '@playwright/test';
+import pkg from '../package.json' with { type: 'json' };
+
+const appVersion: string = pkg.version;
 
 /** The accounts set by `supabase/seed.sql`, confirmed and approved from `supabase db reset` onwards. */
 export const FIXTURE_EMAIL = 'e2e@familist.test';
@@ -32,15 +35,23 @@ export const test = base.extend<{ signedInPage: Page }>({
 	signedInPage: async ({ page }, use) => {
 		// Without this, the guided tour opens on its own (first visit = empty storage) and its overlay
 		// intercepts the clicks of the following tests — we are not testing the tour here, we neutralise it.
+		// The changelog modal is the same story: an unseen version pops a native `<dialog>` that steals every
+		// click behind it, hanging most of the suite rather than failing fast. `lastSeenChangelogVersion` is
+		// pre-set to the app's own current version for the same reason `hasSeenTour`/`hasSeenWelcome` are.
 		// `changedAt` must be set: without it `localWins` is false, and the appearance sync that follows
 		// signing in immediately overwrites this setting with the blank one left in the database for this
 		// fixed account.
-		await page.addInitScript(() => {
+		await page.addInitScript((version: string) => {
 			localStorage.setItem(
 				'familist:appearance',
-				JSON.stringify({ hasSeenTour: true, hasSeenWelcome: true, changedAt: Date.now() })
+				JSON.stringify({
+					hasSeenTour: true,
+					hasSeenWelcome: true,
+					lastSeenChangelogVersion: version,
+					changedAt: Date.now()
+				})
 			);
-		});
+		}, appVersion);
 
 		await signIn(page, FIXTURE_EMAIL, FIXTURE_PASSWORD);
 

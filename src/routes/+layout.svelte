@@ -36,6 +36,7 @@
 	import CreateMenu from '$components/app/CreateMenu.svelte';
 	import Logo from '$components/app/Logo.svelte';
 	import HelpButton from '$components/app/HelpButton.svelte';
+	import ChangelogModal from '$components/app/ChangelogModal.svelte';
 	import ReportPanel from '$components/app/ReportPanel.svelte';
 	import SearchSheet from '$components/app/SearchSheet.svelte';
 	import ListPanel from '$components/app/ListPanel.svelte';
@@ -607,4 +608,5 @@
 
 	<CreateMenu bind:this={menu} />
 	<SearchSheet bind:this={search} />
+	<ChangelogModal />
 {/if}

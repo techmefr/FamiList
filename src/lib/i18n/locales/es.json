@@ -1039,6 +1039,23 @@
 		"suggestion": "Proponer una mejora",
 		"bug": "Informar de un error"
 	},
+	"changelog": {
+		"title": "Novedades",
+		"entryTitle": "Versión {version}",
+		"acknowledge": "Entendido",
+		"replayTour": "Volver a ver toda la guía",
+		"dismissOnce": "Ahora no",
+		"dismissUntilNextUpdate": "No mostrar hasta la próxima actualización",
+		"v0_1_0": {
+			"items": [
+				"Menú semanal: planifica tus comidas y obtén la lista de la compra correspondiente.",
+				"El hogar ahora puede registrar a sus miembros y sus restricciones alimentarias.",
+				"Pide una receta a la IA conversando, incluso cuando falla la importación de una página.",
+				"Ahora se pueden guardar varias claves de IA en la misma cuenta.",
+				"Tras una actualización aparece una tarjeta de novedades con acceso rápido a la guía."
+			]
+		}
+	},
 	"install": {
 		"title": "Familiste en tu pantalla de inicio",
 		"body": "Una vez instalada, la aplicación se abre desde un icono, sin pasar por el navegador, y arranca incluso sin red.",

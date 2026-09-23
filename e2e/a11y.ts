@@ -2,6 +2,9 @@ import { readFileSync, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import AxeBuilder from '@axe-core/playwright';
 import { expect, type Page } from '@playwright/test';
+import pkg from '../package.json' with { type: 'json' };
+
+const appVersion: string = pkg.version;
 
 /**
  * The rules kept are those matching the RGAA criteria a machine can verify: contrast, field labels,
@@ -27,7 +30,9 @@ const readBaseline = (): Baseline => JSON.parse(readFileSync(BASELINE_PATH, 'utf
 /**
  * The guided tour and the welcome screen open on the first visit and cover the page: axe would then only
  * analyse their overlay. `changedAt` is essential, otherwise the appearance sync that follows sign-in
- * overwrites this setting.
+ * overwrites this setting. The changelog modal is the same story: an unseen version pops a native
+ * `<dialog>` that steals every click behind it, so `lastSeenChangelogVersion` is pre-set to the app's own
+ * current version.
  */
 export async function presetAppearance(
 	page: Page,
@@ -37,7 +42,13 @@ export async function presetAppearance(
 		settings => {
 			localStorage.setItem('familist:appearance', JSON.stringify(settings));
 		},
-		{ hasSeenTour: true, hasSeenWelcome: true, changedAt: Date.now(), ...extra }
+		{
+			hasSeenTour: true,
+			hasSeenWelcome: true,
+			lastSeenChangelogVersion: appVersion,
+			changedAt: Date.now(),
+			...extra
+		}
 	);
 }
 

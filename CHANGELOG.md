@@ -23,6 +23,8 @@ existing shared-list core.
 - Editing for recipes and loyalty cards (previously create-and-delete only).
 - A dedicated navigation destination for household management and meal plans on tablet and
   desktop.
+- A "what's new" modal shown after an update, translated into the person's own language, offering
+  to replay the guided tour.
 - A premium visual pass across sign-in, sign-up, password reset, the first-launch walkthrough, and
   the lists screen.
 
