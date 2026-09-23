@@ -24,6 +24,8 @@
 	import { settings } from '$stores/settings.svelte';
 	import { ai } from '$stores/ai.svelte';
 	import { navDirection } from '$domain/motion';
+	import { entriesSince } from '$domain/changelog';
+	import { version as appVersion } from '../../package.json';
 	import { pushAppearance, syncAppearance } from '$sync/appearance';
 	import { registerServiceWorker } from '$native/pwa';
 	import { watchCrashes } from '$crash/reporter';
@@ -234,6 +236,20 @@
 	});
 
 	/**
+	 * Whether the changelog modal is about to claim the screen: same conditions as `ChangelogModal`'s own
+	 * effect, read here so the guided tour does not start underneath it. Both are driven by independent
+	 * effects that fire on the same mount, and a native `<dialog>` opening over a driver.js overlay traps
+	 * pointer events between the two — Escape closes the dialog, but nothing on either was clickable until
+	 * then.
+	 */
+	const changelogPending = $derived(
+		session.isApproved &&
+			settings.hasSeenWelcome &&
+			settings.lastSeenChangelogVersion !== appVersion &&
+			entriesSince(settings.lastSeenChangelogVersion).length > 0
+	);
+
+	/**
 	 * The tour plays once, on the home screen, once the account is approved.
 	 *
 	 * driver.js and its stylesheet are loaded on demand: they only serve once in the life of an account,
@@ -246,6 +262,9 @@
 	$effect(() => {
 		if (!session.isApproved || settings.hasSeenTour) return;
 		if (page.url.pathname !== '/') return;
+		// The changelog modal takes precedence: it is dismissed with a click that this effect's own retries
+		// would otherwise race against, and re-runs once `lastSeenChangelogVersion` changes.
+		if (changelogPending) return;
 
 		let cancelled = false;
 		let timer: ReturnType<typeof setTimeout>;
