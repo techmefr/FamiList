@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { LoyaltyCard } from '$db/schema';
 	import { isMatrixFormat } from '$domain/code-format';
-	import { i18n, t } from '$i18n/index.svelte';
+	import { t } from '$i18n/index.svelte';
 	import { QrCode, Barcode, StickyNote } from '@lucide/svelte';
 
 	let { card }: { card: LoyaltyCard } = $props();
@@ -43,11 +43,7 @@
 		</div>
 	</div>
 
-	<div class="mt-5 flex flex-wrap items-end justify-between gap-3">
+	<div class="mt-5">
 		<p class="text-label font-mono tracking-widest break-all opacity-85">{card.num}</p>
-		<div class="text-end">
-			<p class="text-caption font-medium opacity-70">{t('cards.points')}</p>
-			<p class="text-h2 leading-none font-semibold">{i18n.number(card.points)}</p>
-		</div>
 	</div>
 </article>
