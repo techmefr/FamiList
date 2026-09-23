@@ -336,6 +336,17 @@
 		href === '/' ? page.url.pathname === '/' : page.url.pathname.startsWith(href);
 
 	/**
+	 * Icons-only tabs, on a phone, at the three largest text sizes.
+	 *
+	 * Five labels fit under their icon up to `lg`; past that a two-line label pushes its neighbours and
+	 * the bar's five tabs stop lining up under the thumb — the same crowding that already forces
+	 * `.name-form` to a single column at these sizes (see app.css). The label is not removed, only made
+	 * `sr-only`: a screen reader still gets it, and every page carries an `<h1>` that names where the icon
+	 * led, so nothing that was said out loud goes missing.
+	 */
+	const iconOnlyNav = $derived(['xl', 'xxl', 'comfort'].includes(settings.fontScaleId));
+
+	/**
 	 * Ctrl+K, ⌘K on Mac: the shortcut everyone already tries in order to search. It doubles the header
 	 * button, it does not replace it — on a phone there is no keyboard to type it, and that is where the
 	 * application serves most.
@@ -495,7 +506,10 @@
 								<Icon size={22} class="relative" aria-hidden="true" />
 							</span>
 							<!-- The weight repeats the active tab: colour must not say it on its own. -->
-							<span class="fl-nav-label relative {active ? 'font-medium' : ''}">{t(key)}</span>
+							<span
+								class="fl-nav-label relative {active ? 'font-medium' : ''} {iconOnlyNav ? 'phone:sr-only' : ''}"
+								>{t(key)}</span
+							>
 						</a>
 					</li>
 				{/each}
