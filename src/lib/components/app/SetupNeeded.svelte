@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { t } from '$i18n/index.svelte';
 	import ConnectionSetup from './ConnectionSetup.svelte';
+	import OfflineLists from './OfflineLists.svelte';
 
 	/**
 	 * What an instance shows when nobody has told it where its database is.
@@ -9,6 +10,10 @@
 	 * it is the first screen whoever installs this will see if they got something wrong. So it says what is
 	 * missing and where to put it, rather than staying blank while the console fills with failed requests —
 	 * and, since #257, lets it be typed in right here instead of requiring a rebuild.
+	 *
+	 * `OfflineLists` below it means this is no longer a dead end: connecting is offered, not required.
+	 * Checklists made here stay on the device — see the store's own comment for why they need no migration
+	 * the day a backend is connected.
 	 */
 </script>
 
@@ -20,4 +25,6 @@
 	<div class="mt-4">
 		<ConnectionSetup />
 	</div>
+
+	<OfflineLists />
 </main>

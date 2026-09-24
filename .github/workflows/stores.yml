@@ -1,0 +1,151 @@
+name: Store builds
+
+# Runs on every push to main, like the issue asked for, plus a manual button for a one-off resubmission
+# without an empty commit. Each job is skipped rather than failing when its secrets are absent — the
+# workflow does nothing on a fork or before the secrets below are set, the same way the mail-sending
+# functions do nothing without their own secrets.
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# Secrets, set once in the repository's Settings → Secrets → Actions:
+#
+#   Android — ANDROID_KEYSTORE_BASE64 (`base64 -w0 release.keystore`), ANDROID_KEYSTORE_PASSWORD,
+#   ANDROID_KEY_ALIAS, ANDROID_KEY_PASSWORD. Add PLAY_SERVICE_ACCOUNT_JSON (a Play Console service
+#   account key with "Release manager") to also publish to the internal track; without it, the job still
+#   builds and uploads a signed .aab as a workflow artifact.
+#
+#   iOS — IOS_CERTIFICATE_BASE64 (`base64 -w0 distribution.p12`), IOS_CERTIFICATE_PASSWORD,
+#   IOS_PROVISIONING_PROFILE_BASE64 (`base64 -w0 familist.mobileprovision`, and its name in Apple's
+#   portal must match the one in .github/mobile-ci/exportOptions.plist). That plist's `REPLACE_WITH_APPLE_TEAM_ID`
+#   also needs the real team ID before this job can sign anything. Add APPSTORE_API_KEY_ID,
+#   APPSTORE_ISSUER_ID and APPSTORE_API_KEY_BASE64 (an App Store Connect API key, Users and Access →
+#   Integrations) to also publish to TestFlight; without them, the job still builds and uploads a signed
+#   .ipa as a workflow artifact.
+
+jobs:
+  # Neither build job can express "skip me if this secret is unset" against its own name — a job's `if`
+  # only sees expressions, not a lookup by variable name — so this one reads them all once and hands the
+  # decision down as two plain booleans.
+  check-secrets:
+    runs-on: ubuntu-latest
+    outputs:
+      android: ${{ steps.check.outputs.android }}
+      ios: ${{ steps.check.outputs.ios }}
+    steps:
+      - id: check
+        run: |
+          echo "android=${{ secrets.ANDROID_KEYSTORE_BASE64 != '' }}" >> "$GITHUB_OUTPUT"
+          echo "ios=${{ secrets.IOS_CERTIFICATE_BASE64 != '' }}" >> "$GITHUB_OUTPUT"
+
+  android:
+    needs: check-secrets
+    if: needs.check-secrets.outputs.android == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build
+      - run: pnpm exec cap sync android
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      # Decoded to a path outside the repo: a keystore left inside the checkout, even gitignored, is one
+      # accidental `git add -f` away from being committed.
+      - name: Decode the release keystore
+        run: echo "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" | base64 -d > "$RUNNER_TEMP/release.keystore"
+
+      - name: Build the signed release bundle
+        working-directory: android
+        env:
+          RELEASE_STORE_FILE: ${{ runner.temp }}/release.keystore
+          RELEASE_STORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          RELEASE_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          RELEASE_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        run: ./gradlew bundleRelease
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: android-release-aab
+          path: android/app/build/outputs/bundle/release/app-release.aab
+
+      # A service account key with "Release manager" on the Play Console — see
+      # https://github.com/r0adkll/upload-google-play#setup — pushed as a second, independent secret so a
+      # signed build can still be produced and inspected without granting store-submission rights.
+      - name: Publish to the Play Store's internal track
+        if: secrets.PLAY_SERVICE_ACCOUNT_JSON != ''
+        uses: r0adkll/upload-google-play@v1.1.3
+        with:
+          serviceAccountJsonPlainText: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
+          packageName: fr.techmefr.familist
+          releaseFiles: android/app/build/outputs/bundle/release/app-release.aab
+          track: internal
+          status: draft
+
+  ios:
+    needs: check-secrets
+    if: needs.check-secrets.outputs.ios == 'true'
+    # Free on a public repository, per the issue. A private mirror (see mirror-private.yml) would pay for
+    # these minutes instead — one more reason the public repo stays the one building for the stores.
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build
+
+      # Never committed — see the note next to `ios/` in .gitignore. A macOS runner is exactly the
+      # "when the time comes" that comment is written for.
+      - run: pnpm exec cap add ios
+      - run: pnpm exec cap sync ios
+
+      - uses: apple-actions/import-codesigning-certs@v3
+        with:
+          p12-file-base64: ${{ secrets.IOS_CERTIFICATE_BASE64 }}
+          p12-password: ${{ secrets.IOS_CERTIFICATE_PASSWORD }}
+
+      - name: Install the provisioning profile
+        run: |
+          PROFILE_PATH="$HOME/Library/MobileDevice/Provisioning Profiles/familist.mobileprovision"
+          mkdir -p "$(dirname "$PROFILE_PATH")"
+          echo "${{ secrets.IOS_PROVISIONING_PROFILE_BASE64 }}" | base64 -d > "$PROFILE_PATH"
+
+      - name: Archive and export the .ipa
+        run: |
+          xcodebuild -workspace ios/App/App.xcworkspace -scheme App -configuration Release \
+            -archivePath "$RUNNER_TEMP/App.xcarchive" archive
+          xcodebuild -exportArchive -archivePath "$RUNNER_TEMP/App.xcarchive" \
+            -exportPath "$RUNNER_TEMP/export" -exportOptionsPlist .github/mobile-ci/exportOptions.plist
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ios-release-ipa
+          path: ${{ runner.temp }}/export/*.ipa
+
+      # An app-specific API key from App Store Connect (Users and Access → Integrations), independent of
+      # the signing certificate above for the same reason as the Play Store's service account.
+      - name: Publish to TestFlight
+        if: secrets.APPSTORE_API_KEY_BASE64 != ''
+        uses: apple-actions/upload-testflight-build@v3
+        with:
+          app-path: ${{ runner.temp }}/export/*.ipa
+          api-key-id: ${{ secrets.APPSTORE_API_KEY_ID }}
+          api-issuer-id: ${{ secrets.APPSTORE_ISSUER_ID }}
+          api-private-key: ${{ secrets.APPSTORE_API_KEY_BASE64 }}

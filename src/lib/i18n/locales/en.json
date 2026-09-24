@@ -1247,5 +1247,12 @@
 		"note": "Turn on a circle to let it see this recipe and use it to generate lists. It stays yours — the other circle only reads it.",
 		"empty": "You have no other circle to share with yet.",
 		"sharedWith": "Shared with {name}"
+	},
+	"offline": {
+		"title": "Your lists, no account needed",
+		"body": "Create shopping lists on this device with no backend configured. Nothing leaves it until an instance is connected above.",
+		"listPlaceholder": "This week's groceries",
+		"itemPlaceholder": "Tomatoes",
+		"back": "Back to lists"
 	}
 }

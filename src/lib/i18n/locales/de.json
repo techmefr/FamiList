@@ -1247,5 +1247,12 @@
 		"note": "Aktiviere einen Kreis, damit er dieses Rezept sehen und daraus Listen erstellen kann. Es bleibt deins — der andere Kreis liest es nur.",
 		"empty": "Du hast noch keinen anderen Kreis zum Teilen.",
 		"sharedWith": "Geteilt mit {name}"
+	},
+	"offline": {
+		"title": "Deine Listen, ohne Konto",
+		"body": "Erstelle Einkaufslisten auf diesem Gerät, ohne konfiguriertes Backend. Nichts verlässt es, solange oben keine Instanz verbunden ist.",
+		"listPlaceholder": "Einkauf der Woche",
+		"itemPlaceholder": "Tomaten",
+		"back": "Zurück zu den Listen"
 	}
 }
