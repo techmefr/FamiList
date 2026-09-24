@@ -6,8 +6,8 @@ on:
     tags: ['v*']
   workflow_dispatch:
 
-# Une seule publication à la fois par référence : deux push rapprochés sur main pousseraient deux
-# images sous le même tag `latest`, et la dernière arrivée ne serait pas forcément la plus récente.
+# One publication at a time per ref: two close pushes to main would push two images under the same
+# `latest` tag, and the last one to arrive would not necessarily be the newest.
 concurrency:
   group: image-${{ github.ref }}
   cancel-in-progress: true
@@ -24,9 +24,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # amd64 et arm64 : un serveur à la maison est souvent un Raspberry Pi ou un Mac. La seconde
-      # architecture est émulée, ce qui allonge le build, mais évite à ces machines de compiler
-      # elles-mêmes ce que l'image est justement censée leur épargner.
+      # amd64 and arm64: a home server is often a Raspberry Pi or a Mac. The second architecture is
+      # emulated, which makes the build longer, but spares those machines from compiling themselves
+      # what the image is precisely meant to spare them.
       - uses: docker/setup-qemu-action@v3
 
       - uses: docker/setup-buildx-action@v3
@@ -37,9 +37,9 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      # `latest` suit main, parce que c'est ce que `compose.yml` demande et que le projet n'a pas
-      # encore de version publiée. Un tag `vX.Y.Z` ajoute les siens : quelqu'un qui tient à ne pas
-      # bouger peut alors épingler `1.2.3` ou `1.2`.
+      # `latest` follows main, because that is what `compose.yml` asks for and the project has no
+      # published version yet. A `vX.Y.Z` tag adds its own: someone who wants to stay put can then
+      # pin `1.2.3` or `1.2`.
       - id: meta
         uses: docker/metadata-action@v5
         with:
