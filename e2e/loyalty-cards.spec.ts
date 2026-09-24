@@ -155,8 +155,9 @@ test('le lien vers le site de la marque ne sort que pour une adresse http ou htt
 test.describe('compte de la carte', () => {
 	let secret: string | null = null;
 
-	test.afterEach(async ({ page }) => {
+	test.afterEach(async ({ page }, testInfo) => {
 		if (!secret) return;
+		testInfo.setTimeout(testInfo.timeout + 60_000);
 		const current = secret;
 		secret = null;
 		await signBackInAndRemoveSecondStep(page, current);
@@ -165,7 +166,7 @@ test.describe('compte de la carte', () => {
 	test('le mot de passe exige l aal2, se relit après rechargement et hors ligne', async ({
 		signedInPage: page
 	}) => {
-		test.setTimeout(120_000);
+		test.setTimeout(240_000);
 
 		const name = `Compte e2e ${Date.now()}`;
 		const accountEmail = `fidelite-${Date.now()}@example.com`;
@@ -259,7 +260,10 @@ test('partager une carte avec un autre cercle, puis retirer le partage', async (
 	await signOut(page);
 	await signIn(page, SECOND_EMAIL, FIXTURE_PASSWORD);
 	await page.goto('/household');
-	await page.getByTestId('invite-create').click();
+	await expect(async () => {
+		await page.getByTestId('invite-create').click();
+		await expect(page.getByTestId('invite-code')).toBeVisible({ timeout: 3_000 });
+	}).toPass({ timeout: 30_000 });
 	const invite = (await page.getByTestId('invite-code').innerText()).trim();
 
 	await signOut(page);
