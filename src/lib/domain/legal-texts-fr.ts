@@ -111,6 +111,7 @@ export const LEGAL_FR: Record<LegalDocumentId, LegalText> = {
 					'Mots de passe des comptes de fidélité : chiffrés au repos dans Supabase Vault, et éventuellement conservés sur votre appareil, chiffrés par un code de déverrouillage.',
 					'Clés d’API d’IA : stockées pour vous seul, jamais partagées avec le foyer.',
 					'Préférences : langue, thème, taille du texte, rappels.',
+					'Demandes relatives à vos données : adresse e-mail, type de demande, message, compte associé le cas échéant, dates de dépôt et de clôture.',
 					'Signalements de bugs et erreurs de l’application : identifiant du compte, description, capture d’écran facultative, page concernée, navigateur (user agent), message technique de l’erreur.'
 				]
 			},
@@ -125,6 +126,7 @@ export const LEGAL_FR: Record<LegalDocumentId, LegalText> = {
 			{
 				heading: 'Finalités et bases légales',
 				items: [
+					'Traiter vos demandes relatives à vos données : obligation légale (article 6.1.c).',
 					'Fournir le service (compte, synchronisation, foyer, partages, messagerie, cartes) : exécution du contrat (article 6.1.b du RGPD).',
 					'Sécurité, prévention des abus, approbation des comptes, double authentification : intérêt légitime (article 6.1.f).',
 					'Corriger les bugs à partir des signalements et des erreurs de l’application : intérêt légitime (article 6.1.f).',
@@ -140,6 +142,7 @@ export const LEGAL_FR: Record<LegalDocumentId, LegalText> = {
 					'Signalements de bugs : capture d’écran effacée dès que le signalement est résolu ; signalement supprimé 3 mois après sa résolution, ou 6 mois après sa création s’il n’est pas résolu.',
 					'Erreurs de l’application : supprimées au plus tard 3 mois après leur dernière occurrence.',
 					'Signalements et erreurs liés à un compte : supprimés avec le compte.',
+					'Demandes relatives à vos données : conservées 3 ans après leur clôture, comme preuve de leur traitement, puis supprimées.',
 					'Journaux techniques de l’hébergeur : selon la durée appliquée par Supabase et Vercel.'
 				]
 			},
@@ -164,9 +167,10 @@ export const LEGAL_FR: Record<LegalDocumentId, LegalText> = {
 			{
 				heading: 'Vos droits',
 				paragraphs: [
-					`Vous disposez des droits d’accès, de rectification, d’effacement, de limitation, de portabilité et d’opposition, ainsi que du droit de retirer votre consentement. L’export de vos données et la suppression du compte sont disponibles dans Profil › Sécurité. Pour toute autre demande, écrivez à ${CONTACT}. Une réponse est apportée sous un mois.`,
+					`Vous disposez des droits d’accès, de rectification, d’effacement, de limitation, de portabilité et d’opposition, ainsi que du droit de retirer votre consentement. L’export de vos données et la suppression du compte sont disponibles dans Profil › Sécurité. Pour exercer vos droits, utilisez le formulaire de demande ci-dessous, accessible sans compte, ou écrivez à ${CONTACT}. Une réponse est apportée sous un mois.`,
 					'Vous pouvez introduire une réclamation auprès de la CNIL : www.cnil.fr, 3 place de Fontenoy, TSA 80715, 75334 Paris Cedex 07.'
-				]
+				],
+				link: { label: 'Faire une demande relative à mes données', href: '/legal/privacy-request' }
 			},
 			{
 				heading: 'Cookies et stockage local',

@@ -1,5 +1,6 @@
 import { LEGAL_FR } from './legal-texts-fr';
 import { LEGAL_EN } from './legal-texts-en';
+import { PRIVACY_REQUEST_PATH } from './privacy-request';
 
 export const LEGAL_DOCUMENTS = ['notice', 'terms', 'privacy', 'sales'] as const;
 
@@ -11,6 +12,7 @@ export interface LegalSection {
 	heading: string;
 	paragraphs?: string[];
 	items?: string[];
+	link?: { label: string; href: string };
 }
 
 export interface LegalText {
@@ -26,7 +28,7 @@ export function legalPath(id: LegalDocumentId): string {
 }
 
 export function isLegalRoute(pathname: string): boolean {
-	return LEGAL_DOCUMENTS.some((id) => pathname === legalPath(id));
+	return pathname === PRIVACY_REQUEST_PATH || LEGAL_DOCUMENTS.some((id) => pathname === legalPath(id));
 }
 
 export function legalLanguage(locale: string): LegalLanguage {

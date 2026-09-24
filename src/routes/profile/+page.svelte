@@ -25,6 +25,7 @@
 	import { Switch } from '$components/ui/switch';
 	import { Check, Volume2, Users, ShieldCheck, Sparkles, PlugZap, Scale } from '@lucide/svelte';
 	import { LEGAL_DOCUMENTS, legalPath } from '$domain/legal';
+	import { PRIVACY_REQUEST_PATH } from '$domain/privacy-request';
 	import Avatar from '$components/app/Avatar.svelte';
 	import AvatarPicker from '$components/app/AvatarPicker.svelte';
 	import NameField from '$components/app/NameField.svelte';
@@ -479,6 +480,12 @@
 					</Button>
 				</li>
 			{/each}
+			<li>
+				<Button href={PRIVACY_REQUEST_PATH} variant="outline" data-test-id="go-privacy-request" class="fl-press">
+					<Scale size={18} aria-hidden="true" />
+					{t('legal.makeRequest')}
+				</Button>
+			</li>
 		</ul>
 	</Card.Content>
 </Card.Root>

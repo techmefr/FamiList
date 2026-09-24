@@ -111,6 +111,7 @@ export const LEGAL_EN: Record<LegalDocumentId, LegalText> = {
 					'Loyalty account passwords: encrypted at rest in Supabase Vault, and optionally kept on your device, encrypted under an unlock code.',
 					'AI API keys: stored for you alone, never shared with the household.',
 					'Preferences: language, theme, text size, reminders.',
+					'Requests about your data: email address, request type, message, linked account if any, submission and closing dates.',
 					'Bug reports and application errors: account identifier, description, optional screenshot, page concerned, browser (user agent), technical error message.'
 				]
 			},
@@ -125,6 +126,7 @@ export const LEGAL_EN: Record<LegalDocumentId, LegalText> = {
 			{
 				heading: 'Purposes and legal bases',
 				items: [
+					'Handling your requests about your data: legal obligation (article 6.1.c).',
 					'Providing the service (account, sync, household, sharing, chat, cards): performance of the contract (GDPR article 6.1.b).',
 					'Security, abuse prevention, account approval, two-factor authentication: legitimate interest (article 6.1.f).',
 					'Fixing bugs from reports and application errors: legitimate interest (article 6.1.f).',
@@ -140,6 +142,7 @@ export const LEGAL_EN: Record<LegalDocumentId, LegalText> = {
 					'Bug reports: screenshot erased as soon as the report is resolved; report deleted 3 months after it is resolved, or 6 months after it was created if it is never resolved.',
 					'Application errors: deleted at most 3 months after their last occurrence.',
 					'Reports and errors tied to an account: deleted with the account.',
+					'Requests about your data: kept for 3 years after they are closed, as proof that they were handled, then deleted.',
 					'Hosting providers’ technical logs: according to the periods applied by Supabase and Vercel.'
 				]
 			},
@@ -164,9 +167,10 @@ export const LEGAL_EN: Record<LegalDocumentId, LegalText> = {
 			{
 				heading: 'Your rights',
 				paragraphs: [
-					`You have the rights of access, rectification, erasure, restriction, portability and objection, and the right to withdraw your consent. Exporting your data and deleting your account are available in Profile › Security. For any other request, write to ${CONTACT}. You will receive an answer within one month.`,
+					`You have the rights of access, rectification, erasure, restriction, portability and objection, and the right to withdraw your consent. Exporting your data and deleting your account are available in Profile › Security. To exercise your rights, use the request form below, available without an account, or write to ${CONTACT}. You will receive an answer within one month.`,
 					'You may lodge a complaint with the CNIL, the French data protection authority: www.cnil.fr, 3 place de Fontenoy, TSA 80715, 75334 Paris Cedex 07, France.'
-				]
+				],
+				link: { label: 'Make a request about my data', href: '/legal/privacy-request' }
 			},
 			{
 				heading: 'Cookies and local storage',

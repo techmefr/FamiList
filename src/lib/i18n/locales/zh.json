@@ -826,7 +826,15 @@
 		"mfaReset": "第二因素已移除。该账号现在仅凭密码登录，随后可在仍持有的设备上重新启用两步验证。",
 		"errorDenied": "此账号没有管理员角色。",
 		"errorSecondFactor": "您的会话停在了密码这一步。请完成两步验证后再在此操作。",
-		"elevate": "完成验证"
+		"elevate": "完成验证",
+		"privacyTitle": "数据保护请求",
+		"privacyEmpty": "没有数据保护请求。",
+		"closePrivacyRequest": "关闭",
+		"privacyStatus": {
+			"open": "待处理",
+			"closed": "已关闭"
+		},
+		"privacyAccount": "关联账户"
 	},
 	"instance": {
 		"title": "实例设置",
@@ -1328,6 +1336,32 @@
 		"privacy": "隐私政策",
 		"sales": "销售条款",
 		"updated": "最后更新：",
-		"signupConsent": "创建账户即表示您接受{terms}和{privacy}。"
+		"signupConsent": "创建账户即表示您接受{terms}和{privacy}。",
+		"request": {
+			"title": "关于我的数据的请求",
+			"intro": "无论是否有账户，都可以行使您对个人数据的权利。",
+			"deadline": "我们会在收到请求后一个月内答复。",
+			"success": "您的请求已发送。我们将在一个月内通过电子邮件答复。",
+			"email": "电子邮件地址",
+			"kind": "请求类型",
+			"message": "您的请求",
+			"confirm": "我确认我是此请求涉及的本人，或已获授权代表其行事。",
+			"submit": "发送请求",
+			"errorEmail": "请输入有效的电子邮件地址。",
+			"errorMessage": "请描述您的请求（最多 4000 个字符）。",
+			"errorConfirm": "请确认您是相关本人。",
+			"errorTooMany": "今天该地址的请求过多。请明天再试或写信至 rgpd@familiste.fr。",
+			"errorUnknown": "发送失败。请重试或写信至 rgpd@familiste.fr。",
+			"kinds": {
+				"access": "访问我的数据",
+				"rectification": "更正",
+				"erasure": "删除",
+				"portability": "可携带性",
+				"objection": "反对",
+				"restriction": "限制处理",
+				"other": "其他"
+			}
+		},
+		"makeRequest": "提交关于我的数据的请求"
 	}
 }

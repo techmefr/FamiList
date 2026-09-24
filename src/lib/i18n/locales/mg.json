@@ -831,7 +831,15 @@
 		"mfaReset": "Voaesotra ilay singa faharoa. Miditra amin'ny tenimiafina fotsiny izao ity kaonty ity, avy eo mamerina mampandeha ny 2FA amin'ny fitaovana mbola ananany.",
 		"errorDenied": "Tsy manana andraikitra mpitantana ity kaonty ity.",
 		"errorSecondFactor": "Nijanona teo amin'ny tenimiafina ny fidiranao. Vitao ny fanamarinana roa dingana vao afaka miasa eto.",
-		"elevate": "Vitao ny fanamarinana"
+		"elevate": "Vitao ny fanamarinana",
+		"privacyTitle": "Fangatahana RGPD",
+		"privacyEmpty": "Tsy misy fangatahana RGPD.",
+		"closePrivacyRequest": "Hidio",
+		"privacyStatus": {
+			"open": "Misokatra",
+			"closed": "Mihidy"
+		},
+		"privacyAccount": "Kaonty mifandray"
 	},
 	"instance": {
 		"title": "Kirakira ny instance",
@@ -1339,6 +1347,32 @@
 		"privacy": "Politika momba ny fiainana manokana",
 		"sales": "Fepetra fivarotana",
 		"updated": "Fanavaozana farany:",
-		"signupConsent": "Amin’ny famoronana kaonty dia manaiky ny {terms} sy ny {privacy} ianao."
+		"signupConsent": "Amin’ny famoronana kaonty dia manaiky ny {terms} sy ny {privacy} ianao.",
+		"request": {
+			"title": "Fangatahana momba ny angona",
+			"intro": "Ampiasao ny zonao amin’ny angona manokana, na manana kaonty na tsia.",
+			"deadline": "Mamaly ao anatin’ny iray volana aorian’ny nahazoana ny fangatahanao izahay.",
+			"success": "Lasa ny fangatahanao. Hamaly amin’ny mailaka ao anatin’ny iray volana izahay.",
+			"email": "Adiresy mailaka",
+			"kind": "Karazana fangatahana",
+			"message": "Ny fangatahanao",
+			"confirm": "Manamafy aho fa izaho no voakasik’ity fangatahana ity, na nomena alalana hiasa ho azy.",
+			"submit": "Alefaso ny fangatahana",
+			"errorEmail": "Ampidiro adiresy mailaka marina.",
+			"errorMessage": "Lazalazao ny fangatahanao (4000 litera farafahabetsany).",
+			"errorConfirm": "Hamafiso fa ianao no voakasika.",
+			"errorTooMany": "Be loatra ny fangatahana amin’ity adiresy ity androany. Andramo rahampitso na manorata any amin’ny rgpd@familiste.fr.",
+			"errorUnknown": "Tsy lasa ny fandefasana. Andramo indray na manorata any amin’ny rgpd@familiste.fr.",
+			"kinds": {
+				"access": "Fidirana amin’ny angona",
+				"rectification": "Fanitsiana",
+				"erasure": "Famafana",
+				"portability": "Famindrana",
+				"objection": "Fanoherana",
+				"restriction": "Famerana ny fikirakirana",
+				"other": "Hafa"
+			}
+		},
+		"makeRequest": "Hanao fangatahana momba ny angona"
 	}
 }

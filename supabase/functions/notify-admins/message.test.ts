@@ -101,3 +101,32 @@ describe('buildApprovalMail', () => {
 		expect(mail.text).toContain('https://familiste.app');
 	});
 });
+
+describe('buildAdminMail with privacy requests', () => {
+	const privacy = (overrides: Record<string, unknown> = {}): AdminNotification => ({
+		id: 'c1',
+		kind: 'privacy_request',
+		createdAt: '2026-09-24T09:00:00Z',
+		payload: {
+			request_kind: 'erasure',
+			email: 'dana@example.test',
+			excerpt: 'Please delete my data',
+			...overrides
+		}
+	});
+
+	it('announces a privacy request with its kind, author and legal deadline', () => {
+		const mail = buildAdminMail([privacy()], ADMIN_URL);
+
+		expect(mail.subject).toContain('1 demande RGPD');
+		expect(mail.text).toContain('Effacement de dana@example.test');
+		expect(mail.text).toContain('Please delete my data');
+		expect(mail.text).toContain('un mois');
+	});
+
+	it('falls back on an unknown kind', () => {
+		const mail = buildAdminMail([privacy({ request_kind: 'unexpected' })], ADMIN_URL);
+
+		expect(mail.text).toContain('Autre de dana@example.test');
+	});
+});

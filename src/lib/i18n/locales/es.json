@@ -831,7 +831,15 @@
 		"mfaReset": "Se ha quitado el segundo factor. Esta cuenta inicia sesión solo con su contraseña y luego vuelve a activar la 2FA desde un dispositivo que todavía tenga.",
 		"errorDenied": "Esta cuenta no tiene el rol de administrador.",
 		"errorSecondFactor": "Tu sesión se detuvo en la contraseña. Termina la verificación en dos pasos para actuar aquí.",
-		"elevate": "Terminar la verificación"
+		"elevate": "Terminar la verificación",
+		"privacyTitle": "Solicitudes RGPD",
+		"privacyEmpty": "Ninguna solicitud RGPD.",
+		"closePrivacyRequest": "Cerrar",
+		"privacyStatus": {
+			"open": "Abierta",
+			"closed": "Cerrada"
+		},
+		"privacyAccount": "Cuenta asociada"
 	},
 	"instance": {
 		"title": "Ajustes de la instancia",
@@ -1339,6 +1347,32 @@
 		"privacy": "Política de privacidad",
 		"sales": "Condiciones de venta",
 		"updated": "Última actualización:",
-		"signupConsent": "Al crear una cuenta, aceptas las {terms} y la {privacy}."
+		"signupConsent": "Al crear una cuenta, aceptas las {terms} y la {privacy}.",
+		"request": {
+			"title": "Solicitud sobre mis datos",
+			"intro": "Ejerce tus derechos sobre tus datos personales, con o sin cuenta.",
+			"deadline": "Respondemos en el plazo de un mes desde la recepción de tu solicitud.",
+			"success": "Tu solicitud se ha enviado. Te responderemos por correo en el plazo de un mes.",
+			"email": "Correo electrónico",
+			"kind": "Tipo de solicitud",
+			"message": "Tu solicitud",
+			"confirm": "Confirmo que soy la persona afectada por esta solicitud o que estoy autorizado a actuar en su nombre.",
+			"submit": "Enviar la solicitud",
+			"errorEmail": "Introduce un correo electrónico válido.",
+			"errorMessage": "Describe tu solicitud (4000 caracteres como máximo).",
+			"errorConfirm": "Confirma que eres la persona afectada.",
+			"errorTooMany": "Demasiadas solicitudes para esta dirección hoy. Inténtalo mañana o escribe a rgpd@familiste.fr.",
+			"errorUnknown": "El envío ha fallado. Inténtalo de nuevo o escribe a rgpd@familiste.fr.",
+			"kinds": {
+				"access": "Acceso a mis datos",
+				"rectification": "Rectificación",
+				"erasure": "Supresión",
+				"portability": "Portabilidad",
+				"objection": "Oposición",
+				"restriction": "Limitación del tratamiento",
+				"other": "Otra"
+			}
+		},
+		"makeRequest": "Hacer una solicitud sobre mis datos"
 	}
 }

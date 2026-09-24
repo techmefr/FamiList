@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { i18n, t } from '$i18n/index.svelte';
+	import { Button } from '$components/ui/button';
 	import {
 		LEGAL_DOCUMENTS,
 		legalLanguage,
@@ -53,6 +54,13 @@
 						<li>{@render rich(item)}</li>
 					{/each}
 				</ul>
+			{/if}
+			{#if section.link}
+				<p>
+					<Button href={section.link.href} variant="outline" data-test-id="legal-section-link" class="fl-press">
+						{section.link.label}
+					</Button>
+				</p>
 			{/if}
 		</section>
 	{/each}

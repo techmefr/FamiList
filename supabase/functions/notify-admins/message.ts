@@ -11,7 +11,7 @@
  * No Deno dependency here, so that the formatting stays testable by vitest.
  */
 
-export const NOTIFICATION_KINDS = ['signup', 'bug_report', 'approved'] as const;
+export const NOTIFICATION_KINDS = ['signup', 'bug_report', 'approved', 'privacy_request'] as const;
 export type NotificationKind = (typeof NOTIFICATION_KINDS)[number];
 
 export type AdminNotification = {
@@ -29,8 +29,7 @@ export type AdminMail = {
 const text = (value: unknown): string | null =>
 	typeof value === 'string' && value.trim() !== '' ? value.trim() : null;
 
-const plural = (count: number, one: string, many: string): string =>
-	`${count} ${count > 1 ? many : one}`;
+const plural = (count: number, one: string, many: string): string => `${count} ${count > 1 ? many : one}`;
 
 function formatDate(value: string): string {
 	const date = new Date(value);
@@ -59,6 +58,24 @@ function describeBugReport(notification: AdminNotification): string {
 	return details.join('\n');
 }
 
+const PRIVACY_KINDS: Record<string, string> = {
+	access: 'Acces',
+	rectification: 'Rectification',
+	erasure: 'Effacement',
+	portability: 'Portabilite',
+	objection: 'Opposition',
+	restriction: 'Limitation',
+	other: 'Autre'
+};
+
+function describePrivacyRequest(notification: AdminNotification): string {
+	const kind = PRIVACY_KINDS[String(notification.payload.request_kind)] ?? 'Autre';
+	const email = text(notification.payload.email) ?? 'adresse inconnue';
+	const excerpt = text(notification.payload.excerpt) ?? '(sans message)';
+
+	return [`- ${kind} de ${email} — ${formatDate(notification.createdAt)}`, `  ${excerpt}`].join('\n');
+}
+
 /**
  * The one email sent to the person themselves, once their account clears review. Written in French like the
  * rest of what this file sends: `profiles` carries no language column, so there is no preference to honour —
@@ -85,24 +102,29 @@ export function buildAdminMail(notifications: AdminNotification[], adminUrl: str
 	// `approved` rows are routed to the account itself by the caller, never grouped into this one.
 	const signups = notifications.filter((n) => n.kind === 'signup');
 	const reports = notifications.filter((n) => n.kind === 'bug_report');
+	const privacy = notifications.filter((n) => n.kind === 'privacy_request');
 
 	const headline: string[] = [];
 	if (signups.length > 0) headline.push(plural(signups.length, 'inscription', 'inscriptions'));
 	if (reports.length > 0) headline.push(plural(reports.length, 'signalement', 'signalements'));
+	if (privacy.length > 0) headline.push(plural(privacy.length, 'demande RGPD', 'demandes RGPD'));
 
 	const body: string[] = [];
 
 	if (signups.length > 0) {
 		const title =
-			signups.length > 1
-				? 'Inscriptions en attente de validation'
-				: 'Inscription en attente de validation';
+			signups.length > 1 ? 'Inscriptions en attente de validation' : 'Inscription en attente de validation';
 		body.push(title, ...signups.map(describeSignup), '');
 	}
 
 	if (reports.length > 0) {
 		const title = reports.length > 1 ? 'Nouveaux signalements' : 'Nouveau signalement';
 		body.push(title, ...reports.map(describeBugReport), '');
+	}
+
+	if (privacy.length > 0) {
+		const title = privacy.length > 1 ? 'Nouvelles demandes RGPD' : 'Nouvelle demande RGPD';
+		body.push(title, ...privacy.map(describePrivacyRequest), 'Delai legal de reponse : un mois.', '');
 	}
 
 	body.push(`Tout se traite depuis ${adminUrl}`);

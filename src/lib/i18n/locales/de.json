@@ -831,7 +831,15 @@
 		"mfaReset": "Der zweite Faktor wurde entfernt. Dieses Konto meldet sich jetzt nur mit seinem Passwort an und aktiviert die 2FA danach auf einem Gerät, das es noch hat.",
 		"errorDenied": "Dieses Konto hat keine Administratorrolle.",
 		"errorSecondFactor": "Ihre Sitzung ist beim Passwort stehen geblieben. Schließen Sie die Zwei-Faktor-Prüfung ab, um hier zu handeln.",
-		"elevate": "Prüfung abschließen"
+		"elevate": "Prüfung abschließen",
+		"privacyTitle": "Datenschutzanfragen",
+		"privacyEmpty": "Keine Datenschutzanfrage.",
+		"closePrivacyRequest": "Abschließen",
+		"privacyStatus": {
+			"open": "Offen",
+			"closed": "Abgeschlossen"
+		},
+		"privacyAccount": "Verknüpftes Konto"
 	},
 	"instance": {
 		"title": "Instanz-Einstellungen",
@@ -1339,6 +1347,32 @@
 		"privacy": "Datenschutzerklärung",
 		"sales": "Verkaufsbedingungen",
 		"updated": "Zuletzt aktualisiert:",
-		"signupConsent": "Mit der Erstellung eines Kontos akzeptierst du die {terms} und die {privacy}."
+		"signupConsent": "Mit der Erstellung eines Kontos akzeptierst du die {terms} und die {privacy}.",
+		"request": {
+			"title": "Anfrage zu meinen Daten",
+			"intro": "Übe deine Rechte an deinen personenbezogenen Daten aus, mit oder ohne Konto.",
+			"deadline": "Wir antworten innerhalb eines Monats nach Eingang deiner Anfrage.",
+			"success": "Deine Anfrage wurde gesendet. Wir antworten dir innerhalb eines Monats per E-Mail.",
+			"email": "E-Mail-Adresse",
+			"kind": "Art der Anfrage",
+			"message": "Deine Anfrage",
+			"confirm": "Ich bestätige, dass ich die betroffene Person bin oder berechtigt bin, in ihrem Namen zu handeln.",
+			"submit": "Anfrage senden",
+			"errorEmail": "Gib eine gültige E-Mail-Adresse ein.",
+			"errorMessage": "Beschreibe deine Anfrage (höchstens 4000 Zeichen).",
+			"errorConfirm": "Bestätige, dass du die betroffene Person bist.",
+			"errorTooMany": "Heute zu viele Anfragen für diese Adresse. Versuche es morgen erneut oder schreibe an rgpd@familiste.fr.",
+			"errorUnknown": "Senden fehlgeschlagen. Versuche es erneut oder schreibe an rgpd@familiste.fr.",
+			"kinds": {
+				"access": "Auskunft über meine Daten",
+				"rectification": "Berichtigung",
+				"erasure": "Löschung",
+				"portability": "Datenübertragbarkeit",
+				"objection": "Widerspruch",
+				"restriction": "Einschränkung der Verarbeitung",
+				"other": "Sonstiges"
+			}
+		},
+		"makeRequest": "Anfrage zu meinen Daten stellen"
 	}
 }
