@@ -607,6 +607,9 @@
 	"auth": {
 		"title": "Sign in",
 		"brandTagline": "Your groceries, together.",
+		"brandHeadline": "Your household groceries, ",
+		"brandHeadlineAccent": "always in sync.",
+		"brandFooter": "Open source, self-hostable.",
 		"signInBody": "Pick your lists back up, and your household's.",
 		"signUpBody": "It only takes a moment, and your settings come with you.",
 		"signIn": "Sign in",

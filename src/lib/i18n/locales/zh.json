@@ -604,6 +604,9 @@
 	"auth": {
 		"title": "登录",
 		"brandTagline": "购物清单，一起管理。",
+		"brandHeadline": "家庭购物清单，",
+		"brandHeadlineAccent": "始终同步。",
+		"brandFooter": "开源，可自行托管。",
 		"signInBody": "回到你的清单，以及家里的清单。",
 		"signUpBody": "只需片刻，你的设置也会一起带走。",
 		"signIn": "登录",

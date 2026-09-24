@@ -607,6 +607,9 @@
 	"auth": {
 		"title": "Hiditra",
 		"brandTagline": "Ny fividianana, miaraka.",
+		"brandHeadline": "Ny fividianan'ny fianakaviana, ",
+		"brandHeadlineAccent": "mifanaraka foana.",
+		"brandFooter": "Open source, azo hebergena manokana.",
 		"signInBody": "Hitanao indray ny lisitrao sy ny an'ny fianakavianao.",
 		"signUpBody": "Fotoana fohy monja, ary manaraka anao ny safidinao.",
 		"signIn": "Hiditra",

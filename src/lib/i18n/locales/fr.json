@@ -607,6 +607,9 @@
 	"auth": {
 		"title": "Connexion",
 		"brandTagline": "Vos courses, ensemble.",
+		"brandHeadline": "Les courses du foyer, ",
+		"brandHeadlineAccent": "toujours à jour.",
+		"brandFooter": "Open source, hébergeable chez soi.",
 		"signInBody": "Retrouvez vos listes et celles de votre foyer.",
 		"signUpBody": "Quelques secondes suffisent, et vos réglages vous suivront.",
 		"signIn": "Se connecter",
