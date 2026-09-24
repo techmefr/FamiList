@@ -503,7 +503,7 @@ class FamiListDatabase extends Dexie {
 			deviceVault: 'id'
 		});
 
-		this.version(14).stores({ rejections: 'key' });
+		this.version(14).stores({ rejections: 'key, at' });
 	}
 }
 
