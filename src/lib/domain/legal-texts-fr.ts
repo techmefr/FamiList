@@ -1,7 +1,7 @@
 import type { LegalDocumentId, LegalText } from './legal';
 
-const CONTACT = '[TO CONFIRM: adresse e-mail de contact]';
-const EFFECTIVE = '[TO CONFIRM: date d’entrée en vigueur]';
+const CONTACT = 'rgpd@familiste.fr';
+const EFFECTIVE = '24/09/2026';
 
 export const LEGAL_FR: Record<LegalDocumentId, LegalText> = {
 	notice: {
@@ -13,7 +13,7 @@ export const LEGAL_FR: Record<LegalDocumentId, LegalText> = {
 				paragraphs: [
 					'FamiList est édité par Gaëtan Compigni, particulier, à titre non professionnel.',
 					`Contact : ${CONTACT}.`,
-					'[TO CONFIRM: adresse postale ou domiciliation, uniquement si elle est exigée]'
+					'Adresse postale communiquée sur demande à rgpd@familiste.fr.'
 				]
 			},
 			{
