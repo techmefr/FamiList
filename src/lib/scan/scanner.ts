@@ -21,7 +21,8 @@ export interface ScanOptions {
 /**
  * Three ways to read a barcode, from best to worst:
  *
- * - in the installed application, the native camera through ML Kit;
+ * - in the installed application, the native camera through ML Kit, when the build ships it (not the
+ *   F-Droid one, which falls through to the two others);
  * - in a browser exposing BarcodeDetector (Chrome Android, desktop Chrome);
  * - everywhere else, a JavaScript decoder loaded on demand.
  *
@@ -42,7 +43,7 @@ const resultOf = (value: string, format: string): ScanResult => ({
 });
 
 export function scanSupport(): ScanSupport {
-	if (Capacitor.isNativePlatform()) return 'native';
+	if (Capacitor.isNativePlatform() && Capacitor.isPluginAvailable('BarcodeScanner')) return 'native';
 	if (typeof navigator !== 'undefined' && Boolean(navigator.mediaDevices)) return 'browser';
 
 	return 'none';
