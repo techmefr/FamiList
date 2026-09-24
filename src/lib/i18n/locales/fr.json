@@ -1246,5 +1246,12 @@
 		"note": "Activez un cercle pour lui permettre de voir cette recette et de l’utiliser pour générer des listes. Elle reste la vôtre : l’autre cercle ne fait que la lire.",
 		"empty": "Vous n’avez pas encore d’autre cercle avec qui partager.",
 		"sharedWith": "Partagée avec {name}"
+	},
+	"offline": {
+		"title": "Vos listes, sans compte",
+		"body": "Créez des listes de courses sur cet appareil, sans backend configuré. Rien ne part nulle part tant qu'aucune instance n'est reliée ci-dessus.",
+		"listPlaceholder": "Courses de la semaine",
+		"itemPlaceholder": "Tomates",
+		"back": "Retour aux listes"
 	}
 }
