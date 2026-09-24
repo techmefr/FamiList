@@ -21,6 +21,7 @@ import {
 	toRecipe,
 	toRecipeIngredient,
 	toRecipeShare,
+	toCardShare,
 	toRecipeStep,
 	toMealPlan,
 	toMealPlanRecipe,
@@ -400,6 +401,7 @@ class SyncStore {
 			recipeIngredients,
 			recipeSteps,
 			recipeShares,
+			cardShares,
 			mealPlans,
 			mealPlanRecipes,
 			householdPersons,
@@ -416,7 +418,10 @@ class SyncStore {
 				.or(`household_id.is.null,household_id.in.(${cercles.join(',')})`),
 			supabase.from('list_members').select('*'),
 			supabase.from('items').select('*'),
-			supabase.from('loyalty_cards').select('*').in('household_id', cercles),
+			// No household filter: a card accepted into one of our circles keeps its owner's household. RLS decides,
+			// and only the card's own columns come back: the account credentials live in another table, never read
+			// here, so the password never reaches IndexedDB.
+			supabase.from('loyalty_cards').select('*'),
 			supabase.from('household_members').select('*').in('household_id', cercles),
 			supabase.from('shop_layouts').select('*'),
 			supabase.from('shop_item_orders').select('*'),
@@ -437,6 +442,7 @@ class SyncStore {
 			// Same reasoning as `recipes`: a share into one of `cercles` may originate from a household we are
 			// not otherwise a member of, so RLS is the only filter.
 			supabase.from('recipe_shares').select('*'),
+			supabase.from('loyalty_card_shares').select('*'),
 			supabase.from('meal_plans').select('*').in('household_id', cercles),
 			// A meal plan's recipes carry no household of their own, same reason as recipe_ingredients.
 			supabase.from('meal_plan_recipes').select('*'),
@@ -466,6 +472,7 @@ class SyncStore {
 			recipeIngredients,
 			recipeSteps,
 			recipeShares,
+			cardShares,
 			mealPlans,
 			mealPlanRecipes,
 			householdPersons,
@@ -533,6 +540,7 @@ class SyncStore {
 				db.recipeIngredients,
 				db.recipeSteps,
 				db.recipeShares,
+				db.cardShares,
 				db.mealPlans,
 				db.mealPlanRecipes,
 				db.householdPersons,
@@ -573,6 +581,7 @@ class SyncStore {
 					db.recipeIngredients.clear(),
 					db.recipeSteps.clear(),
 					db.recipeShares.clear(),
+					db.cardShares.clear(),
 					db.mealPlans.clear(),
 					db.mealPlanRecipes.clear(),
 					db.householdPersons.clear(),
@@ -605,6 +614,7 @@ class SyncStore {
 					),
 					db.recipeSteps.bulkAdd((recipeSteps.data ?? []).map(toRecipeStep)),
 					db.recipeShares.bulkAdd((recipeShares.data ?? []).map(toRecipeShare)),
+					db.cardShares.bulkAdd((cardShares.data ?? []).map(toCardShare)),
 					db.mealPlans.bulkAdd((mealPlans.data ?? []).map(toMealPlan)),
 					db.mealPlanRecipes.bulkAdd((mealPlanRecipes.data ?? []).map(toMealPlanRecipe)),
 					db.householdPersons.bulkAdd(

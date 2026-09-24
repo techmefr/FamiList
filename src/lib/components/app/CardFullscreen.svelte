@@ -5,8 +5,11 @@
 	import { motionMs } from '$stores/settings.svelte';
 	import { t } from '$i18n/index.svelte';
 	import CodeImage from './CodeImage.svelte';
+	import CardShareSheet from './CardShareSheet.svelte';
 	import { Button } from '$components/ui/button';
-	import { X, Sun, Pencil, Eye, EyeOff } from '@lucide/svelte';
+	import { readCardAccount, type CardAccount } from '$stores/card-account';
+	import { safeWebsiteUrl } from '$domain/website';
+	import { X, Sun, Pencil, Eye, EyeOff, Share2, KeyRound, ExternalLink } from '@lucide/svelte';
 
 	let {
 		card,
@@ -25,8 +28,26 @@
 		draft = null;
 	}
 
-	/** Which half of the screen is showing. Always starts on the code: that is what a checkout is for. */
-	let tab = $state<'code' | 'notes'>('code');
+	/** Which half of the screen is showing. Always starts on the card: that is what a checkout is for. */
+	let tab = $state<'card' | 'account'>('card');
+
+	const owned = $derived(data.isOwnCard(card));
+	const website = $derived(safeWebsiteUrl(card.websiteUrl));
+
+	let shareSheet = $state<CardShareSheet | null>(null);
+
+	let account = $state<CardAccount | null>(null);
+	let accountState = $state<'loading' | 'ready' | 'error'>('loading');
+	let accountError = $state('');
+
+	async function openAccountTab() {
+		tab = 'account';
+		accountState = 'loading';
+		const result = await readCardAccount(card.id);
+		if (result.ok) account = result.value;
+		else accountError = result.error;
+		accountState = result.ok ? 'ready' : 'error';
+	}
 
 	/**
 	 * The code stays masked until asked for, on every opening — including on a device that never leaves the
@@ -66,15 +87,26 @@
 			<X size={20} aria-hidden="true" />
 		</button>
 		<p class="text-product flex-1 text-center font-semibold break-words">{card.name}</p>
-		<button
-			type="button"
-			onclick={() => onEdit(card)}
-			aria-label={t('cards.edit', { name: card.name })}
-			data-test-id="card-edit"
-			class="grid size-11 min-w-[44px] shrink-0 place-items-center rounded-full border border-white/20 bg-white/10"
-		>
-			<Pencil size={20} aria-hidden="true" />
-		</button>
+		{#if owned}
+			<button
+				type="button"
+				onclick={() => shareSheet?.show()}
+				aria-label={t('cards.share', { name: card.name })}
+				data-test-id="card-share"
+				class="grid size-11 min-w-[44px] shrink-0 place-items-center rounded-full border border-white/20 bg-white/10"
+			>
+				<Share2 size={20} aria-hidden="true" />
+			</button>
+			<button
+				type="button"
+				onclick={() => onEdit(card)}
+				aria-label={t('cards.edit', { name: card.name })}
+				data-test-id="card-edit"
+				class="grid size-11 min-w-[44px] shrink-0 place-items-center rounded-full border border-white/20 bg-white/10"
+			>
+				<Pencil size={20} aria-hidden="true" />
+			</button>
+		{/if}
 	</div>
 
 	<div class="px-5 pb-10">
@@ -82,30 +114,30 @@
 			<button
 				type="button"
 				role="tab"
-				aria-selected={tab === 'code'}
-				onclick={() => (tab = 'code')}
-				data-test-id="card-tab-code"
-				class="fl-press text-label flex-1 rounded-full py-2 font-medium {tab === 'code'
+				aria-selected={tab === 'card'}
+				onclick={() => (tab = 'card')}
+				data-test-id="card-tab-card"
+				class="fl-press text-label flex-1 rounded-full py-2 font-medium {tab === 'card'
 					? 'bg-white text-neutral-900'
 					: 'text-white/70'}"
 			>
-				{t('cards.tabCode')}
+				{t('cards.tabCard')}
 			</button>
 			<button
 				type="button"
 				role="tab"
-				aria-selected={tab === 'notes'}
-				onclick={() => (tab = 'notes')}
-				data-test-id="card-tab-notes"
-				class="fl-press text-label flex-1 rounded-full py-2 font-medium {tab === 'notes'
+				aria-selected={tab === 'account'}
+				onclick={openAccountTab}
+				data-test-id="card-tab-account"
+				class="fl-press text-label flex-1 rounded-full py-2 font-medium {tab === 'account'
 					? 'bg-white text-neutral-900'
 					: 'text-white/70'}"
 			>
-				{t('cards.tabNotes')}
+				{t('cards.tabAccount')}
 			</button>
 		</div>
 
-		{#if tab === 'code'}
+		{#if tab === 'card'}
 			<div class="fl-rise rounded-lg bg-white p-5 shadow-[0_24px_60px_rgba(0,0,0,0.4)]">
 				{#if revealed}
 					<p class="text-caption text-center font-bold tracking-widest text-neutral-900">
@@ -167,17 +199,19 @@
 					{t('cards.brightnessHint')}
 				</p>
 			{/if}
-		{:else}
-			<section class="rounded-lg border border-white/15 bg-white/5 p-4">
+
+			<section class="mt-5 rounded-lg border border-white/15 bg-white/5 p-4">
 				<div class="mb-3 flex items-center justify-between gap-3">
 					<h2 class="text-product font-semibold text-white">{t('cards.notes')}</h2>
-					<Button
-						variant={draft === null ? 'outline' : 'default'}
-						onclick={() => (draft === null ? (draft = card.notes ?? '') : save())}
-						data-test-id="card-notes-toggle"
-					>
-						{draft === null ? t('common.edit') : t('common.save')}
-					</Button>
+					{#if owned}
+						<Button
+							variant={draft === null ? 'outline' : 'default'}
+							onclick={() => (draft === null ? (draft = card.notes ?? '') : save())}
+							data-test-id="card-notes-toggle"
+						>
+							{draft === null ? t('common.edit') : t('common.save')}
+						</Button>
+					{/if}
 				</div>
 
 				{#if draft !== null}
@@ -196,6 +230,61 @@
 
 				<p class="text-caption mt-4 text-white/50">{t('cards.secretNotice')}</p>
 			</section>
+		{:else}
+			<section
+				class="rounded-lg border border-white/15 bg-white/5 p-4 text-white"
+				data-test-id="card-account"
+			>
+				{#if accountState === 'loading'}
+					<p class="text-white/70">{t('common.loading')}</p>
+				{:else if accountState === 'error'}
+					<p class="text-white/85" role="alert" data-test-id="card-account-error">
+						{t('cards.accountError', { error: accountError })}
+					</p>
+				{:else if account && (account.email || account.hasPassword)}
+					{#if account.email}
+						<p class="text-caption text-white/60">{t('cards.accountEmail')}</p>
+						<p class="text-label break-all" data-test-id="card-account-email">{account.email}</p>
+					{/if}
+					<p class="text-caption mt-3 text-white/60">
+						{account.hasPassword ? t('cards.accountPasswordSaved') : t('cards.accountNoPassword')}
+					</p>
+				{:else}
+					<p class="text-white/85" data-test-id="card-account-empty">{t('cards.accountEmpty')}</p>
+				{/if}
+
+				{#if owned || account?.hasPassword || accountState === 'error'}
+					<a
+						href={`/cards/${card.id}/account`}
+						data-test-id="card-account-open"
+						class="fl-press bg-primary text-primary-foreground text-label mt-4 flex min-h-[max(2.75rem,44px)] items-center justify-center gap-2 rounded-full px-6 font-medium"
+					>
+						<KeyRound size={18} aria-hidden="true" />
+						{t('cards.accountOpen')}
+					</a>
+				{/if}
+				{#if website}
+					<a
+						href={website}
+						target="_blank"
+						rel="noopener noreferrer"
+						aria-label={t('cards.websiteOpenLabel', { name: card.name })}
+						data-test-id="card-website-open"
+						class="fl-press text-label mt-3 flex min-h-[max(2.75rem,44px)] items-center justify-center gap-2 rounded-full border border-white/30 px-6 font-medium text-white"
+					>
+						<ExternalLink size={18} aria-hidden="true" />
+						{t('cards.websiteOpen')}
+					</a>
+				{/if}
+				<p class="text-caption mt-3 text-white/50">{t('cards.accountSecureHint')}</p>
+				{#if !owned}
+					<p class="text-caption mt-2 text-white/50">{t('cards.accountReadOnly')}</p>
+				{/if}
+			</section>
 		{/if}
 	</div>
 </div>
+
+{#if owned}
+	<CardShareSheet bind:this={shareSheet} {card} />
+{/if}

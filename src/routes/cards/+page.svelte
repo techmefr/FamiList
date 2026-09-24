@@ -12,6 +12,7 @@
 	import { CODE_TYPES, guessCodeType, isMatrixFormat, type CodeType } from '$domain/code-format';
 	import type { LoyaltyCard } from '$db/schema';
 	import { linearCode } from '$domain/barcode';
+	import { safeWebsiteUrl } from '$domain/website';
 	import { CARD_GRADIENT_END, DEFAULT_TINT } from '$domain/tint';
 	import LoyaltyCardFace from '$components/app/LoyaltyCardFace.svelte';
 	import CardFullscreen from '$components/app/CardFullscreen.svelte';
@@ -21,7 +22,18 @@
 	import { Button } from '$components/ui/button';
 	import { Input } from '$components/ui/input';
 	import { Label } from '$components/ui/label';
-	import { Plus, Trash2, ScanLine, CreditCard, Barcode, Star, Store, Pencil } from '@lucide/svelte';
+	import {
+		Plus,
+		Trash2,
+		ScanLine,
+		CreditCard,
+		Barcode,
+		Star,
+		Store,
+		Pencil,
+		Globe
+	} from '@lucide/svelte';
+	import CardShareRequests from '$components/app/CardShareRequests.svelte';
 	import IconField from '$components/app/IconField.svelte';
 	import EmptyState from '$components/app/EmptyState.svelte';
 
@@ -59,6 +71,7 @@
 	let codeType = $state<CodeType | ''>('');
 	let points = $state('0');
 	let secretCode = $state('');
+	let websiteUrl = $state('');
 	let notes = $state('');
 
 	/**
@@ -107,6 +120,8 @@
 		!isMatrixFormat(effectiveType) && code.trim() !== '' && !linearCode(code, effectiveType)
 	);
 
+	const invalidWebsite = $derived(websiteUrl.trim() !== '' && safeWebsiteUrl(websiteUrl) === null);
+
 	const brands = $derived([
 		...new Set(data.shops.map((shop) => shop.brand.trim()).filter(Boolean))
 	]);
@@ -145,6 +160,7 @@
 		codeType = '';
 		points = '0';
 		secretCode = '';
+		websiteUrl = '';
 		notes = '';
 		attach = '';
 	}
@@ -161,6 +177,7 @@
 		codeType = card.codeType;
 		points = String(card.points);
 		secretCode = card.secretCode ?? '';
+		websiteUrl = card.websiteUrl ?? '';
 		notes = card.notes ?? '';
 		attach = card.shopId ? `shop:${card.shopId}` : card.brand ? `brand:${card.brand}` : '';
 		adding = true;
@@ -169,7 +186,7 @@
 
 	function submit(event: SubmitEvent) {
 		event.preventDefault();
-		if (!label || !code.trim() || invalidCode) return;
+		if (!label || !code.trim() || invalidCode || invalidWebsite) return;
 
 		feedback.play('add');
 
@@ -182,6 +199,7 @@
 			codeType: effectiveType,
 			points: Number(points) || 0,
 			secretCode: secretCode.trim() || undefined,
+			websiteUrl: safeWebsiteUrl(websiteUrl) ?? undefined,
 			notes: notes.trim(),
 			tint,
 			grad: `linear-gradient(135deg, ${tint} 0%, ${CARD_GRADIENT_END} 100%)`
@@ -213,6 +231,8 @@
 		{t('cards.tapHint')}
 	</p>
 
+	<CardShareRequests />
+
 	{#if data.cards.length === 0}
 		<EmptyState illustration="cards" text={t('cards.empty')} testId="cards-empty" />
 	{:else}
@@ -235,6 +255,7 @@
 					>
 						<LoyaltyCardFace {card} />
 					</button>
+					{#if data.isOwnCard(card)}
 					<button
 						type="button"
 						onclick={() => editCard(card)}
@@ -256,6 +277,7 @@
 					>
 						<Trash2 size={18} aria-hidden="true" />
 					</button>
+					{/if}
 				</li>
 			{/each}
 		</ul>
@@ -413,6 +435,26 @@
 					/>
 				</IconField>
 				<p class="text-muted-foreground text-caption mt-1">{t('cards.secretCodeHint')}</p>
+			</div>
+
+			<div>
+				<Label for="card-website">{t('cards.websiteUrl')}</Label>
+				<IconField icon={Globe}>
+					<Input
+						id="card-website"
+						inputmode="url"
+						autocomplete="url"
+						bind:value={websiteUrl}
+						data-test-id="card-website"
+						placeholder={t('cards.websiteUrlPlaceholder')}
+						aria-invalid={invalidWebsite}
+					/>
+				</IconField>
+				{#if invalidWebsite}
+					<p class="text-destructive text-caption mt-1" role="alert" data-test-id="card-website-error">
+						{t('cards.websiteUrlInvalid')}
+					</p>
+				{/if}
 			</div>
 
 			<!--

@@ -40,4 +40,25 @@ describe('locales completeness', () => {
 			).toBeTruthy();
 		}
 	});
+
+	it('définit les clés du compte et du partage de carte dans toutes les langues (#248)', () => {
+		const keys = [
+			'tabCard',
+			'tabAccount',
+			'accountOpen',
+			'accountNeedsMfa',
+			'shareTitle',
+			'requestsTitle',
+			'websiteOpen',
+			'offlineUnlock',
+			'offlineWiped'
+		] as const;
+		for (const key of keys) expect(fr.cards[key], `missing cards.${key} in fr`).toBeTruthy();
+		for (const [code, locale] of Object.entries(ALL_LOCALES)) {
+			for (const key of keys) expect(locale.cards[key], `missing cards.${key} in ${code}`).toBeTruthy();
+			for (const status of ['pending', 'accepted', 'declined'] as const) {
+				expect(locale.cards.shareStatus[status], `missing cards.shareStatus.${status} in ${code}`).toBeTruthy();
+			}
+		}
+	});
 });

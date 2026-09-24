@@ -651,6 +651,83 @@ export type Database = {
           },
         ]
       }
+      loyalty_card_accounts: {
+        Row: {
+          card_id: string
+          email: string | null
+          has_password: boolean
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          card_id: string
+          email?: string | null
+          has_password?: boolean
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          card_id?: string
+          email?: string | null
+          has_password?: boolean
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "loyalty_card_accounts_card_id_fkey"
+            columns: ["card_id"]
+            isOneToOne: true
+            referencedRelation: "loyalty_cards"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      loyalty_card_shares: {
+        Row: {
+          card_id: string
+          created_at: string
+          decided_at: string | null
+          decided_by: string | null
+          household_id: string
+          shared_by: string | null
+          status: string
+        }
+        Insert: {
+          card_id: string
+          created_at?: string
+          decided_at?: string | null
+          decided_by?: string | null
+          household_id: string
+          shared_by?: string | null
+          status?: string
+        }
+        Update: {
+          card_id?: string
+          created_at?: string
+          decided_at?: string | null
+          decided_by?: string | null
+          household_id?: string
+          shared_by?: string | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "loyalty_card_shares_card_id_fkey"
+            columns: ["card_id"]
+            isOneToOne: false
+            referencedRelation: "loyalty_cards"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "loyalty_card_shares_household_id_fkey"
+            columns: ["household_id"]
+            isOneToOne: false
+            referencedRelation: "households"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       loyalty_cards: {
         Row: {
           brand: string
@@ -665,6 +742,7 @@ export type Database = {
           num: string
           points: number
           secret_code: string | null
+          website_url: string | null
           shop_id: string | null
           tint: string
         }
@@ -681,6 +759,7 @@ export type Database = {
           num?: string
           points?: number
           secret_code?: string | null
+          website_url?: string | null
           shop_id?: string | null
           tint?: string
         }
@@ -697,6 +776,7 @@ export type Database = {
           num?: string
           points?: number
           secret_code?: string | null
+          website_url?: string | null
           shop_id?: string | null
           tint?: string
         }
@@ -1358,6 +1438,31 @@ export type Database = {
       is_conversation_participant: {
         Args: { target: string }
         Returns: boolean
+      }
+      can_view_card: { Args: { target: string }; Returns: boolean }
+      decide_loyalty_card_share: {
+        Args: { card: string; decision: string; target_household: string }
+        Returns: undefined
+      }
+      is_card_owner: { Args: { target: string }; Returns: boolean }
+      pending_loyalty_card_shares: {
+        Args: never
+        Returns: {
+          card_id: string
+          card_name: string
+          created_at: string
+          household_id: string
+          shared_by_name: string | null
+        }[]
+      }
+      read_loyalty_card_password: { Args: { card: string }; Returns: string | null }
+      request_loyalty_card_share: {
+        Args: { card: string; target_household: string }
+        Returns: undefined
+      }
+      set_loyalty_card_account: {
+        Args: { account_email: string; card: string; password: string | null }
+        Returns: undefined
       }
       is_household_member: { Args: { target: string }; Returns: boolean }
       is_household_owner: { Args: { target: string }; Returns: boolean }
