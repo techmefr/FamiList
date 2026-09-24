@@ -4,6 +4,7 @@ import type {
 	Item,
 	List,
 	LoyaltyCard,
+	LoyaltyCardShare,
 	Member,
 	Message,
 	Poll,
@@ -21,7 +22,8 @@ import type {
 	ShopItemOrder,
 	ShopLayout
 } from '$db/schema';
-import { itemOrderKey, memberKey, pollVoteKey, recipeShareKey } from '$db/schema';
+import { cardShareKey, itemOrderKey, memberKey, pollVoteKey, recipeShareKey } from '$db/schema';
+import { toCardShareStatus } from '$domain/card-share';
 import { CODE_TYPES, type CodeType } from '$domain/code-format';
 import { DEFAULT_MEMBER_TINT, DEFAULT_TINT } from '$domain/tint';
 import { DEFAULT_UNIT } from '$domain/units';
@@ -168,6 +170,7 @@ export const toCard = (row: Row): LoyaltyCard => ({
 	code: text(row.code),
 	codeType: toCodeType(text(row.code_type, 'code_39')),
 	secretCode: typeof row.secret_code === 'string' ? row.secret_code : undefined,
+	websiteUrl: typeof row.website_url === 'string' ? row.website_url : undefined,
 	points: typeof row.points === 'number' ? row.points : 0,
 	tint: text(row.tint, DEFAULT_TINT),
 	grad: text(row.grad),
@@ -184,6 +187,7 @@ export const fromCard = (card: LoyaltyCard, householdId: string) => ({
 	code: card.code,
 	code_type: card.codeType,
 	secret_code: card.secretCode ?? null,
+	website_url: card.websiteUrl ?? null,
 	points: card.points,
 	tint: card.tint,
 	grad: card.grad,
@@ -422,6 +426,15 @@ export const fromRecipeShare = (share: RecipeShare) => ({
 	recipe_id: share.recipeId,
 	household_id: share.householdId,
 	shared_by: share.sharedBy ?? null
+});
+
+export const toCardShare = (row: Row): LoyaltyCardShare => ({
+	key: cardShareKey(text(row.card_id), text(row.household_id)),
+	cardId: text(row.card_id),
+	householdId: text(row.household_id),
+	status: toCardShareStatus(row.status),
+	sharedBy: typeof row.shared_by === 'string' ? row.shared_by : undefined,
+	createdAt: Date.parse(text(row.created_at)) || 0
 });
 
 export const toRecipeStep = (row: Row): RecipeStep => ({

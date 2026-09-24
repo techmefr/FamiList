@@ -12,6 +12,7 @@ import {
 	fromShop,
 	toAisle,
 	toCard,
+	toCardShare,
 	toItem,
 	toItemOrder,
 	toLayout,
@@ -234,8 +235,10 @@ describe('toCard / fromCard', () => {
 			tint: 'blue',
 			grad: 'radial',
 			notes: 'note',
-			secret_code: '1234'
+			secret_code: '1234',
+			website_url: 'https://example.org/'
 		});
+		expect(card.websiteUrl).toBe('https://example.org/');
 		expect(card.codeType).toBe('ean_13');
 		expect(card.points).toBe(42);
 		expect(card.notes).toBe('note');
@@ -488,5 +491,26 @@ describe('toPollVote', () => {
 		expect(vote.userId).toBe('u1');
 		expect(vote.key).toContain('o1');
 		expect(vote.key).toContain('u1');
+	});
+});
+
+describe('toCardShare', () => {
+	it('lit le statut et construit la clé du couple carte / cercle', () => {
+		const share = toCardShare({
+			card_id: 'c1',
+			household_id: 'h2',
+			status: 'accepted',
+			shared_by: 'u1',
+			created_at: '2026-09-24T10:00:00Z'
+		});
+		expect(share.key).toBe('c1::h2');
+		expect(share.status).toBe('accepted');
+		expect(share.sharedBy).toBe('u1');
+	});
+
+	it('ne transporte aucun identifiant de compte', () => {
+		const share = toCardShare({ card_id: 'c1', household_id: 'h2', password: 'secret', email: 'a@b.c' });
+		expect(JSON.stringify(share)).not.toContain('secret');
+		expect(JSON.stringify(share)).not.toContain('a@b.c');
 	});
 });

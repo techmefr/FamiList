@@ -1,6 +1,8 @@
 import Dexie, { type EntityTable } from 'dexie';
 import type { CodeType } from '$domain/code-format';
 import type { PriceEntry } from '$domain/price';
+import type { CardShareStatus } from '$domain/card-share';
+import type { DeviceVault, StoredSecret } from '$domain/offline-secret';
 
 export interface Shop {
 	id: string;
@@ -96,6 +98,7 @@ export interface LoyaltyCard {
 	codeType: CodeType;
 	/** A second, shorter code some cards print — a PIN, a code asked for at the till — never the account. */
 	secretCode?: string;
+	websiteUrl?: string;
 	points: number;
 	tint: string;
 	grad: string;
@@ -276,6 +279,21 @@ export interface RecipeShare {
 export const recipeShareKey = (recipeId: string, householdId: string) => `${recipeId}::${householdId}`;
 
 /**
+ * A card offered to another circle, visible there once a member of it accepts. Never carries the account
+ * credentials: those are read on demand from `/cards/[id]/account` and never cached.
+ */
+export interface LoyaltyCardShare {
+	key: string;
+	cardId: string;
+	householdId: string;
+	status: CardShareStatus;
+	sharedBy?: string;
+	createdAt: number;
+}
+
+export const cardShareKey = (cardId: string, householdId: string) => `${cardId}::${householdId}`;
+
+/**
  * A meal plan: several recipes picked together, so that one consolidated shopping list can be generated
  * from all of them at once instead of one per recipe. Like a recipe, generation from it copies into the
  * list rather than linking to it — see `generateMealPlanList`.
@@ -367,6 +385,9 @@ class FamiListDatabase extends Dexie {
 	mealPlanRecipes!: EntityTable<MealPlanRecipe, 'id'>;
 	householdPersons!: EntityTable<HouseholdPerson, 'id'>;
 	recipeShares!: EntityTable<RecipeShare, 'key'>;
+	cardShares!: EntityTable<LoyaltyCardShare, 'key'>;
+	cardSecrets!: EntityTable<StoredSecret, 'cardId'>;
+	deviceVault!: EntityTable<DeviceVault, 'id'>;
 
 	constructor() {
 		super('familist');
@@ -458,6 +479,12 @@ class FamiListDatabase extends Dexie {
 		// primary key in one call is the forbidden pattern (see version 7). Queried both by recipe (does this
 		// one carry a share) and by household (what was shared into this circle).
 		this.version(12).stores({ recipeShares: 'key, recipeId, householdId' });
+
+		this.version(13).stores({
+			cardShares: 'key, cardId, householdId',
+			cardSecrets: 'cardId',
+			deviceVault: 'id'
+		});
 	}
 }
 

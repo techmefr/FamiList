@@ -8,6 +8,7 @@ import {
 	type Item,
 	type List,
 	type LoyaltyCard,
+	type LoyaltyCardShare,
 	type Member,
 	type Message,
 	type Poll,
@@ -34,6 +35,7 @@ import { guessAisleKind, FALLBACK_AISLE_KIND } from '$domain/guess-aisle';
 import { PendingWrites } from '$domain/pending-writes';
 import { groupByAisle, learnedItemOrder } from '$domain/aisle-order';
 import { defaultCircle, ofCircle, resolveAisle, visibleLists, visibleRecipes } from '$domain/circle';
+import { shareStatusOf, visibleCards } from '$domain/card-share';
 import { session } from '$stores/session.svelte';
 import { sync } from '$sync/index.svelte';
 import {
@@ -130,6 +132,7 @@ class DataStore {
 	recipeIngredients = $state<RecipeIngredient[]>([]);
 	recipeSteps = $state<RecipeStep[]>([]);
 	recipeShares = $state<RecipeShare[]>([]);
+	cardShares = $state<LoyaltyCardShare[]>([]);
 	mealPlanRecipes = $state<MealPlanRecipe[]>([]);
 
 	activeShopId = $state<string>('');
@@ -143,7 +146,7 @@ class DataStore {
 
 	shops = $derived(ofCircle(this.cachedShops, this.circle));
 	aisles = $derived(ofCircle(this.cachedAisles, this.circle));
-	cards = $derived(ofCircle(this.cachedCards, this.circle));
+	cards = $derived(visibleCards(this.cachedCards, this.cardShares, this.circle));
 	members = $derived(ofCircle(this.cachedMembers, this.circle));
 	prices = $derived(ofCircle(this.cachedPrices, this.circle));
 	recipes = $derived(visibleRecipes(this.cachedRecipes, this.recipeShares, this.circle));
@@ -227,6 +230,7 @@ class DataStore {
 			recipeIngredients,
 			recipeSteps,
 			recipeShares,
+			cardShares,
 			mealPlans,
 			mealPlanRecipes,
 			householdPersons,
@@ -249,6 +253,7 @@ class DataStore {
 			db.recipeIngredients.toArray(),
 			db.recipeSteps.toArray(),
 			db.recipeShares.toArray(),
+			db.cardShares.toArray(),
 			db.mealPlans.toArray(),
 			db.mealPlanRecipes.toArray(),
 			db.householdPersons.toArray(),
@@ -265,7 +270,13 @@ class DataStore {
 		// `cachedCards` now would clobber the optimistic card until some later cycle picks it up. Skipping this
 		// cycle costs nothing: `hydrate()` runs again on the next sync round-trip, by which point the write has
 		// settled and the read will see it.
-		if (this.#pendingWrites.count === 0) this.cachedCards = cards;
+		if (this.#pendingWrites.count === 0) {
+			this.cachedCards = cards;
+			void db.cardSecrets
+				.where('cardId')
+				.noneOf(cards.map((card) => card.id))
+				.delete();
+		}
 
 		this.cachedMembers = members;
 		this.layouts = layouts;
@@ -279,6 +290,7 @@ class DataStore {
 		this.recipeIngredients = recipeIngredients;
 		this.recipeSteps = recipeSteps;
 		this.recipeShares = recipeShares;
+		this.cardShares = cardShares;
 		this.cachedMealPlans = mealPlans;
 		this.mealPlanRecipes = mealPlanRecipes;
 		this.cachedHouseholdPersons = householdPersons;
@@ -860,9 +872,19 @@ class DataStore {
 		this.push('loyalty_cards', snapshot, fromCard);
 	}
 
+	/** A card shared into this circle is read here, never rewritten: only its own household edits it. */
+	isOwnCard(card: LoyaltyCard) {
+		return card.householdId === this.circle;
+	}
+
+	cardShareStatus(cardId: string, householdId: string) {
+		return shareStatusOf(this.cardShares, cardId, householdId);
+	}
+
 	removeCard(id: string) {
 		this.cachedCards = this.cachedCards.filter((c) => c.id !== id);
 		db.cards.delete(id);
+		db.cardSecrets.delete(id);
 		sync.enqueue({ table: 'loyalty_cards', op: 'delete', match: { id } });
 	}
 
@@ -1950,6 +1972,10 @@ class DataStore {
 			db.recipes.clear(),
 			db.recipeIngredients.clear(),
 			db.recipeSteps.clear(),
+			db.recipeShares.clear(),
+			db.cardShares.clear(),
+			db.cardSecrets.clear(),
+			db.deviceVault.clear(),
 			db.mealPlans.clear(),
 			db.mealPlanRecipes.clear(),
 			db.conversations.clear()
