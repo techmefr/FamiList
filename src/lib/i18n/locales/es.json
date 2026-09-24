@@ -888,7 +888,21 @@
 	},
 	"sync": {
 		"offline": "Sin conexión — tus cambios se enviarán al volver la red",
-		"error": "No se puede sincronizar ahora mismo"
+		"error": "No se puede sincronizar ahora mismo",
+		"rejected": {
+			"message": "No se pudo guardar {what} en el servidor",
+			"retry": "Reintentar",
+			"ignore": "Ignorar",
+			"entities": {
+				"card": "esta tarjeta de fidelidad",
+				"list": "esta lista",
+				"item": "este artículo",
+				"shop": "esta tienda",
+				"recipe": "esta receta",
+				"message": "este mensaje",
+				"other": "este cambio"
+			}
+		}
 	},
 	"chat": {
 		"title": "Conversación",

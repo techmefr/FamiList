@@ -34,6 +34,7 @@
 	import { applyReminders } from '$native/reminders';
 	import { applyNearbyWatch } from '$native/nearby';
 	import SyncStatus from '$components/app/SyncStatus.svelte';
+	import SyncRejections from '$components/app/SyncRejections.svelte';
 	import InstallBanner from '$components/app/InstallBanner.svelte';
 	import CreateMenu from '$components/app/CreateMenu.svelte';
 	import Logo from '$components/app/Logo.svelte';
@@ -577,6 +578,7 @@
 
 		<div>
 			<SyncStatus />
+			<SyncRejections />
 			<InstallBanner />
 
 			<!--

@@ -888,7 +888,21 @@
 	},
 	"sync": {
 		"offline": "Non in linea — le modifiche partiranno al ritorno della rete",
-		"error": "Sincronizzazione non possibile al momento"
+		"error": "Sincronizzazione non possibile al momento",
+		"rejected": {
+			"message": "Impossibile salvare {what} sul server",
+			"retry": "Riprova",
+			"ignore": "Ignora",
+			"entities": {
+				"card": "questa carta fedeltà",
+				"list": "questa lista",
+				"item": "questo articolo",
+				"shop": "questo negozio",
+				"recipe": "questa ricetta",
+				"message": "questo messaggio",
+				"other": "questa modifica"
+			}
+		}
 	},
 	"chat": {
 		"title": "Conversazione",

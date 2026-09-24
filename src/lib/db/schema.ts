@@ -348,6 +348,22 @@ export interface OutboxEntry {
 	payload?: Record<string, unknown>;
 }
 
+/**
+ * A write the server refused for good, kept until the person retries or lets it go.
+ *
+ * Dropped silently, the next re-read would replace the local row with the server's and the entry would vanish.
+ */
+export interface Rejection {
+	key: string;
+	table: string;
+	op: OutboxEntry['op'];
+	match: Record<string, string>;
+	payload?: Record<string, unknown>;
+	code: string;
+	message: string;
+	at: string;
+}
+
 export const itemOrderKey = (shopId: string, aisleId: string) => `${shopId}::${aisleId}`;
 
 export const memberKey = (householdId: string, userId: string) => `${householdId}::${userId}`;
@@ -388,6 +404,7 @@ class FamiListDatabase extends Dexie {
 	cardShares!: EntityTable<LoyaltyCardShare, 'key'>;
 	cardSecrets!: EntityTable<StoredSecret, 'cardId'>;
 	deviceVault!: EntityTable<DeviceVault, 'id'>;
+	rejections!: EntityTable<Rejection, 'key'>;
 
 	constructor() {
 		super('familist');
@@ -485,6 +502,8 @@ class FamiListDatabase extends Dexie {
 			cardSecrets: 'cardId',
 			deviceVault: 'id'
 		});
+
+		this.version(14).stores({ rejections: 'key' });
 	}
 }
 

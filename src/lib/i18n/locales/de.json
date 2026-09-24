@@ -888,7 +888,21 @@
 	},
 	"sync": {
 		"offline": "Offline — Ihre Änderungen werden übertragen, sobald das Netz zurück ist",
-		"error": "Synchronisierung derzeit nicht möglich"
+		"error": "Synchronisierung derzeit nicht möglich",
+		"rejected": {
+			"message": "{what} konnte nicht auf dem Server gespeichert werden",
+			"retry": "Erneut versuchen",
+			"ignore": "Ignorieren",
+			"entities": {
+				"card": "Diese Kundenkarte",
+				"list": "Diese Liste",
+				"item": "Dieser Artikel",
+				"shop": "Dieses Geschäft",
+				"recipe": "Dieses Rezept",
+				"message": "Diese Nachricht",
+				"other": "Diese Änderung"
+			}
+		}
 	},
 	"chat": {
 		"title": "Unterhaltung",

@@ -888,7 +888,21 @@
 	},
 	"sync": {
 		"offline": "Tsy misy fifandraisana — halefa rehefa miverina ny aterineto ny fanovana",
-		"error": "Tsy afaka mampifanaraka izao"
+		"error": "Tsy afaka mampifanaraka izao",
+		"rejected": {
+			"message": "Tsy voatahiry tao amin'ny mpizara {what}",
+			"retry": "Andramo indray",
+			"ignore": "Avelao",
+			"entities": {
+				"card": "ity karatra fanomezana tombony ity",
+				"list": "ity lisitra ity",
+				"item": "ity entana ity",
+				"shop": "ity fivarotana ity",
+				"recipe": "ity fomba fahandro ity",
+				"message": "ity hafatra ity",
+				"other": "ity fanovana ity"
+			}
+		}
 	},
 	"chat": {
 		"title": "Resaka",

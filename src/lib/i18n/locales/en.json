@@ -888,7 +888,21 @@
 	},
 	"sync": {
 		"offline": "Offline — your changes will sync when the network is back",
-		"error": "Cannot sync right now"
+		"error": "Cannot sync right now",
+		"rejected": {
+			"message": "Could not save {what} on the server",
+			"retry": "Retry",
+			"ignore": "Ignore",
+			"entities": {
+				"card": "this loyalty card",
+				"list": "this list",
+				"item": "this item",
+				"shop": "this shop",
+				"recipe": "this recipe",
+				"message": "this message",
+				"other": "this change"
+			}
+		}
 	},
 	"chat": {
 		"title": "Chat",
