@@ -5,22 +5,22 @@ on:
     branches: [main]
   pull_request:
 
-# Les deux jobs compilent l'application, qui lit ces variables à la compilation. Ce sont celles de
-# la pile Supabase locale, publiques par construction : la CI ne joint aucun projet en ligne.
+# Both jobs compile the app, which reads these variables at build time. They are the ones of the
+# local Supabase stack, public by design: CI reaches no online project.
 env:
   PUBLIC_SUPABASE_URL: http://127.0.0.1:54321
   PUBLIC_SUPABASE_ANON_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0
 
-# Un push qui en rattrape un autre annule la file en cours : ce qui compte, c'est le dernier état
-# de la branche, pas chaque état intermédiaire.
+# A push that catches up with another cancels the run in progress: what matters is the latest state
+# of the branch, not every intermediate state.
 concurrency:
   group: ci-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  # Rapide et sans dépendance externe : le check svelte-check plus la couverture unitaire de la
-  # logique pure. Sépare ce job du reste pour avoir un retour avant même que Supabase ait fini de
-  # démarrer dans le job e2e.
+  # Fast and with no external dependency: svelte-check plus unit coverage of the pure logic.
+  # Kept apart from the rest to get feedback before Supabase has even finished starting in the
+  # e2e job.
   check-and-unit:
     runs-on: ubuntu-latest
     steps:
@@ -35,10 +35,10 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
-      - name: Vérification des types
+      - name: Type check
         run: pnpm run check
 
-      - name: Tests unitaires (couverture ≥ 80 % sur la logique pure)
+      - name: Unit tests (coverage ≥ 80% on pure logic)
         run: pnpm run test:coverage
 
       - name: Build
@@ -58,26 +58,26 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
-      - name: Navigateur Playwright
+      - name: Playwright browser
         run: pnpm exec playwright install --with-deps chromium
 
-      # La CLI vient du `package.json`, pas d'une action qui suivrait une version flottante : la
-      # CI et la machine du dev appliquent alors les mêmes migrations avec le même outil. Une CLI
-      # trop ancienne refuse `supabase/config.toml`, et personne ne veut découvrir ça ici.
+      # The CLI comes from `package.json`, not from an action tracking a floating version: CI and
+      # the developer's machine then apply the same migrations with the same tool. A CLI that is
+      # too old rejects `supabase/config.toml`, and nobody wants to find that out here.
       #
-      # `db reset` applique les migrations puis `supabase/seed.sql`, qui pose le compte fixe
-      # utilisé par les E2E (e2e@familist.test) — confirmé et approuvé sans mail ni clé de service.
-      - name: Pile Supabase locale
+      # `db reset` applies the migrations then `supabase/seed.sql`, which creates the fixed account
+      # used by the E2E tests (e2e@familist.test), confirmed and approved without mail or service key.
+      - name: Local Supabase stack
         run: |
           pnpm run db:start
           pnpm run db:reset
 
-      # Inclut `e2e/a11y.spec.ts` : axe-core passe sur les écrans principaux, connectés compris, et
-      # échoue sur toute violation absente de `e2e/a11y-baseline.json`.
-      - name: Tests E2E et accessibilité
+      # Includes `e2e/a11y.spec.ts`: axe-core runs on the main screens, signed-in ones included, and
+      # fails on any violation missing from `e2e/a11y-baseline.json`.
+      - name: E2E and accessibility tests
         run: pnpm exec playwright test
 
-      - name: Rapport Playwright
+      - name: Playwright report
         if: failure()
         uses: actions/upload-artifact@v4
         with:

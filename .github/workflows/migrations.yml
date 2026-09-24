@@ -30,8 +30,8 @@ jobs:
           echo "::add-mask::$password"
           echo "DB_URL=postgresql://postgres.${{ vars.SUPABASE_PROJECT_REF }}:${password}@${SUPABASE_DB_HOST}:5432/postgres" >> "$GITHUB_ENV"
 
-      - name: Migrations en attente
+      - name: Pending migrations
         run: supabase db push --db-url "$DB_URL" --dry-run
 
-      - name: Application en prod
+      - name: Apply to production
         run: supabase db push --db-url "$DB_URL"

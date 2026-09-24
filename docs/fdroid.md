@@ -1,13 +1,13 @@
-# Publier FamiList sur F-Droid
+# Publishing FamiList on F-Droid
 
-## Ce que contient le dépôt
+## What the repository contains
 
-- Deux flavors Gradle : `play` (avec ML Kit) et `fdroid` (sans aucun composant Google).
-- `FAMILIST_FLAVOR=fdroid pnpm exec cap sync android` retire le plugin ML Kit des fichiers Gradle générés. L'app retombe alors sur le scan caméra + ZXing.
-- Les métadonnées de fiche dans `fastlane/metadata/android/{fr-FR,en-US}/`.
-- Le brouillon de recette fdroiddata dans `metadata/fr.techmefr.familist.yml`.
+- Two Gradle flavors: `play` (with ML Kit) and `fdroid` (without any Google component).
+- `FAMILIST_FLAVOR=fdroid pnpm exec cap sync android` removes the ML Kit plugin from the generated Gradle files. The app then falls back to camera scanning + ZXing.
+- The store listing metadata in `fastlane/metadata/android/{fr-FR,en-US}/`.
+- The draft fdroiddata recipe in `metadata/fr.techmefr.familist.yml`.
 
-## Build F-Droid en local
+## Local F-Droid build
 
 ```sh
 pnpm install --frozen-lockfile
@@ -16,13 +16,13 @@ FAMILIST_FLAVOR=fdroid pnpm exec cap sync android
 cd android && ./gradlew assembleFdroidRelease
 ```
 
-Relancer `pnpm exec cap sync android` sans la variable pour revenir au flavor `play`.
+Run `pnpm exec cap sync android` again without the variable to go back to the `play` flavor.
 
-## Reste à faire
+## Still to do
 
-1. À chaque release, incrémenter `versionCode` et `versionName` dans `android/app/build.gradle`, puis ajouter `fastlane/metadata/android/*/changelogs/<versionCode>.txt`.
-2. Créer et pousser le tag : `git tag v0.1.0 && git push origin v0.1.0`.
-4. Ajouter des captures dans `fastlane/metadata/android/<langue>/images/phoneScreenshots/` et une icône `images/icon.png` (512 px).
-5. Forker https://gitlab.com/fdroid/fdroiddata et copier `metadata/fr.techmefr.familist.yml` dans son `metadata/`. Vérifier ensuite avec `fdroid readmeta`, `fdroid lint fr.techmefr.familist` et `fdroid build -v -l fr.techmefr.familist`.
-6. Ouvrir la MR sur fdroiddata avec le modèle « App inclusion », puis répondre aux relecteurs.
-7. Facultatif : rendre les builds reproductibles avec `Binaries:` et `AllowedAPKSigningKeys:` une fois l'APK signé publié dans les releases GitHub.
+1. On every release, increment `versionCode` and `versionName` in `android/app/build.gradle`, then add `fastlane/metadata/android/*/changelogs/<versionCode>.txt`.
+2. Create and push the tag: `git tag v0.1.0 && git push origin v0.1.0`.
+4. Add screenshots in `fastlane/metadata/android/<language>/images/phoneScreenshots/` and an icon `images/icon.png` (512 px).
+5. Fork https://gitlab.com/fdroid/fdroiddata and copy `metadata/fr.techmefr.familist.yml` into its `metadata/`. Then check with `fdroid readmeta`, `fdroid lint fr.techmefr.familist` and `fdroid build -v -l fr.techmefr.familist`.
+6. Open the MR on fdroiddata with the "App inclusion" template, then answer the reviewers.
+7. Optional: make builds reproducible with `Binaries:` and `AllowedAPKSigningKeys:` once the signed APK is published in the GitHub releases.

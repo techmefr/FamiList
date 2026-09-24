@@ -18,6 +18,6 @@ services:
     environment:
       PUBLIC_SUPABASE_URL: ${PUBLIC_SUPABASE_URL}
       PUBLIC_SUPABASE_ANON_KEY: ${PUBLIC_SUPABASE_ANON_KEY}
-      # Facultatif : laissez vide pour ne rien changer, aucun autre instance n'est concernee.
+      # Optional: leave empty to change nothing, no other instance is affected.
       PUBLIC_SENTRY_DSN: ${PUBLIC_SENTRY_DSN:-}
     restart: unless-stopped
