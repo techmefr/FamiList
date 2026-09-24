@@ -610,6 +610,9 @@
 	"auth": {
 		"title": "Entrar",
 		"brandTagline": "As compras, em família.",
+		"brandHeadline": "As compras da casa, ",
+		"brandHeadlineAccent": "sempre atualizadas.",
+		"brandFooter": "Código aberto, auto-hospedável.",
 		"signInBody": "Volte às suas listas e às da sua casa.",
 		"signUpBody": "Demora um instante, e as suas definições acompanham-no.",
 		"signIn": "Entrar",

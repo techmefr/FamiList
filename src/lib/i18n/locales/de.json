@@ -610,6 +610,9 @@
 	"auth": {
 		"title": "Anmelden",
 		"brandTagline": "Euer Einkauf, gemeinsam.",
+		"brandHeadline": "Der Einkauf der Familie, ",
+		"brandHeadlineAccent": "immer aktuell.",
+		"brandFooter": "Open Source, selbst hostbar.",
 		"signInBody": "Zurück zu Ihren Listen und denen Ihres Haushalts.",
 		"signUpBody": "Das dauert nur einen Moment, und Ihre Einstellungen kommen mit.",
 		"signIn": "Anmelden",

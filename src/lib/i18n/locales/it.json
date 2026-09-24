@@ -610,6 +610,9 @@
 	"auth": {
 		"title": "Accedi",
 		"brandTagline": "La spesa, insieme.",
+		"brandHeadline": "La spesa di casa, ",
+		"brandHeadlineAccent": "sempre aggiornata.",
+		"brandFooter": "Open source, auto-ospitabile.",
 		"signInBody": "Ritrova le tue liste e quelle della tua famiglia.",
 		"signUpBody": "Bastano pochi istanti, e le tue impostazioni ti seguono.",
 		"signIn": "Accedi",
