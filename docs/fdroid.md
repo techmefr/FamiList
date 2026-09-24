@@ -22,7 +22,6 @@ Relancer `pnpm exec cap sync android` sans la variable pour revenir au flavor `p
 
 1. À chaque release, incrémenter `versionCode` et `versionName` dans `android/app/build.gradle`, puis ajouter `fastlane/metadata/android/*/changelogs/<versionCode>.txt`.
 2. Créer et pousser le tag : `git tag v0.1.0 && git push origin v0.1.0`.
-3. Dans la recette, remplacer `REPLACE_WITH_SHA256` par la somme officielle de l'archive Node (`SHASUMS256.txt` sur nodejs.org).
 4. Ajouter des captures dans `fastlane/metadata/android/<langue>/images/phoneScreenshots/` et une icône `images/icon.png` (512 px).
 5. Forker https://gitlab.com/fdroid/fdroiddata et copier `metadata/fr.techmefr.familist.yml` dans son `metadata/`. Vérifier ensuite avec `fdroid readmeta`, `fdroid lint fr.techmefr.familist` et `fdroid build -v -l fr.techmefr.familist`.
 6. Ouvrir la MR sur fdroiddata avec le modèle « App inclusion », puis répondre aux relecteurs.
