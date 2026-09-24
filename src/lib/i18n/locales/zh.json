@@ -164,6 +164,8 @@
 		"secretCodeHint": "与条形码不同的代码（如果卡片上有）。",
 		"tabCard": "卡片",
 		"tabAccount": "账户",
+		"tabCodes": "代码",
+		"noSecretCode": "此卡没有密码。",
 		"accountEmpty": "此卡未保存在线账户。",
 		"accountEmail": "账户邮箱",
 		"accountPasswordSaved": "密码已保存",

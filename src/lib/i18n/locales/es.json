@@ -165,6 +165,8 @@
 		"secretCodeHint": "Un código distinto del código de barras, si la tarjeta lo tiene.",
 		"tabCard": "Tarjeta",
 		"tabAccount": "Cuenta",
+		"tabCodes": "Códigos",
+		"noSecretCode": "No hay código secreto para esta tarjeta.",
 		"accountEmpty": "No hay ninguna cuenta en línea guardada para esta tarjeta.",
 		"accountEmail": "Correo de la cuenta",
 		"accountPasswordSaved": "Contraseña guardada",

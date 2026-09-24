@@ -49,10 +49,11 @@
 		accountState = result.ok ? 'ready' : 'error';
 	}
 
+	let detail = $state<'notes' | 'codes'>('notes');
+
 	/**
-	 * The code stays masked until asked for, on every opening — including on a device that never leaves the
-	 * owner's hand. A glance over the shoulder at a till, or a screen left unlocked, must not hand over a
-	 * loyalty account for free.
+	 * Only the secret code is masked, never the barcode: the barcode is what the till scans, and a
+	 * glance over the shoulder at the PIN is what the mask guards against.
 	 */
 	let revealed = $state(false);
 </script>
@@ -139,97 +140,120 @@
 
 		{#if tab === 'card'}
 			<div class="fl-rise rounded-lg bg-white p-5 shadow-[0_24px_60px_rgba(0,0,0,0.4)]">
-				{#if revealed}
-					<p class="text-caption text-center font-bold tracking-widest text-neutral-900">
-						{t('cards.showAtCheckout')}
-					</p>
+				<p class="text-caption text-center font-bold tracking-widest text-neutral-900">
+					{t('cards.showAtCheckout')}
+				</p>
 
-					<div class="my-5 flex justify-center">
-						<CodeImage value={card.code || card.num} codeType={card.codeType} />
-					</div>
+				<div class="my-5 flex justify-center">
+					<CodeImage value={card.code || card.num} codeType={card.codeType} />
+				</div>
 
-					<p class="text-label text-center font-mono tracking-widest break-all text-neutral-900">
-						{card.code || card.num}
-					</p>
-					<p class="text-caption mt-2 text-center font-semibold text-neutral-500">
-						{t(`cards.type.${card.codeType}`)}
-					</p>
+				<p class="text-label text-center font-mono tracking-widest break-all text-neutral-900">
+					{card.code || card.num}
+				</p>
+				<p class="text-caption mt-2 text-center font-semibold text-neutral-500">
+					{t(`cards.type.${card.codeType}`)}
+				</p>
+			</div>
 
-					{#if card.secretCode}
-						<div class="mt-4 border-t border-neutral-200 pt-4 text-center">
-							<p class="text-caption font-medium text-neutral-500">{t('cards.secretCode')}</p>
-							<p
-								class="text-label mt-1 font-mono tracking-widest text-neutral-900"
-								data-test-id="card-secret-code-value"
+			<p class="text-caption mt-4 flex items-center justify-center gap-2 text-white/65">
+				<Sun size={16} aria-hidden="true" />
+				{t('cards.brightnessHint')}
+			</p>
+
+			<div class="mt-5 flex gap-2 rounded-full bg-white/10 p-1" role="tablist">
+				<button
+					type="button"
+					role="tab"
+					aria-selected={detail === 'notes'}
+					onclick={() => (detail = 'notes')}
+					data-test-id="card-detail-notes"
+					class="fl-press text-label min-h-[44px] flex-1 rounded-full py-2 font-medium {detail === 'notes'
+						? 'bg-white text-neutral-900'
+						: 'text-white/70'}"
+				>
+					{t('cards.notes')}
+				</button>
+				<button
+					type="button"
+					role="tab"
+					aria-selected={detail === 'codes'}
+					onclick={() => (detail = 'codes')}
+					data-test-id="card-detail-codes"
+					class="fl-press text-label min-h-[44px] flex-1 rounded-full py-2 font-medium {detail === 'codes'
+						? 'bg-white text-neutral-900'
+						: 'text-white/70'}"
+				>
+					{t('cards.tabCodes')}
+				</button>
+			</div>
+
+			{#if detail === 'notes'}
+				<section class="mt-3 rounded-lg border border-white/15 bg-white/5 p-4">
+					{#if owned}
+						<div class="mb-3 flex justify-end">
+							<Button
+								variant={draft === null ? 'outline' : 'default'}
+								onclick={() => (draft === null ? (draft = card.notes ?? '') : save())}
+								data-test-id="card-notes-toggle"
 							>
-								{card.secretCode}
-							</p>
+								{draft === null ? t('common.edit') : t('common.save')}
+							</Button>
 						</div>
 					{/if}
 
-					<button
-						type="button"
-						onclick={() => (revealed = false)}
-						data-test-id="card-code-hide"
-						class="fl-press text-label mx-auto mt-4 flex items-center gap-2 rounded-full px-4 py-2 text-neutral-500"
-					>
-						<EyeOff size={18} aria-hidden="true" />
-						{t('cards.hideCode')}
-					</button>
-				{:else}
-					<p class="text-label text-center font-mono tracking-widest text-neutral-300" aria-hidden="true">
-						••••••••••••
-					</p>
-					<button
-						type="button"
-						onclick={() => (revealed = true)}
-						data-test-id="card-code-reveal"
-						class="fl-press bg-primary text-primary-foreground text-label mx-auto mt-4 flex min-h-[max(2.75rem,44px)] items-center gap-2 rounded-full px-6 font-medium"
-					>
-						<Eye size={18} aria-hidden="true" />
-						{t('cards.revealCode')}
-					</button>
-					<p class="text-caption mt-3 text-center text-neutral-500">{t('cards.codeMaskedHint')}</p>
-				{/if}
-			</div>
-
-			{#if revealed}
-				<p class="text-caption mt-4 flex items-center justify-center gap-2 text-white/65">
-					<Sun size={16} aria-hidden="true" />
-					{t('cards.brightnessHint')}
-				</p>
-			{/if}
-
-			<section class="mt-5 rounded-lg border border-white/15 bg-white/5 p-4">
-				<div class="mb-3 flex items-center justify-between gap-3">
-					<h2 class="text-product font-semibold text-white">{t('cards.notes')}</h2>
-					{#if owned}
-						<Button
-							variant={draft === null ? 'outline' : 'default'}
-							onclick={() => (draft === null ? (draft = card.notes ?? '') : save())}
-							data-test-id="card-notes-toggle"
-						>
-							{draft === null ? t('common.edit') : t('common.save')}
-						</Button>
+					{#if draft !== null}
+						<textarea
+							bind:value={draft}
+							rows="3"
+							placeholder={t('cards.notesPlaceholder')}
+							data-test-id="card-notes"
+							class="w-full rounded-md border border-white/20 bg-black/40 p-3 text-white"
+						></textarea>
+					{:else}
+						<p class="text-white/85" data-test-id="card-notes-text">
+							{card.notes || t('cards.noNotes')}
+						</p>
 					{/if}
-				</div>
-
-				{#if draft !== null}
-					<textarea
-						bind:value={draft}
-						rows="3"
-						placeholder={t('cards.notesPlaceholder')}
-						data-test-id="card-notes"
-						class="w-full rounded-md border border-white/20 bg-black/40 p-3 text-white"
-					></textarea>
-				{:else}
-					<p class="text-white/85" data-test-id="card-notes-text">
-						{card.notes || t('cards.noNotes')}
-					</p>
-				{/if}
-
-				<p class="text-caption mt-4 text-white/50">{t('cards.secretNotice')}</p>
-			</section>
+				</section>
+			{:else}
+				<section
+					class="mt-3 rounded-lg border border-white/15 bg-white/5 p-4 text-center text-white"
+					data-test-id="card-codes"
+				>
+					<p class="text-caption font-medium text-white/60">{t('cards.secretCode')}</p>
+					{#if !card.secretCode}
+						<p class="text-white/85 mt-2" data-test-id="card-secret-code-empty">{t('cards.noSecretCode')}</p>
+					{:else if revealed}
+						<p
+							class="text-label mt-2 font-mono tracking-widest"
+							data-test-id="card-secret-code-value"
+						>
+							{card.secretCode}
+						</p>
+						<button
+							type="button"
+							onclick={() => (revealed = false)}
+							data-test-id="card-code-hide"
+							class="fl-press text-label mx-auto mt-3 flex min-h-[44px] items-center gap-2 rounded-full px-4 py-2 text-white/70"
+						>
+							<EyeOff size={18} aria-hidden="true" />
+							{t('cards.hideCode')}
+						</button>
+					{:else}
+						<p class="text-label mt-2 font-mono tracking-widest text-white/40" aria-hidden="true">••••••</p>
+						<button
+							type="button"
+							onclick={() => (revealed = true)}
+							data-test-id="card-code-reveal"
+							class="fl-press bg-primary text-primary-foreground text-label mx-auto mt-3 flex min-h-[max(2.75rem,44px)] items-center gap-2 rounded-full px-6 font-medium"
+						>
+							<Eye size={18} aria-hidden="true" />
+							{t('cards.revealCode')}
+						</button>
+					{/if}
+				</section>
+			{/if}
 		{:else}
 			<section
 				class="rounded-lg border border-white/15 bg-white/5 p-4 text-white"

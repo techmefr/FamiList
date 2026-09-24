@@ -165,6 +165,8 @@
 		"secretCodeHint": "Ein vom Barcode getrennter Code, falls die Karte einen hat.",
 		"tabCard": "Karte",
 		"tabAccount": "Konto",
+		"tabCodes": "Codes",
+		"noSecretCode": "Kein Geheimcode für diese Karte.",
 		"accountEmpty": "Für diese Karte ist kein Online-Konto gespeichert.",
 		"accountEmail": "E-Mail des Kontos",
 		"accountPasswordSaved": "Passwort gespeichert",

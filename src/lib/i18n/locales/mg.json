@@ -165,6 +165,8 @@
 		"secretCodeHint": "Kaody hafa noho ny kaody tsipika, raha misy amin'ny karatra.",
 		"tabCard": "Karatra",
 		"tabAccount": "Kaonty",
+		"tabCodes": "Kaody",
+		"noSecretCode": "Tsy misy kaody miafina ho an ity karatra ity.",
 		"accountEmpty": "Tsy misy kaonty an-tserasera voatahiry ho an'ity karatra ity.",
 		"accountEmail": "Mailaka an'ny kaonty",
 		"accountPasswordSaved": "Voatahiry ny teny miafina",
