@@ -1331,5 +1331,14 @@
 		"listPlaceholder": "Compras de la semana",
 		"itemPlaceholder": "Tomates",
 		"back": "Volver a las listas"
+	},
+	"legal": {
+		"title": "Información legal",
+		"notice": "Aviso legal",
+		"terms": "Condiciones de uso",
+		"privacy": "Política de privacidad",
+		"sales": "Condiciones de venta",
+		"updated": "Última actualización:",
+		"signupConsent": "Al crear una cuenta, aceptas las {terms} y la {privacy}."
 	}
 }

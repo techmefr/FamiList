@@ -1330,5 +1330,14 @@
 		"listPlaceholder": "Courses de la semaine",
 		"itemPlaceholder": "Tomates",
 		"back": "Retour aux listes"
+	},
+	"legal": {
+		"title": "Informations légales",
+		"notice": "Mentions légales",
+		"terms": "Conditions générales d’utilisation",
+		"privacy": "Politique de confidentialité",
+		"sales": "Conditions générales de vente",
+		"updated": "Dernière mise à jour :",
+		"signupConsent": "En créant un compte, vous acceptez les {terms} et la {privacy}."
 	}
 }

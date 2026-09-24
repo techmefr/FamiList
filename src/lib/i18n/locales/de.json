@@ -1331,5 +1331,14 @@
 		"listPlaceholder": "Einkauf der Woche",
 		"itemPlaceholder": "Tomaten",
 		"back": "Zurück zu den Listen"
+	},
+	"legal": {
+		"title": "Rechtliches",
+		"notice": "Impressum",
+		"terms": "Nutzungsbedingungen",
+		"privacy": "Datenschutzerklärung",
+		"sales": "Verkaufsbedingungen",
+		"updated": "Zuletzt aktualisiert:",
+		"signupConsent": "Mit der Erstellung eines Kontos akzeptierst du die {terms} und die {privacy}."
 	}
 }

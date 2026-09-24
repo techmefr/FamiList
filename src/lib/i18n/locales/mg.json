@@ -1331,5 +1331,14 @@
 		"listPlaceholder": "Fividianana amin'ny herinandro",
 		"itemPlaceholder": "Voatabia",
 		"back": "Miverina any amin'ny lisitra"
+	},
+	"legal": {
+		"title": "Fampahalalana ara-dalàna",
+		"notice": "Fampahafantarana ara-dalàna",
+		"terms": "Fepetra fampiasana",
+		"privacy": "Politika momba ny fiainana manokana",
+		"sales": "Fepetra fivarotana",
+		"updated": "Fanavaozana farany:",
+		"signupConsent": "Amin’ny famoronana kaonty dia manaiky ny {terms} sy ny {privacy} ianao."
 	}
 }

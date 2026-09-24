@@ -1320,5 +1320,14 @@
 		"listPlaceholder": "本周购物",
 		"itemPlaceholder": "西红柿",
 		"back": "返回清单"
+	},
+	"legal": {
+		"title": "法律信息",
+		"notice": "法律声明",
+		"terms": "使用条款",
+		"privacy": "隐私政策",
+		"sales": "销售条款",
+		"updated": "最后更新：",
+		"signupConsent": "创建账户即表示您接受{terms}和{privacy}。"
 	}
 }

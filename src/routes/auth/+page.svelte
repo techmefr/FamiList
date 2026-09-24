@@ -2,6 +2,7 @@
 	import { t } from '$i18n/index.svelte';
 	import Logo from '$components/app/Logo.svelte';
 	import AuthForm from '$components/app/AuthForm.svelte';
+	import { LEGAL_DOCUMENTS, legalPath } from '$domain/legal';
 
 	/**
 	 * The title follows the chosen tab: the page announced "Sign in" above a sign-up form, which is exactly
@@ -37,3 +38,17 @@
 <p class="text-muted-foreground mt-2 text-center text-balance">{body}</p>
 
 <AuthForm bind:mode />
+
+<nav aria-label={t('legal.title')} class="mt-6">
+	<ul class="text-caption flex flex-wrap justify-center gap-x-4 gap-y-2">
+		{#each LEGAL_DOCUMENTS as id (id)}
+			<li>
+				<a
+					href={legalPath(id)}
+					class="text-muted-foreground hover:text-foreground underline"
+					data-test-id="auth-legal-link-{id}">{t(`legal.${id}`)}</a
+				>
+			</li>
+		{/each}
+	</ul>
+</nav>

@@ -1331,5 +1331,14 @@
 		"listPlaceholder": "This week's groceries",
 		"itemPlaceholder": "Tomatoes",
 		"back": "Back to lists"
+	},
+	"legal": {
+		"title": "Legal information",
+		"notice": "Legal notice",
+		"terms": "Terms of use",
+		"privacy": "Privacy policy",
+		"sales": "Terms of sale",
+		"updated": "Last updated:",
+		"signupConsent": "By creating an account, you accept the {terms} and the {privacy}."
 	}
 }

@@ -24,6 +24,7 @@
 	import { settings } from '$stores/settings.svelte';
 	import { ai } from '$stores/ai.svelte';
 	import { navDirection } from '$domain/motion';
+	import { isLegalRoute } from '$domain/legal';
 	import { entriesSince } from '$domain/changelog';
 	import { version as appVersion } from '../../package.json';
 	import { pushAppearance, syncAppearance } from '$sync/appearance';
@@ -174,6 +175,8 @@
 	 */
 	$effect(() => {
 		if (session.loading) return;
+
+		if (isLegalRoute(page.url.pathname)) return;
 
 		if (!session.isSignedIn) {
 			if (!isPublic) goto(signedOutHome);

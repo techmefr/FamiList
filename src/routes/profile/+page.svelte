@@ -23,7 +23,8 @@
 	import { Label } from '$components/ui/label';
 	import { Button } from '$components/ui/button';
 	import { Switch } from '$components/ui/switch';
-	import { Check, Volume2, Users, ShieldCheck, Sparkles, PlugZap } from '@lucide/svelte';
+	import { Check, Volume2, Users, ShieldCheck, Sparkles, PlugZap, Scale } from '@lucide/svelte';
+	import { LEGAL_DOCUMENTS, legalPath } from '$domain/legal';
 	import Avatar from '$components/app/Avatar.svelte';
 	import AvatarPicker from '$components/app/AvatarPicker.svelte';
 	import NameField from '$components/app/NameField.svelte';
@@ -461,5 +462,23 @@
 		<Button onclick={replayTour} data-test-id="replay-tour" class="fl-press">
 			{t('profile.replayTour')}
 		</Button>
+	</Card.Content>
+</Card.Root>
+
+<Card.Root class="mt-6">
+	<Card.Header>
+		<Card.Title class="text-h2">{t('legal.title')}</Card.Title>
+	</Card.Header>
+	<Card.Content>
+		<ul class="flex flex-wrap gap-2">
+			{#each LEGAL_DOCUMENTS as id (id)}
+				<li>
+					<Button href={legalPath(id)} variant="outline" data-test-id="go-legal-{id}" class="fl-press">
+						<Scale size={18} aria-hidden="true" />
+						{t(`legal.${id}`)}
+					</Button>
+				</li>
+			{/each}
+		</ul>
 	</Card.Content>
 </Card.Root>

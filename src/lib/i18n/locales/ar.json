@@ -1375,5 +1375,14 @@
 		"listPlaceholder": "تسوق الأسبوع",
 		"itemPlaceholder": "طماطم",
 		"back": "العودة إلى القوائم"
+	},
+	"legal": {
+		"title": "معلومات قانونية",
+		"notice": "إشعار قانوني",
+		"terms": "شروط الاستخدام",
+		"privacy": "سياسة الخصوصية",
+		"sales": "شروط البيع",
+		"updated": "آخر تحديث:",
+		"signupConsent": "بإنشاء حساب، فإنك توافق على {terms} و{privacy}."
 	}
 }

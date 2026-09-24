@@ -1331,5 +1331,14 @@
 		"listPlaceholder": "Spesa della settimana",
 		"itemPlaceholder": "Pomodori",
 		"back": "Torna alle liste"
+	},
+	"legal": {
+		"title": "Informazioni legali",
+		"notice": "Note legali",
+		"terms": "Condizioni d’uso",
+		"privacy": "Informativa sulla privacy",
+		"sales": "Condizioni di vendita",
+		"updated": "Ultimo aggiornamento:",
+		"signupConsent": "Creando un account, accetti le {terms} e l’{privacy}."
 	}
 }
