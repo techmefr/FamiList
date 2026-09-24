@@ -11,6 +11,7 @@
 	import IconField from '$components/app/IconField.svelte';
 	import CodeField from '$components/app/CodeField.svelte';
 	import { isCompleteOtp, normalizeOtp } from '$domain/otp';
+	import { legalPath } from '$domain/legal';
 
 	/**
 	 * The same block serves the sign-in screen and the last step of the welcome. There you arrive to create
@@ -465,6 +466,21 @@
 
 		{#if mode === 'signup'}
 			<p class="text-muted-foreground text-caption">{t('auth.approvalNotice')}</p>
+			<p class="text-muted-foreground text-caption" data-test-id="auth-legal-consent">
+				{#each t('legal.signupConsent').split(/(\{terms\}|\{privacy\})/) as part, index (index)}
+					{#if part === '{terms}'}
+						<a href={legalPath('terms')} class="text-primary underline" data-test-id="auth-legal-terms"
+							>{t('legal.terms')}</a
+						>
+					{:else if part === '{privacy}'}
+						<a href={legalPath('privacy')} class="text-primary underline" data-test-id="auth-legal-privacy"
+							>{t('legal.privacy')}</a
+						>
+					{:else}
+						{part}
+					{/if}
+				{/each}
+			</p>
 		{/if}
 	</form>
 

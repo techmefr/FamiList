@@ -71,6 +71,18 @@
 		status: string;
 	}
 
+	interface PrivacyRequest {
+		id: string;
+		email: string;
+		kind: string;
+		message: string;
+		has_account: boolean;
+		status: string;
+		created_at: string;
+		closed_at: string | null;
+	}
+
+	let privacyRequests = $state<PrivacyRequest[]>([]);
 	let accounts = $state<PendingAccount[]>([]);
 	let reports = $state<BugReport[]>([]);
 	let crashes = $state<ClientError[]>([]);
@@ -99,11 +111,13 @@
 		const [
 			{ data, error: rpcError },
 			{ data: reportData, error: reportError },
-			{ data: crashData, error: crashError }
+			{ data: crashData, error: crashError },
+			{ data: privacyData, error: privacyError }
 		] = await Promise.all([
 			supabase.rpc('pending_accounts'),
 			supabase.rpc('list_bug_reports'),
-			supabase.rpc('list_client_errors')
+			supabase.rpc('list_client_errors'),
+			supabase.rpc('list_privacy_requests')
 		]);
 
 		// A non-admin gets an error, not an empty list: the distinction avoids believing nobody is waiting when
@@ -111,7 +125,8 @@
 		//
 		// The reads are independent and can each fail for their own reason: showing only one would suggest the
 		// others answered.
-		refuse([rpcError?.message, reportError?.message, crashError?.message]);
+		refuse([rpcError?.message, reportError?.message, crashError?.message, privacyError?.message]);
+		privacyRequests = (privacyData as PrivacyRequest[]) ?? [];
 		accounts = (data as PendingAccount[]) ?? [];
 		reports = (reportData as BugReport[]) ?? [];
 		crashes = (crashData as ClientError[]) ?? [];
@@ -122,6 +137,15 @@
 		const { error: rpcError } = await supabase.rpc('resolve_client_error', {
 			target: fingerprint
 		});
+		if (rpcError) {
+			refuse([rpcError.message]);
+			return;
+		}
+		await load();
+	}
+
+	async function closePrivacyRequest(id: string) {
+		const { error: rpcError } = await supabase.rpc('close_privacy_request', { target: id });
 		if (rpcError) {
 			refuse([rpcError.message]);
 			return;
@@ -377,6 +401,49 @@
 										data-test-class="toggle-demo"
 									/>
 								</div>
+							{/if}
+						</Card.Content>
+					</Card.Root>
+				</li>
+			{/each}
+		</ul>
+	{/if}
+
+	<h2 class="text-h2 mt-10 font-semibold">{t('admin.privacyTitle')}</h2>
+
+	{#if privacyRequests.length === 0}
+		<EmptyState illustration="inbox" text={t('admin.privacyEmpty')} testId="admin-privacy-empty" />
+	{:else}
+		<ul class="mt-6 space-y-3" data-test-id="privacy-requests">
+			{#each privacyRequests as request (request.id)}
+				<li>
+					<Card.Root data-test-class="privacy-request">
+						<Card.Content class="space-y-3">
+							<div class="flex flex-wrap items-start justify-between gap-4">
+								<div class="min-w-0 flex-1 basis-[16rem]">
+									<p class="text-label font-medium break-all">{request.email}</p>
+									<p class="mt-1 whitespace-pre-wrap">{request.message}</p>
+									<p class="text-muted-foreground text-caption mt-1">{formatDate(request.created_at)}</p>
+								</div>
+								<div class="flex shrink-0 flex-wrap gap-2">
+									<Badge variant="secondary">{t(`legal.request.kinds.${request.kind}`)}</Badge>
+									{#if request.has_account}
+										<Badge variant="secondary">{t('admin.privacyAccount')}</Badge>
+									{/if}
+									<Badge variant={request.status === 'open' ? 'secondary' : 'default'}>
+										{t(`admin.privacyStatus.${request.status}`)}
+									</Badge>
+								</div>
+							</div>
+
+							{#if request.status === 'open'}
+								<Button
+									variant="outline"
+									onclick={() => closePrivacyRequest(request.id)}
+									data-test-class="close-privacy-request"
+								>
+									{t('admin.closePrivacyRequest')}
+								</Button>
 							{/if}
 						</Card.Content>
 					</Card.Root>

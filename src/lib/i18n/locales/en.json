@@ -831,7 +831,15 @@
 		"mfaReset": "The second factor has been removed. This account now signs in with its password alone, then re-enables 2FA from a device it still has.",
 		"errorDenied": "This account does not have the administrator role.",
 		"errorSecondFactor": "Your session stopped at the password. Finish the two-step verification to act here.",
-		"elevate": "Finish verification"
+		"elevate": "Finish verification",
+		"privacyTitle": "Privacy requests",
+		"privacyEmpty": "No privacy request.",
+		"closePrivacyRequest": "Close",
+		"privacyStatus": {
+			"open": "Open",
+			"closed": "Closed"
+		},
+		"privacyAccount": "Linked account"
 	},
 	"instance": {
 		"title": "Instance settings",
@@ -1331,5 +1339,40 @@
 		"listPlaceholder": "This week's groceries",
 		"itemPlaceholder": "Tomatoes",
 		"back": "Back to lists"
+	},
+	"legal": {
+		"title": "Legal information",
+		"notice": "Legal notice",
+		"terms": "Terms of use",
+		"privacy": "Privacy policy",
+		"sales": "Terms of sale",
+		"updated": "Last updated:",
+		"signupConsent": "By creating an account, you accept the {terms} and the {privacy}.",
+		"request": {
+			"title": "Request about my data",
+			"intro": "Exercise your rights over your personal data, with or without an account.",
+			"deadline": "We answer within one month of receiving your request.",
+			"success": "Your request has been sent. We will answer by email within one month.",
+			"email": "Email address",
+			"kind": "Request type",
+			"message": "Your request",
+			"confirm": "I confirm that I am the person concerned by this request, or that I am authorised to act on their behalf.",
+			"submit": "Send the request",
+			"errorEmail": "Enter a valid email address.",
+			"errorMessage": "Describe your request (4000 characters at most).",
+			"errorConfirm": "Confirm that you are the person concerned.",
+			"errorTooMany": "Too many requests for this address today. Try again tomorrow or write to rgpd@familiste.fr.",
+			"errorUnknown": "Sending failed. Try again or write to rgpd@familiste.fr.",
+			"kinds": {
+				"access": "Access to my data",
+				"rectification": "Rectification",
+				"erasure": "Erasure",
+				"portability": "Portability",
+				"objection": "Objection",
+				"restriction": "Restriction of processing",
+				"other": "Other"
+			}
+		},
+		"makeRequest": "Make a request about my data"
 	}
 }

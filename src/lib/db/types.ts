@@ -1490,6 +1490,19 @@ export type Database = {
           user_agent: string
         }[]
       }
+      list_privacy_requests: {
+        Args: never
+        Returns: {
+          closed_at: string
+          created_at: string
+          email: string
+          has_account: boolean
+          id: string
+          kind: string
+          message: string
+          status: string
+        }[]
+      }
       list_client_errors: {
         Args: never
         Returns: {
@@ -1558,6 +1571,7 @@ export type Database = {
         }
         Returns: Json
       }
+      close_privacy_request: { Args: { target: string }; Returns: undefined }
       request_bug_report_issue: { Args: { target: string }; Returns: undefined }
       reset_demo: { Args: never; Returns: undefined }
       resolve_bug_report: { Args: { target: string }; Returns: undefined }
@@ -1574,6 +1588,10 @@ export type Database = {
       }
       slugify: { Args: { value: string }; Returns: string }
       start_direct_conversation: { Args: { other: string }; Returns: string }
+      submit_privacy_request: {
+        Args: { email: string; kind: string; message: string }
+        Returns: Json
+      }
       submit_bug_report: {
         Args: {
           description: string

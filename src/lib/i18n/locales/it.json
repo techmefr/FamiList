@@ -831,7 +831,15 @@
 		"mfaReset": "Il secondo fattore è stato rimosso. Questo account accede solo con la sua password, poi riattiva la 2FA da un dispositivo che ha ancora.",
 		"errorDenied": "Questo account non ha il ruolo di amministratore.",
 		"errorSecondFactor": "La tua sessione si è fermata alla password. Completa la verifica in due passaggi per agire qui.",
-		"elevate": "Completa la verifica"
+		"elevate": "Completa la verifica",
+		"privacyTitle": "Richieste GDPR",
+		"privacyEmpty": "Nessuna richiesta GDPR.",
+		"closePrivacyRequest": "Chiudi",
+		"privacyStatus": {
+			"open": "Aperta",
+			"closed": "Chiusa"
+		},
+		"privacyAccount": "Account collegato"
 	},
 	"instance": {
 		"title": "Impostazioni dell'istanza",
@@ -1331,5 +1339,40 @@
 		"listPlaceholder": "Spesa della settimana",
 		"itemPlaceholder": "Pomodori",
 		"back": "Torna alle liste"
+	},
+	"legal": {
+		"title": "Informazioni legali",
+		"notice": "Note legali",
+		"terms": "Condizioni d’uso",
+		"privacy": "Informativa sulla privacy",
+		"sales": "Condizioni di vendita",
+		"updated": "Ultimo aggiornamento:",
+		"signupConsent": "Creando un account, accetti le {terms} e l’{privacy}.",
+		"request": {
+			"title": "Richiesta sui miei dati",
+			"intro": "Esercita i tuoi diritti sui tuoi dati personali, con o senza account.",
+			"deadline": "Rispondiamo entro un mese dal ricevimento della richiesta.",
+			"success": "La tua richiesta è stata inviata. Ti risponderemo via e-mail entro un mese.",
+			"email": "Indirizzo e-mail",
+			"kind": "Tipo di richiesta",
+			"message": "La tua richiesta",
+			"confirm": "Confermo di essere la persona interessata da questa richiesta o di essere autorizzato ad agire per suo conto.",
+			"submit": "Invia la richiesta",
+			"errorEmail": "Inserisci un indirizzo e-mail valido.",
+			"errorMessage": "Descrivi la tua richiesta (massimo 4000 caratteri).",
+			"errorConfirm": "Conferma di essere la persona interessata.",
+			"errorTooMany": "Troppe richieste per questo indirizzo oggi. Riprova domani o scrivi a rgpd@familiste.fr.",
+			"errorUnknown": "Invio non riuscito. Riprova o scrivi a rgpd@familiste.fr.",
+			"kinds": {
+				"access": "Accesso ai miei dati",
+				"rectification": "Rettifica",
+				"erasure": "Cancellazione",
+				"portability": "Portabilità",
+				"objection": "Opposizione",
+				"restriction": "Limitazione del trattamento",
+				"other": "Altro"
+			}
+		},
+		"makeRequest": "Fai una richiesta sui miei dati"
 	}
 }

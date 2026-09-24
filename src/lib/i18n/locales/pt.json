@@ -831,7 +831,15 @@
 		"mfaReset": "O segundo fator foi removido. Esta conta passa a entrar apenas com a palavra-passe e depois reativa a 2FA num aparelho que ainda tenha.",
 		"errorDenied": "Esta conta não tem a função de administrador.",
 		"errorSecondFactor": "A sua sessão parou na palavra-passe. Conclua a verificação em duas etapas para agir aqui.",
-		"elevate": "Concluir a verificação"
+		"elevate": "Concluir a verificação",
+		"privacyTitle": "Pedidos RGPD",
+		"privacyEmpty": "Nenhum pedido RGPD.",
+		"closePrivacyRequest": "Encerrar",
+		"privacyStatus": {
+			"open": "Aberto",
+			"closed": "Encerrado"
+		},
+		"privacyAccount": "Conta associada"
 	},
 	"instance": {
 		"title": "Definições da instância",
@@ -1331,5 +1339,40 @@
 		"listPlaceholder": "Compras da semana",
 		"itemPlaceholder": "Tomates",
 		"back": "Voltar às listas"
+	},
+	"legal": {
+		"title": "Informações legais",
+		"notice": "Aviso legal",
+		"terms": "Termos de utilização",
+		"privacy": "Política de privacidade",
+		"sales": "Condições de venda",
+		"updated": "Última atualização:",
+		"signupConsent": "Ao criar uma conta, aceitas os {terms} e a {privacy}.",
+		"request": {
+			"title": "Pedido sobre os meus dados",
+			"intro": "Exerce os teus direitos sobre os teus dados pessoais, com ou sem conta.",
+			"deadline": "Respondemos no prazo de um mês a contar da receção do pedido.",
+			"success": "O teu pedido foi enviado. Responderemos por e-mail no prazo de um mês.",
+			"email": "Endereço de e-mail",
+			"kind": "Tipo de pedido",
+			"message": "O teu pedido",
+			"confirm": "Confirmo que sou a pessoa visada por este pedido ou que estou autorizado a agir em seu nome.",
+			"submit": "Enviar o pedido",
+			"errorEmail": "Introduz um endereço de e-mail válido.",
+			"errorMessage": "Descreve o teu pedido (máximo de 4000 caracteres).",
+			"errorConfirm": "Confirma que és a pessoa visada.",
+			"errorTooMany": "Demasiados pedidos para este endereço hoje. Tenta amanhã ou escreve para rgpd@familiste.fr.",
+			"errorUnknown": "O envio falhou. Tenta de novo ou escreve para rgpd@familiste.fr.",
+			"kinds": {
+				"access": "Acesso aos meus dados",
+				"rectification": "Retificação",
+				"erasure": "Apagamento",
+				"portability": "Portabilidade",
+				"objection": "Oposição",
+				"restriction": "Limitação do tratamento",
+				"other": "Outro"
+			}
+		},
+		"makeRequest": "Fazer um pedido sobre os meus dados"
 	}
 }
