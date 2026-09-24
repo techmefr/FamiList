@@ -58,6 +58,7 @@
 	let code = $state('');
 	let codeType = $state<CodeType | ''>('');
 	let points = $state('0');
+	let secretCode = $state('');
 	let notes = $state('');
 
 	/**
@@ -143,6 +144,7 @@
 		code = '';
 		codeType = '';
 		points = '0';
+		secretCode = '';
 		notes = '';
 		attach = '';
 	}
@@ -158,6 +160,7 @@
 		code = card.code;
 		codeType = card.codeType;
 		points = String(card.points);
+		secretCode = card.secretCode ?? '';
 		notes = card.notes ?? '';
 		attach = card.shopId ? `shop:${card.shopId}` : card.brand ? `brand:${card.brand}` : '';
 		adding = true;
@@ -178,6 +181,7 @@
 			code: code.trim(),
 			codeType: effectiveType,
 			points: Number(points) || 0,
+			secretCode: secretCode.trim() || undefined,
 			notes: notes.trim(),
 			tint,
 			grad: `linear-gradient(135deg, ${tint} 0%, ${CARD_GRADIENT_END} 100%)`
@@ -396,6 +400,19 @@
 						placeholder={t('cards.pointsPlaceholder')}
 					/>
 				</IconField>
+			</div>
+
+			<div>
+				<Label for="card-secret-code">{t('cards.secretCode')}</Label>
+				<IconField icon={Barcode}>
+					<Input
+						id="card-secret-code"
+						bind:value={secretCode}
+						data-test-id="card-secret-code"
+						placeholder={t('cards.secretCodePlaceholder')}
+					/>
+				</IconField>
+				<p class="text-muted-foreground text-caption mt-1">{t('cards.secretCodeHint')}</p>
 			</div>
 
 			<!--

@@ -94,6 +94,8 @@ export interface LoyaltyCard {
 	num: string;
 	code: string;
 	codeType: CodeType;
+	/** A second, shorter code some cards print — a PIN, a code asked for at the till — never the account. */
+	secretCode?: string;
 	points: number;
 	tint: string;
 	grad: string;
