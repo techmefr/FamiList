@@ -23,6 +23,19 @@ on:
 #   APPSTORE_ISSUER_ID and APPSTORE_API_KEY_BASE64 (an App Store Connect API key, Users and Access →
 #   Integrations) to also publish to TestFlight; without them, the job still builds and uploads a signed
 #   .ipa as a workflow artifact.
+#
+#   Amazon Appstore — AMAZON_CLIENT_ID, AMAZON_CLIENT_SECRET (a security profile created at
+#   developer.amazon.com → App Testing → Security Profile) and AMAZON_APP_ID (this app's listing there).
+#
+#   Samsung Galaxy Store — SAMSUNG_SERVICE_ACCOUNT_ID, SAMSUNG_ACCESS_TOKEN (Seller Portal → Settings →
+#   API Certificate) and SAMSUNG_CONTENT_ID (this app's listing there). Both stores take the same signed
+#   APK the Android job already produces — reusing the keystore secrets above rather than a fourth
+#   signing identity.
+#
+# The Amazon and Samsung steps talk to each store's REST API directly with curl rather than through a
+# community action: neither has an official one, and the unofficial ones are thinly maintained. Endpoint
+# paths on both APIs have moved before — worth a quick check against their current docs before relying on
+# this for a first real submission.
 
 jobs:
   # Neither build job can express "skip me if this secret is unset" against its own name — a job's `if`
@@ -33,11 +46,15 @@ jobs:
     outputs:
       android: ${{ steps.check.outputs.android }}
       ios: ${{ steps.check.outputs.ios }}
+      amazon: ${{ steps.check.outputs.amazon }}
+      samsung: ${{ steps.check.outputs.samsung }}
     steps:
       - id: check
         run: |
           echo "android=${{ secrets.ANDROID_KEYSTORE_BASE64 != '' }}" >> "$GITHUB_OUTPUT"
           echo "ios=${{ secrets.IOS_CERTIFICATE_BASE64 != '' }}" >> "$GITHUB_OUTPUT"
+          echo "amazon=${{ secrets.AMAZON_CLIENT_ID != '' }}" >> "$GITHUB_OUTPUT"
+          echo "samsung=${{ secrets.SAMSUNG_SERVICE_ACCOUNT_ID != '' }}" >> "$GITHUB_OUTPUT"
 
   android:
     needs: check-secrets
@@ -66,19 +83,28 @@ jobs:
       - name: Decode the release keystore
         run: echo "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" | base64 -d > "$RUNNER_TEMP/release.keystore"
 
-      - name: Build the signed release bundle
+      # The bundle (.aab) for the Play Store, which alone accepts it; the APK below for Amazon and Samsung,
+      # neither of which understands Play's split-delivery format.
+      - name: Build the signed release bundle and APK
         working-directory: android
         env:
           RELEASE_STORE_FILE: ${{ runner.temp }}/release.keystore
           RELEASE_STORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
           RELEASE_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
           RELEASE_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
-        run: ./gradlew bundleRelease
+        run: |
+          ./gradlew bundleRelease
+          ./gradlew assembleRelease
 
       - uses: actions/upload-artifact@v4
         with:
           name: android-release-aab
           path: android/app/build/outputs/bundle/release/app-release.aab
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: android-release-apk
+          path: android/app/build/outputs/apk/release/app-release.apk
 
       # A service account key with "Release manager" on the Play Console — see
       # https://github.com/r0adkll/upload-google-play#setup — pushed as a second, independent secret so a
@@ -149,3 +175,53 @@ jobs:
           api-key-id: ${{ secrets.APPSTORE_API_KEY_ID }}
           api-issuer-id: ${{ secrets.APPSTORE_ISSUER_ID }}
           api-private-key: ${{ secrets.APPSTORE_API_KEY_BASE64 }}
+
+  amazon:
+    needs: [check-secrets, android]
+    if: needs.check-secrets.outputs.amazon == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: android-release-apk
+
+      - name: Authenticate with the Appstore Developer API
+        run: |
+          token=$(curl -sS -X POST https://api.amazon.com/auth/O2/token \
+            -d "grant_type=client_credentials" \
+            -d "client_id=${{ secrets.AMAZON_CLIENT_ID }}" \
+            -d "client_secret=${{ secrets.AMAZON_CLIENT_SECRET }}" \
+            -d "scope=appstore::apps:readwrite" | jq -r .access_token)
+          echo "::add-mask::$token"
+          echo "TOKEN=$token" >> "$GITHUB_ENV"
+
+      - name: Open an edit, upload the APK, commit it
+        env:
+          APP_ID: ${{ secrets.AMAZON_APP_ID }}
+        run: |
+          base="https://developer.amazon.com/api/appstore/v1/applications/$APP_ID/edits"
+          edit_id=$(curl -sS -X POST "$base" -H "Authorization: Bearer $TOKEN" | jq -r .id)
+          upload_url=$(curl -sS -X POST "$base/$edit_id/apks/upload" -H "Authorization: Bearer $TOKEN" | jq -r .uploadUrl)
+          curl -sS -X PUT "$upload_url" -H "Content-Type: application/octet-stream" --data-binary @app-release.apk
+          curl -sS -X POST "$base/$edit_id/commit" -H "Authorization: Bearer $TOKEN"
+
+  samsung:
+    needs: [check-secrets, android]
+    if: needs.check-secrets.outputs.samsung == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: android-release-apk
+
+      - name: Upload the binary and submit for review
+        env:
+          SERVICE_ACCOUNT_ID: ${{ secrets.SAMSUNG_SERVICE_ACCOUNT_ID }}
+          ACCESS_TOKEN: ${{ secrets.SAMSUNG_ACCESS_TOKEN }}
+          CONTENT_ID: ${{ secrets.SAMSUNG_CONTENT_ID }}
+        run: |
+          base="https://seller.samsungapps.com/galaxy/apps/v2/seller/${SERVICE_ACCOUNT_ID}/content/${CONTENT_ID}"
+          curl -sS -X POST "$base/binary" \
+            -H "Authorization: Bearer $ACCESS_TOKEN" \
+            -F "file=@app-release.apk;type=application/vnd.android.package-archive"
+          curl -sS -X POST "$base/submit" -H "Authorization: Bearer $ACCESS_TOKEN"
