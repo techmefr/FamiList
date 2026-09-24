@@ -1,0 +1,1 @@
+A shared household shopping list, offline-first, on your own database.

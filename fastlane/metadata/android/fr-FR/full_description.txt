@@ -1,0 +1,19 @@
+FamiList est une liste de courses partagée pour le foyer, sur une base de données qui vous appartient.
+
+La liste que toute la maison modifie en même temps, rangée dans l'ordre des rayons du magasin où vous êtes, qui continue de fonctionner quand le supermarché n'a pas de réseau, et dont personne ne revend rien.
+
+Ce qu'elle fait :
+* Des listes modifiées à plusieurs, en temps réel.
+* Des rayons ordonnés magasin par magasin : la liste se lit dans l'ordre de la marche.
+* Hors ligne d'abord : tout s'écrit localement et part quand le réseau revient.
+* Scan de codes-barres et de QR codes pour ajouter un article ou une carte de fidélité.
+* Cartes de fidélité, pour laisser le plastique à la maison.
+* Une conversation par liste, avec sondages de dates et répartition de qui apporte quoi.
+* Recettes et menus de la semaine, transformés en une seule liste de courses.
+* IA entièrement facultative, toujours avec la clé de la personne : rien n'est envoyé sans configuration explicite.
+* Une loupe et une section apparence complète : taille du texte, police, contraste, animations réduites, mode gaucher ou droitier.
+* Dix langues.
+
+Pas de compte à créer chez qui que ce soit, pas de publicité, pas de pistage. Les données vivent dans votre Supabase, hébergé ou auto-hébergé.
+
+Cette version F-Droid n'embarque aucun composant Google : le scan passe par la caméra et un décodeur libre (ZXing).

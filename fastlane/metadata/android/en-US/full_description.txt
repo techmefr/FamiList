@@ -1,0 +1,19 @@
+FamiList is a shared shopping list for a household, on a database you own.
+
+The list everyone in the house edits at once, in the order of the aisles of the shop you are actually standing in, that keeps working when the supermarket has no signal, and that nobody sells anything from.
+
+What it does:
+* Lists several people edit at once, in real time.
+* Aisles ordered shop by shop, so the list reads in walking order.
+* Offline first: everything is written locally and sent when signal comes back.
+* Barcode and QR scanning to add an item or a loyalty card without typing.
+* Loyalty cards, so the plastic stays at home.
+* One conversation per list, with date polls and a split of who brings what.
+* Recipes and weekly meal plans, turned into one consolidated shopping list.
+* AI is entirely optional and always the person's own key: nothing is sent unless someone configures it.
+* A magnifier and a full appearance section: type size, font, contrast, reduced motion, left- or right-handed layout.
+* Ten languages.
+
+No account to create with anyone, no adverts, no tracking. The data lives in your own Supabase, hosted or self-hosted.
+
+This F-Droid build ships no Google component: scanning goes through the camera and a free decoder (ZXing).

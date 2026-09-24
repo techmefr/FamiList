@@ -1,0 +1,45 @@
+Categories:
+  - Shopping
+License: AGPL-3.0-or-later
+AuthorName: techmefr
+SourceCode: https://github.com/techmefr/FamiList
+IssueTracker: https://github.com/techmefr/FamiList/issues
+Changelog: https://github.com/techmefr/FamiList/blob/HEAD/CHANGELOG.md
+
+AutoName: FamiList
+
+RepoType: git
+Repo: https://github.com/techmefr/FamiList.git
+
+AntiFeatures:
+  NonFreeNet:
+    en-US: Optional AI features talk to the provider the user configures with their own key (Anthropic, Gemini, Mistral, Groq, OpenRouter, DeepSeek).
+    fr-FR: Les fonctions d'IA facultatives parlent au fournisseur que l'utilisateur configure avec sa propre clé (Anthropic, Gemini, Mistral, Groq, OpenRouter, DeepSeek).
+
+Builds:
+  - versionName: 0.1.0
+    versionCode: 1
+    commit: v0.1.0
+    subdir: android/app
+    sudo:
+      - apt-get update
+      - apt-get install -y curl xz-utils
+      - curl -fsSL -o /tmp/node.tar.xz https://nodejs.org/dist/v24.9.0/node-v24.9.0-linux-x64.tar.xz
+      - echo 'f52ec50e959d72d5c680d9731420b2661cd2a8070e94c7369b6ddfcd8b7278be  /tmp/node.tar.xz' | sha256sum -c -
+      - tar -xJf /tmp/node.tar.xz -C /usr/local --strip-components=1
+      - npm install -g pnpm@11.9.0
+    gradle:
+      - fdroid
+    prebuild:
+      - cd ../..
+      - pnpm install --frozen-lockfile
+      - pnpm build
+      - FAMILIST_FLAVOR=fdroid pnpm exec cap sync android
+    scandelete:
+      - node_modules/.pnpm/@capacitor-mlkit+barcode-scanning*
+    output: build/outputs/apk/fdroid/release/app-fdroid-release-unsigned.apk
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags ^v[0-9.]+$
+CurrentVersion: 0.1.0
+CurrentVersionCode: 1
