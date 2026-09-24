@@ -111,7 +111,7 @@ export const LEGAL_FR: Record<LegalDocumentId, LegalText> = {
 					'Mots de passe des comptes de fidélité : chiffrés au repos dans Supabase Vault, et éventuellement conservés sur votre appareil, chiffrés par un code de déverrouillage.',
 					'Clés d’API d’IA : stockées pour vous seul, jamais partagées avec le foyer.',
 					'Préférences : langue, thème, taille du texte, rappels.',
-					'Signalements de bugs et rapports de plantage : description, capture d’écran facultative, navigateur (user agent), version de l’application.'
+					'Signalements de bugs et erreurs de l’application : identifiant du compte, description, capture d’écran facultative, page concernée, navigateur (user agent), message technique de l’erreur.'
 				]
 			},
 			{
@@ -127,7 +127,7 @@ export const LEGAL_FR: Record<LegalDocumentId, LegalText> = {
 				items: [
 					'Fournir le service (compte, synchronisation, foyer, partages, messagerie, cartes) : exécution du contrat (article 6.1.b du RGPD).',
 					'Sécurité, prévention des abus, approbation des comptes, double authentification : intérêt légitime (article 6.1.f).',
-					'Diagnostic des bugs et des plantages : intérêt légitime.',
+					'Corriger les bugs à partir des signalements et des erreurs de l’application : intérêt légitime (article 6.1.f).',
 					'Fonctions d’IA et images : exécution du contrat, à votre demande.',
 					'Géolocalisation et notifications : votre consentement, donné via les autorisations de l’appareil et retirable à tout moment.'
 				]
@@ -137,7 +137,9 @@ export const LEGAL_FR: Record<LegalDocumentId, LegalText> = {
 				items: [
 					'Données du compte et contenus : tant que le compte existe ; supprimés lors de la suppression du compte.',
 					'Contenus partagés au sein du foyer : conservés pour les autres membres selon les règles du foyer.',
-					'Rapports de plantage et signalements : [TO CONFIRM: durée de conservation des rapports de plantage et signalements].',
+					'Signalements de bugs : capture d’écran effacée dès que le signalement est résolu ; signalement supprimé 3 mois après sa résolution, ou 6 mois après sa création s’il n’est pas résolu.',
+					'Erreurs de l’application : supprimées au plus tard 3 mois après leur dernière occurrence.',
+					'Signalements et erreurs liés à un compte : supprimés avec le compte.',
 					'Journaux techniques de l’hébergeur : selon la durée appliquée par Supabase et Vercel.'
 				]
 			},
@@ -147,16 +149,16 @@ export const LEGAL_FR: Record<LegalDocumentId, LegalText> = {
 					'Supabase Inc. : base de données, authentification, stockage des photos, Vault ; données hébergées à Paris (eu-west-3).',
 					'Vercel Inc. (États-Unis) : hébergement de l’application web ; reçoit les données techniques de connexion (adresse IP, requêtes).',
 					'Brevo (Sendinblue SAS, France) : envoi des e-mails depuis noreply@familiste.fr ; reçoit votre adresse e-mail.',
-					'Sentry (Functional Software Inc., États-Unis), uniquement si l’instance est configurée pour l’utiliser : rapports de plantage. [TO CONFIRM: Sentry est-il activé en production ?]',
 					'Fournisseur d’IA choisi par vous (par exemple Anthropic, Google, Mistral, Groq, OpenRouter, DeepSeek) : reçoit le texte de vos demandes, avec votre clé, directement depuis votre appareil.',
 					'Pollinations et Openverse : reçoivent la description ou le nom d’une recette pour générer ou rechercher une image.',
-					'GitHub : un signalement de bug ouvre un ticket qui ne contient que son numéro, sans donnée personnelle.'
+					'GitHub : un signalement de bug ouvre un ticket qui ne contient que son numéro, sans donnée personnelle.',
+					'Une instance auto-hébergée de FamiList peut activer l’envoi des rapports de plantage à un service tiers ; son exploitant doit alors le déclarer dans sa propre politique.'
 				]
 			},
 			{
 				heading: 'Transferts hors de l’Union européenne',
 				paragraphs: [
-					'Vercel et Sentry sont établis aux États-Unis, comme les fournisseurs d’IA américains. Ces transferts reposent sur les clauses contractuelles types de la Commission européenne et, le cas échéant, sur le Data Privacy Framework UE–États-Unis.'
+					'Vercel est établi aux États-Unis, comme les fournisseurs d’IA américains. Ces transferts reposent sur les clauses contractuelles types de la Commission européenne et, le cas échéant, sur le Data Privacy Framework UE–États-Unis.'
 				]
 			},
 			{

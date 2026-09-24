@@ -111,7 +111,7 @@ export const LEGAL_EN: Record<LegalDocumentId, LegalText> = {
 					'Loyalty account passwords: encrypted at rest in Supabase Vault, and optionally kept on your device, encrypted under an unlock code.',
 					'AI API keys: stored for you alone, never shared with the household.',
 					'Preferences: language, theme, text size, reminders.',
-					'Bug reports and crash reports: description, optional screenshot, browser (user agent), app version.'
+					'Bug reports and application errors: account identifier, description, optional screenshot, page concerned, browser (user agent), technical error message.'
 				]
 			},
 			{
@@ -127,7 +127,7 @@ export const LEGAL_EN: Record<LegalDocumentId, LegalText> = {
 				items: [
 					'Providing the service (account, sync, household, sharing, chat, cards): performance of the contract (GDPR article 6.1.b).',
 					'Security, abuse prevention, account approval, two-factor authentication: legitimate interest (article 6.1.f).',
-					'Diagnosing bugs and crashes: legitimate interest.',
+					'Fixing bugs from reports and application errors: legitimate interest (article 6.1.f).',
 					'AI features and images: performance of the contract, at your request.',
 					'Geolocation and notifications: your consent, given through device permissions and revocable at any time.'
 				]
@@ -137,7 +137,9 @@ export const LEGAL_EN: Record<LegalDocumentId, LegalText> = {
 				items: [
 					'Account data and content: as long as the account exists; deleted when the account is deleted.',
 					'Content shared within the household: kept for the other members according to the household’s rules.',
-					'Crash reports and bug reports: [TO CONFIRM: retention period for crash reports and bug reports].',
+					'Bug reports: screenshot erased as soon as the report is resolved; report deleted 3 months after it is resolved, or 6 months after it was created if it is never resolved.',
+					'Application errors: deleted at most 3 months after their last occurrence.',
+					'Reports and errors tied to an account: deleted with the account.',
 					'Hosting providers’ technical logs: according to the periods applied by Supabase and Vercel.'
 				]
 			},
@@ -147,16 +149,16 @@ export const LEGAL_EN: Record<LegalDocumentId, LegalText> = {
 					'Supabase Inc.: database, authentication, photo storage, Vault; data hosted in Paris (eu-west-3).',
 					'Vercel Inc. (United States): hosting of the web application; receives technical connection data (IP address, requests).',
 					'Brevo (Sendinblue SAS, France): sending emails from noreply@familiste.fr; receives your email address.',
-					'Sentry (Functional Software Inc., United States), only if the instance is configured to use it: crash reports. [TO CONFIRM: is Sentry enabled in production?]',
 					'The AI provider you choose (for example Anthropic, Google, Mistral, Groq, OpenRouter, DeepSeek): receives the text of your requests, with your key, directly from your device.',
 					'Pollinations and Openverse: receive a recipe’s description or name to generate or search for an image.',
-					'GitHub: a bug report opens an issue that only contains its number, without personal data.'
+					'GitHub: a bug report opens an issue that only contains its number, without personal data.',
+					'A self-hosted FamiList instance may enable sending crash reports to a third-party service; its operator must then declare it in their own policy.'
 				]
 			},
 			{
 				heading: 'Transfers outside the European Union',
 				paragraphs: [
-					'Vercel and Sentry are based in the United States, as are the US AI providers. These transfers rely on the European Commission’s standard contractual clauses and, where applicable, on the EU–US Data Privacy Framework.'
+					'Vercel is based in the United States, as are the US AI providers. These transfers rely on the European Commission’s standard contractual clauses and, where applicable, on the EU–US Data Privacy Framework.'
 				]
 			},
 			{
