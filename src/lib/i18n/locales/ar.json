@@ -169,6 +169,8 @@
 		"secretCodeHint": "رمز منفصل عن الباركود، إن وُجد على البطاقة.",
 		"tabCard": "البطاقة",
 		"tabAccount": "الحساب",
+		"tabCodes": "الرموز",
+		"noSecretCode": "لا يوجد رمز سري لهذه البطاقة.",
 		"accountEmpty": "لا يوجد حساب إلكتروني محفوظ لهذه البطاقة.",
 		"accountEmail": "بريد الحساب",
 		"accountPasswordSaved": "تم حفظ كلمة المرور",

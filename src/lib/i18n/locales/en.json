@@ -165,6 +165,8 @@
 		"secretCodeHint": "A code separate from the barcode, if the card has one.",
 		"tabCard": "Card",
 		"tabAccount": "Account",
+		"tabCodes": "Codes",
+		"noSecretCode": "No secret code for this card.",
 		"accountEmpty": "No online account saved for this card.",
 		"accountEmail": "Account email",
 		"accountPasswordSaved": "Password saved",

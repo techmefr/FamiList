@@ -165,6 +165,8 @@
 		"secretCodeHint": "Un code distinct du code-barres, s'il y en a un sur la carte.",
 		"tabCard": "Carte",
 		"tabAccount": "Compte",
+		"tabCodes": "Codes",
+		"noSecretCode": "Aucun code secret pour cette carte.",
 		"accountEmpty": "Aucun compte en ligne enregistré pour cette carte.",
 		"accountEmail": "E-mail du compte",
 		"accountPasswordSaved": "Mot de passe enregistré",
