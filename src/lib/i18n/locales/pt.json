@@ -888,7 +888,21 @@
 	},
 	"sync": {
 		"offline": "Sem ligação — as alterações serão enviadas quando a rede voltar",
-		"error": "Não é possível sincronizar de momento"
+		"error": "Não é possível sincronizar de momento",
+		"rejected": {
+			"message": "Não foi possível guardar {what} no servidor",
+			"retry": "Tentar novamente",
+			"ignore": "Ignorar",
+			"entities": {
+				"card": "este cartão de fidelização",
+				"list": "esta lista",
+				"item": "este artigo",
+				"shop": "esta loja",
+				"recipe": "esta receita",
+				"message": "esta mensagem",
+				"other": "esta alteração"
+			}
+		}
 	},
 	"chat": {
 		"title": "Conversa",

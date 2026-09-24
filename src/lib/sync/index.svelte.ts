@@ -1,7 +1,8 @@
 import { browser } from '$app/environment';
 import { supabase } from '$db/supabase';
-import { db, type OutboxEntry } from '$db/schema';
-import { describeError } from './errors';
+import { db, type OutboxEntry, type Rejection } from '$db/schema';
+import { describeError, isPermanent } from './errors';
+import { protectedRows, rejectionKey, restorePlan, retryEntry, toRejection } from './rejections';
 import { defaultCircle } from '$domain/circle';
 import { reportCrash } from '$crash/reporter';
 import {
@@ -31,14 +32,6 @@ import {
 import { planRealtime, rowKey, type RealtimeEvent } from './realtime';
 
 const HOUSEHOLD_KEY = 'familist:household';
-
-/**
- * Postgres codes a retry will never fix: malformed data, missing reference, empty required field,
- * permission denied. Everything else (network down, server unavailable) deserves to wait its turn.
- */
-const PERMANENT_CODES = new Set(['22P02', '23502', '23503', '23505', '23514', '42501', '42703']);
-
-const isPermanent = (code: string | undefined) => code !== undefined && PERMANENT_CODES.has(code);
 
 const noop = () => undefined;
 
@@ -71,6 +64,9 @@ class SyncStore {
 
 	state = $state<SyncState>('idle');
 	lastError = $state<string | null>(null);
+
+	/** Writes the server refused for good, shown until the person retries or lets them go. */
+	rejections = $state<Rejection[]>([]);
 
 	/**
 	 * True as soon as the first sync attempt has settled, whether it succeeded, failed or found no
@@ -176,6 +172,7 @@ class SyncStore {
 		if (!browser) return false;
 
 		this.onPulled = onPulled;
+		await this.loadRejections();
 
 		// The state is wired to the browser, not only to our own calls: otherwise the banner would only
 		// appear on the first write, long after the network was lost.
@@ -232,6 +229,31 @@ class SyncStore {
 		// first event of a row in the new household carrying the same id be discarded as late.
 		this.appliedAt.clear();
 		this.subscribed = false;
+	}
+
+	private async loadRejections() {
+		this.rejections = await db.rejections.orderBy('at').toArray();
+	}
+
+	/** Sends the refused write again; a second refusal records it anew. */
+	async retry(key: string) {
+		const rejection = await db.rejections.get(key);
+		if (!rejection) return;
+		await db.rejections.delete(key);
+		await this.loadRejections();
+		await this.enqueue(retryEntry(rejection));
+	}
+
+	/** Lets the refused write go: the server's version comes back at the next re-read. */
+	async dismiss(key: string) {
+		await db.rejections.delete(key);
+		await this.loadRejections();
+		this.detach(this.pull());
+	}
+
+	async forgetRejections() {
+		await db.rejections.clear();
+		this.rejections = [];
 	}
 
 	private async resume() {
@@ -544,7 +566,8 @@ class SyncStore {
 				db.mealPlans,
 				db.mealPlanRecipes,
 				db.householdPersons,
-				db.conversations
+				db.conversations,
+				db.rejections
 			],
 			async () => {
 				/**
@@ -562,6 +585,9 @@ class SyncStore {
 				 * these tables, which closes the window instead of narrowing it.
 				 */
 				if ((await db.outbox.count()) > 0) return;
+
+				const kept = protectedRows(await db.rejections.toArray());
+				const local = await Promise.all(kept.map((row) => db.table(row.dexie).get(row.key)));
 
 				await Promise.all([
 					db.shops.clear(),
@@ -626,6 +652,11 @@ class SyncStore {
 						)
 					)
 				]);
+
+				for (const restore of restorePlan(kept, (row) => local[kept.indexOf(row)])) {
+					if (restore.kind === 'put') await db.table(restore.dexie).put(restore.row);
+					else await db.table(restore.dexie).delete(restore.key);
+				}
 			}
 		);
 
@@ -687,8 +718,8 @@ class SyncStore {
 	/**
 	 * Drains the queue in arrival order. Order matters: a list must exist before its items. A network
 	 * failure stops the loop and leaves everything pending. A final refusal from the server, on the other
-	 * hand, discards the write: keeping it would block the queue forever and the user would see nothing
-	 * leave any more.
+	 * hand, moves the write out of the queue into the rejections: kept queued it would block everything
+	 * behind it, dropped silently it would let the next re-read erase the local row without a word.
 	 *
 	 * `depuisRelecture` says the call comes from the re-read itself, which drains the queue before reading: it
 	 * does not need a second one scheduled behind it.
@@ -722,11 +753,17 @@ class SyncStore {
 				rejected = true;
 				this.state = 'error';
 				this.lastError = error.message;
+				await db.rejections.put(toRejection(entry, error, new Date().toISOString()));
+				this.report(error);
+			} else {
+				await db.rejections.delete(rejectionKey(entry));
 			}
 
 			sent += 1;
 			await db.outbox.delete(entry.seq as number);
 		}
+
+		if (pending.length > 0) await this.loadRejections();
 
 		// Re-reading after a final refusal would be logical — the screen should show what the server really
 		// has. Tried, and removed: every re-read empties the twelve tables and rewrites them, so it rebuilds

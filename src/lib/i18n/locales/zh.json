@@ -883,7 +883,21 @@
 	},
 	"sync": {
 		"offline": "离线 — 网络恢复后将同步你的更改",
-		"error": "目前无法同步"
+		"error": "目前无法同步",
+		"rejected": {
+			"message": "无法在服务器上保存{what}",
+			"retry": "重试",
+			"ignore": "忽略",
+			"entities": {
+				"card": "这张会员卡",
+				"list": "这个清单",
+				"item": "这个商品",
+				"shop": "这家商店",
+				"recipe": "这个食谱",
+				"message": "这条消息",
+				"other": "这项更改"
+			}
+		}
 	},
 	"chat": {
 		"title": "讨论",

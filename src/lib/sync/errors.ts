@@ -17,3 +17,12 @@ export function describeError(cause: unknown): string {
 
 	return 'erreur inconnue';
 }
+
+/**
+ * Postgres codes a retry will never fix: malformed data, missing reference, empty required field,
+ * permission denied. Everything else (network down, server unavailable) deserves to wait its turn.
+ */
+const PERMANENT_CODES = new Set(['22P02', '23502', '23503', '23505', '23514', '42501', '42703']);
+
+export const isPermanent = (code: string | undefined) =>
+	code !== undefined && PERMANENT_CODES.has(code);

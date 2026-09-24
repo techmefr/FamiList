@@ -888,7 +888,21 @@
 	},
 	"sync": {
 		"offline": "Hors connexion — vos modifications partiront au retour du réseau",
-		"error": "Synchronisation impossible pour le moment"
+		"error": "Synchronisation impossible pour le moment",
+		"rejected": {
+			"message": "Impossible d'enregistrer {what} sur le serveur",
+			"retry": "Réessayer",
+			"ignore": "Ignorer",
+			"entities": {
+				"card": "cette carte de fidélité",
+				"list": "cette liste",
+				"item": "cet article",
+				"shop": "ce magasin",
+				"recipe": "cette recette",
+				"message": "ce message",
+				"other": "cette modification"
+			}
+		}
 	},
 	"chat": {
 		"title": "Discussion",

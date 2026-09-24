@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { describeError } from './errors';
+import { describeError, isPermanent } from './errors';
 
 describe('describeError', () => {
 	it('prend le message d une Error', () => {
@@ -22,5 +22,18 @@ describe('describeError', () => {
 		expect(describeError(undefined)).toBe('erreur inconnue');
 		expect(describeError({})).toBe('erreur inconnue');
 		expect(describeError({ message: 42 })).toBe('erreur inconnue');
+	});
+});
+
+describe('isPermanent', () => {
+	it.each(['22P02', '23502', '23503', '23505', '23514', '42501', '42703'])(
+		'tient %s pour un refus définitif',
+		(code) => {
+			expect(isPermanent(code)).toBe(true);
+		}
+	);
+
+	it.each([undefined, '', '08006', '57014', 'PGRST301'])('laisse %s au retry', (code) => {
+		expect(isPermanent(code)).toBe(false);
 	});
 });

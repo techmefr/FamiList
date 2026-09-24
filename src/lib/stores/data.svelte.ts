@@ -1947,6 +1947,7 @@ class DataStore {
 	async forget() {
 		sync.stop();
 		await db.outbox.clear();
+		await sync.forgetRejections();
 		this.ready = false;
 		this.userId = '';
 		this.userIdKnown = false;
