@@ -664,6 +664,7 @@ export type Database = {
           notes: string | null
           num: string
           points: number
+          secret_code: string | null
           shop_id: string | null
           tint: string
         }
@@ -679,6 +680,7 @@ export type Database = {
           notes?: string | null
           num?: string
           points?: number
+          secret_code?: string | null
           shop_id?: string | null
           tint?: string
         }
@@ -694,6 +696,7 @@ export type Database = {
           notes?: string | null
           num?: string
           points?: number
+          secret_code?: string | null
           shop_id?: string | null
           tint?: string
         }

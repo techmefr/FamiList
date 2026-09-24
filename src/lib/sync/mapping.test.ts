@@ -233,11 +233,13 @@ describe('toCard / fromCard', () => {
 			points: 42,
 			tint: 'blue',
 			grad: 'radial',
-			notes: 'note'
+			notes: 'note',
+			secret_code: '1234'
 		});
 		expect(card.codeType).toBe('ean_13');
 		expect(card.points).toBe(42);
 		expect(card.notes).toBe('note');
+		expect(card.secretCode).toBe('1234');
 	});
 
 	it('retombe sur code_39 et zéro point par défaut', () => {
@@ -245,6 +247,11 @@ describe('toCard / fromCard', () => {
 		expect(card.codeType).toBe('code_39');
 		expect(card.points).toBe(0);
 		expect(card.notes).toBeUndefined();
+		expect(card.secretCode).toBeUndefined();
+	});
+
+	it('range le code secret absent en null pour l’écriture', () => {
+		expect(fromCard(toCard({ id: 'c1' }), 'h1').secret_code).toBeNull();
 	});
 
 	it('range le magasin absent en null pour l’écriture', () => {

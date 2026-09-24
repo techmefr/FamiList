@@ -123,6 +123,18 @@
 						{t(`cards.type.${card.codeType}`)}
 					</p>
 
+					{#if card.secretCode}
+						<div class="mt-4 border-t border-neutral-200 pt-4 text-center">
+							<p class="text-caption font-medium text-neutral-500">{t('cards.secretCode')}</p>
+							<p
+								class="text-label mt-1 font-mono tracking-widest text-neutral-900"
+								data-test-id="card-secret-code-value"
+							>
+								{card.secretCode}
+							</p>
+						</div>
+					{/if}
+
 					<button
 						type="button"
 						onclick={() => (revealed = false)}
