@@ -385,6 +385,11 @@ class SyncStore {
 		return this.pulling;
 	}
 
+	async pullFresh() {
+		await this.pulling;
+		return this.pull();
+	}
+
 	private async pullOnce() {
 		if (!this.householdId) return;
 

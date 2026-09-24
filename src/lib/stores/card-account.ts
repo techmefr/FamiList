@@ -65,7 +65,7 @@ export async function requestCardShare(cardId: string, householdId: string): Pro
 		target_household: householdId
 	});
 	if (error) return failure(error);
-	void sync.pull();
+	void sync.pullFresh();
 	return { ok: true, value: null };
 }
 
@@ -76,7 +76,7 @@ export async function withdrawCardShare(cardId: string, householdId: string): Pr
 		.eq('card_id', cardId)
 		.eq('household_id', householdId);
 	if (error) return failure(error);
-	void sync.pull();
+	void sync.pullFresh();
 	return { ok: true, value: null };
 }
 
@@ -91,7 +91,7 @@ export async function decideCardShare(
 		decision
 	});
 	if (error) return failure(error);
-	void sync.pull();
+	void sync.pullFresh();
 	return { ok: true, value: null };
 }
 

@@ -352,7 +352,9 @@
 					</Button>
 				</form>
 			{:else}
-				<p class="text-muted-foreground text-label">{t('cards.offlineMissing')}</p>
+				<p class="text-muted-foreground text-label" data-test-id="card-offline-missing">
+					{t('cards.offlineMissing')}
+				</p>
 			{/if}
 		</section>
 	{/if}

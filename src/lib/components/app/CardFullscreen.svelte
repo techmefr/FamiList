@@ -148,10 +148,17 @@
 					<CodeImage value={card.code || card.num} codeType={card.codeType} />
 				</div>
 
-				<p class="text-label text-center font-mono tracking-widest break-all text-neutral-900">
+				<p
+					class="text-label text-center font-mono tracking-widest break-all text-neutral-900"
+					data-test-id="card-code-value"
+				>
 					{card.code || card.num}
 				</p>
-				<p class="text-caption mt-2 text-center font-semibold text-neutral-500">
+				<p
+					class="text-caption mt-2 text-center font-semibold text-neutral-500"
+					data-test-id="card-code-type"
+					data-test-state={card.codeType}
+				>
 					{t(`cards.type.${card.codeType}`)}
 				</p>
 			</div>
