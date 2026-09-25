@@ -49,6 +49,16 @@
          refusable : la date reste enregistree et affichee, c'est le rappel seul qui manque. -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
+    <!-- Micro, pour le mode mains libres de « Suivre la recette ». Le greffon de reconnaissance
+         vocale declare RECORD_AUDIO ; il n est demande qu au premier « Mains libres », apres une
+         explication, et les boutons restent utilisables sans. La requete ci-dessous rend le
+         service de reconnaissance du telephone visible depuis Android 11. -->
+    <queries>
+        <intent>
+            <action android:name="android.speech.RecognitionService" />
+        </intent>
+    </queries>
+
     <!-- Position, pour proposer la carte de fidelite a l approche d un magasin enregistre.
          Demandee seulement quand on active le reglage, qui part eteint, et coupable a tout
          moment. La precision grossiere suffit : le rayon de declenchement est de 300 m. -->
