@@ -1187,8 +1187,7 @@
 		"directFailed": "Non è stato possibile aprire la conversazione. Riprova.",
 		"backToChats": "Torna alle conversazioni",
 		"directNotFound": "Questa conversazione non è stata trovata.",
-		"someone": "Qualcuno",
-		"recipeAdded": "{name} è stata aggiunta alle ricette."
+		"someone": "Qualcuno"
 	},
 	"household": {
 		"title": "La mia casa",
@@ -1447,7 +1446,6 @@
 		"sendingTo": "Destinatario: {provider}.",
 		"sendConfirm": "Invia e chiedi",
 		"asking": "Richiesta in corso…",
-		"added": "Ricetta aggiunta a quelle della famiglia.",
 		"keep": "Tieni questa ricetta",
 		"retry": "Chiedi di nuovo",
 		"discard": "Scarta",
@@ -1505,9 +1503,7 @@
 		},
 		"request": {
 			"trigger": "Chiedi una ricetta all’IA",
-			"title": "Che ricetta vorresti?",
 			"placeholder": "es. un curry di pollo per 4",
-			"submit": "Chiedi",
 			"followUpPlaceholder": "es. più piccante, o sostituisci il pollo con il tofu",
 			"dictate": "Detta a voce",
 			"stopDictate": "Ferma la dettatura",
@@ -1519,7 +1515,34 @@
 		"photoErrorNoKey": "Per generare un’immagine, aggiungi una chiave OpenRouter.",
 		"photoErrorNoKeyLink": "Aggiungi una chiave",
 		"photoErrorNoCredit": "Il tuo account OpenRouter non ha più credito: la generazione di immagini è a pagamento.",
-		"photoErrorNoCreditLink": "Aggiungi credito"
+		"photoErrorNoCreditLink": "Aggiungi credito",
+		"chat": {
+			"tableTitle": "Chi mangia?",
+			"tableHint": "Allergie e diete vengono inviate all’assistente, mai i nomi. Tocchi un nome per dire chi non c’è.",
+			"present": "a tavola",
+			"absent": "assente",
+			"addGuest": "Aggiungi un ospite",
+			"guestName": "Nome dell’ospite (facoltativo)",
+			"guestNotes": "Cosa non può mangiare, o la sua dieta",
+			"guestNotesPlaceholder": "es. allergico al cavolfiore",
+			"guestSave": "Aggiungi l’ospite",
+			"guestDefault": "Ospite {number}",
+			"removeGuest": "Togli {name}",
+			"constraintsTitle": "L’assistente tiene conto di",
+			"constraintsNone": "Nessuna allergia né dieta da considerare.",
+			"constraintOf": "{who}: {notes}",
+			"threadLabel": "Conversazione con l’assistente",
+			"assistant": "Assistente",
+			"you": "Lei",
+			"greeting": "Mi dica cosa le piacerebbe mangiare. Forse le farò una o due domande, poi scriverò la ricetta.",
+			"writing": "L’assistente sta scrivendo…",
+			"messageLabel": "Il suo messaggio",
+			"send": "Invia",
+			"conflictTitle": "Da controllare: questi ingredienti forse non vanno bene",
+			"conflictLine": "{ingredient} — {constraint}",
+			"avoid": "Chiedi una versione senza",
+			"avoidMessage": "Riscrivi la ricetta senza: {ingredients}."
+		}
 	},
 	"setup": {
 		"title": "Istanza non configurata",
