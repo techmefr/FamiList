@@ -412,7 +412,6 @@
 	},
 	"recipes": {
 		"import": {
-			"title": "Über einen Link importieren",
 			"privacy": "Die Adresse geht an den Server dieser Instanz, der die Seite für Sie abruft und sich der besuchten Website zu erkennen gibt. Nichts wird gespeichert, keine weitere Seite wird geöffnet.",
 			"url": "Adresse des Rezepts",
 			"urlPlaceholder": "https://beispiel.de/mein-rezept",
@@ -514,7 +513,38 @@
 			"steps": "Rezeptschritte",
 			"goTo": "Zu Schritt {current} von {total}"
 		},
-		"stepIngredients": "Zutaten für Schritt {rank}"
+		"stepIngredients": "Zutaten für Schritt {rank}",
+		"create": {
+			"title": "Rezept erstellen",
+			"intro": "Wählen Sie, wie Sie beginnen. Vor dem Speichern lesen Sie alles noch einmal.",
+			"back": "Andere Wege zum Erstellen",
+			"backToRecipes": "Zurück zu den Rezepten",
+			"needsKey": "Benötigt einen KI-Schlüssel",
+			"needsKeyBody": "Dieser Weg läuft über Ihren eigenen KI-Anbieter. Hinterlegen Sie Ihren Schlüssel in den KI-Einstellungen und kommen Sie dann hierher zurück.",
+			"needsKeyLink": "Meinen KI-Schlüssel hinterlegen",
+			"sources": {
+				"manual": {
+					"title": "Selbst schreiben",
+					"hint": "Der Name, die Zutaten, dann die Schritte."
+				},
+				"link": {
+					"title": "Aus einem Link",
+					"hint": "Fügen Sie die Adresse eines Rezepts aus dem Web ein."
+				},
+				"photo": {
+					"title": "Aus einem Foto",
+					"hint": "Eine Buchseite oder ein geschriebenes Rezept, von der KI gelesen."
+				},
+				"ai": {
+					"title": "Die KI fragen",
+					"hint": "Beschreiben Sie das Gericht, die KI schlägt ein Rezept vor."
+				},
+				"purchases": {
+					"title": "Idee aus den Einkäufen",
+					"hint": "Ein Rezept mit dem, was der Haushalt schon gekauft hat."
+				}
+			}
+		}
 	},
 	"aisles": {
 		"title": "Abteilungen",
@@ -1231,8 +1261,6 @@
 		"clear": "Schlüssel entfernen",
 		"active": "Aktiv",
 		"useThisOne": "Diesen verwenden",
-		"suggest": "Eine Rezeptidee",
-		"suggestTitle": "Eine Idee aus deinen Einkäufen",
 		"noProducts": "Noch nichts abgehakt. Geh einkaufen, daraus entstehen die Ideen.",
 		"willSend": {
 			"one": "1 Produkt wird gesendet",
@@ -1294,8 +1322,6 @@
 		"photoErrorUnreachable": "Der Bilddienst hat nicht geantwortet. Versuchen Sie es gleich noch einmal.",
 		"photoErrorUpload": "Das Bild konnte nicht gespeichert werden. Versuchen Sie es erneut.",
 		"photo": {
-			"trigger": "Rezept per Foto erstellen",
-			"title": "Foto des Rezepts aufnehmen",
 			"hint": "Fotografieren Sie eine Buchseite oder ein geschriebenes oder gedrucktes Rezept.",
 			"pick": "Foto aufnehmen oder importieren",
 			"reading": "Foto wird gelesen…",

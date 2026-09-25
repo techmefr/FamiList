@@ -6,8 +6,8 @@ test.describe('modifier une recette', () => {
 	}) => {
 		const name = `Recette a modifier e2e ${Date.now()}`;
 
-		await page.goto('/recipes');
-		await page.getByTestId('recipe-new').click();
+		await page.goto('/recipes/new');
+		await page.getByTestId('recipe-source-manual').click();
 		await page.getByTestId('recipe-name').fill(name);
 		await page.getByTestId('recipe-servings').fill('6');
 		await page.getByTestId('recipe-notes').fill('Meilleure le lendemain');

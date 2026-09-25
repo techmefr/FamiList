@@ -4,7 +4,7 @@ import { test, expect } from './fixtures';
  * The AI key, and the only thing it governs: the appearance of the recipe suggestion.
  *
  * No call is made to a provider here. The key set is a fake one, and that is intended — what is checked
- * does not need the network: with no key the feature does not exist, with a key it appears, and before any
+ * does not need the network: with no key the source says it needs one, with a key it opens, and before any
  * sending the screen shows exactly what would leave.
  *
  * The fixed account is shared by the whole suite: each test removes the key it set, otherwise it would
@@ -26,12 +26,16 @@ test.describe('intelligence artificielle', () => {
 		await expect(page.getByTestId('ai-state')).toHaveAttribute('data-test-state', 'off');
 	});
 
-	test('sans clé, la suggestion de recette n existe pas', async ({ signedInPage: page }) => {
+	test('sans clé, la suggestion de recette dit qu il lui faut une clé', async ({ signedInPage: page }) => {
 		await page.goto('/profile/ai');
 		await expect(page.getByTestId('ai-state')).toHaveAttribute('data-test-state', 'off');
 
-		await page.goto('/recipes');
-		await expect(page.getByTestId('recipe-new')).toBeVisible();
+		await page.goto('/recipes/new');
+		const tile = page.getByTestId('recipe-source-purchases');
+		await expect(tile).toHaveAttribute('data-test-state', 'needs-key');
+
+		await tile.click();
+		await expect(page.getByTestId('recipe-source-needs-key')).toBeVisible();
 		await expect(page.getByTestId('ai-suggest-block')).toHaveCount(0);
 	});
 
@@ -50,19 +54,21 @@ test.describe('intelligence artificielle', () => {
 		// The key leaves the screen as soon as it is saved: it has no business in a field any more.
 		await expect(page.getByTestId('ai-key')).toHaveValue('');
 
-		await page.goto('/recipes');
-		await expect(page.getByTestId('ai-suggest-open')).toBeVisible();
+		await page.goto('/recipes/new');
+		const tile = page.getByTestId('recipe-source-purchases');
+		await expect(tile).toHaveAttribute('data-test-state', 'ready');
 
-		// Unfolding sends nothing: it shows what would leave, and waits for a second gesture.
-		await page.getByTestId('ai-suggest-open').click();
-		await expect(page.getByTestId('ai-suggest-open')).toBeVisible();
+		// Opening sends nothing: it shows what would leave, and waits for a second gesture.
+		await tile.click();
+		await expect(page.getByTestId('ai-suggest-block')).toBeVisible();
+		await expect(page.getByTestId('ai-proposal')).toHaveCount(0);
 
 		await page.goto('/profile/ai');
 		await page.getByTestId('ai-clear').click();
 		await expect(page.getByTestId('ai-state')).toHaveAttribute('data-test-state', 'off');
 
-		await page.goto('/recipes');
-		await expect(page.getByTestId('ai-suggest-block')).toHaveCount(0);
+		await page.goto('/recipes/new');
+		await expect(page.getByTestId('recipe-source-purchases')).toHaveAttribute('data-test-state', 'needs-key');
 	});
 
 	/**
@@ -103,10 +109,11 @@ test.describe('intelligence artificielle', () => {
 		await expect(row).toBeVisible();
 		await row.locator('[data-test-class="item-check"]').check();
 
-		await page.locator('a[href="/recipes"]').first().click();
-		await expect(page).toHaveURL(/\/recipes$/);
+		await page.getByTestId('nav-create').click();
+		await page.getByTestId('create-recipe').click();
+		await expect(page).toHaveURL(/\/recipes\/new$/);
 
-		await page.getByTestId('ai-suggest-open').click();
+		await page.getByTestId('recipe-source-purchases').click();
 		await expect(page.getByTestId('ai-products')).toContainText(product);
 
 		await page.getByTestId('ai-prompt-toggle').click();

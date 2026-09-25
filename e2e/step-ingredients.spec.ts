@@ -8,8 +8,8 @@ test.describe('ingredients par etape', () => {
 	test('les cases du formulaire decident de ce que montre le panneau', async ({ signedInPage: page }) => {
 		const name = `Omelette e2e ${Date.now()}`;
 
-		await page.goto('/recipes');
-		await page.getByTestId('recipe-new').click();
+		await page.goto('/recipes/new');
+		await page.getByTestId('recipe-source-manual').click();
 		await page.getByTestId('recipe-name').fill(name);
 		await page.getByTestId('recipe-next').click();
 
