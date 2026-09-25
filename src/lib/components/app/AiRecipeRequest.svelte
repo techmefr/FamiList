@@ -142,7 +142,8 @@
 			steps: suggestion.steps,
 			stepIngredients: suggestion.stepIngredients,
 			imagePrompt: suggestion.imagePrompt,
-			tags: suggestion.tags
+			tags: suggestion.tags,
+			stepDurations: suggestion.stepDurations
 		});
 
 		onAccepted?.(suggestion);

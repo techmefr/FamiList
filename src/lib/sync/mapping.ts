@@ -449,7 +449,9 @@ export const toRecipeStep = (row: Row): RecipeStep => ({
 	position: typeof row.position === 'number' ? row.position : 0,
 	ingredientIds: Array.isArray(row.ingredient_ids)
 		? row.ingredient_ids.filter((id): id is string => typeof id === 'string')
-		: []
+		: [],
+	durationSeconds:
+		typeof row.duration_seconds === 'number' && row.duration_seconds > 0 ? row.duration_seconds : undefined
 });
 
 export const fromRecipeStep = (step: RecipeStep) => ({
@@ -457,7 +459,8 @@ export const fromRecipeStep = (step: RecipeStep) => ({
 	recipe_id: step.recipeId,
 	body: step.body,
 	position: step.position,
-	ingredient_ids: step.ingredientIds
+	ingredient_ids: step.ingredientIds,
+	duration_seconds: step.durationSeconds ?? null
 });
 
 export const toMealPlan = (row: Row): MealPlan => ({

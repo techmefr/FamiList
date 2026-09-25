@@ -5,7 +5,7 @@
  * gesture in a shop with no coverage, and weight in the application, for a hundred milliseconds of beep. So
  * the timbres are described here in plain terms: that is also what makes them checkable without a browser.
  */
-export type Cue = 'check' | 'uncheck' | 'add' | 'remove' | 'success' | 'error' | 'tap';
+export type Cue = 'check' | 'uncheck' | 'add' | 'remove' | 'success' | 'error' | 'tap' | 'alarm';
 
 export interface Tone {
 	/** Starting frequency, in hertz. */
@@ -34,7 +34,9 @@ const TONES: Record<Cue, Tone> = {
 	remove: { from: 300, to: 190, ms: 130, gain: 0.12, wave: 'triangle' },
 	success: { from: 700, to: 1180, ms: 220, gain: 0.16, wave: 'sine' },
 	error: { from: 260, to: 200, ms: 260, gain: 0.18, wave: 'square' },
-	tap: { from: 880, to: 880, ms: 40, gain: 0.07, wave: 'sine' }
+	tap: { from: 880, to: 880, ms: 40, gain: 0.07, wave: 'sine' },
+	// A timer that ran out (#310): the loudest and longest allowed, played again until someone stops it.
+	alarm: { from: 988, to: 1319, ms: 300, gain: 0.2, wave: 'square' }
 };
 
 const HAPTICS: Record<Cue, Haptic> = {
@@ -44,7 +46,8 @@ const HAPTICS: Record<Cue, Haptic> = {
 	remove: 'medium',
 	success: 'medium',
 	error: 'heavy',
-	tap: 'light'
+	tap: 'light',
+	alarm: 'heavy'
 };
 
 export const CUES = Object.keys(TONES) as Cue[];

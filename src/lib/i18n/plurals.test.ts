@@ -68,7 +68,10 @@ describe('formes plurielles', () => {
 			'security.backupLeft',
 			'search.count',
 			'ai.willSend',
-			'mealPlan.recipeCount'
+			'mealPlan.recipeCount',
+			'timers.hours',
+			'timers.minutes',
+			'timers.seconds'
 		]);
 	});
 

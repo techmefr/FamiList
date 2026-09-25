@@ -512,9 +512,130 @@
 			"readIngredients": "Leggi gli ingredienti",
 			"speakIngredients": "Ingredienti: {list}.",
 			"steps": "Passaggi della ricetta",
-			"goTo": "Vai al passaggio {current} di {total}"
+			"goTo": "Vai al passaggio {current} di {total}",
+			"voice": {
+				"start": "Mani libere",
+				"stop": "Ferma mani libere",
+				"introTitle": "Seguire la ricetta con la voce",
+				"introBody": "Di’ «Famy», poi un comando: «Famy, avanti», «Famy, ripeti», «Famy, leggi gli ingredienti». Niente più schermo toccato con le mani sporche.",
+				"introPrivacy": "Il microfono ascolta solo in questa modalità. Il riconoscimento lo fa il tuo telefono o browser, che può usare il suo servizio online. FamiList non registra nulla.",
+				"introAccept": "Attiva il microfono",
+				"introCancel": "Non ora",
+				"listening": "In ascolto. Di’ «Famy», poi un comando.",
+				"awake": "Famy ti ascolta…",
+				"understood": "Capito: {command}",
+				"notUnderstood": "Non capito: «{text}». Di’ «Famy, aiuto» per l’elenco.",
+				"denied": "Il microfono è bloccato. Consentilo nelle impostazioni; i pulsanti restano utilizzabili.",
+				"unsupported": "Il comando vocale non è disponibile su questo dispositivo. I pulsanti restano utilizzabili.",
+				"failed": "Il microfono si è fermato. Tocca «Mani libere» per ripartire.",
+				"help": "Comandi vocali",
+				"helpTitle": "Di’ «Famy», poi:",
+				"volume": "Volume: {percent}%",
+				"speakHelp": "Di’ Famy, poi: {list}.",
+				"wake": [
+					"famy",
+					"fami"
+				],
+				"labels": {
+					"next": "Passo successivo",
+					"previous": "Passo precedente",
+					"repeat": "Ripeti il passo",
+					"stepIngredients": "Ingredienti del passo",
+					"allIngredients": "Tutti gli ingredienti",
+					"louder": "Più forte",
+					"quieter": "Più piano",
+					"mute": "Silenzia la voce",
+					"unmute": "Riattiva la voce",
+					"stopListening": "Smetti di ascoltare",
+					"help": "Aiuto",
+					"close": "Esci",
+					"startTimer": "Avvia il timer",
+					"stopTimer": "Ferma il timer",
+					"timeLeft": "Tempo rimanente"
+				},
+				"commands": {
+					"next": [
+						"avanti",
+						"successivo",
+						"passo successivo",
+						"dopo",
+						"continua"
+					],
+					"previous": [
+						"indietro",
+						"precedente",
+						"passo precedente"
+					],
+					"repeat": [
+						"ripeti",
+						"ancora",
+						"di nuovo",
+						"rileggi"
+					],
+					"stepIngredients": [
+						"ingredienti",
+						"leggi gli ingredienti",
+						"cosa serve"
+					],
+					"allIngredients": [
+						"tutti gli ingredienti",
+						"tutta la ricetta",
+						"lista completa"
+					],
+					"louder": [
+						"più forte",
+						"alza il volume"
+					],
+					"quieter": [
+						"più piano",
+						"abbassa il volume"
+					],
+					"mute": [
+						"silenzio",
+						"zitto",
+						"togli la voce"
+					],
+					"unmute": [
+						"riattiva la voce",
+						"parla di nuovo"
+					],
+					"stopListening": [
+						"smetti di ascoltare",
+						"spegni il microfono",
+						"microfono spento"
+					],
+					"help": [
+						"aiuto",
+						"comandi",
+						"cosa posso dire"
+					],
+					"close": [
+						"esci",
+						"chiudi",
+						"fine",
+						"ho finito"
+					],
+					"startTimer": [
+						"avvia il timer",
+						"fai partire il timer",
+						"timer"
+					],
+					"stopTimer": [
+						"ferma il timer",
+						"ferma la sveglia",
+						"spegni l’allarme"
+					],
+					"timeLeft": [
+						"quanto manca",
+						"tempo rimanente"
+					]
+				}
+			}
 		},
-		"stepIngredients": "Ingredienti usati nel passaggio {rank}"
+		"stepIngredients": "Ingredienti usati nel passaggio {rank}",
+		"stepDuration": "Durata del passo {rank} (facoltativa)",
+		"durationHours": "Ore",
+		"durationMinutes": "Minuti"
 	},
 	"recipeTags": {
 		"title": "Categorie",
@@ -1471,5 +1592,32 @@
 		"saved": "Chiave {bank} salvata",
 		"removed": "Chiave {bank} rimossa",
 		"saveFailed": "Non è stato possibile salvare la chiave. Riprova."
+	},
+	"timers": {
+		"start": "Avvia il timer ({time})",
+		"running": "Timer in corso",
+		"stepLabel": "Passo {rank}",
+		"addMinute": "+1 minuto",
+		"stop": "Ferma",
+		"announce": "Annuncia il tempo",
+		"remaining": "Mancano {time} per il passo {rank}.",
+		"none": "Nessun timer in corso.",
+		"noDuration": "Questo passo non ha una durata. Aggiungila modificando la ricetta.",
+		"webHint": "In un browser, la sveglia suona solo se FamiList resta aperto.",
+		"doneTitle": "Timer finito",
+		"doneBody": "{recipe} — {step}",
+		"stopAlarm": "Ferma la sveglia",
+		"hours": {
+			"one": "{count} ora",
+			"other": "{count} ore"
+		},
+		"minutes": {
+			"one": "{count} minuto",
+			"other": "{count} minuti"
+		},
+		"seconds": {
+			"one": "{count} secondo",
+			"other": "{count} secondi"
+		}
 	}
 }

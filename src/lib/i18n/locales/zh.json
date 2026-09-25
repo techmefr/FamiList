@@ -509,9 +509,132 @@
 			"readIngredients": "朗读食材",
 			"speakIngredients": "食材：{list}。",
 			"steps": "食谱步骤",
-			"goTo": "前往第 {current} 步，共 {total} 步"
+			"goTo": "前往第 {current} 步，共 {total} 步",
+			"voice": {
+				"start": "免提",
+				"stop": "关闭免提",
+				"introTitle": "用语音跟着食谱做",
+				"introBody": "先说“Famy”，再说一个指令：“Famy，下一步”“Famy，重复”“Famy，读配料”。不用再用脏手碰屏幕。",
+				"introPrivacy": "麦克风只在这个模式下收听。语音识别由你的手机或浏览器完成，可能会使用其在线服务。FamiList 不会录下任何内容。",
+				"introAccept": "打开麦克风",
+				"introCancel": "以后再说",
+				"listening": "正在收听。先说“Famy”，再说指令。",
+				"awake": "Famy 在听…",
+				"understood": "已听懂：{command}",
+				"notUnderstood": "没听懂：“{text}”。说“Famy，帮助”查看指令列表。",
+				"denied": "麦克风被拒绝。请在设置中允许；按钮仍然可以使用。",
+				"unsupported": "此设备不支持语音控制。按钮仍然可以使用。",
+				"failed": "麦克风已停止。点“免提”重新开始。",
+				"help": "语音指令",
+				"helpTitle": "先说“Famy”，然后：",
+				"volume": "音量：{percent}%",
+				"speakHelp": "先说 Famy，然后：{list}。",
+				"wake": [
+					"famy",
+					"法米",
+					"发米",
+					"法咪"
+				],
+				"labels": {
+					"next": "下一步",
+					"previous": "上一步",
+					"repeat": "重复这一步",
+					"stepIngredients": "这一步的配料",
+					"allIngredients": "所有配料",
+					"louder": "大声点",
+					"quieter": "小声点",
+					"mute": "关闭语音",
+					"unmute": "打开语音",
+					"stopListening": "停止收听",
+					"help": "帮助",
+					"close": "退出",
+					"startTimer": "开始计时",
+					"stopTimer": "停止计时",
+					"timeLeft": "剩余时间"
+				},
+				"commands": {
+					"next": [
+						"下一步",
+						"继续",
+						"然后呢"
+					],
+					"previous": [
+						"上一步",
+						"返回",
+						"后退"
+					],
+					"repeat": [
+						"重复",
+						"再说一遍",
+						"再读一遍"
+					],
+					"stepIngredients": [
+						"配料",
+						"读配料",
+						"需要什么"
+					],
+					"allIngredients": [
+						"所有配料",
+						"全部配料",
+						"整个食谱"
+					],
+					"louder": [
+						"大声点",
+						"大声一点",
+						"音量调高"
+					],
+					"quieter": [
+						"小声点",
+						"小声一点",
+						"音量调低"
+					],
+					"mute": [
+						"安静",
+						"闭嘴",
+						"关闭声音"
+					],
+					"unmute": [
+						"打开声音",
+						"继续说话"
+					],
+					"stopListening": [
+						"停止收听",
+						"关闭麦克风",
+						"别听了"
+					],
+					"help": [
+						"帮助",
+						"命令",
+						"我能说什么"
+					],
+					"close": [
+						"退出",
+						"关闭",
+						"结束",
+						"做完了"
+					],
+					"startTimer": [
+						"开始计时",
+						"启动计时器",
+						"计时器"
+					],
+					"stopTimer": [
+						"停止计时",
+						"关掉闹钟",
+						"停止闹钟"
+					],
+					"timeLeft": [
+						"还剩多久",
+						"剩余时间",
+						"还有多久"
+					]
+				}
+			}
 		},
-		"stepIngredients": "第 {rank} 步用到的食材"
+		"stepIngredients": "第 {rank} 步用到的食材",
+		"stepDuration": "第 {rank} 步用时（可选）",
+		"durationHours": "小时",
+		"durationMinutes": "分钟"
 	},
 	"recipeTags": {
 		"title": "分类",
@@ -1460,5 +1583,29 @@
 		"saved": "{bank} 密钥已保存",
 		"removed": "{bank} 密钥已移除",
 		"saveFailed": "密钥无法保存。请重试。"
+	},
+	"timers": {
+		"start": "开始计时（{time}）",
+		"running": "正在计时",
+		"stepLabel": "第 {rank} 步",
+		"addMinute": "+1 分钟",
+		"stop": "停止",
+		"announce": "播报时间",
+		"remaining": "第 {rank} 步还剩 {time}。",
+		"none": "没有正在进行的计时。",
+		"noDuration": "这一步没有设置时长。编辑食谱即可添加。",
+		"webHint": "在浏览器中，只有 FamiList 保持打开时闹钟才会响。",
+		"doneTitle": "计时结束",
+		"doneBody": "{recipe} — {step}",
+		"stopAlarm": "关掉闹钟",
+		"hours": {
+			"other": "{count} 小时"
+		},
+		"minutes": {
+			"other": "{count} 分钟"
+		},
+		"seconds": {
+			"other": "{count} 秒"
+		}
 	}
 }
