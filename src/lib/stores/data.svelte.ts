@@ -938,11 +938,23 @@ class DataStore {
 		return shareStatusOf(this.cardShares, cardId, householdId);
 	}
 
+	/**
+	 * Removing a card only marks it on the server (`deleted_at`, enforced by RLS and a revoked delete
+	 * privilege — see the `soft_delete_loyalty_cards` migration): a stray sync push or a mistaken tap must
+	 * never be the reason someone's loyalty card is gone for good.
+	 */
 	removeCard(id: string) {
+		const card = this.cachedCards.find((c) => c.id === id);
 		this.cachedCards = this.cachedCards.filter((c) => c.id !== id);
 		db.cards.delete(id);
 		db.cardSecrets.delete(id);
-		sync.enqueue({ table: 'loyalty_cards', op: 'delete', match: { id } });
+		if (!card) return;
+
+		const snapshot = $state.snapshot(card) as LoyaltyCard;
+		this.push('loyalty_cards', snapshot, (record, householdId) => ({
+			...fromCard(record, householdId),
+			deleted_at: new Date().toISOString()
+		}));
 	}
 
 	/**
