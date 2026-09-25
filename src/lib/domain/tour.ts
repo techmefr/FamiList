@@ -64,7 +64,7 @@ export const SCREEN_STEPS: { test: RegExp; steps: TourStep[] }[] = [
 	},
 	{
 		test: /^\/profile/,
-		steps: [{ selector: '[data-test-id="go-household"]', key: 'profileHousehold' }]
+		steps: [{ selector: '[data-test-id="profile-category-household"]', key: 'profileHousehold' }]
 	}
 ];
 

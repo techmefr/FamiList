@@ -59,7 +59,6 @@
 	},
 	"profile": {
 		"title": "Perfil",
-		"appearance": "Aparência",
 		"theme": "Tema",
 		"textSize": "Tamanho do texto",
 		"font": "Tipo de letra",
@@ -79,7 +78,6 @@
 		"avatarTooBig": "Esta imagem é demasiado pesada. Escolha uma mais pequena.",
 		"avatarFailed": "Não foi possível ler esta imagem.",
 		"signedInAs": "Sessão iniciada como {email}",
-		"feedbackTitle": "Movimento e retorno",
 		"motion": "Animações",
 		"motionHint": "«Sistema» segue a definição de redução de movimento do aparelho.",
 		"motionPreview": "Animações ativas.",
@@ -95,9 +93,6 @@
 		"help": "Ajuda",
 		"tourHint": "Rever a visita guiada aos ecrãs principais.",
 		"replayTour": "Rever a visita",
-		"sharing": "Partilha",
-		"householdHint": "Convidar os seus e partilhar as listas.",
-		"adminHint": "Aprovar as novas contas e gerir os perfis.",
 		"firstName": "Nome",
 		"lastName": "Sobrenome",
 		"name": "Nome exibido",
@@ -106,7 +101,62 @@
 		"nameSave": "Guardar",
 		"nameSaved": "Guardado",
 		"nameFailed": "Não foi possível guardar o nome. Tente novamente daqui a pouco.",
-		"administration": "Administração"
+		"administration": "Administração",
+		"back": "Voltar ao perfil",
+		"search": "Pesquisar uma definição",
+		"searchEmpty": "Nenhuma definição corresponde a «{query}».",
+		"searchResults": "Definições encontradas",
+		"readingShortcut": "Tamanho do texto e tipo de letra",
+		"categories": {
+			"account": {
+				"hint": "Nome, retrato, terminar sessão",
+				"keywords": "nome próprio, apelido, fotografia, avatar, iniciais, e-mail, terminar sessão, sair"
+			},
+			"household": {
+				"title": "Agregado e partilha",
+				"hint": "Membros, convites, círculos",
+				"keywords": "família, próximos, convidar, juntar-se, código, partilhar, círculo, alergias, dietas"
+			},
+			"display": {
+				"title": "Visualização e leitura",
+				"hint": "Tamanho do texto, tipo de letra, tema, idioma",
+				"keywords": "grande, aumentar, ler, legibilidade, escuro, claro, noite, cor, canhoto, destro, polegar, dislexia"
+			},
+			"feedback": {
+				"title": "Som e resposta",
+				"hint": "Animações, som, vibração, cartão perto de uma loja",
+				"keywords": "bip, ruído, volume, mudo, silencioso, movimento, vibrar, notificação, localização, fidelização"
+			},
+			"security": {
+				"hint": "Palavra-passe, dois passos, dispositivos, os seus dados",
+				"keywords": "código, autenticação, 2FA, TOTP, sessão, dispositivo, exportar, eliminar a conta, impressão digital, rosto, PIN, biometria, chave de acesso, desbloqueio"
+			},
+			"ai": {
+				"hint": "Fornecedor e chave para ideias de receitas",
+				"keywords": "IA, chave API, fornecedor, modelo, sugestão, ideia de receita"
+			},
+			"images": {
+				"hint": "Chaves Pexels e Pixabay para fotografias de pratos",
+				"keywords": "fotografia, imagem, Pexels, Pixabay, chave, prato"
+			},
+			"connection": {
+				"hint": "A base Supabase usada pela aplicação",
+				"keywords": "servidor, Supabase, URL, alojamento próprio, instância, base de dados"
+			},
+			"help": {
+				"hint": "Visita guiada",
+				"keywords": "tutorial, visita, guia, ajuda, descobrir"
+			},
+			"legal": {
+				"title": "Jurídico e privacidade",
+				"hint": "Avisos, condições, os seus dados pessoais",
+				"keywords": "termos de utilização, condições de venda, privacidade, RGPD, dados pessoais, direitos, aviso legal"
+			},
+			"admin": {
+				"hint": "Contas, relatórios, falhas",
+				"keywords": "aprovar, validar, função, administrador, demo, relatório, falha, pedido RGPD"
+			}
+		}
 	},
 	"theme": {
 		"light": "Claro",

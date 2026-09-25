@@ -70,7 +70,7 @@ test('sur tablette en portrait, le bouton de création est dans le rail et ne fl
 test('sur tablette en portrait, le rail change de bord avec la main déclarée', async ({
 	signedInPage: page
 }) => {
-	await page.goto('/profile');
+	await page.goto('/profile/display');
 
 	const width = page.viewportSize()!.width;
 	const bar = page.getByRole('navigation');

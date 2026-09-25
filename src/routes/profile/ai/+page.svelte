@@ -96,7 +96,7 @@
 <h1 class="text-h1 font-semibold">{t('ai.title')}</h1>
 <p class="text-muted-foreground mt-1">{t('ai.subtitle')}</p>
 
-<Card.Root class="mt-6">
+<Card.Root id="setting-ai-privacy" tabindex={-1} class="fl-setting mt-6">
 	<Card.Header>
 		<Card.Title class="text-h2 flex items-center gap-2">
 			<TriangleAlert size={22} aria-hidden="true" />
@@ -114,7 +114,7 @@
 	</Card.Content>
 </Card.Root>
 
-<Card.Root class="mt-6">
+<Card.Root id="setting-ai-key" tabindex={-1} class="fl-setting mt-6">
 	<Card.Header>
 		<Card.Title class="text-h2 flex items-center gap-2">
 			<KeyRound size={22} aria-hidden="true" />

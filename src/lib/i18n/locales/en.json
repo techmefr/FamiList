@@ -59,7 +59,6 @@
 	},
 	"profile": {
 		"title": "Profile",
-		"appearance": "Appearance",
 		"theme": "Theme",
 		"textSize": "Text size",
 		"font": "Font",
@@ -79,7 +78,6 @@
 		"avatarTooBig": "That image is too heavy. Pick a smaller one.",
 		"avatarFailed": "That image could not be read.",
 		"signedInAs": "Signed in as {email}",
-		"feedbackTitle": "Motion and feedback",
 		"motion": "Animations",
 		"motionHint": "“System” follows your device's reduce-motion setting.",
 		"motionPreview": "Animations on.",
@@ -95,9 +93,6 @@
 		"help": "Help",
 		"tourHint": "Replay the guided tour of the main screens.",
 		"replayTour": "Replay the tour",
-		"sharing": "Sharing",
-		"householdHint": "Invite your family and share your lists.",
-		"adminHint": "Approve new accounts and manage roles.",
 		"firstName": "First name",
 		"lastName": "Last name",
 		"name": "Display name",
@@ -106,7 +101,62 @@
 		"nameSave": "Save",
 		"nameSaved": "Saved",
 		"nameFailed": "That name could not be saved. Try again in a moment.",
-		"administration": "Administration"
+		"administration": "Administration",
+		"back": "Back to profile",
+		"search": "Search settings",
+		"searchEmpty": "No setting matches “{query}”.",
+		"searchResults": "Settings found",
+		"readingShortcut": "Text size and font",
+		"categories": {
+			"account": {
+				"hint": "Name, portrait, sign out",
+				"keywords": "first name, last name, photo, avatar, initials, email, log out, sign out"
+			},
+			"household": {
+				"title": "Household and sharing",
+				"hint": "Members, invitations, circles",
+				"keywords": "family, relatives, invite, join, code, share, circle, allergies, diets"
+			},
+			"display": {
+				"title": "Display and reading",
+				"hint": "Text size, font, theme, language",
+				"keywords": "big, large, bigger, zoom, read, readability, dark, light, night, colour, color, left-handed, right-handed, thumb, dyslexia"
+			},
+			"feedback": {
+				"title": "Sound and feedback",
+				"hint": "Animations, sound, vibration, card near a shop",
+				"keywords": "beep, noise, volume, mute, silent, motion, vibrate, notification, location, loyalty"
+			},
+			"security": {
+				"hint": "Password, two-step, devices, your data",
+				"keywords": "code, authentication, 2FA, TOTP, session, device, export, delete account, fingerprint, face, PIN, biometrics, passkey, unlock"
+			},
+			"ai": {
+				"hint": "Provider and key for recipe ideas",
+				"keywords": "AI, API key, provider, model, suggestion, recipe idea"
+			},
+			"images": {
+				"hint": "Pexels and Pixabay keys for dish photos",
+				"keywords": "photo, picture, image, Pexels, Pixabay, key, dish"
+			},
+			"connection": {
+				"hint": "The Supabase database this app uses",
+				"keywords": "server, Supabase, URL, self-hosting, instance, database"
+			},
+			"help": {
+				"hint": "Guided tour",
+				"keywords": "tutorial, tour, guide, help, discover"
+			},
+			"legal": {
+				"title": "Legal and privacy",
+				"hint": "Notice, terms, your personal data",
+				"keywords": "terms of use, terms of sale, privacy, GDPR, personal data, rights, legal notice"
+			},
+			"admin": {
+				"hint": "Accounts, reports, crashes",
+				"keywords": "approve, validate, role, administrator, demo, report, crash, GDPR request"
+			}
+		}
 	},
 	"theme": {
 		"light": "Light",

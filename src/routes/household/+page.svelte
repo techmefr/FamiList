@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { goto } from '$app/navigation';
+	import { afterNavigate, goto } from '$app/navigation';
 	import { supabase } from '$db/supabase';
 	import { session } from '$stores/session.svelte';
 	import { householdErrorKey } from '$domain/household-error';
@@ -14,6 +14,9 @@
 	import { Label } from '$components/ui/label';
 	import { Users, Copy, Check, KeyRound, CircleDot, Salad, Trash2 } from '@lucide/svelte';
 	import IconField from '$components/app/IconField.svelte';
+	import { highlightSettingTarget } from '$components/app/setting-target';
+
+	afterNavigate(({ to }) => highlightSettingTarget(to?.url));
 
 	let invite = $state<{ code: string; expires: string } | null>(null);
 	let joinCode = $state('');
@@ -245,7 +248,7 @@
 	</Card.Root>
 {/if}
 
-<Card.Root class="mt-6">
+<Card.Root id="setting-members" tabindex={-1} class="fl-setting mt-6">
 	<Card.Header>
 		<Card.Title class="text-h2 flex items-center gap-2">
 			<Users size={20} aria-hidden="true" />
@@ -297,7 +300,7 @@
 	</Card.Content>
 </Card.Root>
 
-<Card.Root class="mt-6">
+<Card.Root id="setting-people" tabindex={-1} class="fl-setting mt-6">
 	<Card.Header>
 		<Card.Title class="text-h2 flex items-center gap-2">
 			<Salad size={20} aria-hidden="true" />
@@ -358,7 +361,7 @@
 	</Card.Content>
 </Card.Root>
 
-<Card.Root class="mt-6">
+<Card.Root id="setting-invite" tabindex={-1} class="fl-setting mt-6">
 	<Card.Header>
 		<Card.Title class="text-h2">{t('household.inviteTitle')}</Card.Title>
 	</Card.Header>
@@ -389,7 +392,7 @@
 	</Card.Content>
 </Card.Root>
 
-<Card.Root class="mt-6">
+<Card.Root id="setting-join" tabindex={-1} class="fl-setting mt-6">
 	<Card.Header>
 		<Card.Title class="text-h2">{t('household.joinTitle')}</Card.Title>
 	</Card.Header>

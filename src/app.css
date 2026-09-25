@@ -480,6 +480,31 @@
 }
 
 /**
+ * A setting the search can land on.
+ *
+ * It takes focus when it is the target, but a focus ring on a whole block reads as a selection nobody
+ * made; the highlight says it instead, drawn outside the block so it never covers a label.
+ */
+.fl-setting {
+	scroll-margin-block-start: 1.5rem;
+	border-radius: var(--radius);
+}
+
+.fl-setting:focus {
+	outline: none;
+}
+
+.fl-setting[data-highlight] {
+	outline: 3px solid var(--primary);
+	outline-offset: 6px;
+}
+
+/* A row runs edge to edge of its card, which clips anything drawn outside it. */
+li.fl-setting[data-highlight] {
+	outline-offset: -3px;
+}
+
+/**
  * The primary button reacts to hover and press.
  *
  * shadcn only plans that change for a link (`[a]:hover`): a real `<button>` in the primary colour did not

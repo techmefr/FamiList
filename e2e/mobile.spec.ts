@@ -90,12 +90,12 @@ test('sur téléphone, la navigation est une barre en bas et non une colonne', a
 });
 
 /**
- * Everything plays out without leaving the profile. The setting is pushed to the account with a delay, and
- * a navigation in between brings back the appearance still saved in the database: we would then measure
- * the button from before the gesture. The button being present on every page, staying here costs nothing.
+ * Everything plays out without leaving the display settings. The setting is pushed to the account with a
+ * delay, and a navigation in between brings back the appearance still saved in the database: we would then
+ * measure the button from before the gesture. The button being present on every page, staying here costs nothing.
  */
 test('le bouton de création change de côté avec la main déclarée', async ({ signedInPage: page }) => {
-	await page.goto('/profile');
+	await page.goto('/profile/display');
 
 	const middle = page.viewportSize()!.width / 2;
 	const button = page.getByTestId('nav-create');

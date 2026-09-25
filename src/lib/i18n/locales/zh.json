@@ -58,7 +58,6 @@
 	},
 	"profile": {
 		"title": "我的",
-		"appearance": "外观",
 		"theme": "主题",
 		"textSize": "文字大小",
 		"font": "字体",
@@ -78,7 +77,6 @@
 		"avatarTooBig": "这张图片太大了，请选一张小一些的。",
 		"avatarFailed": "无法读取这张图片。",
 		"signedInAs": "已登录：{email}",
-		"feedbackTitle": "动效与反馈",
 		"motion": "动画",
 		"motionHint": "“跟随系统”会采用设备的减弱动态效果设置。",
 		"motionPreview": "动画已开启。",
@@ -94,9 +92,6 @@
 		"help": "帮助",
 		"tourHint": "重新观看主要界面的导览。",
 		"replayTour": "重看导览",
-		"sharing": "共享",
-		"householdHint": "邀请家人，一起共用清单。",
-		"adminHint": "审批新账号并管理权限。",
 		"firstName": "名",
 		"lastName": "姓",
 		"name": "显示名称",
@@ -105,7 +100,62 @@
 		"nameSave": "保存",
 		"nameSaved": "已保存",
 		"nameFailed": "姓名保存失败，请稍后再试。",
-		"administration": "管理"
+		"administration": "管理",
+		"back": "返回个人资料",
+		"search": "搜索设置",
+		"searchEmpty": "没有与“{query}”匹配的设置。",
+		"searchResults": "找到的设置",
+		"readingShortcut": "文字大小和字体",
+		"categories": {
+			"account": {
+				"hint": "姓名、头像、退出登录",
+				"keywords": "名字、姓氏、照片、头像、首字母、邮箱、退出登录、登出"
+			},
+			"household": {
+				"title": "家庭与共享",
+				"hint": "成员、邀请、圈子",
+				"keywords": "家人、亲友、邀请、加入、代码、共享、圈子、过敏、饮食"
+			},
+			"display": {
+				"title": "显示与阅读",
+				"hint": "文字大小、字体、主题、语言",
+				"keywords": "大字、放大、阅读、易读、深色、浅色、夜间、颜色、左撇子、右撇子、拇指、阅读障碍"
+			},
+			"feedback": {
+				"title": "声音与反馈",
+				"hint": "动效、声音、振动、到店提醒卡片",
+				"keywords": "提示音、声音、音量、静音、动画、振动、通知、位置、会员卡"
+			},
+			"security": {
+				"hint": "密码、两步验证、设备、你的数据",
+				"keywords": "验证码、认证、2FA、TOTP、会话、设备、导出、删除账号、指纹、面容、PIN 码、生物识别、通行密钥、解锁"
+			},
+			"ai": {
+				"hint": "用于菜谱灵感的服务商和密钥",
+				"keywords": "AI、人工智能、API 密钥、服务商、模型、建议、菜谱灵感"
+			},
+			"images": {
+				"hint": "用于菜品照片的 Pexels 和 Pixabay 密钥",
+				"keywords": "照片、图片、Pexels、Pixabay、密钥、菜品"
+			},
+			"connection": {
+				"hint": "本应用使用的 Supabase 数据库",
+				"keywords": "服务器、Supabase、网址、自托管、实例、数据库"
+			},
+			"help": {
+				"hint": "导览",
+				"keywords": "教程、导览、指南、帮助、了解"
+			},
+			"legal": {
+				"title": "法律与隐私",
+				"hint": "声明、条款、你的个人数据",
+				"keywords": "使用条款、销售条款、隐私、GDPR、个人数据、权利、法律声明"
+			},
+			"admin": {
+				"hint": "账号、反馈、崩溃",
+				"keywords": "批准、审核、角色、管理员、演示、反馈、崩溃、数据请求"
+			}
+		}
 	},
 	"theme": {
 		"light": "浅色",
