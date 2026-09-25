@@ -1380,6 +1380,7 @@
 	"helpMenu": {
 		"button": "Hilfe",
 		"tutorial": "Anleitung ansehen",
+		"whatsNew": "Neuigkeiten ansehen",
 		"install": "Auf dem Startbildschirm installieren",
 		"suggestion": "Verbesserung vorschlagen",
 		"bug": "Fehler melden"
@@ -1387,19 +1388,16 @@
 	"changelog": {
 		"title": "Neuigkeiten",
 		"entryTitle": "Version {version}",
+		"currentVersion": "Sie verwenden Version {version}",
+		"groups": {
+			"new": "Neu",
+			"improved": "Verbessert",
+			"fixed": "Behoben"
+		},
 		"acknowledge": "Verstanden",
 		"replayTour": "Die ganze Anleitung erneut ansehen",
 		"dismissOnce": "Nicht jetzt",
-		"dismissUntilNextUpdate": "Bis zum nächsten Update nicht mehr anzeigen",
-		"v0_1_0": {
-			"items": [
-				"Wochenmenü: Planen Sie Ihre Mahlzeiten und erhalten Sie die passende Einkaufsliste.",
-				"Der Haushalt kann jetzt seine Mitglieder und deren Ernährungseinschränkungen speichern.",
-				"Fragen Sie die KI im Gespräch nach einem Rezept, auch wenn der Import einer Seite fehlschlägt.",
-				"Mehrere KI-Schlüssel können jetzt für denselben Account gespeichert werden.",
-				"Nach einem Update erscheint eine Neuigkeiten-Karte mit schnellem Zugang zur Anleitung."
-			]
-		}
+		"dismissUntilNextUpdate": "Bis zum nächsten Update nicht mehr anzeigen"
 	},
 	"install": {
 		"title": "Familiste auf Ihrem Startbildschirm",

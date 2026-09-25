@@ -1,5 +1,34 @@
 # Changelog
 
+## v0.1.1
+
+[compare changes](https://github.com/techmefr/FamiList/compare/v0.1.0...v0.1.1)
+
+### 🚀 Enhancements
+
+- **legal:** Add legal notice, terms, privacy policy and terms of sale pages ([#301](https://github.com/techmefr/FamiList/pull/301))
+- **recipes:** Link steps to their ingredients and show them in cook-along ([#330](https://github.com/techmefr/FamiList/pull/330))
+- **recipes:** Unified image picker with camera, gallery and image banks ([#331](https://github.com/techmefr/FamiList/pull/331))
+- **cook-along:** Step track with position, progress and jump to step ([#327](https://github.com/techmefr/FamiList/pull/327))
+- **recipes:** Hands-free cook-along with the wake word Famy ([#333](https://github.com/techmefr/FamiList/pull/333))
+- **recipes:** Timers on recipe steps, in cook-along and by voice ([#335](https://github.com/techmefr/FamiList/pull/335))
+- **recipes:** Fixed, translated recipe tags stored as stable keys ([#334](https://github.com/techmefr/FamiList/pull/334))
+
+### 🩹 Fixes
+
+- **recipes:** Land on the filled form when editing a recipe ([#326](https://github.com/techmefr/FamiList/pull/326))
+- **recipes:** Say what happens when setting a recipe photo ([#325](https://github.com/techmefr/FamiList/pull/325))
+- **recipes:** Draw dish photos from an ai-written visual prompt via openrouter ([#332](https://github.com/techmefr/FamiList/pull/332))
+
+### 📖 Documentation
+
+- Translate remaining french docs and workflow comments to english ([#300](https://github.com/techmefr/FamiList/pull/300))
+
+### ✅ Tests
+
+- **cards:** Cover loyalty cards end to end ([#299](https://github.com/techmefr/FamiList/pull/299))
+- **e2e:** Stop a leftover second step from failing the rest of the suite ([#329](https://github.com/techmefr/FamiList/pull/329))
+
 ## 0.1.0
 
 The first release with recipes, meal planning, and optional AI assistance — built on top of the
