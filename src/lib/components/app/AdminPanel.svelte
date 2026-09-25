@@ -8,6 +8,7 @@
 	import { Label } from '$components/ui/label';
 	import { Switch } from '$components/ui/switch';
 	import { adminErrorKey, needsElevation } from '$domain/admin-error';
+	import { openExternal } from '$native/external-link';
 	import {
 		Check,
 		X,
@@ -509,6 +510,11 @@
 										href={report.issue_url ?? '#'}
 										target="_blank"
 										rel="noreferrer"
+										onclick={(event) => {
+											if (!report.issue_url) return;
+											event.preventDefault();
+											openExternal(report.issue_url);
+										}}
 										class="text-label underline"
 										data-test-class="bug-issue-link"
 									>

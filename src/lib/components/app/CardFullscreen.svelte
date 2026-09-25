@@ -10,6 +10,7 @@
 	import { Button } from '$components/ui/button';
 	import { readCardAccount, type CardAccount } from '$stores/card-account';
 	import { safeWebsiteUrl } from '$domain/website';
+	import { openExternal } from '$native/external-link';
 	import { X, Sun, Pencil, Eye, EyeOff, Share2, KeyRound, ExternalLink } from '@lucide/svelte';
 
 	let {
@@ -305,6 +306,10 @@
 						href={website}
 						target="_blank"
 						rel="noopener noreferrer"
+						onclick={(event) => {
+							event.preventDefault();
+							openExternal(website);
+						}}
 						aria-label={t('cards.websiteOpenLabel', { name: card.name })}
 						data-test-id="card-website-open"
 						class="fl-press text-label mt-3 flex min-h-[max(2.75rem,44px)] items-center justify-center gap-2 rounded-full border border-white/30 px-6 font-medium text-white"
