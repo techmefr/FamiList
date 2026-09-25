@@ -427,7 +427,6 @@
 	},
 	"recipes": {
 		"import": {
-			"title": "从链接导入",
 			"privacy": "该网址会发送到本实例的服务器，由它代您抓取页面，并向被访问的网站表明身份。不会保留任何内容，也不会打开其他页面。",
 			"url": "菜谱网址",
 			"urlPlaceholder": "https://example.com/my-recipe",
@@ -651,7 +650,38 @@
 		"stepIngredients": "第 {rank} 步用到的食材",
 		"stepDuration": "第 {rank} 步用时（可选）",
 		"durationHours": "小时",
-		"durationMinutes": "分钟"
+		"durationMinutes": "分钟",
+		"create": {
+			"title": "创建食谱",
+			"intro": "选择从哪里开始。保存前您会再通读一遍。",
+			"back": "其他创建方式",
+			"backToRecipes": "返回食谱",
+			"needsKey": "需要 AI 密钥",
+			"needsKeyBody": "这种创建方式会经过您自己的 AI 提供商。请在 AI 设置中添加密钥，然后回到这里。",
+			"needsKeyLink": "添加我的 AI 密钥",
+			"sources": {
+				"manual": {
+					"title": "自己动手写",
+					"hint": "名称、食材，然后是步骤。"
+				},
+				"link": {
+					"title": "从链接导入",
+					"hint": "粘贴在网上找到的食谱地址。"
+				},
+				"photo": {
+					"title": "从照片导入",
+					"hint": "书页或手写的食谱，由 AI 读取。"
+				},
+				"ai": {
+					"title": "询问 AI",
+					"hint": "描述菜品，AI 会推荐一份食谱。"
+				},
+				"purchases": {
+					"title": "根据购物记录",
+					"hint": "用家里已经买过的东西做一道菜。"
+				}
+			}
+		}
 	},
 	"recipeTags": {
 		"title": "分类",
@@ -1428,8 +1458,6 @@
 		"clear": "移除密钥",
 		"active": "已启用",
 		"useThisOne": "使用此项",
-		"suggest": "菜谱灵感",
-		"suggestTitle": "根据你买过的东西想一道菜",
 		"noProducts": "还没有勾选任何商品。先去采购，灵感就从那里来。",
 		"willSend": {
 			"other": "将发送 {count} 件商品"
@@ -1490,8 +1518,6 @@
 		"photoErrorUnreachable": "图片服务没有响应。请稍后重试。",
 		"photoErrorUpload": "图片无法保存。请重试。",
 		"photo": {
-			"trigger": "通过照片创建食谱",
-			"title": "拍摄食谱照片",
 			"hint": "拍摄书页照片，或手写/印刷的食谱。",
 			"pick": "拍照或导入照片",
 			"reading": "正在读取照片…",

@@ -429,7 +429,6 @@
 	},
 	"recipes": {
 		"import": {
-			"title": "Importer depuis un lien",
 			"privacy": "L’adresse est envoyée au serveur de l’instance, qui ira chercher la page à votre place et se présentera au site visité. Rien n’est conservé, et aucune autre page n’est consultée.",
 			"url": "Adresse de la recette",
 			"urlPlaceholder": "https://exemple.fr/ma-recette",
@@ -673,7 +672,38 @@
 		"stepIngredients": "Ingrédients utilisés à l’étape {rank}",
 		"stepDuration": "Durée de l’étape {rank} (facultatif)",
 		"durationHours": "Heures",
-		"durationMinutes": "Minutes"
+		"durationMinutes": "Minutes",
+		"create": {
+			"title": "Créer une recette",
+			"intro": "Choisissez comment commencer. Vous relirez tout avant d’enregistrer.",
+			"back": "Autres façons de créer",
+			"backToRecipes": "Retour aux recettes",
+			"needsKey": "Demande une clé IA",
+			"needsKeyBody": "Cette façon de créer passe par votre propre fournisseur d’IA. Posez votre clé dans les réglages IA, puis revenez ici.",
+			"needsKeyLink": "Poser ma clé IA",
+			"sources": {
+				"manual": {
+					"title": "Écrire moi-même",
+					"hint": "Le nom, les ingrédients, puis les étapes."
+				},
+				"link": {
+					"title": "Depuis un lien",
+					"hint": "Collez l’adresse d’une recette trouvée sur le web."
+				},
+				"photo": {
+					"title": "Depuis une photo",
+					"hint": "Une page de livre ou une recette écrite, lue par l’IA."
+				},
+				"ai": {
+					"title": "Demander à l’IA",
+					"hint": "Décrivez le plat, l’IA propose une recette."
+				},
+				"purchases": {
+					"title": "Idée à partir des achats",
+					"hint": "Une recette avec ce que le foyer a déjà acheté."
+				}
+			}
+		}
 	},
 	"recipeTags": {
 		"title": "Catégories",
@@ -1455,8 +1485,6 @@
 		"clear": "Retirer la clé",
 		"active": "Actif",
 		"useThisOne": "Utiliser celui-ci",
-		"suggest": "Une idée de recette",
-		"suggestTitle": "Une idée à partir de vos achats",
 		"noProducts": "Aucun article coché pour l’instant. Faites vos courses, les idées viendront de là.",
 		"willSend": {
 			"one": "1 produit va être envoyé",
@@ -1518,8 +1546,6 @@
 		"photoErrorUnreachable": "Le service d'images n'a pas répondu. Réessayez dans un instant.",
 		"photoErrorUpload": "L'image n'a pas pu être enregistrée. Réessayez.",
 		"photo": {
-			"trigger": "Créer une recette par photo",
-			"title": "Prenez une photo de la recette",
 			"hint": "Photographiez une page de livre, ou une recette écrite ou imprimée.",
 			"pick": "Prendre ou importer une photo",
 			"reading": "Lecture de la photo…",

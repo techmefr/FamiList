@@ -52,8 +52,8 @@ const say = (page: Page, text: string) => page.evaluate((text) => (window as unk
 async function openCookAlong(page: Page) {
 	const name = `Voix e2e ${Date.now()}`;
 
-	await page.goto('/recipes');
-	await page.getByTestId('recipe-new').click();
+	await page.goto('/recipes/new');
+	await page.getByTestId('recipe-source-manual').click();
 	await page.getByTestId('recipe-name').fill(name);
 	await page.getByTestId('recipe-next').click();
 	await page.locator('[data-test-class="ingredient-name"]').first().fill('Oeufs');
