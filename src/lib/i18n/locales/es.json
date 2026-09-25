@@ -1302,8 +1302,7 @@
 			"stopDictate": "Detener el dictado",
 			"listening": "Escuchando…",
 			"dictateError": "El dictado por voz falló. Intenta de nuevo o escribe el texto."
-		},
-		"photoGenerateFallback": "Generar una imagen con IA"
+		}
 	},
 	"setup": {
 		"title": "Instancia sin configurar",

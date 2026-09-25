@@ -1302,8 +1302,7 @@
 			"stopDictate": "Ferma la dettatura",
 			"listening": "In ascolto…",
 			"dictateError": "La dettatura vocale non è riuscita. Riprova o scrivi il testo."
-		},
-		"photoGenerateFallback": "Genera un'immagine con l'IA"
+		}
 	},
 	"setup": {
 		"title": "Istanza non configurata",

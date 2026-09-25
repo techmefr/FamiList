@@ -1292,8 +1292,7 @@
 			"stopDictate": "停止口述",
 			"listening": "正在聆听…",
 			"dictateError": "语音口述失败。请重试或手动输入文字。"
-		},
-		"photoGenerateFallback": "用AI生成图片"
+		}
 	},
 	"setup": {
 		"title": "实例尚未配置",

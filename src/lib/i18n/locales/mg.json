@@ -1302,8 +1302,7 @@
 			"stopDictate": "Atsaharo ny fitononana",
 			"listening": "Mihaino…",
 			"dictateError": "Tsy nahomby ny fitononana am-bava. Andramo indray na soraty ny lahatsoratra."
-		},
-		"photoGenerateFallback": "Mamorona sary amin'ny AI"
+		}
 	},
 	"setup": {
 		"title": "Tsy mbola voaomana ity instance ity",

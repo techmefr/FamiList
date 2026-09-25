@@ -1302,8 +1302,7 @@
 			"stopDictate": "Stop dictation",
 			"listening": "Listening…",
 			"dictateError": "Voice dictation failed. Try again or type the text."
-		},
-		"photoGenerateFallback": "Generate an image with AI"
+		}
 	},
 	"setup": {
 		"title": "Instance not configured",

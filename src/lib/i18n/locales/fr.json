@@ -1301,8 +1301,7 @@
 			"stopDictate": "Arrêter la dictée",
 			"listening": "Écoute en cours…",
 			"dictateError": "La dictée vocale a échoué. Réessayez ou saisissez le texte."
-		},
-		"photoGenerateFallback": "Générer une image par IA"
+		}
 	},
 	"setup": {
 		"title": "Instance non configurée",

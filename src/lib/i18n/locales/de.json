@@ -1302,8 +1302,7 @@
 			"stopDictate": "Diktat beenden",
 			"listening": "Höre zu…",
 			"dictateError": "Die Sprachdiktatur ist fehlgeschlagen. Erneut versuchen oder Text eingeben."
-		},
-		"photoGenerateFallback": "Bild mit KI erzeugen"
+		}
 	},
 	"setup": {
 		"title": "Instanz nicht konfiguriert",
