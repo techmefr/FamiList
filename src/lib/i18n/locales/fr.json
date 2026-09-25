@@ -502,9 +502,19 @@
 			"mute": "Couper la voix",
 			"unmute": "Réactiver la voix",
 			"empty": "Cette recette n’a pas d’étape à suivre.",
+			"ingredients": "Ingrédients",
+			"stepIngredientsCount": "Ingrédients de l’étape ({count})",
+			"ingredientsOfStep": "Ingrédients de l’étape {current}",
+			"allIngredients": "Tous les ingrédients",
+			"noStepIngredients": "Aucun ingrédient n’est relié à cette étape : voici toute la recette.",
+			"showAllIngredients": "Voir toute la recette",
+			"showStepIngredients": "Voir seulement cette étape",
+			"readIngredients": "Lire les ingrédients",
+			"speakIngredients": "Ingrédients : {list}.",
 			"steps": "Étapes de la recette",
 			"goTo": "Aller à l’étape {current} sur {total}"
-		}
+		},
+		"stepIngredients": "Ingrédients utilisés à l’étape {rank}"
 	},
 	"aisles": {
 		"title": "Rayons",
@@ -1260,7 +1270,19 @@
 		"photoSearch": "Chercher une image",
 		"photoSearching": "Recherche en cours…",
 		"photoSearchNotFound": "Aucune image trouvée",
-		"photoGenerateFallback": "Générer une image par IA",
+		"photoSearchTitle": "Chercher une image",
+		"photoSearchQuery": "Que chercher ?",
+		"photoSearchSubmit": "Rechercher",
+		"photoSearchHint": "Touchez une image pour l'utiliser sur cette recette.",
+		"photoSearchNotFoundHint": "Essayez d'autres mots, ou générez une image par IA.",
+		"photoPick": "Utiliser cette image : {title}",
+		"photoUsing": "Ajout de l'image…",
+		"photoSaved": "Photo ajoutée à la recette",
+		"photoRetry": "Réessayer",
+		"photoErrorOffline": "Vous êtes hors ligne. Connectez-vous à Internet, puis réessayez.",
+		"photoErrorUnavailable": "Ce service d'images est indisponible pour le moment. Essayez une autre source.",
+		"photoErrorUnreachable": "Le service d'images n'a pas répondu. Réessayez dans un instant.",
+		"photoErrorUpload": "L'image n'a pas pu être enregistrée. Réessayez.",
 		"photo": {
 			"trigger": "Créer une recette par photo",
 			"title": "Prenez une photo de la recette",
@@ -1279,7 +1301,8 @@
 			"stopDictate": "Arrêter la dictée",
 			"listening": "Écoute en cours…",
 			"dictateError": "La dictée vocale a échoué. Réessayez ou saisissez le texte."
-		}
+		},
+		"photoGenerateFallback": "Générer une image par IA"
 	},
 	"setup": {
 		"title": "Instance non configurée",

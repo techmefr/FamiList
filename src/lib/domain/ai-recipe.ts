@@ -1,5 +1,6 @@
 import { DEFAULT_SERVINGS, MAX_SERVINGS, MIN_SERVINGS, type RecipeLine } from './recipe';
 import { slugify } from './slug';
+import { guessLinks, sanitizeLinks } from './step-ingredients';
 import { DEFAULT_UNIT, resolveUnit, UNITS } from './units';
 
 /**
@@ -70,6 +71,13 @@ export interface PromptOptions {
 	restrictions?: string[];
 }
 
+/**
+ * Asked with every recipe (#308): which lines each step uses, so cook-along can show what to get out. The
+ * indices are the positions in "ingredients", counted from 0, one list per step.
+ */
+const STEP_INGREDIENTS_RULE =
+	'"stepIngredients" contient une liste par etape, dans le meme ordre que "steps" : les numeros (a partir de 0) des ingredients utilises a cette etape.';
+
 /** The instruction line added to a prompt when the household has dietary restrictions, or none at all. */
 function restrictionsLine(restrictions?: string[]): string[] {
 	const kept = (restrictions ?? []).map((r) => r.trim()).filter(Boolean);
@@ -108,11 +116,12 @@ export function recipePrompt(products: string[], options: PromptOptions): string
 		...restrictionsLine(options.restrictions),
 		'Reponds uniquement par un objet JSON, sans texte autour et sans bloc de code.',
 		'Forme exacte attendue :',
-		'{"name":"","emoji":"","servings":0,"ingredients":[{"name":"","qty":"","unit":""}],"steps":[""]}',
+		'{"name":"","emoji":"","servings":0,"ingredients":[{"name":"","qty":"","unit":""}],"steps":[""],"stepIngredients":[[0]]}',
 		`"emoji" est un seul caractere emoji. "servings" vaut ${servings}.`,
 		`"unit" vaut obligatoirement l'une de ces valeurs : ${UNITS.join(', ')}.`,
 		'"qty" est un nombre ecrit en chiffres, ou une chaine vide si la quantite ne se compte pas.',
-		'"steps" contient les etapes de preparation, une par entree, dans l ordre.'
+		'"steps" contient les etapes de preparation, une par entree, dans l ordre.',
+		STEP_INGREDIENTS_RULE
 	].join('\n');
 }
 
@@ -137,11 +146,12 @@ export function recipeExtractionPrompt(pageText: string, options: PromptOptions)
 		...restrictionsLine(options.restrictions),
 		'Reponds uniquement par un objet JSON, sans texte autour et sans bloc de code.',
 		'Forme exacte attendue :',
-		'{"name":"","emoji":"","servings":0,"ingredients":[{"name":"","qty":"","unit":""}],"steps":[""]}',
+		'{"name":"","emoji":"","servings":0,"ingredients":[{"name":"","qty":"","unit":""}],"steps":[""],"stepIngredients":[[0]]}',
 		'"emoji" est un seul caractere emoji.',
 		`"unit" vaut obligatoirement l'une de ces valeurs : ${UNITS.join(', ')}.`,
 		'"qty" est un nombre ecrit en chiffres, ou une chaine vide si la quantite ne se compte pas.',
-		'"steps" contient les etapes de preparation, une par entree, dans l ordre.'
+		'"steps" contient les etapes de preparation, une par entree, dans l ordre.',
+		STEP_INGREDIENTS_RULE
 	].join('\n');
 }
 
@@ -165,11 +175,12 @@ export function recipeFromRequestPrompt(userText: string, options: PromptOptions
 		...restrictionsLine(options.restrictions),
 		'Reponds uniquement par un objet JSON, sans texte autour et sans bloc de code.',
 		'Forme exacte attendue :',
-		'{"name":"","emoji":"","servings":0,"ingredients":[{"name":"","qty":"","unit":""}],"steps":[""]}',
+		'{"name":"","emoji":"","servings":0,"ingredients":[{"name":"","qty":"","unit":""}],"steps":[""],"stepIngredients":[[0]]}',
 		'"emoji" est un seul caractere emoji.',
 		`"unit" vaut obligatoirement l'une de ces valeurs : ${UNITS.join(', ')}.`,
 		'"qty" est un nombre ecrit en chiffres, ou une chaine vide si la quantite ne se compte pas.',
-		'"steps" contient les etapes de preparation, une par entree, dans l ordre.'
+		'"steps" contient les etapes de preparation, une par entree, dans l ordre.',
+		STEP_INGREDIENTS_RULE
 	].join('\n');
 }
 
@@ -197,11 +208,12 @@ export function recipeFollowUpPrompt(userText: string, options: PromptOptions): 
 		`Garde ${servings} personnes sauf si la demande dit le contraire.`,
 		'Reponds de nouveau par la recette complete, uniquement par un objet JSON, sans texte autour et sans bloc de code.',
 		'Forme exacte attendue :',
-		'{"name":"","emoji":"","servings":0,"ingredients":[{"name":"","qty":"","unit":""}],"steps":[""]}',
+		'{"name":"","emoji":"","servings":0,"ingredients":[{"name":"","qty":"","unit":""}],"steps":[""],"stepIngredients":[[0]]}',
 		'"emoji" est un seul caractere emoji.',
 		`"unit" vaut obligatoirement l'une de ces valeurs : ${UNITS.join(', ')}.`,
 		'"qty" est un nombre ecrit en chiffres, ou une chaine vide si la quantite ne se compte pas.',
-		'"steps" contient les etapes de preparation, une par entree, dans l ordre.'
+		'"steps" contient les etapes de preparation, une par entree, dans l ordre.',
+		STEP_INGREDIENTS_RULE
 	].join('\n');
 }
 
@@ -221,11 +233,12 @@ export function recipeFromPhotoPrompt(options: PromptOptions): string {
 		...restrictionsLine(options.restrictions),
 		'Reponds uniquement par un objet JSON, sans texte autour et sans bloc de code.',
 		'Forme exacte attendue :',
-		'{"name":"","emoji":"","servings":0,"ingredients":[{"name":"","qty":"","unit":""}],"steps":[""]}',
+		'{"name":"","emoji":"","servings":0,"ingredients":[{"name":"","qty":"","unit":""}],"steps":[""],"stepIngredients":[[0]]}',
 		'"emoji" est un seul caractere emoji.',
 		`"unit" vaut obligatoirement l'une de ces valeurs : ${UNITS.join(', ')}.`,
 		'"qty" est un nombre ecrit en chiffres, ou une chaine vide si la quantite ne se compte pas.',
-		'"steps" contient les etapes de preparation, une par entree, dans l ordre.'
+		'"steps" contient les etapes de preparation, une par entree, dans l ordre.',
+		STEP_INGREDIENTS_RULE
 	].join('\n');
 }
 
@@ -241,6 +254,8 @@ export interface SuggestedRecipe {
 	servings: number;
 	ingredients: RecipeLine[];
 	steps: string[];
+	/** For each of `steps`, the indices in `ingredients` it uses (#308). */
+	stepIngredients: number[][];
 }
 
 /** What we show in the absence of an emoji returned by the provider, like the entry form. */
@@ -281,6 +296,25 @@ const asText = (value: unknown): string => (typeof value === 'string' ? value.tr
  * single ingredient returns null: there is nothing to show, and displaying an empty card would suggest a
  * useful answer.
  */
+function suggestedLinks(raw: unknown, allIngredients: RecipeLine[], allSteps: string[]): number[][] {
+	// The model numbers the lines it wrote, blank ones included: its indices are moved onto the kept lines.
+	const keptIndex = new Map<number, number>();
+	allIngredients.forEach((line, index) => {
+		if (line.name !== '') keptIndex.set(index, keptIndex.size);
+	});
+
+	const given = sanitizeLinks(raw, allSteps.length, allIngredients.length)
+		.map(indices => indices.flatMap(index => (keptIndex.has(index) ? [keptIndex.get(index)!] : [])))
+		.filter((_, step) => allSteps[step] !== '');
+
+	if (given.some(indices => indices.length > 0)) return given;
+
+	return guessLinks(
+		allIngredients.filter(line => line.name !== '').map(line => line.name),
+		allSteps.filter(Boolean)
+	);
+}
+
 export function parseRecipeSuggestion(text: string): SuggestedRecipe | null {
 	const root = asRecord(extractJson(text));
 	if (!root) return null;
@@ -288,7 +322,7 @@ export function parseRecipeSuggestion(text: string): SuggestedRecipe | null {
 	const name = asText(root.name);
 	if (!name) return null;
 
-	const ingredients = (Array.isArray(root.ingredients) ? root.ingredients : [])
+	const allIngredients = (Array.isArray(root.ingredients) ? root.ingredients : [])
 		.map(asRecord)
 		.map(line => ({
 			name: asText(line?.name),
@@ -296,14 +330,15 @@ export function parseRecipeSuggestion(text: string): SuggestedRecipe | null {
 			// `resolveUnit` already knows the aliases and the plurals written by hand: a model answering "grammes"
 			// despite the instruction falls back on `g` instead of being brought back to the piece.
 			unit: resolveUnit(line?.unit as string) ?? DEFAULT_UNIT
-		}))
-		.filter(line => line.name !== '');
+		}));
+	const ingredients = allIngredients.filter(line => line.name !== '');
 
 	if (ingredients.length === 0) return null;
 
 	const emoji = [...asText(root.emoji)][0] ?? FALLBACK_EMOJI;
 
-	const steps = (Array.isArray(root.steps) ? root.steps : []).map(asText).filter(Boolean);
+	const allSteps = (Array.isArray(root.steps) ? root.steps : []).map(asText);
+	const steps = allSteps.filter(Boolean);
 
 	return {
 		name,
@@ -312,6 +347,7 @@ export function parseRecipeSuggestion(text: string): SuggestedRecipe | null {
 		ingredients,
 		// A recipe with no step is still a recipe — the shopping list, which is the point, does not need one. We
 		// keep an empty entry so that the review form has its row.
-		steps: steps.length > 0 ? steps : ['']
+		steps: steps.length > 0 ? steps : [''],
+		stepIngredients: steps.length > 0 ? suggestedLinks(root.stepIngredients, allIngredients, allSteps) : [[]]
 	};
 }

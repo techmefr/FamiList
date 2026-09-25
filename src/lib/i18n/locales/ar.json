@@ -514,9 +514,19 @@
 			"mute": "كتم الصوت",
 			"unmute": "تفعيل الصوت",
 			"empty": "لا توجد خطوات لهذه الوصفة.",
+			"ingredients": "المكونات",
+			"stepIngredientsCount": "مكونات هذه الخطوة ({count})",
+			"ingredientsOfStep": "مكونات الخطوة {current}",
+			"allIngredients": "كل المكونات",
+			"noStepIngredients": "لا يوجد مكوّن مرتبط بهذه الخطوة: إليك الوصفة كاملة.",
+			"showAllIngredients": "عرض الوصفة كاملة",
+			"showStepIngredients": "عرض هذه الخطوة فقط",
+			"readIngredients": "قراءة المكونات",
+			"speakIngredients": "المكونات: {list}.",
 			"steps": "خطوات الوصفة",
 			"goTo": "الانتقال إلى الخطوة {current} من {total}"
-		}
+		},
+		"stepIngredients": "المكونات المستخدمة في الخطوة {rank}"
 	},
 	"aisles": {
 		"title": "الأقسام",
@@ -1301,7 +1311,19 @@
 		"photoSearch": "البحث عن صورة",
 		"photoSearching": "جارٍ البحث…",
 		"photoSearchNotFound": "لم يتم العثور على صورة",
-		"photoGenerateFallback": "إنشاء صورة بالذكاء الاصطناعي",
+		"photoSearchTitle": "ابحث عن صورة",
+		"photoSearchQuery": "عمّ تبحث؟",
+		"photoSearchSubmit": "بحث",
+		"photoSearchHint": "المس صورة لاستخدامها في هذه الوصفة.",
+		"photoSearchNotFoundHint": "جرّب كلمات أخرى، أو أنشئ صورة بالذكاء الاصطناعي.",
+		"photoPick": "استخدم هذه الصورة: {title}",
+		"photoUsing": "جارٍ إضافة الصورة…",
+		"photoSaved": "أُضيفت الصورة إلى الوصفة",
+		"photoRetry": "أعد المحاولة",
+		"photoErrorOffline": "أنت غير متصل. اتصل بالإنترنت ثم أعد المحاولة.",
+		"photoErrorUnavailable": "خدمة الصور هذه غير متاحة حاليًا. جرّب مصدرًا آخر.",
+		"photoErrorUnreachable": "لم تستجب خدمة الصور. أعد المحاولة بعد لحظات.",
+		"photoErrorUpload": "تعذّر حفظ الصورة. أعد المحاولة.",
 		"photo": {
 			"trigger": "إنشاء وصفة عبر صورة",
 			"title": "التقط صورة للوصفة",
@@ -1320,7 +1342,8 @@
 			"stopDictate": "إيقاف الإملاء",
 			"listening": "جارٍ الاستماع…",
 			"dictateError": "فشل الإملاء الصوتي. أعد المحاولة أو اكتب النص."
-		}
+		},
+		"photoGenerateFallback": "إنشاء صورة بالذكاء الاصطناعي"
 	},
 	"setup": {
 		"title": "لم تُضبط هذه النسخة بعد",

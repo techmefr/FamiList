@@ -502,9 +502,19 @@
 			"mute": "Mute voice",
 			"unmute": "Unmute voice",
 			"empty": "This recipe has no step to follow.",
+			"ingredients": "Ingredients",
+			"stepIngredientsCount": "Ingredients for this step ({count})",
+			"ingredientsOfStep": "Ingredients for step {current}",
+			"allIngredients": "All ingredients",
+			"noStepIngredients": "No ingredient is linked to this step: here is the whole recipe.",
+			"showAllIngredients": "Show the whole recipe",
+			"showStepIngredients": "Show this step only",
+			"readIngredients": "Read the ingredients",
+			"speakIngredients": "Ingredients: {list}.",
 			"steps": "Recipe steps",
 			"goTo": "Go to step {current} of {total}"
-		}
+		},
+		"stepIngredients": "Ingredients used in step {rank}"
 	},
 	"aisles": {
 		"title": "Aisles",
@@ -1261,7 +1271,19 @@
 		"photoSearch": "Search for an image",
 		"photoSearching": "Searching…",
 		"photoSearchNotFound": "No image found",
-		"photoGenerateFallback": "Generate an image with AI",
+		"photoSearchTitle": "Search for an image",
+		"photoSearchQuery": "What to look for",
+		"photoSearchSubmit": "Search",
+		"photoSearchHint": "Tap an image to use it for this recipe.",
+		"photoSearchNotFoundHint": "Try other words, or generate an image with AI.",
+		"photoPick": "Use this image: {title}",
+		"photoUsing": "Adding the image…",
+		"photoSaved": "Photo added to the recipe",
+		"photoRetry": "Try again",
+		"photoErrorOffline": "You are offline. Connect to the internet, then try again.",
+		"photoErrorUnavailable": "This image service is unavailable at the moment. Try another source.",
+		"photoErrorUnreachable": "The image service did not respond. Try again in a moment.",
+		"photoErrorUpload": "The image could not be saved. Try again.",
 		"photo": {
 			"trigger": "Create a recipe by photo",
 			"title": "Take a photo of the recipe",
@@ -1280,7 +1302,8 @@
 			"stopDictate": "Stop dictation",
 			"listening": "Listening…",
 			"dictateError": "Voice dictation failed. Try again or type the text."
-		}
+		},
+		"photoGenerateFallback": "Generate an image with AI"
 	},
 	"setup": {
 		"title": "Instance not configured",

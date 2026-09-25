@@ -441,14 +441,18 @@ export const toRecipeStep = (row: Row): RecipeStep => ({
 	id: text(row.id),
 	recipeId: text(row.recipe_id),
 	body: text(row.body),
-	position: typeof row.position === 'number' ? row.position : 0
+	position: typeof row.position === 'number' ? row.position : 0,
+	ingredientIds: Array.isArray(row.ingredient_ids)
+		? row.ingredient_ids.filter((id): id is string => typeof id === 'string')
+		: []
 });
 
 export const fromRecipeStep = (step: RecipeStep) => ({
 	id: step.id,
 	recipe_id: step.recipeId,
 	body: step.body,
-	position: step.position
+	position: step.position,
+	ingredient_ids: step.ingredientIds
 });
 
 export const toMealPlan = (row: Row): MealPlan => ({

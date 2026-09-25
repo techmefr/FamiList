@@ -31,22 +31,6 @@ export function recipePhotoPath(householdId: string, recipeId: string, mimeType:
 	return `${householdId}/${recipeId}.${extension}`;
 }
 
-/**
- * What is typed into the free-image search: the dish name plus its two or three main ingredients, so a
- * query stays specific ("Poulet basquaise poivron tomate") rather than the single word a household actually
- * named the recipe ("Poulet"), which returns whatever stock photo of chicken the bank happens to rank first.
- */
-const MAX_SEARCH_INGREDIENTS = 3;
-
-export function recipeImageSearchQuery(recipeName: string, ingredientNames: string[]): string {
-	const dish = recipeName.trim();
-	const ingredients = ingredientNames
-		.map(name => name.trim())
-		.filter(Boolean)
-		.slice(0, MAX_SEARCH_INGREDIENTS);
-
-	return [dish, ...ingredients].filter(Boolean).join(' ');
-}
 
 /**
  * Openverse (api.openverse.org): a keyless, CORS-open index of openly licensed images, queried straight from
@@ -54,24 +38,38 @@ export function recipeImageSearchQuery(recipeName: string, ingredientNames: stri
  * is the only kind that fits here. `license_type=commercial,modification` keeps results a household can
  * actually put on a recipe card without a usage question hanging over it.
  */
+export const IMAGE_SEARCH_PAGE_SIZE = 20;
+
 export function openverseSearchUrl(query: string): string {
 	const params = new URLSearchParams({
 		q: query,
-		page_size: '1',
+		page_size: String(IMAGE_SEARCH_PAGE_SIZE),
 		license_type: 'commercial,modification'
 	});
 	return `https://api.openverse.org/v1/images/?${params.toString()}`;
 }
 
-/** One Openverse search hit, trimmed to what `pickImageResult` needs. */
-export interface OpenverseResult {
+interface OpenverseResult {
 	id?: string;
+	title?: string;
 	thumbnail?: string;
 	url?: string;
+	creator?: string;
+	license?: string;
+	license_version?: string;
 }
 
 interface OpenverseSearchResponse {
 	results?: OpenverseResult[];
+}
+
+/** One image a person can pick in the search sheet, with the credit its licence asks for. */
+export interface ImageSearchResult {
+	id: string;
+	previewUrl: string;
+	title: string;
+	creator: string;
+	license: string;
 }
 
 /**
@@ -80,10 +78,43 @@ interface OpenverseSearchResponse {
  * refuse a cross-origin browser fetch entirely. `url` is kept as a fallback for a result Openverse returns
  * without a thumbnail.
  */
-export function pickImageResult(payload: unknown): string | null {
+export function imageSearchResults(payload: unknown): ImageSearchResult[] {
 	const results = (payload as OpenverseSearchResponse | null)?.results;
-	if (!Array.isArray(results) || results.length === 0) return null;
+	if (!Array.isArray(results)) return [];
 
-	const first = results[0];
-	return first?.thumbnail ?? first?.url ?? null;
+	return results.flatMap((result) => {
+		const previewUrl = result?.thumbnail ?? result?.url;
+		if (!result?.id || !previewUrl) return [];
+
+		const license = [result.license?.toUpperCase(), result.license_version].filter(Boolean).join(' ');
+		return [
+			{
+				id: result.id,
+				previewUrl,
+				title: result.title?.trim() ?? '',
+				creator: result.creator?.trim() ?? '',
+				license
+			}
+		];
+	});
+}
+
+/** Why a photo could not be set, each one calling for a different next step from the person. */
+export type PhotoFailure = 'offline' | 'unavailable' | 'unreachable' | 'not-found' | 'upload';
+
+/** 401, 402 and 403 are the provider asking for a key or a balance we do not have: retrying cannot help. */
+export function photoFailureOfStatus(status: number): PhotoFailure {
+	return status === 401 || status === 402 || status === 403 ? 'unavailable' : 'unreachable';
+}
+
+const PHOTO_FAILURE_KEYS: Record<PhotoFailure, string> = {
+	offline: 'ai.photoErrorOffline',
+	unavailable: 'ai.photoErrorUnavailable',
+	unreachable: 'ai.photoErrorUnreachable',
+	'not-found': 'ai.photoSearchNotFound',
+	upload: 'ai.photoErrorUpload'
+};
+
+export function photoFailureKey(failure: PhotoFailure): string {
+	return PHOTO_FAILURE_KEYS[failure];
 }

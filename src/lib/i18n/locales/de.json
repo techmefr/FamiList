@@ -502,9 +502,19 @@
 			"mute": "Stimme stummschalten",
 			"unmute": "Stimme aktivieren",
 			"empty": "Dieses Rezept hat keine Schritte.",
+			"ingredients": "Zutaten",
+			"stepIngredientsCount": "Zutaten für diesen Schritt ({count})",
+			"ingredientsOfStep": "Zutaten für Schritt {current}",
+			"allIngredients": "Alle Zutaten",
+			"noStepIngredients": "Diesem Schritt ist keine Zutat zugeordnet: hier ist das ganze Rezept.",
+			"showAllIngredients": "Ganzes Rezept anzeigen",
+			"showStepIngredients": "Nur diesen Schritt anzeigen",
+			"readIngredients": "Zutaten vorlesen",
+			"speakIngredients": "Zutaten: {list}.",
 			"steps": "Rezeptschritte",
 			"goTo": "Zu Schritt {current} von {total}"
-		}
+		},
+		"stepIngredients": "Zutaten für Schritt {rank}"
 	},
 	"aisles": {
 		"title": "Abteilungen",
@@ -1261,7 +1271,19 @@
 		"photoSearch": "Nach einem Bild suchen",
 		"photoSearching": "Suche läuft…",
 		"photoSearchNotFound": "Kein Bild gefunden",
-		"photoGenerateFallback": "Bild mit KI erzeugen",
+		"photoSearchTitle": "Bild suchen",
+		"photoSearchQuery": "Wonach suchen?",
+		"photoSearchSubmit": "Suchen",
+		"photoSearchHint": "Tippen Sie auf ein Bild, um es für dieses Rezept zu verwenden.",
+		"photoSearchNotFoundHint": "Versuchen Sie andere Wörter oder erzeugen Sie ein Bild mit KI.",
+		"photoPick": "Dieses Bild verwenden: {title}",
+		"photoUsing": "Bild wird hinzugefügt…",
+		"photoSaved": "Foto zum Rezept hinzugefügt",
+		"photoRetry": "Erneut versuchen",
+		"photoErrorOffline": "Sie sind offline. Verbinden Sie sich mit dem Internet und versuchen Sie es erneut.",
+		"photoErrorUnavailable": "Dieser Bilddienst ist im Moment nicht verfügbar. Versuchen Sie eine andere Quelle.",
+		"photoErrorUnreachable": "Der Bilddienst hat nicht geantwortet. Versuchen Sie es gleich noch einmal.",
+		"photoErrorUpload": "Das Bild konnte nicht gespeichert werden. Versuchen Sie es erneut.",
 		"photo": {
 			"trigger": "Rezept per Foto erstellen",
 			"title": "Foto des Rezepts aufnehmen",
@@ -1280,7 +1302,8 @@
 			"stopDictate": "Diktat beenden",
 			"listening": "Höre zu…",
 			"dictateError": "Die Sprachdiktatur ist fehlgeschlagen. Erneut versuchen oder Text eingeben."
-		}
+		},
+		"photoGenerateFallback": "Bild mit KI erzeugen"
 	},
 	"setup": {
 		"title": "Instanz nicht konfiguriert",

@@ -502,9 +502,19 @@
 			"mute": "Ampitsahatra ny feo",
 			"unmute": "Alefaso ny feo",
 			"empty": "Tsy misy dingana harahina amin'ity fahandroana ity.",
+			"ingredients": "Akora",
+			"stepIngredientsCount": "Akoran’ity dingana ity ({count})",
+			"ingredientsOfStep": "Akoran’ny dingana {current}",
+			"allIngredients": "Ny akora rehetra",
+			"noStepIngredients": "Tsy misy akora mifandray amin’ity dingana ity: ity ny fahandroana manontolo.",
+			"showAllIngredients": "Hijery ny fahandroana manontolo",
+			"showStepIngredients": "Ity dingana ity ihany",
+			"readIngredients": "Hamaky ny akora",
+			"speakIngredients": "Akora: {list}.",
 			"steps": "Dingana amin’ny fahandroana",
 			"goTo": "Mankany amin’ny dingana {current} amin’ny {total}"
-		}
+		},
+		"stepIngredients": "Akora ampiasaina amin’ny dingana {rank}"
 	},
 	"aisles": {
 		"title": "Faritra",
@@ -1261,7 +1271,19 @@
 		"photoSearch": "Mikaroka sary",
 		"photoSearching": "Mikaroka…",
 		"photoSearchNotFound": "Tsy nisy sary hita",
-		"photoGenerateFallback": "Mamorona sary amin'ny AI",
+		"photoSearchTitle": "Hitady sary",
+		"photoSearchQuery": "Inona no hotadiavina?",
+		"photoSearchSubmit": "Hitady",
+		"photoSearchHint": "Tsindrio ny sary iray mba hampiasaina amin’ity fomba fahandroana ity.",
+		"photoSearchNotFoundHint": "Andramo teny hafa, na mamorona sary amin’ny IA.",
+		"photoPick": "Ampiasao ity sary ity: {title}",
+		"photoUsing": "Manampy ny sary…",
+		"photoSaved": "Tafiditra amin’ny fomba fahandroana ny sary",
+		"photoRetry": "Andramo indray",
+		"photoErrorOffline": "Tsy mifandray amin’ny Internet ianao. Mifandraisa dia andramo indray.",
+		"photoErrorUnavailable": "Tsy azo ampiasaina amin’izao fotoana izao ity tolotra sary ity. Andramo loharano hafa.",
+		"photoErrorUnreachable": "Tsy namaly ny tolotra sary. Andramo indray afaka kelikely.",
+		"photoErrorUpload": "Tsy voatahiry ny sary. Andramo indray.",
 		"photo": {
 			"trigger": "Mamorona lasopy amin'ny sary",
 			"title": "Alao sary ny lasopy",
@@ -1280,7 +1302,8 @@
 			"stopDictate": "Atsaharo ny fitononana",
 			"listening": "Mihaino…",
 			"dictateError": "Tsy nahomby ny fitononana am-bava. Andramo indray na soraty ny lahatsoratra."
-		}
+		},
+		"photoGenerateFallback": "Mamorona sary amin'ny AI"
 	},
 	"setup": {
 		"title": "Tsy mbola voaomana ity instance ity",

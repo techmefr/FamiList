@@ -502,9 +502,19 @@
 			"mute": "Disattiva voce",
 			"unmute": "Attiva voce",
 			"empty": "Questa ricetta non ha passaggi da seguire.",
+			"ingredients": "Ingredienti",
+			"stepIngredientsCount": "Ingredienti di questo passaggio ({count})",
+			"ingredientsOfStep": "Ingredienti del passaggio {current}",
+			"allIngredients": "Tutti gli ingredienti",
+			"noStepIngredients": "Nessun ingrediente è collegato a questo passaggio: ecco tutta la ricetta.",
+			"showAllIngredients": "Mostra tutta la ricetta",
+			"showStepIngredients": "Mostra solo questo passaggio",
+			"readIngredients": "Leggi gli ingredienti",
+			"speakIngredients": "Ingredienti: {list}.",
 			"steps": "Passaggi della ricetta",
 			"goTo": "Vai al passaggio {current} di {total}"
-		}
+		},
+		"stepIngredients": "Ingredienti usati nel passaggio {rank}"
 	},
 	"aisles": {
 		"title": "Reparti",
@@ -1261,7 +1271,19 @@
 		"photoSearch": "Cerca un'immagine",
 		"photoSearching": "Ricerca in corso…",
 		"photoSearchNotFound": "Nessuna immagine trovata",
-		"photoGenerateFallback": "Genera un'immagine con l'IA",
+		"photoSearchTitle": "Cerca un'immagine",
+		"photoSearchQuery": "Cosa cercare",
+		"photoSearchSubmit": "Cerca",
+		"photoSearchHint": "Tocca un'immagine per usarla in questa ricetta.",
+		"photoSearchNotFoundHint": "Prova con altre parole, oppure genera un'immagine con l'IA.",
+		"photoPick": "Usa questa immagine: {title}",
+		"photoUsing": "Aggiunta dell'immagine…",
+		"photoSaved": "Foto aggiunta alla ricetta",
+		"photoRetry": "Riprova",
+		"photoErrorOffline": "Sei offline. Connettiti a Internet, poi riprova.",
+		"photoErrorUnavailable": "Questo servizio di immagini non è disponibile al momento. Prova un’altra fonte.",
+		"photoErrorUnreachable": "Il servizio di immagini non ha risposto. Riprova tra poco.",
+		"photoErrorUpload": "Non è stato possibile salvare l'immagine. Riprova.",
 		"photo": {
 			"trigger": "Crea una ricetta con una foto",
 			"title": "Scatta una foto della ricetta",
@@ -1280,7 +1302,8 @@
 			"stopDictate": "Ferma la dettatura",
 			"listening": "In ascolto…",
 			"dictateError": "La dettatura vocale non è riuscita. Riprova o scrivi il testo."
-		}
+		},
+		"photoGenerateFallback": "Genera un'immagine con l'IA"
 	},
 	"setup": {
 		"title": "Istanza non configurata",

@@ -508,9 +508,19 @@
 			"mute": "Выключить голос",
 			"unmute": "Включить голос",
 			"empty": "В этом рецепте нет шагов.",
+			"ingredients": "Ингредиенты",
+			"stepIngredientsCount": "Ингредиенты для этого шага ({count})",
+			"ingredientsOfStep": "Ингредиенты для шага {current}",
+			"allIngredients": "Все ингредиенты",
+			"noStepIngredients": "К этому шагу не привязан ни один ингредиент: вот весь рецепт.",
+			"showAllIngredients": "Показать весь рецепт",
+			"showStepIngredients": "Показать только этот шаг",
+			"readIngredients": "Прочитать ингредиенты",
+			"speakIngredients": "Ингредиенты: {list}.",
 			"steps": "Шаги рецепта",
 			"goTo": "Перейти к шагу {current} из {total}"
-		}
+		},
+		"stepIngredients": "Ингредиенты для шага {rank}"
 	},
 	"aisles": {
 		"title": "Отделы",
@@ -1281,7 +1291,19 @@
 		"photoSearch": "Найти изображение",
 		"photoSearching": "Поиск…",
 		"photoSearchNotFound": "Изображение не найдено",
-		"photoGenerateFallback": "Сгенерировать изображение с помощью ИИ",
+		"photoSearchTitle": "Найти изображение",
+		"photoSearchQuery": "Что искать",
+		"photoSearchSubmit": "Искать",
+		"photoSearchHint": "Нажмите на изображение, чтобы использовать его для этого рецепта.",
+		"photoSearchNotFoundHint": "Попробуйте другие слова или создайте изображение с помощью ИИ.",
+		"photoPick": "Использовать это изображение: {title}",
+		"photoUsing": "Добавляем изображение…",
+		"photoSaved": "Фото добавлено к рецепту",
+		"photoRetry": "Повторить",
+		"photoErrorOffline": "Нет подключения к интернету. Подключитесь и попробуйте снова.",
+		"photoErrorUnavailable": "Этот сервис изображений сейчас недоступен. Попробуйте другой источник.",
+		"photoErrorUnreachable": "Сервис изображений не ответил. Попробуйте ещё раз чуть позже.",
+		"photoErrorUpload": "Не удалось сохранить изображение. Попробуйте снова.",
 		"photo": {
 			"trigger": "Создать рецепт по фото",
 			"title": "Сфотографируйте рецепт",
@@ -1300,7 +1322,8 @@
 			"stopDictate": "Остановить диктовку",
 			"listening": "Слушаю…",
 			"dictateError": "Голосовой ввод не удался. Попробуйте снова или введите текст."
-		}
+		},
+		"photoGenerateFallback": "Сгенерировать изображение с помощью ИИ"
 	},
 	"setup": {
 		"title": "Экземпляр не настроен",

@@ -502,9 +502,19 @@
 			"mute": "Silenciar voz",
 			"unmute": "Ativar voz",
 			"empty": "Esta receita não tem passos a seguir.",
+			"ingredients": "Ingredientes",
+			"stepIngredientsCount": "Ingredientes deste passo ({count})",
+			"ingredientsOfStep": "Ingredientes do passo {current}",
+			"allIngredients": "Todos os ingredientes",
+			"noStepIngredients": "Nenhum ingrediente está ligado a este passo: eis a receita completa.",
+			"showAllIngredients": "Ver a receita completa",
+			"showStepIngredients": "Ver só este passo",
+			"readIngredients": "Ler os ingredientes",
+			"speakIngredients": "Ingredientes: {list}.",
 			"steps": "Passos da receita",
 			"goTo": "Ir para o passo {current} de {total}"
-		}
+		},
+		"stepIngredients": "Ingredientes usados no passo {rank}"
 	},
 	"aisles": {
 		"title": "Secções",
@@ -1261,7 +1271,19 @@
 		"photoSearch": "Procurar uma imagem",
 		"photoSearching": "A procurar…",
 		"photoSearchNotFound": "Nenhuma imagem encontrada",
-		"photoGenerateFallback": "Gerar uma imagem com IA",
+		"photoSearchTitle": "Procurar uma imagem",
+		"photoSearchQuery": "O que procurar",
+		"photoSearchSubmit": "Procurar",
+		"photoSearchHint": "Toque numa imagem para a usar nesta receita.",
+		"photoSearchNotFoundHint": "Experimente outras palavras ou gere uma imagem com IA.",
+		"photoPick": "Usar esta imagem: {title}",
+		"photoUsing": "A adicionar a imagem…",
+		"photoSaved": "Foto adicionada à receita",
+		"photoRetry": "Tentar novamente",
+		"photoErrorOffline": "Está offline. Ligue-se à Internet e tente novamente.",
+		"photoErrorUnavailable": "Este serviço de imagens está indisponível de momento. Experimente outra fonte.",
+		"photoErrorUnreachable": "O serviço de imagens não respondeu. Tente novamente dentro de instantes.",
+		"photoErrorUpload": "Não foi possível guardar a imagem. Tente novamente.",
 		"photo": {
 			"trigger": "Criar uma receita por foto",
 			"title": "Tire uma foto da receita",
@@ -1280,7 +1302,8 @@
 			"stopDictate": "Parar o ditado",
 			"listening": "A ouvir…",
 			"dictateError": "O ditado por voz falhou. Tente novamente ou escreva o texto."
-		}
+		},
+		"photoGenerateFallback": "Gerar uma imagem com IA"
 	},
 	"setup": {
 		"title": "Instância não configurada",

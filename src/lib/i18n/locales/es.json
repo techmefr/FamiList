@@ -502,9 +502,19 @@
 			"mute": "Silenciar voz",
 			"unmute": "Activar voz",
 			"empty": "Esta receta no tiene pasos a seguir.",
+			"ingredients": "Ingredientes",
+			"stepIngredientsCount": "Ingredientes de este paso ({count})",
+			"ingredientsOfStep": "Ingredientes del paso {current}",
+			"allIngredients": "Todos los ingredientes",
+			"noStepIngredients": "Ningún ingrediente está vinculado a este paso: aquí está toda la receta.",
+			"showAllIngredients": "Ver toda la receta",
+			"showStepIngredients": "Ver solo este paso",
+			"readIngredients": "Leer los ingredientes",
+			"speakIngredients": "Ingredientes: {list}.",
 			"steps": "Pasos de la receta",
 			"goTo": "Ir al paso {current} de {total}"
-		}
+		},
+		"stepIngredients": "Ingredientes usados en el paso {rank}"
 	},
 	"aisles": {
 		"title": "Secciones",
@@ -1261,7 +1271,19 @@
 		"photoSearch": "Buscar una imagen",
 		"photoSearching": "Buscando…",
 		"photoSearchNotFound": "No se encontró ninguna imagen",
-		"photoGenerateFallback": "Generar una imagen con IA",
+		"photoSearchTitle": "Buscar una imagen",
+		"photoSearchQuery": "Qué buscar",
+		"photoSearchSubmit": "Buscar",
+		"photoSearchHint": "Toque una imagen para usarla en esta receta.",
+		"photoSearchNotFoundHint": "Pruebe con otras palabras o genere una imagen con IA.",
+		"photoPick": "Usar esta imagen: {title}",
+		"photoUsing": "Añadiendo la imagen…",
+		"photoSaved": "Foto añadida a la receta",
+		"photoRetry": "Reintentar",
+		"photoErrorOffline": "Está sin conexión. Conéctese a Internet y vuelva a intentarlo.",
+		"photoErrorUnavailable": "Este servicio de imágenes no está disponible por ahora. Pruebe otra fuente.",
+		"photoErrorUnreachable": "El servicio de imágenes no respondió. Vuelva a intentarlo en un momento.",
+		"photoErrorUpload": "No se pudo guardar la imagen. Vuelva a intentarlo.",
 		"photo": {
 			"trigger": "Crear una receta por foto",
 			"title": "Tome una foto de la receta",
@@ -1280,7 +1302,8 @@
 			"stopDictate": "Detener el dictado",
 			"listening": "Escuchando…",
 			"dictateError": "El dictado por voz falló. Intenta de nuevo o escribe el texto."
-		}
+		},
+		"photoGenerateFallback": "Generar una imagen con IA"
 	},
 	"setup": {
 		"title": "Instancia sin configurar",

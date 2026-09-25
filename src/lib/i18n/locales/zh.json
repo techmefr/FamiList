@@ -499,9 +499,19 @@
 			"mute": "静音",
 			"unmute": "取消静音",
 			"empty": "这个食谱没有步骤。",
+			"ingredients": "食材",
+			"stepIngredientsCount": "本步骤的食材（{count}）",
+			"ingredientsOfStep": "第 {current} 步的食材",
+			"allIngredients": "全部食材",
+			"noStepIngredients": "这一步没有关联食材：以下是整道菜的食材。",
+			"showAllIngredients": "查看全部食材",
+			"showStepIngredients": "只看这一步",
+			"readIngredients": "朗读食材",
+			"speakIngredients": "食材：{list}。",
 			"steps": "食谱步骤",
 			"goTo": "前往第 {current} 步，共 {total} 步"
-		}
+		},
+		"stepIngredients": "第 {rank} 步用到的食材"
 	},
 	"aisles": {
 		"title": "货区",
@@ -1251,7 +1261,19 @@
 		"photoSearch": "搜索图片",
 		"photoSearching": "搜索中…",
 		"photoSearchNotFound": "未找到图片",
-		"photoGenerateFallback": "用AI生成图片",
+		"photoSearchTitle": "搜索图片",
+		"photoSearchQuery": "要搜索什么",
+		"photoSearchSubmit": "搜索",
+		"photoSearchHint": "点按一张图片，将其用于这道食谱。",
+		"photoSearchNotFoundHint": "换些词试试，或者用 AI 生成一张图片。",
+		"photoPick": "使用这张图片：{title}",
+		"photoUsing": "正在添加图片…",
+		"photoSaved": "照片已添加到食谱",
+		"photoRetry": "重试",
+		"photoErrorOffline": "你已离线。请连接互联网后重试。",
+		"photoErrorUnavailable": "此图片服务暂时不可用。请换一个来源试试。",
+		"photoErrorUnreachable": "图片服务没有响应。请稍后重试。",
+		"photoErrorUpload": "图片无法保存。请重试。",
 		"photo": {
 			"trigger": "通过照片创建食谱",
 			"title": "拍摄食谱照片",
@@ -1270,7 +1292,8 @@
 			"stopDictate": "停止口述",
 			"listening": "正在聆听…",
 			"dictateError": "语音口述失败。请重试或手动输入文字。"
-		}
+		},
+		"photoGenerateFallback": "用AI生成图片"
 	},
 	"setup": {
 		"title": "实例尚未配置",
