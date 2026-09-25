@@ -2,7 +2,7 @@
 	"name": "familist",
 	"private": true,
 	"license": "AGPL-3.0-or-later",
-	"version": "0.1.0",
+	"version": "0.1.1",
 	"type": "module",
 	"packageManager": "pnpm@11.9.0",
 	"scripts": {
@@ -23,7 +23,13 @@
 		"db:reset": "supabase db reset",
 		"db:types": "supabase gen types typescript --local > src/lib/db/types.ts",
 		"e2e": "playwright test",
-		"e2e:ui": "playwright test --ui"
+		"e2e:ui": "playwright test --ui",
+		"release:changelog": "changelogen --bump --output CHANGELOG.md",
+		"release:notes": "node scripts/patch-notes.ts"
+	},
+	"changelog": {
+		"repo": "techmefr/FamiList",
+		"noAuthors": true
 	},
 	"devDependencies": {
 		"@axe-core/playwright": "^4.13.0",
@@ -36,6 +42,7 @@
 		"@tailwindcss/vite": "^4.3.3",
 		"@types/qrcode": "^1.5.6",
 		"@vitest/coverage-v8": "^4.1.10",
+		"changelogen": "^0.6.2",
 		"jsqr": "^1.4.0",
 		"supabase": "^2.117.0",
 		"svelte": "^5.56.1",

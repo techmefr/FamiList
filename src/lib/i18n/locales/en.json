@@ -183,7 +183,7 @@
 		"accountRemovePassword": "Remove password",
 		"accountSave": "Save account",
 		"accountSaved": "Account saved.",
-		"accountNeedsMfa": "Turn on two-factor authentication in your profile to save or show an account password.",
+		"accountNeedsMfa": "Turn on device unlock or two-step verification in your profile to save or show an account password.",
 		"accountGoProfile": "Go to profile",
 		"accountNotFound": "Card not found.",
 		"accountError": "Could not read the account: {error}",
@@ -1313,6 +1313,34 @@
 		"backupWrong": "That code matches no unused backup code.",
 		"back": "Back to the app code"
 	},
+	"deviceUnlock": {
+		"title": "Device unlock",
+		"body": "Confirm it's you with your phone's fingerprint, face or PIN. No app to install, no code to copy.",
+		"fallback": "On a device without fingerprint or face, its lock PIN is asked instead.",
+		"add": "Use this device's unlock",
+		"added": "This device is registered. It will be asked for at sign-in and before a password is shown.",
+		"unavailable": "This browser or app does not offer device unlock. The authenticator app, below, still works.",
+		"listLabel": "Registered devices",
+		"thisDevice": "This device",
+		"addedOn": "Added on {date}",
+		"remove": "Remove",
+		"removeLabel": "Remove {name}",
+		"failed": "The confirmation did not go through. Try again, or use another method.",
+		"confirmBody": "Your phone will ask for your fingerprint, your face or its PIN.",
+		"confirm": "Confirm with the phone's fingerprint, face or PIN",
+		"choose": "Choose the device you are holding:",
+		"unavailableHere": "This account is confirmed with another device's unlock. Use that device, or a backup code.",
+		"useCode": "Or with the app's code",
+		"back": "Back to confirmation",
+		"revealHint": "Your phone will ask for your fingerprint, face or PIN before the password is shown.",
+		"offlineHint": "Keep this password encrypted on this device, and open it without network using the phone's unlock.",
+		"offlineEnable": "Keep on this device with the phone's unlock",
+		"offlineOrCode": "Or choose an unlock code instead:",
+		"offlineUnsupported": "This device cannot open the copy with its unlock. Choose an unlock code.",
+		"offlineUnlockHint": "Offline: confirm with your phone's unlock.",
+		"offlineUnlock": "Open with the phone's fingerprint, face or PIN",
+		"offlineWrongDevice": "This is not the passkey used to keep this password. Try again."
+	},
 	"security": {
 		"title": "Security",
 		"subtitle": "Your password, two-step verification, and the devices you are signed in on.",
@@ -1403,6 +1431,7 @@
 	"helpMenu": {
 		"button": "Help",
 		"tutorial": "Watch the tutorial",
+		"whatsNew": "See what's new",
 		"install": "Install on the home screen",
 		"suggestion": "Suggest an improvement",
 		"bug": "Report a bug"
@@ -1410,19 +1439,16 @@
 	"changelog": {
 		"title": "What's new",
 		"entryTitle": "Version {version}",
+		"currentVersion": "You are using version {version}",
+		"groups": {
+			"new": "New",
+			"improved": "Improved",
+			"fixed": "Fixed"
+		},
 		"acknowledge": "Got it",
 		"replayTour": "Replay the whole guide",
 		"dismissOnce": "Not now",
-		"dismissUntilNextUpdate": "Don't show until the next update",
-		"v0_1_0": {
-			"items": [
-				"Weekly meal plans: plan your meals and get the matching shopping list.",
-				"The household can now record its members and their dietary restrictions.",
-				"Ask the AI for a recipe through a conversation, even when importing a page fails.",
-				"Several AI keys can now be saved on the same account.",
-				"A what's-new card appears after an update, with quick access to the guide."
-			]
-		}
+		"dismissUntilNextUpdate": "Don't show until the next update"
 	},
 	"install": {
 		"title": "Familiste on your home screen",

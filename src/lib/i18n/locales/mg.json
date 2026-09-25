@@ -183,7 +183,7 @@
 		"accountRemovePassword": "Fafao ny teny miafina",
 		"accountSave": "Tehirizo ny kaonty",
 		"accountSaved": "Voatahiry ny kaonty.",
-		"accountNeedsMfa": "Alefaso ny fanamarinana roa sosona ao amin'ny mombamomba anao mba hitahiry na hanehoana ny teny miafin'ny kaonty.",
+		"accountNeedsMfa": "Alefaso ny famohana amin'ny fitaovana na ny fanamarinana roa sosona ao amin'ny mombamomba anao mba hitahiry na hampiseho ny tenimiafin'ny kaonty.",
 		"accountGoProfile": "Mankany amin'ny mombamomba",
 		"accountNotFound": "Tsy hita ny karatra.",
 		"accountError": "Tsy voavaky ny kaonty: {error}",
@@ -1293,6 +1293,34 @@
 		"backupWrong": "Tsy misy kaody vonjy taitra tsy mbola nampiasaina mifanaraka amin'io.",
 		"back": "Hiverina amin'ny kaody avy amin'ny rindranasa"
 	},
+	"deviceUnlock": {
+		"title": "Famohana amin'ny fitaovana",
+		"body": "Hamafiso fa ianao tokoa amin'ny dian-tanana, ny tarehy na ny kaody PIN an'ny findainao. Tsy misy rindranasa apetraka, tsy misy kaody adika.",
+		"fallback": "Amin'ny fitaovana tsy misy dian-tanana na tarehy, ny kaody PIN fanidiana no angatahina.",
+		"add": "Ampiasao ny famohana amin'ity fitaovana ity",
+		"added": "Voasoratra ity fitaovana ity. Hangatahina izy rehefa miditra sy alohan'ny hampisehoana tenimiafina.",
+		"unavailable": "Tsy manolotra famohana amin'ny fitaovana ity mpitety tranonkala na rindranasa ity. Mbola azo ampiasaina eto ambany ny rindranasa fanamarinana.",
+		"listLabel": "Fitaovana voasoratra",
+		"thisDevice": "Ity fitaovana ity",
+		"addedOn": "Nampidirina ny {date}",
+		"remove": "Esory",
+		"removeLabel": "Esory {name}",
+		"failed": "Tsy vita ny fanamafisana. Andramo indray, na mampiasà fomba hafa.",
+		"confirmBody": "Hangataka ny dian-tananao, ny tarehinao na ny kaody PIN ny findainao.",
+		"confirm": "Hamafiso amin'ny dian-tanana, tarehy na PIN an'ny finday",
+		"choose": "Safidio ny fitaovana tananao:",
+		"unavailableHere": "Hamafisina amin'ny famohana fitaovana hafa ity kaonty ity. Ampiasao io fitaovana io, na kaody famonjena.",
+		"useCode": "Na amin'ny kaodin'ny rindranasa",
+		"back": "Hiverina amin'ny fanamafisana",
+		"revealHint": "Hangataka dian-tanana, tarehy na PIN ny findainao alohan'ny hampisehoana ny tenimiafina.",
+		"offlineHint": "Tehirizo voaaro amin'ity fitaovana ity ity tenimiafina ity, ary sokafy tsy misy tambajotra amin'ny famohana ny finday.",
+		"offlineEnable": "Tehirizo amin'ity fitaovana ity miaraka amin'ny famohana ny finday",
+		"offlineOrCode": "Na misafidiana kaody famohana:",
+		"offlineUnsupported": "Tsy mahasokatra ny dika amin'ny famohany ity fitaovana ity. Misafidiana kaody famohana.",
+		"offlineUnlockHint": "Tsy misy tambajotra: hamafiso amin'ny famohana ny findainao.",
+		"offlineUnlock": "Sokafy amin'ny dian-tanana, tarehy na PIN an'ny finday",
+		"offlineWrongDevice": "Tsy io ny fanalahidy nampiasaina hitehirizana ity tenimiafina ity. Andramo indray."
+	},
 	"security": {
 		"title": "Fiarovana",
 		"subtitle": "Ny teny miafina, ny fanamarinana roa dingana, ary ny fitaovana mifandray.",
@@ -1383,6 +1411,7 @@
 	"helpMenu": {
 		"button": "Fanampiana",
 		"tutorial": "Jereo ny fizarana torolalana",
+		"whatsNew": "Jereo ny vaovao",
 		"install": "Apetraho eo amin'ny efijery fandraisana",
 		"suggestion": "Manolotra fanatsarana",
 		"bug": "Milaza olana"
@@ -1390,19 +1419,16 @@
 	"changelog": {
 		"title": "Vaovao",
 		"entryTitle": "Kinovana {version}",
+		"currentVersion": "Ampiasainao ny kinovana {version}",
+		"groups": {
+			"new": "Vaovao",
+			"improved": "Nohatsaraina",
+			"fixed": "Namboarina"
+		},
 		"acknowledge": "Azoko",
 		"replayTour": "Hijery indray ny tari-dalana manontolo",
 		"dismissOnce": "Tsy izao",
-		"dismissUntilNextUpdate": "Aza aseho mandra-pisian'ny fanavaozana manaraka",
-		"v0_1_0": {
-			"items": [
-				"Tari-tsakafo isan-kerinandro: kajio ny sakafonao ary alao ny lisitry ny fividianana mifanaraka aminy.",
-				"Afaka misoratra ny mpikambana sy ny fisorohana amin'ny sakafo amin'ny tokantrano izao.",
-				"Angataho tari-hevi-nahandro amin'ny AI amin'ny resadresaka, na dia tsy mety aza ny fakana pejy iray.",
-				"Azo tehirizina amin'ny kaonty iray ny fanalahidy AI maromaro izao.",
-				"Misy karatra momba ny vaovao miseho aorian'ny fanavaozana, misy fidirana haingana amin'ny tari-dalana."
-			]
-		}
+		"dismissUntilNextUpdate": "Aza aseho mandra-pisian'ny fanavaozana manaraka"
 	},
 	"install": {
 		"title": "Familiste eo amin'ny efijery fandraisanao",
