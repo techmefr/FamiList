@@ -8,7 +8,6 @@
 		isLastStep,
 		nextStepIndex,
 		previousStepIndex,
-		progressPercent,
 		speechLangOf,
 		stepPosition,
 		stepTrack
@@ -99,7 +98,6 @@
 	const atFirst = $derived(isFirstStep(index, total));
 	const atLast = $derived(isLastStep(index, total));
 	const track = $derived(stepTrack(index, total));
-	const percent = $derived(progressPercent(index, total));
 
 	let trackList = $state<HTMLOListElement | null>(null);
 
@@ -431,13 +429,6 @@
 		</p>
 
 		{#if total > 1}
-			<div class="mx-auto mt-3 h-2 max-w-xl overflow-hidden rounded-full bg-white/15" aria-hidden="true">
-				<div
-					class="bg-primary h-full rounded-full transition-[width] motion-reduce:transition-none"
-					style:width="{percent}%"
-				></div>
-			</div>
-
 			<ol
 				bind:this={trackList}
 				class="mx-auto mt-3 flex w-fit max-w-full gap-2 overflow-x-auto px-1 py-2"
@@ -475,14 +466,38 @@
 		{/if}
 	</nav>
 
-	<div class="flex flex-1 items-center justify-center px-6 py-8">
+	<div class="relative flex flex-1 items-center justify-center px-6 py-8">
 		{#if total > 0}
 			<p
 				data-test-id="cook-along-step"
-				class="text-center text-3xl leading-snug font-semibold break-words"
+				class="pointer-events-none relative z-10 text-center text-3xl leading-snug font-semibold break-words"
 			>
 				{current}
 			</p>
+
+			<!--
+				The whole step half-screen doubles as previous/next, on top of the arrow buttons below: a hand busy
+				cooking can tap anywhere left or right of the text instead of aiming for a small button at the
+				bottom. Decorative — the labelled buttons underneath are what a screen reader and the keyboard use.
+			-->
+			<button
+				type="button"
+				tabindex="-1"
+				aria-hidden="true"
+				disabled={atFirst}
+				onclick={() => go(previousStepIndex(index, total))}
+				data-test-id="cook-along-tap-previous"
+				class="absolute inset-y-0 start-0 z-0 w-1/2 disabled:pointer-events-none"
+			></button>
+			<button
+				type="button"
+				tabindex="-1"
+				aria-hidden="true"
+				disabled={atLast}
+				onclick={() => go(nextStepIndex(index, total))}
+				data-test-id="cook-along-tap-next"
+				class="absolute inset-y-0 end-0 z-0 w-1/2 disabled:pointer-events-none"
+			></button>
 		{:else}
 			<p class="text-center text-white/70">{t('recipes.cookAlong.empty')}</p>
 		{/if}
@@ -580,35 +595,17 @@
 			</Button>
 		{/if}
 
-		<div class="flex flex-col gap-3 sm:flex-row">
-			<Button
-				bind:ref={voiceButton}
-				variant="outline"
-				onclick={toggleVoice}
-				aria-pressed={voice.active}
-				data-test-id="cook-along-voice-toggle"
-				class="fl-press h-auto min-h-14 flex-1 py-2 whitespace-normal border-white/20 bg-white/10 text-white aria-pressed:border-white aria-pressed:bg-white/25"
-			>
-				{#if voice.active}
-					<Mic size={22} aria-hidden="true" />
-					{t('recipes.cookAlong.voice.stop')}
-				{:else}
-					<MicOff size={22} aria-hidden="true" />
-					{t('recipes.cookAlong.voice.start')}
-				{/if}
-			</Button>
-			<Button
-				variant="outline"
-				onclick={openHelp}
-				aria-expanded={helpOpen}
-				aria-controls="cook-along-voice-help"
-				data-test-id="cook-along-voice-help-open"
-				class="fl-press h-auto min-h-14 flex-1 py-2 whitespace-normal border-white/20 bg-white/10 text-white"
-			>
-				<CircleHelp size={22} aria-hidden="true" />
-				{t('recipes.cookAlong.voice.help')}
-			</Button>
-		</div>
+		<Button
+			variant="outline"
+			onclick={openHelp}
+			aria-expanded={helpOpen}
+			aria-controls="cook-along-voice-help"
+			data-test-id="cook-along-voice-help-open"
+			class="fl-press h-auto min-h-14 w-full py-2 whitespace-normal border-white/20 bg-white/10 text-white"
+		>
+			<CircleHelp size={22} aria-hidden="true" />
+			{t('recipes.cookAlong.voice.help')}
+		</Button>
 
 		<div role="status" aria-live="polite" class="space-y-1 text-center" data-test-id="cook-along-voice-status">
 			{#if voiceNotice}
@@ -789,7 +786,7 @@
 		</div>
 	{/if}
 
-	<div class="flex items-center justify-center gap-4 px-6 pb-10">
+	<div class="flex items-center justify-center gap-2 px-6 pb-10">
 		<Button
 			variant="outline"
 			disabled={atFirst}
@@ -800,6 +797,22 @@
 		>
 			<ChevronLeft size={22} aria-hidden="true" class="rtl:rotate-180" />
 			{t('recipes.cookAlong.previous')}
+		</Button>
+
+		<Button
+			bind:ref={voiceButton}
+			variant="outline"
+			onclick={toggleVoice}
+			aria-pressed={voice.active}
+			aria-label={t(voice.active ? 'recipes.cookAlong.voice.stop' : 'recipes.cookAlong.voice.start')}
+			data-test-id="cook-along-voice-toggle"
+			class="fl-press h-14 w-14 shrink-0 border-white/20 bg-white/10 text-white aria-pressed:border-white aria-pressed:bg-white/25"
+		>
+			{#if voice.active}
+				<Mic size={22} aria-hidden="true" />
+			{:else}
+				<MicOff size={22} aria-hidden="true" />
+			{/if}
 		</Button>
 
 		<Button
