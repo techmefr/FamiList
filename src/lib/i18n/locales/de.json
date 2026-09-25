@@ -1228,8 +1228,7 @@
 		"directFailed": "Das Gespräch konnte nicht geöffnet werden. Bitte erneut versuchen.",
 		"backToChats": "Zurück zu den Gesprächen",
 		"directNotFound": "Dieses Gespräch wurde nicht gefunden.",
-		"someone": "Jemand",
-		"recipeAdded": "{name} wurde zu den Rezepten hinzugefügt."
+		"someone": "Jemand"
 	},
 	"household": {
 		"title": "Mein Haushalt",
@@ -1515,7 +1514,6 @@
 		"sendingTo": "Empfänger: {provider}.",
 		"sendConfirm": "Senden und fragen",
 		"asking": "Anfrage läuft …",
-		"added": "Rezept zu denen des Haushalts hinzugefügt.",
 		"keep": "Dieses Rezept behalten",
 		"retry": "Noch einmal fragen",
 		"discard": "Verwerfen",
@@ -1573,9 +1571,7 @@
 		},
 		"request": {
 			"trigger": "KI nach einem Rezept fragen",
-			"title": "Welches Rezept möchtest du?",
 			"placeholder": "z. B. ein Hähnchen-Curry für 4",
-			"submit": "Fragen",
 			"followUpPlaceholder": "z. B. schärfer, oder Hähnchen durch Tofu ersetzen",
 			"dictate": "Per Sprache diktieren",
 			"stopDictate": "Diktat beenden",
@@ -1587,7 +1583,34 @@
 		"photoErrorNoKey": "Um ein Bild zu erzeugen, füge einen OpenRouter-Schlüssel hinzu.",
 		"photoErrorNoKeyLink": "Schlüssel hinzufügen",
 		"photoErrorNoCredit": "Dein OpenRouter-Konto hat kein Guthaben mehr: Bilderzeugung ist kostenpflichtig.",
-		"photoErrorNoCreditLink": "Guthaben aufladen"
+		"photoErrorNoCreditLink": "Guthaben aufladen",
+		"chat": {
+			"tableTitle": "Wer isst mit?",
+			"tableHint": "Allergien und Ernährungsweisen werden an den Assistenten gesendet, nie die Namen. Tippen Sie auf einen Namen, wenn die Person nicht da ist.",
+			"present": "am Tisch",
+			"absent": "nicht da",
+			"addGuest": "Gast hinzufügen",
+			"guestName": "Name des Gastes (optional)",
+			"guestNotes": "Was er nicht essen darf, oder seine Ernährungsweise",
+			"guestNotesPlaceholder": "z. B. allergisch gegen Blumenkohl",
+			"guestSave": "Gast hinzufügen",
+			"guestDefault": "Gast {number}",
+			"removeGuest": "{name} entfernen",
+			"constraintsTitle": "Der Assistent berücksichtigt",
+			"constraintsNone": "Keine Allergie und keine Ernährungsweise zu berücksichtigen.",
+			"constraintOf": "{who}: {notes}",
+			"threadLabel": "Unterhaltung mit dem Assistenten",
+			"assistant": "Assistent",
+			"you": "Sie",
+			"greeting": "Sagen Sie mir, worauf Sie Lust haben. Vielleicht stelle ich ein oder zwei Fragen, dann schreibe ich das Rezept.",
+			"writing": "Der Assistent schreibt…",
+			"messageLabel": "Ihre Nachricht",
+			"send": "Senden",
+			"conflictTitle": "Bitte prüfen: Diese Zutaten passen vielleicht nicht",
+			"conflictLine": "{ingredient} — {constraint}",
+			"avoid": "Eine Version ohne sie erbitten",
+			"avoidMessage": "Schreibe das Rezept noch einmal ohne: {ingredients}."
+		}
 	},
 	"setup": {
 		"title": "Instanz nicht konfiguriert",

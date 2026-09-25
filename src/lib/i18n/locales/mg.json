@@ -1219,8 +1219,7 @@
 		"directFailed": "Tsy afaka nosokafana ny resaka. Andramo indray.",
 		"backToChats": "Hiverina amin’ny resaka",
 		"directNotFound": "Tsy hita io resaka io.",
-		"someone": "Olona iray",
-		"recipeAdded": "Nampidirina tao amin ny recette ny {name}."
+		"someone": "Olona iray"
 	},
 	"household": {
 		"title": "Ny ankohonako",
@@ -1506,7 +1505,6 @@
 		"sendingTo": "Mpandray : {provider}.",
 		"sendConfirm": "Alefa ary anontanio",
 		"asking": "Eo am-panontaniana…",
-		"added": "Nampiana amin ny recette-n ny tokantrano ilay recette.",
 		"keep": "Tehirizo ity recette ity",
 		"retry": "Anontanio indray",
 		"discard": "Ario",
@@ -1564,9 +1562,7 @@
 		},
 		"request": {
 			"trigger": "Anontanio ny AI hanome recette",
-			"title": "Recette inona no tianao?",
 			"placeholder": "ohatra: curry akoho ho an ny olona 4",
-			"submit": "Anontanio",
 			"followUpPlaceholder": "ohatra: mafy kokoa, na soloy tôfo ny akoho",
 			"dictate": "Tononina am-bava",
 			"stopDictate": "Atsaharo ny fitononana",
@@ -1578,7 +1574,34 @@
 		"photoErrorNoKey": "Mba hamoronana sary dia ampio lakile OpenRouter.",
 		"photoErrorNoKeyLink": "Hanampy lakile",
 		"photoErrorNoCredit": "Tsy misy crédit intsony ny kaontinao OpenRouter: mandoa vola ny famoronana sary.",
-		"photoErrorNoCreditLink": "Hanampy crédit"
+		"photoErrorNoCreditLink": "Hanampy crédit",
+		"chat": {
+			"tableTitle": "Iza no hisakafo?",
+			"tableHint": "Ny tsy fahazakana sy ny fomba fihinana ihany no alefa amin’ny mpanampy, tsy ny anarana mihitsy. Tsindrio ny anarana iray raha tsy ho eo izy.",
+			"present": "eo ambony latabatra",
+			"absent": "tsy eo",
+			"addGuest": "Hanampy vahiny",
+			"guestName": "Anaran’ny vahiny (tsy voatery)",
+			"guestNotes": "Izay tsy azony hanina, na ny fomba fihinany",
+			"guestNotesPlaceholder": "ohatra: tsy mahazaka chou-fleur",
+			"guestSave": "Ampidiro ny vahiny",
+			"guestDefault": "Vahiny {number}",
+			"removeGuest": "Esory {name}",
+			"constraintsTitle": "Heverin’ny mpanampy",
+			"constraintsNone": "Tsy misy tsy fahazakana na fomba fihinana tokony hodinihina.",
+			"constraintOf": "{who}: {notes}",
+			"threadLabel": "Resaka amin’ny mpanampy",
+			"assistant": "Mpanampy",
+			"you": "Ianao",
+			"greeting": "Lazao ahy izay tianao hohanina. Mety hametraka fanontaniana iray na roa aho, avy eo hanoratra ny fomba fahandroana.",
+			"writing": "Manoratra ny mpanampy…",
+			"messageLabel": "Ny hafatrao",
+			"send": "Alefa",
+			"conflictTitle": "Hamarino: mety tsy mety ireto akora ireto",
+			"conflictLine": "{ingredient} — {constraint}",
+			"avoid": "Angataho izay tsy misy azy",
+			"avoidMessage": "Soraty indray ny fomba fahandroana tsy misy: {ingredients}."
+		}
 	},
 	"setup": {
 		"title": "Tsy mbola voaomana ity instance ity",

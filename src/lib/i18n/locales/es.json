@@ -1232,8 +1232,7 @@
 		"directFailed": "No se ha podido abrir la conversación. Inténtalo de nuevo.",
 		"backToChats": "Volver a las conversaciones",
 		"directNotFound": "No se encuentra esta conversación.",
-		"someone": "Alguien",
-		"recipeAdded": "{name} se añadió a las recetas."
+		"someone": "Alguien"
 	},
 	"household": {
 		"title": "Mi hogar",
@@ -1519,7 +1518,6 @@
 		"sendingTo": "Destinatario: {provider}.",
 		"sendConfirm": "Enviar y preguntar",
 		"asking": "Preguntando…",
-		"added": "Receta añadida a las del hogar.",
 		"keep": "Guardar esta receta",
 		"retry": "Preguntar de nuevo",
 		"discard": "Descartar",
@@ -1577,9 +1575,7 @@
 		},
 		"request": {
 			"trigger": "Pedir una receta a la IA",
-			"title": "¿Qué receta te gustaría?",
 			"placeholder": "ej. un curry de pollo para 4",
-			"submit": "Preguntar",
 			"followUpPlaceholder": "ej. más picante, o cambia el pollo por tofu",
 			"dictate": "Dictar por voz",
 			"stopDictate": "Detener el dictado",
@@ -1591,7 +1587,34 @@
 		"photoErrorNoKey": "Para generar una imagen, añade una clave de OpenRouter.",
 		"photoErrorNoKeyLink": "Añadir una clave",
 		"photoErrorNoCredit": "Tu cuenta de OpenRouter no tiene saldo: la generación de imágenes es de pago.",
-		"photoErrorNoCreditLink": "Añadir saldo"
+		"photoErrorNoCreditLink": "Añadir saldo",
+		"chat": {
+			"tableTitle": "¿Quién come?",
+			"tableHint": "Sus alergias y dietas se envían al asistente, nunca sus nombres. Toque un nombre para indicar quién no está.",
+			"present": "en la mesa",
+			"absent": "ausente",
+			"addGuest": "Añadir un invitado",
+			"guestName": "Nombre del invitado (opcional)",
+			"guestNotes": "Lo que no puede comer, o su dieta",
+			"guestNotesPlaceholder": "p. ej. alérgico a la coliflor",
+			"guestSave": "Añadir el invitado",
+			"guestDefault": "Invitado {number}",
+			"removeGuest": "Quitar a {name}",
+			"constraintsTitle": "El asistente tiene en cuenta",
+			"constraintsNone": "Ninguna alergia ni dieta que tener en cuenta.",
+			"constraintOf": "{who}: {notes}",
+			"threadLabel": "Conversación con el asistente",
+			"assistant": "Asistente",
+			"you": "Usted",
+			"greeting": "Dígame qué le apetece comer. Quizá le haga una o dos preguntas y luego escribiré la receta.",
+			"writing": "El asistente está escribiendo…",
+			"messageLabel": "Su mensaje",
+			"send": "Enviar",
+			"conflictTitle": "Compruebe: puede que estos ingredientes no convengan",
+			"conflictLine": "{ingredient} — {constraint}",
+			"avoid": "Pedir una versión sin ellos",
+			"avoidMessage": "Vuelve a escribir la receta sin: {ingredients}."
+		}
 	},
 	"setup": {
 		"title": "Instancia sin configurar",

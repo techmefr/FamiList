@@ -1228,8 +1228,7 @@
 		"directFailed": "Não foi possível abrir a conversa. Tente novamente.",
 		"backToChats": "Voltar às conversas",
 		"directNotFound": "Esta conversa não foi encontrada.",
-		"someone": "Alguém",
-		"recipeAdded": "{name} foi adicionada às receitas."
+		"someone": "Alguém"
 	},
 	"household": {
 		"title": "A minha casa",
@@ -1515,7 +1514,6 @@
 		"sendingTo": "Destinatário: {provider}.",
 		"sendConfirm": "Enviar e perguntar",
 		"asking": "A perguntar…",
-		"added": "Receita adicionada às da casa.",
 		"keep": "Guardar esta receita",
 		"retry": "Perguntar de novo",
 		"discard": "Deitar fora",
@@ -1573,9 +1571,7 @@
 		},
 		"request": {
 			"trigger": "Pedir uma receita à IA",
-			"title": "Que receita gostaria?",
 			"placeholder": "ex. um curry de frango para 4",
-			"submit": "Perguntar",
 			"followUpPlaceholder": "ex. mais picante, ou troque o frango por tofu",
 			"dictate": "Ditar por voz",
 			"stopDictate": "Parar o ditado",
@@ -1587,7 +1583,34 @@
 		"photoErrorNoKey": "Para gerar uma imagem, adicione uma chave OpenRouter.",
 		"photoErrorNoKeyLink": "Adicionar uma chave",
 		"photoErrorNoCredit": "A sua conta OpenRouter não tem crédito: a geração de imagens é paga.",
-		"photoErrorNoCreditLink": "Adicionar crédito"
+		"photoErrorNoCreditLink": "Adicionar crédito",
+		"chat": {
+			"tableTitle": "Quem vai comer?",
+			"tableHint": "As alergias e dietas são enviadas ao assistente, nunca os nomes. Toque num nome para indicar quem não está.",
+			"present": "à mesa",
+			"absent": "ausente",
+			"addGuest": "Adicionar um convidado",
+			"guestName": "Nome do convidado (opcional)",
+			"guestNotes": "O que não pode comer, ou a sua dieta",
+			"guestNotesPlaceholder": "ex. alérgico a couve-flor",
+			"guestSave": "Adicionar o convidado",
+			"guestDefault": "Convidado {number}",
+			"removeGuest": "Retirar {name}",
+			"constraintsTitle": "O assistente tem em conta",
+			"constraintsNone": "Nenhuma alergia nem dieta a ter em conta.",
+			"constraintOf": "{who}: {notes}",
+			"threadLabel": "Conversa com o assistente",
+			"assistant": "Assistente",
+			"you": "Você",
+			"greeting": "Diga-me o que lhe apetece comer. Talvez faça uma ou duas perguntas e depois escrevo a receita.",
+			"writing": "O assistente está a escrever…",
+			"messageLabel": "A sua mensagem",
+			"send": "Enviar",
+			"conflictTitle": "Verifique: estes ingredientes talvez não sirvam",
+			"conflictLine": "{ingredient} — {constraint}",
+			"avoid": "Pedir uma versão sem eles",
+			"avoidMessage": "Reescreve a receita sem: {ingredients}."
+		}
 	},
 	"setup": {
 		"title": "Instância não configurada",
