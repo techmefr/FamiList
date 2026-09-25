@@ -2,8 +2,8 @@ import { describe, expect, it } from 'vitest';
 import { CUES, hapticFor, TONE_MAX_GAIN, TONE_MAX_MS, toneFor } from './cue';
 
 describe('cue', () => {
-	it('couvre les sept retours, sans doublon', () => {
-		expect(CUES).toHaveLength(7);
+	it('couvre les huit retours, sans doublon', () => {
+		expect(CUES).toHaveLength(8);
 		expect(new Set(CUES).size).toBe(CUES.length);
 	});
 

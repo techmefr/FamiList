@@ -12,6 +12,7 @@ describe('emptyDraft', () => {
 			lines: [{ name: '', qty: '', unit: DEFAULT_UNIT }],
 			steps: [''],
 			stepIngredients: [[]],
+			stepDurations: [null],
 			image: null,
 			reviewed: false
 		});
@@ -29,7 +30,7 @@ describe('draftFromImport', () => {
 		const draft = draftFromImport({
 			name: 'Crêpes',
 			ingredients: ['250 g de farine', '3 oeufs'],
-			steps: ['Mélanger la farine et les oeufs.'],
+			steps: ['Mélanger la farine et les oeufs.', 'Laisser reposer 30 minutes.'],
 			servings: '6 personnes',
 			image: 'https://exemple.fr/crepes.jpg'
 		});
@@ -37,8 +38,9 @@ describe('draftFromImport', () => {
 		expect(draft.name).toBe('Crêpes');
 		expect(draft.servings).toBe(6);
 		expect(draft.lines[0]).toEqual({ name: 'farine', qty: '250', unit: 'g' });
-		expect(draft.steps).toEqual(['Mélanger la farine et les oeufs.']);
-		expect(draft.stepIngredients).toHaveLength(1);
+		expect(draft.steps).toHaveLength(2);
+		expect(draft.stepIngredients).toHaveLength(2);
+		expect(draft.stepDurations).toEqual([null, 30 * 60]);
 		expect(draft.image).toBe('https://exemple.fr/crepes.jpg');
 		expect(draft.reviewed).toBe(true);
 	});
@@ -63,6 +65,7 @@ describe('draftFromSuggestion', () => {
 			ingredients: [{ name: 'Poulet', qty: '500', unit: 'g' }],
 			steps: ['Cuire le poulet.'],
 			stepIngredients: [[0]],
+			stepDurations: [600],
 			imagePrompt: 'un curry fumant'
 		});
 
@@ -73,6 +76,7 @@ describe('draftFromSuggestion', () => {
 			lines: [{ name: 'Poulet', qty: '500', unit: 'g' }],
 			steps: ['Cuire le poulet.'],
 			stepIngredients: [[0]],
+			stepDurations: [600],
 			imagePrompt: 'un curry fumant',
 			image: null,
 			reviewed: true
@@ -86,11 +90,13 @@ describe('draftFromSuggestion', () => {
 			servings: 2,
 			ingredients: [],
 			steps: [],
-			stepIngredients: []
+			stepIngredients: [],
+			stepDurations: []
 		});
 
 		expect(draft.lines).toHaveLength(1);
 		expect(draft.steps).toEqual(['']);
 		expect(draft.stepIngredients).toEqual([[]]);
+		expect(draft.stepDurations).toEqual([null]);
 	});
 });

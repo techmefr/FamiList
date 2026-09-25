@@ -511,9 +511,143 @@
 			"readIngredients": "Read the ingredients",
 			"speakIngredients": "Ingredients: {list}.",
 			"steps": "Recipe steps",
-			"goTo": "Go to step {current} of {total}"
+			"goTo": "Go to step {current} of {total}",
+			"voice": {
+				"start": "Hands-free",
+				"stop": "Stop hands-free",
+				"introTitle": "Follow the recipe by voice",
+				"introBody": "Say “Famy”, then a command: “Famy, next”, “Famy, repeat”, “Famy, read the ingredients”. No need to touch the screen with messy hands.",
+				"introPrivacy": "The microphone only listens in this mode. Recognition is done by your phone or browser, which may use its online service. FamiList records nothing.",
+				"introAccept": "Turn on the microphone",
+				"introCancel": "Not now",
+				"listening": "Listening. Say “Famy”, then a command.",
+				"awake": "Famy is listening…",
+				"understood": "Understood: {command}",
+				"notUnderstood": "Not understood: “{text}”. Say “Famy, help” for the list.",
+				"denied": "The microphone is blocked. Allow it in the settings; the buttons still work.",
+				"unsupported": "Voice control is not available on this device. The buttons still work.",
+				"failed": "The microphone stopped. Tap “Hands-free” to start again.",
+				"help": "Voice commands",
+				"helpTitle": "Say “Famy”, then:",
+				"volume": "Volume: {percent}%",
+				"speakHelp": "Say Famy, then: {list}.",
+				"wake": [
+					"famy",
+					"famie",
+					"fami",
+					"fammy"
+				],
+				"labels": {
+					"next": "Next step",
+					"previous": "Previous step",
+					"repeat": "Repeat the step",
+					"stepIngredients": "Step ingredients",
+					"allIngredients": "All ingredients",
+					"louder": "Louder",
+					"quieter": "Quieter",
+					"mute": "Mute the voice",
+					"unmute": "Unmute the voice",
+					"stopListening": "Stop listening",
+					"help": "Help",
+					"close": "Leave",
+					"startTimer": "Start the timer",
+					"stopTimer": "Stop the timer",
+					"timeLeft": "Time left"
+				},
+				"commands": {
+					"next": [
+						"next",
+						"next step",
+						"go on",
+						"continue",
+						"carry on"
+					],
+					"previous": [
+						"previous",
+						"previous step",
+						"back",
+						"go back"
+					],
+					"repeat": [
+						"repeat",
+						"say again",
+						"again",
+						"read the step"
+					],
+					"stepIngredients": [
+						"ingredients",
+						"read the ingredients",
+						"what do I need"
+					],
+					"allIngredients": [
+						"all ingredients",
+						"all the ingredients",
+						"whole recipe",
+						"full list"
+					],
+					"louder": [
+						"louder",
+						"volume up",
+						"turn it up"
+					],
+					"quieter": [
+						"quieter",
+						"volume down",
+						"turn it down",
+						"softer"
+					],
+					"mute": [
+						"be quiet",
+						"mute",
+						"stop talking",
+						"silence"
+					],
+					"unmute": [
+						"unmute",
+						"speak again",
+						"talk again"
+					],
+					"stopListening": [
+						"stop listening",
+						"microphone off",
+						"mic off"
+					],
+					"help": [
+						"help",
+						"commands",
+						"what can I say"
+					],
+					"close": [
+						"exit",
+						"quit",
+						"close",
+						"I’m done",
+						"finished"
+					],
+					"startTimer": [
+						"start the timer",
+						"start timer",
+						"timer",
+						"set the timer"
+					],
+					"stopTimer": [
+						"stop the timer",
+						"stop timer",
+						"stop the alarm",
+						"stop alarm"
+					],
+					"timeLeft": [
+						"how long left",
+						"time left",
+						"how much time"
+					]
+				}
+			}
 		},
 		"stepIngredients": "Ingredients used in step {rank}",
+		"stepDuration": "Step {rank} duration (optional)",
+		"durationHours": "Hours",
+		"durationMinutes": "Minutes",
 		"create": {
 			"title": "Create a recipe",
 			"intro": "Choose how to start. You will read everything again before saving.",
@@ -1459,5 +1593,32 @@
 		"saved": "{bank} key saved",
 		"removed": "{bank} key removed",
 		"saveFailed": "The key could not be saved. Try again."
+	},
+	"timers": {
+		"start": "Start the timer ({time})",
+		"running": "Running timers",
+		"stepLabel": "Step {rank}",
+		"addMinute": "+1 minute",
+		"stop": "Stop",
+		"announce": "Say the time",
+		"remaining": "{time} left for step {rank}.",
+		"none": "No timer running.",
+		"noDuration": "This step has no duration. Add one by editing the recipe.",
+		"webHint": "In a browser, the alarm only rings while FamiList stays open.",
+		"doneTitle": "Timer done",
+		"doneBody": "{recipe} — {step}",
+		"stopAlarm": "Stop the alarm",
+		"hours": {
+			"one": "{count} hour",
+			"other": "{count} hours"
+		},
+		"minutes": {
+			"one": "{count} minute",
+			"other": "{count} minutes"
+		},
+		"seconds": {
+			"one": "{count} second",
+			"other": "{count} seconds"
+		}
 	}
 }

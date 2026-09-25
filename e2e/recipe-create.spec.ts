@@ -22,7 +22,8 @@ function suggested(name: string) {
 		emoji: '🥗',
 		servings: 2,
 		ingredients: [{ name: 'Tomates', qty: '3', unit: 'piece' }],
-		steps: ['Couper les tomates.']
+		steps: ['Couper les tomates.', 'Laisser mariner.'],
+		stepMinutes: [0, 15]
 	};
 }
 
@@ -58,13 +59,18 @@ async function clearKey(page: Page) {
 }
 
 /** The form is filled but nothing is saved yet: the three stages are walked through, then the card shows. */
-async function saveFromForm(page: Page, name: string) {
+async function saveFromForm(page: Page, name: string, minutes?: { step: number; value: string }) {
 	await expect(page).toHaveURL(/\/recipes$/);
 	await expect(page.getByTestId('recipe-name')).toHaveValue(name);
 	await expect(page.locator('[data-test-class="recipe-card"]').filter({ hasText: name })).toHaveCount(0);
 
 	await page.getByTestId('recipe-next').click();
 	await page.getByTestId('recipe-next').click();
+	if (minutes) {
+		await expect(page.locator('[data-test-class="recipe-step-minutes"]').nth(minutes.step)).toHaveValue(
+			minutes.value
+		);
+	}
 	await page.getByTestId('recipe-next').click();
 
 	await expect(page.locator('[data-test-class="recipe-card"]').filter({ hasText: name })).toBeVisible();
@@ -101,7 +107,7 @@ test.describe('creer une recette', () => {
 				body: JSON.stringify({
 					name,
 					ingredients: ['250 g de farine', '3 oeufs'],
-					steps: ['Tout mélanger.'],
+					steps: ['Cuire 20 minutes.'],
 					servings: '6',
 					image: null
 				})
@@ -117,7 +123,7 @@ test.describe('creer une recette', () => {
 
 		await expect(page.getByTestId('recipe-import-review')).toBeVisible();
 		await expect(page.getByTestId('recipe-servings')).toHaveValue('6');
-		await saveFromForm(page, name);
+		await saveFromForm(page, name, { step: 0, value: '20' });
 	});
 
 	/**
@@ -186,7 +192,7 @@ test.describe('creer une recette avec l IA', () => {
 		await page.getByTestId('ai-proposal-accept').click();
 
 		await expect(page.getByTestId('recipe-import-review')).toBeVisible();
-		await saveFromForm(page, name);
+		await saveFromForm(page, name, { step: 1, value: '15' });
 	});
 
 	/**

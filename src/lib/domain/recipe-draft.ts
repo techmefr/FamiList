@@ -1,6 +1,7 @@
 import { DEFAULT_SERVINGS, type RecipeLine } from './recipe';
 import { DEFAULT_UNIT } from './units';
 import { guessLinks } from './step-ingredients';
+import { detectDuration } from './step-duration';
 import { importedLines, parseImportedServings, type ImportedRecipe } from './recipe-import';
 import type { SuggestedRecipe } from './ai-recipe';
 
@@ -21,6 +22,8 @@ export interface RecipeDraft {
 	lines: RecipeLine[];
 	steps: string[];
 	stepIngredients: number[][];
+	/** For each of `steps`, how long it takes in seconds, or null (#310). */
+	stepDurations: (number | null)[];
 	imagePrompt?: string;
 	image: string | null;
 	reviewed: boolean;
@@ -38,6 +41,7 @@ export function emptyDraft(): RecipeDraft {
 		lines: [emptyLine()],
 		steps: [''],
 		stepIngredients: [[]],
+		stepDurations: [null],
 		image: null,
 		reviewed: false
 	};
@@ -63,6 +67,7 @@ export function draftFromImport(recipe: ImportedRecipe): RecipeDraft {
 					recipe.steps
 				)
 			: [[]],
+		stepDurations: recipe.steps.length ? recipe.steps.map((body) => detectDuration(body)) : [null],
 		image: recipe.image,
 		reviewed: true
 	};
@@ -77,6 +82,9 @@ export function draftFromSuggestion(recipe: SuggestedRecipe): RecipeDraft {
 		lines: recipe.ingredients.length ? recipe.ingredients : [emptyLine()],
 		steps: recipe.steps.length ? recipe.steps : [''],
 		stepIngredients: recipe.steps.length ? recipe.stepIngredients : [[]],
+		stepDurations: recipe.steps.length
+			? recipe.steps.map((_, index) => recipe.stepDurations[index] ?? null)
+			: [null],
 		imagePrompt: recipe.imagePrompt,
 		image: null,
 		reviewed: true

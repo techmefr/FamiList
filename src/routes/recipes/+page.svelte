@@ -11,6 +11,7 @@
 	import { DEFAULT_EMOJI, type RecipeDraft } from '$domain/recipe-draft';
 	import { UNITS, DEFAULT_UNIT } from '$domain/units';
 	import { toggleLink, withoutIngredient } from '$domain/step-ingredients';
+	import { durationFields, durationFromFields } from '$domain/step-duration';
 	import { Button } from '$components/ui/button';
 	import { Input } from '$components/ui/input';
 	import { Label } from '$components/ui/label';
@@ -67,6 +68,9 @@
 	let lines = $state<RecipeLine[]>([{ name: '', qty: '', unit: DEFAULT_UNIT }]);
 	let steps = $state<string[]>(['']);
 	let stepIngredients = $state<number[][]>([[]]);
+	/** Each step's duration as typed (#310): two plain fields rather than a wheel picker. */
+	let stepTimes = $state<{ hours: string; minutes: string }[]>([durationFields(null)]);
+	const stepDurations = $derived(stepTimes.map((time) => durationFromFields(time.hours, time.minutes)));
 	/** The ingredient rows a step can be linked to (#308): a row still unnamed has nothing to show. */
 	const namedLines = $derived(
 		lines.map((line, lineIndex) => ({ line, lineIndex })).filter(({ line }) => line.name.trim())
@@ -147,6 +151,7 @@
 		lines = draft.lines;
 		steps = draft.steps;
 		stepIngredients = draft.stepIngredients;
+		stepTimes = draft.stepDurations.map((seconds) => durationFields(seconds));
 		notes = '';
 		imagePrompt = draft.imagePrompt;
 		importedImage = draft.image;
@@ -184,6 +189,7 @@
 		lines = [{ name: '', qty: '', unit: DEFAULT_UNIT }];
 		steps = [''];
 		stepIngredients = [[]];
+		stepTimes = [durationFields(null)];
 		notes = '';
 		copiedFrom = null;
 		fromImport = false;
@@ -224,6 +230,9 @@
 		const savedSteps = data.stepsOf(recipe.id);
 		const lineIds = data.ingredientsOf(recipe.id).map((line) => line.id);
 		steps = savedSteps.length ? savedSteps.map((saved) => saved.body) : [''];
+		stepTimes = savedSteps.length
+			? savedSteps.map((saved) => durationFields(saved.durationSeconds))
+			: [durationFields(null)];
 		stepIngredients = savedSteps.length
 			? savedSteps.map((saved) =>
 					saved.ingredientIds.flatMap((id) => {
@@ -259,12 +268,14 @@
 	function addStep() {
 		steps = [...steps, ''];
 		stepIngredients = [...stepIngredients, []];
+		stepTimes = [...stepTimes, durationFields(null)];
 	}
 
 	function removeStep(index: number) {
 		if (steps.length <= 1) return;
 		steps = steps.filter((_, i) => i !== index);
 		stepIngredients = stepIngredients.filter((_, i) => i !== index);
+		stepTimes = stepTimes.filter((_, i) => i !== index);
 	}
 
 	function toggleStepIngredient(stepIndex: number, lineIndex: number) {
@@ -293,7 +304,16 @@
 		feedback.play('add');
 		const editedId = editingId;
 		if (editedId) {
-			data.updateRecipe(editedId, { name, emoji, servings, notes, ingredients: lines, steps, stepIngredients });
+			data.updateRecipe(editedId, {
+				name,
+				emoji,
+				servings,
+				notes,
+				ingredients: lines,
+				steps,
+				stepIngredients,
+				stepDurations
+			});
 		} else {
 			const recipe = data.addRecipe({
 				name,
@@ -303,7 +323,8 @@
 				ingredients: lines,
 				steps,
 				stepIngredients,
-				imagePrompt
+				imagePrompt,
+				stepDurations
 			});
 			attachImportedPhoto(recipe.id);
 		}
@@ -625,6 +646,40 @@
 									<Trash2 size={18} aria-hidden="true" />
 								</Button>
 							</div>
+
+							<fieldset class="min-w-0" data-test-class="recipe-step-duration">
+								<legend class="text-label font-semibold">
+									{t('recipes.stepDuration', { rank: index + 1 })}
+								</legend>
+								<div class="mt-1 flex flex-wrap gap-3">
+									<div class="w-32">
+										<Label for="recipe-step-{index}-hours">{t('recipes.durationHours')}</Label>
+										<Input
+											id="recipe-step-{index}-hours"
+											bind:value={stepTimes[index].hours}
+											inputmode="numeric"
+											pattern="[0-9]*"
+											maxlength={2}
+											autocomplete="off"
+											data-test-class="recipe-step-hours"
+											class="text-product h-12"
+										/>
+									</div>
+									<div class="w-32">
+										<Label for="recipe-step-{index}-minutes">{t('recipes.durationMinutes')}</Label>
+										<Input
+											id="recipe-step-{index}-minutes"
+											bind:value={stepTimes[index].minutes}
+											inputmode="numeric"
+											pattern="[0-9]*"
+											maxlength={3}
+											autocomplete="off"
+											data-test-class="recipe-step-minutes"
+											class="text-product h-12"
+										/>
+									</div>
+								</div>
+							</fieldset>
 
 							{#if namedLines.length}
 								<fieldset class="min-w-0 sm:rounded-lg sm:border sm:p-3" data-test-class="recipe-step-ingredients">
@@ -1002,6 +1057,8 @@
 			steps={data.stepsOf(cookAlongRecipe.id).map((step) => step.body)}
 			ingredients={data.ingredientsOf(cookAlongRecipe.id)}
 			stepIngredientIds={data.stepsOf(cookAlongRecipe.id).map((step) => step.ingredientIds ?? [])}
+			recipeId={cookAlongRecipe.id}
+			stepDurations={data.stepsOf(cookAlongRecipe.id).map((step) => step.durationSeconds ?? null)}
 			onClose={() => (cookAlongFor = null)}
 		/>
 	{/if}
