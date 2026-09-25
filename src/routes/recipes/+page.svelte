@@ -35,6 +35,9 @@
 	import RecipePhoto from '$components/app/RecipePhoto.svelte';
 	import RecipeShareSheet from '$components/app/RecipeShareSheet.svelte';
 	import RecipeCover from '$components/app/RecipeCover.svelte';
+	import RecipeTagPicker from '$components/app/RecipeTagPicker.svelte';
+	import RecipeTagChips from '$components/app/RecipeTagChips.svelte';
+	import { tagsFromSchemaOrg } from '$domain/recipe-tags';
 	import {
 		CookingPot,
 		Hash,
@@ -88,6 +91,7 @@
 		lines.map((line, lineIndex) => ({ line, lineIndex })).filter(({ line }) => line.name.trim())
 	);
 	let notes = $state('');
+	let tags = $state<string[]>([]);
 
 	/** Set when the form is a copy of a recipe shared by another circle: saving creates a recipe of our own. */
 	let copiedFrom = $state<string | null>(null);
@@ -195,6 +199,7 @@
 		steps = [''];
 		stepIngredients = [[]];
 		notes = '';
+		tags = [];
 		copiedFrom = null;
 		fromImport = false;
 		importRefusal = null;
@@ -229,6 +234,7 @@
 		emoji = recipe.emoji;
 		servings = recipe.servings;
 		notes = recipe.notes ?? '';
+		tags = [...(recipe.tags ?? [])];
 
 		const existingLines = data
 			.ingredientsOf(recipe.id)
@@ -295,6 +301,7 @@
 			? guessLinks(lines.map((line) => line.name), recipe.steps)
 			: [[]];
 		imagePrompt = undefined;
+		tags = tagsFromSchemaOrg(recipe.categories);
 
 		creating = true;
 		step = 'recipe';
@@ -315,6 +322,7 @@
 		steps = recipe.steps.length ? recipe.steps : [''];
 		stepIngredients = recipe.steps.length ? recipe.stepIngredients : [[]];
 		imagePrompt = recipe.imagePrompt;
+		tags = [...recipe.tags];
 
 		creating = true;
 		step = 'recipe';
@@ -449,13 +457,14 @@
 		feedback.play('add');
 		const editedId = editingId;
 		if (editedId) {
-			data.updateRecipe(editedId, { name, emoji, servings, notes, ingredients: lines, steps, stepIngredients });
+			data.updateRecipe(editedId, { name, emoji, servings, notes, tags, ingredients: lines, steps, stepIngredients });
 		} else {
 			const recipe = data.addRecipe({
 				name,
 				emoji,
 				servings,
 				notes,
+				tags,
 				ingredients: lines,
 				steps,
 				stepIngredients,
@@ -797,6 +806,8 @@
 					></textarea>
 				</div>
 
+				<RecipeTagPicker bind:tags />
+
 				{#if editingId}
 					{@const editing = data.recipes.find((recipe) => recipe.id === editingId)}
 					{#if editing}
@@ -1048,6 +1059,9 @@
 							{/if}
 						</span>
 					</button>
+
+					<!-- Outside the toggle: a list has no place inside a button, and the tags read at rest. -->
+					<RecipeTagChips tags={recipe.tags} class="px-3 pb-3" />
 
 					{#if isExpanded}
 						<div

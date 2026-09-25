@@ -1220,6 +1220,7 @@ export type Database = {
           notes: string | null
           photo_path: string | null
           servings: number
+          tags: string[]
         }
         Insert: {
           created_at?: string
@@ -1232,6 +1233,7 @@ export type Database = {
           notes?: string | null
           photo_path?: string | null
           servings?: number
+          tags?: string[]
         }
         Update: {
           created_at?: string
@@ -1244,6 +1246,7 @@ export type Database = {
           notes?: string | null
           photo_path?: string | null
           servings?: number
+          tags?: string[]
         }
         Relationships: [
           {
