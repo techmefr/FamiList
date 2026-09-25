@@ -1180,6 +1180,7 @@ export type Database = {
         Row: {
           body: string
           ingredient_ids: string[]
+          duration_seconds: number | null
           id: string
           position: number
           recipe_id: string
@@ -1188,12 +1189,14 @@ export type Database = {
           body: string
           id?: string
           ingredient_ids?: string[]
+          duration_seconds?: number | null
           position?: number
           recipe_id: string
         }
         Update: {
           body?: string
           ingredient_ids?: string[]
+          duration_seconds?: number | null
           id?: string
           position?: number
           recipe_id?: string

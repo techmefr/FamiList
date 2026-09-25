@@ -1,5 +1,6 @@
 import { DEFAULT_SERVINGS, MAX_SERVINGS, MIN_SERVINGS, type RecipeLine } from './recipe';
 import { slugify } from './slug';
+import { suggestedDurations } from './step-duration';
 import { guessLinks, sanitizeLinks } from './step-ingredients';
 import { DEFAULT_UNIT, resolveUnit, UNITS } from './units';
 
@@ -80,7 +81,7 @@ const STEP_INGREDIENTS_RULE =
 
 /** The one JSON shape every recipe prompt asks for, so that `parseRecipeSuggestion` reads every answer. */
 export const RECIPE_JSON_SHAPE =
-	'{"name":"","emoji":"","servings":0,"ingredients":[{"name":"","qty":"","unit":""}],"steps":[""],"stepIngredients":[[0]],"imagePrompt":""}';
+	'{"name":"","emoji":"","servings":0,"ingredients":[{"name":"","qty":"","unit":""}],"steps":[""],"stepIngredients":[[0]],"stepMinutes":[0],"imagePrompt":""}';
 
 /**
  * Asked in English whatever the recipe's language: image models understand English far better, and a
@@ -91,6 +92,13 @@ const IMAGE_PROMPT_RULE =
 
 /** Long enough for a rich description, short enough to stay under the column's check. */
 export const MAX_IMAGE_PROMPT_LENGTH = 600;
+
+/**
+ * Asked with every recipe (#310): the time a step makes you wait, so cook-along can offer a timer. 0 for a
+ * step with nothing to wait for; the step's own text is read when the model leaves it out.
+ */
+const STEP_MINUTES_RULE =
+	'"stepMinutes" contient un nombre par etape, dans le meme ordre que "steps" : la duree en minutes quand l etape demande de cuire, reposer ou attendre un temps precis, sinon 0.';
 
 /** The instruction line added to a prompt when the household has dietary restrictions, or none at all. */
 function restrictionsLine(restrictions?: string[]): string[] {
@@ -136,7 +144,8 @@ export function recipePrompt(products: string[], options: PromptOptions): string
 		'"qty" est un nombre ecrit en chiffres, ou une chaine vide si la quantite ne se compte pas.',
 		'"steps" contient les etapes de preparation, une par entree, dans l ordre.',
 		STEP_INGREDIENTS_RULE,
-		IMAGE_PROMPT_RULE
+		IMAGE_PROMPT_RULE,
+		STEP_MINUTES_RULE
 	].join('\n');
 }
 
@@ -167,7 +176,8 @@ export function recipeExtractionPrompt(pageText: string, options: PromptOptions)
 		'"qty" est un nombre ecrit en chiffres, ou une chaine vide si la quantite ne se compte pas.',
 		'"steps" contient les etapes de preparation, une par entree, dans l ordre.',
 		STEP_INGREDIENTS_RULE,
-		IMAGE_PROMPT_RULE
+		IMAGE_PROMPT_RULE,
+		STEP_MINUTES_RULE
 	].join('\n');
 }
 
@@ -197,7 +207,8 @@ export function recipeFromRequestPrompt(userText: string, options: PromptOptions
 		'"qty" est un nombre ecrit en chiffres, ou une chaine vide si la quantite ne se compte pas.',
 		'"steps" contient les etapes de preparation, une par entree, dans l ordre.',
 		STEP_INGREDIENTS_RULE,
-		IMAGE_PROMPT_RULE
+		IMAGE_PROMPT_RULE,
+		STEP_MINUTES_RULE
 	].join('\n');
 }
 
@@ -231,7 +242,8 @@ export function recipeFollowUpPrompt(userText: string, options: PromptOptions): 
 		'"qty" est un nombre ecrit en chiffres, ou une chaine vide si la quantite ne se compte pas.',
 		'"steps" contient les etapes de preparation, une par entree, dans l ordre.',
 		STEP_INGREDIENTS_RULE,
-		IMAGE_PROMPT_RULE
+		IMAGE_PROMPT_RULE,
+		STEP_MINUTES_RULE
 	].join('\n');
 }
 
@@ -257,7 +269,8 @@ export function recipeFromPhotoPrompt(options: PromptOptions): string {
 		'"qty" est un nombre ecrit en chiffres, ou une chaine vide si la quantite ne se compte pas.',
 		'"steps" contient les etapes de preparation, une par entree, dans l ordre.',
 		STEP_INGREDIENTS_RULE,
-		IMAGE_PROMPT_RULE
+		IMAGE_PROMPT_RULE,
+		STEP_MINUTES_RULE
 	].join('\n');
 }
 
@@ -276,6 +289,8 @@ export interface SuggestedRecipe {
 	/** For each of `steps`, the indices in `ingredients` it uses (#308). */
 	stepIngredients: number[][];
 	imagePrompt?: string;
+	/** For each of `steps`, how long it takes in seconds, or null (#310). */
+	stepDurations: (number | null)[];
 }
 
 /**
@@ -401,6 +416,7 @@ export function parseRecipeSuggestion(text: string): SuggestedRecipe | null {
 		// A recipe with no step is still a recipe — the shopping list, which is the point, does not need one. We
 		// keep an empty entry so that the review form has its row.
 		steps: steps.length > 0 ? steps : [''],
-		stepIngredients: steps.length > 0 ? suggestedLinks(root.stepIngredients, allIngredients, allSteps) : [[]]
+		stepIngredients: steps.length > 0 ? suggestedLinks(root.stepIngredients, allIngredients, allSteps) : [[]],
+		stepDurations: steps.length > 0 ? suggestedDurations(root.stepMinutes, allSteps) : [null]
 	};
 }

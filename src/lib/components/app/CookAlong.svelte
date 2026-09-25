@@ -15,9 +15,15 @@
 	} from '$domain/cook-along';
 	import { Button } from '$components/ui/button';
 	import { X, Check, ChevronLeft, ChevronRight, Volume2, VolumeX } from '@lucide/svelte';
-	import { ShoppingBasket } from '@lucide/svelte';
+	import { ShoppingBasket, Mic, MicOff, CircleHelp, Timer as TimerIcon, Plus } from '@lucide/svelte';
+	import { timers } from '$stores/timers.svelte';
+	import { formatClock, splitDuration } from '$domain/step-duration';
+	import { remindersSupported } from '$native/reminders';
 	import { tick } from 'svelte';
 	import { ingredientsOfStep } from '$domain/step-ingredients';
+	import { VOICE_COMMANDS, stepVolume, type VoiceCommand } from '$domain/voice-commands';
+	import { VoiceControl } from '$stores/voice-control.svelte';
+	import { keepScreenOn } from '$native/wake-lock';
 	import type { RecipeIngredient } from '$db/schema';
 
 	let {
@@ -25,6 +31,8 @@
 		steps,
 		ingredients = [],
 		stepIngredientIds = [],
+		recipeId,
+		stepDurations = [],
 		onClose
 	}: {
 		recipeName: string;
@@ -32,6 +40,9 @@
 		/** The recipe's lines, and for each step the ids of those it uses (#308). */
 		ingredients?: RecipeIngredient[];
 		stepIngredientIds?: string[][];
+		/** The recipe the timers belong to, and each step's duration in seconds (#310). */
+		recipeId?: string;
+		stepDurations?: (number | null)[];
 		onClose: () => void;
 	} = $props();
 
@@ -51,9 +62,9 @@
 	const lineText = (line: RecipeIngredient) =>
 		line.qty ? `${line.qty} ${t(`units.${line.unit}`)} ${line.name}` : line.name;
 
-	async function openPanel() {
+	async function openPanel(all = false) {
 		panelOpen = true;
-		showAll = false;
+		showAll = all;
 		await tick();
 		panelHeading?.focus();
 	}
@@ -79,6 +90,8 @@
 	let speaking = $state(false);
 	/** Muted is a choice the person makes; it stays true until they turn it back on, across steps. */
 	let muted = $state(false);
+	/** Set by voice only ("Famy, plus fort"): the buttons keep the device volume for that. */
+	let volume = $state(1);
 
 	const total = $derived(steps.length);
 	const current = $derived(steps[clampStepIndex(index, total)] ?? '');
@@ -124,6 +137,7 @@
 		window.speechSynthesis.cancel();
 		const utterance = new SpeechSynthesisUtterance(text);
 		utterance.lang = speechLangOf(i18n.locale);
+		utterance.volume = volume;
 		utterance.onend = () => (speaking = false);
 		utterance.onerror = () => (speaking = false);
 		speaking = true;
@@ -148,8 +162,202 @@
 		return stop;
 	});
 
+	$effect(() => keepScreenOn());
+
+	const voiceLabel = (command: VoiceCommand) => t(`recipes.cookAlong.voice.labels.${command}`);
+
+	const voice = new VoiceControl(
+		() => ({
+			wake: i18n.list('recipes.cookAlong.voice.wake'),
+			commands: Object.fromEntries(
+				VOICE_COMMANDS.map((command) => [command, i18n.list(`recipes.cookAlong.voice.commands.${command}`)])
+			) as Record<VoiceCommand, string[]>
+		}),
+		() => speechLangOf(i18n.locale),
+		runVoiceCommand
+	);
+
+	$effect(() => () => voice.stop());
+
+	let introOpen = $state(false);
+	let helpOpen = $state(false);
+	let voiceButton = $state<HTMLButtonElement | null>(null);
+	let introHeading = $state<HTMLElement | null>(null);
+	let helpHeading = $state<HTMLElement | null>(null);
+
+	/** The explanation comes once, before the browser's own permission prompt, not on every opening. */
+	const INTRO_SEEN_KEY = 'familist:voice-intro-seen';
+
+	function introSeen(): boolean {
+		try {
+			return localStorage.getItem(INTRO_SEEN_KEY) === '1';
+		} catch {
+			return false;
+		}
+	}
+
+	async function toggleVoice() {
+		if (voice.active) {
+			voice.stop();
+			return;
+		}
+
+		if (!introSeen()) {
+			introOpen = true;
+			await tick();
+			introHeading?.focus();
+			return;
+		}
+
+		void voice.start();
+	}
+
+	async function acceptIntro() {
+		try {
+			localStorage.setItem(INTRO_SEEN_KEY, '1');
+		} catch {
+			// private window: the explanation simply comes back next time
+		}
+		introOpen = false;
+		await tick();
+		voiceButton?.focus();
+		void voice.start();
+	}
+
+	async function closeIntro() {
+		introOpen = false;
+		await tick();
+		voiceButton?.focus();
+	}
+
+	async function openHelp() {
+		helpOpen = true;
+		await tick();
+		helpHeading?.focus();
+	}
+
+	async function closeHelp() {
+		helpOpen = false;
+		await tick();
+		voiceButton?.focus();
+	}
+
+	const stepDuration = $derived(stepDurations[clampStepIndex(index, steps.length)] ?? null);
+	const recipeTimers = $derived(recipeId ? timers.ofRecipe(recipeId) : []);
+	const stepTimer = $derived(recipeId ? timers.forStep(recipeId, clampStepIndex(index, total)) : undefined);
+	/** Written only on request (a tap, "Famy, temps restant"): a countdown read out every second is noise. */
+	let timerNotice = $state('');
+
+	function startTimer() {
+		if (!recipeId) return;
+		if (!stepDuration) {
+			timerNotice = t('timers.noDuration');
+			return speak(timerNotice);
+		}
+
+		timers.start({
+			recipeId,
+			recipeName,
+			stepIndex: clampStepIndex(index, total),
+			step: current,
+			seconds: stepDuration
+		});
+	}
+
+	/** The ringing one first, then this step's, then the last one started. */
+	function stopTimer() {
+		const target = timers.ringing[0] ?? stepTimer ?? recipeTimers.at(-1);
+		if (target) timers.stop(target.id);
+	}
+
+	function spokenDuration(seconds: number): string {
+		const { hours, minutes, seconds: rest } = splitDuration(Math.ceil(seconds));
+		const parts: string[] = [];
+		if (hours) parts.push(t('timers.hours', { count: hours }));
+		if (minutes) parts.push(t('timers.minutes', { count: minutes }));
+		if (!hours && (rest || !minutes)) parts.push(t('timers.seconds', { count: rest }));
+
+		return parts.join(' ');
+	}
+
+	function announceTimers() {
+		timerNotice = recipeTimers.length
+			? recipeTimers
+					.map((timer) =>
+						t('timers.remaining', { time: spokenDuration(timers.remaining(timer)), rank: timer.stepIndex + 1 })
+					)
+					.join(' ')
+			: t('timers.none');
+		speak(timerNotice);
+	}
+
+	function runVoiceCommand(command: VoiceCommand) {
+		switch (command) {
+			case 'next':
+				return go(nextStepIndex(index, total));
+			case 'previous':
+				return go(previousStepIndex(index, total));
+			case 'repeat':
+				return speak(current);
+			case 'stepIngredients':
+			case 'allIngredients':
+				if (ingredients.length === 0) return;
+				void openPanel(command === 'allIngredients').then(speakIngredients);
+				return;
+			case 'louder':
+			case 'quieter':
+				volume = stepVolume(volume, command === 'louder' ? 'up' : 'down');
+				return speak(t('recipes.cookAlong.voice.volume', { percent: Math.round(volume * 100) }));
+			case 'mute':
+				muted = true;
+				return stop();
+			case 'unmute':
+				muted = false;
+				return speak(current);
+			case 'stopListening':
+				return voice.stop();
+			case 'help':
+				void openHelp();
+				return speak(
+					t('recipes.cookAlong.voice.speakHelp', { list: VOICE_COMMANDS.map(voiceLabel).join(', ') })
+				);
+			case 'startTimer':
+				return startTimer();
+			case 'stopTimer':
+				return stopTimer();
+			case 'timeLeft':
+				return announceTimers();
+			case 'close':
+				return close();
+		}
+	}
+
+	const voiceNotice = $derived.by(() => {
+		switch (voice.status) {
+			case 'listening':
+				return t('recipes.cookAlong.voice.listening');
+			case 'awake':
+				return t('recipes.cookAlong.voice.awake');
+			case 'denied':
+			case 'unsupported':
+			case 'failed':
+				return t(`recipes.cookAlong.voice.${voice.status}`);
+			default:
+				return '';
+		}
+	});
+
+	const voiceHeard = $derived(
+		!voice.active || !voice.lastHeard
+			? ''
+			: voice.lastHeard.kind === 'command'
+				? t('recipes.cookAlong.voice.understood', { command: voiceLabel(voice.lastHeard.command) })
+				: t('recipes.cookAlong.voice.notUnderstood', { text: voice.lastHeard.text })
+	);
+
 	function close() {
 		stop();
+		voice.stop();
 		onClose();
 	}
 </script>
@@ -160,7 +368,9 @@
 		const back = isRtl() ? 'ArrowRight' : 'ArrowLeft';
 
 		if (event.key === 'Escape') {
-			if (panelOpen) void closePanel();
+			if (introOpen) void closeIntro();
+			else if (helpOpen) void closeHelp();
+			else if (panelOpen) void closePanel();
 			else close();
 		} else if (event.key === forward || event.key === back) {
 			// The page behind the dialog would otherwise scroll sideways along with the step.
@@ -278,21 +488,228 @@
 		{/if}
 	</div>
 
-	{#if ingredients.length > 0}
-		<div class="flex justify-center px-6 pb-4">
+	<div class="mx-auto flex w-full max-w-md flex-col gap-3 px-6 pb-4">
+		{#if recipeId && (stepDuration || recipeTimers.length > 0)}
+			<section aria-label={t('timers.running')} class="space-y-3" data-test-id="cook-along-timers">
+				{#if stepDuration && !stepTimer}
+					<Button
+						onclick={startTimer}
+						data-test-id="cook-along-timer-start"
+						class="fl-press h-auto min-h-14 w-full py-2 text-lg whitespace-normal"
+					>
+						<TimerIcon size={22} aria-hidden="true" />
+						{t('timers.start', { time: formatClock(stepDuration) })}
+					</Button>
+				{/if}
+
+				{#each recipeTimers as timer (timer.id)}
+					<div class="rounded-xl border border-white/20 bg-white/10 p-3" data-test-class="cook-along-timer">
+						<p id="cook-along-timer-{timer.id}" class="text-label break-words text-white/80">
+							{t('timers.stepLabel', { rank: timer.stepIndex + 1 })} · {timer.label}
+						</p>
+						<p
+							role="timer"
+							dir="ltr"
+							aria-describedby="cook-along-timer-{timer.id}"
+							class="text-4xl font-semibold tabular-nums"
+							data-test-class="cook-along-timer-clock"
+						>
+							{formatClock(timers.remaining(timer))}
+						</p>
+						<div class="mt-2 flex flex-col gap-2 sm:flex-row">
+							<Button
+								variant="outline"
+								onclick={() => timers.addMinute(timer.id)}
+								aria-describedby="cook-along-timer-{timer.id}"
+								data-test-class="cook-along-timer-add"
+								class="fl-press h-auto min-h-12 flex-1 py-2 whitespace-normal border-white/20 bg-white/10 text-white"
+							>
+								<Plus size={20} aria-hidden="true" />
+								{t('timers.addMinute')}
+							</Button>
+							<Button
+								variant="outline"
+								onclick={() => timers.stop(timer.id)}
+								aria-describedby="cook-along-timer-{timer.id}"
+								data-test-class="cook-along-timer-stop"
+								class="fl-press h-auto min-h-12 flex-1 py-2 whitespace-normal border-white/20 bg-white/10 text-white"
+							>
+								<X size={20} aria-hidden="true" />
+								{t('timers.stop')}
+							</Button>
+						</div>
+					</div>
+				{/each}
+
+				{#if recipeTimers.length > 0}
+					<Button
+						variant="outline"
+						onclick={announceTimers}
+						data-test-id="cook-along-timer-announce"
+						class="fl-press h-auto min-h-14 w-full py-2 whitespace-normal border-white/20 bg-white/10 text-white"
+					>
+						<Volume2 size={22} aria-hidden="true" />
+						{t('timers.announce')}
+					</Button>
+					{#if !remindersSupported()}
+						<p class="text-label break-words text-white/70" data-test-id="cook-along-timer-web-hint">
+							{t('timers.webHint')}
+						</p>
+					{/if}
+				{/if}
+			</section>
+		{/if}
+		<p role="status" class="text-label break-words text-center" data-test-id="cook-along-timer-notice">
+			{timerNotice}
+		</p>
+
+		{#if ingredients.length > 0}
 			<Button
 				bind:ref={panelButton}
 				variant="outline"
-				onclick={openPanel}
+				onclick={() => openPanel()}
 				aria-expanded={panelOpen}
 				aria-controls="cook-along-ingredients"
 				data-test-id="cook-along-ingredients-open"
-				class="fl-press h-14 w-full max-w-md border-white/20 bg-white/10 text-white"
+				class="fl-press h-auto min-h-14 w-full py-2 whitespace-normal border-white/20 bg-white/10 text-white"
 			>
 				<ShoppingBasket size={22} aria-hidden="true" />
 				{hasStepLines
 					? t('recipes.cookAlong.stepIngredientsCount', { count: stepLines.length })
 					: t('recipes.cookAlong.ingredients')}
+			</Button>
+		{/if}
+
+		<div class="flex flex-col gap-3 sm:flex-row">
+			<Button
+				bind:ref={voiceButton}
+				variant="outline"
+				onclick={toggleVoice}
+				aria-pressed={voice.active}
+				data-test-id="cook-along-voice-toggle"
+				class="fl-press h-auto min-h-14 flex-1 py-2 whitespace-normal border-white/20 bg-white/10 text-white aria-pressed:border-white aria-pressed:bg-white/25"
+			>
+				{#if voice.active}
+					<Mic size={22} aria-hidden="true" />
+					{t('recipes.cookAlong.voice.stop')}
+				{:else}
+					<MicOff size={22} aria-hidden="true" />
+					{t('recipes.cookAlong.voice.start')}
+				{/if}
+			</Button>
+			<Button
+				variant="outline"
+				onclick={openHelp}
+				aria-expanded={helpOpen}
+				aria-controls="cook-along-voice-help"
+				data-test-id="cook-along-voice-help-open"
+				class="fl-press h-auto min-h-14 flex-1 py-2 whitespace-normal border-white/20 bg-white/10 text-white"
+			>
+				<CircleHelp size={22} aria-hidden="true" />
+				{t('recipes.cookAlong.voice.help')}
+			</Button>
+		</div>
+
+		<div role="status" aria-live="polite" class="space-y-1 text-center" data-test-id="cook-along-voice-status">
+			{#if voiceNotice}
+				<p
+					class="text-label flex items-center justify-center gap-2 font-semibold"
+					data-test-id="cook-along-voice-notice"
+					data-test-state={voice.status}
+				>
+					{#if voice.active}
+						<span
+							class="grid size-6 shrink-0 place-items-center rounded-full bg-white text-black motion-safe:animate-pulse"
+							aria-hidden="true"
+						>
+							<Mic size={14} />
+						</span>
+					{/if}
+					<span class="min-w-0 break-words">{voiceNotice}</span>
+				</p>
+			{/if}
+			{#if voiceHeard}
+				<p class="text-label break-words text-white/80" data-test-id="cook-along-voice-heard">{voiceHeard}</p>
+			{/if}
+		</div>
+	</div>
+
+	{#if introOpen}
+		<div
+			role="dialog"
+			aria-modal="true"
+			aria-labelledby="cook-along-voice-intro-title"
+			data-test-id="cook-along-voice-intro"
+			class="fixed inset-x-0 bottom-0 z-10 max-h-[85dvh] overflow-y-auto rounded-t-2xl border-t border-white/20 bg-neutral-900 p-5 pb-8 md:inset-x-auto md:start-1/2 md:w-[36rem] md:-translate-x-1/2 md:rounded-2xl rtl:md:translate-x-1/2"
+		>
+			<h2
+				id="cook-along-voice-intro-title"
+				bind:this={introHeading}
+				tabindex="-1"
+				class="text-h2 font-semibold break-words hyphens-auto outline-none"
+			>
+				{t('recipes.cookAlong.voice.introTitle')}
+			</h2>
+			<p class="text-product mt-3 break-words">{t('recipes.cookAlong.voice.introBody')}</p>
+			<p class="text-label mt-3 break-words text-white/75">{t('recipes.cookAlong.voice.introPrivacy')}</p>
+			<div class="mt-5 flex flex-col gap-3 sm:flex-row">
+				<Button
+					variant="outline"
+					onclick={closeIntro}
+					data-test-id="cook-along-voice-intro-cancel"
+					class="fl-press h-auto min-h-14 flex-1 py-2 whitespace-normal border-white/20 bg-white/10 text-white"
+				>
+					{t('recipes.cookAlong.voice.introCancel')}
+				</Button>
+				<Button
+					onclick={acceptIntro}
+					data-test-id="cook-along-voice-intro-accept"
+					class="fl-press h-auto min-h-14 flex-1 py-2 whitespace-normal"
+				>
+					<Mic size={22} aria-hidden="true" />
+					{t('recipes.cookAlong.voice.introAccept')}
+				</Button>
+			</div>
+		</div>
+	{/if}
+
+	{#if helpOpen}
+		<div
+			id="cook-along-voice-help"
+			role="dialog"
+			aria-modal="true"
+			aria-labelledby="cook-along-voice-help-title"
+			data-test-id="cook-along-voice-help"
+			class="fixed inset-x-0 bottom-0 z-10 max-h-[85dvh] overflow-y-auto rounded-t-2xl border-t border-white/20 bg-neutral-900 p-5 pb-8 md:inset-x-auto md:start-1/2 md:w-[36rem] md:-translate-x-1/2 md:rounded-2xl rtl:md:translate-x-1/2"
+		>
+			<h2
+				id="cook-along-voice-help-title"
+				bind:this={helpHeading}
+				tabindex="-1"
+				class="text-h2 font-semibold break-words hyphens-auto outline-none"
+			>
+				{t('recipes.cookAlong.voice.helpTitle')}
+			</h2>
+			<dl class="mt-4 space-y-3">
+				{#each VOICE_COMMANDS as command (command)}
+					<div class="border-b border-white/15 pb-2 last:border-0" data-test-class="cook-along-voice-command">
+						<dt class="text-product font-semibold break-words">{voiceLabel(command)}</dt>
+						<dd class="text-label break-words text-white/75">
+							{i18n
+								.list(`recipes.cookAlong.voice.commands.${command}`)
+								.slice(0, 3)
+								.join(' · ')}
+						</dd>
+					</div>
+				{/each}
+			</dl>
+			<Button
+				onclick={closeHelp}
+				data-test-id="cook-along-voice-help-close"
+				class="fl-press mt-5 h-auto min-h-14 w-full py-2 whitespace-normal"
+			>
+				<X size={22} aria-hidden="true" />
+				{t('common.close')}
 			</Button>
 		</div>
 	{/if}
