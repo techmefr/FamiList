@@ -239,6 +239,23 @@
 		"attachHint": "Um cartão de rede funciona em todas as lojas da rede.",
 		"name": "Nome do cartão",
 		"namePlaceholder": "Cartão de fidelização",
+		"brandMatch": "Marca reconhecida: {brand}",
+		"color": "Cor do cartão",
+		"colorAuto": "Automática",
+		"colorBrand": "Cor {brand}",
+		"colors": {
+			"navy": "Azul-marinho",
+			"blue": "Azul",
+			"teal": "Azul-petróleo",
+			"green": "Verde",
+			"red": "Vermelho",
+			"orange": "Laranja",
+			"plum": "Ameixa",
+			"purple": "Roxo",
+			"brown": "Castanho",
+			"slate": "Ardósia"
+		},
+		"preview": "Pré-visualização",
 		"code": "Código do cartão",
 		"codePlaceholder": "3560070123456",
 		"format": "Formato do código",
@@ -412,7 +429,6 @@
 	},
 	"recipes": {
 		"import": {
-			"title": "Importar a partir de uma ligação",
 			"privacy": "O endereço é enviado ao servidor desta instância, que vai buscar a página por si e identifica-se perante o site visitado. Nada é guardado e nenhuma outra página é aberta.",
 			"url": "Endereço da receita",
 			"urlPlaceholder": "https://exemplo.pt/a-minha-receita",
@@ -637,7 +653,38 @@
 		"stepIngredients": "Ingredientes usados no passo {rank}",
 		"stepDuration": "Duração do passo {rank} (opcional)",
 		"durationHours": "Horas",
-		"durationMinutes": "Minutos"
+		"durationMinutes": "Minutos",
+		"create": {
+			"title": "Criar uma receita",
+			"intro": "Escolha como começar. Vai reler tudo antes de guardar.",
+			"back": "Outras formas de criar",
+			"backToRecipes": "Voltar às receitas",
+			"needsKey": "Precisa de uma chave de IA",
+			"needsKeyBody": "Esta forma de criar passa pelo seu próprio fornecedor de IA. Adicione a sua chave nas definições de IA e volte aqui.",
+			"needsKeyLink": "Adicionar a minha chave de IA",
+			"sources": {
+				"manual": {
+					"title": "Escrever eu mesmo",
+					"hint": "O nome, os ingredientes e depois os passos."
+				},
+				"link": {
+					"title": "A partir de um link",
+					"hint": "Cole o endereço de uma receita encontrada na web."
+				},
+				"photo": {
+					"title": "A partir de uma foto",
+					"hint": "Uma página de livro ou uma receita escrita, lida pela IA."
+				},
+				"ai": {
+					"title": "Pedir à IA",
+					"hint": "Descreva o prato e a IA propõe uma receita."
+				},
+				"purchases": {
+					"title": "Ideia a partir das compras",
+					"hint": "Uma receita com o que a casa já comprou."
+				}
+			}
+		}
 	},
 	"recipeTags": {
 		"title": "Categorias",
@@ -1390,8 +1437,6 @@
 		"clear": "Retirar a chave",
 		"active": "Ativo",
 		"useThisOne": "Usar este",
-		"suggest": "Uma ideia de receita",
-		"suggestTitle": "Uma ideia a partir das suas compras",
 		"noProducts": "Ainda não há nenhum artigo assinalado. Faça compras, as ideias virão daí.",
 		"willSend": {
 			"one": "Vai ser enviado 1 produto",
@@ -1453,8 +1498,6 @@
 		"photoErrorUnreachable": "O serviço de imagens não respondeu. Tente novamente dentro de instantes.",
 		"photoErrorUpload": "Não foi possível guardar a imagem. Tente novamente.",
 		"photo": {
-			"trigger": "Criar uma receita por foto",
-			"title": "Tire uma foto da receita",
 			"hint": "Fotografe uma página de um livro, ou uma receita escrita ou impressa.",
 			"pick": "Tirar ou importar uma foto",
 			"reading": "A ler a foto…",

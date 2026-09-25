@@ -5,7 +5,10 @@ declare global {
 		// interface Error {}
 		// interface Locals {}
 		// interface PageData {}
-		// interface PageState {}
+		interface PageState {
+			/** The source opened on the "Create a recipe" screen, kept in history so Back returns to the tiles. */
+			recipeSource?: import('$components/app/recipe-sources').RecipeSourceId;
+		}
 		// interface Platform {}
 	}
 

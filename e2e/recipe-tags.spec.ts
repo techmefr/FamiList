@@ -45,8 +45,8 @@ test.describe('categories de recette', () => {
 	}) => {
 		const name = `Recette categories e2e ${Date.now()}`;
 
-		await page.goto('/recipes');
-		await page.getByTestId('recipe-new').click();
+		await page.goto('/recipes/new');
+		await page.getByTestId('recipe-source-manual').click();
 		await page.getByTestId('recipe-name').fill(name);
 
 		await expect(page.getByTestId('recipe-tags')).toBeVisible();
@@ -90,7 +90,8 @@ test.describe('categories de recette', () => {
 			categories: ['Plat principal', 'Française', 'https://schema.org/VegetarianDiet']
 		});
 
-		await page.goto('/recipes');
+		await page.goto('/recipes/new');
+		await page.getByTestId('recipe-source-link').click();
 		await page.getByTestId('recipe-import-url').fill('https://exemple.test/gratin');
 		await page.getByTestId('recipe-import-submit').click();
 

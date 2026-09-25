@@ -239,6 +239,23 @@
 		"attachHint": "Ny karatra anaram-barotra dia mandeha amin'ny fivarotana rehetra amin'io tambajotra io.",
 		"name": "Anaran'ny karatra",
 		"namePlaceholder": "Karatra fahatokiana",
+		"brandMatch": "Marika fantatra: {brand}",
+		"color": "Lokon'ny karatra",
+		"colorAuto": "Ho azy",
+		"colorBrand": "Lokon'i {brand}",
+		"colors": {
+			"navy": "Manga maizina",
+			"blue": "Manga",
+			"teal": "Manga maitso",
+			"green": "Maitso",
+			"red": "Mena",
+			"orange": "Volom-boasary",
+			"plum": "Volom-paisomena",
+			"purple": "Volomparasy",
+			"brown": "Volontany",
+			"slate": "Volom-bato"
+		},
+		"preview": "Topi-maso",
 		"code": "Kaodin’ny karatra",
 		"codePlaceholder": "3560070123456",
 		"format": "Endriky ny kaody",
@@ -412,7 +429,6 @@
 	},
 	"recipes": {
 		"import": {
-			"title": "Ampidiro avy amin'ny rohy",
 			"privacy": "Alefa any amin'ny lohamilina an'ity kopia ity ny adiresy, izy no haka ny pejy solonao ary hilaza ny anarany amin'ny tranonkala tsidihina. Tsy misy tehirizina, ary tsy misy pejy hafa sokafana.",
 			"url": "Adiresin'ny fomba fahandroana",
 			"urlPlaceholder": "https://ohatra.mg/fomba-fahandroako",
@@ -628,7 +644,38 @@
 		"stepIngredients": "Akora ampiasaina amin’ny dingana {rank}",
 		"stepDuration": "Faharetan’ny dingana {rank} (tsy voatery)",
 		"durationHours": "Ora",
-		"durationMinutes": "Minitra"
+		"durationMinutes": "Minitra",
+		"create": {
+			"title": "Hamorona recette",
+			"intro": "Safidio ny fomba hanombohana. Havakinao indray ny zava-drehetra alohan’ny hitahirizana.",
+			"back": "Fomba hafa hamoronana",
+			"backToRecipes": "Hiverina amin’ny recettes",
+			"needsKey": "Mila fanalahidy AI",
+			"needsKeyBody": "Mandalo amin’ny mpamatsy AI anao manokana ity fomba hamoronana ity. Ampidiro ao amin’ny fikirakirana AI ny fanalahidinao, dia miverena eto.",
+			"needsKeyLink": "Hampiditra ny fanalahidiko AI",
+			"sources": {
+				"manual": {
+					"title": "Hanoratra irery",
+					"hint": "Ny anarana, ny akora, avy eo ny dingana."
+				},
+				"link": {
+					"title": "Avy amin’ny rohy",
+					"hint": "Apetaho ny adiresin’ny recette hita tao amin’ny tranonkala."
+				},
+				"photo": {
+					"title": "Avy amin’ny sary",
+					"hint": "Pejin’ny boky na recette voasoratra, vakian’ny AI."
+				},
+				"ai": {
+					"title": "Anontanio ny AI",
+					"hint": "Lazalazao ny sakafo, ny AI no manolotra recette."
+				},
+				"purchases": {
+					"title": "Hevitra avy amin’ny zavatra novidiana",
+					"hint": "Recette miaraka amin’izay efa novidian’ny ankohonana."
+				}
+			}
+		}
 	},
 	"recipeTags": {
 		"title": "Sokajy",
@@ -1381,8 +1428,6 @@
 		"clear": "Esory ny lakile",
 		"active": "Mihatra",
 		"useThisOne": "Ampiasao ity",
-		"suggest": "Hevitra recette",
-		"suggestTitle": "Hevitra avy amin izay novidinao",
 		"noProducts": "Mbola tsy misy entana voamarika. Mividiana aloha, avy eo no hipoiran ny hevitra.",
 		"willSend": {
 			"one": "Hisy vokatra 1 halefa",
@@ -1444,8 +1489,6 @@
 		"photoErrorUnreachable": "Tsy namaly ny tolotra sary. Andramo indray afaka kelikely.",
 		"photoErrorUpload": "Tsy voatahiry ny sary. Andramo indray.",
 		"photo": {
-			"trigger": "Mamorona lasopy amin'ny sary",
-			"title": "Alao sary ny lasopy",
 			"hint": "Alao sary pejin-boky, na lasopy voasoratra na vita pirinty.",
 			"pick": "Maka na mampiditra sary",
 			"reading": "Mamaky ny sary…",
