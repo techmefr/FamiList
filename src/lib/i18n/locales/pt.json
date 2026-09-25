@@ -656,6 +656,44 @@
 		"durationHours": "Horas",
 		"durationMinutes": "Minutos"
 	},
+	"recipeTags": {
+		"title": "Categorias",
+		"hint": "Marque tudo o que se aplica: servem para voltar a encontrar a receita.",
+		"listLabel": "Categorias da receita",
+		"category": {
+			"course": "Tipo de prato",
+			"diet": "Dieta",
+			"occasion": "Ocasião",
+			"season": "Estação"
+		},
+		"tag": {
+			"breakfast": "Pequeno-almoço",
+			"aperitif": "Aperitivo",
+			"hot_starter": "Entrada quente",
+			"cold_starter": "Entrada fria",
+			"soup": "Sopa",
+			"main": "Prato principal",
+			"side": "Acompanhamento",
+			"dessert": "Sobremesa",
+			"snack": "Lanche",
+			"drink": "Bebida",
+			"vegetarian": "Vegetariano",
+			"vegan": "Vegano",
+			"gluten_free": "Sem glúten",
+			"lactose_free": "Sem lactose",
+			"low_salt": "Pouco sal",
+			"low_sugar": "Pouco açúcar",
+			"quick": "Rápido",
+			"kids": "Para crianças",
+			"party": "Festa",
+			"picnic": "Piquenique",
+			"holiday": "Natal e festas",
+			"spring": "Primavera",
+			"summer": "Verão",
+			"autumn": "Outono",
+			"winter": "Inverno"
+		}
+	},
 	"aisles": {
 		"title": "Secções",
 		"new": "Adicionar uma secção",

@@ -142,6 +142,7 @@
 			steps: suggestion.steps,
 			stepIngredients: suggestion.stepIngredients,
 			imagePrompt: suggestion.imagePrompt,
+			tags: suggestion.tags,
 			stepDurations: suggestion.stepDurations
 		});
 

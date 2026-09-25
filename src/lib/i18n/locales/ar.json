@@ -664,6 +664,44 @@
 		"durationHours": "ساعات",
 		"durationMinutes": "دقائق"
 	},
+	"recipeTags": {
+		"title": "الفئات",
+		"hint": "حدّد كل ما ينطبق: تساعدك على إيجاد الوصفة من جديد.",
+		"listLabel": "فئات الوصفة",
+		"category": {
+			"course": "نوع الطبق",
+			"diet": "النظام الغذائي",
+			"occasion": "المناسبة",
+			"season": "الموسم"
+		},
+		"tag": {
+			"breakfast": "فطور",
+			"aperitif": "مقبّلات خفيفة",
+			"hot_starter": "مقبّلات ساخنة",
+			"cold_starter": "مقبّلات باردة",
+			"soup": "حساء",
+			"main": "طبق رئيسي",
+			"side": "طبق جانبي",
+			"dessert": "حلوى",
+			"snack": "وجبة خفيفة",
+			"drink": "مشروب",
+			"vegetarian": "نباتي",
+			"vegan": "نباتي صرف",
+			"gluten_free": "خالٍ من الغلوتين",
+			"lactose_free": "خالٍ من اللاكتوز",
+			"low_salt": "قليل الملح",
+			"low_sugar": "قليل السكر",
+			"quick": "سريع",
+			"kids": "للأطفال",
+			"party": "حفلة",
+			"picnic": "نزهة",
+			"holiday": "الأعياد",
+			"spring": "الربيع",
+			"summer": "الصيف",
+			"autumn": "الخريف",
+			"winter": "الشتاء"
+		}
+	},
 	"aisles": {
 		"title": "الأقسام",
 		"new": "إضافة قسم",

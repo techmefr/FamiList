@@ -238,6 +238,8 @@ export interface Recipe {
 	photoPath?: string;
 	/** English description of the finished dish, sent to the image model instead of the bare name (#306). */
 	imagePrompt?: string;
+	/** Tag keys from `RECIPE_TAG_CATEGORIES` (#314), never labels. May hold keys a newer app added. */
+	tags: string[];
 	createdBy?: string;
 	createdAt: number;
 }
@@ -521,6 +523,19 @@ class FamiListDatabase extends Dexie {
 					.toCollection()
 					.modify((step: Partial<RecipeStep>) => {
 						step.ingredientIds ??= [];
+					});
+			});
+
+		// Tags are what the recipe filters narrow on (#314): a multi-entry index answers "every dessert" without
+		// reading each recipe. Recipes cached before carry none, and get an empty list like the steps above.
+		this.version(16)
+			.stores({ recipes: 'id, *tags' })
+			.upgrade(async (tx) => {
+				await tx
+					.table('recipes')
+					.toCollection()
+					.modify((recipe: Partial<Recipe>) => {
+						recipe.tags ??= [];
 					});
 			});
 	}

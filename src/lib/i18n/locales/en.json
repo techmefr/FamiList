@@ -667,6 +667,44 @@
 		"durationHours": "Hours",
 		"durationMinutes": "Minutes"
 	},
+	"recipeTags": {
+		"title": "Categories",
+		"hint": "Tick everything that fits: they help you find the recipe again.",
+		"listLabel": "Recipe categories",
+		"category": {
+			"course": "Course",
+			"diet": "Diet",
+			"occasion": "Occasion",
+			"season": "Season"
+		},
+		"tag": {
+			"breakfast": "Breakfast",
+			"aperitif": "Appetiser",
+			"hot_starter": "Hot starter",
+			"cold_starter": "Cold starter",
+			"soup": "Soup",
+			"main": "Main course",
+			"side": "Side dish",
+			"dessert": "Dessert",
+			"snack": "Snack",
+			"drink": "Drink",
+			"vegetarian": "Vegetarian",
+			"vegan": "Vegan",
+			"gluten_free": "Gluten-free",
+			"lactose_free": "Lactose-free",
+			"low_salt": "Low salt",
+			"low_sugar": "Low sugar",
+			"quick": "Quick",
+			"kids": "For children",
+			"party": "Party",
+			"picnic": "Picnic",
+			"holiday": "Christmas and holidays",
+			"spring": "Spring",
+			"summer": "Summer",
+			"autumn": "Autumn",
+			"winter": "Winter"
+		}
+	},
 	"aisles": {
 		"title": "Aisles",
 		"new": "Add an aisle",
