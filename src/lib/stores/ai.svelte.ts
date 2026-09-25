@@ -22,6 +22,7 @@ import {
 	parseRecipeSuggestion,
 	type SuggestedRecipe
 } from '$domain/ai-recipe';
+import { parseChatReply, type ChatReply } from '$domain/ai-recipe-chat';
 import {
 	decodeDataUrl,
 	openRouterFailureOfStatus,
@@ -40,6 +41,13 @@ import {
 export type SuggestOutcome =
 	| { ok: true; recipe: SuggestedRecipe }
 	| { ok: false; reason: 'network' | 'provider' | 'unreadable' | 'unsupported'; detail: string };
+
+type Failure = { ok: false; reason: 'network' | 'provider' | 'unreadable' | 'unsupported'; detail: string };
+
+type TextOutcome = { ok: true; text: string } | Failure;
+
+/** A chat turn's answer, with the provider's own text kept to be sent back as the history. */
+export type ChatOutcome = { ok: true; reply: ChatReply; raw: string } | Failure;
 
 export type PhotoOutcome = { ok: true; path: string } | { ok: false; reason: PhotoFailure };
 
@@ -299,17 +307,26 @@ class AiStore {
 	}
 
 	/**
-	 * A follow-up in an ongoing conversation (#226): `turns` is the whole history so far, oldest first,
-	 * ending with the person's newest message — the same call as `suggestRecipe`, except the provider is
-	 * given every earlier exchange instead of a single prompt, so that "et si je remplace le poulet par du
-	 * tofu ?" is understood against what was already discussed.
-	 *
-	 * Every assistant turn is expected to restate the complete recipe as the same JSON object `suggestRecipe`
-	 * already asks for, never a plain-text reply: that is what lets this reuse `parseRecipeSuggestion`
-	 * unchanged, and it is the prompts in `ai-recipe.ts` that carry this instruction on every turn.
+	 * One turn of the "ask the AI" chat (#313): `turns` is the whole history so far, oldest first, ending with
+	 * the person's newest message, so that "and with tofu instead?" is understood against what was already
+	 * discussed. The answer is either the complete recipe or one short question back (`ai-recipe-chat.ts`).
 	 */
-	async continueRecipeConversation(turns: ConversationTurn[]): Promise<SuggestOutcome> {
-		return this.#ask(turns);
+	async continueRecipeChat(turns: ConversationTurn[]): Promise<ChatOutcome> {
+		const active = this.#active;
+		const provider = active ? providerById(active.provider) : null;
+		const apiKey = active ? this.#keys.get(active.provider) : undefined;
+		if (!provider || !apiKey) {
+			return { ok: false, reason: 'provider', detail: '' };
+		}
+
+		const request = buildRequest(provider, apiKey, active?.model ?? '', turns);
+		const outcome = await this.#sendText(provider, request);
+		if (!outcome.ok) return outcome;
+
+		const reply = parseChatReply(outcome.text);
+		if (reply === null) return { ok: false, reason: 'unreadable', detail: '' };
+
+		return { ok: true, reply, raw: outcome.text };
 	}
 
 	/**
@@ -362,6 +379,16 @@ class AiStore {
 	}
 
 	async #send(provider: Provider, request: ProviderRequest): Promise<SuggestOutcome> {
+		const outcome = await this.#sendText(provider, request);
+		if (!outcome.ok) return outcome;
+
+		const recipe = parseRecipeSuggestion(outcome.text);
+		if (recipe === null) return { ok: false, reason: 'unreadable', detail: '' };
+
+		return { ok: true, recipe };
+	}
+
+	async #sendText(provider: Provider, request: ProviderRequest): Promise<TextOutcome> {
 		let response: Response;
 		try {
 			response = await fetch(request.url, {
@@ -388,10 +415,7 @@ class AiStore {
 		const text = parseReply(provider, payload);
 		if (text === null) return { ok: false, reason: 'unreadable', detail: '' };
 
-		const recipe = parseRecipeSuggestion(text);
-		if (recipe === null) return { ok: false, reason: 'unreadable', detail: '' };
-
-		return { ok: true, recipe };
+		return { ok: true, text };
 	}
 
 	/**

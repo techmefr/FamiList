@@ -1222,8 +1222,7 @@
 		"directFailed": "无法打开对话，请重试。",
 		"backToChats": "返回对话列表",
 		"directNotFound": "找不到这个对话。",
-		"someone": "某人",
-		"recipeAdded": "已将{name}添加到食谱。"
+		"someone": "某人"
 	},
 	"household": {
 		"title": "我的家庭",
@@ -1505,7 +1504,6 @@
 		"sendingTo": "接收方：{provider}。",
 		"sendConfirm": "发送并询问",
 		"asking": "正在询问…",
-		"added": "菜谱已加入家庭菜谱。",
 		"keep": "保留这道菜谱",
 		"retry": "再问一次",
 		"discard": "丢弃",
@@ -1563,9 +1561,7 @@
 		},
 		"request": {
 			"trigger": "向AI询问食谱",
-			"title": "您想要什么食谱？",
 			"placeholder": "例如：4人份鸡肉咖喱",
-			"submit": "询问",
 			"followUpPlaceholder": "例如：更辣一点，或把鸡肉换成豆腐",
 			"dictate": "语音口述",
 			"stopDictate": "停止口述",
@@ -1577,7 +1573,34 @@
 		"photoErrorNoKey": "要生成图片，请添加 OpenRouter 密钥。",
 		"photoErrorNoKeyLink": "添加密钥",
 		"photoErrorNoCredit": "你的 OpenRouter 账户余额不足：图片生成需要付费。",
-		"photoErrorNoCreditLink": "充值"
+		"photoErrorNoCreditLink": "充值",
+		"chat": {
+			"tableTitle": "谁来吃饭？",
+			"tableHint": "发送给助手的是过敏和饮食限制，绝不包括姓名。点一下名字即可标记谁不在。",
+			"present": "在座",
+			"absent": "不在",
+			"addGuest": "添加客人",
+			"guestName": "客人姓名（可选）",
+			"guestNotes": "不能吃的东西或饮食方式",
+			"guestNotesPlaceholder": "例如：对花椰菜过敏",
+			"guestSave": "添加这位客人",
+			"guestDefault": "客人 {number}",
+			"removeGuest": "移除 {name}",
+			"constraintsTitle": "助手会考虑",
+			"constraintsNone": "没有需要考虑的过敏或饮食限制。",
+			"constraintOf": "{who}：{notes}",
+			"threadLabel": "与助手的对话",
+			"assistant": "助手",
+			"you": "您",
+			"greeting": "告诉我您想吃什么。我可能会问一两个问题，然后写出食谱。",
+			"writing": "助手正在输入…",
+			"messageLabel": "您的消息",
+			"send": "发送",
+			"conflictTitle": "请检查：这些食材可能不合适",
+			"conflictLine": "{ingredient} — {constraint}",
+			"avoid": "请求不含这些食材的版本",
+			"avoidMessage": "请重新写这份食谱，不要用：{ingredients}。"
+		}
 	},
 	"setup": {
 		"title": "实例尚未配置",

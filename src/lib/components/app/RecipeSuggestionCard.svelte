@@ -3,7 +3,8 @@
 	import type { SuggestedRecipe } from '$domain/ai-recipe';
 	import { unitKey } from '$domain/units';
 	import { Button } from '$components/ui/button';
-	import { Users, RotateCcw } from '@lucide/svelte';
+	import type { Conflict } from '$domain/ai-recipe-chat';
+	import { Users, RotateCcw, TriangleAlert } from '@lucide/svelte';
 
 	interface Props {
 		suggestion: SuggestedRecipe;
@@ -11,9 +12,13 @@
 		onAccept: () => void;
 		onRetry: () => void;
 		onDiscard: () => void;
+		/** Ingredients a constraint of the people at the table names (#313), shown before keeping. */
+		conflicts?: Conflict[];
+		/** Asks the AI for the same recipe without the conflicting ingredients. */
+		onAvoid?: () => void;
 	}
 
-	const { suggestion, busy, onAccept, onRetry, onDiscard }: Props = $props();
+	const { suggestion, busy, onAccept, onRetry, onDiscard, conflicts = [], onAvoid }: Props = $props();
 </script>
 
 <!--
@@ -70,6 +75,35 @@
 					</li>
 				{/each}
 			</ol>
+		{/if}
+
+		{#if conflicts.length > 0}
+			<!-- Said in words with its own icon and heading, never by a red tint alone. -->
+			<div
+				class="border-destructive bg-destructive/10 mt-5 space-y-2 rounded-lg border-2 p-3"
+				role="alert"
+				data-test-id="ai-proposal-conflicts"
+			>
+				<p class="text-label flex items-start gap-2 font-semibold">
+					<TriangleAlert size={20} aria-hidden="true" class="mt-0.5 shrink-0" />
+					{t('ai.chat.conflictTitle')}
+				</p>
+				<ul class="text-label space-y-1 ps-7">
+					{#each conflicts as conflict (conflict.ingredient)}
+						<li data-test-class="ai-proposal-conflict">
+							{t('ai.chat.conflictLine', {
+								ingredient: conflict.ingredient,
+								constraint: conflict.constraint
+							})}
+						</li>
+					{/each}
+				</ul>
+				{#if onAvoid}
+					<Button variant="outline" onclick={onAvoid} disabled={busy} data-test-id="ai-proposal-avoid">
+						{t('ai.chat.avoid')}
+					</Button>
+				{/if}
+			</div>
 		{/if}
 
 		<div class="mt-4 flex flex-wrap gap-2">

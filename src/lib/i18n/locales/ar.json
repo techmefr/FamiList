@@ -1253,8 +1253,7 @@
 		"directFailed": "تعذّر فتح المحادثة. حاول مرة أخرى.",
 		"backToChats": "العودة إلى المحادثات",
 		"directNotFound": "لم يتم العثور على هذه المحادثة.",
-		"someone": "شخص ما",
-		"recipeAdded": "تمت إضافة {name} إلى الوصفات."
+		"someone": "شخص ما"
 	},
 	"household": {
 		"title": "منزلي",
@@ -1551,7 +1550,6 @@
 		"sendingTo": "المستلم: {provider}.",
 		"sendConfirm": "أرسل واسأل",
 		"asking": "جارٍ الطلب…",
-		"added": "أُضيفت الوصفة إلى وصفات المنزل.",
 		"keep": "الاحتفاظ بهذه الوصفة",
 		"retry": "اسأل مرة أخرى",
 		"discard": "تجاهل",
@@ -1609,9 +1607,7 @@
 		},
 		"request": {
 			"trigger": "اسأل الذكاء الاصطناعي عن وصفة",
-			"title": "ما الوصفة التي تريدها؟",
 			"placeholder": "مثال: كاري دجاج لـ 4 أشخاص",
-			"submit": "اسأل",
 			"followUpPlaceholder": "مثال: أكثر حرارة، أو استبدل الدجاج بالتوفو",
 			"dictate": "إملاء بالصوت",
 			"stopDictate": "إيقاف الإملاء",
@@ -1623,7 +1619,34 @@
 		"photoErrorNoKey": "لإنشاء صورة، أضف مفتاح OpenRouter.",
 		"photoErrorNoKeyLink": "إضافة مفتاح",
 		"photoErrorNoCredit": "لا يوجد رصيد في حساب OpenRouter الخاص بك: إنشاء الصور مدفوع.",
-		"photoErrorNoCreditLink": "إضافة رصيد"
+		"photoErrorNoCreditLink": "إضافة رصيد",
+		"chat": {
+			"tableTitle": "من سيأكل؟",
+			"tableHint": "تُرسَل الحساسيات والأنظمة الغذائية إلى المساعد، ولا تُرسَل الأسماء أبدًا. المس اسمًا للإشارة إلى من سيغيب.",
+			"present": "على المائدة",
+			"absent": "غائب",
+			"addGuest": "إضافة ضيف",
+			"guestName": "اسم الضيف (اختياري)",
+			"guestNotes": "ما لا يستطيع أكله، أو نظامه الغذائي",
+			"guestNotesPlaceholder": "مثلًا: حساسية من القرنبيط",
+			"guestSave": "إضافة الضيف",
+			"guestDefault": "ضيف {number}",
+			"removeGuest": "إزالة {name}",
+			"constraintsTitle": "يأخذ المساعد في الحسبان",
+			"constraintsNone": "لا توجد حساسية ولا نظام غذائي يجب مراعاته.",
+			"constraintOf": "{who}: {notes}",
+			"threadLabel": "محادثة مع المساعد",
+			"assistant": "المساعد",
+			"you": "أنت",
+			"greeting": "أخبرني بما ترغب في أكله. قد أطرح عليك سؤالًا أو سؤالين، ثم أكتب الوصفة.",
+			"writing": "المساعد يكتب…",
+			"messageLabel": "رسالتك",
+			"send": "إرسال",
+			"conflictTitle": "للتحقق: قد لا تناسب هذه المكونات",
+			"conflictLine": "{ingredient} — {constraint}",
+			"avoid": "طلب نسخة بدونها",
+			"avoidMessage": "أعد كتابة الوصفة بدون: {ingredients}."
+		}
 	},
 	"setup": {
 		"title": "لم تُضبط هذه النسخة بعد",
