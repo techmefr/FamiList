@@ -70,8 +70,11 @@ export async function applyReminders(
 
 		const pending = await LocalNotifications.getPending();
 		const prevus = new Set(plans.map((plan) => plan.id));
+		// Cook-along timers (#310) are scheduled elsewhere and are not ours to cancel.
 		const stale = pending.notifications.filter(
-			(notification) => !prevus.has(Number(notification.id))
+			(notification) =>
+				!prevus.has(Number(notification.id)) &&
+				(notification.extra as { kind?: string } | undefined)?.kind !== 'timer'
 		);
 		if (stale.length) await LocalNotifications.cancel({ notifications: stale });
 

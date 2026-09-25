@@ -549,7 +549,10 @@
 					"unmute": "Stimme an",
 					"stopListening": "Nicht mehr zuhören",
 					"help": "Hilfe",
-					"close": "Beenden"
+					"close": "Beenden",
+					"startTimer": "Timer starten",
+					"stopTimer": "Timer stoppen",
+					"timeLeft": "Restzeit"
 				},
 				"commands": {
 					"next": [
@@ -612,11 +615,29 @@
 						"schließen",
 						"fertig",
 						"verlassen"
+					],
+					"startTimer": [
+						"Timer starten",
+						"starte den Timer",
+						"Timer"
+					],
+					"stopTimer": [
+						"Timer stoppen",
+						"stoppe den Timer",
+						"Alarm aus"
+					],
+					"timeLeft": [
+						"wie lange noch",
+						"Restzeit",
+						"wie viel Zeit"
 					]
 				}
 			}
 		},
-		"stepIngredients": "Zutaten für Schritt {rank}"
+		"stepIngredients": "Zutaten für Schritt {rank}",
+		"stepDuration": "Dauer von Schritt {rank} (optional)",
+		"durationHours": "Stunden",
+		"durationMinutes": "Minuten"
 	},
 	"aisles": {
 		"title": "Abteilungen",
@@ -1535,5 +1556,32 @@
 		"saved": "{bank}-Schlüssel gespeichert",
 		"removed": "{bank}-Schlüssel entfernt",
 		"saveFailed": "Der Schlüssel konnte nicht gespeichert werden. Versuchen Sie es erneut."
+	},
+	"timers": {
+		"start": "Timer starten ({time})",
+		"running": "Laufende Timer",
+		"stepLabel": "Schritt {rank}",
+		"addMinute": "+1 Minute",
+		"stop": "Stoppen",
+		"announce": "Zeit ansagen",
+		"remaining": "Noch {time} für Schritt {rank}.",
+		"none": "Kein Timer läuft.",
+		"noDuration": "Dieser Schritt hat keine Dauer. Füge sie beim Bearbeiten des Rezepts hinzu.",
+		"webHint": "Im Browser klingelt der Alarm nur, solange FamiList geöffnet bleibt.",
+		"doneTitle": "Timer abgelaufen",
+		"doneBody": "{recipe} — {step}",
+		"stopAlarm": "Alarm stoppen",
+		"hours": {
+			"one": "{count} Stunde",
+			"other": "{count} Stunden"
+		},
+		"minutes": {
+			"one": "{count} Minute",
+			"other": "{count} Minuten"
+		},
+		"seconds": {
+			"one": "{count} Sekunde",
+			"other": "{count} Sekunden"
+		}
 	}
 }

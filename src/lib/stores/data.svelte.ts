@@ -30,6 +30,7 @@ import {
 } from '$db/schema';
 import { supabase } from '$db/supabase';
 import { initialsFor } from '$domain/avatar';
+import { clampDuration } from '$domain/step-duration';
 import { accountDecision } from '$domain/account-switch';
 import { guessAisleKind, FALLBACK_AISLE_KIND } from '$domain/guess-aisle';
 import { PendingWrites } from '$domain/pending-writes';
@@ -113,7 +114,12 @@ const DEFAULT_SHOP_NODE = 'd0defa017000';
  */
 function recipeChildren(
 	recipeId: string,
-	input: { ingredients: RecipeLine[]; steps: string[]; stepIngredients?: number[][] }
+	input: {
+		ingredients: RecipeLine[];
+		steps: string[];
+		stepIngredients?: number[][];
+		stepDurations?: (number | null)[];
+	}
 ): { rows: RecipeIngredient[]; steps: RecipeStep[] } {
 	const idOfRow = new Map<number, string>();
 	const rows: RecipeIngredient[] = [];
@@ -146,7 +152,8 @@ function recipeChildren(
 			recipeId,
 			body: body.trim(),
 			position: steps.length,
-			ingredientIds
+			ingredientIds,
+			durationSeconds: clampDuration(input.stepDurations?.[index]) ?? undefined
 		});
 	});
 
@@ -1490,6 +1497,7 @@ class DataStore {
 		ingredients: RecipeLine[];
 		steps: string[];
 		stepIngredients?: number[][];
+		stepDurations?: (number | null)[];
 	}) {
 		const recipe: Recipe = {
 			id: crypto.randomUUID(),
@@ -1539,6 +1547,7 @@ class DataStore {
 			ingredients: RecipeLine[];
 			steps: string[];
 			stepIngredients?: number[][];
+			stepDurations?: (number | null)[];
 		}
 	) {
 		const recipe = this.cachedRecipes.find((r) => r.id === id);

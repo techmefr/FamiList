@@ -18,6 +18,9 @@ export const VOICE_COMMANDS = [
 	'mute',
 	'unmute',
 	'stopListening',
+	'startTimer',
+	'stopTimer',
+	'timeLeft',
 	'help',
 	'close'
 ] as const;

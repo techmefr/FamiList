@@ -107,7 +107,7 @@ test.describe('suivre la recette à la voix', () => {
 		await page.keyboard.press('Escape');
 
 		await say(page, 'Famy, aide');
-		await expect(cookAlong.locator('[data-test-class="cook-along-voice-command"]')).toHaveCount(12);
+		await expect(cookAlong.locator('[data-test-class="cook-along-voice-command"]')).toHaveCount(15);
 		await cookAlong.getByTestId('cook-along-voice-help-close').click();
 
 		await say(page, 'Famy, quitter');

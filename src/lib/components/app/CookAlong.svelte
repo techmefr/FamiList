@@ -15,7 +15,10 @@
 	} from '$domain/cook-along';
 	import { Button } from '$components/ui/button';
 	import { X, Check, ChevronLeft, ChevronRight, Volume2, VolumeX } from '@lucide/svelte';
-	import { ShoppingBasket, Mic, MicOff, CircleHelp } from '@lucide/svelte';
+	import { ShoppingBasket, Mic, MicOff, CircleHelp, Timer as TimerIcon, Plus } from '@lucide/svelte';
+	import { timers } from '$stores/timers.svelte';
+	import { formatClock, splitDuration } from '$domain/step-duration';
+	import { remindersSupported } from '$native/reminders';
 	import { tick } from 'svelte';
 	import { ingredientsOfStep } from '$domain/step-ingredients';
 	import { VOICE_COMMANDS, stepVolume, type VoiceCommand } from '$domain/voice-commands';
@@ -28,6 +31,8 @@
 		steps,
 		ingredients = [],
 		stepIngredientIds = [],
+		recipeId,
+		stepDurations = [],
 		onClose
 	}: {
 		recipeName: string;
@@ -35,6 +40,9 @@
 		/** The recipe's lines, and for each step the ids of those it uses (#308). */
 		ingredients?: RecipeIngredient[];
 		stepIngredientIds?: string[][];
+		/** The recipe the timers belong to, and each step's duration in seconds (#310). */
+		recipeId?: string;
+		stepDurations?: (number | null)[];
 		onClose: () => void;
 	} = $props();
 
@@ -234,6 +242,55 @@
 		voiceButton?.focus();
 	}
 
+	const stepDuration = $derived(stepDurations[clampStepIndex(index, steps.length)] ?? null);
+	const recipeTimers = $derived(recipeId ? timers.ofRecipe(recipeId) : []);
+	const stepTimer = $derived(recipeId ? timers.forStep(recipeId, clampStepIndex(index, total)) : undefined);
+	/** Written only on request (a tap, "Famy, temps restant"): a countdown read out every second is noise. */
+	let timerNotice = $state('');
+
+	function startTimer() {
+		if (!recipeId) return;
+		if (!stepDuration) {
+			timerNotice = t('timers.noDuration');
+			return speak(timerNotice);
+		}
+
+		timers.start({
+			recipeId,
+			recipeName,
+			stepIndex: clampStepIndex(index, total),
+			step: current,
+			seconds: stepDuration
+		});
+	}
+
+	/** The ringing one first, then this step's, then the last one started. */
+	function stopTimer() {
+		const target = timers.ringing[0] ?? stepTimer ?? recipeTimers.at(-1);
+		if (target) timers.stop(target.id);
+	}
+
+	function spokenDuration(seconds: number): string {
+		const { hours, minutes, seconds: rest } = splitDuration(Math.ceil(seconds));
+		const parts: string[] = [];
+		if (hours) parts.push(t('timers.hours', { count: hours }));
+		if (minutes) parts.push(t('timers.minutes', { count: minutes }));
+		if (!hours && (rest || !minutes)) parts.push(t('timers.seconds', { count: rest }));
+
+		return parts.join(' ');
+	}
+
+	function announceTimers() {
+		timerNotice = recipeTimers.length
+			? recipeTimers
+					.map((timer) =>
+						t('timers.remaining', { time: spokenDuration(timers.remaining(timer)), rank: timer.stepIndex + 1 })
+					)
+					.join(' ')
+			: t('timers.none');
+		speak(timerNotice);
+	}
+
 	function runVoiceCommand(command: VoiceCommand) {
 		switch (command) {
 			case 'next':
@@ -264,6 +321,12 @@
 				return speak(
 					t('recipes.cookAlong.voice.speakHelp', { list: VOICE_COMMANDS.map(voiceLabel).join(', ') })
 				);
+			case 'startTimer':
+				return startTimer();
+			case 'stopTimer':
+				return stopTimer();
+			case 'timeLeft':
+				return announceTimers();
 			case 'close':
 				return close();
 		}
@@ -426,6 +489,80 @@
 	</div>
 
 	<div class="mx-auto flex w-full max-w-md flex-col gap-3 px-6 pb-4">
+		{#if recipeId && (stepDuration || recipeTimers.length > 0)}
+			<section aria-label={t('timers.running')} class="space-y-3" data-test-id="cook-along-timers">
+				{#if stepDuration && !stepTimer}
+					<Button
+						onclick={startTimer}
+						data-test-id="cook-along-timer-start"
+						class="fl-press h-auto min-h-14 w-full py-2 text-lg whitespace-normal"
+					>
+						<TimerIcon size={22} aria-hidden="true" />
+						{t('timers.start', { time: formatClock(stepDuration) })}
+					</Button>
+				{/if}
+
+				{#each recipeTimers as timer (timer.id)}
+					<div class="rounded-xl border border-white/20 bg-white/10 p-3" data-test-class="cook-along-timer">
+						<p id="cook-along-timer-{timer.id}" class="text-label break-words text-white/80">
+							{t('timers.stepLabel', { rank: timer.stepIndex + 1 })} · {timer.label}
+						</p>
+						<p
+							role="timer"
+							dir="ltr"
+							aria-describedby="cook-along-timer-{timer.id}"
+							class="text-4xl font-semibold tabular-nums"
+							data-test-class="cook-along-timer-clock"
+						>
+							{formatClock(timers.remaining(timer))}
+						</p>
+						<div class="mt-2 flex flex-col gap-2 sm:flex-row">
+							<Button
+								variant="outline"
+								onclick={() => timers.addMinute(timer.id)}
+								aria-describedby="cook-along-timer-{timer.id}"
+								data-test-class="cook-along-timer-add"
+								class="fl-press h-auto min-h-12 flex-1 py-2 whitespace-normal border-white/20 bg-white/10 text-white"
+							>
+								<Plus size={20} aria-hidden="true" />
+								{t('timers.addMinute')}
+							</Button>
+							<Button
+								variant="outline"
+								onclick={() => timers.stop(timer.id)}
+								aria-describedby="cook-along-timer-{timer.id}"
+								data-test-class="cook-along-timer-stop"
+								class="fl-press h-auto min-h-12 flex-1 py-2 whitespace-normal border-white/20 bg-white/10 text-white"
+							>
+								<X size={20} aria-hidden="true" />
+								{t('timers.stop')}
+							</Button>
+						</div>
+					</div>
+				{/each}
+
+				{#if recipeTimers.length > 0}
+					<Button
+						variant="outline"
+						onclick={announceTimers}
+						data-test-id="cook-along-timer-announce"
+						class="fl-press h-auto min-h-14 w-full py-2 whitespace-normal border-white/20 bg-white/10 text-white"
+					>
+						<Volume2 size={22} aria-hidden="true" />
+						{t('timers.announce')}
+					</Button>
+					{#if !remindersSupported()}
+						<p class="text-label break-words text-white/70" data-test-id="cook-along-timer-web-hint">
+							{t('timers.webHint')}
+						</p>
+					{/if}
+				{/if}
+			</section>
+		{/if}
+		<p role="status" class="text-label break-words text-center" data-test-id="cook-along-timer-notice">
+			{timerNotice}
+		</p>
+
 		{#if ingredients.length > 0}
 			<Button
 				bind:ref={panelButton}

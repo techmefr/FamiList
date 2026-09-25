@@ -547,7 +547,10 @@
 					"unmute": "打开语音",
 					"stopListening": "停止收听",
 					"help": "帮助",
-					"close": "退出"
+					"close": "退出",
+					"startTimer": "开始计时",
+					"stopTimer": "停止计时",
+					"timeLeft": "剩余时间"
 				},
 				"commands": {
 					"next": [
@@ -609,11 +612,29 @@
 						"关闭",
 						"结束",
 						"做完了"
+					],
+					"startTimer": [
+						"开始计时",
+						"启动计时器",
+						"计时器"
+					],
+					"stopTimer": [
+						"停止计时",
+						"关掉闹钟",
+						"停止闹钟"
+					],
+					"timeLeft": [
+						"还剩多久",
+						"剩余时间",
+						"还有多久"
 					]
 				}
 			}
 		},
-		"stepIngredients": "第 {rank} 步用到的食材"
+		"stepIngredients": "第 {rank} 步用到的食材",
+		"stepDuration": "第 {rank} 步用时（可选）",
+		"durationHours": "小时",
+		"durationMinutes": "分钟"
 	},
 	"aisles": {
 		"title": "货区",
@@ -1524,5 +1545,29 @@
 		"saved": "{bank} 密钥已保存",
 		"removed": "{bank} 密钥已移除",
 		"saveFailed": "密钥无法保存。请重试。"
+	},
+	"timers": {
+		"start": "开始计时（{time}）",
+		"running": "正在计时",
+		"stepLabel": "第 {rank} 步",
+		"addMinute": "+1 分钟",
+		"stop": "停止",
+		"announce": "播报时间",
+		"remaining": "第 {rank} 步还剩 {time}。",
+		"none": "没有正在进行的计时。",
+		"noDuration": "这一步没有设置时长。编辑食谱即可添加。",
+		"webHint": "在浏览器中，只有 FamiList 保持打开时闹钟才会响。",
+		"doneTitle": "计时结束",
+		"doneBody": "{recipe} — {step}",
+		"stopAlarm": "关掉闹钟",
+		"hours": {
+			"other": "{count} 小时"
+		},
+		"minutes": {
+			"other": "{count} 分钟"
+		},
+		"seconds": {
+			"other": "{count} 秒"
+		}
 	}
 }

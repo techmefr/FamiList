@@ -549,7 +549,10 @@
 					"unmute": "Reactivar la voz",
 					"stopListening": "Dejar de escuchar",
 					"help": "Ayuda",
-					"close": "Salir"
+					"close": "Salir",
+					"startTimer": "Iniciar el temporizador",
+					"stopTimer": "Detener el temporizador",
+					"timeLeft": "Tiempo restante"
 				},
 				"commands": {
 					"next": [
@@ -616,11 +619,29 @@
 						"cerrar",
 						"cierra",
 						"terminé"
+					],
+					"startTimer": [
+						"pon el temporizador",
+						"inicia el temporizador",
+						"temporizador"
+					],
+					"stopTimer": [
+						"para el temporizador",
+						"para la alarma",
+						"apaga la alarma"
+					],
+					"timeLeft": [
+						"cuánto falta",
+						"tiempo restante",
+						"cuánto queda"
 					]
 				}
 			}
 		},
-		"stepIngredients": "Ingredientes usados en el paso {rank}"
+		"stepIngredients": "Ingredientes usados en el paso {rank}",
+		"stepDuration": "Duración del paso {rank} (opcional)",
+		"durationHours": "Horas",
+		"durationMinutes": "Minutos"
 	},
 	"aisles": {
 		"title": "Secciones",
@@ -1539,5 +1560,32 @@
 		"saved": "Clave de {bank} guardada",
 		"removed": "Clave de {bank} quitada",
 		"saveFailed": "No se pudo guardar la clave. Vuelva a intentarlo."
+	},
+	"timers": {
+		"start": "Iniciar el temporizador ({time})",
+		"running": "Temporizadores en marcha",
+		"stepLabel": "Paso {rank}",
+		"addMinute": "+1 minuto",
+		"stop": "Detener",
+		"announce": "Decir el tiempo",
+		"remaining": "Quedan {time} para el paso {rank}.",
+		"none": "Ningún temporizador en marcha.",
+		"noDuration": "Este paso no tiene duración. Añádela editando la receta.",
+		"webHint": "En un navegador, la alarma solo suena si FamiList sigue abierto.",
+		"doneTitle": "Temporizador terminado",
+		"doneBody": "{recipe} — {step}",
+		"stopAlarm": "Detener la alarma",
+		"hours": {
+			"one": "{count} hora",
+			"other": "{count} horas"
+		},
+		"minutes": {
+			"one": "{count} minuto",
+			"other": "{count} minutos"
+		},
+		"seconds": {
+			"one": "{count} segundo",
+			"other": "{count} segundos"
+		}
 	}
 }
