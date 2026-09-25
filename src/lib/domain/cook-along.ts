@@ -88,10 +88,3 @@ export function stepTrack(
     state: step < current ? "done" : step === current ? "current" : "todo",
   }));
 }
-
-/** How far through the recipe the current step is, 0 to 100: the last step fills the bar. */
-export function progressPercent(index: number, total: number): number {
-  if (total <= 0) return 0;
-
-  return Math.round(((clampStepIndex(index, total) + 1) / total) * 100);
-}
