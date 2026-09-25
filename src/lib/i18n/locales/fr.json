@@ -1310,7 +1310,13 @@
 			"stopDictate": "Arrêter la dictée",
 			"listening": "Écoute en cours…",
 			"dictateError": "La dictée vocale a échoué. Réessayez ou saisissez le texte."
-		}
+		},
+		"photoGenerateHint": "Avec ta clé OpenRouter, environ 1 centime l’image",
+		"photoGenerateNeedsKey": "Demande une clé OpenRouter",
+		"photoErrorNoKey": "Pour générer une image, ajoute une clé OpenRouter.",
+		"photoErrorNoKeyLink": "Ajouter une clé",
+		"photoErrorNoCredit": "Ton compte OpenRouter n’a plus de crédit : la génération d’image est payante.",
+		"photoErrorNoCreditLink": "Ajouter du crédit"
 	},
 	"setup": {
 		"title": "Instance non configurée",

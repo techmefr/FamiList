@@ -16,10 +16,18 @@ import {
 	type Provider,
 	type ProviderRequest
 } from '$domain/ai';
-import { parseRecipeSuggestion, type SuggestedRecipe } from '$domain/ai-recipe';
 import {
+	cleanImagePrompt,
+	imagePromptRequest,
+	parseRecipeSuggestion,
+	type SuggestedRecipe
+} from '$domain/ai-recipe';
+import {
+	decodeDataUrl,
+	openRouterFailureOfStatus,
+	openRouterImageRequest,
+	openRouterImageUrl,
 	photoFailureOfStatus,
-	pollinationsImageUrl,
 	recipePhotoPath,
 	type PhotoFailure
 } from '$domain/ai-image';
@@ -82,6 +90,14 @@ class AiStore {
 	 * provider switched mid-screen cannot slip a photo through — see `Provider.supportsVision` for what this
 	 * is and is not a promise about.
 	 */
+	/**
+	 * Whether dish photos can be generated (#306): an OpenRouter key is saved, active or not. The image
+	 * model is always OpenRouter's, whichever provider writes the recipes.
+	 */
+	get generatesImages(): boolean {
+		return this.credentials.some((c) => c.provider === 'openrouter');
+	}
+
 	get supportsVision(): boolean {
 		return this.#active ? (providerById(this.#active.provider)?.supportsVision ?? false) : false;
 	}
@@ -379,10 +395,44 @@ class AiStore {
 	}
 
 	/**
-	 * Generates a dish photo and uploads it to the household's `recipe-photos` bucket.
+	 * Asks the active provider for the English description a dish photo is drawn from, for a recipe no AI
+	 * wrote (#306). Null when no provider is set or its answer is unusable: the caller falls back to the
+	 * template built from the name and ingredients.
+	 */
+	async describeDish(recipeName: string, ingredientNames: string[], steps: string[]): Promise<string | null> {
+		const active = this.#active;
+		const provider = active ? providerById(active.provider) : null;
+		const apiKey = active ? this.#keys.get(active.provider) : undefined;
+		if (!provider || !apiKey) return null;
+
+		const request = buildRequest(
+			provider,
+			apiKey,
+			active?.model ?? '',
+			imagePromptRequest(recipeName, ingredientNames, steps)
+		);
+
+		try {
+			const response = await fetch(request.url, {
+				method: 'POST',
+				headers: request.headers,
+				body: request.body
+			});
+			if (!response.ok) return null;
+
+			const text = parseReply(provider, await response.json());
+			return text === null ? null : cleanImagePrompt(text);
+		} catch {
+			return null;
+		}
+	}
+
+	/**
+	 * Generates a dish photo with the person's own OpenRouter key and uploads it to the household's
+	 * `recipe-photos` bucket.
 	 *
-	 * The image never blocks saving a recipe (#186), but a failure is no longer silent (#303): the reason comes
-	 * back so the screen can say what happened instead of leaving a button that seems to do nothing.
+	 * The image never blocks saving a recipe (#186), but a failure is never silent (#303): the reason comes
+	 * back so the screen can say what happened and what to do about it.
 	 */
 	async generateRecipePhoto(
 		householdId: string,
@@ -390,7 +440,29 @@ class AiStore {
 		prompt: string,
 		seed = Math.floor(Math.random() * 2 ** 31)
 	): Promise<PhotoOutcome> {
-		return this.fetchRecipePhoto(householdId, recipeId, pollinationsImageUrl(prompt, seed));
+		const apiKey = this.#keys.get('openrouter');
+		if (!apiKey) return { ok: false, reason: 'no-key' };
+
+		const request = openRouterImageRequest(apiKey, prompt, seed);
+
+		let response: Response;
+		try {
+			response = await fetch(request.url, {
+				method: 'POST',
+				headers: request.headers,
+				body: request.body
+			});
+		} catch {
+			return { ok: false, reason: networkFailure() };
+		}
+
+		if (!response.ok) return { ok: false, reason: openRouterFailureOfStatus(response.status) };
+
+		const url = openRouterImageUrl(await response.json().catch(() => null));
+		const image = url ? decodeDataUrl(url) : null;
+		if (!image) return { ok: false, reason: 'unreachable' };
+
+		return this.#uploadPhoto(householdId, recipeId, image.bytes, image.mimeType);
 	}
 
 	/**

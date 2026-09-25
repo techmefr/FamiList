@@ -1311,7 +1311,13 @@
 			"stopDictate": "Stop dictation",
 			"listening": "Listening…",
 			"dictateError": "Voice dictation failed. Try again or type the text."
-		}
+		},
+		"photoGenerateHint": "With your OpenRouter key, about 1 cent per image",
+		"photoGenerateNeedsKey": "Needs an OpenRouter key",
+		"photoErrorNoKey": "To generate an image, add an OpenRouter key.",
+		"photoErrorNoKeyLink": "Add a key",
+		"photoErrorNoCredit": "Your OpenRouter account has no credit left: image generation is paid.",
+		"photoErrorNoCreditLink": "Add credit"
 	},
 	"setup": {
 		"title": "Instance not configured",

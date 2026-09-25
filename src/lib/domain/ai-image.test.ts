@@ -6,7 +6,12 @@ import {
 	openverseSearchUrl,
 	photoFailureKey,
 	photoFailureOfStatus,
-	pollinationsImageUrl,
+	decodeDataUrl,
+	OPENROUTER_IMAGE_MODEL,
+	openRouterFailureOfStatus,
+	openRouterImageRequest,
+	openRouterImageUrl,
+	recipeImagePrompt,
 	recipePhotoPath
 } from './ai-image';
 
@@ -23,18 +28,71 @@ describe('dishPhotoPrompt', () => {
 	});
 });
 
-describe('pollinationsImageUrl', () => {
-	it('encode le prompt dans le chemin, sans cle ni corps', () => {
-		const url = pollinationsImageUrl('un plat & sa sauce', 42);
+describe('recipeImagePrompt (#306)', () => {
+	it("envoie la description ecrite par l'IA plutot que le gabarit", () => {
+		const prompt = recipeImagePrompt('Golden fried spring rolls on lettuce', 'Nems', ['porc']);
 
-		expect(url).toBe('https://image.pollinations.ai/prompt/un%20plat%20%26%20sa%20sauce?seed=42');
+		expect(prompt).toContain('Golden fried spring rolls on lettuce');
+		expect(prompt).not.toContain('Nems');
 	});
 
-	it('change quand le seed change, pour permettre de regenerer', () => {
-		const first = pollinationsImageUrl('nems', 1);
-		const second = pollinationsImageUrl('nems', 2);
+	it('retombe sur le gabarit sans description', () => {
+		expect(recipeImagePrompt(undefined, 'Nems', ['porc'])).toBe(dishPhotoPrompt('Nems', ['porc']));
+		expect(recipeImagePrompt('   ', 'Nems', [])).toBe(dishPhotoPrompt('Nems', []));
+	});
+});
 
-		expect(first).not.toBe(second);
+describe('openRouterImageRequest (#306)', () => {
+	it('met la cle dans un en-tete et demande une image seule', () => {
+		const request = openRouterImageRequest('cle-secrete', 'a dish', 7);
+
+		expect(request.url).toBe('https://openrouter.ai/api/v1/chat/completions');
+		expect(request.url).not.toContain('cle-secrete');
+		expect(request.headers.authorization).toBe('Bearer cle-secrete');
+		expect(JSON.parse(request.body)).toEqual({
+			model: OPENROUTER_IMAGE_MODEL,
+			modalities: ['image'],
+			seed: 7,
+			messages: [{ role: 'user', content: 'a dish' }]
+		});
+	});
+});
+
+describe('openRouterImageUrl (#306)', () => {
+	it('lit la premiere image renvoyee', () => {
+		const payload = {
+			choices: [{ message: { images: [{ type: 'image_url', image_url: { url: 'data:image/png;base64,AAAA' } }] } }]
+		};
+		expect(openRouterImageUrl(payload)).toBe('data:image/png;base64,AAAA');
+	});
+
+	it("renvoie null sans image, ou pour une adresse qui n'est pas une image en ligne", () => {
+		expect(openRouterImageUrl(null)).toBeNull();
+		expect(openRouterImageUrl({ choices: [{ message: { content: 'non' } }] })).toBeNull();
+		expect(
+			openRouterImageUrl({ choices: [{ message: { images: [{ image_url: { url: 'https://x.test/a.png' } }] } }] })
+		).toBeNull();
+	});
+});
+
+describe('decodeDataUrl (#306)', () => {
+	it('rend les octets et le type', () => {
+		const decoded = decodeDataUrl('data:image/png;base64,AQID');
+		expect(decoded?.mimeType).toBe('image/png');
+		expect(Array.from(decoded?.bytes ?? [])).toEqual([1, 2, 3]);
+	});
+
+	it("refuse ce qui n'est pas une image en base64", () => {
+		expect(decodeDataUrl('data:text/plain;base64,AQID')).toBeNull();
+		expect(decodeDataUrl('data:image/png;base64,@@@')).toBeNull();
+	});
+});
+
+describe('openRouterFailureOfStatus (#306)', () => {
+	it("distingue un solde vide d'une cle refusee", () => {
+		expect(openRouterFailureOfStatus(402)).toBe('no-credit');
+		expect(openRouterFailureOfStatus(401)).toBe('unavailable');
+		expect(openRouterFailureOfStatus(500)).toBe('unreachable');
 	});
 });
 
@@ -125,7 +183,9 @@ describe('photoFailureOfStatus', () => {
 
 describe('photoFailureKey', () => {
 	it('donne un message distinct a chaque echec', () => {
-		const keys = (['offline', 'unavailable', 'unreachable', 'not-found', 'upload'] as const).map(photoFailureKey);
+		const keys = (
+			['offline', 'unavailable', 'unreachable', 'not-found', 'upload', 'no-key', 'no-credit'] as const
+		).map(photoFailureKey);
 		expect(new Set(keys).size).toBe(keys.length);
 	});
 });

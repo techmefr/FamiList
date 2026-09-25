@@ -10,9 +10,10 @@
 		recipeName: string;
 		ingredientNames: string[];
 		photoPath?: string;
+		imagePrompt?: string;
 	}
 
-	let { recipeId, recipeName, ingredientNames, photoPath }: Props = $props();
+	let { recipeId, recipeName, ingredientNames, photoPath, imagePrompt }: Props = $props();
 
 	/** How long a signed URL to a private bucket stays usable before the screen would need another one. */
 	const SIGNED_URL_TTL_SECONDS = 3600;
@@ -62,4 +63,4 @@
 	</Button>
 </div>
 
-<RecipeImagePicker bind:this={picker} {recipeId} {recipeName} {ingredientNames} {photoPath} />
+<RecipeImagePicker bind:this={picker} {recipeId} {recipeName} {ingredientNames} {photoPath} {imagePrompt} />

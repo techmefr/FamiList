@@ -1311,7 +1311,13 @@
 			"stopDictate": "Parar o ditado",
 			"listening": "A ouvir…",
 			"dictateError": "O ditado por voz falhou. Tente novamente ou escreva o texto."
-		}
+		},
+		"photoGenerateHint": "Com a sua chave OpenRouter, cerca de 1 cêntimo por imagem",
+		"photoGenerateNeedsKey": "Requer uma chave OpenRouter",
+		"photoErrorNoKey": "Para gerar uma imagem, adicione uma chave OpenRouter.",
+		"photoErrorNoKeyLink": "Adicionar uma chave",
+		"photoErrorNoCredit": "A sua conta OpenRouter não tem crédito: a geração de imagens é paga.",
+		"photoErrorNoCreditLink": "Adicionar crédito"
 	},
 	"setup": {
 		"title": "Instância não configurada",

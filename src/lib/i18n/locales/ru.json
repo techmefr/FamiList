@@ -1331,7 +1331,13 @@
 			"stopDictate": "Остановить диктовку",
 			"listening": "Слушаю…",
 			"dictateError": "Голосовой ввод не удался. Попробуйте снова или введите текст."
-		}
+		},
+		"photoGenerateHint": "С вашим ключом OpenRouter, около 1 цента за изображение",
+		"photoGenerateNeedsKey": "Нужен ключ OpenRouter",
+		"photoErrorNoKey": "Чтобы создать изображение, добавьте ключ OpenRouter.",
+		"photoErrorNoKeyLink": "Добавить ключ",
+		"photoErrorNoCredit": "На вашем счёте OpenRouter нет средств: создание изображений платное.",
+		"photoErrorNoCreditLink": "Пополнить счёт"
 	},
 	"setup": {
 		"title": "Экземпляр не настроен",
