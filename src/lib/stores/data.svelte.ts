@@ -1634,11 +1634,12 @@ class DataStore {
 	}
 
 	/**
-	 * The server deletes the lines and the steps itself — `on delete cascade` on the recipe. We therefore
-	 * only queue the recipe, and empty the local cache by hand so the screen is right before the next
-	 * re-read.
+	 * Removing a recipe only marks it (`deleted_at`, same guard as a loyalty card) rather than deleting the
+	 * row: its ingredients and steps stay in place server-side, ready to come back if the mark is undone,
+	 * while the local cache clears at once so the screen is right before the next re-read.
 	 */
 	removeRecipe(id: string) {
+		const recipe = this.cachedRecipes.find((r) => r.id === id);
 		const rows = this.recipeIngredients.filter((line) => line.recipeId === id).map((l) => l.id);
 		const steps = this.recipeSteps.filter((step) => step.recipeId === id).map((s) => s.id);
 
@@ -1649,7 +1650,13 @@ class DataStore {
 		db.recipes.delete(id);
 		db.recipeIngredients.bulkDelete(rows);
 		db.recipeSteps.bulkDelete(steps);
-		sync.enqueue({ table: 'recipes', op: 'delete', match: { id } });
+		if (!recipe) return;
+
+		const snapshot = $state.snapshot(recipe) as Recipe;
+		this.push('recipes', snapshot, (record, householdId) => ({
+			...fromRecipe(record, householdId),
+			deleted_at: new Date().toISOString()
+		}));
 	}
 
 	/** The circles a recipe was shared into, besides its own. */
