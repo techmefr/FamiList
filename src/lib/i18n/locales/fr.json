@@ -512,7 +512,126 @@
 			"readIngredients": "Lire les ingrédients",
 			"speakIngredients": "Ingrédients : {list}.",
 			"steps": "Étapes de la recette",
-			"goTo": "Aller à l’étape {current} sur {total}"
+			"goTo": "Aller à l’étape {current} sur {total}",
+			"voice": {
+				"start": "Mains libres",
+				"stop": "Arrêter les mains libres",
+				"introTitle": "Suivre la recette à la voix",
+				"introBody": "Dites « Famy », puis une commande : « Famy, suivant », « Famy, répète », « Famy, lis les ingrédients ». Plus besoin de toucher l’écran avec les mains sales.",
+				"introPrivacy": "Le micro n’écoute que pendant ce mode. La reconnaissance est faite par votre téléphone ou votre navigateur, qui peut passer par son service en ligne. FamiList n’enregistre rien.",
+				"introAccept": "Activer le micro",
+				"introCancel": "Pas maintenant",
+				"listening": "À l’écoute. Dites « Famy » puis une commande.",
+				"awake": "Famy vous écoute…",
+				"understood": "Compris : {command}",
+				"notUnderstood": "Pas compris : « {text} ». Dites « Famy, aide » pour la liste.",
+				"denied": "Le micro est refusé. Autorisez-le dans les réglages ; les boutons restent utilisables.",
+				"unsupported": "La commande vocale n’est pas disponible sur cet appareil. Les boutons restent utilisables.",
+				"failed": "Le micro s’est arrêté. Touchez « Mains libres » pour relancer.",
+				"help": "Commandes vocales",
+				"helpTitle": "Dites « Famy », puis :",
+				"volume": "Volume : {percent} %",
+				"speakHelp": "Dites Famy, puis : {list}.",
+				"wake": [
+					"famy",
+					"fami",
+					"famie",
+					"fa mi"
+				],
+				"labels": {
+					"next": "Étape suivante",
+					"previous": "Étape précédente",
+					"repeat": "Répéter l’étape",
+					"stepIngredients": "Ingrédients de l’étape",
+					"allIngredients": "Tous les ingrédients",
+					"louder": "Plus fort",
+					"quieter": "Moins fort",
+					"mute": "Couper la voix",
+					"unmute": "Remettre la voix",
+					"stopListening": "Arrêter d’écouter",
+					"help": "Aide",
+					"close": "Quitter"
+				},
+				"commands": {
+					"next": [
+						"suivant",
+						"suivante",
+						"étape suivante",
+						"après",
+						"on continue",
+						"continue",
+						"ensuite"
+					],
+					"previous": [
+						"précédent",
+						"précédente",
+						"étape précédente",
+						"retour",
+						"reviens",
+						"avant"
+					],
+					"repeat": [
+						"répète",
+						"répéter",
+						"redis",
+						"relis",
+						"encore",
+						"relis l’étape"
+					],
+					"stepIngredients": [
+						"ingrédients",
+						"lis les ingrédients",
+						"ingrédients de l’étape",
+						"qu’est-ce qu’il faut"
+					],
+					"allIngredients": [
+						"tous les ingrédients",
+						"toute la recette",
+						"liste complète"
+					],
+					"louder": [
+						"plus fort",
+						"monte le son",
+						"monte le volume"
+					],
+					"quieter": [
+						"moins fort",
+						"baisse le son",
+						"baisse le volume",
+						"plus bas"
+					],
+					"mute": [
+						"coupe la voix",
+						"tais-toi",
+						"silence",
+						"chut"
+					],
+					"unmute": [
+						"remets la voix",
+						"réactive la voix",
+						"parle"
+					],
+					"stopListening": [
+						"arrête d’écouter",
+						"coupe le micro",
+						"arrête le micro"
+					],
+					"help": [
+						"aide",
+						"aide-moi",
+						"commandes",
+						"qu’est-ce que je peux dire"
+					],
+					"close": [
+						"quitter",
+						"quitte",
+						"ferme",
+						"fermer",
+						"terminé",
+						"j’ai fini"
+					]
+				}
+			}
 		},
 		"stepIngredients": "Ingrédients utilisés à l’étape {rank}"
 	},

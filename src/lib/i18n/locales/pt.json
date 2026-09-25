@@ -512,7 +512,110 @@
 			"readIngredients": "Ler os ingredientes",
 			"speakIngredients": "Ingredientes: {list}.",
 			"steps": "Passos da receita",
-			"goTo": "Ir para o passo {current} de {total}"
+			"goTo": "Ir para o passo {current} de {total}",
+			"voice": {
+				"start": "Mãos livres",
+				"stop": "Parar mãos livres",
+				"introTitle": "Seguir a receita por voz",
+				"introBody": "Diga «Famy» e depois um comando: «Famy, próximo», «Famy, repete», «Famy, lê os ingredientes». Deixa de ser preciso tocar no ecrã com as mãos sujas.",
+				"introPrivacy": "O microfone só ouve neste modo. O reconhecimento é feito pelo telemóvel ou pelo navegador, que pode usar o seu serviço online. O FamiList não grava nada.",
+				"introAccept": "Ativar o microfone",
+				"introCancel": "Agora não",
+				"listening": "A ouvir. Diga «Famy» e depois um comando.",
+				"awake": "A Famy está a ouvir…",
+				"understood": "Entendido: {command}",
+				"notUnderstood": "Não entendido: «{text}». Diga «Famy, ajuda» para ver a lista.",
+				"denied": "O microfone está bloqueado. Autorize-o nas definições; os botões continuam a funcionar.",
+				"unsupported": "O comando por voz não está disponível neste aparelho. Os botões continuam a funcionar.",
+				"failed": "O microfone parou. Toque em «Mãos livres» para recomeçar.",
+				"help": "Comandos de voz",
+				"helpTitle": "Diga «Famy» e depois:",
+				"volume": "Volume: {percent} %",
+				"speakHelp": "Diga Famy e depois: {list}.",
+				"wake": [
+					"famy",
+					"fami",
+					"fâmi"
+				],
+				"labels": {
+					"next": "Próximo passo",
+					"previous": "Passo anterior",
+					"repeat": "Repetir o passo",
+					"stepIngredients": "Ingredientes do passo",
+					"allIngredients": "Todos os ingredientes",
+					"louder": "Mais alto",
+					"quieter": "Mais baixo",
+					"mute": "Silenciar a voz",
+					"unmute": "Reativar a voz",
+					"stopListening": "Parar de ouvir",
+					"help": "Ajuda",
+					"close": "Sair"
+				},
+				"commands": {
+					"next": [
+						"próximo",
+						"próximo passo",
+						"seguinte",
+						"depois",
+						"continua"
+					],
+					"previous": [
+						"anterior",
+						"passo anterior",
+						"voltar",
+						"volta"
+					],
+					"repeat": [
+						"repete",
+						"repetir",
+						"outra vez",
+						"de novo"
+					],
+					"stepIngredients": [
+						"ingredientes",
+						"lê os ingredientes",
+						"do que preciso"
+					],
+					"allIngredients": [
+						"todos os ingredientes",
+						"receita inteira",
+						"lista completa"
+					],
+					"louder": [
+						"mais alto",
+						"aumenta o volume"
+					],
+					"quieter": [
+						"mais baixo",
+						"baixa o volume"
+					],
+					"mute": [
+						"silêncio",
+						"cala-te",
+						"tira a voz"
+					],
+					"unmute": [
+						"volta a falar",
+						"ativa a voz"
+					],
+					"stopListening": [
+						"para de ouvir",
+						"desliga o microfone",
+						"microfone desligado"
+					],
+					"help": [
+						"ajuda",
+						"comandos",
+						"o que posso dizer"
+					],
+					"close": [
+						"sair",
+						"fechar",
+						"fecha",
+						"terminei"
+					]
+				}
+			}
 		},
 		"stepIngredients": "Ingredientes usados no passo {rank}"
 	},
