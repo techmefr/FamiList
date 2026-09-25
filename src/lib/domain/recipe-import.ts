@@ -22,6 +22,8 @@ export interface ImportedRecipe {
 	steps: string[];
 	servings: string | null;
 	image: string | null;
+	/** Absent from a function deployed before #314: read as none. */
+	categories?: string[];
 }
 
 /** The refusal reasons the edge function can return, and the matching message key. */

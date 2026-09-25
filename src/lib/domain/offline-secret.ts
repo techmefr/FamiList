@@ -5,6 +5,10 @@
  * file is useless elsewhere. The inner one is RSA-OAEP: the public key lets a fresh online read refresh the
  * copy without asking for anything, the private key is only kept wrapped by a PBKDF2 key derived from the
  * unlock code. Script running in the page can therefore not decrypt without the code either.
+ *
+ * The private key can instead be wrapped by the phone's own unlock (#328): a key derived from the passkey's
+ * PRF output, which the authenticator only computes after the fingerprint, face or device PIN. Nothing
+ * stored here can produce it, so a "biometric ok" answer from script would not open anything.
  */
 
 export interface DeviceVault {
@@ -16,6 +20,17 @@ export interface DeviceVault {
 	wrapIv?: Uint8Array<ArrayBuffer>;
 	iterations?: number;
 	failures: number;
+	passkeyId?: ArrayBuffer;
+	passkeySalt?: Uint8Array<ArrayBuffer>;
+	passkeyWrappedPrivateKey?: ArrayBuffer;
+	passkeyWrapIv?: Uint8Array<ArrayBuffer>;
+}
+
+export type UnlockMethod = 'code' | 'device';
+
+export interface PasskeyUnlock {
+	credentialId: ArrayBuffer;
+	salt: Uint8Array<ArrayBuffer>;
 }
 
 export interface StoredSecret {
@@ -35,7 +50,7 @@ export interface SecretStore {
 
 export type RevealOutcome =
 	| { ok: true; value: string }
-	| { ok: false; reason: 'missing' | 'wrong-code' | 'wiped' };
+	| { ok: false; reason: 'missing' | 'wrong-code' | 'wrong-device' | 'wiped' };
 
 export const MIN_UNLOCK_CODE_LENGTH = 6;
 export const MAX_UNLOCK_FAILURES = 5;
@@ -105,7 +120,8 @@ export async function setUnlockCode(
 
 	await store.clearSecrets();
 	await store.putVault({
-		...vault,
+		id: 'device',
+		deviceKey: vault.deviceKey,
 		publicKey: pair.publicKey,
 		wrappedPrivateKey,
 		salt,
@@ -114,6 +130,77 @@ export async function setUnlockCode(
 		failures: 0
 	});
 	return true;
+}
+
+export async function unlockMethod(store: SecretStore): Promise<UnlockMethod | null> {
+	const vault = await store.getVault();
+	if (vault?.passkeyWrappedPrivateKey) return 'device';
+	if (vault?.wrappedPrivateKey) return 'code';
+	return null;
+}
+
+export const newPasskeySalt = () => randomBytes(32);
+
+/** A PRF output is 32 bytes; anything shorter means the authenticator did not really evaluate it. */
+export const isPrfOutput = (output: ArrayBuffer | undefined): output is ArrayBuffer =>
+	output instanceof ArrayBuffer && output.byteLength >= 32;
+
+async function passkeyKey(output: ArrayBuffer) {
+	const material = await crypto.subtle.importKey('raw', output, 'HKDF', false, ['deriveKey']);
+	return crypto.subtle.deriveKey(
+		{
+			name: 'HKDF',
+			hash: 'SHA-256',
+			salt: new Uint8Array(new ArrayBuffer(0)),
+			info: encoder.encode('familist offline vault')
+		},
+		material,
+		{ name: 'AES-GCM', length: 256 },
+		false,
+		['wrapKey', 'unwrapKey']
+	);
+}
+
+/**
+ * Same role as `setUnlockCode`, the passkey's PRF output standing in for the code. One method at a time:
+ * each draws a fresh key pair, so the copies sealed under the other one are forgotten.
+ */
+export async function setPasskeyUnlock(
+	store: SecretStore,
+	unlock: PasskeyUnlock,
+	output: ArrayBuffer
+): Promise<boolean> {
+	if (!isPrfOutput(output)) return false;
+
+	const vault = await deviceVault(store);
+	const pair = await crypto.subtle.generateKey(RSA, true, ['encrypt', 'decrypt']);
+	const passkeyWrapIv = randomBytes(12);
+	const passkeyWrappedPrivateKey = await crypto.subtle.wrapKey(
+		'pkcs8',
+		pair.privateKey,
+		await passkeyKey(output),
+		{ name: 'AES-GCM', iv: passkeyWrapIv }
+	);
+
+	await store.clearSecrets();
+	await store.putVault({
+		id: 'device',
+		deviceKey: vault.deviceKey,
+		publicKey: pair.publicKey,
+		failures: 0,
+		passkeyId: unlock.credentialId,
+		passkeySalt: unlock.salt,
+		passkeyWrappedPrivateKey,
+		passkeyWrapIv
+	});
+	return true;
+}
+
+/** What the passkey has to be asked for, offline: which credential, and the salt its PRF must be fed. */
+export async function passkeyUnlockRequest(store: SecretStore): Promise<PasskeyUnlock | null> {
+	const vault = await store.getVault();
+	if (!vault?.passkeyId || !vault.passkeySalt) return null;
+	return { credentialId: vault.passkeyId, salt: vault.passkeySalt };
 }
 
 /** Refreshes the device copy after a successful online read. Does nothing until an unlock code exists. */
@@ -173,6 +260,46 @@ export async function revealSecret(store: SecretStore, cardId: string, code: str
 		return { ok: false, reason: 'wrong-code' };
 	}
 
+	const value = await openSecret(vault, secret, privateKey);
+	if (vault.failures > 0) await store.putVault({ ...vault, failures: 0 });
+	return { ok: true, value };
+}
+
+/**
+ * Opens the device copy with the passkey's PRF output. No failure counter here: the output is either the
+ * right 32 bytes or another credential's, and the phone itself limits how often its unlock can be tried.
+ */
+export async function revealSecretWithPasskey(
+	store: SecretStore,
+	cardId: string,
+	output: ArrayBuffer
+): Promise<RevealOutcome> {
+	const vault = await store.getVault();
+	const secret = await store.getSecret(cardId);
+	if (!vault?.passkeyWrappedPrivateKey || !vault.passkeyWrapIv || !secret) {
+		return { ok: false, reason: 'missing' };
+	}
+	if (!isPrfOutput(output)) return { ok: false, reason: 'wrong-device' };
+
+	let privateKey: CryptoKey;
+	try {
+		privateKey = await crypto.subtle.unwrapKey(
+			'pkcs8',
+			vault.passkeyWrappedPrivateKey,
+			await passkeyKey(output),
+			{ name: 'AES-GCM', iv: vault.passkeyWrapIv },
+			RSA,
+			false,
+			['decrypt']
+		);
+	} catch {
+		return { ok: false, reason: 'wrong-device' };
+	}
+
+	return { ok: true, value: await openSecret(vault, secret, privateKey) };
+}
+
+async function openSecret(vault: DeviceVault, secret: StoredSecret, privateKey: CryptoKey) {
 	const inner = new Uint8Array(
 		await crypto.subtle.decrypt({ name: 'AES-GCM', iv: secret.iv }, vault.deviceKey, secret.data)
 	);
@@ -186,8 +313,7 @@ export async function revealSecret(store: SecretStore, cardId: string, code: str
 	contentKey.fill(0);
 	const plain = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: contentIv }, aes, body);
 
-	if (vault.failures > 0) await store.putVault({ ...vault, failures: 0 });
-	return { ok: true, value: decoder.decode(plain) };
+	return decoder.decode(plain);
 }
 
 export async function forgetDeviceSecrets(store: SecretStore) {

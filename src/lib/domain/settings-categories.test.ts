@@ -89,6 +89,11 @@ describe('settings search', () => {
 		expect(match.category).toBe('Affichage et lecture');
 	});
 
+	it('finds device unlock by the fingerprint it asks for', () => {
+		const hrefs = searchSettings('empreinte', everyone, translate).map((m) => m.href);
+		expect(hrefs).toContain('/profile/security#setting-device-unlock');
+	});
+
 	it('finds a setting by its hint', () => {
 		const hrefs = searchSettings('bip', everyone, translate).map((m) => m.href);
 		expect(hrefs).toContain('/profile/feedback#setting-sound');

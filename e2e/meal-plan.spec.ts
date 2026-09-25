@@ -7,8 +7,8 @@ import type { Page } from '@playwright/test';
  * `src/lib/domain/meal-plan.ts`), edited in place, then the consolidated shopping list is generated.
  */
 async function createRecipe(page: Page, name: string, ingredient: string, qty: string) {
-	await page.goto('/recipes');
-	await page.getByTestId('recipe-new').click();
+	await page.goto('/recipes/new');
+	await page.getByTestId('recipe-source-manual').click();
 	await page.getByTestId('recipe-name').fill(name);
 	await page.getByTestId('recipe-next').click();
 

@@ -129,7 +129,7 @@
 			},
 			"security": {
 				"hint": "Password, two-step, devices, your data",
-				"keywords": "code, authentication, 2FA, TOTP, session, device, export, delete account"
+				"keywords": "code, authentication, 2FA, TOTP, session, device, export, delete account, fingerprint, face, PIN, biometrics, passkey, unlock"
 			},
 			"ai": {
 				"hint": "Provider and key for recipe ideas",
@@ -233,7 +233,7 @@
 		"accountRemovePassword": "Remove password",
 		"accountSave": "Save account",
 		"accountSaved": "Account saved.",
-		"accountNeedsMfa": "Turn on two-factor authentication in your profile to save or show an account password.",
+		"accountNeedsMfa": "Turn on device unlock or two-step verification in your profile to save or show an account password.",
 		"accountGoProfile": "Go to profile",
 		"accountNotFound": "Card not found.",
 		"accountError": "Could not read the account: {error}",
@@ -289,6 +289,23 @@
 		"attachHint": "A chain card works in every shop of that chain.",
 		"name": "Card name",
 		"namePlaceholder": "Loyalty card",
+		"brandMatch": "Recognised brand: {brand}",
+		"color": "Card colour",
+		"colorAuto": "Automatic",
+		"colorBrand": "{brand} colour",
+		"colors": {
+			"navy": "Navy",
+			"blue": "Blue",
+			"teal": "Teal",
+			"green": "Green",
+			"red": "Red",
+			"orange": "Orange",
+			"plum": "Plum",
+			"purple": "Purple",
+			"brown": "Brown",
+			"slate": "Slate"
+		},
+		"preview": "Preview",
 		"code": "Card code",
 		"codePlaceholder": "3560070123456",
 		"format": "Code format",
@@ -462,7 +479,6 @@
 	},
 	"recipes": {
 		"import": {
-			"title": "Import from a link",
 			"privacy": "The address is sent to this instance’s server, which fetches the page for you and identifies itself to the site visited. Nothing is kept, and no other page is opened.",
 			"url": "Recipe address",
 			"urlPlaceholder": "https://example.com/my-recipe",
@@ -562,9 +578,212 @@
 			"readIngredients": "Read the ingredients",
 			"speakIngredients": "Ingredients: {list}.",
 			"steps": "Recipe steps",
-			"goTo": "Go to step {current} of {total}"
+			"goTo": "Go to step {current} of {total}",
+			"voice": {
+				"start": "Hands-free",
+				"stop": "Stop hands-free",
+				"introTitle": "Follow the recipe by voice",
+				"introBody": "Say “Famy”, then a command: “Famy, next”, “Famy, repeat”, “Famy, read the ingredients”. No need to touch the screen with messy hands.",
+				"introPrivacy": "The microphone only listens in this mode. Recognition is done by your phone or browser, which may use its online service. FamiList records nothing.",
+				"introAccept": "Turn on the microphone",
+				"introCancel": "Not now",
+				"listening": "Listening. Say “Famy”, then a command.",
+				"awake": "Famy is listening…",
+				"understood": "Understood: {command}",
+				"notUnderstood": "Not understood: “{text}”. Say “Famy, help” for the list.",
+				"denied": "The microphone is blocked. Allow it in the settings; the buttons still work.",
+				"unsupported": "Voice control is not available on this device. The buttons still work.",
+				"failed": "The microphone stopped. Tap “Hands-free” to start again.",
+				"help": "Voice commands",
+				"helpTitle": "Say “Famy”, then:",
+				"volume": "Volume: {percent}%",
+				"speakHelp": "Say Famy, then: {list}.",
+				"wake": [
+					"famy",
+					"famie",
+					"fami",
+					"fammy"
+				],
+				"labels": {
+					"next": "Next step",
+					"previous": "Previous step",
+					"repeat": "Repeat the step",
+					"stepIngredients": "Step ingredients",
+					"allIngredients": "All ingredients",
+					"louder": "Louder",
+					"quieter": "Quieter",
+					"mute": "Mute the voice",
+					"unmute": "Unmute the voice",
+					"stopListening": "Stop listening",
+					"help": "Help",
+					"close": "Leave",
+					"startTimer": "Start the timer",
+					"stopTimer": "Stop the timer",
+					"timeLeft": "Time left"
+				},
+				"commands": {
+					"next": [
+						"next",
+						"next step",
+						"go on",
+						"continue",
+						"carry on"
+					],
+					"previous": [
+						"previous",
+						"previous step",
+						"back",
+						"go back"
+					],
+					"repeat": [
+						"repeat",
+						"say again",
+						"again",
+						"read the step"
+					],
+					"stepIngredients": [
+						"ingredients",
+						"read the ingredients",
+						"what do I need"
+					],
+					"allIngredients": [
+						"all ingredients",
+						"all the ingredients",
+						"whole recipe",
+						"full list"
+					],
+					"louder": [
+						"louder",
+						"volume up",
+						"turn it up"
+					],
+					"quieter": [
+						"quieter",
+						"volume down",
+						"turn it down",
+						"softer"
+					],
+					"mute": [
+						"be quiet",
+						"mute",
+						"stop talking",
+						"silence"
+					],
+					"unmute": [
+						"unmute",
+						"speak again",
+						"talk again"
+					],
+					"stopListening": [
+						"stop listening",
+						"microphone off",
+						"mic off"
+					],
+					"help": [
+						"help",
+						"commands",
+						"what can I say"
+					],
+					"close": [
+						"exit",
+						"quit",
+						"close",
+						"I’m done",
+						"finished"
+					],
+					"startTimer": [
+						"start the timer",
+						"start timer",
+						"timer",
+						"set the timer"
+					],
+					"stopTimer": [
+						"stop the timer",
+						"stop timer",
+						"stop the alarm",
+						"stop alarm"
+					],
+					"timeLeft": [
+						"how long left",
+						"time left",
+						"how much time"
+					]
+				}
+			}
 		},
-		"stepIngredients": "Ingredients used in step {rank}"
+		"stepIngredients": "Ingredients used in step {rank}",
+		"stepDuration": "Step {rank} duration (optional)",
+		"durationHours": "Hours",
+		"durationMinutes": "Minutes",
+		"create": {
+			"title": "Create a recipe",
+			"intro": "Choose how to start. You will read everything again before saving.",
+			"back": "Other ways to create",
+			"backToRecipes": "Back to recipes",
+			"needsKey": "Needs an AI key",
+			"needsKeyBody": "This way of creating goes through your own AI provider. Add your key in the AI settings, then come back here.",
+			"needsKeyLink": "Add my AI key",
+			"sources": {
+				"manual": {
+					"title": "Write it myself",
+					"hint": "The name, the ingredients, then the steps."
+				},
+				"link": {
+					"title": "From a link",
+					"hint": "Paste the address of a recipe found on the web."
+				},
+				"photo": {
+					"title": "From a photo",
+					"hint": "A book page or a written recipe, read by the AI."
+				},
+				"ai": {
+					"title": "Ask the AI",
+					"hint": "Describe the dish, the AI suggests a recipe."
+				},
+				"purchases": {
+					"title": "Idea from your shopping",
+					"hint": "A recipe with what the household has already bought."
+				}
+			}
+		}
+	},
+	"recipeTags": {
+		"title": "Categories",
+		"hint": "Tick everything that fits: they help you find the recipe again.",
+		"listLabel": "Recipe categories",
+		"category": {
+			"course": "Course",
+			"diet": "Diet",
+			"occasion": "Occasion",
+			"season": "Season"
+		},
+		"tag": {
+			"breakfast": "Breakfast",
+			"aperitif": "Appetiser",
+			"hot_starter": "Hot starter",
+			"cold_starter": "Cold starter",
+			"soup": "Soup",
+			"main": "Main course",
+			"side": "Side dish",
+			"dessert": "Dessert",
+			"snack": "Snack",
+			"drink": "Drink",
+			"vegetarian": "Vegetarian",
+			"vegan": "Vegan",
+			"gluten_free": "Gluten-free",
+			"lactose_free": "Lactose-free",
+			"low_salt": "Low salt",
+			"low_sugar": "Low sugar",
+			"quick": "Quick",
+			"kids": "For children",
+			"party": "Party",
+			"picnic": "Picnic",
+			"holiday": "Christmas and holidays",
+			"spring": "Spring",
+			"summer": "Summer",
+			"autumn": "Autumn",
+			"winter": "Winter"
+		}
 	},
 	"aisles": {
 		"title": "Aisles",
@@ -1104,6 +1323,34 @@
 		"backupWrong": "That code matches no unused backup code.",
 		"back": "Back to the app code"
 	},
+	"deviceUnlock": {
+		"title": "Device unlock",
+		"body": "Confirm it's you with your phone's fingerprint, face or PIN. No app to install, no code to copy.",
+		"fallback": "On a device without fingerprint or face, its lock PIN is asked instead.",
+		"add": "Use this device's unlock",
+		"added": "This device is registered. It will be asked for at sign-in and before a password is shown.",
+		"unavailable": "This browser or app does not offer device unlock. The authenticator app, below, still works.",
+		"listLabel": "Registered devices",
+		"thisDevice": "This device",
+		"addedOn": "Added on {date}",
+		"remove": "Remove",
+		"removeLabel": "Remove {name}",
+		"failed": "The confirmation did not go through. Try again, or use another method.",
+		"confirmBody": "Your phone will ask for your fingerprint, your face or its PIN.",
+		"confirm": "Confirm with the phone's fingerprint, face or PIN",
+		"choose": "Choose the device you are holding:",
+		"unavailableHere": "This account is confirmed with another device's unlock. Use that device, or a backup code.",
+		"useCode": "Or with the app's code",
+		"back": "Back to confirmation",
+		"revealHint": "Your phone will ask for your fingerprint, face or PIN before the password is shown.",
+		"offlineHint": "Keep this password encrypted on this device, and open it without network using the phone's unlock.",
+		"offlineEnable": "Keep on this device with the phone's unlock",
+		"offlineOrCode": "Or choose an unlock code instead:",
+		"offlineUnsupported": "This device cannot open the copy with its unlock. Choose an unlock code.",
+		"offlineUnlockHint": "Offline: confirm with your phone's unlock.",
+		"offlineUnlock": "Open with the phone's fingerprint, face or PIN",
+		"offlineWrongDevice": "This is not the passkey used to keep this password. Try again."
+	},
 	"security": {
 		"title": "Security",
 		"subtitle": "Your password, two-step verification, and the devices you are signed in on.",
@@ -1281,8 +1528,6 @@
 		"clear": "Remove the key",
 		"active": "Active",
 		"useThisOne": "Use this one",
-		"suggest": "A recipe idea",
-		"suggestTitle": "An idea from what you have bought",
 		"noProducts": "Nothing ticked off yet. Do some shopping, and the ideas will come from there.",
 		"willSend": {
 			"one": "1 product will be sent",
@@ -1344,8 +1589,6 @@
 		"photoErrorUnreachable": "The image service did not respond. Try again in a moment.",
 		"photoErrorUpload": "The image could not be saved. Try again.",
 		"photo": {
-			"trigger": "Create a recipe by photo",
-			"title": "Take a photo of the recipe",
 			"hint": "Photograph a book page, or a written or printed recipe.",
 			"pick": "Take or import a photo",
 			"reading": "Reading the photo…",
@@ -1483,5 +1726,32 @@
 		"saved": "{bank} key saved",
 		"removed": "{bank} key removed",
 		"saveFailed": "The key could not be saved. Try again."
+	},
+	"timers": {
+		"start": "Start the timer ({time})",
+		"running": "Running timers",
+		"stepLabel": "Step {rank}",
+		"addMinute": "+1 minute",
+		"stop": "Stop",
+		"announce": "Say the time",
+		"remaining": "{time} left for step {rank}.",
+		"none": "No timer running.",
+		"noDuration": "This step has no duration. Add one by editing the recipe.",
+		"webHint": "In a browser, the alarm only rings while FamiList stays open.",
+		"doneTitle": "Timer done",
+		"doneBody": "{recipe} — {step}",
+		"stopAlarm": "Stop the alarm",
+		"hours": {
+			"one": "{count} hour",
+			"other": "{count} hours"
+		},
+		"minutes": {
+			"one": "{count} minute",
+			"other": "{count} minutes"
+		},
+		"seconds": {
+			"one": "{count} second",
+			"other": "{count} seconds"
+		}
 	}
 }

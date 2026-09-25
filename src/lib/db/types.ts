@@ -1180,6 +1180,7 @@ export type Database = {
         Row: {
           body: string
           ingredient_ids: string[]
+          duration_seconds: number | null
           id: string
           position: number
           recipe_id: string
@@ -1188,12 +1189,14 @@ export type Database = {
           body: string
           id?: string
           ingredient_ids?: string[]
+          duration_seconds?: number | null
           position?: number
           recipe_id: string
         }
         Update: {
           body?: string
           ingredient_ids?: string[]
+          duration_seconds?: number | null
           id?: string
           position?: number
           recipe_id?: string
@@ -1220,6 +1223,7 @@ export type Database = {
           notes: string | null
           photo_path: string | null
           servings: number
+          tags: string[]
         }
         Insert: {
           created_at?: string
@@ -1232,6 +1236,7 @@ export type Database = {
           notes?: string | null
           photo_path?: string | null
           servings?: number
+          tags?: string[]
         }
         Update: {
           created_at?: string
@@ -1244,6 +1249,7 @@ export type Database = {
           notes?: string | null
           photo_path?: string | null
           servings?: number
+          tags?: string[]
         }
         Relationships: [
           {

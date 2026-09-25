@@ -443,6 +443,38 @@ describe('imagePrompt (#306)', () => {
 	});
 });
 
+describe('tags (#314)', () => {
+	it('sont demandes par chaque prompt de recette, parmi les cles fixes', () => {
+		const options = { language: 'français', servings: 4 };
+		const prompts = [
+			recipePrompt(['Courgettes'], options),
+			recipeExtractionPrompt('texte', options),
+			recipeFromRequestPrompt('un curry', options),
+			recipeFollowUpPrompt('plus epice', options),
+			recipeFromPhotoPrompt(options)
+		];
+
+		for (const prompt of prompts) {
+			expect(prompt).toContain('"tags":[""]');
+			expect(prompt).toContain('"tags" contient les cles');
+			expect(prompt).toContain('type de plat : breakfast, aperitif, hot_starter');
+			expect(prompt).toContain('regime : vegetarian, vegan, gluten_free');
+		}
+	});
+
+	it('ne gardent que les cles connues', () => {
+		const recipe = parseRecipeSuggestion(
+			'{"name":"Soupe","ingredients":[{"name":"poireau"}],"tags":["soup","Winter","comfort_food","soup"]}'
+		);
+		expect(recipe?.tags).toEqual(['soup', 'winter']);
+	});
+
+	it('sont une liste vide quand le modele n en donne pas', () => {
+		const recipe = parseRecipeSuggestion('{"name":"Soupe","ingredients":[{"name":"poireau"}]}');
+		expect(recipe?.tags).toEqual([]);
+	});
+});
+
 describe('imagePromptRequest (#306)', () => {
 	it('decrit le plat a partir de son nom, de ses ingredients et de ses etapes', () => {
 		const prompt = imagePromptRequest('Quiche lorraine', ['lardons', '', 'oeufs'], ['Cuire 35 minutes']);

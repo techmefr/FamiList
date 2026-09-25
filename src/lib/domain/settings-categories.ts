@@ -100,6 +100,7 @@ export const SETTINGS_CATEGORIES: SettingsCategory[] = [
 		...keys('security'),
 		settings: [
 			{ anchor: 'setting-password', label: 'security.passwordTitle' },
+			{ anchor: 'setting-device-unlock', label: 'deviceUnlock.title', hint: 'deviceUnlock.body' },
 			{ anchor: 'setting-two-factor', label: 'security.twoFactor' },
 			{ anchor: 'setting-sessions', label: 'security.sessionsTitle' },
 			{ anchor: 'setting-data', label: 'security.dataTitle' },

@@ -129,7 +129,7 @@
 			},
 			"security": {
 				"hint": "Tenimiafina, dingana roa, fitaovana, ny angonao",
-				"keywords": "kaody, fanamarinana, 2FA, TOTP, fidirana, fitaovana, manondrana, mamafa ny kaonty"
+				"keywords": "kaody, fanamarinana, 2FA, TOTP, fidirana, fitaovana, manondrana, mamafa ny kaonty, dian-tanana, tarehy, kaody PIN, biometrika, passkey, fanokafana"
 			},
 			"ai": {
 				"hint": "Mpamatsy sy fanalahidy ho an’ny hevitra nahandro",
@@ -233,7 +233,7 @@
 		"accountRemovePassword": "Fafao ny teny miafina",
 		"accountSave": "Tehirizo ny kaonty",
 		"accountSaved": "Voatahiry ny kaonty.",
-		"accountNeedsMfa": "Alefaso ny fanamarinana roa sosona ao amin'ny mombamomba anao mba hitahiry na hanehoana ny teny miafin'ny kaonty.",
+		"accountNeedsMfa": "Alefaso ny famohana amin'ny fitaovana na ny fanamarinana roa sosona ao amin'ny mombamomba anao mba hitahiry na hampiseho ny tenimiafin'ny kaonty.",
 		"accountGoProfile": "Mankany amin'ny mombamomba",
 		"accountNotFound": "Tsy hita ny karatra.",
 		"accountError": "Tsy voavaky ny kaonty: {error}",
@@ -289,6 +289,23 @@
 		"attachHint": "Ny karatra anaram-barotra dia mandeha amin'ny fivarotana rehetra amin'io tambajotra io.",
 		"name": "Anaran'ny karatra",
 		"namePlaceholder": "Karatra fahatokiana",
+		"brandMatch": "Marika fantatra: {brand}",
+		"color": "Lokon'ny karatra",
+		"colorAuto": "Ho azy",
+		"colorBrand": "Lokon'i {brand}",
+		"colors": {
+			"navy": "Manga maizina",
+			"blue": "Manga",
+			"teal": "Manga maitso",
+			"green": "Maitso",
+			"red": "Mena",
+			"orange": "Volom-boasary",
+			"plum": "Volom-paisomena",
+			"purple": "Volomparasy",
+			"brown": "Volontany",
+			"slate": "Volom-bato"
+		},
+		"preview": "Topi-maso",
 		"code": "Kaodin’ny karatra",
 		"codePlaceholder": "3560070123456",
 		"format": "Endriky ny kaody",
@@ -462,7 +479,6 @@
 	},
 	"recipes": {
 		"import": {
-			"title": "Ampidiro avy amin'ny rohy",
 			"privacy": "Alefa any amin'ny lohamilina an'ity kopia ity ny adiresy, izy no haka ny pejy solonao ary hilaza ny anarany amin'ny tranonkala tsidihina. Tsy misy tehirizina, ary tsy misy pejy hafa sokafana.",
 			"url": "Adiresin'ny fomba fahandroana",
 			"urlPlaceholder": "https://ohatra.mg/fomba-fahandroako",
@@ -562,9 +578,192 @@
 			"readIngredients": "Hamaky ny akora",
 			"speakIngredients": "Akora: {list}.",
 			"steps": "Dingana amin’ny fahandroana",
-			"goTo": "Mankany amin’ny dingana {current} amin’ny {total}"
+			"goTo": "Mankany amin’ny dingana {current} amin’ny {total}",
+			"voice": {
+				"start": "Tsy mila tanana",
+				"stop": "Ajanony ny tsy mila tanana",
+				"introTitle": "Manaraka ny fomba fahandro amin’ny feo",
+				"introBody": "Lazao hoe « Famy », avy eo baiko iray: « Famy, manaraka », « Famy, avereno », « Famy, vakio ny akora ». Tsy mila mikasika ny efijery amin’ny tanana maloto intsony.",
+				"introPrivacy": "Amin’ity fomba ity ihany no mihaino ny mikro. Ny findainao na ny mpitety tranonkalanao no mamantatra ny feo, ary mety mampiasa ny tolotra an-tserasera izy. Tsy mitahiry na inona na inona FamiList.",
+				"introAccept": "Alefaso ny mikro",
+				"introCancel": "Tsy izao",
+				"listening": "Mihaino. Lazao hoe « Famy », avy eo baiko iray.",
+				"awake": "Mihaino anao i Famy…",
+				"understood": "Azo: {command}",
+				"notUnderstood": "Tsy azo: « {text} ». Lazao hoe « Famy, fanampiana » raha hahita ny lisitra.",
+				"denied": "Voarara ny mikro. Avelao ao amin’ny fikirana; mbola azo ampiasaina ny bokotra.",
+				"unsupported": "Tsy misy ny baiko amin’ny feo amin’ity fitaovana ity. Mbola azo ampiasaina ny bokotra.",
+				"failed": "Nijanona ny mikro. Tsindrio ny « Tsy mila tanana » raha hanomboka indray.",
+				"help": "Baiko amin’ny feo",
+				"helpTitle": "Lazao hoe « Famy », avy eo:",
+				"volume": "Haben’ny feo: {percent} %",
+				"speakHelp": "Lazao hoe Famy, avy eo: {list}.",
+				"wake": [
+					"famy",
+					"fami"
+				],
+				"labels": {
+					"next": "Dingana manaraka",
+					"previous": "Dingana teo aloha",
+					"repeat": "Avereno ny dingana",
+					"stepIngredients": "Akoran’ny dingana",
+					"allIngredients": "Akora rehetra",
+					"louder": "Mafy kokoa",
+					"quieter": "Moramora kokoa",
+					"mute": "Vonoy ny feo",
+					"unmute": "Alefaso ny feo",
+					"stopListening": "Aza mihaino intsony",
+					"help": "Fanampiana",
+					"close": "Hivoaka",
+					"startTimer": "Alefaso ny fanisana fotoana",
+					"stopTimer": "Ajanony ny fanisana fotoana",
+					"timeLeft": "Fotoana sisa"
+				},
+				"commands": {
+					"next": [
+						"manaraka",
+						"dingana manaraka",
+						"aorian’izay",
+						"tohizo"
+					],
+					"previous": [
+						"teo aloha",
+						"dingana teo aloha",
+						"miverena"
+					],
+					"repeat": [
+						"avereno",
+						"vakio indray",
+						"indray mandeha indray"
+					],
+					"stepIngredients": [
+						"akora",
+						"vakio ny akora",
+						"inona no ilaina"
+					],
+					"allIngredients": [
+						"akora rehetra",
+						"vakio ny akora rehetra",
+						"lisitra feno"
+					],
+					"louder": [
+						"mafy kokoa",
+						"ampitomboy ny feo"
+					],
+					"quieter": [
+						"moramora kokoa",
+						"ampihenoy ny feo"
+					],
+					"mute": [
+						"mangina",
+						"vonoy ny feo"
+					],
+					"unmute": [
+						"alefaso ny feo",
+						"mitenena indray"
+					],
+					"stopListening": [
+						"aza mihaino intsony",
+						"vonoy ny mikro"
+					],
+					"help": [
+						"fanampiana",
+						"baiko",
+						"inona no azoko lazaina"
+					],
+					"close": [
+						"hivoaka",
+						"mivoaha",
+						"vita"
+					],
+					"startTimer": [
+						"alefaso ny fanisana fotoana",
+						"fanisana fotoana"
+					],
+					"stopTimer": [
+						"ajanony ny fanisana fotoana",
+						"ajanony ny fanairana"
+					],
+					"timeLeft": [
+						"firy sisa",
+						"ohatrinona ny fotoana sisa"
+					]
+				}
+			}
 		},
-		"stepIngredients": "Akora ampiasaina amin’ny dingana {rank}"
+		"stepIngredients": "Akora ampiasaina amin’ny dingana {rank}",
+		"stepDuration": "Faharetan’ny dingana {rank} (tsy voatery)",
+		"durationHours": "Ora",
+		"durationMinutes": "Minitra",
+		"create": {
+			"title": "Hamorona recette",
+			"intro": "Safidio ny fomba hanombohana. Havakinao indray ny zava-drehetra alohan’ny hitahirizana.",
+			"back": "Fomba hafa hamoronana",
+			"backToRecipes": "Hiverina amin’ny recettes",
+			"needsKey": "Mila fanalahidy AI",
+			"needsKeyBody": "Mandalo amin’ny mpamatsy AI anao manokana ity fomba hamoronana ity. Ampidiro ao amin’ny fikirakirana AI ny fanalahidinao, dia miverena eto.",
+			"needsKeyLink": "Hampiditra ny fanalahidiko AI",
+			"sources": {
+				"manual": {
+					"title": "Hanoratra irery",
+					"hint": "Ny anarana, ny akora, avy eo ny dingana."
+				},
+				"link": {
+					"title": "Avy amin’ny rohy",
+					"hint": "Apetaho ny adiresin’ny recette hita tao amin’ny tranonkala."
+				},
+				"photo": {
+					"title": "Avy amin’ny sary",
+					"hint": "Pejin’ny boky na recette voasoratra, vakian’ny AI."
+				},
+				"ai": {
+					"title": "Anontanio ny AI",
+					"hint": "Lazalazao ny sakafo, ny AI no manolotra recette."
+				},
+				"purchases": {
+					"title": "Hevitra avy amin’ny zavatra novidiana",
+					"hint": "Recette miaraka amin’izay efa novidian’ny ankohonana."
+				}
+			}
+		}
+	},
+	"recipeTags": {
+		"title": "Sokajy",
+		"hint": "Mariho izay rehetra mifanaraka: manampy hahitana indray ilay fomba fahandro izy ireo.",
+		"listLabel": "Sokajin’ilay fomba fahandro",
+		"category": {
+			"course": "Karazan-tsakafo",
+			"diet": "Fomba fisakafoanana",
+			"occasion": "Fotoana manokana",
+			"season": "Vanim-potoana"
+		},
+		"tag": {
+			"breakfast": "Sakafo maraina",
+			"aperitif": "Fanokafana sakafo",
+			"hot_starter": "Fidirana mafana",
+			"cold_starter": "Fidirana mangatsiaka",
+			"soup": "Lasopy",
+			"main": "Sakafo fototra",
+			"side": "Laoka fanampiny",
+			"dessert": "Tsindrin-tsakafo",
+			"snack": "Tsakitsaky",
+			"drink": "Zava-pisotro",
+			"vegetarian": "Tsy misy hena",
+			"vegan": "Zavamaniry ihany",
+			"gluten_free": "Tsy misy gluten",
+			"lactose_free": "Tsy misy lactose",
+			"low_salt": "Kely sira",
+			"low_sugar": "Kely siramamy",
+			"quick": "Haingana",
+			"kids": "Ho an’ny ankizy",
+			"party": "Fety",
+			"picnic": "Piknika",
+			"holiday": "Krismasy sy fety",
+			"spring": "Lohataona",
+			"summer": "Fahavaratra",
+			"autumn": "Fararano",
+			"winter": "Ririnina"
+		}
 	},
 	"aisles": {
 		"title": "Faritra",
@@ -1104,6 +1303,34 @@
 		"backupWrong": "Tsy misy kaody vonjy taitra tsy mbola nampiasaina mifanaraka amin'io.",
 		"back": "Hiverina amin'ny kaody avy amin'ny rindranasa"
 	},
+	"deviceUnlock": {
+		"title": "Famohana amin'ny fitaovana",
+		"body": "Hamafiso fa ianao tokoa amin'ny dian-tanana, ny tarehy na ny kaody PIN an'ny findainao. Tsy misy rindranasa apetraka, tsy misy kaody adika.",
+		"fallback": "Amin'ny fitaovana tsy misy dian-tanana na tarehy, ny kaody PIN fanidiana no angatahina.",
+		"add": "Ampiasao ny famohana amin'ity fitaovana ity",
+		"added": "Voasoratra ity fitaovana ity. Hangatahina izy rehefa miditra sy alohan'ny hampisehoana tenimiafina.",
+		"unavailable": "Tsy manolotra famohana amin'ny fitaovana ity mpitety tranonkala na rindranasa ity. Mbola azo ampiasaina eto ambany ny rindranasa fanamarinana.",
+		"listLabel": "Fitaovana voasoratra",
+		"thisDevice": "Ity fitaovana ity",
+		"addedOn": "Nampidirina ny {date}",
+		"remove": "Esory",
+		"removeLabel": "Esory {name}",
+		"failed": "Tsy vita ny fanamafisana. Andramo indray, na mampiasà fomba hafa.",
+		"confirmBody": "Hangataka ny dian-tananao, ny tarehinao na ny kaody PIN ny findainao.",
+		"confirm": "Hamafiso amin'ny dian-tanana, tarehy na PIN an'ny finday",
+		"choose": "Safidio ny fitaovana tananao:",
+		"unavailableHere": "Hamafisina amin'ny famohana fitaovana hafa ity kaonty ity. Ampiasao io fitaovana io, na kaody famonjena.",
+		"useCode": "Na amin'ny kaodin'ny rindranasa",
+		"back": "Hiverina amin'ny fanamafisana",
+		"revealHint": "Hangataka dian-tanana, tarehy na PIN ny findainao alohan'ny hampisehoana ny tenimiafina.",
+		"offlineHint": "Tehirizo voaaro amin'ity fitaovana ity ity tenimiafina ity, ary sokafy tsy misy tambajotra amin'ny famohana ny finday.",
+		"offlineEnable": "Tehirizo amin'ity fitaovana ity miaraka amin'ny famohana ny finday",
+		"offlineOrCode": "Na misafidiana kaody famohana:",
+		"offlineUnsupported": "Tsy mahasokatra ny dika amin'ny famohany ity fitaovana ity. Misafidiana kaody famohana.",
+		"offlineUnlockHint": "Tsy misy tambajotra: hamafiso amin'ny famohana ny findainao.",
+		"offlineUnlock": "Sokafy amin'ny dian-tanana, tarehy na PIN an'ny finday",
+		"offlineWrongDevice": "Tsy io ny fanalahidy nampiasaina hitehirizana ity tenimiafina ity. Andramo indray."
+	},
 	"security": {
 		"title": "Fiarovana",
 		"subtitle": "Ny teny miafina, ny fanamarinana roa dingana, ary ny fitaovana mifandray.",
@@ -1281,8 +1508,6 @@
 		"clear": "Esory ny lakile",
 		"active": "Mihatra",
 		"useThisOne": "Ampiasao ity",
-		"suggest": "Hevitra recette",
-		"suggestTitle": "Hevitra avy amin izay novidinao",
 		"noProducts": "Mbola tsy misy entana voamarika. Mividiana aloha, avy eo no hipoiran ny hevitra.",
 		"willSend": {
 			"one": "Hisy vokatra 1 halefa",
@@ -1344,8 +1569,6 @@
 		"photoErrorUnreachable": "Tsy namaly ny tolotra sary. Andramo indray afaka kelikely.",
 		"photoErrorUpload": "Tsy voatahiry ny sary. Andramo indray.",
 		"photo": {
-			"trigger": "Mamorona lasopy amin'ny sary",
-			"title": "Alao sary ny lasopy",
 			"hint": "Alao sary pejin-boky, na lasopy voasoratra na vita pirinty.",
 			"pick": "Maka na mampiditra sary",
 			"reading": "Mamaky ny sary…",
@@ -1483,5 +1706,32 @@
 		"saved": "Voatahiry ny lakile {bank}",
 		"removed": "Nesorina ny lakile {bank}",
 		"saveFailed": "Tsy voatahiry ny lakile. Andramo indray."
+	},
+	"timers": {
+		"start": "Alefaso ny fanisana fotoana ({time})",
+		"running": "Fanisana fotoana mandeha",
+		"stepLabel": "Dingana {rank}",
+		"addMinute": "+1 minitra",
+		"stop": "Ajanony",
+		"announce": "Lazao ny fotoana",
+		"remaining": "Mbola {time} sisa ho an’ny dingana {rank}.",
+		"none": "Tsy misy fanisana fotoana mandeha.",
+		"noDuration": "Tsy misy faharetana ity dingana ity. Ampio izany rehefa manova ny fomba fahandro.",
+		"webHint": "Ao amin’ny mpitety tranonkala, maneno ihany ny fanairana raha mbola misokatra FamiList.",
+		"doneTitle": "Tapitra ny fotoana",
+		"doneBody": "{recipe} — {step}",
+		"stopAlarm": "Ajanony ny fanairana",
+		"hours": {
+			"one": "{count} ora",
+			"other": "{count} ora"
+		},
+		"minutes": {
+			"one": "{count} minitra",
+			"other": "{count} minitra"
+		},
+		"seconds": {
+			"one": "{count} segondra",
+			"other": "{count} segondra"
+		}
 	}
 }

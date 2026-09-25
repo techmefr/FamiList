@@ -7,6 +7,8 @@
 	import { DEFAULT_SERVINGS } from '$domain/recipe';
 	import { aiRecipeConversation } from '$stores/ai-recipe-conversation.svelte';
 	import { restrictionsOf, type SuggestedRecipe } from '$domain/ai-recipe';
+	import { draftFromSuggestion, type RecipeDraft } from '$domain/recipe-draft';
+	import { onDestroy } from 'svelte';
 	import {
 		appendTranscript,
 		bcp47LocaleOf,
@@ -23,9 +25,14 @@
 	interface Props {
 		/** Called once the person keeps a suggestion, in addition to it being saved as a household recipe. */
 		onAccepted?: (recipe: SuggestedRecipe) => void;
+		/**
+		 * Set by the "Create a recipe" screen (#311): the thread is open from the start, and a kept suggestion
+		 * goes to the recipe form as a draft instead of being saved here.
+		 */
+		onDraft?: (draft: RecipeDraft) => void;
 	}
 
-	const { onAccepted }: Props = $props();
+	const { onAccepted, onDraft }: Props = $props();
 
 	/**
 	 * Ask the AI for a recipe by describing it in plain words ("un curry de poulet pour 4"), then keep
@@ -35,10 +42,17 @@
 	 * answer never reaches this screen — only the parsed cards below.
 	 */
 	let isOpen = $state(false);
+	const shown = $derived(isOpen || Boolean(onDraft));
 	let message = $state('');
 
 	const conversation = aiRecipeConversation;
 	const language = $derived(LOCALES.find(l => l.code === i18n.locale)?.native ?? 'français');
+
+	// The thread only lives as long as the screen showing it: coming back to "Create a recipe" later starts
+	// a new one, the same as closing it would.
+	onDestroy(() => {
+		if (onDraft) conversation.reset();
+	});
 
 	/**
 	 * Voice dictation for the field above (#265): entirely the browser's own `SpeechRecognition`, so a
@@ -134,6 +148,11 @@
 	 */
 	function accept(index: number, suggestion: SuggestedRecipe) {
 		feedback.play('add');
+		if (onDraft) {
+			onDraft(draftFromSuggestion(suggestion));
+			return;
+		}
+
 		data.addRecipe({
 			name: suggestion.name,
 			emoji: suggestion.emoji,
@@ -141,7 +160,9 @@
 			ingredients: suggestion.ingredients,
 			steps: suggestion.steps,
 			stepIngredients: suggestion.stepIngredients,
-			imagePrompt: suggestion.imagePrompt
+			imagePrompt: suggestion.imagePrompt,
+			tags: suggestion.tags,
+			stepDurations: suggestion.stepDurations
 		});
 
 		onAccepted?.(suggestion);
@@ -150,31 +171,35 @@
 </script>
 
 <!--
-	The free-text "ask the AI for a recipe" entry point, reused as-is on the recipes screen and from both
-	chat screens (#211), now a running thread (#226) instead of one round trip: prior turns stay visible,
-	and the input at the bottom keeps taking follow-ups until the person closes it. Nothing but the
+	The free-text "ask the AI for a recipe" entry point, reused on the "Create a recipe" screen (#311) and
+	from both chat screens (#211), now a running thread (#226) instead of one round trip: prior turns stay
+	visible, and the input at the bottom keeps taking follow-ups until the person closes it. Nothing but the
 	person's own typed sentences and the resulting cards ever show: no prompt preview, no raw JSON.
 -->
 {#if ai.configured}
 	<div data-test-id="ai-request-block">
-		<Button variant="outline" onclick={toggle} data-test-id="ai-request-open">
-			<Sparkles size={18} aria-hidden="true" />
-			{t('ai.request.trigger')}
-		</Button>
+		{#if !onDraft}
+			<Button variant="outline" onclick={toggle} data-test-id="ai-request-open">
+				<Sparkles size={18} aria-hidden="true" />
+				{t('ai.request.trigger')}
+			</Button>
+		{/if}
 
-		{#if isOpen}
-			<Card.Root class="mt-4">
+		{#if shown}
+			<Card.Root class={onDraft ? '' : 'mt-4'}>
 				<Card.Header class="flex flex-row items-start justify-between gap-2">
 					<Card.Title class="text-h2">{t('ai.request.title')}</Card.Title>
-					<button
-						type="button"
-						onclick={toggle}
-						aria-label={t('common.close')}
-						data-test-id="ai-request-close"
-						class="fl-press text-muted-foreground hover:bg-muted grid min-h-[max(2.75rem,44px)] min-w-[44px] shrink-0 place-items-center rounded-full"
-					>
-						<X size={20} aria-hidden="true" />
-					</button>
+					{#if !onDraft}
+						<button
+							type="button"
+							onclick={toggle}
+							aria-label={t('common.close')}
+							data-test-id="ai-request-close"
+							class="fl-press text-muted-foreground hover:bg-muted grid min-h-[max(2.75rem,44px)] min-w-[44px] shrink-0 place-items-center rounded-full"
+						>
+							<X size={20} aria-hidden="true" />
+						</button>
+					{/if}
 				</Card.Header>
 				<Card.Content class="space-y-4">
 					{#each conversation.turns as turn, index (index)}

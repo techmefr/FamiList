@@ -10,6 +10,8 @@
 	import { feedback } from '$stores/feedback.svelte';
 	import { backupCodesText, formatBackupCode, isCompleteOtp, normalizeOtp } from '$domain/otp';
 	import { deviceLabel, deviceText } from '$domain/device';
+	import { deviceFactorName, factorsOfType } from '$domain/device-unlock';
+	import { deviceUnlockAvailable, rememberedDeviceFactor } from '$native/device-unlock';
 	import * as Card from '$components/ui/card';
 	import { Button } from '$components/ui/button';
 	import CodeField from '$components/app/CodeField.svelte';
@@ -30,7 +32,8 @@
 		EyeOff,
 		TriangleAlert,
 		Download,
-		Trash2
+		Trash2,
+		FingerprintPattern
 	} from '@lucide/svelte';
 
 	let factors = $state<Factor[]>([]);
@@ -56,7 +59,20 @@
 	let passwordChanged = $state(false);
 	let passwordError = $state('');
 
-	const enabled = $derived(factors.length > 0);
+	const totpFactors = $derived(factorsOfType(factors, 'totp'));
+	const passkeys = $derived(factorsOfType(factors, 'webauthn'));
+	const enabled = $derived(totpFactors.length > 0);
+	const protectedAccount = $derived(factors.length > 0);
+
+	let deviceSupported = $state(false);
+	let thisDevice = $state<string | null>(null);
+	let deviceError = $state('');
+	let deviceAdded = $state(false);
+
+	$effect(() => {
+		deviceUnlockAvailable().then((available) => (deviceSupported = available));
+		thisDevice = rememberedDeviceFactor();
+	});
 
 	/**
 	 * The switch is not derived from `active`: between the gesture and the second factor actually set,
@@ -102,7 +118,7 @@
 		}
 
 		factors = loadedFactors;
-		switchOn = loadedFactors.length > 0 || enrollment !== null;
+		switchOn = factorsOfType(loadedFactors, 'totp').length > 0 || enrollment !== null;
 		sessions = loadedSessions;
 		remaining = loadedRemaining;
 	}
@@ -146,14 +162,15 @@
 		// started from nothing: the switch, which has already taken the lead, stayed on "off" with no request
 		// sent and no error shown — the screen announced a protection removed that still held. We re-read the
 		// account, which puts the switch back on its real state.
-		if (factors.length === 0) {
+		if (totpFactors.length === 0) {
 			await reload();
 			return;
 		}
 
 		// We stop at the first refusal rather than carry on: `disable` has already put the switch back and shown
-		// the reason, and the next turn would erase it straight away.
-		for (const factor of factors) {
+		// the reason, and the next turn would erase it straight away. Only the authenticator codes: the device
+		// passkeys have their own card and their own remove buttons.
+		for (const factor of totpFactors) {
 			if (!(await disable(factor.id))) return;
 		}
 	}
@@ -178,15 +195,60 @@
 		code = '';
 
 		// Enabling the second step with no backup codes is putting up a lock and throwing away the spare key.
-		// We make them straight away rather than count on a good resolution.
-		codes = await session.newBackupCodes();
+		// We make them straight away rather than count on a good resolution. A passkey already in place came
+		// with its own set: replacing it here would void a sheet the person believes still works.
+		if (!protectedAccount) codes = await session.newBackupCodes();
+		await reload();
+	}
+
+	async function addDevice() {
+		busy = true;
+		deviceError = '';
+		deviceAdded = false;
+		const hadFactor = protectedAccount;
+
+		const name = deviceFactorName(
+			deviceLabel(navigator.userAgent),
+			t('security.on'),
+			t('security.unknownDevice'),
+			new Date()
+		);
+		const ok = await session.registerDeviceUnlock(name);
+		busy = false;
+
+		if (!ok) {
+			deviceError = session.error || t('deviceUnlock.failed');
+			return;
+		}
+
+		feedback.play('success');
+		deviceAdded = true;
+		thisDevice = rememberedDeviceFactor();
+		if (!hadFactor) codes = await session.newBackupCodes();
+		await reload();
+	}
+
+	async function removeDevice(id: string) {
+		busy = true;
+		deviceError = '';
+		deviceAdded = false;
+		const ok = await session.unenrollFactor(id);
+		busy = false;
+
+		if (!ok) {
+			deviceError = session.error ?? '';
+			return;
+		}
+
+		thisDevice = rememberedDeviceFactor();
+		if (factors.length <= 1) codes = [];
 		await reload();
 	}
 
 	async function disable(id: string) {
 		busy = true;
 		error = '';
-		const ok = await session.unenrollTotp(id);
+		const ok = await session.unenrollFactor(id);
 		busy = false;
 
 		if (!ok) {
@@ -423,6 +485,78 @@
 	</Card.Content>
 </Card.Root>
 
+<!--
+	Before the authenticator app on purpose: for most people the phone already knows who they are, and a
+	second app with a square to photograph is the step they give up on.
+-->
+<Card.Root id="setting-device-unlock" tabindex={-1} class="fl-setting mt-6" data-test-id="device-unlock">
+	<Card.Header>
+		<Card.Title class="text-h2 flex items-center gap-2">
+			<FingerprintPattern size={22} aria-hidden="true" />
+			{t('deviceUnlock.title')}
+		</Card.Title>
+	</Card.Header>
+	<Card.Content class="space-y-4">
+		<p class="text-muted-foreground text-label">{t('deviceUnlock.body')}</p>
+
+		{#if !loading && !loadError && passkeys.length > 0}
+			<ul class="fl-divided" aria-label={t('deviceUnlock.listLabel')} data-test-id="device-unlock-list">
+				{#each passkeys as passkey (passkey.id)}
+					<li class="flex flex-wrap items-center justify-between gap-3 py-3" data-test-class="device-unlock-item">
+						<div class="min-w-0">
+							<p class="text-label font-medium break-words">
+								{passkey.friendlyName}
+								{#if passkey.id === thisDevice}
+									<span class="bg-[var(--fl-primary-tint)] text-primary text-caption ms-2 rounded-full px-2 py-0.5">
+										{t('deviceUnlock.thisDevice')}
+									</span>
+								{/if}
+							</p>
+							<p class="text-muted-foreground text-caption">
+								{t('deviceUnlock.addedOn', { date: dateLongue.format(new Date(passkey.createdAt)) })}
+							</p>
+						</div>
+						<Button
+							variant="outline"
+							disabled={busy}
+							onclick={() => removeDevice(passkey.id)}
+							aria-label={t('deviceUnlock.removeLabel', { name: passkey.friendlyName })}
+							data-test-class="device-unlock-remove"
+						>
+							<Trash2 size={18} aria-hidden="true" />
+							{t('deviceUnlock.remove')}
+						</Button>
+					</li>
+				{/each}
+			</ul>
+		{/if}
+
+		<div aria-live="polite">
+			{#if deviceError}
+				<p class="text-destructive text-label" role="alert" data-test-id="device-unlock-error">{deviceError}</p>
+			{/if}
+			{#if deviceAdded}
+				<p class="text-secondary text-label flex items-start gap-2" data-test-id="device-unlock-added">
+					<Check size={18} class="mt-0.5 shrink-0" aria-hidden="true" />
+					<span>{t('deviceUnlock.added')}</span>
+				</p>
+			{/if}
+		</div>
+
+		{#if !deviceSupported}
+			<p class="text-muted-foreground text-label" data-test-id="device-unlock-unavailable">
+				{t('deviceUnlock.unavailable')}
+			</p>
+		{:else if !loading && !loadError && !passkeys.some((passkey) => passkey.id === thisDevice)}
+			<p class="text-muted-foreground text-caption">{t('deviceUnlock.fallback')}</p>
+			<Button class="fl-press w-full" disabled={busy} onclick={addDevice} data-test-id="device-unlock-add">
+				<FingerprintPattern size={18} aria-hidden="true" />
+				{busy ? t('common.loading') : t('deviceUnlock.add')}
+			</Button>
+		{/if}
+	</Card.Content>
+</Card.Root>
+
 <Card.Root id="setting-two-factor" tabindex={-1} class="fl-setting mt-6">
 	<Card.Header>
 		<Card.Title class="text-h2 flex items-center gap-2">
@@ -458,7 +592,7 @@
 							{t('security.twoFactorPending')}
 						{:else if enabled}
 							{t('security.twoFactorOn', {
-								date: dateLongue.format(new Date(factors[0].createdAt))
+								date: dateLongue.format(new Date(totpFactors[0].createdAt))
 							})}
 						{:else}
 							{t('security.twoFactorOff')}
@@ -542,7 +676,7 @@
 	</Card.Content>
 </Card.Root>
 
-{#if enabled || codes.length > 0}
+{#if protectedAccount || codes.length > 0}
 	<Card.Root class="mt-6">
 		<Card.Header>
 			<Card.Title class="text-h2 flex items-center gap-2">

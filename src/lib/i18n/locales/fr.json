@@ -129,7 +129,7 @@
 			},
 			"security": {
 				"hint": "Mot de passe, deux étapes, appareils, vos données",
-				"keywords": "code, authentification, 2FA, TOTP, session, appareil, exporter, supprimer le compte"
+				"keywords": "code, authentification, 2FA, TOTP, session, appareil, exporter, supprimer le compte, empreinte, visage, code PIN, biométrie, clé d’accès, déverrouillage"
 			},
 			"ai": {
 				"hint": "Fournisseur et clé pour des idées de recettes",
@@ -233,7 +233,7 @@
 		"accountRemovePassword": "Supprimer le mot de passe",
 		"accountSave": "Enregistrer le compte",
 		"accountSaved": "Compte enregistré.",
-		"accountNeedsMfa": "Activez la double authentification dans votre profil pour enregistrer ou afficher le mot de passe d'un compte.",
+		"accountNeedsMfa": "Activez le déverrouillage de l'appareil ou la vérification en deux étapes dans votre profil pour enregistrer ou afficher le mot de passe d'un compte.",
 		"accountGoProfile": "Aller au profil",
 		"accountNotFound": "Carte introuvable.",
 		"accountError": "Impossible de lire le compte : {error}",
@@ -289,6 +289,23 @@
 		"attachHint": "Une carte d’enseigne marche dans tous les magasins de la chaîne.",
 		"name": "Nom de la carte",
 		"namePlaceholder": "Carte de fidélité",
+		"brandMatch": "Enseigne reconnue : {brand}",
+		"color": "Couleur de la carte",
+		"colorAuto": "Automatique",
+		"colorBrand": "Couleur {brand}",
+		"colors": {
+			"navy": "Bleu nuit",
+			"blue": "Bleu",
+			"teal": "Bleu canard",
+			"green": "Vert",
+			"red": "Rouge",
+			"orange": "Orange",
+			"plum": "Prune",
+			"purple": "Violet",
+			"brown": "Brun",
+			"slate": "Ardoise"
+		},
+		"preview": "Aperçu",
 		"code": "Code de la carte",
 		"codePlaceholder": "3560070123456",
 		"format": "Format du code",
@@ -462,7 +479,6 @@
 	},
 	"recipes": {
 		"import": {
-			"title": "Importer depuis un lien",
 			"privacy": "L’adresse est envoyée au serveur de l’instance, qui ira chercher la page à votre place et se présentera au site visité. Rien n’est conservé, et aucune autre page n’est consultée.",
 			"url": "Adresse de la recette",
 			"urlPlaceholder": "https://exemple.fr/ma-recette",
@@ -562,9 +578,220 @@
 			"readIngredients": "Lire les ingrédients",
 			"speakIngredients": "Ingrédients : {list}.",
 			"steps": "Étapes de la recette",
-			"goTo": "Aller à l’étape {current} sur {total}"
+			"goTo": "Aller à l’étape {current} sur {total}",
+			"voice": {
+				"start": "Mains libres",
+				"stop": "Arrêter les mains libres",
+				"introTitle": "Suivre la recette à la voix",
+				"introBody": "Dites « Famy », puis une commande : « Famy, suivant », « Famy, répète », « Famy, lis les ingrédients ». Plus besoin de toucher l’écran avec les mains sales.",
+				"introPrivacy": "Le micro n’écoute que pendant ce mode. La reconnaissance est faite par votre téléphone ou votre navigateur, qui peut passer par son service en ligne. FamiList n’enregistre rien.",
+				"introAccept": "Activer le micro",
+				"introCancel": "Pas maintenant",
+				"listening": "À l’écoute. Dites « Famy » puis une commande.",
+				"awake": "Famy vous écoute…",
+				"understood": "Compris : {command}",
+				"notUnderstood": "Pas compris : « {text} ». Dites « Famy, aide » pour la liste.",
+				"denied": "Le micro est refusé. Autorisez-le dans les réglages ; les boutons restent utilisables.",
+				"unsupported": "La commande vocale n’est pas disponible sur cet appareil. Les boutons restent utilisables.",
+				"failed": "Le micro s’est arrêté. Touchez « Mains libres » pour relancer.",
+				"help": "Commandes vocales",
+				"helpTitle": "Dites « Famy », puis :",
+				"volume": "Volume : {percent} %",
+				"speakHelp": "Dites Famy, puis : {list}.",
+				"wake": [
+					"famy",
+					"fami",
+					"famie",
+					"fa mi"
+				],
+				"labels": {
+					"next": "Étape suivante",
+					"previous": "Étape précédente",
+					"repeat": "Répéter l’étape",
+					"stepIngredients": "Ingrédients de l’étape",
+					"allIngredients": "Tous les ingrédients",
+					"louder": "Plus fort",
+					"quieter": "Moins fort",
+					"mute": "Couper la voix",
+					"unmute": "Remettre la voix",
+					"stopListening": "Arrêter d’écouter",
+					"help": "Aide",
+					"close": "Quitter",
+					"startTimer": "Lancer le minuteur",
+					"stopTimer": "Arrêter le minuteur",
+					"timeLeft": "Temps restant"
+				},
+				"commands": {
+					"next": [
+						"suivant",
+						"suivante",
+						"étape suivante",
+						"après",
+						"on continue",
+						"continue",
+						"ensuite"
+					],
+					"previous": [
+						"précédent",
+						"précédente",
+						"étape précédente",
+						"retour",
+						"reviens",
+						"avant"
+					],
+					"repeat": [
+						"répète",
+						"répéter",
+						"redis",
+						"relis",
+						"encore",
+						"relis l’étape"
+					],
+					"stepIngredients": [
+						"ingrédients",
+						"lis les ingrédients",
+						"ingrédients de l’étape",
+						"qu’est-ce qu’il faut"
+					],
+					"allIngredients": [
+						"tous les ingrédients",
+						"toute la recette",
+						"liste complète"
+					],
+					"louder": [
+						"plus fort",
+						"monte le son",
+						"monte le volume"
+					],
+					"quieter": [
+						"moins fort",
+						"baisse le son",
+						"baisse le volume",
+						"plus bas"
+					],
+					"mute": [
+						"coupe la voix",
+						"tais-toi",
+						"silence",
+						"chut"
+					],
+					"unmute": [
+						"remets la voix",
+						"réactive la voix",
+						"parle"
+					],
+					"stopListening": [
+						"arrête d’écouter",
+						"coupe le micro",
+						"arrête le micro"
+					],
+					"help": [
+						"aide",
+						"aide-moi",
+						"commandes",
+						"qu’est-ce que je peux dire"
+					],
+					"close": [
+						"quitter",
+						"quitte",
+						"ferme",
+						"fermer",
+						"terminé",
+						"j’ai fini"
+					],
+					"startTimer": [
+						"lance le minuteur",
+						"démarre le minuteur",
+						"minuteur",
+						"lance le chrono"
+					],
+					"stopTimer": [
+						"arrête le minuteur",
+						"stop minuteur",
+						"arrête l’alarme",
+						"coupe l’alarme"
+					],
+					"timeLeft": [
+						"combien de temps",
+						"temps restant",
+						"il reste combien"
+					]
+				}
+			}
 		},
-		"stepIngredients": "Ingrédients utilisés à l’étape {rank}"
+		"stepIngredients": "Ingrédients utilisés à l’étape {rank}",
+		"stepDuration": "Durée de l’étape {rank} (facultatif)",
+		"durationHours": "Heures",
+		"durationMinutes": "Minutes",
+		"create": {
+			"title": "Créer une recette",
+			"intro": "Choisissez comment commencer. Vous relirez tout avant d’enregistrer.",
+			"back": "Autres façons de créer",
+			"backToRecipes": "Retour aux recettes",
+			"needsKey": "Demande une clé IA",
+			"needsKeyBody": "Cette façon de créer passe par votre propre fournisseur d’IA. Posez votre clé dans les réglages IA, puis revenez ici.",
+			"needsKeyLink": "Poser ma clé IA",
+			"sources": {
+				"manual": {
+					"title": "Écrire moi-même",
+					"hint": "Le nom, les ingrédients, puis les étapes."
+				},
+				"link": {
+					"title": "Depuis un lien",
+					"hint": "Collez l’adresse d’une recette trouvée sur le web."
+				},
+				"photo": {
+					"title": "Depuis une photo",
+					"hint": "Une page de livre ou une recette écrite, lue par l’IA."
+				},
+				"ai": {
+					"title": "Demander à l’IA",
+					"hint": "Décrivez le plat, l’IA propose une recette."
+				},
+				"purchases": {
+					"title": "Idée à partir des achats",
+					"hint": "Une recette avec ce que le foyer a déjà acheté."
+				}
+			}
+		}
+	},
+	"recipeTags": {
+		"title": "Catégories",
+		"hint": "Cochez tout ce qui correspond : elles servent à retrouver la recette.",
+		"listLabel": "Catégories de la recette",
+		"category": {
+			"course": "Type de plat",
+			"diet": "Régime",
+			"occasion": "Occasion",
+			"season": "Saison"
+		},
+		"tag": {
+			"breakfast": "Petit-déjeuner",
+			"aperitif": "Apéritif",
+			"hot_starter": "Entrée chaude",
+			"cold_starter": "Entrée froide",
+			"soup": "Soupe",
+			"main": "Plat principal",
+			"side": "Accompagnement",
+			"dessert": "Dessert",
+			"snack": "Goûter",
+			"drink": "Boisson",
+			"vegetarian": "Végétarien",
+			"vegan": "Végan",
+			"gluten_free": "Sans gluten",
+			"lactose_free": "Sans lactose",
+			"low_salt": "Pauvre en sel",
+			"low_sugar": "Peu sucré",
+			"quick": "Rapide",
+			"kids": "Pour les enfants",
+			"party": "Fête",
+			"picnic": "Pique-nique",
+			"holiday": "Noël et fêtes",
+			"spring": "Printemps",
+			"summer": "Été",
+			"autumn": "Automne",
+			"winter": "Hiver"
+		}
 	},
 	"aisles": {
 		"title": "Rayons",
@@ -1104,6 +1331,34 @@
 		"backupWrong": "Ce code ne correspond à aucun code de secours inutilisé.",
 		"back": "Revenir au code de l'application"
 	},
+	"deviceUnlock": {
+		"title": "Déverrouillage de l'appareil",
+		"body": "Confirmez que c'est bien vous avec l'empreinte, le visage ou le code de votre téléphone. Pas d'application à installer, pas de code à recopier.",
+		"fallback": "Sur un appareil sans empreinte ni visage, c'est son code de verrouillage qui est demandé.",
+		"add": "Utiliser le déverrouillage de cet appareil",
+		"added": "Cet appareil est enregistré. Il vous sera demandé à la connexion et avant d'afficher un mot de passe.",
+		"unavailable": "Ce navigateur ou cette application ne propose pas le déverrouillage de l'appareil. L'application d'authentification, ci-dessous, reste possible.",
+		"listLabel": "Appareils enregistrés",
+		"thisDevice": "Cet appareil",
+		"addedOn": "Ajouté le {date}",
+		"remove": "Retirer",
+		"removeLabel": "Retirer {name}",
+		"failed": "La confirmation n'a pas abouti. Réessayez, ou utilisez une autre méthode.",
+		"confirmBody": "Votre téléphone va vous demander votre empreinte, votre visage ou son code.",
+		"confirm": "Confirmer avec l'empreinte, le visage ou le code du téléphone",
+		"choose": "Choisissez l'appareil que vous tenez en main :",
+		"unavailableHere": "Ce compte se confirme avec le déverrouillage d'un autre appareil. Utilisez cet appareil, ou un code de secours.",
+		"useCode": "Ou avec le code de l'application",
+		"back": "Revenir à la confirmation",
+		"revealHint": "Votre téléphone vous demandera votre empreinte, votre visage ou son code avant d'afficher le mot de passe.",
+		"offlineHint": "Gardez ce mot de passe chiffré sur cet appareil, et ouvrez-le sans réseau avec le déverrouillage du téléphone.",
+		"offlineEnable": "Garder sur cet appareil avec le déverrouillage du téléphone",
+		"offlineOrCode": "Ou choisissez plutôt un code de déverrouillage :",
+		"offlineUnsupported": "Cet appareil ne sait pas ouvrir la copie avec son déverrouillage. Choisissez un code de déverrouillage.",
+		"offlineUnlockHint": "Hors connexion : confirmez avec le déverrouillage de votre téléphone.",
+		"offlineUnlock": "Ouvrir avec l'empreinte, le visage ou le code du téléphone",
+		"offlineWrongDevice": "Ce n'est pas la clé d'accès qui a servi à garder ce mot de passe. Réessayez."
+	},
 	"security": {
 		"title": "Sécurité",
 		"subtitle": "Le mot de passe, la vérification en deux étapes, et les appareils connectés.",
@@ -1280,8 +1535,6 @@
 		"clear": "Retirer la clé",
 		"active": "Actif",
 		"useThisOne": "Utiliser celui-ci",
-		"suggest": "Une idée de recette",
-		"suggestTitle": "Une idée à partir de vos achats",
 		"noProducts": "Aucun article coché pour l’instant. Faites vos courses, les idées viendront de là.",
 		"willSend": {
 			"one": "1 produit va être envoyé",
@@ -1343,8 +1596,6 @@
 		"photoErrorUnreachable": "Le service d'images n'a pas répondu. Réessayez dans un instant.",
 		"photoErrorUpload": "L'image n'a pas pu être enregistrée. Réessayez.",
 		"photo": {
-			"trigger": "Créer une recette par photo",
-			"title": "Prenez une photo de la recette",
 			"hint": "Photographiez une page de livre, ou une recette écrite ou imprimée.",
 			"pick": "Prendre ou importer une photo",
 			"reading": "Lecture de la photo…",
@@ -1482,5 +1733,32 @@
 		"saved": "Clé {bank} enregistrée",
 		"removed": "Clé {bank} retirée",
 		"saveFailed": "La clé n'a pas pu être enregistrée. Réessayez."
+	},
+	"timers": {
+		"start": "Lancer le minuteur ({time})",
+		"running": "Minuteurs en cours",
+		"stepLabel": "Étape {rank}",
+		"addMinute": "+1 minute",
+		"stop": "Arrêter",
+		"announce": "Annoncer le temps",
+		"remaining": "Il reste {time} pour l’étape {rank}.",
+		"none": "Aucun minuteur en cours.",
+		"noDuration": "Cette étape n’a pas de durée. Ajoutez-la en modifiant la recette.",
+		"webHint": "Dans un navigateur, l’alarme ne sonne que si FamiList reste ouvert.",
+		"doneTitle": "Minuteur terminé",
+		"doneBody": "{recipe} — {step}",
+		"stopAlarm": "Arrêter l’alarme",
+		"hours": {
+			"one": "{count} heure",
+			"other": "{count} heures"
+		},
+		"minutes": {
+			"one": "{count} minute",
+			"other": "{count} minutes"
+		},
+		"seconds": {
+			"one": "{count} seconde",
+			"other": "{count} secondes"
+		}
 	}
 }

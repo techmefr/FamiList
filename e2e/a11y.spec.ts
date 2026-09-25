@@ -10,6 +10,7 @@ const ROUTES: Array<{ screen: string; path: string; ready: string }> = [
 	{ screen: 'magasins', path: '/shops', ready: 'nav-create' },
 	{ screen: 'cartes', path: '/cards', ready: 'nav-create' },
 	{ screen: 'recettes', path: '/recipes', ready: 'nav-create' },
+	{ screen: 'creer-une-recette', path: '/recipes/new', ready: 'recipe-sources' },
 	{ screen: 'prix', path: '/prices', ready: 'nav-create' },
 	{ screen: 'foyer', path: '/household', ready: 'nav-create' },
 	{ screen: 'discussion', path: '/chat', ready: 'nav-create' },
@@ -126,8 +127,8 @@ test.describe('accessibilite', () => {
 	 * three.
 	 */
 	test('formulaire de recette', async ({ signedInPage: page }) => {
-		await page.goto('/recipes');
-		await page.getByTestId('recipe-new').click();
+		await page.goto('/recipes/new');
+		await page.getByTestId('recipe-source-manual').click();
 		await expect(page.getByTestId('recipe-name')).toBeVisible();
 
 		await page.getByTestId('recipe-name').fill(`A11y ${Date.now()}`);

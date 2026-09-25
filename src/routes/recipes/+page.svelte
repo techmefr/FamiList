@@ -1,24 +1,17 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import { supabase } from '$db/supabase';
 	import { data } from '$stores/data.svelte';
 	import { feedback } from '$stores/feedback.svelte';
 	import { ai } from '$stores/ai.svelte';
-	import { createIntent } from '$stores/create.svelte';
-	import { i18n, t, LOCALES } from '$i18n/index.svelte';
+	import { recipeDraft } from '$stores/recipe-draft.svelte';
+	import { t } from '$i18n/index.svelte';
 	import { motionMs } from '$stores/settings.svelte';
 	import { DEFAULT_SERVINGS, MAX_SERVINGS, MIN_SERVINGS, type RecipeLine } from '$domain/recipe';
 	import type { Recipe } from '$db/schema';
-	import { recipeExtractionPrompt, restrictionsOf, type SuggestedRecipe } from '$domain/ai-recipe';
-	import {
-		importErrorOf,
-		importedLines,
-		parseImportedServings,
-		type ImportError,
-		type ImportedRecipe
-	} from '$domain/recipe-import';
+	import { DEFAULT_EMOJI, type RecipeDraft } from '$domain/recipe-draft';
 	import { UNITS, DEFAULT_UNIT } from '$domain/units';
-	import { guessLinks, toggleLink, withoutIngredient } from '$domain/step-ingredients';
+	import { toggleLink, withoutIngredient } from '$domain/step-ingredients';
+	import { durationFields, durationFromFields } from '$domain/step-duration';
 	import { Button } from '$components/ui/button';
 	import { Input } from '$components/ui/input';
 	import { Label } from '$components/ui/label';
@@ -29,12 +22,11 @@
 	import EmojiPicker from '$components/app/EmojiPicker.svelte';
 	import EmptyState from '$components/app/EmptyState.svelte';
 	import IconField from '$components/app/IconField.svelte';
-	import RecipeSuggestion from '$components/app/RecipeSuggestion.svelte';
-	import AiRecipeRequest from '$components/app/AiRecipeRequest.svelte';
-	import AiRecipePhoto from '$components/app/AiRecipePhoto.svelte';
 	import RecipePhoto from '$components/app/RecipePhoto.svelte';
 	import RecipeShareSheet from '$components/app/RecipeShareSheet.svelte';
 	import RecipeCover from '$components/app/RecipeCover.svelte';
+	import RecipeTagPicker from '$components/app/RecipeTagPicker.svelte';
+	import RecipeTagChips from '$components/app/RecipeTagChips.svelte';
 	import {
 		CookingPot,
 		Hash,
@@ -45,9 +37,6 @@
 		ChevronLeft,
 		ChevronRight,
 		Check,
-		Link2,
-		Download,
-		Sparkles,
 		CalendarDays,
 		Pencil,
 		Share2,
@@ -68,8 +57,6 @@
 	const STEPS = ['recipe', 'ingredients', 'steps'] as const;
 	type Step = (typeof STEPS)[number];
 
-	const DEFAULT_EMOJI = '🍲';
-
 	let creating = $state(false);
 	let step = $state<Step>('recipe');
 	let picker = $state<EmojiPicker | null>(null);
@@ -83,11 +70,15 @@
 	let lines = $state<RecipeLine[]>([{ name: '', qty: '', unit: DEFAULT_UNIT }]);
 	let steps = $state<string[]>(['']);
 	let stepIngredients = $state<number[][]>([[]]);
+	/** Each step's duration as typed (#310): two plain fields rather than a wheel picker. */
+	let stepTimes = $state<{ hours: string; minutes: string }[]>([durationFields(null)]);
+	const stepDurations = $derived(stepTimes.map((time) => durationFromFields(time.hours, time.minutes)));
 	/** The ingredient rows a step can be linked to (#308): a row still unnamed has nothing to show. */
 	const namedLines = $derived(
 		lines.map((line, lineIndex) => ({ line, lineIndex })).filter(({ line }) => line.name.trim())
 	);
 	let notes = $state('');
+	let tags = $state<string[]>([]);
 
 	/** Set when the form is a copy of a recipe shared by another circle: saving creates a recipe of our own. */
 	let copiedFrom = $state<string | null>(null);
@@ -129,10 +120,7 @@
 		expandedIds = next;
 	}
 
-	/** The import from a link: the address typed, the wait, the refusal, and the fact of having served. */
-	let link = $state('');
-	let importing = $state(false);
-	let importRefusal = $state<ImportError | null>(null);
+	/** Whether the open form holds a draft read from elsewhere (a page, a photo, the AI), to be read over. */
 	let fromImport = $state(false);
 
 	/**
@@ -143,25 +131,36 @@
 	let importedImage = $state<string | null>(null);
 	let imagePrompt = $state<string | undefined>(undefined);
 
-	/**
-	 * The AI fallback (#182): the page's readable text, kept only when JSON-LD failed and the person has their
-	 * own key set, and only ever sent to their own provider on a second, explicit gesture.
-	 */
-	let pageText = $state<string | null>(null);
-	let pastedText = $state('');
-	let aiExtracting = $state(false);
-	let aiExtractError = $state('');
-
 	const rank = $derived(STEPS.indexOf(step));
 	const isLast = $derived(rank === STEPS.length - 1);
-	const language = $derived(LOCALES.find((l) => l.code === i18n.locale)?.native ?? 'français');
 
-	// The central button brings you here to create: the form must already be unfolded on arrival.
+	// "Create a recipe" hands its draft over here: the form must already be unfolded on arrival (#311).
 	$effect(() => {
-		if (createIntent.take('recipe')) open();
+		const draft = recipeDraft.take();
+		if (draft) openDraft(draft);
 	});
 
-	function open() {
+	/**
+	 * Puts a draft into the form, saving nothing — whatever it came from. What comes back from an unknown
+	 * page or an AI answer is a draft: the person reads it, corrects it, then saves, as if they had typed the
+	 * recipe themselves, but without having typed it.
+	 */
+	function openDraft(draft: RecipeDraft) {
+		editingId = null;
+		copiedFrom = null;
+		name = draft.name;
+		emoji = draft.emoji;
+		servings = draft.servings;
+		lines = draft.lines;
+		steps = draft.steps;
+		stepIngredients = draft.stepIngredients;
+		stepTimes = draft.stepDurations.map((seconds) => durationFields(seconds));
+		tags = [...draft.tags];
+		notes = '';
+		imagePrompt = draft.imagePrompt;
+		importedImage = draft.image;
+		fromImport = draft.reviewed;
+
 		creating = true;
 		step = 'recipe';
 		void revealForm();
@@ -194,13 +193,11 @@
 		lines = [{ name: '', qty: '', unit: DEFAULT_UNIT }];
 		steps = [''];
 		stepIngredients = [[]];
+		stepTimes = [durationFields(null)];
 		notes = '';
+		tags = [];
 		copiedFrom = null;
 		fromImport = false;
-		importRefusal = null;
-		pageText = null;
-		pastedText = '';
-		aiExtractError = '';
 		importedImage = null;
 		imagePrompt = undefined;
 	}
@@ -229,6 +226,7 @@
 		emoji = recipe.emoji;
 		servings = recipe.servings;
 		notes = recipe.notes ?? '';
+		tags = [...(recipe.tags ?? [])];
 
 		const existingLines = data
 			.ingredientsOf(recipe.id)
@@ -238,6 +236,9 @@
 		const savedSteps = data.stepsOf(recipe.id);
 		const lineIds = data.ingredientsOf(recipe.id).map((line) => line.id);
 		steps = savedSteps.length ? savedSteps.map((saved) => saved.body) : [''];
+		stepTimes = savedSteps.length
+			? savedSteps.map((saved) => durationFields(saved.durationSeconds))
+			: [durationFields(null)];
 		stepIngredients = savedSteps.length
 			? savedSteps.map((saved) =>
 					saved.ingredientIds.flatMap((id) => {
@@ -250,148 +251,6 @@
 		creating = true;
 		step = 'recipe';
 		fromImport = false;
-	}
-
-	/**
-	 * The reason for refusal returned by the edge function, and the page's readable text when it came with
-	 * one — only on `no_recipe`, and only kept here for the person to decide whether to send it on.
-	 *
-	 * `functions.invoke` does not throw on a 4xx: it returns an error carrying the HTTP response in
-	 * `context`. Without re-reading it, every refusal would look alike — "unreadable address" and "no
-	 * recipe on this page" call for two opposite gestures.
-	 */
-	async function refusalReason(error: unknown): Promise<{ reason: ImportError; text: string | null }> {
-		const context = (error as { context?: unknown } | null)?.context;
-		if (!(context instanceof Response)) return { reason: 'unreachable', text: null };
-
-		try {
-			const body = await context.json();
-			return {
-				reason: importErrorOf(body?.error),
-				text: typeof body?.text === 'string' && body.text ? body.text : null
-			};
-		} catch {
-			return { reason: 'unreachable', text: null };
-		}
-	}
-
-	/**
-	 * Puts the fetched recipe into the form, saving nothing.
-	 *
-	 * That is the whole point of the manoeuvre: what comes back from an unknown page is a draft. The
-	 * quantities are split as best we can, some lines come back as they are, and the number of servings is
-	 * sometimes missing. The person reads it, corrects it, then saves — as if they had typed the recipe
-	 * themselves, but without having typed it.
-	 */
-	function prefill(recipe: ImportedRecipe) {
-		const imported = importedLines(recipe.ingredients);
-
-		name = recipe.name ?? '';
-		emoji = DEFAULT_EMOJI;
-		servings = parseImportedServings(recipe.servings) ?? DEFAULT_SERVINGS;
-		lines = imported.length ? imported : [{ name: '', qty: '', unit: DEFAULT_UNIT }];
-		steps = recipe.steps.length ? recipe.steps : [''];
-		stepIngredients = recipe.steps.length
-			? guessLinks(lines.map((line) => line.name), recipe.steps)
-			: [[]];
-		imagePrompt = undefined;
-
-		creating = true;
-		step = 'recipe';
-		fromImport = true;
-		importedImage = recipe.image;
-		link = '';
-	}
-
-	/**
-	 * Puts an AI-drafted recipe into the form (#182), the same gesture as `prefill`: nothing is written to
-	 * the database here, the person reads it and corrects it like any other draft.
-	 */
-	function prefillFromSuggestion(recipe: SuggestedRecipe) {
-		name = recipe.name;
-		emoji = recipe.emoji;
-		servings = recipe.servings;
-		lines = recipe.ingredients.length ? recipe.ingredients : [{ name: '', qty: '', unit: DEFAULT_UNIT }];
-		steps = recipe.steps.length ? recipe.steps : [''];
-		stepIngredients = recipe.steps.length ? recipe.stepIngredients : [[]];
-		imagePrompt = recipe.imagePrompt;
-
-		creating = true;
-		step = 'recipe';
-		fromImport = true;
-		link = '';
-		pageText = null;
-		pastedText = '';
-	}
-
-	async function importUrl(event: SubmitEvent) {
-		event.preventDefault();
-
-		const url = link.trim();
-		if (!url || importing) return;
-
-		importing = true;
-		importRefusal = null;
-		pageText = null;
-		pastedText = '';
-		aiExtractError = '';
-
-		try {
-			const { data: recipe, error } = await supabase.functions.invoke<ImportedRecipe>(
-				'import-recipe',
-				{ body: { url } }
-			);
-
-			if (error || !recipe) {
-				const refusal = await refusalReason(error);
-				importRefusal = refusal.reason;
-				// Kept only when there is somewhere for it to go: with no key configured, this app offers no AI
-				// fallback at all, and holding the text in memory for nothing would be pointless.
-				pageText = refusal.reason === 'no_recipe' && ai.configured ? refusal.text : null;
-				return;
-			}
-
-			feedback.play('add');
-			prefill(recipe);
-		} catch {
-			// Offline, or function unavailable: for whoever is looking at the screen, it is the same thing.
-			importRefusal = 'unreachable';
-		} finally {
-			importing = false;
-		}
-	}
-
-	/**
-	 * The one gesture that sends the page's text out to the person's own AI provider (#182, #222).
-	 *
-	 * It only exists after the screen has shown, in plain words, that this text is about to leave the device
-	 * for the provider they already trust with their own key — the same rule `RecipeSuggestion.svelte`
-	 * follows for the products already bought.
-	 */
-	async function tryAiExtraction() {
-		const text = pageText || pastedText.trim();
-		if (!text || aiExtracting) return;
-
-		aiExtracting = true;
-		aiExtractError = '';
-
-		const prompt = recipeExtractionPrompt(text, {
-			language,
-			servings: DEFAULT_SERVINGS,
-			restrictions: restrictionsOf(data.householdPersons)
-		});
-		const issue = await ai.suggestRecipe(prompt);
-		aiExtracting = false;
-
-		if (!issue.ok) {
-			aiExtractError = issue.detail
-				? t(`ai.error.${issue.reason}Detail`, { detail: issue.detail })
-				: t(`ai.error.${issue.reason}`);
-			return;
-		}
-
-		feedback.play('add');
-		prefillFromSuggestion(issue.recipe);
 	}
 
 	/**
@@ -415,12 +274,14 @@
 	function addStep() {
 		steps = [...steps, ''];
 		stepIngredients = [...stepIngredients, []];
+		stepTimes = [...stepTimes, durationFields(null)];
 	}
 
 	function removeStep(index: number) {
 		if (steps.length <= 1) return;
 		steps = steps.filter((_, i) => i !== index);
 		stepIngredients = stepIngredients.filter((_, i) => i !== index);
+		stepTimes = stepTimes.filter((_, i) => i !== index);
 	}
 
 	function toggleStepIngredient(stepIndex: number, lineIndex: number) {
@@ -449,17 +310,29 @@
 		feedback.play('add');
 		const editedId = editingId;
 		if (editedId) {
-			data.updateRecipe(editedId, { name, emoji, servings, notes, ingredients: lines, steps, stepIngredients });
+			data.updateRecipe(editedId, {
+				name,
+				emoji,
+				servings,
+				notes,
+				tags,
+				ingredients: lines,
+				steps,
+				stepIngredients,
+				stepDurations
+			});
 		} else {
 			const recipe = data.addRecipe({
 				name,
 				emoji,
 				servings,
 				notes,
+				tags,
 				ingredients: lines,
 				steps,
 				stepIngredients,
-				imagePrompt
+				imagePrompt,
+				stepDurations
 			});
 			attachImportedPhoto(recipe.id);
 		}
@@ -547,143 +420,7 @@
 	{t('recipes.mealPlanLink')}
 </a>
 
-{#if !creating}
-	<Button onclick={open} data-test-id="recipe-new" class="fl-press mt-4">
-		<Plus size={18} aria-hidden="true" />
-		{t('create.recipe')}
-	</Button>
-
-	<!-- Only appears if an AI key is set in the settings; otherwise, nothing at all. -->
-	<RecipeSuggestion />
-
-	<div class="mt-4">
-		<AiRecipeRequest />
-	</div>
-
-	<div class="mt-4">
-		<AiRecipePhoto />
-	</div>
-
-	<!--
-		The import from a link, placed under manual creation and not in its place: a family recipe comes from
-		no web page, and that is what this screen serves first.
-
-		What the address reveals is written in plain words above the field. The application is served
-		statically and talks to nobody but its own database; fetching a third-party page means entrusting that
-		address to the instance's server, which will introduce itself to the site visited. It is the project's
-		first way out to the network, it only leaves on an explicit gesture, and saying so costs less than
-		letting it be discovered.
-	-->
-	<form onsubmit={importUrl} class="bg-card mt-4 space-y-3 rounded-xl border p-4">
-		<h2 class="text-h2 font-semibold">{t('recipes.import.title')}</h2>
-		<p class="text-muted-foreground text-caption">{t('recipes.import.privacy')}</p>
-
-		<div>
-			<Label for="recipe-import-url">{t('recipes.import.url')}</Label>
-			<IconField icon={Link2}>
-				<Input
-					id="recipe-import-url"
-					type="url"
-					bind:value={link}
-					data-test-id="recipe-import-url"
-					placeholder={t('recipes.import.urlPlaceholder')}
-				/>
-			</IconField>
-		</div>
-
-		<Button
-			type="submit"
-			variant="outline"
-			disabled={importing || !link.trim()}
-			data-test-id="recipe-import-submit"
-			class="fl-press"
-		>
-			<Download size={18} aria-hidden="true" />
-			{importing ? t('recipes.import.loading') : t('recipes.import.submit')}
-		</Button>
-
-		<!--
-			The refusal is announced, not only displayed: the person has just pasted an address and is looking at
-			the field, not at the bottom of the block.
-		-->
-		<p class="text-caption text-destructive" role="alert" data-test-id="recipe-import-error">
-			{#if importRefusal}
-				{t(`recipes.import.error.${importRefusal}`)}
-			{/if}
-		</p>
-
-		<!--
-			Offered only when the page had no structured recipe AND the person already has their own key: with
-			no key, this app has no AI feature at all, and there is nothing to offer.
-		-->
-		{#if pageText}
-			<div
-				class="space-y-2 rounded-lg border p-3"
-				data-test-id="recipe-import-ai-fallback"
-			>
-				<p class="text-caption">{t('recipes.import.ai.offer')}</p>
-				<p class="text-muted-foreground text-caption">{t('recipes.import.ai.privacy')}</p>
-
-				<Button
-					type="button"
-					variant="outline"
-					disabled={aiExtracting}
-					onclick={tryAiExtraction}
-					data-test-id="recipe-import-ai-try"
-					class="fl-press"
-				>
-					<Sparkles size={18} aria-hidden="true" />
-					{aiExtracting ? t('recipes.import.ai.loading') : t('recipes.import.ai.submit')}
-				</Button>
-
-				{#if aiExtractError}
-					<p class="text-caption text-destructive" role="alert" data-test-id="recipe-import-ai-error">
-						{aiExtractError}
-					</p>
-				{/if}
-			</div>
-		{:else if importRefusal === 'unreachable' && ai.configured}
-			<div
-				class="space-y-3 rounded-lg border p-3"
-				data-test-id="recipe-import-ai-fallback"
-			>
-				<p class="text-caption">{t('recipes.import.ai.unreachableOffer')}</p>
-				<div class="space-y-1">
-					<Label for="recipe-import-paste">{t('recipes.import.ai.pasteLabel')}</Label>
-					<textarea
-						id="recipe-import-paste"
-						bind:value={pastedText}
-						rows={4}
-						placeholder={t('recipes.import.ai.pastePlaceholder')}
-						data-test-id="recipe-import-paste-input"
-						class="border-input bg-background w-full rounded-md border p-2 text-sm"
-					></textarea>
-				</div>
-				<p class="text-muted-foreground text-caption">{t('recipes.import.ai.privacy')}</p>
-
-				<Button
-					type="button"
-					variant="outline"
-					disabled={aiExtracting || !pastedText.trim()}
-					onclick={tryAiExtraction}
-					data-test-id="recipe-import-ai-try"
-					class="fl-press"
-				>
-					<Sparkles size={18} aria-hidden="true" />
-					{aiExtracting ? t('recipes.import.ai.loading') : t('recipes.import.ai.submit')}
-				</Button>
-
-				{#if aiExtractError}
-					<p class="text-caption text-destructive" role="alert" data-test-id="recipe-import-ai-error">
-						{aiExtractError}
-					</p>
-				{/if}
-			</div>
-		{/if}
-
-		<p class="text-muted-foreground text-caption">{t('recipes.import.social')}</p>
-	</form>
-{:else}
+{#if creating}
 	<form onsubmit={goNext} class="bg-card mt-4 scroll-mt-4 space-y-5 rounded-xl border p-4" data-test-id="recipe-form">
 		<h2
 			bind:this={formHeading}
@@ -796,6 +533,8 @@
 						class="border-input bg-background w-full rounded-md border p-2"
 					></textarea>
 				</div>
+
+				<RecipeTagPicker bind:tags />
 
 				{#if editingId}
 					{@const editing = data.recipes.find((recipe) => recipe.id === editingId)}
@@ -918,6 +657,40 @@
 								</Button>
 							</div>
 
+							<fieldset class="min-w-0" data-test-class="recipe-step-duration">
+								<legend class="text-label font-semibold">
+									{t('recipes.stepDuration', { rank: index + 1 })}
+								</legend>
+								<div class="mt-1 flex flex-wrap gap-3">
+									<div class="w-32">
+										<Label for="recipe-step-{index}-hours">{t('recipes.durationHours')}</Label>
+										<Input
+											id="recipe-step-{index}-hours"
+											bind:value={stepTimes[index].hours}
+											inputmode="numeric"
+											pattern="[0-9]*"
+											maxlength={2}
+											autocomplete="off"
+											data-test-class="recipe-step-hours"
+											class="text-product h-12"
+										/>
+									</div>
+									<div class="w-32">
+										<Label for="recipe-step-{index}-minutes">{t('recipes.durationMinutes')}</Label>
+										<Input
+											id="recipe-step-{index}-minutes"
+											bind:value={stepTimes[index].minutes}
+											inputmode="numeric"
+											pattern="[0-9]*"
+											maxlength={3}
+											autocomplete="off"
+											data-test-class="recipe-step-minutes"
+											class="text-product h-12"
+										/>
+									</div>
+								</div>
+							</fieldset>
+
 							{#if namedLines.length}
 								<fieldset class="min-w-0 sm:rounded-lg sm:border sm:p-3" data-test-class="recipe-step-ingredients">
 									<legend class="text-label mb-2 font-semibold sm:px-1">
@@ -997,7 +770,16 @@
 {/if}
 
 {#if data.recipes.length === 0}
-	<EmptyState illustration="cart" text={t('recipes.empty')} testId="recipes-empty" />
+	<EmptyState illustration="cart" text={t('recipes.empty')} testId="recipes-empty">
+		{#snippet action()}
+			{#if !creating}
+				<Button href="/recipes/new" data-test-id="recipes-empty-create" class="fl-press">
+					<Plus size={18} aria-hidden="true" />
+					{t('recipes.create.title')}
+				</Button>
+			{/if}
+		{/snippet}
+	</EmptyState>
 {:else}
 	<!--
 		A Pinterest-style wall, not a stack: a recipe is a photo before it is a document, and a single column
@@ -1048,6 +830,9 @@
 							{/if}
 						</span>
 					</button>
+
+					<!-- Outside the toggle: a list has no place inside a button, and the tags read at rest. -->
+					<RecipeTagChips tags={recipe.tags} class="px-3 pb-3" />
 
 					{#if isExpanded}
 						<div
@@ -1285,6 +1070,8 @@
 			steps={data.stepsOf(cookAlongRecipe.id).map((step) => step.body)}
 			ingredients={data.ingredientsOf(cookAlongRecipe.id)}
 			stepIngredientIds={data.stepsOf(cookAlongRecipe.id).map((step) => step.ingredientIds ?? [])}
+			recipeId={cookAlongRecipe.id}
+			stepDurations={data.stepsOf(cookAlongRecipe.id).map((step) => step.durationSeconds ?? null)}
 			onClose={() => (cookAlongFor = null)}
 		/>
 	{/if}

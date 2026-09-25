@@ -128,7 +128,7 @@
 			},
 			"security": {
 				"hint": "密码、两步验证、设备、你的数据",
-				"keywords": "验证码、认证、2FA、TOTP、会话、设备、导出、删除账号"
+				"keywords": "验证码、认证、2FA、TOTP、会话、设备、导出、删除账号、指纹、面容、PIN 码、生物识别、通行密钥、解锁"
 			},
 			"ai": {
 				"hint": "用于菜谱灵感的服务商和密钥",
@@ -232,7 +232,7 @@
 		"accountRemovePassword": "删除密码",
 		"accountSave": "保存账户",
 		"accountSaved": "账户已保存。",
-		"accountNeedsMfa": "请在个人资料中开启双重验证，才能保存或显示账户密码。",
+		"accountNeedsMfa": "请在个人资料中开启设备解锁或两步验证，才能保存或显示账户密码。",
 		"accountGoProfile": "前往个人资料",
 		"accountNotFound": "未找到卡片。",
 		"accountError": "无法读取账户：{error}",
@@ -288,6 +288,23 @@
 		"attachHint": "连锁品牌的卡片在该品牌所有门店都能使用。",
 		"name": "卡片名称",
 		"namePlaceholder": "会员卡",
+		"brandMatch": "已识别品牌：{brand}",
+		"color": "卡片颜色",
+		"colorAuto": "自动",
+		"colorBrand": "{brand} 的颜色",
+		"colors": {
+			"navy": "藏青",
+			"blue": "蓝色",
+			"teal": "青色",
+			"green": "绿色",
+			"red": "红色",
+			"orange": "橙色",
+			"plum": "梅红",
+			"purple": "紫色",
+			"brown": "棕色",
+			"slate": "石板灰"
+		},
+		"preview": "预览",
 		"code": "卡号",
 		"codePlaceholder": "3560070123456",
 		"format": "条码格式",
@@ -460,7 +477,6 @@
 	},
 	"recipes": {
 		"import": {
-			"title": "从链接导入",
 			"privacy": "该网址会发送到本实例的服务器，由它代您抓取页面，并向被访问的网站表明身份。不会保留任何内容，也不会打开其他页面。",
 			"url": "菜谱网址",
 			"urlPlaceholder": "https://example.com/my-recipe",
@@ -559,9 +575,201 @@
 			"readIngredients": "朗读食材",
 			"speakIngredients": "食材：{list}。",
 			"steps": "食谱步骤",
-			"goTo": "前往第 {current} 步，共 {total} 步"
+			"goTo": "前往第 {current} 步，共 {total} 步",
+			"voice": {
+				"start": "免提",
+				"stop": "关闭免提",
+				"introTitle": "用语音跟着食谱做",
+				"introBody": "先说“Famy”，再说一个指令：“Famy，下一步”“Famy，重复”“Famy，读配料”。不用再用脏手碰屏幕。",
+				"introPrivacy": "麦克风只在这个模式下收听。语音识别由你的手机或浏览器完成，可能会使用其在线服务。FamiList 不会录下任何内容。",
+				"introAccept": "打开麦克风",
+				"introCancel": "以后再说",
+				"listening": "正在收听。先说“Famy”，再说指令。",
+				"awake": "Famy 在听…",
+				"understood": "已听懂：{command}",
+				"notUnderstood": "没听懂：“{text}”。说“Famy，帮助”查看指令列表。",
+				"denied": "麦克风被拒绝。请在设置中允许；按钮仍然可以使用。",
+				"unsupported": "此设备不支持语音控制。按钮仍然可以使用。",
+				"failed": "麦克风已停止。点“免提”重新开始。",
+				"help": "语音指令",
+				"helpTitle": "先说“Famy”，然后：",
+				"volume": "音量：{percent}%",
+				"speakHelp": "先说 Famy，然后：{list}。",
+				"wake": [
+					"famy",
+					"法米",
+					"发米",
+					"法咪"
+				],
+				"labels": {
+					"next": "下一步",
+					"previous": "上一步",
+					"repeat": "重复这一步",
+					"stepIngredients": "这一步的配料",
+					"allIngredients": "所有配料",
+					"louder": "大声点",
+					"quieter": "小声点",
+					"mute": "关闭语音",
+					"unmute": "打开语音",
+					"stopListening": "停止收听",
+					"help": "帮助",
+					"close": "退出",
+					"startTimer": "开始计时",
+					"stopTimer": "停止计时",
+					"timeLeft": "剩余时间"
+				},
+				"commands": {
+					"next": [
+						"下一步",
+						"继续",
+						"然后呢"
+					],
+					"previous": [
+						"上一步",
+						"返回",
+						"后退"
+					],
+					"repeat": [
+						"重复",
+						"再说一遍",
+						"再读一遍"
+					],
+					"stepIngredients": [
+						"配料",
+						"读配料",
+						"需要什么"
+					],
+					"allIngredients": [
+						"所有配料",
+						"全部配料",
+						"整个食谱"
+					],
+					"louder": [
+						"大声点",
+						"大声一点",
+						"音量调高"
+					],
+					"quieter": [
+						"小声点",
+						"小声一点",
+						"音量调低"
+					],
+					"mute": [
+						"安静",
+						"闭嘴",
+						"关闭声音"
+					],
+					"unmute": [
+						"打开声音",
+						"继续说话"
+					],
+					"stopListening": [
+						"停止收听",
+						"关闭麦克风",
+						"别听了"
+					],
+					"help": [
+						"帮助",
+						"命令",
+						"我能说什么"
+					],
+					"close": [
+						"退出",
+						"关闭",
+						"结束",
+						"做完了"
+					],
+					"startTimer": [
+						"开始计时",
+						"启动计时器",
+						"计时器"
+					],
+					"stopTimer": [
+						"停止计时",
+						"关掉闹钟",
+						"停止闹钟"
+					],
+					"timeLeft": [
+						"还剩多久",
+						"剩余时间",
+						"还有多久"
+					]
+				}
+			}
 		},
-		"stepIngredients": "第 {rank} 步用到的食材"
+		"stepIngredients": "第 {rank} 步用到的食材",
+		"stepDuration": "第 {rank} 步用时（可选）",
+		"durationHours": "小时",
+		"durationMinutes": "分钟",
+		"create": {
+			"title": "创建食谱",
+			"intro": "选择从哪里开始。保存前您会再通读一遍。",
+			"back": "其他创建方式",
+			"backToRecipes": "返回食谱",
+			"needsKey": "需要 AI 密钥",
+			"needsKeyBody": "这种创建方式会经过您自己的 AI 提供商。请在 AI 设置中添加密钥，然后回到这里。",
+			"needsKeyLink": "添加我的 AI 密钥",
+			"sources": {
+				"manual": {
+					"title": "自己动手写",
+					"hint": "名称、食材，然后是步骤。"
+				},
+				"link": {
+					"title": "从链接导入",
+					"hint": "粘贴在网上找到的食谱地址。"
+				},
+				"photo": {
+					"title": "从照片导入",
+					"hint": "书页或手写的食谱，由 AI 读取。"
+				},
+				"ai": {
+					"title": "询问 AI",
+					"hint": "描述菜品，AI 会推荐一份食谱。"
+				},
+				"purchases": {
+					"title": "根据购物记录",
+					"hint": "用家里已经买过的东西做一道菜。"
+				}
+			}
+		}
+	},
+	"recipeTags": {
+		"title": "分类",
+		"hint": "勾选所有符合的项：方便以后再找到这道菜谱。",
+		"listLabel": "菜谱分类",
+		"category": {
+			"course": "菜品类型",
+			"diet": "饮食",
+			"occasion": "场合",
+			"season": "季节"
+		},
+		"tag": {
+			"breakfast": "早餐",
+			"aperitif": "开胃小食",
+			"hot_starter": "热前菜",
+			"cold_starter": "冷前菜",
+			"soup": "汤",
+			"main": "主菜",
+			"side": "配菜",
+			"dessert": "甜点",
+			"snack": "点心",
+			"drink": "饮品",
+			"vegetarian": "素食",
+			"vegan": "纯素",
+			"gluten_free": "无麸质",
+			"lactose_free": "无乳糖",
+			"low_salt": "少盐",
+			"low_sugar": "少糖",
+			"quick": "快手",
+			"kids": "适合儿童",
+			"party": "聚会",
+			"picnic": "野餐",
+			"holiday": "节日",
+			"spring": "春季",
+			"summer": "夏季",
+			"autumn": "秋季",
+			"winter": "冬季"
+		}
 	},
 	"aisles": {
 		"title": "货区",
@@ -1097,6 +1305,34 @@
 		"backupWrong": "没有哪个还没用过的备用码对得上。",
 		"back": "回到应用验证码"
 	},
+	"deviceUnlock": {
+		"title": "设备解锁",
+		"body": "用手机的指纹、面容或锁屏密码确认是您本人。无需安装应用，也无需抄写验证码。",
+		"fallback": "在没有指纹或面容识别的设备上，会改为询问锁屏密码。",
+		"add": "使用此设备的解锁",
+		"added": "此设备已登记。登录时以及显示密码前都会要求确认。",
+		"unavailable": "此浏览器或应用不支持设备解锁。仍可使用下方的身份验证器应用。",
+		"listLabel": "已登记的设备",
+		"thisDevice": "此设备",
+		"addedOn": "添加于 {date}",
+		"remove": "移除",
+		"removeLabel": "移除 {name}",
+		"failed": "确认未完成。请重试，或换一种方式。",
+		"confirmBody": "手机会要求您的指纹、面容或锁屏密码。",
+		"confirm": "用手机的指纹、面容或锁屏密码确认",
+		"choose": "请选择您手中的设备：",
+		"unavailableHere": "此账户需用另一台设备的解锁来确认。请使用那台设备，或使用备用码。",
+		"useCode": "或使用应用中的验证码",
+		"back": "返回确认",
+		"revealHint": "显示密码前，手机会要求指纹、面容或锁屏密码。",
+		"offlineHint": "将此密码加密保存在本设备上，无网络时用手机解锁打开。",
+		"offlineEnable": "用手机解锁保存在此设备上",
+		"offlineOrCode": "或者改为设置一个解锁码：",
+		"offlineUnsupported": "此设备无法用自身解锁打开副本。请设置一个解锁码。",
+		"offlineUnlockHint": "离线：请用手机解锁确认。",
+		"offlineUnlock": "用手机的指纹、面容或锁屏密码打开",
+		"offlineWrongDevice": "这不是保存此密码时使用的通行密钥。请重试。"
+	},
 	"security": {
 		"title": "安全",
 		"subtitle": "密码、两步验证，以及登录中的设备。",
@@ -1272,8 +1508,6 @@
 		"clear": "移除密钥",
 		"active": "已启用",
 		"useThisOne": "使用此项",
-		"suggest": "菜谱灵感",
-		"suggestTitle": "根据你买过的东西想一道菜",
 		"noProducts": "还没有勾选任何商品。先去采购，灵感就从那里来。",
 		"willSend": {
 			"other": "将发送 {count} 件商品"
@@ -1334,8 +1568,6 @@
 		"photoErrorUnreachable": "图片服务没有响应。请稍后重试。",
 		"photoErrorUpload": "图片无法保存。请重试。",
 		"photo": {
-			"trigger": "通过照片创建食谱",
-			"title": "拍摄食谱照片",
 			"hint": "拍摄书页照片，或手写/印刷的食谱。",
 			"pick": "拍照或导入照片",
 			"reading": "正在读取照片…",
@@ -1472,5 +1704,29 @@
 		"saved": "{bank} 密钥已保存",
 		"removed": "{bank} 密钥已移除",
 		"saveFailed": "密钥无法保存。请重试。"
+	},
+	"timers": {
+		"start": "开始计时（{time}）",
+		"running": "正在计时",
+		"stepLabel": "第 {rank} 步",
+		"addMinute": "+1 分钟",
+		"stop": "停止",
+		"announce": "播报时间",
+		"remaining": "第 {rank} 步还剩 {time}。",
+		"none": "没有正在进行的计时。",
+		"noDuration": "这一步没有设置时长。编辑食谱即可添加。",
+		"webHint": "在浏览器中，只有 FamiList 保持打开时闹钟才会响。",
+		"doneTitle": "计时结束",
+		"doneBody": "{recipe} — {step}",
+		"stopAlarm": "关掉闹钟",
+		"hours": {
+			"other": "{count} 小时"
+		},
+		"minutes": {
+			"other": "{count} 分钟"
+		},
+		"seconds": {
+			"other": "{count} 秒"
+		}
 	}
 }

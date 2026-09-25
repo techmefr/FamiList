@@ -311,6 +311,27 @@
 	grid-template-columns: 1fr;
 }
 
+/*
+ * The loyalty cards, two to a row like a wallet. The column floor is in rem, so it grows with the text
+ * size: past the medium size, or on a narrow screen, two cards no longer fit and the grid drops to one
+ * on its own — a breakpoint alone would miss a small phone set to a large text. Never more than two: the
+ * card must stay big enough to be picked at a glance at the till.
+ */
+.fl-wallet {
+	display: grid;
+	gap: 0.75rem;
+	grid-template-columns: repeat(
+		auto-fill,
+		minmax(min(100%, max(8.5rem, calc((100% - 0.75rem) / 2))), 1fr)
+	);
+}
+
+[data-scale='xl'] .fl-wallet,
+[data-scale='xxl'] .fl-wallet,
+[data-scale='comfort'] .fl-wallet {
+	grid-template-columns: minmax(0, 1fr);
+}
+
 @theme inline {
 	--color-background: var(--background);
 	--color-foreground: var(--foreground);
