@@ -5,7 +5,6 @@ import {
   isLastStep,
   nextStepIndex,
   previousStepIndex,
-  progressPercent,
   speechLangOf,
   stepPosition,
   stepTrack,
@@ -104,16 +103,5 @@ describe("stepTrack (#307)", () => {
 
   it("est vide sans etape", () => {
     expect(stepTrack(0, 0)).toEqual([]);
-  });
-});
-
-describe("progressPercent (#307)", () => {
-  it("remplit la barre a la derniere etape", () => {
-    expect(progressPercent(0, 4)).toBe(25);
-    expect(progressPercent(3, 4)).toBe(100);
-  });
-
-  it("vaut 0 sans etape", () => {
-    expect(progressPercent(0, 0)).toBe(0);
   });
 });
