@@ -1,31 +1,39 @@
 <script lang="ts">
 	import type { LoyaltyCard } from '$db/schema';
 	import { isMatrixFormat } from '$domain/code-format';
+	import { cardBackground } from '$domain/tint';
 	import { t } from '$i18n/index.svelte';
+	import BrandMark from './BrandMark.svelte';
 	import { QrCode, Barcode, StickyNote } from '@lucide/svelte';
 
-	let { card }: { card: LoyaltyCard } = $props();
+	/**
+	 * `actions` keeps the bottom of the card free for the edit and delete buttons laid over it: in a
+	 * half-width card, the number would otherwise run under them.
+	 */
+	let {
+		card,
+		actions = false
+	}: {
+		card: Pick<LoyaltyCard, 'name' | 'brand' | 'num' | 'tint' | 'codeType' | 'notes'>;
+		actions?: boolean;
+	} = $props();
 </script>
 
 <article
-	class="relative min-h-[7.5rem] overflow-hidden rounded-lg p-5 text-white shadow-[var(--fl-shadow-2)]"
-	style="background: {card.grad || card.tint}"
+	class="relative flex h-full min-h-[7.5rem] flex-col overflow-hidden rounded-lg p-4 text-white shadow-[var(--fl-shadow-2)] {actions
+		? 'pb-14'
+		: ''}"
+	style="background: {cardBackground(card.tint)}"
 	data-test-class="loyalty-card"
+	data-tint={card.tint}
 >
 	<span
-		class="pointer-events-none absolute -top-10 -right-10 size-40 rounded-full border border-white/20"
-		aria-hidden="true"
-	></span>
-	<span
-		class="pointer-events-none absolute -right-5 -bottom-16 size-36 rounded-full border border-white/10"
+		class="pointer-events-none absolute -top-10 -end-10 size-40 rounded-full border border-white/20"
 		aria-hidden="true"
 	></span>
 
-	<div class="flex items-start justify-between gap-3">
-		<div class="min-w-0">
-			<p class="text-caption font-medium tracking-wide opacity-75">{t('cards.loyalty')}</p>
-			<h2 class="text-product mt-1 font-semibold break-words">{card.name}</h2>
-		</div>
+	<div class="flex items-start justify-between gap-2">
+		<BrandMark name={card.name} brand={card.brand} tint={card.tint} />
 
 		<div class="flex shrink-0 items-center gap-2">
 			{#if card.notes}
@@ -43,7 +51,7 @@
 		</div>
 	</div>
 
-	<div class="mt-5">
-		<p class="text-label font-mono tracking-widest break-all opacity-85">{card.num}</p>
-	</div>
+	<p class="text-caption mt-3 font-medium tracking-wide">{t('cards.loyalty')}</p>
+	<h2 class="text-product font-semibold hyphens-auto wrap-anywhere">{card.name}</h2>
+	<p class="text-label mt-auto pt-2 font-mono tracking-widest break-all"><span dir="ltr">{card.num}</span></p>
 </article>
