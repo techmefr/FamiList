@@ -1200,8 +1200,7 @@
 		"directFailed": "The conversation could not be opened. Try again.",
 		"backToChats": "Back to chats",
 		"directNotFound": "This conversation cannot be found.",
-		"someone": "Someone",
-		"recipeAdded": "{name} was added to the recipes."
+		"someone": "Someone"
 	},
 	"household": {
 		"title": "My household",
@@ -1486,7 +1485,6 @@
 		"sendingTo": "Recipient: {provider}.",
 		"sendConfirm": "Send and ask",
 		"asking": "Asking…",
-		"added": "Recipe added to the household’s recipes.",
 		"keep": "Keep this recipe",
 		"retry": "Ask again",
 		"discard": "Discard",
@@ -1544,9 +1542,7 @@
 		},
 		"request": {
 			"trigger": "Ask AI for a recipe",
-			"title": "What recipe would you like?",
 			"placeholder": "e.g. a chicken curry for 4",
-			"submit": "Ask",
 			"followUpPlaceholder": "e.g. spicier, or swap the chicken for tofu",
 			"dictate": "Dictate by voice",
 			"stopDictate": "Stop dictation",
@@ -1558,7 +1554,34 @@
 		"photoErrorNoKey": "To generate an image, add an OpenRouter key.",
 		"photoErrorNoKeyLink": "Add a key",
 		"photoErrorNoCredit": "Your OpenRouter account has no credit left: image generation is paid.",
-		"photoErrorNoCreditLink": "Add credit"
+		"photoErrorNoCreditLink": "Add credit",
+		"chat": {
+			"tableTitle": "Who is eating?",
+			"tableHint": "Their allergies and diets are sent to the assistant, never their names. Tap a name to say who is away.",
+			"present": "at the table",
+			"absent": "away",
+			"addGuest": "Add a guest",
+			"guestName": "Guest’s name (optional)",
+			"guestNotes": "What they cannot eat, or their diet",
+			"guestNotesPlaceholder": "e.g. allergic to cauliflower",
+			"guestSave": "Add the guest",
+			"guestDefault": "Guest {number}",
+			"removeGuest": "Remove {name}",
+			"constraintsTitle": "The assistant takes into account",
+			"constraintsNone": "No allergy or diet to take into account.",
+			"constraintOf": "{who}: {notes}",
+			"threadLabel": "Conversation with the assistant",
+			"assistant": "Assistant",
+			"you": "You",
+			"greeting": "Tell me what you would like to eat. I may ask you a question or two, then I will write the recipe.",
+			"writing": "The assistant is writing…",
+			"messageLabel": "Your message",
+			"send": "Send",
+			"conflictTitle": "Check: these ingredients may not suit",
+			"conflictLine": "{ingredient} — {constraint}",
+			"avoid": "Ask for a version without them",
+			"avoidMessage": "Write the recipe again without: {ingredients}."
+		}
 	},
 	"setup": {
 		"title": "Instance not configured",
