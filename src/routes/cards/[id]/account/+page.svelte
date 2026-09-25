@@ -7,12 +7,19 @@
 	import { t } from '$i18n/index.svelte';
 	import { accountRevealGate } from '$domain/card-share';
 	import {
-		hasUnlockCode,
 		isUnlockCodeValid,
+		newPasskeySalt,
+		passkeyUnlockRequest,
 		revealSecret,
+		revealSecretWithPasskey,
+		setPasskeyUnlock,
 		setUnlockCode,
-		storeSecret
+		storeSecret,
+		unlockMethod,
+		type UnlockMethod
 	} from '$domain/offline-secret';
+	import { pickDeviceFactor, revealNeedsDevice, type KnownFactor } from '$domain/device-unlock';
+	import { deviceUnlockAvailable, passkeyPrf, rememberedDeviceFactor } from '$native/device-unlock';
 	import { deviceSecrets } from '$stores/offline-secrets';
 	import {
 		readCardAccount,
@@ -23,7 +30,7 @@
 	import { Button } from '$components/ui/button';
 	import { Input } from '$components/ui/input';
 	import { Label } from '$components/ui/label';
-	import { ArrowLeft, Eye, EyeOff, Copy, ShieldCheck } from '@lucide/svelte';
+	import { ArrowLeft, Eye, EyeOff, Copy, ShieldCheck, FingerprintPattern } from '@lucide/svelte';
 
 	const REVEAL_MS = 60_000;
 
@@ -41,7 +48,12 @@
 	let password = $state<string | null>(null);
 	let hideTimer: ReturnType<typeof setTimeout> | undefined;
 
-	let deviceCopy = $state(false);
+	let method = $state<UnlockMethod | null>(null);
+	const deviceCopy = $derived(method !== null);
+
+	let deviceFactor = $state<KnownFactor | null>(null);
+	let deviceSupported = $state(false);
+	const askDevice = $derived(revealNeedsDevice(deviceFactor, deviceSupported));
 	let unlockCode = $state('');
 	let offlineCode = $state('');
 
@@ -61,7 +73,7 @@
 	}
 
 	async function load() {
-		deviceCopy = await hasUnlockCode(deviceSecrets);
+		method = await unlockMethod(deviceSecrets);
 		if (!online) return;
 
 		const result = await readCardAccount(cardId);
@@ -82,8 +94,32 @@
 		if (online) void load();
 	}
 
+	/**
+	 * The passkey of this device, if the account has one. Reading the list needs the network; offline, the
+	 * device copy says by itself which way it opens.
+	 */
+	async function findDeviceFactor() {
+		deviceSupported = await deviceUnlockAvailable();
+		if (!deviceSupported || !online) return;
+		const factors = await session.listFactors();
+		deviceFactor = factors ? pickDeviceFactor(factors, rememberedDeviceFactor()) : null;
+	}
+
+	/**
+	 * The phone asks for the fingerprint, face or PIN, and the server checks the signature before the password
+	 * leaves Vault. The server only ever looks at aal2; this fresh confirmation is what keeps a phone left
+	 * unlocked on a table from showing the password to whoever picks it up.
+	 */
+	async function confirmFirst() {
+		if (!askDevice || !deviceFactor) return true;
+		if (await session.confirmWithDevice(deviceFactor.id)) return true;
+		error = t('deviceUnlock.failed');
+		return false;
+	}
+
 	onMount(() => {
 		void session.refreshLevels();
+		void findDeviceFactor();
 		document.addEventListener('visibilitychange', onVisibility);
 		window.addEventListener('online', onConnectivity);
 		window.addEventListener('offline', onConnectivity);
@@ -109,6 +145,7 @@
 
 	async function revealOnline() {
 		error = '';
+		if (!(await confirmFirst())) return;
 		const result = await revealCardPassword(cardId);
 		if (!result.ok) {
 			error = t('cards.accountError', { error: result.error });
@@ -127,7 +164,7 @@
 			show(result.value);
 			return;
 		}
-		if (result.reason === 'wiped') deviceCopy = false;
+		if (result.reason === 'wiped') method = null;
 		error = t(
 			result.reason === 'wrong-code'
 				? 'cards.offlineWrongCode'
@@ -143,16 +180,50 @@
 		const value = password;
 		if (await setUnlockCode(deviceSecrets, unlockCode)) {
 			await storeSecret(deviceSecrets, cardId, value);
-			deviceCopy = true;
+			method = 'code';
 			notice = t('cards.offlineEnabled');
 		}
 		unlockCode = '';
 	}
 
+	async function keepWithDevice() {
+		if (!password) return;
+		const value = password;
+		error = '';
+		const answer = await passkeyPrf(newPasskeySalt());
+		if (!answer || !(await setPasskeyUnlock(deviceSecrets, answer.unlock, answer.output))) {
+			error = t('deviceUnlock.offlineUnsupported');
+			return;
+		}
+		await storeSecret(deviceSecrets, cardId, value);
+		method = 'device';
+		notice = t('cards.offlineEnabled');
+	}
+
+	async function revealWithDevice() {
+		error = '';
+		const request = await passkeyUnlockRequest(deviceSecrets);
+		const answer = request ? await passkeyPrf(request.salt, request.credentialId) : null;
+		if (!request || !answer) {
+			error = t(request ? 'deviceUnlock.failed' : 'cards.offlineMissing');
+			return;
+		}
+		const result = await revealSecretWithPasskey(deviceSecrets, cardId, answer.output);
+		if (result.ok) {
+			show(result.value);
+			return;
+		}
+		error = t(result.reason === 'wrong-device' ? 'deviceUnlock.offlineWrongDevice' : 'cards.offlineMissing');
+	}
+
 	async function save(removePassword: boolean) {
-		saving = true;
 		error = '';
 		notice = '';
+		saving = true;
+		if (!(await confirmFirst())) {
+			saving = false;
+			return;
+		}
 		const next = removePassword ? '' : newPassword || null;
 		const result = await saveCardAccount(cardId, email, next);
 		saving = false;
@@ -246,7 +317,21 @@
 				{#if password && !deviceCopy}
 					<form onsubmit={keepOnDevice} class="space-y-2 border-t pt-3" data-test-id="card-offline-setup">
 						<h2 class="text-label font-semibold">{t('cards.offlineTitle')}</h2>
-						<p class="text-muted-foreground text-caption">{t('cards.offlineHint')}</p>
+						{#if askDevice}
+							<p class="text-muted-foreground text-caption">{t('deviceUnlock.offlineHint')}</p>
+							<Button
+								type="button"
+								class="fl-press w-full"
+								onclick={keepWithDevice}
+								data-test-id="card-offline-enable-device"
+							>
+								<FingerprintPattern size={18} aria-hidden="true" />
+								{t('deviceUnlock.offlineEnable')}
+							</Button>
+							<p class="text-muted-foreground text-caption pt-2">{t('deviceUnlock.offlineOrCode')}</p>
+						{:else}
+							<p class="text-muted-foreground text-caption">{t('cards.offlineHint')}</p>
+						{/if}
 						<Label for="card-unlock-code">{t('cards.offlineCode')}</Label>
 						<Input
 							id="card-unlock-code"
@@ -262,9 +347,18 @@
 				{/if}
 			{:else if account?.hasPassword}
 				<Button onclick={revealOnline} data-test-id="card-account-reveal">
-					<Eye size={18} aria-hidden="true" />
+					{#if askDevice}
+						<FingerprintPattern size={18} aria-hidden="true" />
+					{:else}
+						<Eye size={18} aria-hidden="true" />
+					{/if}
 					{t('cards.accountReveal')}
 				</Button>
+				{#if askDevice}
+					<p class="text-muted-foreground text-caption" data-test-id="card-account-device-hint">
+						{t('deviceUnlock.revealHint')}
+					</p>
+				{/if}
 			{:else}
 				<p class="text-muted-foreground text-label">{t('cards.accountNoPassword')}</p>
 			{/if}
@@ -335,6 +429,12 @@
 				<Button variant="outline" onclick={forget} data-test-id="card-account-hide">
 					<EyeOff size={18} aria-hidden="true" />
 					{t('cards.accountHide')}
+				</Button>
+			{:else if method === 'device'}
+				<p class="text-label">{t('deviceUnlock.offlineUnlockHint')}</p>
+				<Button class="fl-press w-full" onclick={revealWithDevice} data-test-id="card-offline-unlock-device">
+					<FingerprintPattern size={18} aria-hidden="true" />
+					{t('deviceUnlock.offlineUnlock')}
 				</Button>
 			{:else if deviceCopy}
 				<form onsubmit={revealOffline} class="space-y-2">
