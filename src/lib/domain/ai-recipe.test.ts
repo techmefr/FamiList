@@ -1,5 +1,8 @@
 import { describe, it, expect } from 'vitest';
 import {
+	cleanImagePrompt,
+	imagePromptRequest,
+	MAX_IMAGE_PROMPT_LENGTH,
 	MAX_PRODUCTS,
 	parseRecipeSuggestion,
 	recipeExtractionPrompt,
@@ -7,6 +10,7 @@ import {
 	recipeFromPhotoPrompt,
 	recipeFromRequestPrompt,
 	recipePrompt,
+	RECIPE_JSON_SHAPE,
 	restrictionsOf,
 	shoppedProducts,
 	type Purchase
@@ -151,7 +155,7 @@ describe('recipeExtractionPrompt', () => {
 		const prompt = recipeExtractionPrompt('texte', { language: 'français', servings: 4 });
 
 		expect(prompt).toContain(
-			'{"name":"","emoji":"","servings":0,"ingredients":[{"name":"","qty":"","unit":""}],"steps":[""],"stepIngredients":[[0]]}'
+			RECIPE_JSON_SHAPE
 		);
 	});
 
@@ -187,7 +191,7 @@ describe('recipeFromRequestPrompt', () => {
 		const prompt = recipeFromRequestPrompt('des pancakes', { language: 'français', servings: 4 });
 
 		expect(prompt).toContain(
-			'{"name":"","emoji":"","servings":0,"ingredients":[{"name":"","qty":"","unit":""}],"steps":[""],"stepIngredients":[[0]]}'
+			RECIPE_JSON_SHAPE
 		);
 	});
 
@@ -234,7 +238,7 @@ describe('recipeFollowUpPrompt (#226)', () => {
 		const prompt = recipeFollowUpPrompt('plus epice', { language: 'français', servings: 4 });
 
 		expect(prompt).toContain(
-			'{"name":"","emoji":"","servings":0,"ingredients":[{"name":"","qty":"","unit":""}],"steps":[""],"stepIngredients":[[0]]}'
+			RECIPE_JSON_SHAPE
 		);
 	});
 
@@ -372,7 +376,7 @@ describe('recipeFromPhotoPrompt (#266)', () => {
 		const prompt = recipeFromPhotoPrompt({ language: 'français', servings: 4 });
 
 		expect(prompt).toContain(
-			'{"name":"","emoji":"","servings":0,"ingredients":[{"name":"","qty":"","unit":""}],"steps":[""],"stepIngredients":[[0]]}'
+			RECIPE_JSON_SHAPE
 		);
 	});
 });
@@ -406,5 +410,64 @@ describe('stepIngredients (#308)', () => {
 
 	it('est demande par chaque prompt', () => {
 		expect(recipePrompt(['Oeufs'], { language: 'français', servings: 2 })).toContain('"stepIngredients" contient');
+	});
+});
+
+describe('imagePrompt (#306)', () => {
+	it('est demande par chaque prompt de recette, en anglais', () => {
+		const options = { language: 'français', servings: 4 };
+		const prompts = [
+			recipePrompt(['Courgettes'], options),
+			recipeExtractionPrompt('texte', options),
+			recipeFromRequestPrompt('un curry', options),
+			recipeFollowUpPrompt('plus epice', options),
+			recipeFromPhotoPrompt(options)
+		];
+
+		for (const prompt of prompts) {
+			expect(prompt).toContain('"imagePrompt":""');
+			expect(prompt).toContain('"imagePrompt" decrit en anglais');
+		}
+	});
+
+	it('est lu avec la recette', () => {
+		const recipe = parseRecipeSuggestion(
+			'{"name":"Nems","ingredients":[{"name":"porc"}],"imagePrompt":"Golden fried spring rolls on lettuce leaves"}'
+		);
+		expect(recipe?.imagePrompt).toBe('Golden fried spring rolls on lettuce leaves');
+	});
+
+	it('reste absent quand le modele ne le donne pas', () => {
+		const recipe = parseRecipeSuggestion('{"name":"Nems","ingredients":[{"name":"porc"}]}');
+		expect(recipe?.imagePrompt).toBeUndefined();
+	});
+});
+
+describe('imagePromptRequest (#306)', () => {
+	it('decrit le plat a partir de son nom, de ses ingredients et de ses etapes', () => {
+		const prompt = imagePromptRequest('Quiche lorraine', ['lardons', '', 'oeufs'], ['Cuire 35 minutes']);
+
+		expect(prompt).toContain('Dish: Quiche lorraine');
+		expect(prompt).toContain('Ingredients: lardons, oeufs');
+		expect(prompt).toContain('Method: Cuire 35 minutes');
+	});
+
+	it('omet les lignes vides', () => {
+		const prompt = imagePromptRequest('Salade', [], []);
+		expect(prompt).not.toContain('Ingredients:');
+		expect(prompt).not.toContain('Method:');
+	});
+});
+
+describe('cleanImagePrompt (#306)', () => {
+	it('retire guillemets, etiquette et espaces en trop', () => {
+		expect(cleanImagePrompt('Description: "A creamy   tiramisu in a glass dish."\n')).toBe(
+			'A creamy tiramisu in a glass dish.'
+		);
+	});
+
+	it('coupe une reponse trop longue et refuse une reponse vide', () => {
+		expect(cleanImagePrompt('a'.repeat(2000))?.length).toBe(MAX_IMAGE_PROMPT_LENGTH);
+		expect(cleanImagePrompt('  ""  ')).toBeNull();
 	});
 });

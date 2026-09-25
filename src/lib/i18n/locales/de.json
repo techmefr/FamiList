@@ -1413,7 +1413,13 @@
 			"stopDictate": "Diktat beenden",
 			"listening": "Höre zu…",
 			"dictateError": "Die Sprachdiktatur ist fehlgeschlagen. Erneut versuchen oder Text eingeben."
-		}
+		},
+		"photoGenerateHint": "Mit deinem OpenRouter-Schlüssel, etwa 1 Cent pro Bild",
+		"photoGenerateNeedsKey": "Benötigt einen OpenRouter-Schlüssel",
+		"photoErrorNoKey": "Um ein Bild zu erzeugen, füge einen OpenRouter-Schlüssel hinzu.",
+		"photoErrorNoKeyLink": "Schlüssel hinzufügen",
+		"photoErrorNoCredit": "Dein OpenRouter-Konto hat kein Guthaben mehr: Bilderzeugung ist kostenpflichtig.",
+		"photoErrorNoCreditLink": "Guthaben aufladen"
 	},
 	"setup": {
 		"title": "Instanz nicht konfiguriert",

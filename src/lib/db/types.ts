@@ -1216,7 +1216,9 @@ export type Database = {
           household_id: string
           id: string
           name: string
+          image_prompt: string | null
           notes: string | null
+          photo_path: string | null
           servings: number
         }
         Insert: {
@@ -1226,7 +1228,9 @@ export type Database = {
           household_id: string
           id?: string
           name: string
+          image_prompt?: string | null
           notes?: string | null
+          photo_path?: string | null
           servings?: number
         }
         Update: {
@@ -1236,7 +1240,9 @@ export type Database = {
           household_id?: string
           id?: string
           name?: string
+          image_prompt?: string | null
           notes?: string | null
+          photo_path?: string | null
           servings?: number
         }
         Relationships: [

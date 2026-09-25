@@ -109,7 +109,8 @@
 			servings: suggestion.servings,
 			ingredients: suggestion.ingredients,
 			steps: suggestion.steps,
-			stepIngredients: suggestion.stepIngredients
+			stepIngredients: suggestion.stepIngredients,
+			imagePrompt: suggestion.imagePrompt
 		});
 
 		onAccepted?.(suggestion);

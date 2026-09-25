@@ -236,6 +236,8 @@ export interface Recipe {
 	notes?: string;
 	/** Path of the generated photo in the `recipe-photos` bucket, or none: the image is decorative only. */
 	photoPath?: string;
+	/** English description of the finished dish, sent to the image model instead of the bare name (#306). */
+	imagePrompt?: string;
 	createdBy?: string;
 	createdAt: number;
 }

@@ -1407,7 +1407,13 @@
 			"stopDictate": "Atsaharo ny fitononana",
 			"listening": "Mihaino…",
 			"dictateError": "Tsy nahomby ny fitononana am-bava. Andramo indray na soraty ny lahatsoratra."
-		}
+		},
+		"photoGenerateHint": "Amin’ny lakilen’ny OpenRouter-nao, eo amin’ny 1 santima isaky ny sary",
+		"photoGenerateNeedsKey": "Mila lakile OpenRouter",
+		"photoErrorNoKey": "Mba hamoronana sary dia ampio lakile OpenRouter.",
+		"photoErrorNoKeyLink": "Hanampy lakile",
+		"photoErrorNoCredit": "Tsy misy crédit intsony ny kaontinao OpenRouter: mandoa vola ny famoronana sary.",
+		"photoErrorNoCreditLink": "Hanampy crédit"
 	},
 	"setup": {
 		"title": "Tsy mbola voaomana ity instance ity",
