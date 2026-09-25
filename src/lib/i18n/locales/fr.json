@@ -447,7 +447,7 @@
 		"lookupPlaceholder": "Leclerc Trévoux",
 		"lookupButton": "Rechercher",
 		"lookupSearching": "Recherche…",
-		"lookupHint": "Ce que vous tapez ici est envoyé à OpenStreetMap pour trouver l’adresse, à la différence du reste du formulaire.",
+		"lookupHint": "Ce que vous tapez ici est envoyé à OpenStreetMap (ou à Google Places si vous avez ajouté une clé) pour trouver l’adresse, à la différence du reste du formulaire.",
 		"lookupEmpty": "Aucun résultat.",
 		"lookupError": "La recherche a échoué, réessayez.",
 		"lookupPick": "Utiliser ce résultat",
@@ -1843,6 +1843,10 @@
 		"saved": "Clé {bank} enregistrée",
 		"removed": "Clé {bank} retirée",
 		"saveFailed": "La clé n'a pas pu être enregistrée. Réessayez."
+	},
+	"places": {
+		"title": "Recherche de magasins",
+		"subtitle": "Avec une clé Google Places, la recherche d'un magasin par nom donne des enseignes et adresses plus précises qu'avec la recherche gratuite."
 	},
 	"timers": {
 		"start": "Lancer le minuteur ({time})",

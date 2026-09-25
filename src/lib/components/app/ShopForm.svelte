@@ -7,6 +7,7 @@
 	import { TINTS } from '$domain/tint';
 	import { BRANDS, findBrand } from '$domain/brand-catalogue';
 	import { searchShops, type ShopLookupResult } from '$domain/shop-lookup';
+	import { placeCredentials } from '$stores/place-credentials.svelte';
 	import type { Shop } from '$db/schema';
 	import { Button } from '$components/ui/button';
 	import { Input } from '$components/ui/input';
@@ -74,7 +75,7 @@
 		lookupError = false;
 
 		try {
-			lookupResults = await searchShops(query);
+			lookupResults = await searchShops(query, placeCredentials.key('google_places'));
 		} catch {
 			lookupResults = [];
 			lookupError = true;

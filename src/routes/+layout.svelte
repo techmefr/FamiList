@@ -24,6 +24,7 @@
 	import { settings } from '$stores/settings.svelte';
 	import { ai } from '$stores/ai.svelte';
 	import { imageBanks } from '$stores/image-banks.svelte';
+	import { placeCredentials } from '$stores/place-credentials.svelte';
 	import { navDirection } from '$domain/motion';
 	import { isLegalRoute } from '$domain/legal';
 	import { releasesSince } from '$domain/changelog';
@@ -242,6 +243,7 @@
 
 		ai.load();
 		imageBanks.load();
+		placeCredentials.load();
 	});
 
 	/**
