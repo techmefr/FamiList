@@ -476,6 +476,12 @@
 		"targetNew": "In a new list",
 		"delete": "Delete recipe {name}",
 		"edit": "Edit recipe {name}",
+		"notes": "Notes",
+		"notesPlaceholder": "Tips, variations, where the recipe comes from…",
+		"photo": "Photo",
+		"copyNotice": "This is a copy: saving it creates a recipe of your own, the original stays as it is.",
+		"editCopy": "Edit a copy",
+		"editCopyAria": "Edit a copy of {name}",
 		"deleteConfirm": "Delete {name}? Lists already generated will not change.",
 		"deleteYes": "Delete",
 		"servingsCount": {
