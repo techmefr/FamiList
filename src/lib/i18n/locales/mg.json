@@ -725,6 +725,45 @@
 					"hint": "Recette miaraka amin’izay efa novidian’ny ankohonana."
 				}
 			}
+		},
+		"search": {
+			"label": "Hikaroka fomba fahandro",
+			"placeholder": "Anarana, akora, sokajy…",
+			"clear": "Fafao ny fikarohana",
+			"filters": "Sivana",
+			"count": {
+				"one": "fomba fahandro {count} hita",
+				"other": "fomba fahandro {count} hita"
+			},
+			"empty": "Tsy misy fomba fahandro mifanaraka amin'io fikarohana io.",
+			"reset": "Asehoy daholo"
+		},
+		"filters": {
+			"title": "Sivano ny fomba fahandro",
+			"categories": "Sokajin'ny sivana",
+			"ingredient": "Akora",
+			"time": "Fotoana rehetra",
+			"timeOption": {
+				"upTo15": "15 min na latsaka",
+				"upTo30": "15 ka hatramin'ny 30 min",
+				"upTo60": "30 min ka hatramin'ny 1 ora",
+				"over60": "Mihoatra ny 1 ora"
+			},
+			"search": "Hikaroka sivana",
+			"selected": "Voafidy",
+			"all": "Rehetra",
+			"none": "Tsy misy sivana mifanaraka.",
+			"noIngredient": "Mbola tsy misy akora: avy amin'ny fomba fahandronao izy ireo.",
+			"back": "Hiverina amin'ny sokajy",
+			"clearAll": "Fafao daholo",
+			"apply": {
+				"one": "Asehoy ny fomba fahandro {count}",
+				"other": "Asehoy ny fomba fahandro {count}"
+			},
+			"active": {
+				"one": "{count} mandeha",
+				"other": "{count} mandeha"
+			}
 		}
 	},
 	"recipeTags": {
@@ -1475,7 +1514,8 @@
 			"list": "Lisitra",
 			"item": "Entana",
 			"shop": "Fivarotana",
-			"card": "Karatra"
+			"card": "Karatra",
+			"recipe": "Fomba fahandro"
 		}
 	},
 	"ai": {

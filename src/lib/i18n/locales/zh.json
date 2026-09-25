@@ -731,6 +731,42 @@
 					"hint": "用家里已经买过的东西做一道菜。"
 				}
 			}
+		},
+		"search": {
+			"label": "搜索食谱",
+			"placeholder": "名称、食材、分类…",
+			"clear": "清除搜索",
+			"filters": "筛选",
+			"count": {
+				"other": "找到 {count} 个食谱"
+			},
+			"empty": "没有符合此搜索的食谱。",
+			"reset": "显示全部"
+		},
+		"filters": {
+			"title": "筛选食谱",
+			"categories": "筛选类别",
+			"ingredient": "食材",
+			"time": "总时长",
+			"timeOption": {
+				"upTo15": "15 分钟以内",
+				"upTo30": "15 至 30 分钟",
+				"upTo60": "30 分钟至 1 小时",
+				"over60": "超过 1 小时"
+			},
+			"search": "查找筛选条件",
+			"selected": "已选",
+			"all": "全部",
+			"none": "没有匹配的筛选条件。",
+			"noIngredient": "还没有食材：食材来自你的食谱。",
+			"back": "返回类别",
+			"clearAll": "全部清除",
+			"apply": {
+				"other": "查看 {count} 个食谱"
+			},
+			"active": {
+				"other": "{count} 个已启用"
+			}
 		}
 	},
 	"recipeTags": {
@@ -1475,7 +1511,8 @@
 			"list": "列表",
 			"item": "商品",
 			"shop": "商店",
-			"card": "卡片"
+			"card": "卡片",
+			"recipe": "食谱"
 		}
 	},
 	"ai": {

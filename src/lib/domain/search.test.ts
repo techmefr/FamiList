@@ -19,6 +19,7 @@ const source: SearchSource = {
 		{ id: 'i3', listId: 'l2', name: 'Bougies', checked: false },
 		{ id: 'i4', listId: 'inconnue', name: 'Orphelin', checked: false }
 	],
+	recipes: [{ id: 'r1', name: 'Soupe de poireaux', emoji: '🥣', ingredients: ['Poireaux', 'Crème fraîche'] }],
 	shops: [
 		{ id: 's1', name: 'Carrefour Meximieux', brand: 'Carrefour' },
 		{ id: 's2', name: 'Boucherie du marché', brand: '' }
@@ -112,6 +113,16 @@ describe('searchAll', () => {
 		expect(mixed.map((group) => group.kind)).toEqual(['shop', 'card']);
 	});
 
+	it('trouve une recette par son nom ou un ingrédient, et y mène', () => {
+		expect(idsOf('soupe')).toEqual(['r1']);
+		expect(idsOf('fraiche')).toEqual(['r1']);
+
+		const hit = flattenHits(searchAll('poireaux', source))[0];
+		expect(hit?.kind).toBe('recipe');
+		expect(hit?.href).toBe('/recipes?recipe=r1');
+		expect(hit?.icon).toBe('🥣');
+	});
+
 	it('ne rend aucune famille vide', () => {
 		for (const group of searchAll('carrefour', source)) expect(group.hits.length).toBeGreaterThan(0);
 	});
@@ -158,6 +169,7 @@ describe('searchAll', () => {
 				name: `Lait ${index}`,
 				checked: false
 			})),
+			recipes: [],
 			shops: [],
 			cards: []
 		};
@@ -170,6 +182,6 @@ describe('searchAll', () => {
 	});
 
 	it('supporte un foyer entièrement vide', () => {
-		expect(searchAll('lait', { lists: [], items: [], shops: [], cards: [] })).toEqual([]);
+		expect(searchAll('lait', { lists: [], items: [], recipes: [], shops: [], cards: [] })).toEqual([]);
 	});
 });
