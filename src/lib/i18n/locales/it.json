@@ -495,7 +495,9 @@
 			"next": "Successivo",
 			"mute": "Disattiva voce",
 			"unmute": "Attiva voce",
-			"empty": "Questa ricetta non ha passaggi da seguire."
+			"empty": "Questa ricetta non ha passaggi da seguire.",
+			"steps": "Passaggi della ricetta",
+			"goTo": "Vai al passaggio {current} di {total}"
 		}
 	},
 	"aisles": {

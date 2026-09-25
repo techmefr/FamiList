@@ -495,7 +495,9 @@
 			"next": "Next",
 			"mute": "Mute voice",
 			"unmute": "Unmute voice",
-			"empty": "This recipe has no step to follow."
+			"empty": "This recipe has no step to follow.",
+			"steps": "Recipe steps",
+			"goTo": "Go to step {current} of {total}"
 		}
 	},
 	"aisles": {

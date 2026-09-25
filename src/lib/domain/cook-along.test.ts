@@ -5,8 +5,10 @@ import {
   isLastStep,
   nextStepIndex,
   previousStepIndex,
+  progressPercent,
   speechLangOf,
   stepPosition,
+  stepTrack,
 } from "./cook-along";
 
 describe("clampStepIndex", () => {
@@ -84,5 +86,34 @@ describe("speechLangOf", () => {
 
   it("retombe sur l’anglais pour une locale inconnue", () => {
     expect(speechLangOf("xx")).toBe("en-US");
+  });
+});
+
+describe("stepTrack (#307)", () => {
+  it("marque les etapes faites, l etape en cours et celles a venir", () => {
+    expect(stepTrack(1, 3)).toEqual([
+      { number: 1, state: "done" },
+      { number: 2, state: "current" },
+      { number: 3, state: "todo" },
+    ]);
+  });
+
+  it("ramene un index hors bornes sur une vraie etape", () => {
+    expect(stepTrack(9, 2).map((step) => step.state)).toEqual(["done", "current"]);
+  });
+
+  it("est vide sans etape", () => {
+    expect(stepTrack(0, 0)).toEqual([]);
+  });
+});
+
+describe("progressPercent (#307)", () => {
+  it("remplit la barre a la derniere etape", () => {
+    expect(progressPercent(0, 4)).toBe(25);
+    expect(progressPercent(3, 4)).toBe(100);
+  });
+
+  it("vaut 0 sans etape", () => {
+    expect(progressPercent(0, 0)).toBe(0);
   });
 });

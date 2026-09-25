@@ -495,7 +495,9 @@
 			"next": "Weiter",
 			"mute": "Stimme stummschalten",
 			"unmute": "Stimme aktivieren",
-			"empty": "Dieses Rezept hat keine Schritte."
+			"empty": "Dieses Rezept hat keine Schritte.",
+			"steps": "Rezeptschritte",
+			"goTo": "Zu Schritt {current} von {total}"
 		}
 	},
 	"aisles": {

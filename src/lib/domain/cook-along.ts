@@ -70,3 +70,28 @@ const SPEECH_LOCALES: Record<string, string> = {
 export function speechLangOf(locale: string): string {
   return SPEECH_LOCALES[locale] ?? "en-US";
 }
+
+export type StepState = "done" | "current" | "todo";
+
+/**
+ * Every step of the track, told apart by more than a colour (#307): the screen draws a check on a done
+ * step and a thicker frame on the current one, so the state reads in grey scale too.
+ */
+export function stepTrack(
+  index: number,
+  total: number,
+): { number: number; state: StepState }[] {
+  const current = clampStepIndex(index, total);
+
+  return Array.from({ length: Math.max(total, 0) }, (_, step) => ({
+    number: step + 1,
+    state: step < current ? "done" : step === current ? "current" : "todo",
+  }));
+}
+
+/** How far through the recipe the current step is, 0 to 100: the last step fills the bar. */
+export function progressPercent(index: number, total: number): number {
+  if (total <= 0) return 0;
+
+  return Math.round(((clampStepIndex(index, total) + 1) / total) * 100);
+}

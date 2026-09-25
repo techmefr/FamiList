@@ -495,7 +495,9 @@
 			"next": "Manaraka",
 			"mute": "Ampitsahatra ny feo",
 			"unmute": "Alefaso ny feo",
-			"empty": "Tsy misy dingana harahina amin'ity fahandroana ity."
+			"empty": "Tsy misy dingana harahina amin'ity fahandroana ity.",
+			"steps": "Dingana amin’ny fahandroana",
+			"goTo": "Mankany amin’ny dingana {current} amin’ny {total}"
 		}
 	},
 	"aisles": {

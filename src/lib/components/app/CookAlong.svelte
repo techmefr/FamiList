@@ -2,9 +2,19 @@
 	import { fade } from 'svelte/transition';
 	import { motionMs } from '$stores/settings.svelte';
 	import { i18n, t } from '$i18n/index.svelte';
-	import { clampStepIndex, isFirstStep, isLastStep, nextStepIndex, previousStepIndex, speechLangOf, stepPosition } from '$domain/cook-along';
+	import {
+		clampStepIndex,
+		isFirstStep,
+		isLastStep,
+		nextStepIndex,
+		previousStepIndex,
+		progressPercent,
+		speechLangOf,
+		stepPosition,
+		stepTrack
+	} from '$domain/cook-along';
 	import { Button } from '$components/ui/button';
-	import { X, ChevronLeft, ChevronRight, Volume2, VolumeX } from '@lucide/svelte';
+	import { X, Check, ChevronLeft, ChevronRight, Volume2, VolumeX } from '@lucide/svelte';
 
 	let {
 		recipeName,
@@ -30,6 +40,33 @@
 	const position = $derived(stepPosition(index, total));
 	const atFirst = $derived(isFirstStep(index, total));
 	const atLast = $derived(isLastStep(index, total));
+	const track = $derived(stepTrack(index, total));
+	const percent = $derived(progressPercent(index, total));
+
+	let trackList = $state<HTMLOListElement | null>(null);
+
+	/**
+	 * A long recipe scrolls its track: the current step is brought back to its centre. The track alone is
+	 * scrolled — `scrollIntoView` would also shift the page behind the dialog, which a right-to-left page
+	 * does visibly.
+	 */
+	$effect(() => {
+		void index;
+		const currentStep = trackList?.querySelector<HTMLElement>('[aria-current="step"]');
+		if (!trackList || !currentStep) return;
+
+		const track = trackList.getBoundingClientRect();
+		const step = currentStep.getBoundingClientRect();
+		trackList.scrollBy({
+			left: step.left + step.width / 2 - (track.left + track.width / 2),
+			behavior: motionMs(1) > 0 ? 'smooth' : 'auto'
+		});
+	});
+
+	/** In a right-to-left language the next step sits on the left, so the arrow keys follow it. */
+	function isRtl(): boolean {
+		return typeof document !== 'undefined' && document.documentElement.dir === 'rtl';
+	}
 
 	function stop() {
 		if (speechAvailable) window.speechSynthesis.cancel();
@@ -74,9 +111,15 @@
 
 <svelte:window
 	onkeydown={(event) => {
+		const forward = isRtl() ? 'ArrowLeft' : 'ArrowRight';
+		const back = isRtl() ? 'ArrowRight' : 'ArrowLeft';
+
 		if (event.key === 'Escape') close();
-		else if (event.key === 'ArrowRight') go(nextStepIndex(index, total));
-		else if (event.key === 'ArrowLeft') go(previousStepIndex(index, total));
+		else if (event.key === forward || event.key === back) {
+			// The page behind the dialog would otherwise scroll sideways along with the step.
+			event.preventDefault();
+			go(event.key === forward ? nextStepIndex(index, total) : previousStepIndex(index, total));
+		}
 	}}
 />
 
@@ -98,7 +141,7 @@
 		>
 			<X size={20} aria-hidden="true" />
 		</button>
-		<p class="text-product flex-1 text-center font-semibold break-words">{recipeName}</p>
+		<p class="text-product min-w-0 flex-1 text-center font-semibold break-words">{recipeName}</p>
 
 		{#if speechAvailable}
 			<button
@@ -120,9 +163,60 @@
 		{/if}
 	</div>
 
-	<p class="text-caption text-center text-white/60" data-test-id="cook-along-position">
-		{t('recipes.cookAlong.position', { current: position.current, total: position.total })}
-	</p>
+	<nav aria-label={t('recipes.cookAlong.steps')} class="px-4 pt-2">
+		<p
+			class="text-product text-center font-semibold"
+			aria-live="polite"
+			aria-atomic="true"
+			data-test-id="cook-along-position"
+		>
+			{t('recipes.cookAlong.position', { current: position.current, total: position.total })}
+		</p>
+
+		{#if total > 1}
+			<div class="mx-auto mt-3 h-2 max-w-xl overflow-hidden rounded-full bg-white/15" aria-hidden="true">
+				<div
+					class="bg-primary h-full rounded-full transition-[width] motion-reduce:transition-none"
+					style:width="{percent}%"
+				></div>
+			</div>
+
+			<ol
+				bind:this={trackList}
+				class="mx-auto mt-3 flex w-fit max-w-full gap-2 overflow-x-auto px-1 py-2"
+				data-test-id="cook-along-track"
+			>
+				{#each track as step (step.number)}
+					<li class="shrink-0">
+						<button
+							type="button"
+							onclick={() => go(step.number - 1)}
+							aria-current={step.state === 'current' ? 'step' : undefined}
+							aria-label={t('recipes.cookAlong.goTo', { current: step.number, total })}
+							data-test-class="cook-along-track-step"
+							data-state={step.state}
+							class="fl-press relative grid aspect-square size-[clamp(56px,3.5rem,80px)] place-items-center rounded-full text-lg font-bold
+								{step.state === 'current'
+								? 'border-4 border-white bg-white text-black'
+								: step.state === 'done'
+									? 'border-2 border-white/60 bg-white/15 text-white'
+									: 'border-2 border-dashed border-white/40 text-white/80'}"
+						>
+							{step.number}
+							{#if step.state === 'done'}
+								<span
+									class="bg-secondary absolute -end-0.5 -top-0.5 grid size-[clamp(20px,1.25rem,28px)] place-items-center rounded-full text-white"
+									aria-hidden="true"
+								>
+									<Check size={14} strokeWidth={3} />
+								</span>
+							{/if}
+						</button>
+					</li>
+				{/each}
+			</ol>
+		{/if}
+	</nav>
 
 	<div class="flex flex-1 items-center justify-center px-6 py-8">
 		{#if total > 0}
@@ -146,7 +240,7 @@
 			data-test-id="cook-along-previous"
 			class="fl-press h-14 flex-1 border-white/20 bg-white/10 text-white"
 		>
-			<ChevronLeft size={22} aria-hidden="true" />
+			<ChevronLeft size={22} aria-hidden="true" class="rtl:rotate-180" />
 			{t('recipes.cookAlong.previous')}
 		</Button>
 
@@ -157,7 +251,7 @@
 			class="fl-press h-14 flex-1"
 		>
 			{t('recipes.cookAlong.next')}
-			<ChevronRight size={22} aria-hidden="true" />
+			<ChevronRight size={22} aria-hidden="true" class="rtl:rotate-180" />
 		</Button>
 	</div>
 </div>

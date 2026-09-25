@@ -495,7 +495,9 @@
 			"next": "Suivante",
 			"mute": "Couper la voix",
 			"unmute": "Réactiver la voix",
-			"empty": "Cette recette n’a pas d’étape à suivre."
+			"empty": "Cette recette n’a pas d’étape à suivre.",
+			"steps": "Étapes de la recette",
+			"goTo": "Aller à l’étape {current} sur {total}"
 		}
 	},
 	"aisles": {
