@@ -26,7 +26,8 @@
 	import { imageBanks } from '$stores/image-banks.svelte';
 	import { navDirection } from '$domain/motion';
 	import { isLegalRoute } from '$domain/legal';
-	import { entriesSince } from '$domain/changelog';
+	import { releasesSince } from '$domain/changelog';
+	import { RELEASES } from '$lib/changelog/releases';
 	import { version as appVersion } from '../../package.json';
 	import { pushAppearance, syncAppearance } from '$sync/appearance';
 	import { registerServiceWorker } from '$native/pwa';
@@ -254,7 +255,7 @@
 		session.isApproved &&
 			settings.hasSeenWelcome &&
 			settings.lastSeenChangelogVersion !== appVersion &&
-			entriesSince(settings.lastSeenChangelogVersion).length > 0
+			releasesSince(RELEASES, settings.lastSeenChangelogVersion).length > 0
 	);
 
 	/**

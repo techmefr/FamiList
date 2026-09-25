@@ -1448,6 +1448,7 @@
 	"helpMenu": {
 		"button": "Aide",
 		"tutorial": "Voir le tutoriel",
+		"whatsNew": "Voir les nouveautés",
 		"install": "Installer sur l'écran d'accueil",
 		"suggestion": "Proposer une amélioration",
 		"bug": "Signaler un bug"
@@ -1455,19 +1456,16 @@
 	"changelog": {
 		"title": "Quoi de neuf",
 		"entryTitle": "Version {version}",
+		"currentVersion": "Vous utilisez la version {version}",
+		"groups": {
+			"new": "Nouveau",
+			"improved": "Amélioré",
+			"fixed": "Corrigé"
+		},
 		"acknowledge": "Compris",
 		"replayTour": "Revoir tout le guide",
 		"dismissOnce": "Ignorer cette fois",
-		"dismissUntilNextUpdate": "Ignorer jusqu'à la prochaine mise à jour",
-		"v0_1_0": {
-			"items": [
-				"Le menu de la semaine : planifiez vos repas et retrouvez la liste de courses correspondante.",
-				"Le foyer peut désormais enregistrer ses membres et leurs restrictions alimentaires.",
-				"Demandez une recette à l'IA en discutant, même quand l'import d'une page échoue.",
-				"Plusieurs clés IA peuvent être enregistrées sur un même compte.",
-				"Une carte de nouveautés s'affiche après une mise à jour, avec un accès rapide au guide."
-			]
-		}
+		"dismissUntilNextUpdate": "Ignorer jusqu'à la prochaine mise à jour"
 	},
 	"install": {
 		"title": "Familiste sur votre écran d'accueil",

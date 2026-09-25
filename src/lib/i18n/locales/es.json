@@ -1434,6 +1434,7 @@
 	"helpMenu": {
 		"button": "Ayuda",
 		"tutorial": "Ver el tutorial",
+		"whatsNew": "Ver las novedades",
 		"install": "Instalar en la pantalla de inicio",
 		"suggestion": "Proponer una mejora",
 		"bug": "Informar de un error"
@@ -1441,19 +1442,16 @@
 	"changelog": {
 		"title": "Novedades",
 		"entryTitle": "Versión {version}",
+		"currentVersion": "Está usando la versión {version}",
+		"groups": {
+			"new": "Nuevo",
+			"improved": "Mejorado",
+			"fixed": "Corregido"
+		},
 		"acknowledge": "Entendido",
 		"replayTour": "Volver a ver toda la guía",
 		"dismissOnce": "Ahora no",
-		"dismissUntilNextUpdate": "No mostrar hasta la próxima actualización",
-		"v0_1_0": {
-			"items": [
-				"Menú semanal: planifica tus comidas y obtén la lista de la compra correspondiente.",
-				"El hogar ahora puede registrar a sus miembros y sus restricciones alimentarias.",
-				"Pide una receta a la IA conversando, incluso cuando falla la importación de una página.",
-				"Ahora se pueden guardar varias claves de IA en la misma cuenta.",
-				"Tras una actualización aparece una tarjeta de novedades con acceso rápido a la guía."
-			]
-		}
+		"dismissUntilNextUpdate": "No mostrar hasta la próxima actualización"
 	},
 	"install": {
 		"title": "Familiste en tu pantalla de inicio",
