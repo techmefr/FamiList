@@ -5,6 +5,7 @@
 	import { feedback } from '$stores/feedback.svelte';
 	import { t } from '$i18n/index.svelte';
 	import { TINTS } from '$domain/tint';
+	import { BRANDS, findBrand } from '$domain/brand-catalogue';
 	import type { Shop } from '$db/schema';
 	import { Button } from '$components/ui/button';
 	import { Input } from '$components/ui/input';
@@ -101,11 +102,14 @@
 	);
 
 	/**
-	 * The brands already typed in the household, offered as you type. We keep no catalogue of chains: the
-	 * list fills with what the family really goes to, and an independent shop has nothing to find in it.
+	 * The brands already typed in the household first, then the catalogue's well-known chains: what the
+	 * family really goes to comes up before what it might. An independent shop simply matches none.
 	 */
 	const brands = $derived([
-		...new Set(data.shops.map((shop) => shop.brand.trim()).filter(Boolean))
+		...new Set([
+			...data.shops.map((shop) => shop.brand.trim()).filter(Boolean),
+			...BRANDS.map((entry) => entry.name)
+		])
 	]);
 
 	/** What the badge will carry if nobody fills the field. */
@@ -155,7 +159,7 @@
 			short,
 			lat,
 			lng,
-			tint: TINTS[data.shops.length % TINTS.length]
+			tint: findBrand(brand)?.color ?? TINTS[data.shops.length % TINTS.length]
 		});
 
 		brand = '';
