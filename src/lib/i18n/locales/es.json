@@ -692,6 +692,45 @@
 					"hint": "Una receta con lo que el hogar ya ha comprado."
 				}
 			}
+		},
+		"search": {
+			"label": "Buscar una receta",
+			"placeholder": "Nombre, ingrediente, categoría…",
+			"clear": "Borrar la búsqueda",
+			"filters": "Filtros",
+			"count": {
+				"one": "{count} receta encontrada",
+				"other": "{count} recetas encontradas"
+			},
+			"empty": "Ninguna receta coincide con esta búsqueda.",
+			"reset": "Mostrar todo"
+		},
+		"filters": {
+			"title": "Filtrar recetas",
+			"categories": "Categorías de filtros",
+			"ingredient": "Ingrediente",
+			"time": "Tiempo total",
+			"timeOption": {
+				"upTo15": "15 min o menos",
+				"upTo30": "De 15 a 30 min",
+				"upTo60": "De 30 min a 1 h",
+				"over60": "Más de 1 h"
+			},
+			"search": "Buscar un filtro",
+			"selected": "Seleccionados",
+			"all": "Todos",
+			"none": "Ningún filtro coincide.",
+			"noIngredient": "Aún no hay ingredientes: vienen de tus recetas.",
+			"back": "Volver a las categorías",
+			"clearAll": "Borrar todo",
+			"apply": {
+				"one": "Ver {count} receta",
+				"other": "Ver {count} recetas"
+			},
+			"active": {
+				"one": "{count} activo",
+				"other": "{count} activos"
+			}
 		}
 	},
 	"recipeTags": {
@@ -1478,7 +1517,8 @@
 			"list": "Listas",
 			"item": "Artículos",
 			"shop": "Tiendas",
-			"card": "Tarjetas"
+			"card": "Tarjetas",
+			"recipe": "Recetas"
 		}
 	},
 	"ai": {

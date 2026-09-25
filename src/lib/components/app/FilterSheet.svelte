@@ -1,33 +1,60 @@
 <script lang="ts">
+	import type { Snippet } from 'svelte';
 	import { settings } from '$stores/settings.svelte';
 	import { feedback } from '$stores/feedback.svelte';
 	import { t } from '$i18n/index.svelte';
 	import { Button } from '$components/ui/button';
 	import { X } from '@lucide/svelte';
 
+	/**
+	 * The frame shared by the app's filter sheets: a title, the filters themselves, a button emptying them,
+	 * and the close button in the corner. The list's two switches and the recipes' two-column catalogue
+	 * (#316) are both a `children` of it, so the two sheets open, close and reset the same way.
+	 */
 	let {
-		priorityOnly = $bindable(),
-		hideChecked = $bindable()
-	}: { priorityOnly: boolean; hideChecked: boolean } = $props();
+		title,
+		active,
+		onReset,
+		resetLabel,
+		testPrefix = 'filter',
+		wide = false,
+		onOpen,
+		children,
+		actions
+	}: {
+		title: string;
+		/** How many filters are on: the reset button is off at zero, there is nothing to empty. */
+		active: number;
+		onReset: () => void;
+		resetLabel?: string;
+		/** `filter` gives the list's historical markers: `filter-sheet`, `filter-reset`, `filter-sheet-close`. */
+		testPrefix?: string;
+		/** Room for two columns: a catalogue of filters does not fit the width of two switches. */
+		wide?: boolean;
+		onOpen?: () => void;
+		children: Snippet;
+		/** Buttons set next to the reset one, at the bottom, where the thumb already is. */
+		actions?: Snippet;
+	} = $props();
 
 	let dialog = $state<HTMLDialogElement | null>(null);
 
+	const titleId = $derived(`${testPrefix}-sheet-title`);
+
 	/** Same contract as the other sheets: it is the browser that holds the open state. */
 	export function show() {
+		onOpen?.();
 		dialog?.showModal();
 	}
 
-	function hide() {
+	export function hide() {
 		dialog?.close();
 	}
 
 	function reset() {
 		feedback.play('tap');
-		priorityOnly = false;
-		hideChecked = false;
+		onReset();
 	}
-
-	const actifs = $derived(Number(priorityOnly) + Number(hideChecked));
 </script>
 
 <dialog
@@ -36,62 +63,36 @@
 		if (event.target === dialog) hide();
 	}}
 	class="fl-sheet"
-	aria-labelledby="filter-sheet-title"
-	data-test-id="filter-sheet"
+	class:fl-sheet-wide={wide}
+	aria-labelledby={titleId}
+	data-test-id="{testPrefix}-sheet"
 >
 	<div
 		class="bg-card relative rounded-t-2xl border p-4 md:rounded-2xl"
 		class:fl-rise={settings.animates}
 	>
-		<h2 id="filter-sheet-title" class="text-h2 pe-12 font-semibold">{t('list.filters')}</h2>
+		<h2 id={titleId} class="text-h2 pe-12 font-semibold">{title}</h2>
 
-		<div class="mt-4 space-y-1">
-			<label
-				class="hover:bg-muted flex min-h-[max(3.5rem,56px)] cursor-pointer items-center gap-3 rounded-lg px-3 transition-colors"
-			>
-				<input
-					type="checkbox"
-					bind:checked={priorityOnly}
-					data-test-id="filter-priority"
-					class="accent-primary size-5 shrink-0"
-				/>
-				<span class="min-w-0 flex-1">
-					<span class="text-label block font-medium">{t('list.priorityOnly')}</span>
-					<span class="text-muted-foreground text-caption block">{t('list.priorityOnlyHint')}</span>
-				</span>
-			</label>
+		{@render children()}
 
-			<label
-				class="hover:bg-muted flex min-h-[max(3.5rem,56px)] cursor-pointer items-center gap-3 rounded-lg px-3 transition-colors"
+		<div class="mt-4 flex flex-wrap gap-2">
+			<Button
+				variant="outline"
+				onclick={reset}
+				disabled={active === 0}
+				data-test-id="{testPrefix}-reset"
+				class="h-auto min-h-[max(2.75rem,44px)] min-w-0 flex-1 basis-40 whitespace-normal"
 			>
-				<input
-					type="checkbox"
-					bind:checked={hideChecked}
-					data-test-id="filter-hide-checked"
-					class="accent-primary size-5 shrink-0"
-				/>
-				<span class="min-w-0 flex-1">
-					<span class="text-label block font-medium">{t('list.hideChecked')}</span>
-					<span class="text-muted-foreground text-caption block">{t('list.hideCheckedHint')}</span>
-				</span>
-			</label>
+				{resetLabel ?? t('list.filtersReset')}
+			</Button>
+			{@render actions?.()}
 		</div>
-
-		<Button
-			variant="outline"
-			onclick={reset}
-			disabled={actifs === 0}
-			data-test-id="filter-reset"
-			class="mt-4 w-full"
-		>
-			{t('list.filtersReset')}
-		</Button>
 
 		<button
 			type="button"
 			onclick={hide}
 			aria-label={t('common.close')}
-			data-test-id="filter-sheet-close"
+			data-test-id="{testPrefix}-sheet-close"
 			class="bg-muted text-foreground absolute end-4 top-4 grid size-11 place-items-center rounded-full"
 		>
 			<X size={18} aria-hidden="true" />

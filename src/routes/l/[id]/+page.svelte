@@ -554,5 +554,45 @@
 	</div>
 {/if}
 
-<FilterSheet bind:this={filters} bind:priorityOnly bind:hideChecked />
+<FilterSheet
+	bind:this={filters}
+	title={t('list.filters')}
+	active={activeFilters}
+	onReset={() => {
+		priorityOnly = false;
+		hideChecked = false;
+	}}
+>
+	<div class="mt-4 space-y-1">
+		<label
+			class="hover:bg-muted flex min-h-[max(3.5rem,56px)] cursor-pointer items-center gap-3 rounded-lg px-3 transition-colors"
+		>
+			<input
+				type="checkbox"
+				bind:checked={priorityOnly}
+				data-test-id="filter-priority"
+				class="accent-primary size-5 shrink-0"
+			/>
+			<span class="min-w-0 flex-1">
+				<span class="text-label block font-medium">{t('list.priorityOnly')}</span>
+				<span class="text-muted-foreground text-caption block">{t('list.priorityOnlyHint')}</span>
+			</span>
+		</label>
+
+		<label
+			class="hover:bg-muted flex min-h-[max(3.5rem,56px)] cursor-pointer items-center gap-3 rounded-lg px-3 transition-colors"
+		>
+			<input
+				type="checkbox"
+				bind:checked={hideChecked}
+				data-test-id="filter-hide-checked"
+				class="accent-primary size-5 shrink-0"
+			/>
+			<span class="min-w-0 flex-1">
+				<span class="text-label block font-medium">{t('list.hideChecked')}</span>
+				<span class="text-muted-foreground text-caption block">{t('list.hideCheckedHint')}</span>
+			</span>
+		</label>
+	</div>
+</FilterSheet>
 <AddItemSheet bind:this={add} {listId} />

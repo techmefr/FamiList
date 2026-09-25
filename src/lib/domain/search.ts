@@ -3,15 +3,16 @@ import { foldForSearch } from '$domain/emoji';
 /**
  * What can be found again from a fragment of a word.
  *
- * Four families, and not one more: they are the things the household wrote itself and then files away in
- * separate screens — an item noted three weeks ago sleeps at the bottom of a list among others.
+ * Five families, and not one more: they are the things the household wrote itself and then files away in
+ * separate screens — an item noted three weeks ago sleeps at the bottom of a list among others, a recipe
+ * under forty others in the wall.
  * Conversations stay out: they are read again in their thread, and mixing them with items would make
  * snippets of conversation appear in a result you open in front of somebody else. Aisles and members too:
  * they all fit on one screen, you see them without looking.
  */
-export type SearchKind = 'list' | 'item' | 'shop' | 'card';
+export type SearchKind = 'list' | 'item' | 'recipe' | 'shop' | 'card';
 
-export const SEARCH_KINDS: SearchKind[] = ['list', 'item', 'shop', 'card'];
+export const SEARCH_KINDS: SearchKind[] = ['list', 'item', 'recipe', 'shop', 'card'];
 
 /**
  * Below two characters, everything matches: the search would return the whole household in random order,
@@ -48,9 +49,18 @@ export interface SearchableCard {
 	brand: string;
 }
 
+export interface SearchableRecipe {
+	id: string;
+	name: string;
+	emoji: string;
+	/** The ingredient names: "poireaux" must find the soup it goes into. */
+	ingredients: string[];
+}
+
 export interface SearchSource {
 	lists: SearchableList[];
 	items: SearchableItem[];
+	recipes: SearchableRecipe[];
 	shops: SearchableShop[];
 	cards: SearchableCard[];
 }
@@ -185,6 +195,27 @@ export function searchAll(query: string, source: SearchSource): SearchGroup[] {
 		});
 	}
 
+	const recipes: SearchHit[] = [];
+	for (const recipe of source.recipes) {
+		const score = scoreEntry(query, [
+			{ value: recipe.name, weight: 1 },
+			...recipe.ingredients.map((value) => ({ value, weight: 0.5 }))
+		]);
+		if (score === 0) continue;
+
+		recipes.push({
+			kind: 'recipe',
+			id: recipe.id,
+			label: recipe.name,
+			detail: '',
+			icon: recipe.emoji,
+			// The recipes page unfolds and scrolls to the card named by this parameter.
+			href: `/recipes?recipe=${recipe.id}`,
+			checked: false,
+			score
+		});
+	}
+
 	const shops: SearchHit[] = [];
 	for (const shop of source.shops) {
 		const score = scoreEntry(query, [
@@ -228,6 +259,7 @@ export function searchAll(query: string, source: SearchSource): SearchGroup[] {
 	const byKind: Record<SearchKind, SearchHit[]> = {
 		list: take(lists),
 		item: take(items),
+		recipe: take(recipes),
 		shop: take(shops),
 		card: take(cards)
 	};
