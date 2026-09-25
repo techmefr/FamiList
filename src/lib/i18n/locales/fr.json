@@ -59,7 +59,6 @@
 	},
 	"profile": {
 		"title": "Profil",
-		"appearance": "Apparence",
 		"theme": "Thème",
 		"textSize": "Taille du texte",
 		"font": "Police",
@@ -79,7 +78,6 @@
 		"avatarTooBig": "Cette image est trop lourde. Choisissez-en une plus petite.",
 		"avatarFailed": "Impossible de lire cette image.",
 		"signedInAs": "Connecté en tant que {email}",
-		"feedbackTitle": "Mouvement et retours",
 		"motion": "Animations",
 		"motionHint": "« Système » suit le réglage de réduction du mouvement de votre appareil.",
 		"motionPreview": "Animations actives.",
@@ -95,9 +93,6 @@
 		"help": "Aide",
 		"tourHint": "Revoir la visite guidée des écrans principaux.",
 		"replayTour": "Revoir la visite",
-		"sharing": "Partage",
-		"householdHint": "Inviter vos proches et partager vos listes.",
-		"adminHint": "Approuver les nouveaux comptes et gérer les rôles.",
 		"firstName": "Prénom",
 		"lastName": "Nom",
 		"name": "Nom affiché",
@@ -106,7 +101,62 @@
 		"nameSave": "Enregistrer",
 		"nameSaved": "Enregistré",
 		"nameFailed": "Le nom n’a pas pu être enregistré. Réessayez dans un instant.",
-		"administration": "Administration"
+		"administration": "Administration",
+		"back": "Retour au profil",
+		"search": "Rechercher un réglage",
+		"searchEmpty": "Aucun réglage ne correspond à « {query} ».",
+		"searchResults": "Réglages trouvés",
+		"readingShortcut": "Taille du texte et police",
+		"categories": {
+			"account": {
+				"hint": "Nom, portrait, déconnexion",
+				"keywords": "prénom, nom, photo, avatar, initiales, e-mail, se déconnecter, quitter"
+			},
+			"household": {
+				"title": "Foyer et partage",
+				"hint": "Membres, invitations, cercles",
+				"keywords": "famille, proches, inviter, rejoindre, code, partager, cercle, allergies, régimes"
+			},
+			"display": {
+				"title": "Affichage et lecture",
+				"hint": "Taille du texte, police, thème, langue",
+				"keywords": "grand, gros, agrandir, lire, lisibilité, sombre, clair, nuit, couleur, gaucher, droitier, pouce, dyslexie"
+			},
+			"feedback": {
+				"title": "Son et retours",
+				"hint": "Animations, son, vibration, carte à l’approche",
+				"keywords": "bip, bruit, volume, muet, silencieux, mouvement, vibreur, notification, position, fidélité"
+			},
+			"security": {
+				"hint": "Mot de passe, deux étapes, appareils, vos données",
+				"keywords": "code, authentification, 2FA, TOTP, session, appareil, exporter, supprimer le compte"
+			},
+			"ai": {
+				"hint": "Fournisseur et clé pour des idées de recettes",
+				"keywords": "IA, clé API, fournisseur, modèle, suggestion, idée de recette"
+			},
+			"images": {
+				"hint": "Clés Pexels et Pixabay pour les photos de plats",
+				"keywords": "photo, image, Pexels, Pixabay, clé, plat"
+			},
+			"connection": {
+				"hint": "La base Supabase utilisée par l’application",
+				"keywords": "serveur, Supabase, URL, auto-hébergement, instance, base de données"
+			},
+			"help": {
+				"hint": "Visite guidée",
+				"keywords": "tutoriel, visite, guide, aide, découvrir"
+			},
+			"legal": {
+				"title": "Juridique et confidentialité",
+				"hint": "Mentions, conditions, vos données personnelles",
+				"keywords": "CGU, CGV, confidentialité, vie privée, RGPD, données personnelles, droits, mentions légales"
+			},
+			"admin": {
+				"hint": "Comptes, signalements, plantages",
+				"keywords": "valider, approuver, rôle, administrateur, démo, signalement, plantage, demande RGPD"
+			}
+		}
 	},
 	"theme": {
 		"light": "Clair",

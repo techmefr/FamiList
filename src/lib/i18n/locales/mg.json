@@ -59,7 +59,6 @@
 	},
 	"profile": {
 		"title": "Mombamomba",
-		"appearance": "Endrika",
 		"theme": "Loko fototra",
 		"textSize": "Haben'ny soratra",
 		"font": "Endri-tsoratra",
@@ -79,7 +78,6 @@
 		"avatarTooBig": "Lehibe loatra io sary io. Misafidiana kely kokoa.",
 		"avatarFailed": "Tsy voavaky io sary io.",
 		"signedInAs": "Tafiditra amin'ny anarana {email}",
-		"feedbackTitle": "Hetsika sy valiny",
 		"motion": "Hetsika",
 		"motionHint": "Ny « Rafitra » dia manaraka ny safidy fampihenana hetsika ao amin'ny finday.",
 		"motionPreview": "Mandeha ny hetsika.",
@@ -95,9 +93,6 @@
 		"help": "Fanampiana",
 		"tourHint": "Hijery indray ny fitarihana amin'ny efijery lehibe.",
 		"replayTour": "Hijery ny fitarihana",
-		"sharing": "Fizarana",
-		"householdHint": "Manasa ny fianakaviana sy mizara ny lisitra.",
-		"adminHint": "Manaiky ny kaonty vaovao sy mitantana ny anjara asa.",
 		"firstName": "Anarana",
 		"lastName": "Fanampin'anarana",
 		"name": "Anarana aseho",
@@ -106,7 +101,62 @@
 		"nameSave": "Tehirizo",
 		"nameSaved": "Voatahiry",
 		"nameFailed": "Tsy voatahiry ny anarana. Andramo indray afaka kelikely.",
-		"administration": "Fitantanana"
+		"administration": "Fitantanana",
+		"back": "Hiverina amin’ny mombamomba",
+		"search": "Hitady fandrindrana",
+		"searchEmpty": "Tsy misy fandrindrana mifanaraka amin’ny « {query} ».",
+		"searchResults": "Fandrindrana hita",
+		"readingShortcut": "Haben’ny soratra sy endri-tsoratra",
+		"categories": {
+			"account": {
+				"hint": "Anarana, sary, fivoahana",
+				"keywords": "anarana, fanampin’anarana, sary, avatar, litera voalohany, mailaka, hivoaka"
+			},
+			"household": {
+				"title": "Ankohonana sy fizarana",
+				"hint": "Mpikambana, fanasana, faribolana",
+				"keywords": "fianakaviana, havana, manasa, miditra, kaody, mizara, faribolana, tsy fahazakana, sakafo"
+			},
+			"display": {
+				"title": "Fampisehoana sy famakiana",
+				"hint": "Haben’ny soratra, endri-tsoratra, loko, fiteny",
+				"keywords": "lehibe, manalehibe, mamaky, mazava, maizina, mazava loko, alina, loko, havia, havanana, ankihibe, dyslexie"
+			},
+			"feedback": {
+				"title": "Feo sy valiny",
+				"hint": "Hetsika, feo, hovitra, karatra akaikin’ny fivarotana",
+				"keywords": "bip, tabataba, haben’ny feo, mangina, hetsika, mihovitra, fampandrenesana, toerana, karatra fahatokiana"
+			},
+			"security": {
+				"hint": "Tenimiafina, dingana roa, fitaovana, ny angonao",
+				"keywords": "kaody, fanamarinana, 2FA, TOTP, fidirana, fitaovana, manondrana, mamafa ny kaonty"
+			},
+			"ai": {
+				"hint": "Mpamatsy sy fanalahidy ho an’ny hevitra nahandro",
+				"keywords": "IA, fanalahidy API, mpamatsy, modely, soso-kevitra, hevitra nahandro"
+			},
+			"images": {
+				"hint": "Fanalahidy Pexels sy Pixabay ho an’ny sarin-tsakafo",
+				"keywords": "sary, Pexels, Pixabay, fanalahidy, sakafo"
+			},
+			"connection": {
+				"hint": "Ny tahiry Supabase ampiasain’ny fampiharana",
+				"keywords": "mpizara, Supabase, URL, fampiantranoana manokana, tahiry"
+			},
+			"help": {
+				"hint": "Fitsidihana tarihina",
+				"keywords": "fampianarana, fitsidihana, torolalana, fanampiana, hahafantatra"
+			},
+			"legal": {
+				"title": "Lalàna sy fiainana manokana",
+				"hint": "Fampahafantarana, fepetra, ny angon-drakitrao manokana",
+				"keywords": "fepetra fampiasana, fepetra fivarotana, fiainana manokana, RGPD, angona manokana, zo, fampahalalana ara-dalàna"
+			},
+			"admin": {
+				"hint": "Kaonty, tatitra, fianjerana",
+				"keywords": "manaiky, manamarina, anjara, mpitantana, demo, tatitra, fianjerana, fangatahana RGPD"
+			}
+		}
 	},
 	"theme": {
 		"light": "Mazava",

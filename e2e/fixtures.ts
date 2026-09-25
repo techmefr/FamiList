@@ -23,7 +23,7 @@ export async function signIn(page: Page, email: string, password: string) {
 }
 
 export async function signOut(page: Page) {
-	await page.goto('/profile');
+	await page.goto('/profile/account');
 	await page.getByTestId('sign-out').click();
 	await expect(page).toHaveURL(/\/auth|\/welcome/);
 }

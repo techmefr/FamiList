@@ -59,7 +59,6 @@
 	},
 	"profile": {
 		"title": "Profil",
-		"appearance": "Darstellung",
 		"theme": "Design",
 		"textSize": "Schriftgröße",
 		"font": "Schriftart",
@@ -79,7 +78,6 @@
 		"avatarTooBig": "Dieses Bild ist zu groß. Wählen Sie ein kleineres.",
 		"avatarFailed": "Dieses Bild konnte nicht gelesen werden.",
 		"signedInAs": "Angemeldet als {email}",
-		"feedbackTitle": "Bewegung und Rückmeldung",
 		"motion": "Animationen",
 		"motionHint": "„System“ folgt der Einstellung „Bewegung reduzieren“ des Geräts.",
 		"motionPreview": "Animationen aktiv.",
@@ -95,9 +93,6 @@
 		"help": "Hilfe",
 		"tourHint": "Die Führung durch die wichtigsten Bildschirme erneut ansehen.",
 		"replayTour": "Führung ansehen",
-		"sharing": "Teilen",
-		"householdHint": "Angehörige einladen und Listen gemeinsam nutzen.",
-		"adminHint": "Neue Konten freigeben und Rollen verwalten.",
 		"firstName": "Vorname",
 		"lastName": "Nachname",
 		"name": "Anzeigename",
@@ -106,7 +101,62 @@
 		"nameSave": "Speichern",
 		"nameSaved": "Gespeichert",
 		"nameFailed": "Der Name konnte nicht gespeichert werden. Versuche es gleich noch einmal.",
-		"administration": "Verwaltung"
+		"administration": "Verwaltung",
+		"back": "Zurück zum Profil",
+		"search": "Einstellung suchen",
+		"searchEmpty": "Keine Einstellung passt zu „{query}“.",
+		"searchResults": "Gefundene Einstellungen",
+		"readingShortcut": "Schriftgröße und Schriftart",
+		"categories": {
+			"account": {
+				"hint": "Name, Porträt, Abmelden",
+				"keywords": "Vorname, Nachname, Foto, Avatar, Initialen, E-Mail, abmelden, ausloggen"
+			},
+			"household": {
+				"title": "Haushalt und Teilen",
+				"hint": "Mitglieder, Einladungen, Kreise",
+				"keywords": "Familie, Angehörige, einladen, beitreten, Code, teilen, Kreis, Allergien, Ernährung"
+			},
+			"display": {
+				"title": "Anzeige und Lesen",
+				"hint": "Schriftgröße, Schriftart, Design, Sprache",
+				"keywords": "groß, größer, vergrößern, lesen, Lesbarkeit, dunkel, hell, Nacht, Farbe, Linkshänder, Rechtshänder, Daumen, Legasthenie"
+			},
+			"feedback": {
+				"title": "Ton und Rückmeldung",
+				"hint": "Animationen, Ton, Vibration, Karte in Ladennähe",
+				"keywords": "Piepton, Geräusch, Lautstärke, stumm, lautlos, Bewegung, vibrieren, Benachrichtigung, Standort, Kundenkarte"
+			},
+			"security": {
+				"hint": "Passwort, zwei Schritte, Geräte, Ihre Daten",
+				"keywords": "Code, Authentifizierung, 2FA, TOTP, Sitzung, Gerät, exportieren, Konto löschen"
+			},
+			"ai": {
+				"hint": "Anbieter und Schlüssel für Rezeptideen",
+				"keywords": "KI, API-Schlüssel, Anbieter, Modell, Vorschlag, Rezeptidee"
+			},
+			"images": {
+				"hint": "Pexels- und Pixabay-Schlüssel für Fotos von Gerichten",
+				"keywords": "Foto, Bild, Pexels, Pixabay, Schlüssel, Gericht"
+			},
+			"connection": {
+				"hint": "Die Supabase-Datenbank dieser App",
+				"keywords": "Server, Supabase, URL, Selbsthosting, Instanz, Datenbank"
+			},
+			"help": {
+				"hint": "Geführte Tour",
+				"keywords": "Anleitung, Tour, Rundgang, Hilfe, entdecken"
+			},
+			"legal": {
+				"title": "Rechtliches und Datenschutz",
+				"hint": "Impressum, Bedingungen, Ihre persönlichen Daten",
+				"keywords": "Nutzungsbedingungen, Verkaufsbedingungen, Datenschutz, DSGVO, persönliche Daten, Rechte, Impressum"
+			},
+			"admin": {
+				"hint": "Konten, Meldungen, Abstürze",
+				"keywords": "freigeben, bestätigen, Rolle, Administrator, Demo, Meldung, Absturz, DSGVO-Anfrage"
+			}
+		}
 	},
 	"theme": {
 		"light": "Hell",

@@ -13,7 +13,7 @@ import { test, expect } from './fixtures';
  * would start from an already changed name.
  */
 test('changer son nom, et voir les initiales suivre', async ({ signedInPage: page }) => {
-	await page.goto('/profile');
+	await page.goto('/profile/account');
 
 	// The fields are only filled once the account is identified: reading their content before would give an
 	// empty string, and the end-of-test restore would write an empty name.

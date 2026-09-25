@@ -59,7 +59,6 @@
 	},
 	"profile": {
 		"title": "Profilo",
-		"appearance": "Aspetto",
 		"theme": "Tema",
 		"textSize": "Dimensione del testo",
 		"font": "Carattere",
@@ -79,7 +78,6 @@
 		"avatarTooBig": "Questa immagine è troppo pesante. Ne scelga una più piccola.",
 		"avatarFailed": "Impossibile leggere questa immagine.",
 		"signedInAs": "Connesso come {email}",
-		"feedbackTitle": "Movimento e ritorni",
 		"motion": "Animazioni",
 		"motionHint": "«Sistema» segue l'impostazione di riduzione del movimento del dispositivo.",
 		"motionPreview": "Animazioni attive.",
@@ -95,9 +93,6 @@
 		"help": "Aiuto",
 		"tourHint": "Rivedere la visita guidata delle schermate principali.",
 		"replayTour": "Rivedere la visita",
-		"sharing": "Condivisione",
-		"householdHint": "Invitare i propri cari e condividere le liste.",
-		"adminHint": "Approvare i nuovi account e gestire i ruoli.",
 		"firstName": "Nome",
 		"lastName": "Cognome",
 		"name": "Nome visualizzato",
@@ -106,7 +101,62 @@
 		"nameSave": "Salva",
 		"nameSaved": "Salvato",
 		"nameFailed": "Non è stato possibile salvare il nome. Riprova tra un momento.",
-		"administration": "Amministrazione"
+		"administration": "Amministrazione",
+		"back": "Torna al profilo",
+		"search": "Cerca un’impostazione",
+		"searchEmpty": "Nessuna impostazione corrisponde a «{query}».",
+		"searchResults": "Impostazioni trovate",
+		"readingShortcut": "Dimensione del testo e carattere",
+		"categories": {
+			"account": {
+				"hint": "Nome, ritratto, esci",
+				"keywords": "nome, cognome, foto, avatar, iniziali, e-mail, disconnettersi, esci"
+			},
+			"household": {
+				"title": "Famiglia e condivisione",
+				"hint": "Membri, inviti, cerchie",
+				"keywords": "famiglia, parenti, invitare, unirsi, codice, condividere, cerchia, allergie, diete"
+			},
+			"display": {
+				"title": "Schermo e lettura",
+				"hint": "Dimensione del testo, carattere, tema, lingua",
+				"keywords": "grande, ingrandire, leggere, leggibilità, scuro, chiaro, notte, colore, mancino, destrorso, pollice, dislessia"
+			},
+			"feedback": {
+				"title": "Suono e riscontri",
+				"hint": "Animazioni, suono, vibrazione, carta vicino a un negozio",
+				"keywords": "bip, rumore, volume, muto, silenzioso, movimento, vibrare, notifica, posizione, fedeltà"
+			},
+			"security": {
+				"hint": "Password, due passaggi, dispositivi, i tuoi dati",
+				"keywords": "codice, autenticazione, 2FA, TOTP, sessione, dispositivo, esportare, eliminare l’account"
+			},
+			"ai": {
+				"hint": "Fornitore e chiave per idee di ricette",
+				"keywords": "IA, chiave API, fornitore, modello, suggerimento, idea di ricetta"
+			},
+			"images": {
+				"hint": "Chiavi Pexels e Pixabay per le foto dei piatti",
+				"keywords": "foto, immagine, Pexels, Pixabay, chiave, piatto"
+			},
+			"connection": {
+				"hint": "Il database Supabase usato dall’app",
+				"keywords": "server, Supabase, URL, self-hosting, istanza, database"
+			},
+			"help": {
+				"hint": "Visita guidata",
+				"keywords": "tutorial, visita, guida, aiuto, scoprire"
+			},
+			"legal": {
+				"title": "Note legali e privacy",
+				"hint": "Note, condizioni, i tuoi dati personali",
+				"keywords": "condizioni d’uso, condizioni di vendita, privacy, GDPR, dati personali, diritti, note legali"
+			},
+			"admin": {
+				"hint": "Account, segnalazioni, arresti anomali",
+				"keywords": "approvare, convalidare, ruolo, amministratore, demo, segnalazione, crash, richiesta GDPR"
+			}
+		}
 	},
 	"theme": {
 		"light": "Chiaro",

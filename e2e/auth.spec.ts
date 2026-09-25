@@ -35,7 +35,7 @@ test.describe('connexion', () => {
 
 test.describe('session', () => {
 	test('se déconnecter renvoie vers un écran public', async ({ signedInPage: page }) => {
-		await page.goto('/profile');
+		await page.goto('/profile/account');
 		await page.getByTestId('sign-out').click();
 
 		// /welcome on a browser that has seen nothing yet, /auth otherwise: both are public, and it is precisely

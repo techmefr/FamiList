@@ -24,6 +24,7 @@ test.describe('privacy request form', () => {
 		signedInPage: page
 	}) => {
 		await page.goto('/profile');
+		await page.getByTestId('profile-category-legal').click();
 		await page.getByTestId('go-privacy-request').click();
 
 		await expect(page).toHaveURL(/\/legal\/privacy-request$/);

@@ -329,7 +329,7 @@
 <h1 class="text-h1 font-semibold">{t('security.title')}</h1>
 <p class="text-muted-foreground mt-1">{t('security.subtitle')}</p>
 
-<Card.Root class="mt-6">
+<Card.Root id="setting-password" tabindex={-1} class="fl-setting mt-6">
 	<Card.Header>
 		<Card.Title class="text-h2 flex items-center gap-2">
 			<Lock size={22} aria-hidden="true" />
@@ -423,7 +423,7 @@
 	</Card.Content>
 </Card.Root>
 
-<Card.Root class="mt-6">
+<Card.Root id="setting-two-factor" tabindex={-1} class="fl-setting mt-6">
 	<Card.Header>
 		<Card.Title class="text-h2 flex items-center gap-2">
 			{#if enabled}
@@ -608,7 +608,7 @@
 	</Card.Root>
 {/if}
 
-<Card.Root class="mt-6">
+<Card.Root id="setting-sessions" tabindex={-1} class="fl-setting mt-6">
 	<Card.Header>
 		<Card.Title class="text-h2 flex items-center gap-2">
 			<Monitor size={22} aria-hidden="true" />
@@ -664,7 +664,7 @@
 	</Card.Content>
 </Card.Root>
 
-<Card.Root class="mt-6">
+<Card.Root id="setting-data" tabindex={-1} class="fl-setting mt-6">
 	<Card.Header>
 		<Card.Title class="text-h2 flex items-center gap-2">
 			<Download size={22} aria-hidden="true" />
@@ -687,7 +687,7 @@
 	</Card.Content>
 </Card.Root>
 
-<Card.Root class="mt-6 border-destructive/40">
+<Card.Root id="setting-delete" tabindex={-1} class="fl-setting mt-6 border-destructive/40">
 	<Card.Header>
 		<Card.Title class="text-h2 flex items-center gap-2">
 			<Trash2 size={22} class="text-destructive" aria-hidden="true" />
