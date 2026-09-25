@@ -684,6 +684,45 @@
 					"hint": "Ein Rezept mit dem, was der Haushalt schon gekauft hat."
 				}
 			}
+		},
+		"search": {
+			"label": "Rezept suchen",
+			"placeholder": "Name, Zutat, Kategorie…",
+			"clear": "Suche löschen",
+			"filters": "Filter",
+			"count": {
+				"one": "{count} Rezept gefunden",
+				"other": "{count} Rezepte gefunden"
+			},
+			"empty": "Kein Rezept passt zu dieser Suche.",
+			"reset": "Alle anzeigen"
+		},
+		"filters": {
+			"title": "Rezepte filtern",
+			"categories": "Filterkategorien",
+			"ingredient": "Zutat",
+			"time": "Gesamtzeit",
+			"timeOption": {
+				"upTo15": "15 Min. oder weniger",
+				"upTo30": "15 bis 30 Min.",
+				"upTo60": "30 Min. bis 1 Std.",
+				"over60": "Über 1 Std."
+			},
+			"search": "Filter suchen",
+			"selected": "Ausgewählt",
+			"all": "Alle",
+			"none": "Kein Filter passt.",
+			"noIngredient": "Noch keine Zutaten: Sie kommen aus Ihren Rezepten.",
+			"back": "Zurück zu den Kategorien",
+			"clearAll": "Alle löschen",
+			"apply": {
+				"one": "{count} Rezept anzeigen",
+				"other": "{count} Rezepte anzeigen"
+			},
+			"active": {
+				"one": "{count} aktiv",
+				"other": "{count} aktiv"
+			}
 		}
 	},
 	"recipeTags": {
@@ -1409,7 +1448,8 @@
 			"list": "Listen",
 			"item": "Artikel",
 			"shop": "Geschäfte",
-			"card": "Karten"
+			"card": "Karten",
+			"recipe": "Rezepte"
 		}
 	},
 	"ai": {

@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
+	import { page } from '$app/state';
 	import { data } from '$stores/data.svelte';
 	import { feedback } from '$stores/feedback.svelte';
 	import { ai } from '$stores/ai.svelte';
@@ -12,11 +13,13 @@
 	import { UNITS, DEFAULT_UNIT } from '$domain/units';
 	import { toggleLink, withoutIngredient } from '$domain/step-ingredients';
 	import { durationFields, durationFromFields } from '$domain/step-duration';
+	import { knownTags } from '$domain/recipe-tags';
+	import { activeCount, emptySelection, findRecipes, totalSeconds } from '$domain/recipe-filter';
 	import { Button } from '$components/ui/button';
 	import { Input } from '$components/ui/input';
 	import { Label } from '$components/ui/label';
 	import * as Card from '$components/ui/card';
-	import { tick } from 'svelte';
+	import { tick, untrack } from 'svelte';
 	import { slide } from 'svelte/transition';
 	import { cubicOut } from 'svelte/easing';
 	import EmojiPicker from '$components/app/EmojiPicker.svelte';
@@ -27,6 +30,8 @@
 	import RecipeCover from '$components/app/RecipeCover.svelte';
 	import RecipeTagPicker from '$components/app/RecipeTagPicker.svelte';
 	import RecipeTagChips from '$components/app/RecipeTagChips.svelte';
+	import RecipeSearchBar from '$components/app/RecipeSearchBar.svelte';
+	import RecipeFilterSheet from '$components/app/RecipeFilterSheet.svelte';
 	import {
 		CookingPot,
 		Hash,
@@ -119,6 +124,75 @@
 		}
 		expandedIds = next;
 	}
+
+	/**
+	 * The search and the filters of the wall (#315, #316). Worked out on what is already in memory, never
+	 * asked of the server: a kitchen or a shop is where the signal is worst.
+	 */
+	let query = $state('');
+	let selection = $state(emptySelection());
+	let filterSheet = $state<RecipeFilterSheet | null>(null);
+	let barHeight = $state(0);
+
+	/** Grouped once per change, not looked up per recipe per keystroke: a household has thousands of lines. */
+	const linesByRecipe = $derived.by(() => {
+		const names = new Map<string, string[]>();
+		for (const line of data.recipeIngredients) {
+			names.set(line.recipeId, [...(names.get(line.recipeId) ?? []), line.name]);
+		}
+		return names;
+	});
+
+	const durationsByRecipe = $derived.by(() => {
+		const durations = new Map<string, (number | undefined)[]>();
+		for (const step of data.recipeSteps) {
+			durations.set(step.recipeId, [...(durations.get(step.recipeId) ?? []), step.durationSeconds]);
+		}
+		return durations;
+	});
+
+	const filterable = $derived(
+		data.recipes.map((recipe) => ({
+			id: recipe.id,
+			name: recipe.name,
+			tags: recipe.tags ?? [],
+			tagLabels: knownTags(recipe.tags).map((tag) => t(`recipeTags.tag.${tag}`)),
+			ingredients: linesByRecipe.get(recipe.id) ?? [],
+			totalSeconds: totalSeconds(durationsByRecipe.get(recipe.id) ?? []),
+			recipe
+		}))
+	);
+
+	const shownRecipes = $derived(findRecipes(query, selection, filterable).map((entry) => entry.recipe));
+	const narrowed = $derived(query.trim() !== '' || activeCount(selection) > 0);
+
+	function showAll() {
+		feedback.play('tap');
+		query = '';
+		selection = emptySelection();
+	}
+
+	/**
+	 * A recipe opened from the household search arrives as `?recipe=<id>`: its card is unfolded and brought
+	 * into view, with the search and the filters emptied so nothing can be hiding it.
+	 */
+	let revealed: string | null = null;
+	$effect(() => {
+		const target = page.url.searchParams.get('recipe');
+		if (!target) {
+			revealed = null;
+			return;
+		}
+		if (target === revealed || !data.recipes.some((recipe) => recipe.id === target)) return;
+
+		revealed = target;
+		untrack(() => {
+			query = '';
+			selection = emptySelection();
+			expandedIds = new Set([...expandedIds, target]);
+			void revealCard(target);
+		});
+	});
 
 	/** Whether the open form holds a draft read from elsewhere (a page, a photo, the AI), to be read over. */
 	let fromImport = $state(false);
@@ -419,6 +493,20 @@
 	<CalendarDays size={18} aria-hidden="true" />
 	{t('recipes.mealPlanLink')}
 </a>
+
+{#if data.recipes.length > 0}
+	<RecipeSearchBar
+		bind:query
+		bind:height={barHeight}
+		active={activeCount(selection)}
+		onFilters={() => filterSheet?.show()}
+	/>
+
+	<!-- Spoken, not shown: the wall itself shows how many cards are left. -->
+	<p class="sr-only" aria-live="polite" data-test-id="recipe-search-count">
+		{narrowed ? t('recipes.search.count', { count: shownRecipes.length }) : ''}
+	</p>
+{/if}
 
 {#if creating}
 	<form onsubmit={goNext} class="bg-card mt-4 scroll-mt-4 space-y-5 rounded-xl border p-4" data-test-id="recipe-form">
@@ -780,6 +868,14 @@
 			{/if}
 		{/snippet}
 	</EmptyState>
+{:else if shownRecipes.length === 0}
+	<EmptyState illustration="inbox" text={t('recipes.search.empty')} testId="recipes-search-empty">
+		{#snippet action()}
+			<Button variant="outline" onclick={showAll} data-test-id="recipes-search-reset" class="fl-press">
+				{t('recipes.search.reset')}
+			</Button>
+		{/snippet}
+	</EmptyState>
 {:else}
 	<!--
 		A Pinterest-style wall, not a stack: a recipe is a photo before it is a document, and a single column
@@ -790,7 +886,7 @@
 		once there is a real desktop-width landscape screen to fill.
 	-->
 	<ul class="fl-recipe-grid mt-6 columns-2 gap-3.5 full:columns-4">
-		{#each data.recipes as recipe (recipe.id)}
+		{#each shownRecipes as recipe (recipe.id)}
 			{@const ingredients = data.ingredientsOf(recipe.id)}
 			{@const recipeSteps = data.stepsOf(recipe.id)}
 			{@const owned = recipe.householdId === data.circle}
@@ -1057,6 +1153,11 @@
 		{/each}
 	</ul>
 {/if}
+
+<!-- On a phone the bar floats over the end of the wall: this keeps the last card clear of it. -->
+<div class="md:hidden" style="height: {barHeight}px" aria-hidden="true"></div>
+
+<RecipeFilterSheet bind:this={filterSheet} bind:selection recipes={filterable} {query} />
 
 <EmojiPicker bind:this={picker} value={emoji} onpick={(chosen) => (emoji = chosen)} />
 

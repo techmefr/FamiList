@@ -8,7 +8,16 @@
 	import { flattenHits, searchAll, MIN_QUERY_LENGTH, type SearchHit } from '$domain/search';
 	import { Input } from '$components/ui/input';
 	import { Label } from '$components/ui/label';
-	import { Search, X, Check, ListChecks, ShoppingBasket, Store, CreditCard } from '@lucide/svelte';
+	import {
+		Search,
+		X,
+		Check,
+		ListChecks,
+		ShoppingBasket,
+		Store,
+		CreditCard,
+		CookingPot
+	} from '@lucide/svelte';
 	import IconField from '$components/app/IconField.svelte';
 	import EmptyState from '$components/app/EmptyState.svelte';
 
@@ -24,14 +33,28 @@
 	let enabled = $state(0);
 
 	/**
-	 * Everything happens on the local cache: the lists, the items, the shops and the cards are already in
+	 * Everything happens on the local cache: the lists, the items, the recipes, the shops and the cards are already in
 	 * memory, and a family's household comes to hundreds of rows. Querying the server would make the search
 	 * unusable where it serves most — standing in an aisle, with one bar of signal.
 	 */
+	const ingredientNames = $derived.by(() => {
+		const byRecipe = new Map<string, string[]>();
+		for (const line of data.recipeIngredients) {
+			byRecipe.set(line.recipeId, [...(byRecipe.get(line.recipeId) ?? []), line.name]);
+		}
+		return byRecipe;
+	});
+
 	const groups = $derived(
 		searchAll(query, {
 			lists: data.lists,
 			items: data.items,
+			recipes: data.recipes.map((recipe) => ({
+				id: recipe.id,
+				name: recipe.name,
+				emoji: recipe.emoji,
+				ingredients: ingredientNames.get(recipe.id) ?? []
+			})),
 			shops: data.shops,
 			cards: data.cards
 		})
@@ -43,6 +66,7 @@
 	const ICONS = {
 		list: ListChecks,
 		item: ShoppingBasket,
+		recipe: CookingPot,
 		shop: Store,
 		card: CreditCard
 	};
