@@ -2,7 +2,8 @@
 	import { t } from '$i18n/index.svelte';
 	import { ai } from '$stores/ai.svelte';
 	import { recipeScan } from '$stores/recipe-scan.svelte';
-	import { ocrEngine } from '$native/ocr';
+	import { onMount } from 'svelte';
+	import { loadOcrEngine } from '$native/ocr';
 	import type { RecipeDraft } from '$domain/recipe-draft';
 	import { Button } from '$components/ui/button';
 	import AiRecipePhoto from '$components/app/AiRecipePhoto.svelte';
@@ -18,7 +19,11 @@
 	 * "Scan a recipe" (#312): pages read on the device, no key needed. The person's own AI, when it can read
 	 * an image, stays offered as the better reader of handwriting, never as the default.
 	 */
-	const available = ocrEngine() !== null;
+	// Loaded as soon as the panel opens, so the engine is ready by the time the photos are taken.
+	let available = $state(true);
+	onMount(() => {
+		void loadOcrEngine().then((engine) => (available = engine !== null));
+	});
 	const aiCanRead = $derived(ai.configured && ai.supportsVision);
 	let useAi = $state(false);
 

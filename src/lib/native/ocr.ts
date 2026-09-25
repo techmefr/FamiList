@@ -4,11 +4,9 @@ import { textOfLines, type PlacedLine } from '$domain/recipe-ocr';
  * Reading the text of a photo on the device itself (#312): no AI key, no upload, and it keeps working
  * offline once the engine is there.
  *
- * The engine is behind this small interface on purpose. The decided one is Tesseract.js (web, PWA and
- * Android alike), with ML Kit text recognition as a possible native alternative; neither ships yet, so
- * the app registers whichever it bundles through `provideOcrEngine`, and nothing else in the app changes.
- * Until then the browser's own `TextDetector` is used where it exists (Chromium with the Shape Detection
- * API), and the screen says plainly when there is no way to read text here.
+ * The engine is behind this small interface on purpose: Tesseract.js (web, PWA and Android alike) is the
+ * one shipped, ML Kit text recognition could replace it natively through `provideOcrEngine` without
+ * anything else in the app changing. The screen says plainly when there is no way to read text here.
  */
 export interface OcrOptions {
 	/** The app's language (`fr`, `ar`, `zh`…): the engine picks its own models from it. */
@@ -66,10 +64,27 @@ const textDetectorEngine = (Detector: TextDetectorConstructor): OcrEngine => ({
 	}
 });
 
-/** The engine to read with, or null when this device has none: the screen then offers the AI instead. */
-export function ocrEngine(): OcrEngine | null {
+const canRunTesseract = () =>
+	typeof window !== 'undefined' && typeof Worker !== 'undefined' && typeof WebAssembly === 'object';
+
+/**
+ * The engine to read with, or null when this device has none: the screen then offers the AI instead.
+ *
+ * A browser's own `TextDetector` goes first when it exists: it costs no download. Otherwise Tesseract, only
+ * imported now — the first scan pays for it, not every start of the app.
+ */
+export async function loadOcrEngine(): Promise<OcrEngine | null> {
 	if (provided) return provided;
 
 	const Detector = textDetector();
-	return Detector ? textDetectorEngine(Detector) : null;
+	if (Detector) return textDetectorEngine(Detector);
+	if (!canRunTesseract()) return null;
+
+	try {
+		const { tesseractEngine } = await import('./tesseract');
+		provided = tesseractEngine;
+		return provided;
+	} catch {
+		return null;
+	}
 }

@@ -69,3 +69,6 @@ repomix-output.*
 
 # La pile Supabase auto-hebergee : elle porte les secrets de votre instance.
 /supabase-stack/
+
+# Copied from node_modules by scripts/ocr-assets.mjs before every dev and build.
+static/tesseract/

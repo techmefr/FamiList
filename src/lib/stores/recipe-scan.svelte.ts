@@ -1,6 +1,6 @@
 import { goto } from '$app/navigation';
 import { i18n, t } from '$i18n/index.svelte';
-import { ocrEngine } from '$native/ocr';
+import { loadOcrEngine } from '$native/ocr';
 import { MAX_SCAN_PAGES, draftFromScan, scanProgress, structureRecipeText } from '$domain/recipe-ocr';
 import { move } from '$domain/reorder';
 import type { RecipeDraft } from '$domain/recipe-draft';
@@ -74,8 +74,7 @@ class RecipeScan {
 	}
 
 	async read(): Promise<void> {
-		const engine = ocrEngine();
-		if (!engine || this.reading || this.pages.length === 0) return;
+		if (this.reading || this.pages.length === 0) return;
 
 		const run = ++this.#run;
 		const pages = [...this.pages];
@@ -84,6 +83,15 @@ class RecipeScan {
 		this.progress = 0;
 		this.draft = null;
 		this.#toast = toasts.progress(t('recipeScan.readingToast'));
+
+		const engine = await loadOcrEngine();
+		if (run !== this.#run) return;
+		if (!engine) {
+			this.#dismissToast();
+			this.status = 'failed';
+			this.#toast = toasts.error(t('recipeScan.failedToast'));
+			return;
+		}
 
 		const advance = (ratio: number) => {
 			if (run !== this.#run) return;
