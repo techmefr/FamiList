@@ -1316,6 +1316,7 @@
 	"helpMenu": {
 		"button": "Help",
 		"tutorial": "Watch the tutorial",
+		"whatsNew": "See what's new",
 		"install": "Install on the home screen",
 		"suggestion": "Suggest an improvement",
 		"bug": "Report a bug"
@@ -1323,19 +1324,16 @@
 	"changelog": {
 		"title": "What's new",
 		"entryTitle": "Version {version}",
+		"currentVersion": "You are using version {version}",
+		"groups": {
+			"new": "New",
+			"improved": "Improved",
+			"fixed": "Fixed"
+		},
 		"acknowledge": "Got it",
 		"replayTour": "Replay the whole guide",
 		"dismissOnce": "Not now",
-		"dismissUntilNextUpdate": "Don't show until the next update",
-		"v0_1_0": {
-			"items": [
-				"Weekly meal plans: plan your meals and get the matching shopping list.",
-				"The household can now record its members and their dietary restrictions.",
-				"Ask the AI for a recipe through a conversation, even when importing a page fails.",
-				"Several AI keys can now be saved on the same account.",
-				"A what's-new card appears after an update, with quick access to the guide."
-			]
-		}
+		"dismissUntilNextUpdate": "Don't show until the next update"
 	},
 	"install": {
 		"title": "Familiste on your home screen",

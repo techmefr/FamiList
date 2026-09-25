@@ -1296,6 +1296,7 @@
 	"helpMenu": {
 		"button": "Fanampiana",
 		"tutorial": "Jereo ny fizarana torolalana",
+		"whatsNew": "Jereo ny vaovao",
 		"install": "Apetraho eo amin'ny efijery fandraisana",
 		"suggestion": "Manolotra fanatsarana",
 		"bug": "Milaza olana"
@@ -1303,19 +1304,16 @@
 	"changelog": {
 		"title": "Vaovao",
 		"entryTitle": "Kinovana {version}",
+		"currentVersion": "Ampiasainao ny kinovana {version}",
+		"groups": {
+			"new": "Vaovao",
+			"improved": "Nohatsaraina",
+			"fixed": "Namboarina"
+		},
 		"acknowledge": "Azoko",
 		"replayTour": "Hijery indray ny tari-dalana manontolo",
 		"dismissOnce": "Tsy izao",
-		"dismissUntilNextUpdate": "Aza aseho mandra-pisian'ny fanavaozana manaraka",
-		"v0_1_0": {
-			"items": [
-				"Tari-tsakafo isan-kerinandro: kajio ny sakafonao ary alao ny lisitry ny fividianana mifanaraka aminy.",
-				"Afaka misoratra ny mpikambana sy ny fisorohana amin'ny sakafo amin'ny tokantrano izao.",
-				"Angataho tari-hevi-nahandro amin'ny AI amin'ny resadresaka, na dia tsy mety aza ny fakana pejy iray.",
-				"Azo tehirizina amin'ny kaonty iray ny fanalahidy AI maromaro izao.",
-				"Misy karatra momba ny vaovao miseho aorian'ny fanavaozana, misy fidirana haingana amin'ny tari-dalana."
-			]
-		}
+		"dismissUntilNextUpdate": "Aza aseho mandra-pisian'ny fanavaozana manaraka"
 	},
 	"install": {
 		"title": "Familiste eo amin'ny efijery fandraisanao",

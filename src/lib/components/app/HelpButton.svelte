@@ -5,7 +5,9 @@
 	import { settings } from '$stores/settings.svelte';
 	import { feedback } from '$stores/feedback.svelte';
 	import { install } from '$stores/install.svelte';
-	import { CircleQuestionMark, GraduationCap, Lightbulb, Bug, Download, X } from '@lucide/svelte';
+	import { whatsNew } from '$stores/whats-new.svelte';
+	import { CircleQuestionMark, GraduationCap, Sparkles, Lightbulb, Bug, Download, X } from '@lucide/svelte';
+	import { version as appVersion } from '../../../../package.json';
 
 	let dialog = $state<HTMLDialogElement | null>(null);
 
@@ -50,12 +52,22 @@
 	 */
 	const ACTIONS = $derived([
 		{ key: 'tutorial', icon: GraduationCap, action: tour },
+		{ key: 'whatsNew', icon: Sparkles, action: showWhatsNew },
 		...(install.canExplain
 			? [{ key: 'install', icon: Download, action: () => explainInstall() }]
 			: []),
 		{ key: 'suggestion', icon: Lightbulb, action: () => openReport('suggestion') },
 		{ key: 'bug', icon: Bug, action: () => openReport('bug') }
 	]);
+
+	/**
+	 * The menu closes first, like for the tour: focus then returns to the help button, and it is there that
+	 * the "What's new" dialog hands it back once read.
+	 */
+	function showWhatsNew() {
+		hide();
+		whatsNew.show();
+	}
 
 	function explainInstall() {
 		hide();
@@ -115,6 +127,10 @@
 				</li>
 			{/each}
 		</ul>
+
+		<p class="text-caption text-muted-foreground mt-3 text-center" data-test-id="help-menu-version">
+			{t('changelog.entryTitle', { version: appVersion })}
+		</p>
 
 		<button
 			type="button"
