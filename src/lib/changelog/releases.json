@@ -1,0 +1,314 @@
+[
+	{
+		"version": "0.1.1",
+		"date": "2026-09-25",
+		"notes": {
+			"fr": {
+				"new": [
+					"Cuisine mains libres : dites « Famy » puis « suivant », « répète » ou « ingrédients » pour suivre une recette sans toucher l'écran.",
+					"Minuteurs sur les étapes : lancez-les d'un appui ou à la voix. Une alarme sonne à la fin, même depuis un autre écran.",
+					"Étiquettes de recette (plat, régime, occasion, saison), traduites dans votre langue.",
+					"Chaque étape peut indiquer ses ingrédients, affichés pendant la cuisine guidée.",
+					"Nouvelles pages : mentions légales, conditions d’utilisation, confidentialité et conditions de vente."
+				],
+				"improved": [
+					"Cuisine guidée : une barre montre où vous en êtes et permet d'aller directement à une étape.",
+					"Photo de recette : un seul bouton pour l'appareil photo, la galerie ou une banque d'images.",
+					"Les photos de plats créées par l'IA ressemblent davantage à la recette.",
+					"Les nouveautés et la version de l'application sont maintenant dans le menu Aide."
+				],
+				"fixed": [
+					"Modifier une recette ouvre bien le formulaire déjà rempli.",
+					"L'application explique ce qui se passe quand vous ajoutez une photo à une recette."
+				]
+			},
+			"en": {
+				"new": [
+					"Hands-free cooking: say \"Famy\" then \"next\", \"repeat\" or \"ingredients\" to follow a recipe without touching the screen.",
+					"Step timers: start one with a tap or by voice. An alarm rings when it ends, even from another screen.",
+					"Recipe tags (course, diet, occasion, season), translated into your language.",
+					"Each step can list its ingredients, shown while you cook along.",
+					"New pages: legal notice, terms of use, privacy policy and terms of sale."
+				],
+				"improved": [
+					"Cook-along: a bar shows how far along you are and lets you jump straight to a step.",
+					"Recipe photo: one button for the camera, your gallery or an image bank.",
+					"Dish photos made by the AI look more like the actual recipe.",
+					"What's new and the app version are now in the Help menu."
+				],
+				"fixed": [
+					"Editing a recipe now opens the form already filled in.",
+					"The app now tells you what happens when you add a photo to a recipe."
+				]
+			},
+			"es": {
+				"new": [
+					"Cocina sin manos: diga «Famy» y luego «siguiente», «repite» o «ingredientes» para seguir una receta sin tocar la pantalla.",
+					"Temporizadores en los pasos: póngalos en marcha con un toque o con la voz. Una alarma suena al terminar, incluso desde otra pantalla.",
+					"Etiquetas de receta (plato, dieta, ocasión, temporada), traducidas a su idioma.",
+					"Cada paso puede indicar sus ingredientes, que se muestran mientras cocina paso a paso.",
+					"Nuevas páginas: aviso legal, condiciones de uso, privacidad y condiciones de venta."
+				],
+				"improved": [
+					"Cocina paso a paso: una barra muestra por dónde va y permite saltar directamente a un paso.",
+					"Foto de receta: un solo botón para la cámara, la galería o un banco de imágenes.",
+					"Las fotos de platos creadas por la IA se parecen más a la receta.",
+					"Las novedades y la versión de la aplicación están ahora en el menú Ayuda."
+				],
+				"fixed": [
+					"Editar una receta abre el formulario ya rellenado.",
+					"La aplicación explica qué ocurre cuando añade una foto a una receta."
+				]
+			},
+			"de": {
+				"new": [
+					"Freihändig kochen: Sagen Sie „Famy“ und dann „weiter“, „wiederholen“ oder „Zutaten“, um einem Rezept zu folgen, ohne den Bildschirm zu berühren.",
+					"Timer für die Schritte: mit einem Tippen oder per Stimme starten. Am Ende klingelt ein Alarm, auch auf einem anderen Bildschirm.",
+					"Rezept-Schlagwörter (Gang, Ernährung, Anlass, Saison), in Ihre Sprache übersetzt.",
+					"Jeder Schritt kann seine Zutaten angeben; sie werden beim geführten Kochen angezeigt.",
+					"Neue Seiten: Impressum, Nutzungsbedingungen, Datenschutz und Verkaufsbedingungen."
+				],
+				"improved": [
+					"Geführtes Kochen: Eine Leiste zeigt, wo Sie gerade sind, und führt direkt zu einem Schritt.",
+					"Rezeptfoto: ein einziger Knopf für Kamera, Galerie oder Bilddatenbank.",
+					"Von der KI erstellte Gerichtfotos sehen dem Rezept ähnlicher.",
+					"Neuigkeiten und App-Version finden Sie jetzt im Hilfe-Menü."
+				],
+				"fixed": [
+					"Beim Bearbeiten eines Rezepts öffnet sich wieder das bereits ausgefüllte Formular.",
+					"Die App erklärt, was passiert, wenn Sie einem Rezept ein Foto hinzufügen."
+				]
+			},
+			"it": {
+				"new": [
+					"Cucina a mani libere: dite «Famy» e poi «avanti», «ripeti» o «ingredienti» per seguire una ricetta senza toccare lo schermo.",
+					"Timer sui passaggi: avviateli con un tocco o con la voce. Un allarme suona alla fine, anche da un'altra schermata.",
+					"Etichette delle ricette (portata, dieta, occasione, stagione), tradotte nella vostra lingua.",
+					"Ogni passaggio può indicare i suoi ingredienti, mostrati mentre cucinate passo passo.",
+					"Nuove pagine: note legali, condizioni d'uso, privacy e condizioni di vendita."
+				],
+				"improved": [
+					"Cucina passo passo: una barra mostra a che punto siete e permette di andare subito a un passaggio.",
+					"Foto della ricetta: un solo pulsante per fotocamera, galleria o banca di immagini.",
+					"Le foto dei piatti create dall'IA somigliano di più alla ricetta.",
+					"Le novità e la versione dell'app ora sono nel menu Aiuto."
+				],
+				"fixed": [
+					"Modificare una ricetta apre di nuovo il modulo già compilato.",
+					"L'app spiega cosa succede quando aggiungete una foto a una ricetta."
+				]
+			},
+			"pt": {
+				"new": [
+					"Cozinhar sem mãos: diga «Famy» e depois «seguinte», «repete» ou «ingredientes» para seguir uma receita sem tocar no ecrã.",
+					"Temporizadores nos passos: inicie-os com um toque ou com a voz. Um alarme toca no fim, mesmo noutro ecrã.",
+					"Etiquetas de receita (prato, dieta, ocasião, estação), traduzidas para a sua língua.",
+					"Cada passo pode indicar os seus ingredientes, mostrados enquanto cozinha passo a passo.",
+					"Novas páginas: aviso legal, termos de utilização, privacidade e condições de venda."
+				],
+				"improved": [
+					"Cozinhar passo a passo: uma barra mostra onde está e permite ir diretamente para um passo.",
+					"Foto da receita: um só botão para a câmara, a galeria ou um banco de imagens.",
+					"As fotos de pratos criadas pela IA parecem-se mais com a receita.",
+					"As novidades e a versão da aplicação estão agora no menu Ajuda."
+				],
+				"fixed": [
+					"Editar uma receita volta a abrir o formulário já preenchido.",
+					"A aplicação explica o que acontece quando adiciona uma foto a uma receita."
+				]
+			},
+			"ru": {
+				"new": [
+					"Готовка без рук: скажите «Famy», а затем «дальше», «повтори» или «ингредиенты», чтобы следовать рецепту, не касаясь экрана.",
+					"Таймеры для шагов: запускаются одним нажатием или голосом. По окончании звенит сигнал, даже на другом экране.",
+					"Метки рецептов (блюдо, диета, повод, сезон) на вашем языке.",
+					"Для каждого шага можно указать ингредиенты — они видны во время готовки по шагам.",
+					"Новые страницы: правовая информация, условия использования, конфиденциальность и условия продажи."
+				],
+				"improved": [
+					"Готовка по шагам: полоса показывает, где вы находитесь, и позволяет сразу перейти к нужному шагу.",
+					"Фото рецепта: одна кнопка для камеры, галереи или фотобанка.",
+					"Фото блюд, созданные ИИ, больше похожи на сам рецепт.",
+					"Новости и версия приложения теперь в меню «Помощь»."
+				],
+				"fixed": [
+					"При изменении рецепта снова открывается уже заполненная форма.",
+					"Приложение объясняет, что происходит, когда вы добавляете фото к рецепту."
+				]
+			},
+			"ar": {
+				"new": [
+					"الطبخ دون استخدام اليدين: قولوا «Famy» ثم «التالي» أو «أعد» أو «المكونات» لمتابعة الوصفة دون لمس الشاشة.",
+					"مؤقتات للخطوات: شغّلوها بلمسة أو بالصوت. يرن منبّه عند انتهائها، حتى من شاشة أخرى.",
+					"وسوم للوصفات (الطبق، النظام الغذائي، المناسبة، الموسم) مترجمة إلى لغتكم.",
+					"يمكن لكل خطوة أن تذكر مكوناتها، وتظهر أثناء متابعة الوصفة.",
+					"صفحات جديدة: الإشعار القانوني، شروط الاستخدام، الخصوصية وشروط البيع."
+				],
+				"improved": [
+					"متابعة الوصفة: شريط يبيّن أين وصلتم ويتيح الانتقال مباشرة إلى أي خطوة.",
+					"صورة الوصفة: زر واحد للكاميرا أو المعرض أو بنك الصور.",
+					"صور الأطباق التي ينشئها الذكاء الاصطناعي أصبحت أقرب إلى الوصفة.",
+					"الجديد ورقم إصدار التطبيق موجودان الآن في قائمة المساعدة."
+				],
+				"fixed": [
+					"تعديل وصفة يفتح من جديد النموذج مملوءاً.",
+					"يوضح التطبيق ما يحدث عند إضافة صورة إلى وصفة."
+				]
+			},
+			"zh": {
+				"new": [
+					"免手动烹饪：先说\"Famy\"，再说\"下一步\"\"重复\"或\"食材\"，无需触碰屏幕即可跟着食谱做。",
+					"步骤计时器：轻点一下或用语音即可启动。计时结束时会响铃，即使在其他页面也会提醒。",
+					"食谱标签（菜品、饮食、场合、季节），以您的语言显示。",
+					"每个步骤可以标注所需食材，跟做时会显示出来。",
+					"新增页面：法律声明、使用条款、隐私政策和销售条款。"
+				],
+				"improved": [
+					"跟做模式：进度条显示当前位置，并可直接跳到某一步。",
+					"食谱照片：一个按钮即可选择相机、相册或图片库。",
+					"AI 生成的菜品照片更贴近食谱本身。",
+					"新版本内容和应用版本号现在可在\"帮助\"菜单中查看。"
+				],
+				"fixed": [
+					"编辑食谱时会正确打开已填写好的表单。",
+					"为食谱添加照片时，应用会说明接下来会发生什么。"
+				]
+			},
+			"mg": {
+				"new": [
+					"Mahandro tsy mampiasa tanana: lazao hoe « Famy », avy eo « manaraka », « avereno » na « akora » mba hanarahana recette iray tsy mikasika ny efijery.",
+					"Famantaranandro isaky ny dingana: alefaso amin'ny fanindriana iray na amin'ny feo. Maneno ny lakolosy rehefa vita, na dia amin'ny efijery hafa aza.",
+					"Marika ho an'ny recette (karazan-tsakafo, fitsipi-tsakafo, fotoana manokana, vanim-potoana), voadika amin'ny fiteninao.",
+					"Afaka milaza ny akora ilainy ny dingana tsirairay, ary aseho izy ireo mandritra ny fanarahana ny fahandroana.",
+					"Pejy vaovao: fampahafantarana ara-dalàna, fepetra fampiasana, fiainana manokana ary fepetra fivarotana."
+				],
+				"improved": [
+					"Fanarahana ny fahandroana: misy tsipika mampiseho hoe aiza ianao ary ahafahana mandeha mivantana any amin'ny dingana iray.",
+					"Sarin'ny recette: bokotra iray monja ho an'ny fakan-tsary, ny galerie na banky sary.",
+					"Mitovitovy kokoa amin'ny recette ny sary sakafo noforonin'ny AI.",
+					"Hita ao amin'ny menio Fanampiana izao ny vaovao sy ny kinovan'ny fampiharana."
+				],
+				"fixed": [
+					"Rehefa manova recette dia misokatra ilay taratasy efa feno.",
+					"Manazava ny fampiharana izay mitranga rehefa manampy sary amin'ny recette ianao."
+				]
+			}
+		}
+	},
+	{
+		"version": "0.1.0",
+		"date": "2026-09-24",
+		"notes": {
+			"fr": {
+				"new": [
+					"Le menu de la semaine : planifiez vos repas et retrouvez la liste de courses correspondante.",
+					"Le foyer peut désormais enregistrer ses membres et leurs restrictions alimentaires.",
+					"Demandez une recette à l'IA en discutant, même quand l'import d'une page échoue.",
+					"Plusieurs clés IA peuvent être enregistrées sur un même compte.",
+					"Une carte de nouveautés s'affiche après une mise à jour, avec un accès rapide au guide."
+				],
+				"improved": [],
+				"fixed": []
+			},
+			"en": {
+				"new": [
+					"Weekly meal plans: plan your meals and get the matching shopping list.",
+					"The household can now record its members and their dietary restrictions.",
+					"Ask the AI for a recipe through a conversation, even when importing a page fails.",
+					"Several AI keys can now be saved on the same account.",
+					"A what's-new card appears after an update, with quick access to the guide."
+				],
+				"improved": [],
+				"fixed": []
+			},
+			"es": {
+				"new": [
+					"Menú semanal: planifica tus comidas y obtén la lista de la compra correspondiente.",
+					"El hogar ahora puede registrar a sus miembros y sus restricciones alimentarias.",
+					"Pide una receta a la IA conversando, incluso cuando falla la importación de una página.",
+					"Ahora se pueden guardar varias claves de IA en la misma cuenta.",
+					"Tras una actualización aparece una tarjeta de novedades con acceso rápido a la guía."
+				],
+				"improved": [],
+				"fixed": []
+			},
+			"de": {
+				"new": [
+					"Wochenmenü: Planen Sie Ihre Mahlzeiten und erhalten Sie die passende Einkaufsliste.",
+					"Der Haushalt kann jetzt seine Mitglieder und deren Ernährungseinschränkungen speichern.",
+					"Fragen Sie die KI im Gespräch nach einem Rezept, auch wenn der Import einer Seite fehlschlägt.",
+					"Mehrere KI-Schlüssel können jetzt für denselben Account gespeichert werden.",
+					"Nach einem Update erscheint eine Neuigkeiten-Karte mit schnellem Zugang zur Anleitung."
+				],
+				"improved": [],
+				"fixed": []
+			},
+			"it": {
+				"new": [
+					"Menu settimanale: pianifica i pasti e ottieni la lista della spesa corrispondente.",
+					"Il nucleo familiare ora può registrare i propri membri e le loro restrizioni alimentari.",
+					"Chiedi una ricetta all'IA conversando, anche quando l'importazione di una pagina non riesce.",
+					"Ora è possibile salvare più chiavi IA sullo stesso account.",
+					"Dopo un aggiornamento appare una scheda con le novità e un accesso rapido alla guida."
+				],
+				"improved": [],
+				"fixed": []
+			},
+			"pt": {
+				"new": [
+					"Menu semanal: planeie as suas refeições e obtenha a lista de compras correspondente.",
+					"O agregado familiar já pode registar os seus membros e as respetivas restrições alimentares.",
+					"Peça uma receita à IA por conversa, mesmo quando a importação de uma página falha.",
+					"Já é possível guardar várias chaves de IA na mesma conta.",
+					"Após uma atualização surge um cartão de novidades, com acesso rápido ao guia."
+				],
+				"improved": [],
+				"fixed": []
+			},
+			"ru": {
+				"new": [
+					"Меню на неделю: планируйте приёмы пищи и получайте готовый список покупок.",
+					"Теперь в семье можно указать её членов и их пищевые ограничения.",
+					"Попросите у ИИ рецепт в диалоге — это работает, даже если импорт страницы не удался.",
+					"Теперь на одном аккаунте можно сохранить несколько ключей ИИ.",
+					"После обновления появляется карточка с новостями и быстрым доступом к гиду."
+				],
+				"improved": [],
+				"fixed": []
+			},
+			"ar": {
+				"new": [
+					"قائمة الأسبوع: خطّطوا لوجباتكم واحصلوا على قائمة التسوق المطابقة لها.",
+					"يمكن للعائلة الآن تسجيل أفرادها والقيود الغذائية الخاصة بكل منهم.",
+					"اطلبوا وصفة من الذكاء الاصطناعي عبر محادثة، حتى عند فشل استيراد صفحة ما.",
+					"يمكن الآن حفظ عدة مفاتيح للذكاء الاصطناعي على نفس الحساب.",
+					"تظهر بطاقة للجديد بعد كل تحديث، مع وصول سريع إلى الدليل."
+				],
+				"improved": [],
+				"fixed": []
+			},
+			"zh": {
+				"new": [
+					"每周菜单：安排每周餐食，自动生成对应的购物清单。",
+					"家庭现在可以记录成员信息及各自的饮食限制。",
+					"通过对话向 AI 请求食谱，即使某个网页导入失败也可以使用。",
+					"同一账户现在可以保存多个 AI 密钥。",
+					"更新后会显示新版本卡片,可快速进入引导。"
+				],
+				"improved": [],
+				"fixed": []
+			},
+			"mg": {
+				"new": [
+					"Tari-tsakafo isan-kerinandro: kajio ny sakafonao ary alao ny lisitry ny fividianana mifanaraka aminy.",
+					"Afaka misoratra ny mpikambana sy ny fisorohana amin'ny sakafo amin'ny tokantrano izao.",
+					"Angataho tari-hevi-nahandro amin'ny AI amin'ny resadresaka, na dia tsy mety aza ny fakana pejy iray.",
+					"Azo tehirizina amin'ny kaonty iray ny fanalahidy AI maromaro izao.",
+					"Misy karatra momba ny vaovao miseho aorian'ny fanavaozana, misy fidirana haingana amin'ny tari-dalana."
+				],
+				"improved": [],
+				"fixed": []
+			}
+		}
+	}
+]

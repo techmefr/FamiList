@@ -1408,6 +1408,7 @@
 	"helpMenu": {
 		"button": "帮助",
 		"tutorial": "查看教程",
+		"whatsNew": "查看新版本内容",
 		"install": "安装到主屏幕",
 		"suggestion": "提出改进建议",
 		"bug": "报告问题"
@@ -1415,19 +1416,16 @@
 	"changelog": {
 		"title": "新版本内容",
 		"entryTitle": "版本 {version}",
+		"currentVersion": "您正在使用版本 {version}",
+		"groups": {
+			"new": "新功能",
+			"improved": "改进",
+			"fixed": "修复"
+		},
 		"acknowledge": "知道了",
 		"replayTour": "重新观看完整指南",
 		"dismissOnce": "暂不显示",
-		"dismissUntilNextUpdate": "下次更新前不再提示",
-		"v0_1_0": {
-			"items": [
-				"每周菜单：安排每周餐食，自动生成对应的购物清单。",
-				"家庭现在可以记录成员信息及各自的饮食限制。",
-				"通过对话向 AI 请求食谱，即使某个网页导入失败也可以使用。",
-				"同一账户现在可以保存多个 AI 密钥。",
-				"更新后会显示新版本卡片,可快速进入引导。"
-			]
-		}
+		"dismissUntilNextUpdate": "下次更新前不再提示"
 	},
 	"install": {
 		"title": "把 Familiste 放到主屏幕",
