@@ -1,10 +1,12 @@
 import { describe, it, expect } from 'vitest';
 import {
 	dishPhotoPrompt,
+	IMAGE_SEARCH_PAGE_SIZE,
+	imageSearchResults,
 	openverseSearchUrl,
-	pickImageResult,
+	photoFailureKey,
+	photoFailureOfStatus,
 	pollinationsImageUrl,
-	recipeImageSearchQuery,
 	recipePhotoPath
 } from './ai-image';
 
@@ -43,22 +45,6 @@ describe('recipePhotoPath', () => {
 	});
 });
 
-describe('recipeImageSearchQuery', () => {
-	it('combine le nom du plat et ses ingredients principaux', () => {
-		const query = recipeImageSearchQuery('Poulet basquaise', ['poivron', 'tomate', 'poulet']);
-		expect(query).toBe('Poulet basquaise poivron tomate poulet');
-	});
-
-	it('limite le nombre d ingredients repris dans la recherche', () => {
-		const query = recipeImageSearchQuery('Ratatouille', ['aubergine', 'courgette', 'tomate', 'poivron', 'oignon']);
-		expect(query).toBe('Ratatouille aubergine courgette tomate');
-	});
-
-	it('ignore les ingredients vides et reste utilisable sans ingredient', () => {
-		expect(recipeImageSearchQuery('Salade', ['', '  '])).toBe('Salade');
-	});
-});
-
 describe('openverseSearchUrl', () => {
 	it('construit une requete keyless vers openverse, filtree sur les licences reutilisables', () => {
 		const url = openverseSearchUrl('tarte aux pommes');
@@ -67,28 +53,69 @@ describe('openverseSearchUrl', () => {
 		expect(url).toContain('q=tarte+aux+pommes');
 		expect(url).toContain('license_type=commercial%2Cmodification');
 	});
+
+	it('demande assez de resultats pour laisser le choix', () => {
+		expect(openverseSearchUrl('quiche')).toContain(`page_size=${IMAGE_SEARCH_PAGE_SIZE}`);
+		expect(IMAGE_SEARCH_PAGE_SIZE).toBeGreaterThan(1);
+	});
 });
 
-describe('pickImageResult', () => {
-	it('prend la miniature du premier resultat, ouverte en CORS', () => {
+describe('imageSearchResults', () => {
+	it('garde chaque resultat avec sa miniature ouverte en CORS et son credit', () => {
 		const payload = {
 			results: [
-				{ id: 'abc', thumbnail: 'https://api.openverse.org/v1/images/abc/thumb/', url: 'https://source.example/img.jpg' }
+				{
+					id: 'abc',
+					title: ' Quiche ',
+					thumbnail: 'https://api.openverse.org/v1/images/abc/thumb/',
+					url: 'https://source.example/img.jpg',
+					creator: 'mastermaq',
+					license: 'by-sa',
+					license_version: '2.0'
+				},
+				{ id: 'def', url: 'https://source.example/other.jpg' }
 			]
 		};
 
-		expect(pickImageResult(payload)).toBe('https://api.openverse.org/v1/images/abc/thumb/');
+		expect(imageSearchResults(payload)).toEqual([
+			{
+				id: 'abc',
+				previewUrl: 'https://api.openverse.org/v1/images/abc/thumb/',
+				title: 'Quiche',
+				creator: 'mastermaq',
+				license: 'BY-SA 2.0'
+			},
+			{ id: 'def', previewUrl: 'https://source.example/other.jpg', title: '', creator: '', license: '' }
+		]);
 	});
 
-	it('retombe sur l url d origine quand aucune miniature n est fournie', () => {
-		const payload = { results: [{ id: 'abc', url: 'https://source.example/img.jpg' }] };
-
-		expect(pickImageResult(payload)).toBe('https://source.example/img.jpg');
+	it('ecarte un resultat sans image ni identifiant', () => {
+		expect(imageSearchResults({ results: [{ id: 'abc' }, { thumbnail: 'https://x.example/a.jpg' }] })).toEqual([]);
 	});
 
-	it('renvoie null quand il n y a aucun resultat', () => {
-		expect(pickImageResult({ results: [] })).toBeNull();
-		expect(pickImageResult({})).toBeNull();
-		expect(pickImageResult(null)).toBeNull();
+	it('renvoie une liste vide quand la reponse est vide ou illisible', () => {
+		expect(imageSearchResults({ results: [] })).toEqual([]);
+		expect(imageSearchResults({})).toEqual([]);
+		expect(imageSearchResults(null)).toEqual([]);
+	});
+});
+
+describe('photoFailureOfStatus', () => {
+	it('lit 401, 402 et 403 comme un service qui exige une cle', () => {
+		expect(photoFailureOfStatus(401)).toBe('unavailable');
+		expect(photoFailureOfStatus(402)).toBe('unavailable');
+		expect(photoFailureOfStatus(403)).toBe('unavailable');
+	});
+
+	it('lit les autres erreurs comme un service injoignable, a reessayer', () => {
+		expect(photoFailureOfStatus(500)).toBe('unreachable');
+		expect(photoFailureOfStatus(429)).toBe('unreachable');
+	});
+});
+
+describe('photoFailureKey', () => {
+	it('donne un message distinct a chaque echec', () => {
+		const keys = (['offline', 'unavailable', 'unreachable', 'not-found', 'upload'] as const).map(photoFailureKey);
+		expect(new Set(keys).size).toBe(keys.length);
 	});
 });
