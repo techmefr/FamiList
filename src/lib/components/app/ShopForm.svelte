@@ -6,12 +6,13 @@
 	import { t } from '$i18n/index.svelte';
 	import { TINTS } from '$domain/tint';
 	import { BRANDS, findBrand } from '$domain/brand-catalogue';
+	import { searchShops, type ShopLookupResult } from '$domain/shop-lookup';
 	import type { Shop } from '$db/schema';
 	import { Button } from '$components/ui/button';
 	import { Input } from '$components/ui/input';
 	import { Label } from '$components/ui/label';
 	import IconField from '$components/app/IconField.svelte';
-	import { Plus, Store, Building2, MapPin, RefreshCw, Check } from '@lucide/svelte';
+	import { Plus, Store, Building2, MapPin, RefreshCw, Check, Search } from '@lucide/svelte';
 
 	/**
 	 * The shop creation form, where it is needed.
@@ -53,6 +54,49 @@
 
 	let captured = $state(false);
 	let gpsError = $state('');
+
+	let lookupQuery = $state('');
+	let lookupResults = $state<ShopLookupResult[]>([]);
+	let lookupBusy = $state(false);
+	let lookupError = $state(false);
+	let lookupSearched = $state(false);
+
+	/**
+	 * Filling the form from a name instead of typing brand, name and address one by one. Unlike everything
+	 * else here, this sends the query to Nominatim — see `shop-lookup.ts` for why, and `lookupHint` below for
+	 * what tells the person so.
+	 */
+	async function runLookup() {
+		const query = lookupQuery.trim();
+		if (!query || lookupBusy) return;
+
+		lookupBusy = true;
+		lookupError = false;
+
+		try {
+			lookupResults = await searchShops(query);
+		} catch {
+			lookupResults = [];
+			lookupError = true;
+		} finally {
+			lookupBusy = false;
+			lookupSearched = true;
+		}
+	}
+
+	function pickLookupResult(result: ShopLookupResult) {
+		name = result.name;
+		address = result.address;
+		lat = result.lat;
+		lng = result.lng;
+
+		const match = findBrand(result.name);
+		if (match) brand = match.name;
+
+		lookupResults = [];
+		lookupSearched = false;
+		lookupQuery = '';
+	}
 
 	const located = $derived(lat !== undefined && lng !== undefined);
 
@@ -174,6 +218,62 @@
 </script>
 
 <form onsubmit={submit} class="space-y-3" data-test-id="add-shop">
+	{#if !editing}
+		<div class="space-y-2">
+			<Label for="{prefix}-lookup">{t('shops.lookup')}</Label>
+			<div class="flex gap-2">
+				<div class="flex-1">
+					<IconField icon={Search}>
+						<Input
+							id="{prefix}-lookup"
+							bind:value={lookupQuery}
+							data-test-id="shop-lookup"
+							placeholder={t('shops.lookupPlaceholder')}
+							onkeydown={(event) => {
+								if (event.key === 'Enter') {
+									event.preventDefault();
+									runLookup();
+								}
+							}}
+						/>
+					</IconField>
+				</div>
+				<Button
+					type="button"
+					variant="outline"
+					disabled={!lookupQuery.trim() || lookupBusy}
+					onclick={runLookup}
+					data-test-id="shop-lookup-run"
+				>
+					{lookupBusy ? t('shops.lookupSearching') : t('shops.lookupButton')}
+				</Button>
+			</div>
+			<p class="text-muted-foreground text-caption">{t('shops.lookupHint')}</p>
+
+			{#if lookupResults.length}
+				<ul class="divide-border bg-card divide-y rounded-lg border" data-test-id="shop-lookup-results">
+					{#each lookupResults as result (result.name + result.address)}
+						<li>
+							<button
+								type="button"
+								onclick={() => pickLookupResult(result)}
+								class="hover:bg-muted focus-visible:ring-ring flex w-full flex-col items-start gap-0.5 p-3 text-start focus-visible:ring-2 focus-visible:ring-inset focus-visible:outline-none"
+								data-test-class="shop-lookup-result"
+							>
+								<span class="font-medium">{result.name}</span>
+								<span class="text-muted-foreground text-caption">{result.address}</span>
+							</button>
+						</li>
+					{/each}
+				</ul>
+			{:else if lookupSearched && !lookupBusy}
+				<p class="text-muted-foreground text-caption" role="status" data-test-id="shop-lookup-empty">
+					{lookupError ? t('shops.lookupError') : t('shops.lookupEmpty')}
+				</p>
+			{/if}
+		</div>
+	{/if}
+
 	<div class="grid gap-3 sm:grid-cols-2">
 		<!--
 			The brand first, because it is what opens the three-letter code and what will carry the card.
