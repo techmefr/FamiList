@@ -476,6 +476,12 @@
 		"targetNew": "Amin ny lisitra vaovao",
 		"delete": "Fafao ny recette {name}",
 		"edit": "Ovay ny fomba fahandro {name}",
+		"notes": "Fanamarihana",
+		"notesPlaceholder": "Torohevitra, fiovana, niavian’ny fomba fahandroana…",
+		"photo": "Sary",
+		"copyNotice": "Kopia ity: rehefa tehirizina dia lasa fomba fahandroanao manokana izy, tsy miova ny tany am-boalohany.",
+		"editCopy": "Hanova kopia",
+		"editCopyAria": "Hanova kopian’ny {name}",
 		"deleteConfirm": "Fafao ny {name}? Tsy hiova ireo lisitra efa noforonina.",
 		"deleteYes": "Fafao",
 		"servingsCount": {
@@ -495,8 +501,18 @@
 			"next": "Manaraka",
 			"mute": "Ampitsahatra ny feo",
 			"unmute": "Alefaso ny feo",
-			"empty": "Tsy misy dingana harahina amin'ity fahandroana ity."
-		}
+			"empty": "Tsy misy dingana harahina amin'ity fahandroana ity.",
+			"ingredients": "Akora",
+			"stepIngredientsCount": "Akoran’ity dingana ity ({count})",
+			"ingredientsOfStep": "Akoran’ny dingana {current}",
+			"allIngredients": "Ny akora rehetra",
+			"noStepIngredients": "Tsy misy akora mifandray amin’ity dingana ity: ity ny fahandroana manontolo.",
+			"showAllIngredients": "Hijery ny fahandroana manontolo",
+			"showStepIngredients": "Ity dingana ity ihany",
+			"readIngredients": "Hamaky ny akora",
+			"speakIngredients": "Akora: {list}."
+		},
+		"stepIngredients": "Akora ampiasaina amin’ny dingana {rank}"
 	},
 	"aisles": {
 		"title": "Faritra",

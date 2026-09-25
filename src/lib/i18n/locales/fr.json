@@ -476,6 +476,12 @@
 		"targetNew": "Dans une nouvelle liste",
 		"delete": "Supprimer la recette {name}",
 		"edit": "Modifier la recette {name}",
+		"notes": "Notes",
+		"notesPlaceholder": "Astuces, variantes, origine de la recette…",
+		"photo": "Photo",
+		"copyNotice": "C'est une copie : l'enregistrer crée une recette à vous, l'originale ne change pas.",
+		"editCopy": "Modifier une copie",
+		"editCopyAria": "Modifier une copie de {name}",
 		"deleteConfirm": "Supprimer {name} ? Les listes déjà générées ne changeront pas.",
 		"deleteYes": "Supprimer",
 		"servingsCount": {
@@ -495,8 +501,18 @@
 			"next": "Suivante",
 			"mute": "Couper la voix",
 			"unmute": "Réactiver la voix",
-			"empty": "Cette recette n’a pas d’étape à suivre."
-		}
+			"empty": "Cette recette n’a pas d’étape à suivre.",
+			"ingredients": "Ingrédients",
+			"stepIngredientsCount": "Ingrédients de l’étape ({count})",
+			"ingredientsOfStep": "Ingrédients de l’étape {current}",
+			"allIngredients": "Tous les ingrédients",
+			"noStepIngredients": "Aucun ingrédient n’est relié à cette étape : voici toute la recette.",
+			"showAllIngredients": "Voir toute la recette",
+			"showStepIngredients": "Voir seulement cette étape",
+			"readIngredients": "Lire les ingrédients",
+			"speakIngredients": "Ingrédients : {list}."
+		},
+		"stepIngredients": "Ingrédients utilisés à l’étape {rank}"
 	},
 	"aisles": {
 		"title": "Rayons",

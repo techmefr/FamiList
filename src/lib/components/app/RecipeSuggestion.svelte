@@ -78,7 +78,8 @@
 			emoji: suggestion.emoji,
 			servings: suggestion.servings,
 			ingredients: suggestion.ingredients,
-			steps: suggestion.steps
+			steps: suggestion.steps,
+			stepIngredients: suggestion.stepIngredients
 		});
 
 		saved = true;

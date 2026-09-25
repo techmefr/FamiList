@@ -484,6 +484,12 @@
 		"targetNew": "في قائمة جديدة",
 		"delete": "حذف الوصفة {name}",
 		"edit": "تعديل الوصفة {name}",
+		"notes": "ملاحظات",
+		"notesPlaceholder": "نصائح، تنويعات، مصدر الوصفة…",
+		"photo": "صورة",
+		"copyNotice": "هذه نسخة: حفظها ينشئ وصفة خاصة بك، وتبقى الأصلية كما هي.",
+		"editCopy": "تعديل نسخة",
+		"editCopyAria": "تعديل نسخة من {name}",
 		"deleteConfirm": "حذف {name}؟ القوائم التي أُنشئت من قبل لن تتغير.",
 		"deleteYes": "حذف",
 		"servingsCount": {
@@ -507,8 +513,18 @@
 			"next": "التالية",
 			"mute": "كتم الصوت",
 			"unmute": "تفعيل الصوت",
-			"empty": "لا توجد خطوات لهذه الوصفة."
-		}
+			"empty": "لا توجد خطوات لهذه الوصفة.",
+			"ingredients": "المكونات",
+			"stepIngredientsCount": "مكونات هذه الخطوة ({count})",
+			"ingredientsOfStep": "مكونات الخطوة {current}",
+			"allIngredients": "كل المكونات",
+			"noStepIngredients": "لا يوجد مكوّن مرتبط بهذه الخطوة: إليك الوصفة كاملة.",
+			"showAllIngredients": "عرض الوصفة كاملة",
+			"showStepIngredients": "عرض هذه الخطوة فقط",
+			"readIngredients": "قراءة المكونات",
+			"speakIngredients": "المكونات: {list}."
+		},
+		"stepIngredients": "المكونات المستخدمة في الخطوة {rank}"
 	},
 	"aisles": {
 		"title": "الأقسام",

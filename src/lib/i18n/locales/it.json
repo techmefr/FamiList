@@ -476,6 +476,12 @@
 		"targetNew": "In una nuova lista",
 		"delete": "Elimina la ricetta {name}",
 		"edit": "Modifica la ricetta {name}",
+		"notes": "Note",
+		"notesPlaceholder": "Consigli, varianti, origine della ricetta…",
+		"photo": "Foto",
+		"copyNotice": "È una copia: salvandola crei una ricetta tua, l'originale non cambia.",
+		"editCopy": "Modifica una copia",
+		"editCopyAria": "Modifica una copia di {name}",
 		"deleteConfirm": "Eliminare {name}? Le liste già generate non cambieranno.",
 		"deleteYes": "Elimina",
 		"servingsCount": {
@@ -495,8 +501,18 @@
 			"next": "Successivo",
 			"mute": "Disattiva voce",
 			"unmute": "Attiva voce",
-			"empty": "Questa ricetta non ha passaggi da seguire."
-		}
+			"empty": "Questa ricetta non ha passaggi da seguire.",
+			"ingredients": "Ingredienti",
+			"stepIngredientsCount": "Ingredienti di questo passaggio ({count})",
+			"ingredientsOfStep": "Ingredienti del passaggio {current}",
+			"allIngredients": "Tutti gli ingredienti",
+			"noStepIngredients": "Nessun ingrediente è collegato a questo passaggio: ecco tutta la ricetta.",
+			"showAllIngredients": "Mostra tutta la ricetta",
+			"showStepIngredients": "Mostra solo questo passaggio",
+			"readIngredients": "Leggi gli ingredienti",
+			"speakIngredients": "Ingredienti: {list}."
+		},
+		"stepIngredients": "Ingredienti usati nel passaggio {rank}"
 	},
 	"aisles": {
 		"title": "Reparti",

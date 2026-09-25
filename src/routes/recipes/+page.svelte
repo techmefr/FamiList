@@ -18,10 +18,12 @@
 		type ImportedRecipe
 	} from '$domain/recipe-import';
 	import { UNITS, DEFAULT_UNIT } from '$domain/units';
+	import { guessLinks, toggleLink, withoutIngredient } from '$domain/step-ingredients';
 	import { Button } from '$components/ui/button';
 	import { Input } from '$components/ui/input';
 	import { Label } from '$components/ui/label';
 	import * as Card from '$components/ui/card';
+	import { tick } from 'svelte';
 	import { slide } from 'svelte/transition';
 	import { cubicOut } from 'svelte/easing';
 	import EmojiPicker from '$components/app/EmojiPicker.svelte';
@@ -49,7 +51,9 @@
 		CalendarDays,
 		Pencil,
 		Share2,
-		Mic
+		Mic,
+		Copy,
+		NotebookPen
 	} from '@lucide/svelte';
 	import CookAlong from '$components/app/CookAlong.svelte';
 
@@ -78,6 +82,17 @@
 	let servings = $state(DEFAULT_SERVINGS);
 	let lines = $state<RecipeLine[]>([{ name: '', qty: '', unit: DEFAULT_UNIT }]);
 	let steps = $state<string[]>(['']);
+	let stepIngredients = $state<number[][]>([[]]);
+	/** The ingredient rows a step can be linked to (#308): a row still unnamed has nothing to show. */
+	const namedLines = $derived(
+		lines.map((line, lineIndex) => ({ line, lineIndex })).filter(({ line }) => line.name.trim())
+	);
+	let notes = $state('');
+
+	/** Set when the form is a copy of a recipe shared by another circle: saving creates a recipe of our own. */
+	let copiedFrom = $state<string | null>(null);
+
+	let formHeading = $state<HTMLHeadingElement | null>(null);
 
 	/** The recipe whose generation is unfolded, and what is being asked of it. */
 	let generatingFor = $state<string | null>(null);
@@ -148,6 +163,24 @@
 	function open() {
 		creating = true;
 		step = 'recipe';
+		void revealForm();
+	}
+
+	/**
+	 * The form sits at the top of the page while the Edit button lives deep in the grid: without this, a tap
+	 * on Edit filled a form far out of sight and the person saw nothing happen.
+	 */
+	async function revealForm() {
+		await tick();
+		formHeading?.scrollIntoView({ behavior: motionMs(1) ? 'smooth' : 'auto', block: 'start' });
+		formHeading?.focus({ preventScroll: true });
+	}
+
+	async function revealCard(recipeId: string) {
+		await tick();
+		document
+			.getElementById(`recipe-card-${recipeId}`)
+			?.scrollIntoView({ behavior: motionMs(1) ? 'smooth' : 'auto', block: 'center' });
 	}
 
 	function reset() {
@@ -159,6 +192,9 @@
 		servings = DEFAULT_SERVINGS;
 		lines = [{ name: '', qty: '', unit: DEFAULT_UNIT }];
 		steps = [''];
+		stepIngredients = [[]];
+		notes = '';
+		copiedFrom = null;
 		fromImport = false;
 		importRefusal = null;
 		pageText = null;
@@ -173,18 +209,41 @@
 	 * card already reads them from (`ingredientsOf`/`stepsOf`), in their saved order.
 	 */
 	function edit(recipe: Recipe) {
+		fillFrom(recipe);
 		editingId = recipe.id;
+		void revealForm();
+	}
+
+	/** A recipe shared by another circle is theirs to change: we edit a copy that becomes our own. */
+	function editCopy(recipe: Recipe) {
+		fillFrom(recipe);
+		editingId = null;
+		copiedFrom = recipe.id;
+		void revealForm();
+	}
+
+	function fillFrom(recipe: Recipe) {
 		name = recipe.name;
 		emoji = recipe.emoji;
 		servings = recipe.servings;
+		notes = recipe.notes ?? '';
 
 		const existingLines = data
 			.ingredientsOf(recipe.id)
 			.map((line) => ({ name: line.name, qty: line.qty, unit: line.unit }));
 		lines = existingLines.length ? existingLines : [{ name: '', qty: '', unit: DEFAULT_UNIT }];
 
-		const existingSteps = data.stepsOf(recipe.id).map((step) => step.body);
-		steps = existingSteps.length ? existingSteps : [''];
+		const savedSteps = data.stepsOf(recipe.id);
+		const lineIds = data.ingredientsOf(recipe.id).map((line) => line.id);
+		steps = savedSteps.length ? savedSteps.map((saved) => saved.body) : [''];
+		stepIngredients = savedSteps.length
+			? savedSteps.map((saved) =>
+					saved.ingredientIds.flatMap((id) => {
+						const index = lineIds.indexOf(id);
+						return index === -1 ? [] : [index];
+					})
+				)
+			: [[]];
 
 		creating = true;
 		step = 'recipe';
@@ -230,6 +289,9 @@
 		servings = parseImportedServings(recipe.servings) ?? DEFAULT_SERVINGS;
 		lines = imported.length ? imported : [{ name: '', qty: '', unit: DEFAULT_UNIT }];
 		steps = recipe.steps.length ? recipe.steps : [''];
+		stepIngredients = recipe.steps.length
+			? guessLinks(lines.map((line) => line.name), recipe.steps)
+			: [[]];
 
 		creating = true;
 		step = 'recipe';
@@ -248,6 +310,7 @@
 		servings = recipe.servings;
 		lines = recipe.ingredients.length ? recipe.ingredients : [{ name: '', qty: '', unit: DEFAULT_UNIT }];
 		steps = recipe.steps.length ? recipe.steps : [''];
+		stepIngredients = recipe.steps.length ? recipe.stepIngredients : [[]];
 
 		creating = true;
 		step = 'recipe';
@@ -340,15 +403,24 @@
 	}
 
 	function removeRow(index: number) {
-		lines = lines.length > 1 ? lines.filter((_, i) => i !== index) : lines;
+		if (lines.length <= 1) return;
+		lines = lines.filter((_, i) => i !== index);
+		stepIngredients = withoutIngredient(stepIngredients, index);
 	}
 
 	function addStep() {
 		steps = [...steps, ''];
+		stepIngredients = [...stepIngredients, []];
 	}
 
 	function removeStep(index: number) {
-		steps = steps.length > 1 ? steps.filter((_, i) => i !== index) : steps;
+		if (steps.length <= 1) return;
+		steps = steps.filter((_, i) => i !== index);
+		stepIngredients = stepIngredients.filter((_, i) => i !== index);
+	}
+
+	function toggleStepIngredient(stepIndex: number, lineIndex: number) {
+		stepIngredients = toggleLink(stepIngredients, stepIndex, lineIndex);
 	}
 
 	function goBack() {
@@ -371,13 +443,23 @@
 		if (!name.trim()) return;
 
 		feedback.play('add');
-		if (editingId) {
-			data.updateRecipe(editingId, { name, emoji, servings, ingredients: lines, steps });
+		const editedId = editingId;
+		if (editedId) {
+			data.updateRecipe(editedId, { name, emoji, servings, notes, ingredients: lines, steps, stepIngredients });
 		} else {
-			const recipe = data.addRecipe({ name, emoji, servings, ingredients: lines, steps });
+			const recipe = data.addRecipe({
+				name,
+				emoji,
+				servings,
+				notes,
+				ingredients: lines,
+				steps,
+				stepIngredients
+			});
 			attachImportedPhoto(recipe.id);
 		}
 		reset();
+		if (editedId) void revealCard(editedId);
 	}
 
 	/**
@@ -597,7 +679,22 @@
 		<p class="text-muted-foreground text-caption">{t('recipes.import.social')}</p>
 	</form>
 {:else}
-	<form onsubmit={goNext} class="bg-card mt-4 space-y-5 rounded-xl border p-4">
+	<form onsubmit={goNext} class="bg-card mt-4 scroll-mt-4 space-y-5 rounded-xl border p-4" data-test-id="recipe-form">
+		<h2
+			bind:this={formHeading}
+			tabindex="-1"
+			class="text-h1 scroll-mt-4 font-semibold outline-none"
+			data-test-id="recipe-form-title"
+		>
+			{editingId ? t('recipes.edit', { name }) : t('create.recipe')}
+		</h2>
+
+		{#if copiedFrom}
+			<p class="text-label rounded-lg bg-[var(--fl-primary-tint)] p-3" data-test-id="recipe-copy-notice">
+				{t('recipes.copyNotice')}
+			</p>
+		{/if}
+
 		{#if fromImport}
 			<!--
 				What comes from a web page is a draft, and the screen must say so before the person saves. The
@@ -631,7 +728,7 @@
 
 		{#if step === 'recipe'}
 			<div class="space-y-4">
-				<h2 class="text-h2 font-semibold">{t('recipes.step.recipe')}</h2>
+				<h3 class="text-h2 font-semibold">{t('recipes.step.recipe')}</h3>
 
 				<div class="grid gap-3 sm:grid-cols-[auto_1fr]">
 					<div class="w-20">
@@ -682,10 +779,37 @@
 					</IconField>
 					<p class="text-muted-foreground text-caption">{t('recipes.servingsHint')}</p>
 				</div>
+
+				<div>
+					<Label for="recipe-notes">{t('recipes.notes')}</Label>
+					<textarea
+						id="recipe-notes"
+						bind:value={notes}
+						rows={3}
+						data-test-id="recipe-notes"
+						placeholder={t('recipes.notesPlaceholder')}
+						class="border-input bg-background w-full rounded-md border p-2"
+					></textarea>
+				</div>
+
+				{#if editingId}
+					{@const editing = data.recipes.find((recipe) => recipe.id === editingId)}
+					{#if editing}
+						<div>
+							<p class="text-label mb-2 font-medium">{t('recipes.photo')}</p>
+							<RecipePhoto
+								recipeId={editing.id}
+								recipeName={name || editing.name}
+								ingredientNames={lines.map((line) => line.name).filter(Boolean)}
+								photoPath={editing.photoPath}
+							/>
+						</div>
+					{/if}
+				{/if}
 			</div>
 		{:else if step === 'ingredients'}
 			<div class="space-y-4">
-				<h2 class="text-h2 font-semibold">{t('recipes.step.ingredients')}</h2>
+				<h3 class="text-h2 font-semibold">{t('recipes.step.ingredients')}</h3>
 				<p class="text-muted-foreground text-caption">{t('recipes.ingredientsHint')}</p>
 
 				<ul class="space-y-3" data-test-id="recipe-ingredients">
@@ -759,33 +883,60 @@
 			</div>
 		{:else}
 			<div class="space-y-4">
-				<h2 class="text-h2 font-semibold">{t('recipes.step.steps')}</h2>
+				<h3 class="text-h2 font-semibold">{t('recipes.step.steps')}</h3>
 				<p class="text-muted-foreground text-caption">{t('recipes.stepsHint')}</p>
 
 				<ol class="space-y-3" data-test-id="recipe-steps">
 					{#each steps as _, index (index)}
-						<li class="flex items-end gap-2">
-							<div class="min-w-0 flex-1">
-								<Label for="recipe-step-{index}">{t('recipes.stepBody', { rank: index + 1 })}</Label>
-								<textarea
-									id="recipe-step-{index}"
-									bind:value={steps[index]}
-									rows={2}
-									data-test-class="recipe-step"
-									class="border-input bg-background w-full rounded-md border p-2"
-								></textarea>
+						<li class="space-y-2">
+							<div class="flex items-end gap-2">
+								<div class="min-w-0 flex-1">
+									<Label for="recipe-step-{index}">{t('recipes.stepBody', { rank: index + 1 })}</Label>
+									<textarea
+										id="recipe-step-{index}"
+										bind:value={steps[index]}
+										rows={2}
+										data-test-class="recipe-step"
+										class="border-input bg-background w-full rounded-md border p-2"
+									></textarea>
+								</div>
+								<Button
+									type="button"
+									variant="outline"
+									onclick={() => removeStep(index)}
+									disabled={steps.length === 1}
+									aria-label={t('recipes.removeStep', { rank: index + 1 })}
+									data-test-class="recipe-step-remove"
+									class="fl-press"
+								>
+									<Trash2 size={18} aria-hidden="true" />
+								</Button>
 							</div>
-							<Button
-								type="button"
-								variant="outline"
-								onclick={() => removeStep(index)}
-								disabled={steps.length === 1}
-								aria-label={t('recipes.removeStep', { rank: index + 1 })}
-								data-test-class="recipe-step-remove"
-								class="fl-press"
-							>
-								<Trash2 size={18} aria-hidden="true" />
-							</Button>
+
+							{#if namedLines.length}
+								<fieldset class="min-w-0 sm:rounded-lg sm:border sm:p-3" data-test-class="recipe-step-ingredients">
+									<legend class="text-label mb-2 font-semibold sm:px-1">
+										{t('recipes.stepIngredients', { rank: index + 1 })}
+									</legend>
+									<div class="grid grid-cols-1 gap-2 sm:grid-cols-2">
+										{#each namedLines as { line, lineIndex } (lineIndex)}
+											{@const checked = stepIngredients[index]?.includes(lineIndex) ?? false}
+											<label
+												class="fl-press has-[:focus-visible]:ring-ring has-[:checked]:border-primary has-[:checked]:bg-primary/10 flex min-h-[max(3rem,48px)] cursor-pointer items-center gap-2 rounded-lg border px-2 py-1 has-[:focus-visible]:ring-2"
+											>
+												<input
+													type="checkbox"
+													{checked}
+													onchange={() => toggleStepIngredient(index, lineIndex)}
+													data-test-class="recipe-step-ingredient"
+													class="accent-primary size-6 shrink-0"
+												/>
+												<span class="text-label min-w-0 hyphens-auto [overflow-wrap:anywhere]">{line.name}</span>
+											</label>
+										{/each}
+									</div>
+								</fieldset>
+							{/if}
 						</li>
 					{/each}
 				</ol>
@@ -857,7 +1008,7 @@
 			{@const recipeSteps = data.stepsOf(recipe.id)}
 			{@const owned = recipe.householdId === data.circle}
 			{@const isExpanded = expandedIds.has(recipe.id)}
-			<li class="mb-3.5 break-inside-avoid">
+			<li id="recipe-card-{recipe.id}" class="mb-3.5 scroll-mt-4 break-inside-avoid">
 				<Card.Root data-test-class="recipe-card" class="fl-home-card overflow-hidden p-0">
 					<!--
 						Collapsed, a card is only its photo (or its emoji, when there is none) and its name: nothing
@@ -930,6 +1081,18 @@
 											</li>
 										{/each}
 									</ul>
+								{/if}
+
+								{#if recipe.notes}
+									<h3
+										class="text-label text-muted-foreground mt-5 flex items-center gap-1.5 font-semibold tracking-wide uppercase"
+									>
+										<NotebookPen size={14} aria-hidden="true" />
+										{t('recipes.notes')}
+									</h3>
+									<p class="text-label mt-2 whitespace-pre-line" data-test-class="recipe-notes-body">
+										{recipe.notes}
+									</p>
 								{/if}
 
 								{#if recipeSteps.length}
@@ -1011,6 +1174,17 @@
 								>
 									<Trash2 size={18} aria-hidden="true" />
 									{t('common.delete')}
+								</Button>
+							{:else}
+								<Button
+									variant="outline"
+									onclick={() => editCopy(recipe)}
+									aria-label={t('recipes.editCopyAria', { name: recipe.name })}
+									data-test-class="recipe-edit-copy"
+									class="fl-press"
+								>
+									<Copy size={18} aria-hidden="true" />
+									{t('recipes.editCopy')}
 								</Button>
 							{/if}
 						</div>
@@ -1103,6 +1277,8 @@
 		<CookAlong
 			recipeName={cookAlongRecipe.name}
 			steps={data.stepsOf(cookAlongRecipe.id).map((step) => step.body)}
+			ingredients={data.ingredientsOf(cookAlongRecipe.id)}
+			stepIngredientIds={data.stepsOf(cookAlongRecipe.id).map((step) => step.ingredientIds ?? [])}
 			onClose={() => (cookAlongFor = null)}
 		/>
 	{/if}

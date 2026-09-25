@@ -476,6 +476,12 @@
 		"targetNew": "In a new list",
 		"delete": "Delete recipe {name}",
 		"edit": "Edit recipe {name}",
+		"notes": "Notes",
+		"notesPlaceholder": "Tips, variations, where the recipe comes from…",
+		"photo": "Photo",
+		"copyNotice": "This is a copy: saving it creates a recipe of your own, the original stays as it is.",
+		"editCopy": "Edit a copy",
+		"editCopyAria": "Edit a copy of {name}",
 		"deleteConfirm": "Delete {name}? Lists already generated will not change.",
 		"deleteYes": "Delete",
 		"servingsCount": {
@@ -495,8 +501,18 @@
 			"next": "Next",
 			"mute": "Mute voice",
 			"unmute": "Unmute voice",
-			"empty": "This recipe has no step to follow."
-		}
+			"empty": "This recipe has no step to follow.",
+			"ingredients": "Ingredients",
+			"stepIngredientsCount": "Ingredients for this step ({count})",
+			"ingredientsOfStep": "Ingredients for step {current}",
+			"allIngredients": "All ingredients",
+			"noStepIngredients": "No ingredient is linked to this step: here is the whole recipe.",
+			"showAllIngredients": "Show the whole recipe",
+			"showStepIngredients": "Show this step only",
+			"readIngredients": "Read the ingredients",
+			"speakIngredients": "Ingredients: {list}."
+		},
+		"stepIngredients": "Ingredients used in step {rank}"
 	},
 	"aisles": {
 		"title": "Aisles",

@@ -1179,6 +1179,7 @@ export type Database = {
       recipe_steps: {
         Row: {
           body: string
+          ingredient_ids: string[]
           id: string
           position: number
           recipe_id: string
@@ -1186,11 +1187,13 @@ export type Database = {
         Insert: {
           body: string
           id?: string
+          ingredient_ids?: string[]
           position?: number
           recipe_id: string
         }
         Update: {
           body?: string
+          ingredient_ids?: string[]
           id?: string
           position?: number
           recipe_id?: string

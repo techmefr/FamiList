@@ -476,6 +476,12 @@
 		"targetNew": "En una lista nueva",
 		"delete": "Eliminar la receta {name}",
 		"edit": "Editar la receta {name}",
+		"notes": "Notas",
+		"notesPlaceholder": "Trucos, variantes, origen de la receta…",
+		"photo": "Foto",
+		"copyNotice": "Es una copia: al guardarla se crea una receta suya, la original no cambia.",
+		"editCopy": "Editar una copia",
+		"editCopyAria": "Editar una copia de {name}",
 		"deleteConfirm": "¿Eliminar {name}? Las listas ya generadas no cambiarán.",
 		"deleteYes": "Eliminar",
 		"servingsCount": {
@@ -495,8 +501,18 @@
 			"next": "Siguiente",
 			"mute": "Silenciar voz",
 			"unmute": "Activar voz",
-			"empty": "Esta receta no tiene pasos a seguir."
-		}
+			"empty": "Esta receta no tiene pasos a seguir.",
+			"ingredients": "Ingredientes",
+			"stepIngredientsCount": "Ingredientes de este paso ({count})",
+			"ingredientsOfStep": "Ingredientes del paso {current}",
+			"allIngredients": "Todos los ingredientes",
+			"noStepIngredients": "Ningún ingrediente está vinculado a este paso: aquí está toda la receta.",
+			"showAllIngredients": "Ver toda la receta",
+			"showStepIngredients": "Ver solo este paso",
+			"readIngredients": "Leer los ingredientes",
+			"speakIngredients": "Ingredientes: {list}."
+		},
+		"stepIngredients": "Ingredientes usados en el paso {rank}"
 	},
 	"aisles": {
 		"title": "Secciones",
