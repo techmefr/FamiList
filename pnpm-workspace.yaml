@@ -1,0 +1,3 @@
+# tesseract.js only runs opencollective-postinstall (a funding banner): nothing the app needs.
+allowBuilds:
+  tesseract.js: false

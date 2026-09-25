@@ -721,6 +721,10 @@
 					"title": "Aus einem Link",
 					"hint": "Fügen Sie die Adresse eines Rezepts aus dem Web ein."
 				},
+				"scan": {
+					"title": "Rezept scannen",
+					"hint": "Eine Buchseite oder Rezeptkarte, auf dem Gerät gelesen, ohne KI."
+				},
 				"photo": {
 					"title": "Aus einem Foto",
 					"hint": "Eine Buchseite oder ein geschriebenes Rezept, von der KI gelesen."
@@ -733,6 +737,45 @@
 					"title": "Idee aus den Einkäufen",
 					"hint": "Ein Rezept mit dem, was der Haushalt schon gekauft hat."
 				}
+			}
+		},
+		"search": {
+			"label": "Rezept suchen",
+			"placeholder": "Name, Zutat, Kategorie…",
+			"clear": "Suche löschen",
+			"filters": "Filter",
+			"count": {
+				"one": "{count} Rezept gefunden",
+				"other": "{count} Rezepte gefunden"
+			},
+			"empty": "Kein Rezept passt zu dieser Suche.",
+			"reset": "Alle anzeigen"
+		},
+		"filters": {
+			"title": "Rezepte filtern",
+			"categories": "Filterkategorien",
+			"ingredient": "Zutat",
+			"time": "Gesamtzeit",
+			"timeOption": {
+				"upTo15": "15 Min. oder weniger",
+				"upTo30": "15 bis 30 Min.",
+				"upTo60": "30 Min. bis 1 Std.",
+				"over60": "Über 1 Std."
+			},
+			"search": "Filter suchen",
+			"selected": "Ausgewählt",
+			"all": "Alle",
+			"none": "Kein Filter passt.",
+			"noIngredient": "Noch keine Zutaten: Sie kommen aus Ihren Rezepten.",
+			"back": "Zurück zu den Kategorien",
+			"clearAll": "Alle löschen",
+			"apply": {
+				"one": "{count} Rezept anzeigen",
+				"other": "{count} Rezepte anzeigen"
+			},
+			"active": {
+				"one": "{count} aktiv",
+				"other": "{count} aktiv"
 			}
 		}
 	},
@@ -773,6 +816,42 @@
 			"autumn": "Herbst",
 			"winter": "Winter"
 		}
+	},
+	"recipeScan": {
+		"tipsTitle": "Für ein gutes Ergebnis",
+		"tipSteady": "Halten Sie das Telefon ganz ruhig über die Seite.",
+		"tipLight": "Sorgen Sie für gutes Licht, ohne Schatten oder Spiegelung auf der Seite.",
+		"tipFrame": "Nehmen Sie die ganze Seite flach auf: ein Foto pro Seite, der Reihe nach.",
+		"takePhoto": "Eine Seite fotografieren",
+		"choosePhotos": "Aus meinen Fotos wählen",
+		"pagesTitle": "Zu lesende Seiten, der Reihe nach",
+		"page": "Seite {number}",
+		"moveUp": "Nach oben",
+		"moveDown": "Nach unten",
+		"remove": "Entfernen",
+		"moveUpLabel": "Nach oben: Seite {number}",
+		"moveDownLabel": "Nach unten: Seite {number}",
+		"removeLabel": "Entfernen: Seite {number}",
+		"full": "Höchstzahl an Seiten erreicht.",
+		"read": "Rezept lesen",
+		"reading": "Wird gelesen: {percent} %",
+		"readingHint": "Sie können die App währenddessen weiter nutzen: Eine Nachricht meldet, wenn das Rezept fertig ist.",
+		"cancel": "Lesen abbrechen",
+		"readingToast": "Das Rezept wird gelesen…",
+		"readyToast": "Das Rezept wurde gelesen. Öffnen Sie es zur Kontrolle.",
+		"readyTitle": "Das Rezept wurde gelesen",
+		"readyBody": "Öffnen Sie es, um alles vor dem Speichern zu prüfen und zu korrigieren.",
+		"open": "Rezept öffnen",
+		"restart": "Neu beginnen",
+		"empty": "Kein lesbarer Text auf diesen Fotos. Nehmen Sie sie bei gutem Licht neu auf, die ganze Seite flach.",
+		"emptyToast": "Kein lesbarer Text auf den Rezeptfotos.",
+		"failed": "Das Lesen ist fehlgeschlagen. Versuchen Sie es erneut oder machen Sie neue Fotos.",
+		"failedToast": "Das Lesen des Rezepts ist fehlgeschlagen.",
+		"unavailable": "Das Lesen auf dem Gerät ist hier noch nicht verfügbar.",
+		"aiTitle": "Besser lesen mit Ihrer KI",
+		"aiHint": "Ihr KI-Anbieter liest Handschrift besser. Das Foto wird an ihn gesendet.",
+		"useAi": "Mit meiner KI lesen",
+		"useDevice": "Auf dem Gerät lesen"
 	},
 	"aisles": {
 		"title": "Abteilungen",
@@ -1239,8 +1318,7 @@
 		"directFailed": "Das Gespräch konnte nicht geöffnet werden. Bitte erneut versuchen.",
 		"backToChats": "Zurück zu den Gesprächen",
 		"directNotFound": "Dieses Gespräch wurde nicht gefunden.",
-		"someone": "Jemand",
-		"recipeAdded": "{name} wurde zu den Rezepten hinzugefügt."
+		"someone": "Jemand"
 	},
 	"household": {
 		"title": "Mein Haushalt",
@@ -1430,6 +1508,7 @@
 	"helpMenu": {
 		"button": "Hilfe",
 		"tutorial": "Anleitung ansehen",
+		"whatsNew": "Neuigkeiten ansehen",
 		"install": "Auf dem Startbildschirm installieren",
 		"suggestion": "Verbesserung vorschlagen",
 		"bug": "Fehler melden"
@@ -1437,19 +1516,16 @@
 	"changelog": {
 		"title": "Neuigkeiten",
 		"entryTitle": "Version {version}",
+		"currentVersion": "Sie verwenden Version {version}",
+		"groups": {
+			"new": "Neu",
+			"improved": "Verbessert",
+			"fixed": "Behoben"
+		},
 		"acknowledge": "Verstanden",
 		"replayTour": "Die ganze Anleitung erneut ansehen",
 		"dismissOnce": "Nicht jetzt",
-		"dismissUntilNextUpdate": "Bis zum nächsten Update nicht mehr anzeigen",
-		"v0_1_0": {
-			"items": [
-				"Wochenmenü: Planen Sie Ihre Mahlzeiten und erhalten Sie die passende Einkaufsliste.",
-				"Der Haushalt kann jetzt seine Mitglieder und deren Ernährungseinschränkungen speichern.",
-				"Fragen Sie die KI im Gespräch nach einem Rezept, auch wenn der Import einer Seite fehlschlägt.",
-				"Mehrere KI-Schlüssel können jetzt für denselben Account gespeichert werden.",
-				"Nach einem Update erscheint eine Neuigkeiten-Karte mit schnellem Zugang zur Anleitung."
-			]
-		}
+		"dismissUntilNextUpdate": "Bis zum nächsten Update nicht mehr anzeigen"
 	},
 	"install": {
 		"title": "Familiste auf Ihrem Startbildschirm",
@@ -1487,7 +1563,8 @@
 			"list": "Listen",
 			"item": "Artikel",
 			"shop": "Geschäfte",
-			"card": "Karten"
+			"card": "Karten",
+			"recipe": "Rezepte"
 		}
 	},
 	"ai": {
@@ -1527,7 +1604,6 @@
 		"sendingTo": "Empfänger: {provider}.",
 		"sendConfirm": "Senden und fragen",
 		"asking": "Anfrage läuft …",
-		"added": "Rezept zu denen des Haushalts hinzugefügt.",
 		"keep": "Dieses Rezept behalten",
 		"retry": "Noch einmal fragen",
 		"discard": "Verwerfen",
@@ -1585,9 +1661,7 @@
 		},
 		"request": {
 			"trigger": "KI nach einem Rezept fragen",
-			"title": "Welches Rezept möchtest du?",
 			"placeholder": "z. B. ein Hähnchen-Curry für 4",
-			"submit": "Fragen",
 			"followUpPlaceholder": "z. B. schärfer, oder Hähnchen durch Tofu ersetzen",
 			"dictate": "Per Sprache diktieren",
 			"stopDictate": "Diktat beenden",
@@ -1599,7 +1673,34 @@
 		"photoErrorNoKey": "Um ein Bild zu erzeugen, füge einen OpenRouter-Schlüssel hinzu.",
 		"photoErrorNoKeyLink": "Schlüssel hinzufügen",
 		"photoErrorNoCredit": "Dein OpenRouter-Konto hat kein Guthaben mehr: Bilderzeugung ist kostenpflichtig.",
-		"photoErrorNoCreditLink": "Guthaben aufladen"
+		"photoErrorNoCreditLink": "Guthaben aufladen",
+		"chat": {
+			"tableTitle": "Wer isst mit?",
+			"tableHint": "Allergien und Ernährungsweisen werden an den Assistenten gesendet, nie die Namen. Tippen Sie auf einen Namen, wenn die Person nicht da ist.",
+			"present": "am Tisch",
+			"absent": "nicht da",
+			"addGuest": "Gast hinzufügen",
+			"guestName": "Name des Gastes (optional)",
+			"guestNotes": "Was er nicht essen darf, oder seine Ernährungsweise",
+			"guestNotesPlaceholder": "z. B. allergisch gegen Blumenkohl",
+			"guestSave": "Gast hinzufügen",
+			"guestDefault": "Gast {number}",
+			"removeGuest": "{name} entfernen",
+			"constraintsTitle": "Der Assistent berücksichtigt",
+			"constraintsNone": "Keine Allergie und keine Ernährungsweise zu berücksichtigen.",
+			"constraintOf": "{who}: {notes}",
+			"threadLabel": "Unterhaltung mit dem Assistenten",
+			"assistant": "Assistent",
+			"you": "Sie",
+			"greeting": "Sagen Sie mir, worauf Sie Lust haben. Vielleicht stelle ich ein oder zwei Fragen, dann schreibe ich das Rezept.",
+			"writing": "Der Assistent schreibt…",
+			"messageLabel": "Ihre Nachricht",
+			"send": "Senden",
+			"conflictTitle": "Bitte prüfen: Diese Zutaten passen vielleicht nicht",
+			"conflictLine": "{ingredient} — {constraint}",
+			"avoid": "Eine Version ohne sie erbitten",
+			"avoidMessage": "Schreibe das Rezept noch einmal ohne: {ingredients}."
+		}
 	},
 	"setup": {
 		"title": "Instanz nicht konfiguriert",

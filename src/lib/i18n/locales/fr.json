@@ -740,6 +740,10 @@
 					"title": "Depuis un lien",
 					"hint": "Collez l’adresse d’une recette trouvée sur le web."
 				},
+				"scan": {
+					"title": "Scanner une recette",
+					"hint": "Une page de livre ou une fiche, lue sur l’appareil, sans IA."
+				},
 				"photo": {
 					"title": "Depuis une photo",
 					"hint": "Une page de livre ou une recette écrite, lue par l’IA."
@@ -752,6 +756,45 @@
 					"title": "Idée à partir des achats",
 					"hint": "Une recette avec ce que le foyer a déjà acheté."
 				}
+			}
+		},
+		"search": {
+			"label": "Rechercher une recette",
+			"placeholder": "Nom, ingrédient, catégorie…",
+			"clear": "Effacer la recherche",
+			"filters": "Filtres",
+			"count": {
+				"one": "{count} recette trouvée",
+				"other": "{count} recettes trouvées"
+			},
+			"empty": "Aucune recette ne correspond à cette recherche.",
+			"reset": "Tout afficher"
+		},
+		"filters": {
+			"title": "Filtrer les recettes",
+			"categories": "Catégories de filtres",
+			"ingredient": "Ingrédient",
+			"time": "Temps total",
+			"timeOption": {
+				"upTo15": "15 min ou moins",
+				"upTo30": "De 15 à 30 min",
+				"upTo60": "De 30 min à 1 h",
+				"over60": "Plus d’1 h"
+			},
+			"search": "Chercher un filtre",
+			"selected": "Sélectionnés",
+			"all": "Tous",
+			"none": "Aucun filtre ne correspond.",
+			"noIngredient": "Pas encore d’ingrédient : ils viennent de vos recettes.",
+			"back": "Retour aux catégories",
+			"clearAll": "Tout effacer",
+			"apply": {
+				"one": "Voir {count} recette",
+				"other": "Voir {count} recettes"
+			},
+			"active": {
+				"one": "{count} actif",
+				"other": "{count} actifs"
 			}
 		}
 	},
@@ -792,6 +835,42 @@
 			"autumn": "Automne",
 			"winter": "Hiver"
 		}
+	},
+	"recipeScan": {
+		"tipsTitle": "Pour une bonne lecture",
+		"tipSteady": "Tenez le téléphone bien immobile, au-dessus de la page.",
+		"tipLight": "Placez-vous à la lumière, sans ombre ni reflet sur la page.",
+		"tipFrame": "Prenez toute la page, bien à plat : une photo par page, dans l’ordre.",
+		"takePhoto": "Prendre une page en photo",
+		"choosePhotos": "Choisir dans mes photos",
+		"pagesTitle": "Pages à lire, dans l’ordre",
+		"page": "Page {number}",
+		"moveUp": "Monter",
+		"moveDown": "Descendre",
+		"remove": "Retirer",
+		"moveUpLabel": "Monter la page {number}",
+		"moveDownLabel": "Descendre la page {number}",
+		"removeLabel": "Retirer la page {number}",
+		"full": "Nombre maximal de pages atteint.",
+		"read": "Lire la recette",
+		"reading": "Lecture en cours : {percent} %",
+		"readingHint": "Vous pouvez utiliser l’application en attendant : un message vous dira quand la recette est prête.",
+		"cancel": "Arrêter la lecture",
+		"readingToast": "Lecture de la recette en cours…",
+		"readyToast": "La recette est lue. Ouvrez-la pour la vérifier.",
+		"readyTitle": "La recette est lue",
+		"readyBody": "Ouvrez-la pour tout relire et corriger avant d’enregistrer.",
+		"open": "Ouvrir la recette",
+		"restart": "Recommencer",
+		"empty": "Aucun texte lisible sur ces photos. Reprenez-les à la lumière, la page entière et bien à plat.",
+		"emptyToast": "Aucun texte lisible sur les photos de la recette.",
+		"failed": "La lecture a échoué. Réessayez, ou reprenez les photos.",
+		"failedToast": "La lecture de la recette a échoué.",
+		"unavailable": "La lecture sur l’appareil n’est pas encore disponible ici.",
+		"aiTitle": "Meilleure lecture avec votre IA",
+		"aiHint": "Votre fournisseur d’IA lit mieux l’écriture à la main. La photo lui est envoyée.",
+		"useAi": "Lire avec mon IA",
+		"useDevice": "Lire sur l’appareil"
 	},
 	"aisles": {
 		"title": "Rayons",
@@ -1258,8 +1337,7 @@
 		"directFailed": "La conversation n'a pas pu s'ouvrir. Réessayez.",
 		"backToChats": "Retour aux discussions",
 		"directNotFound": "Cette conversation est introuvable.",
-		"someone": "Quelqu’un",
-		"recipeAdded": "{name} a été ajoutée aux recettes."
+		"someone": "Quelqu’un"
 	},
 	"household": {
 		"title": "Mon foyer",
@@ -1448,6 +1526,7 @@
 	"helpMenu": {
 		"button": "Aide",
 		"tutorial": "Voir le tutoriel",
+		"whatsNew": "Voir les nouveautés",
 		"install": "Installer sur l'écran d'accueil",
 		"suggestion": "Proposer une amélioration",
 		"bug": "Signaler un bug"
@@ -1455,19 +1534,16 @@
 	"changelog": {
 		"title": "Quoi de neuf",
 		"entryTitle": "Version {version}",
+		"currentVersion": "Vous utilisez la version {version}",
+		"groups": {
+			"new": "Nouveau",
+			"improved": "Amélioré",
+			"fixed": "Corrigé"
+		},
 		"acknowledge": "Compris",
 		"replayTour": "Revoir tout le guide",
 		"dismissOnce": "Ignorer cette fois",
-		"dismissUntilNextUpdate": "Ignorer jusqu'à la prochaine mise à jour",
-		"v0_1_0": {
-			"items": [
-				"Le menu de la semaine : planifiez vos repas et retrouvez la liste de courses correspondante.",
-				"Le foyer peut désormais enregistrer ses membres et leurs restrictions alimentaires.",
-				"Demandez une recette à l'IA en discutant, même quand l'import d'une page échoue.",
-				"Plusieurs clés IA peuvent être enregistrées sur un même compte.",
-				"Une carte de nouveautés s'affiche après une mise à jour, avec un accès rapide au guide."
-			]
-		}
+		"dismissUntilNextUpdate": "Ignorer jusqu'à la prochaine mise à jour"
 	},
 	"install": {
 		"title": "Familiste sur votre écran d'accueil",
@@ -1505,7 +1581,8 @@
 			"list": "Listes",
 			"item": "Articles",
 			"shop": "Magasins",
-			"card": "Cartes"
+			"card": "Cartes",
+			"recipe": "Recettes"
 		}
 	},
 	"ai": {
@@ -1545,7 +1622,6 @@
 		"sendingTo": "Destinataire : {provider}.",
 		"sendConfirm": "Envoyer et demander",
 		"asking": "Demande en cours…",
-		"added": "Recette ajoutée à celles du foyer.",
 		"keep": "Garder cette recette",
 		"retry": "Redemander",
 		"discard": "Jeter",
@@ -1603,9 +1679,7 @@
 		},
 		"request": {
 			"trigger": "Demander une recette à l’IA",
-			"title": "Quelle recette souhaitez-vous ?",
 			"placeholder": "ex. un curry de poulet pour 4",
-			"submit": "Demander",
 			"followUpPlaceholder": "ex. plus épicé, ou remplacer le poulet par du tofu",
 			"dictate": "Dicter au vocal",
 			"stopDictate": "Arrêter la dictée",
@@ -1617,7 +1691,34 @@
 		"photoErrorNoKey": "Pour générer une image, ajoute une clé OpenRouter.",
 		"photoErrorNoKeyLink": "Ajouter une clé",
 		"photoErrorNoCredit": "Ton compte OpenRouter n’a plus de crédit : la génération d’image est payante.",
-		"photoErrorNoCreditLink": "Ajouter du crédit"
+		"photoErrorNoCreditLink": "Ajouter du crédit",
+		"chat": {
+			"tableTitle": "Qui mange ?",
+			"tableHint": "Leurs allergies et régimes sont envoyés à l’assistant, jamais leurs prénoms. Touchez un prénom pour dire qui est absent.",
+			"present": "à table",
+			"absent": "absent",
+			"addGuest": "Ajouter un invité",
+			"guestName": "Prénom de l’invité (facultatif)",
+			"guestNotes": "Ce qu’il ne peut pas manger, ou son régime",
+			"guestNotesPlaceholder": "ex. allergique au chou-fleur",
+			"guestSave": "Ajouter l’invité",
+			"guestDefault": "Invité {number}",
+			"removeGuest": "Retirer {name}",
+			"constraintsTitle": "L’assistant tient compte de",
+			"constraintsNone": "Aucune allergie ni régime à prendre en compte.",
+			"constraintOf": "{who} : {notes}",
+			"threadLabel": "Conversation avec l’assistant",
+			"assistant": "Assistant",
+			"you": "Vous",
+			"greeting": "Dites-moi ce qui vous ferait plaisir. Je vous poserai peut-être une ou deux questions, puis j’écrirai la recette.",
+			"writing": "L’assistant écrit…",
+			"messageLabel": "Votre message",
+			"send": "Envoyer",
+			"conflictTitle": "À vérifier : ces ingrédients ne conviennent peut-être pas",
+			"conflictLine": "{ingredient} — {constraint}",
+			"avoid": "Demander une version sans",
+			"avoidMessage": "Refais la recette sans : {ingredients}."
+		}
 	},
 	"setup": {
 		"title": "Instance non configurée",

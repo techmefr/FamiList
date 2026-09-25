@@ -732,6 +732,10 @@
 					"title": "From a link",
 					"hint": "Paste the address of a recipe found on the web."
 				},
+				"scan": {
+					"title": "Scan a recipe",
+					"hint": "A book page or a recipe card, read on this device, no AI needed."
+				},
 				"photo": {
 					"title": "From a photo",
 					"hint": "A book page or a written recipe, read by the AI."
@@ -744,6 +748,45 @@
 					"title": "Idea from your shopping",
 					"hint": "A recipe with what the household has already bought."
 				}
+			}
+		},
+		"search": {
+			"label": "Search recipes",
+			"placeholder": "Name, ingredient, category…",
+			"clear": "Clear the search",
+			"filters": "Filters",
+			"count": {
+				"one": "{count} recipe found",
+				"other": "{count} recipes found"
+			},
+			"empty": "No recipe matches this search.",
+			"reset": "Show all"
+		},
+		"filters": {
+			"title": "Filter recipes",
+			"categories": "Filter categories",
+			"ingredient": "Ingredient",
+			"time": "Total time",
+			"timeOption": {
+				"upTo15": "15 min or less",
+				"upTo30": "15 to 30 min",
+				"upTo60": "30 min to 1 h",
+				"over60": "Over 1 h"
+			},
+			"search": "Find a filter",
+			"selected": "Selected",
+			"all": "All",
+			"none": "No filter matches.",
+			"noIngredient": "No ingredients yet: they come from your recipes.",
+			"back": "Back to categories",
+			"clearAll": "Clear all",
+			"apply": {
+				"one": "Show {count} recipe",
+				"other": "Show {count} recipes"
+			},
+			"active": {
+				"one": "{count} active",
+				"other": "{count} active"
 			}
 		}
 	},
@@ -784,6 +827,42 @@
 			"autumn": "Autumn",
 			"winter": "Winter"
 		}
+	},
+	"recipeScan": {
+		"tipsTitle": "For a good reading",
+		"tipSteady": "Hold the phone very still, above the page.",
+		"tipLight": "Stand in good light, with no shadow or glare on the page.",
+		"tipFrame": "Take the whole page, lying flat: one photo per page, in order.",
+		"takePhoto": "Take a photo of a page",
+		"choosePhotos": "Choose from my photos",
+		"pagesTitle": "Pages to read, in order",
+		"page": "Page {number}",
+		"moveUp": "Move up",
+		"moveDown": "Move down",
+		"remove": "Remove",
+		"moveUpLabel": "Move up page {number}",
+		"moveDownLabel": "Move down page {number}",
+		"removeLabel": "Remove page {number}",
+		"full": "Maximum number of pages reached.",
+		"read": "Read the recipe",
+		"reading": "Reading: {percent}%",
+		"readingHint": "You can keep using the app meanwhile: a message will tell you when the recipe is ready.",
+		"cancel": "Stop reading",
+		"readingToast": "Reading the recipe…",
+		"readyToast": "The recipe has been read. Open it to check it.",
+		"readyTitle": "The recipe has been read",
+		"readyBody": "Open it to read everything over and fix it before saving.",
+		"open": "Open the recipe",
+		"restart": "Start again",
+		"empty": "No readable text on these photos. Take them again in good light, with the whole page lying flat.",
+		"emptyToast": "No readable text on the recipe photos.",
+		"failed": "Reading failed. Try again, or take the photos again.",
+		"failedToast": "Reading the recipe failed.",
+		"unavailable": "Reading on this device is not available here yet.",
+		"aiTitle": "Better reading with your AI",
+		"aiHint": "Your AI provider reads handwriting better. The photo is sent to it.",
+		"useAi": "Read with my AI",
+		"useDevice": "Read on this device"
 	},
 	"aisles": {
 		"title": "Aisles",
@@ -1250,8 +1329,7 @@
 		"directFailed": "The conversation could not be opened. Try again.",
 		"backToChats": "Back to chats",
 		"directNotFound": "This conversation cannot be found.",
-		"someone": "Someone",
-		"recipeAdded": "{name} was added to the recipes."
+		"someone": "Someone"
 	},
 	"household": {
 		"title": "My household",
@@ -1441,6 +1519,7 @@
 	"helpMenu": {
 		"button": "Help",
 		"tutorial": "Watch the tutorial",
+		"whatsNew": "See what's new",
 		"install": "Install on the home screen",
 		"suggestion": "Suggest an improvement",
 		"bug": "Report a bug"
@@ -1448,19 +1527,16 @@
 	"changelog": {
 		"title": "What's new",
 		"entryTitle": "Version {version}",
+		"currentVersion": "You are using version {version}",
+		"groups": {
+			"new": "New",
+			"improved": "Improved",
+			"fixed": "Fixed"
+		},
 		"acknowledge": "Got it",
 		"replayTour": "Replay the whole guide",
 		"dismissOnce": "Not now",
-		"dismissUntilNextUpdate": "Don't show until the next update",
-		"v0_1_0": {
-			"items": [
-				"Weekly meal plans: plan your meals and get the matching shopping list.",
-				"The household can now record its members and their dietary restrictions.",
-				"Ask the AI for a recipe through a conversation, even when importing a page fails.",
-				"Several AI keys can now be saved on the same account.",
-				"A what's-new card appears after an update, with quick access to the guide."
-			]
-		}
+		"dismissUntilNextUpdate": "Don't show until the next update"
 	},
 	"install": {
 		"title": "Familiste on your home screen",
@@ -1498,7 +1574,8 @@
 			"list": "Lists",
 			"item": "Items",
 			"shop": "Shops",
-			"card": "Cards"
+			"card": "Cards",
+			"recipe": "Recipes"
 		}
 	},
 	"ai": {
@@ -1538,7 +1615,6 @@
 		"sendingTo": "Recipient: {provider}.",
 		"sendConfirm": "Send and ask",
 		"asking": "Asking…",
-		"added": "Recipe added to the household’s recipes.",
 		"keep": "Keep this recipe",
 		"retry": "Ask again",
 		"discard": "Discard",
@@ -1596,9 +1672,7 @@
 		},
 		"request": {
 			"trigger": "Ask AI for a recipe",
-			"title": "What recipe would you like?",
 			"placeholder": "e.g. a chicken curry for 4",
-			"submit": "Ask",
 			"followUpPlaceholder": "e.g. spicier, or swap the chicken for tofu",
 			"dictate": "Dictate by voice",
 			"stopDictate": "Stop dictation",
@@ -1610,7 +1684,34 @@
 		"photoErrorNoKey": "To generate an image, add an OpenRouter key.",
 		"photoErrorNoKeyLink": "Add a key",
 		"photoErrorNoCredit": "Your OpenRouter account has no credit left: image generation is paid.",
-		"photoErrorNoCreditLink": "Add credit"
+		"photoErrorNoCreditLink": "Add credit",
+		"chat": {
+			"tableTitle": "Who is eating?",
+			"tableHint": "Their allergies and diets are sent to the assistant, never their names. Tap a name to say who is away.",
+			"present": "at the table",
+			"absent": "away",
+			"addGuest": "Add a guest",
+			"guestName": "Guest’s name (optional)",
+			"guestNotes": "What they cannot eat, or their diet",
+			"guestNotesPlaceholder": "e.g. allergic to cauliflower",
+			"guestSave": "Add the guest",
+			"guestDefault": "Guest {number}",
+			"removeGuest": "Remove {name}",
+			"constraintsTitle": "The assistant takes into account",
+			"constraintsNone": "No allergy or diet to take into account.",
+			"constraintOf": "{who}: {notes}",
+			"threadLabel": "Conversation with the assistant",
+			"assistant": "Assistant",
+			"you": "You",
+			"greeting": "Tell me what you would like to eat. I may ask you a question or two, then I will write the recipe.",
+			"writing": "The assistant is writing…",
+			"messageLabel": "Your message",
+			"send": "Send",
+			"conflictTitle": "Check: these ingredients may not suit",
+			"conflictLine": "{ingredient} — {constraint}",
+			"avoid": "Ask for a version without them",
+			"avoidMessage": "Write the recipe again without: {ingredients}."
+		}
 	},
 	"setup": {
 		"title": "Instance not configured",

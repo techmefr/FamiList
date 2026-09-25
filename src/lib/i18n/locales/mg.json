@@ -712,6 +712,10 @@
 					"title": "Avy amin’ny rohy",
 					"hint": "Apetaho ny adiresin’ny recette hita tao amin’ny tranonkala."
 				},
+				"scan": {
+					"title": "Hisava fomba fahandro",
+					"hint": "Pejin-boky na karatra, vakiana ao amin’ny fitaovana, tsy mila IA."
+				},
 				"photo": {
 					"title": "Avy amin’ny sary",
 					"hint": "Pejin’ny boky na recette voasoratra, vakian’ny AI."
@@ -724,6 +728,45 @@
 					"title": "Hevitra avy amin’ny zavatra novidiana",
 					"hint": "Recette miaraka amin’izay efa novidian’ny ankohonana."
 				}
+			}
+		},
+		"search": {
+			"label": "Hikaroka fomba fahandro",
+			"placeholder": "Anarana, akora, sokajy…",
+			"clear": "Fafao ny fikarohana",
+			"filters": "Sivana",
+			"count": {
+				"one": "fomba fahandro {count} hita",
+				"other": "fomba fahandro {count} hita"
+			},
+			"empty": "Tsy misy fomba fahandro mifanaraka amin'io fikarohana io.",
+			"reset": "Asehoy daholo"
+		},
+		"filters": {
+			"title": "Sivano ny fomba fahandro",
+			"categories": "Sokajin'ny sivana",
+			"ingredient": "Akora",
+			"time": "Fotoana rehetra",
+			"timeOption": {
+				"upTo15": "15 min na latsaka",
+				"upTo30": "15 ka hatramin'ny 30 min",
+				"upTo60": "30 min ka hatramin'ny 1 ora",
+				"over60": "Mihoatra ny 1 ora"
+			},
+			"search": "Hikaroka sivana",
+			"selected": "Voafidy",
+			"all": "Rehetra",
+			"none": "Tsy misy sivana mifanaraka.",
+			"noIngredient": "Mbola tsy misy akora: avy amin'ny fomba fahandronao izy ireo.",
+			"back": "Hiverina amin'ny sokajy",
+			"clearAll": "Fafao daholo",
+			"apply": {
+				"one": "Asehoy ny fomba fahandro {count}",
+				"other": "Asehoy ny fomba fahandro {count}"
+			},
+			"active": {
+				"one": "{count} mandeha",
+				"other": "{count} mandeha"
 			}
 		}
 	},
@@ -764,6 +807,42 @@
 			"autumn": "Fararano",
 			"winter": "Ririnina"
 		}
+	},
+	"recipeScan": {
+		"tipsTitle": "Mba ho voavaky tsara",
+		"tipSteady": "Tazomy tsy mihetsika ny finday, eo ambonin’ny pejy.",
+		"tipLight": "Mitadiava hazavana tsara, tsy misy aloka na taratra eo amin’ny pejy.",
+		"tipFrame": "Alaivo sary manontolo ny pejy, voavelatra tsara: sary iray isaky ny pejy, araka ny filaharany.",
+		"takePhoto": "Alaivo sary ny pejy iray",
+		"choosePhotos": "Misafidiana amin’ny sariko",
+		"pagesTitle": "Pejy hovakiana, araka ny filaharany",
+		"page": "Pejy {number}",
+		"moveUp": "Akarina",
+		"moveDown": "Ampidinina",
+		"remove": "Esorina",
+		"moveUpLabel": "Akarina ny pejy {number}",
+		"moveDownLabel": "Ampidinina ny pejy {number}",
+		"removeLabel": "Esorina ny pejy {number}",
+		"full": "Tratra ny isan’ny pejy farany azo atao.",
+		"read": "Vakio ny fomba fahandro",
+		"reading": "Mamaky: {percent} %",
+		"readingHint": "Afaka mampiasa ny rindranasa ianao mandritra izany: hisy hafatra milaza rehefa vonona ny fomba fahandro.",
+		"cancel": "Ajanony ny famakiana",
+		"readingToast": "Mamaky ny fomba fahandro…",
+		"readyToast": "Voavaky ny fomba fahandro. Sokafy hanamarinana azy.",
+		"readyTitle": "Voavaky ny fomba fahandro",
+		"readyBody": "Sokafy mba hamerenana sy hanitsiana ny zava-drehetra alohan’ny hitahirizana.",
+		"open": "Sokafy ny fomba fahandro",
+		"restart": "Atombohy indray",
+		"empty": "Tsy misy soratra azo vakiana amin’ireo sary ireo. Alaivo indray amin’ny hazavana tsara, manontolo sy voavelatra ny pejy.",
+		"emptyToast": "Tsy misy soratra azo vakiana amin’ny sarin’ny fomba fahandro.",
+		"failed": "Tsy nahomby ny famakiana. Andramo indray, na alaivo indray ny sary.",
+		"failedToast": "Tsy nahomby ny famakiana ny fomba fahandro.",
+		"unavailable": "Mbola tsy azo atao eto ny famakiana ao amin’ny fitaovana.",
+		"aiTitle": "Famakiana tsara kokoa miaraka amin’ny IA-nao",
+		"aiHint": "Mahay mamaky soratra tanana kokoa ny mpamatsy IA-nao. Alefa any aminy ny sary.",
+		"useAi": "Vakio amin’ny IA-ko",
+		"useDevice": "Vakio ao amin’ny fitaovana"
 	},
 	"aisles": {
 		"title": "Faritra",
@@ -1230,8 +1309,7 @@
 		"directFailed": "Tsy afaka nosokafana ny resaka. Andramo indray.",
 		"backToChats": "Hiverina amin’ny resaka",
 		"directNotFound": "Tsy hita io resaka io.",
-		"someone": "Olona iray",
-		"recipeAdded": "Nampidirina tao amin ny recette ny {name}."
+		"someone": "Olona iray"
 	},
 	"household": {
 		"title": "Ny ankohonako",
@@ -1421,6 +1499,7 @@
 	"helpMenu": {
 		"button": "Fanampiana",
 		"tutorial": "Jereo ny fizarana torolalana",
+		"whatsNew": "Jereo ny vaovao",
 		"install": "Apetraho eo amin'ny efijery fandraisana",
 		"suggestion": "Manolotra fanatsarana",
 		"bug": "Milaza olana"
@@ -1428,19 +1507,16 @@
 	"changelog": {
 		"title": "Vaovao",
 		"entryTitle": "Kinovana {version}",
+		"currentVersion": "Ampiasainao ny kinovana {version}",
+		"groups": {
+			"new": "Vaovao",
+			"improved": "Nohatsaraina",
+			"fixed": "Namboarina"
+		},
 		"acknowledge": "Azoko",
 		"replayTour": "Hijery indray ny tari-dalana manontolo",
 		"dismissOnce": "Tsy izao",
-		"dismissUntilNextUpdate": "Aza aseho mandra-pisian'ny fanavaozana manaraka",
-		"v0_1_0": {
-			"items": [
-				"Tari-tsakafo isan-kerinandro: kajio ny sakafonao ary alao ny lisitry ny fividianana mifanaraka aminy.",
-				"Afaka misoratra ny mpikambana sy ny fisorohana amin'ny sakafo amin'ny tokantrano izao.",
-				"Angataho tari-hevi-nahandro amin'ny AI amin'ny resadresaka, na dia tsy mety aza ny fakana pejy iray.",
-				"Azo tehirizina amin'ny kaonty iray ny fanalahidy AI maromaro izao.",
-				"Misy karatra momba ny vaovao miseho aorian'ny fanavaozana, misy fidirana haingana amin'ny tari-dalana."
-			]
-		}
+		"dismissUntilNextUpdate": "Aza aseho mandra-pisian'ny fanavaozana manaraka"
 	},
 	"install": {
 		"title": "Familiste eo amin'ny efijery fandraisanao",
@@ -1478,7 +1554,8 @@
 			"list": "Lisitra",
 			"item": "Entana",
 			"shop": "Fivarotana",
-			"card": "Karatra"
+			"card": "Karatra",
+			"recipe": "Fomba fahandro"
 		}
 	},
 	"ai": {
@@ -1518,7 +1595,6 @@
 		"sendingTo": "Mpandray : {provider}.",
 		"sendConfirm": "Alefa ary anontanio",
 		"asking": "Eo am-panontaniana…",
-		"added": "Nampiana amin ny recette-n ny tokantrano ilay recette.",
 		"keep": "Tehirizo ity recette ity",
 		"retry": "Anontanio indray",
 		"discard": "Ario",
@@ -1576,9 +1652,7 @@
 		},
 		"request": {
 			"trigger": "Anontanio ny AI hanome recette",
-			"title": "Recette inona no tianao?",
 			"placeholder": "ohatra: curry akoho ho an ny olona 4",
-			"submit": "Anontanio",
 			"followUpPlaceholder": "ohatra: mafy kokoa, na soloy tôfo ny akoho",
 			"dictate": "Tononina am-bava",
 			"stopDictate": "Atsaharo ny fitononana",
@@ -1590,7 +1664,34 @@
 		"photoErrorNoKey": "Mba hamoronana sary dia ampio lakile OpenRouter.",
 		"photoErrorNoKeyLink": "Hanampy lakile",
 		"photoErrorNoCredit": "Tsy misy crédit intsony ny kaontinao OpenRouter: mandoa vola ny famoronana sary.",
-		"photoErrorNoCreditLink": "Hanampy crédit"
+		"photoErrorNoCreditLink": "Hanampy crédit",
+		"chat": {
+			"tableTitle": "Iza no hisakafo?",
+			"tableHint": "Ny tsy fahazakana sy ny fomba fihinana ihany no alefa amin’ny mpanampy, tsy ny anarana mihitsy. Tsindrio ny anarana iray raha tsy ho eo izy.",
+			"present": "eo ambony latabatra",
+			"absent": "tsy eo",
+			"addGuest": "Hanampy vahiny",
+			"guestName": "Anaran’ny vahiny (tsy voatery)",
+			"guestNotes": "Izay tsy azony hanina, na ny fomba fihinany",
+			"guestNotesPlaceholder": "ohatra: tsy mahazaka chou-fleur",
+			"guestSave": "Ampidiro ny vahiny",
+			"guestDefault": "Vahiny {number}",
+			"removeGuest": "Esory {name}",
+			"constraintsTitle": "Heverin’ny mpanampy",
+			"constraintsNone": "Tsy misy tsy fahazakana na fomba fihinana tokony hodinihina.",
+			"constraintOf": "{who}: {notes}",
+			"threadLabel": "Resaka amin’ny mpanampy",
+			"assistant": "Mpanampy",
+			"you": "Ianao",
+			"greeting": "Lazao ahy izay tianao hohanina. Mety hametraka fanontaniana iray na roa aho, avy eo hanoratra ny fomba fahandroana.",
+			"writing": "Manoratra ny mpanampy…",
+			"messageLabel": "Ny hafatrao",
+			"send": "Alefa",
+			"conflictTitle": "Hamarino: mety tsy mety ireto akora ireto",
+			"conflictLine": "{ingredient} — {constraint}",
+			"avoid": "Angataho izay tsy misy azy",
+			"avoidMessage": "Soraty indray ny fomba fahandroana tsy misy: {ingredients}."
+		}
 	},
 	"setup": {
 		"title": "Tsy mbola voaomana ity instance ity",

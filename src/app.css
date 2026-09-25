@@ -819,6 +819,36 @@ textarea {
 }
 
 /*
+ * The recipes' search bar (#315): the Filters button goes to the thumb's side, the field takes the rest.
+ *
+ * Flex order speaks in `start` and `end`, which flip with Arabic; the thumb does not. So the side is set
+ * from both settings at once: last in a left-to-right row puts it on the right, first in a right-to-left
+ * row does too. A left hand reverses both.
+ *
+ * When a software keyboard covers the bottom of the page, the bar rises above it rather than above a
+ * navigation bar now hidden underneath: the bar measures what is covered through `visualViewport` and
+ * publishes it as `--fl-keyboard`.
+ */
+.fl-recipe-bar-filters {
+	order: 1;
+}
+
+[dir='rtl'] .fl-recipe-bar-filters,
+[data-hand='left'] .fl-recipe-bar-filters {
+	order: -1;
+}
+
+[dir='rtl'][data-hand='left'] .fl-recipe-bar-filters {
+	order: 1;
+}
+
+@media (width < 48rem) {
+	.fl-recipe-bar[data-keyboard='open'] {
+		inset-block-end: calc(var(--fl-keyboard, 0px) + 0.5rem);
+	}
+}
+
+/*
  * The ground of the floating controls.
  *
  * Laid flat, they had the same weight as the cards scrolling underneath and the eye could no longer tell
@@ -1745,6 +1775,11 @@ button[data-slot='switch'][data-state='checked'] {
 	padding: 0;
 	background: transparent;
 	color: inherit;
+}
+
+/* A sheet holding a catalogue in two columns, the recipe filters (#316): two switches' width is too narrow. */
+.fl-sheet.fl-sheet-wide {
+	max-width: 48rem;
 }
 
 .fl-sheet::backdrop {

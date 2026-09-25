@@ -718,6 +718,10 @@
 					"title": "从链接导入",
 					"hint": "粘贴在网上找到的食谱地址。"
 				},
+				"scan": {
+					"title": "扫描食谱",
+					"hint": "书页或食谱卡片，在设备上识别，无需 AI。"
+				},
 				"photo": {
 					"title": "从照片导入",
 					"hint": "书页或手写的食谱，由 AI 读取。"
@@ -730,6 +734,42 @@
 					"title": "根据购物记录",
 					"hint": "用家里已经买过的东西做一道菜。"
 				}
+			}
+		},
+		"search": {
+			"label": "搜索食谱",
+			"placeholder": "名称、食材、分类…",
+			"clear": "清除搜索",
+			"filters": "筛选",
+			"count": {
+				"other": "找到 {count} 个食谱"
+			},
+			"empty": "没有符合此搜索的食谱。",
+			"reset": "显示全部"
+		},
+		"filters": {
+			"title": "筛选食谱",
+			"categories": "筛选类别",
+			"ingredient": "食材",
+			"time": "总时长",
+			"timeOption": {
+				"upTo15": "15 分钟以内",
+				"upTo30": "15 至 30 分钟",
+				"upTo60": "30 分钟至 1 小时",
+				"over60": "超过 1 小时"
+			},
+			"search": "查找筛选条件",
+			"selected": "已选",
+			"all": "全部",
+			"none": "没有匹配的筛选条件。",
+			"noIngredient": "还没有食材：食材来自你的食谱。",
+			"back": "返回类别",
+			"clearAll": "全部清除",
+			"apply": {
+				"other": "查看 {count} 个食谱"
+			},
+			"active": {
+				"other": "{count} 个已启用"
 			}
 		}
 	},
@@ -770,6 +810,42 @@
 			"autumn": "秋季",
 			"winter": "冬季"
 		}
+	},
+	"recipeScan": {
+		"tipsTitle": "如何拍得清楚",
+		"tipSteady": "将手机稳稳地拿在页面正上方。",
+		"tipLight": "在光线充足处拍摄，页面上不要有阴影或反光。",
+		"tipFrame": "拍下整页并保持平整：每页一张，按顺序拍。",
+		"takePhoto": "拍摄一页",
+		"choosePhotos": "从我的照片中选择",
+		"pagesTitle": "要识别的页面（按顺序）",
+		"page": "第 {number} 页",
+		"moveUp": "上移",
+		"moveDown": "下移",
+		"remove": "移除",
+		"moveUpLabel": "上移第 {number} 页",
+		"moveDownLabel": "下移第 {number} 页",
+		"removeLabel": "移除第 {number} 页",
+		"full": "已达到页数上限。",
+		"read": "识别食谱",
+		"reading": "正在识别：{percent}%",
+		"readingHint": "识别期间可以继续使用应用：食谱准备好时会有消息提醒。",
+		"cancel": "停止识别",
+		"readingToast": "正在识别食谱…",
+		"readyToast": "食谱已识别。打开查看。",
+		"readyTitle": "食谱已识别",
+		"readyBody": "打开后在保存前检查并修改所有内容。",
+		"open": "打开食谱",
+		"restart": "重新开始",
+		"empty": "这些照片上没有可识别的文字。请在光线充足处重拍，拍下整页并保持平整。",
+		"emptyToast": "食谱照片上没有可识别的文字。",
+		"failed": "识别失败。请重试，或重新拍照。",
+		"failedToast": "食谱识别失败。",
+		"unavailable": "此处暂不支持在设备上识别。",
+		"aiTitle": "用你的 AI 识别更准确",
+		"aiHint": "你的 AI 服务更擅长识别手写字。照片会发送给它。",
+		"useAi": "用我的 AI 识别",
+		"useDevice": "在设备上识别"
 	},
 	"aisles": {
 		"title": "货区",
@@ -1232,8 +1308,7 @@
 		"directFailed": "无法打开对话，请重试。",
 		"backToChats": "返回对话列表",
 		"directNotFound": "找不到这个对话。",
-		"someone": "某人",
-		"recipeAdded": "已将{name}添加到食谱。"
+		"someone": "某人"
 	},
 	"household": {
 		"title": "我的家庭",
@@ -1422,6 +1497,7 @@
 	"helpMenu": {
 		"button": "帮助",
 		"tutorial": "查看教程",
+		"whatsNew": "查看新版本内容",
 		"install": "安装到主屏幕",
 		"suggestion": "提出改进建议",
 		"bug": "报告问题"
@@ -1429,19 +1505,16 @@
 	"changelog": {
 		"title": "新版本内容",
 		"entryTitle": "版本 {version}",
+		"currentVersion": "您正在使用版本 {version}",
+		"groups": {
+			"new": "新功能",
+			"improved": "改进",
+			"fixed": "修复"
+		},
 		"acknowledge": "知道了",
 		"replayTour": "重新观看完整指南",
 		"dismissOnce": "暂不显示",
-		"dismissUntilNextUpdate": "下次更新前不再提示",
-		"v0_1_0": {
-			"items": [
-				"每周菜单：安排每周餐食，自动生成对应的购物清单。",
-				"家庭现在可以记录成员信息及各自的饮食限制。",
-				"通过对话向 AI 请求食谱，即使某个网页导入失败也可以使用。",
-				"同一账户现在可以保存多个 AI 密钥。",
-				"更新后会显示新版本卡片,可快速进入引导。"
-			]
-		}
+		"dismissUntilNextUpdate": "下次更新前不再提示"
 	},
 	"install": {
 		"title": "把 Familiste 放到主屏幕",
@@ -1478,7 +1551,8 @@
 			"list": "列表",
 			"item": "商品",
 			"shop": "商店",
-			"card": "卡片"
+			"card": "卡片",
+			"recipe": "食谱"
 		}
 	},
 	"ai": {
@@ -1517,7 +1591,6 @@
 		"sendingTo": "接收方：{provider}。",
 		"sendConfirm": "发送并询问",
 		"asking": "正在询问…",
-		"added": "菜谱已加入家庭菜谱。",
 		"keep": "保留这道菜谱",
 		"retry": "再问一次",
 		"discard": "丢弃",
@@ -1575,9 +1648,7 @@
 		},
 		"request": {
 			"trigger": "向AI询问食谱",
-			"title": "您想要什么食谱？",
 			"placeholder": "例如：4人份鸡肉咖喱",
-			"submit": "询问",
 			"followUpPlaceholder": "例如：更辣一点，或把鸡肉换成豆腐",
 			"dictate": "语音口述",
 			"stopDictate": "停止口述",
@@ -1589,7 +1660,34 @@
 		"photoErrorNoKey": "要生成图片，请添加 OpenRouter 密钥。",
 		"photoErrorNoKeyLink": "添加密钥",
 		"photoErrorNoCredit": "你的 OpenRouter 账户余额不足：图片生成需要付费。",
-		"photoErrorNoCreditLink": "充值"
+		"photoErrorNoCreditLink": "充值",
+		"chat": {
+			"tableTitle": "谁来吃饭？",
+			"tableHint": "发送给助手的是过敏和饮食限制，绝不包括姓名。点一下名字即可标记谁不在。",
+			"present": "在座",
+			"absent": "不在",
+			"addGuest": "添加客人",
+			"guestName": "客人姓名（可选）",
+			"guestNotes": "不能吃的东西或饮食方式",
+			"guestNotesPlaceholder": "例如：对花椰菜过敏",
+			"guestSave": "添加这位客人",
+			"guestDefault": "客人 {number}",
+			"removeGuest": "移除 {name}",
+			"constraintsTitle": "助手会考虑",
+			"constraintsNone": "没有需要考虑的过敏或饮食限制。",
+			"constraintOf": "{who}：{notes}",
+			"threadLabel": "与助手的对话",
+			"assistant": "助手",
+			"you": "您",
+			"greeting": "告诉我您想吃什么。我可能会问一两个问题，然后写出食谱。",
+			"writing": "助手正在输入…",
+			"messageLabel": "您的消息",
+			"send": "发送",
+			"conflictTitle": "请检查：这些食材可能不合适",
+			"conflictLine": "{ingredient} — {constraint}",
+			"avoid": "请求不含这些食材的版本",
+			"avoidMessage": "请重新写这份食谱，不要用：{ingredients}。"
+		}
 	},
 	"setup": {
 		"title": "实例尚未配置",

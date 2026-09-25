@@ -6,9 +6,7 @@ import {
 	MAX_PRODUCTS,
 	parseRecipeSuggestion,
 	recipeExtractionPrompt,
-	recipeFollowUpPrompt,
 	recipeFromPhotoPrompt,
-	recipeFromRequestPrompt,
 	recipePrompt,
 	RECIPE_JSON_SHAPE,
 	restrictionsOf,
@@ -172,80 +170,6 @@ describe('recipeExtractionPrompt', () => {
 		).toContain('Eviter absolument : gluten');
 		expect(recipeExtractionPrompt('texte', { language: 'fr', servings: 4 })).not.toContain(
 			'Eviter absolument'
-		);
-	});
-});
-
-describe('recipeFromRequestPrompt', () => {
-	it('contient la demande de la personne et la langue demandee', () => {
-		const prompt = recipeFromRequestPrompt('un curry de poulet pour 4', {
-			language: 'français',
-			servings: 4
-		});
-
-		expect(prompt).toContain('un curry de poulet pour 4');
-		expect(prompt).toContain('français');
-	});
-
-	it('impose la meme forme JSON que les autres invites', () => {
-		const prompt = recipeFromRequestPrompt('des pancakes', { language: 'français', servings: 4 });
-
-		expect(prompt).toContain(
-			RECIPE_JSON_SHAPE
-		);
-	});
-
-	it('ramene un nombre de parts absurde dans les bornes', () => {
-		expect(recipeFromRequestPrompt('texte', { language: 'fr', servings: 0 })).toContain(
-			'1 personnes'
-		);
-		expect(recipeFromRequestPrompt('texte', { language: 'fr', servings: 5000 })).toContain(
-			'99 personnes'
-		);
-	});
-
-	it('ne contient rien d autre que ce qu on lui donne', () => {
-		const prompt = recipeFromRequestPrompt('un curry de poulet', {
-			language: 'français',
-			servings: 4
-		});
-
-		expect(prompt).not.toContain('Lardons');
-	});
-
-	it('ajoute les restrictions alimentaires quand il y en a, sinon aucune instruction', () => {
-		expect(
-			recipeFromRequestPrompt('texte', { language: 'fr', servings: 4, restrictions: ['lactose'] })
-		).toContain('Eviter absolument : lactose');
-		expect(recipeFromRequestPrompt('texte', { language: 'fr', servings: 4 })).not.toContain(
-			'Eviter absolument'
-		);
-	});
-});
-
-describe('recipeFollowUpPrompt (#226)', () => {
-	it('contient le message de suivi et la langue demandee', () => {
-		const prompt = recipeFollowUpPrompt('et si je remplace le poulet par du tofu ?', {
-			language: 'français',
-			servings: 4
-		});
-
-		expect(prompt).toContain('et si je remplace le poulet par du tofu ?');
-		expect(prompt).toContain('français');
-	});
-
-	it('exige de nouveau la recette complete au meme format JSON', () => {
-		const prompt = recipeFollowUpPrompt('plus epice', { language: 'français', servings: 4 });
-
-		expect(prompt).toContain(
-			RECIPE_JSON_SHAPE
-		);
-	});
-
-	it('ramene un nombre de parts absurde dans les bornes', () => {
-		expect(recipeFollowUpPrompt('texte', { language: 'fr', servings: 0 })).toContain('1 personnes');
-		expect(recipeFollowUpPrompt('texte', { language: 'fr', servings: 5000 })).toContain(
-			'99 personnes'
 		);
 	});
 });
@@ -419,8 +343,6 @@ describe('imagePrompt (#306)', () => {
 		const prompts = [
 			recipePrompt(['Courgettes'], options),
 			recipeExtractionPrompt('texte', options),
-			recipeFromRequestPrompt('un curry', options),
-			recipeFollowUpPrompt('plus epice', options),
 			recipeFromPhotoPrompt(options)
 		];
 
@@ -449,8 +371,6 @@ describe('tags (#314)', () => {
 		const prompts = [
 			recipePrompt(['Courgettes'], options),
 			recipeExtractionPrompt('texte', options),
-			recipeFromRequestPrompt('un curry', options),
-			recipeFollowUpPrompt('plus epice', options),
 			recipeFromPhotoPrompt(options)
 		];
 
