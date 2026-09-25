@@ -110,7 +110,9 @@
 			ingredients: suggestion.ingredients,
 			steps: suggestion.steps,
 			stepIngredients: suggestion.stepIngredients,
-			imagePrompt: suggestion.imagePrompt
+			imagePrompt: suggestion.imagePrompt,
+			tags: suggestion.tags,
+			stepDurations: suggestion.stepDurations
 		});
 
 		onAccepted?.(suggestion);

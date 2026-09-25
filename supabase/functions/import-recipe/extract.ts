@@ -22,6 +22,11 @@ export type ImportedRecipe = {
 	servings: string | null;
 	/** The page's own photo of the dish, when it published one. */
 	image: string | null;
+	/**
+	 * `recipeCategory`, `recipeCuisine` and `suitableForDiet` as written ("Plat principal", "VeganDiet"):
+	 * turning them into the app's tag keys is the client's (`tagsFromSchemaOrg`).
+	 */
+	categories: string[];
 };
 
 const SCRIPT = /<script\b[^>]*type\s*=\s*["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/gi;
@@ -173,7 +178,12 @@ export function extractRecipe(html: string): ImportedRecipe | null {
 			ingredients,
 			steps,
 			servings: flatten(recipe.recipeYield)[0] ?? null,
-			image: imageUrl(recipe.image)
+			image: imageUrl(recipe.image),
+			categories: [
+				...flatten(recipe.recipeCategory),
+				...flatten(recipe.recipeCuisine),
+				...flatten(recipe.suitableForDiet)
+			]
 		};
 	}
 

@@ -562,9 +562,170 @@
 			"readIngredients": "Zutaten vorlesen",
 			"speakIngredients": "Zutaten: {list}.",
 			"steps": "Rezeptschritte",
-			"goTo": "Zu Schritt {current} von {total}"
+			"goTo": "Zu Schritt {current} von {total}",
+			"voice": {
+				"start": "Freihändig",
+				"stop": "Freihändig beenden",
+				"introTitle": "Das Rezept per Stimme verfolgen",
+				"introBody": "Sag „Famy“ und dann einen Befehl: „Famy, weiter“, „Famy, wiederholen“, „Famy, lies die Zutaten“. So musst du den Bildschirm nicht mit schmutzigen Händen berühren.",
+				"introPrivacy": "Das Mikrofon hört nur in diesem Modus zu. Die Erkennung übernimmt dein Telefon oder Browser, der dafür seinen Online-Dienst nutzen kann. FamiList speichert nichts.",
+				"introAccept": "Mikrofon einschalten",
+				"introCancel": "Nicht jetzt",
+				"listening": "Hört zu. Sag „Famy“ und dann einen Befehl.",
+				"awake": "Famy hört dir zu…",
+				"understood": "Verstanden: {command}",
+				"notUnderstood": "Nicht verstanden: „{text}“. Sag „Famy, Hilfe“ für die Liste.",
+				"denied": "Das Mikrofon ist gesperrt. Erlaube es in den Einstellungen; die Tasten funktionieren weiter.",
+				"unsupported": "Die Sprachsteuerung ist auf diesem Gerät nicht verfügbar. Die Tasten funktionieren weiter.",
+				"failed": "Das Mikrofon hat aufgehört. Tippe auf „Freihändig“, um neu zu starten.",
+				"help": "Sprachbefehle",
+				"helpTitle": "Sag „Famy“, dann:",
+				"volume": "Lautstärke: {percent} %",
+				"speakHelp": "Sag Famy, dann: {list}.",
+				"wake": [
+					"famy",
+					"fami",
+					"famie"
+				],
+				"labels": {
+					"next": "Nächster Schritt",
+					"previous": "Vorheriger Schritt",
+					"repeat": "Schritt wiederholen",
+					"stepIngredients": "Zutaten des Schritts",
+					"allIngredients": "Alle Zutaten",
+					"louder": "Lauter",
+					"quieter": "Leiser",
+					"mute": "Stimme stumm",
+					"unmute": "Stimme an",
+					"stopListening": "Nicht mehr zuhören",
+					"help": "Hilfe",
+					"close": "Beenden",
+					"startTimer": "Timer starten",
+					"stopTimer": "Timer stoppen",
+					"timeLeft": "Restzeit"
+				},
+				"commands": {
+					"next": [
+						"weiter",
+						"nächster Schritt",
+						"nächste",
+						"danach"
+					],
+					"previous": [
+						"zurück",
+						"vorheriger Schritt",
+						"vorherige"
+					],
+					"repeat": [
+						"wiederholen",
+						"wiederhole",
+						"nochmal",
+						"noch einmal"
+					],
+					"stepIngredients": [
+						"Zutaten",
+						"lies die Zutaten",
+						"was brauche ich"
+					],
+					"allIngredients": [
+						"alle Zutaten",
+						"ganzes Rezept",
+						"ganze Liste"
+					],
+					"louder": [
+						"lauter",
+						"Lautstärke hoch"
+					],
+					"quieter": [
+						"leiser",
+						"Lautstärke runter"
+					],
+					"mute": [
+						"stumm",
+						"sei still",
+						"Ruhe"
+					],
+					"unmute": [
+						"Stimme an",
+						"sprich wieder",
+						"Ton an"
+					],
+					"stopListening": [
+						"hör auf zuzuhören",
+						"Mikrofon aus",
+						"nicht mehr zuhören"
+					],
+					"help": [
+						"Hilfe",
+						"Befehle",
+						"was kann ich sagen"
+					],
+					"close": [
+						"beenden",
+						"schließen",
+						"fertig",
+						"verlassen"
+					],
+					"startTimer": [
+						"Timer starten",
+						"starte den Timer",
+						"Timer"
+					],
+					"stopTimer": [
+						"Timer stoppen",
+						"stoppe den Timer",
+						"Alarm aus"
+					],
+					"timeLeft": [
+						"wie lange noch",
+						"Restzeit",
+						"wie viel Zeit"
+					]
+				}
+			}
 		},
-		"stepIngredients": "Zutaten für Schritt {rank}"
+		"stepIngredients": "Zutaten für Schritt {rank}",
+		"stepDuration": "Dauer von Schritt {rank} (optional)",
+		"durationHours": "Stunden",
+		"durationMinutes": "Minuten"
+	},
+	"recipeTags": {
+		"title": "Kategorien",
+		"hint": "Kreuzen Sie alles an, was passt: So finden Sie das Rezept wieder.",
+		"listLabel": "Kategorien des Rezepts",
+		"category": {
+			"course": "Gericht",
+			"diet": "Ernährung",
+			"occasion": "Anlass",
+			"season": "Jahreszeit"
+		},
+		"tag": {
+			"breakfast": "Frühstück",
+			"aperitif": "Aperitif",
+			"hot_starter": "Warme Vorspeise",
+			"cold_starter": "Kalte Vorspeise",
+			"soup": "Suppe",
+			"main": "Hauptgericht",
+			"side": "Beilage",
+			"dessert": "Dessert",
+			"snack": "Zwischenmahlzeit",
+			"drink": "Getränk",
+			"vegetarian": "Vegetarisch",
+			"vegan": "Vegan",
+			"gluten_free": "Glutenfrei",
+			"lactose_free": "Laktosefrei",
+			"low_salt": "Salzarm",
+			"low_sugar": "Zuckerarm",
+			"quick": "Schnell",
+			"kids": "Für Kinder",
+			"party": "Feier",
+			"picnic": "Picknick",
+			"holiday": "Weihnachten und Feiertage",
+			"spring": "Frühling",
+			"summer": "Sommer",
+			"autumn": "Herbst",
+			"winter": "Winter"
+		}
 	},
 	"aisles": {
 		"title": "Abteilungen",
@@ -1483,5 +1644,32 @@
 		"saved": "{bank}-Schlüssel gespeichert",
 		"removed": "{bank}-Schlüssel entfernt",
 		"saveFailed": "Der Schlüssel konnte nicht gespeichert werden. Versuchen Sie es erneut."
+	},
+	"timers": {
+		"start": "Timer starten ({time})",
+		"running": "Laufende Timer",
+		"stepLabel": "Schritt {rank}",
+		"addMinute": "+1 Minute",
+		"stop": "Stoppen",
+		"announce": "Zeit ansagen",
+		"remaining": "Noch {time} für Schritt {rank}.",
+		"none": "Kein Timer läuft.",
+		"noDuration": "Dieser Schritt hat keine Dauer. Füge sie beim Bearbeiten des Rezepts hinzu.",
+		"webHint": "Im Browser klingelt der Alarm nur, solange FamiList geöffnet bleibt.",
+		"doneTitle": "Timer abgelaufen",
+		"doneBody": "{recipe} — {step}",
+		"stopAlarm": "Alarm stoppen",
+		"hours": {
+			"one": "{count} Stunde",
+			"other": "{count} Stunden"
+		},
+		"minutes": {
+			"one": "{count} Minute",
+			"other": "{count} Minuten"
+		},
+		"seconds": {
+			"one": "{count} Sekunde",
+			"other": "{count} Sekunden"
+		}
 	}
 }

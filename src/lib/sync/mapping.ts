@@ -29,6 +29,7 @@ import { DEFAULT_MEMBER_TINT, DEFAULT_TINT } from '$domain/tint';
 import { DEFAULT_UNIT } from '$domain/units';
 import { DEFAULT_CURRENCY } from '$domain/price';
 import { DEFAULT_SERVINGS } from '$domain/recipe';
+import { storedTags } from '$domain/recipe-tags';
 import { initialsFor } from '$domain/avatar';
 
 /**
@@ -380,6 +381,7 @@ export const toRecipe = (row: Row): Recipe => ({
 	notes: typeof row.notes === 'string' ? row.notes : undefined,
 	photoPath: typeof row.photo_path === 'string' ? row.photo_path : undefined,
 	imagePrompt: typeof row.image_prompt === 'string' ? row.image_prompt : undefined,
+	tags: storedTags(row.tags),
 	createdBy: typeof row.created_by === 'string' ? row.created_by : undefined,
 	createdAt: Date.parse(text(row.created_at)) || 0
 });
@@ -393,7 +395,8 @@ export const fromRecipe = (recipe: Recipe, householdId: string) => ({
 	servings: recipe.servings,
 	notes: recipe.notes ?? null,
 	photo_path: recipe.photoPath ?? null,
-	image_prompt: recipe.imagePrompt ?? null
+	image_prompt: recipe.imagePrompt ?? null,
+	tags: recipe.tags ?? []
 });
 
 export const toRecipeIngredient = (row: Row): RecipeIngredient => ({
@@ -446,7 +449,9 @@ export const toRecipeStep = (row: Row): RecipeStep => ({
 	position: typeof row.position === 'number' ? row.position : 0,
 	ingredientIds: Array.isArray(row.ingredient_ids)
 		? row.ingredient_ids.filter((id): id is string => typeof id === 'string')
-		: []
+		: [],
+	durationSeconds:
+		typeof row.duration_seconds === 'number' && row.duration_seconds > 0 ? row.duration_seconds : undefined
 });
 
 export const fromRecipeStep = (step: RecipeStep) => ({
@@ -454,7 +459,8 @@ export const fromRecipeStep = (step: RecipeStep) => ({
 	recipe_id: step.recipeId,
 	body: step.body,
 	position: step.position,
-	ingredient_ids: step.ingredientIds
+	ingredient_ids: step.ingredientIds,
+	duration_seconds: step.durationSeconds ?? null
 });
 
 export const toMealPlan = (row: Row): MealPlan => ({
