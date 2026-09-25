@@ -3,6 +3,7 @@
 	import { imageBanks } from '$stores/image-banks.svelte';
 	import { toasts } from '$stores/toast.svelte';
 	import { IMAGE_BANKS, type ImageBankId } from '$domain/image-bank';
+	import { openExternal } from '$native/external-link';
 	import * as Card from '$components/ui/card';
 	import { Button } from '$components/ui/button';
 	import { Input } from '$components/ui/input';
@@ -85,6 +86,10 @@
 						href={bank.keyUrl}
 						target="_blank"
 						rel="noreferrer noopener"
+						onclick={(event) => {
+							event.preventDefault();
+							openExternal(bank.keyUrl);
+						}}
 						class="text-primary inline-flex items-center gap-1 underline"
 					>
 						{t('ai.whereKey', { provider: bank.name })}

@@ -3,6 +3,7 @@
 	import { ai } from '$stores/ai.svelte';
 	import { feedback } from '$stores/feedback.svelte';
 	import { PROVIDERS, providerById } from '$domain/ai';
+	import { openExternal } from '$native/external-link';
 	import * as Card from '$components/ui/card';
 	import { Button } from '$components/ui/button';
 	import { Input } from '$components/ui/input';
@@ -216,6 +217,10 @@
 								href={selected.keysUrl}
 								target="_blank"
 								rel="noreferrer noopener"
+								onclick={(event) => {
+									event.preventDefault();
+									openExternal(selected.keysUrl);
+								}}
 								class="text-primary inline-flex items-center gap-1 underline"
 								data-test-id="ai-keys-link"
 							>
