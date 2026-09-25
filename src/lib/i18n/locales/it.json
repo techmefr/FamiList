@@ -548,7 +548,10 @@
 					"unmute": "Riattiva la voce",
 					"stopListening": "Smetti di ascoltare",
 					"help": "Aiuto",
-					"close": "Esci"
+					"close": "Esci",
+					"startTimer": "Avvia il timer",
+					"stopTimer": "Ferma il timer",
+					"timeLeft": "Tempo rimanente"
 				},
 				"commands": {
 					"next": [
@@ -611,11 +614,28 @@
 						"chiudi",
 						"fine",
 						"ho finito"
+					],
+					"startTimer": [
+						"avvia il timer",
+						"fai partire il timer",
+						"timer"
+					],
+					"stopTimer": [
+						"ferma il timer",
+						"ferma la sveglia",
+						"spegni l’allarme"
+					],
+					"timeLeft": [
+						"quanto manca",
+						"tempo rimanente"
 					]
 				}
 			}
 		},
-		"stepIngredients": "Ingredienti usati nel passaggio {rank}"
+		"stepIngredients": "Ingredienti usati nel passaggio {rank}",
+		"stepDuration": "Durata del passo {rank} (facoltativa)",
+		"durationHours": "Ore",
+		"durationMinutes": "Minuti"
 	},
 	"aisles": {
 		"title": "Reparti",
@@ -1534,5 +1554,32 @@
 		"saved": "Chiave {bank} salvata",
 		"removed": "Chiave {bank} rimossa",
 		"saveFailed": "Non è stato possibile salvare la chiave. Riprova."
+	},
+	"timers": {
+		"start": "Avvia il timer ({time})",
+		"running": "Timer in corso",
+		"stepLabel": "Passo {rank}",
+		"addMinute": "+1 minuto",
+		"stop": "Ferma",
+		"announce": "Annuncia il tempo",
+		"remaining": "Mancano {time} per il passo {rank}.",
+		"none": "Nessun timer in corso.",
+		"noDuration": "Questo passo non ha una durata. Aggiungila modificando la ricetta.",
+		"webHint": "In un browser, la sveglia suona solo se FamiList resta aperto.",
+		"doneTitle": "Timer finito",
+		"doneBody": "{recipe} — {step}",
+		"stopAlarm": "Ferma la sveglia",
+		"hours": {
+			"one": "{count} ora",
+			"other": "{count} ore"
+		},
+		"minutes": {
+			"one": "{count} minuto",
+			"other": "{count} minuti"
+		},
+		"seconds": {
+			"one": "{count} secondo",
+			"other": "{count} secondi"
+		}
 	}
 }

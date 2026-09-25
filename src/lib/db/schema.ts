@@ -263,6 +263,8 @@ export interface RecipeStep {
 	position: number;
 	/** The ingredient lines this step uses (#308). Empty for a step nobody linked: cook-along then shows them all. */
 	ingredientIds: string[];
+	/** How long the step takes, in seconds (#310). Absent for a step with no wait. */
+	durationSeconds?: number;
 }
 
 /**

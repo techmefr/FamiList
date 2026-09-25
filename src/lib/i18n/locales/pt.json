@@ -549,7 +549,10 @@
 					"unmute": "Reativar a voz",
 					"stopListening": "Parar de ouvir",
 					"help": "Ajuda",
-					"close": "Sair"
+					"close": "Sair",
+					"startTimer": "Iniciar o temporizador",
+					"stopTimer": "Parar o temporizador",
+					"timeLeft": "Tempo restante"
 				},
 				"commands": {
 					"next": [
@@ -613,11 +616,28 @@
 						"fechar",
 						"fecha",
 						"terminei"
+					],
+					"startTimer": [
+						"inicia o temporizador",
+						"liga o temporizador",
+						"temporizador"
+					],
+					"stopTimer": [
+						"para o temporizador",
+						"desliga o alarme",
+						"para o alarme"
+					],
+					"timeLeft": [
+						"quanto falta",
+						"tempo restante"
 					]
 				}
 			}
 		},
-		"stepIngredients": "Ingredientes usados no passo {rank}"
+		"stepIngredients": "Ingredientes usados no passo {rank}",
+		"stepDuration": "Duração do passo {rank} (opcional)",
+		"durationHours": "Horas",
+		"durationMinutes": "Minutos"
 	},
 	"aisles": {
 		"title": "Secções",
@@ -1536,5 +1556,32 @@
 		"saved": "Chave {bank} guardada",
 		"removed": "Chave {bank} removida",
 		"saveFailed": "Não foi possível guardar a chave. Tente novamente."
+	},
+	"timers": {
+		"start": "Iniciar o temporizador ({time})",
+		"running": "Temporizadores a correr",
+		"stepLabel": "Passo {rank}",
+		"addMinute": "+1 minuto",
+		"stop": "Parar",
+		"announce": "Dizer o tempo",
+		"remaining": "Faltam {time} para o passo {rank}.",
+		"none": "Nenhum temporizador a correr.",
+		"noDuration": "Este passo não tem duração. Adicione-a ao editar a receita.",
+		"webHint": "Num navegador, o alarme só toca se o FamiList continuar aberto.",
+		"doneTitle": "Temporizador terminado",
+		"doneBody": "{recipe} — {step}",
+		"stopAlarm": "Parar o alarme",
+		"hours": {
+			"one": "{count} hora",
+			"other": "{count} horas"
+		},
+		"minutes": {
+			"one": "{count} minuto",
+			"other": "{count} minutos"
+		},
+		"seconds": {
+			"one": "{count} segundo",
+			"other": "{count} segundos"
+		}
 	}
 }

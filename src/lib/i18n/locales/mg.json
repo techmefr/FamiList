@@ -548,7 +548,10 @@
 					"unmute": "Alefaso ny feo",
 					"stopListening": "Aza mihaino intsony",
 					"help": "Fanampiana",
-					"close": "Hivoaka"
+					"close": "Hivoaka",
+					"startTimer": "Alefaso ny fanisana fotoana",
+					"stopTimer": "Ajanony ny fanisana fotoana",
+					"timeLeft": "Fotoana sisa"
 				},
 				"commands": {
 					"next": [
@@ -606,11 +609,26 @@
 						"hivoaka",
 						"mivoaha",
 						"vita"
+					],
+					"startTimer": [
+						"alefaso ny fanisana fotoana",
+						"fanisana fotoana"
+					],
+					"stopTimer": [
+						"ajanony ny fanisana fotoana",
+						"ajanony ny fanairana"
+					],
+					"timeLeft": [
+						"firy sisa",
+						"ohatrinona ny fotoana sisa"
 					]
 				}
 			}
 		},
-		"stepIngredients": "Akora ampiasaina amin’ny dingana {rank}"
+		"stepIngredients": "Akora ampiasaina amin’ny dingana {rank}",
+		"stepDuration": "Faharetan’ny dingana {rank} (tsy voatery)",
+		"durationHours": "Ora",
+		"durationMinutes": "Minitra"
 	},
 	"aisles": {
 		"title": "Faritra",
@@ -1529,5 +1547,32 @@
 		"saved": "Voatahiry ny lakile {bank}",
 		"removed": "Nesorina ny lakile {bank}",
 		"saveFailed": "Tsy voatahiry ny lakile. Andramo indray."
+	},
+	"timers": {
+		"start": "Alefaso ny fanisana fotoana ({time})",
+		"running": "Fanisana fotoana mandeha",
+		"stepLabel": "Dingana {rank}",
+		"addMinute": "+1 minitra",
+		"stop": "Ajanony",
+		"announce": "Lazao ny fotoana",
+		"remaining": "Mbola {time} sisa ho an’ny dingana {rank}.",
+		"none": "Tsy misy fanisana fotoana mandeha.",
+		"noDuration": "Tsy misy faharetana ity dingana ity. Ampio izany rehefa manova ny fomba fahandro.",
+		"webHint": "Ao amin’ny mpitety tranonkala, maneno ihany ny fanairana raha mbola misokatra FamiList.",
+		"doneTitle": "Tapitra ny fotoana",
+		"doneBody": "{recipe} — {step}",
+		"stopAlarm": "Ajanony ny fanairana",
+		"hours": {
+			"one": "{count} ora",
+			"other": "{count} ora"
+		},
+		"minutes": {
+			"one": "{count} minitra",
+			"other": "{count} minitra"
+		},
+		"seconds": {
+			"one": "{count} segondra",
+			"other": "{count} segondra"
+		}
 	}
 }

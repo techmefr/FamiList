@@ -47,6 +47,7 @@
 	import SearchSheet from '$components/app/SearchSheet.svelte';
 	import ListPanel from '$components/app/ListPanel.svelte';
 	import SetupNeeded from '$components/app/SetupNeeded.svelte';
+	import TimerAlarm from '$components/app/TimerAlarm.svelte';
 	import { isConfigured } from '$db/supabase';
 
 	let { children } = $props();
@@ -663,4 +664,5 @@
 	<SearchSheet bind:this={search} />
 	<ChangelogModal />
 	<Toaster />
+	<TimerAlarm />
 {/if}

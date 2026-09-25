@@ -550,7 +550,10 @@
 					"unmute": "Unmute the voice",
 					"stopListening": "Stop listening",
 					"help": "Help",
-					"close": "Leave"
+					"close": "Leave",
+					"startTimer": "Start the timer",
+					"stopTimer": "Stop the timer",
+					"timeLeft": "Time left"
 				},
 				"commands": {
 					"next": [
@@ -621,11 +624,31 @@
 						"close",
 						"I’m done",
 						"finished"
+					],
+					"startTimer": [
+						"start the timer",
+						"start timer",
+						"timer",
+						"set the timer"
+					],
+					"stopTimer": [
+						"stop the timer",
+						"stop timer",
+						"stop the alarm",
+						"stop alarm"
+					],
+					"timeLeft": [
+						"how long left",
+						"time left",
+						"how much time"
 					]
 				}
 			}
 		},
-		"stepIngredients": "Ingredients used in step {rank}"
+		"stepIngredients": "Ingredients used in step {rank}",
+		"stepDuration": "Step {rank} duration (optional)",
+		"durationHours": "Hours",
+		"durationMinutes": "Minutes"
 	},
 	"aisles": {
 		"title": "Aisles",
@@ -1544,5 +1567,32 @@
 		"saved": "{bank} key saved",
 		"removed": "{bank} key removed",
 		"saveFailed": "The key could not be saved. Try again."
+	},
+	"timers": {
+		"start": "Start the timer ({time})",
+		"running": "Running timers",
+		"stepLabel": "Step {rank}",
+		"addMinute": "+1 minute",
+		"stop": "Stop",
+		"announce": "Say the time",
+		"remaining": "{time} left for step {rank}.",
+		"none": "No timer running.",
+		"noDuration": "This step has no duration. Add one by editing the recipe.",
+		"webHint": "In a browser, the alarm only rings while FamiList stays open.",
+		"doneTitle": "Timer done",
+		"doneBody": "{recipe} — {step}",
+		"stopAlarm": "Stop the alarm",
+		"hours": {
+			"one": "{count} hour",
+			"other": "{count} hours"
+		},
+		"minutes": {
+			"one": "{count} minute",
+			"other": "{count} minutes"
+		},
+		"seconds": {
+			"one": "{count} second",
+			"other": "{count} seconds"
+		}
 	}
 }

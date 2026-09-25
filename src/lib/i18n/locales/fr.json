@@ -550,7 +550,10 @@
 					"unmute": "Remettre la voix",
 					"stopListening": "Arrêter d’écouter",
 					"help": "Aide",
-					"close": "Quitter"
+					"close": "Quitter",
+					"startTimer": "Lancer le minuteur",
+					"stopTimer": "Arrêter le minuteur",
+					"timeLeft": "Temps restant"
 				},
 				"commands": {
 					"next": [
@@ -629,11 +632,31 @@
 						"fermer",
 						"terminé",
 						"j’ai fini"
+					],
+					"startTimer": [
+						"lance le minuteur",
+						"démarre le minuteur",
+						"minuteur",
+						"lance le chrono"
+					],
+					"stopTimer": [
+						"arrête le minuteur",
+						"stop minuteur",
+						"arrête l’alarme",
+						"coupe l’alarme"
+					],
+					"timeLeft": [
+						"combien de temps",
+						"temps restant",
+						"il reste combien"
 					]
 				}
 			}
 		},
-		"stepIngredients": "Ingrédients utilisés à l’étape {rank}"
+		"stepIngredients": "Ingrédients utilisés à l’étape {rank}",
+		"stepDuration": "Durée de l’étape {rank} (facultatif)",
+		"durationHours": "Heures",
+		"durationMinutes": "Minutes"
 	},
 	"aisles": {
 		"title": "Rayons",
@@ -1551,5 +1574,32 @@
 		"saved": "Clé {bank} enregistrée",
 		"removed": "Clé {bank} retirée",
 		"saveFailed": "La clé n'a pas pu être enregistrée. Réessayez."
+	},
+	"timers": {
+		"start": "Lancer le minuteur ({time})",
+		"running": "Minuteurs en cours",
+		"stepLabel": "Étape {rank}",
+		"addMinute": "+1 minute",
+		"stop": "Arrêter",
+		"announce": "Annoncer le temps",
+		"remaining": "Il reste {time} pour l’étape {rank}.",
+		"none": "Aucun minuteur en cours.",
+		"noDuration": "Cette étape n’a pas de durée. Ajoutez-la en modifiant la recette.",
+		"webHint": "Dans un navigateur, l’alarme ne sonne que si FamiList reste ouvert.",
+		"doneTitle": "Minuteur terminé",
+		"doneBody": "{recipe} — {step}",
+		"stopAlarm": "Arrêter l’alarme",
+		"hours": {
+			"one": "{count} heure",
+			"other": "{count} heures"
+		},
+		"minutes": {
+			"one": "{count} minute",
+			"other": "{count} minutes"
+		},
+		"seconds": {
+			"one": "{count} seconde",
+			"other": "{count} secondes"
+		}
 	}
 }
