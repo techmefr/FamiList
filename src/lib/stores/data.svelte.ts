@@ -62,6 +62,7 @@ import {
 import { copiedItem, copyName } from '$domain/duplicate';
 import { directSummaries, otherParticipant } from '$domain/direct-conversation';
 import { slugify } from '$domain/slug';
+import { storedTags } from '$domain/recipe-tags';
 import {
 	compareShops,
 	currencyForLocale,
@@ -1494,6 +1495,7 @@ class DataStore {
 		servings: number;
 		notes?: string;
 		imagePrompt?: string;
+		tags?: readonly string[];
 		ingredients: RecipeLine[];
 		steps: string[];
 		stepIngredients?: number[][];
@@ -1508,6 +1510,7 @@ class DataStore {
 				input.servings > 0 ? Math.min(MAX_SERVINGS, Math.round(input.servings)) : DEFAULT_SERVINGS,
 			notes: input.notes?.trim() || undefined,
 			imagePrompt: input.imagePrompt?.trim() || undefined,
+			tags: storedTags(input.tags),
 			createdBy: this.userId || undefined,
 			createdAt: Date.now()
 		};
@@ -1544,6 +1547,7 @@ class DataStore {
 			emoji: string;
 			servings: number;
 			notes?: string;
+			tags?: readonly string[];
 			ingredients: RecipeLine[];
 			steps: string[];
 			stepIngredients?: number[][];
@@ -1561,6 +1565,7 @@ class DataStore {
 		recipe.servings =
 			input.servings > 0 ? Math.min(MAX_SERVINGS, Math.round(input.servings)) : DEFAULT_SERVINGS;
 		recipe.notes = input.notes?.trim() || undefined;
+		if (input.tags) recipe.tags = storedTags(input.tags);
 
 		const oldRows = this.recipeIngredients.filter((line) => line.recipeId === id).map((l) => l.id);
 		const oldSteps = this.recipeSteps.filter((step) => step.recipeId === id).map((s) => s.id);

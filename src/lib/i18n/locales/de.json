@@ -639,6 +639,44 @@
 		"durationHours": "Stunden",
 		"durationMinutes": "Minuten"
 	},
+	"recipeTags": {
+		"title": "Kategorien",
+		"hint": "Kreuzen Sie alles an, was passt: So finden Sie das Rezept wieder.",
+		"listLabel": "Kategorien des Rezepts",
+		"category": {
+			"course": "Gericht",
+			"diet": "Ernährung",
+			"occasion": "Anlass",
+			"season": "Jahreszeit"
+		},
+		"tag": {
+			"breakfast": "Frühstück",
+			"aperitif": "Aperitif",
+			"hot_starter": "Warme Vorspeise",
+			"cold_starter": "Kalte Vorspeise",
+			"soup": "Suppe",
+			"main": "Hauptgericht",
+			"side": "Beilage",
+			"dessert": "Dessert",
+			"snack": "Zwischenmahlzeit",
+			"drink": "Getränk",
+			"vegetarian": "Vegetarisch",
+			"vegan": "Vegan",
+			"gluten_free": "Glutenfrei",
+			"lactose_free": "Laktosefrei",
+			"low_salt": "Salzarm",
+			"low_sugar": "Zuckerarm",
+			"quick": "Schnell",
+			"kids": "Für Kinder",
+			"party": "Feier",
+			"picnic": "Picknick",
+			"holiday": "Weihnachten und Feiertage",
+			"spring": "Frühling",
+			"summer": "Sommer",
+			"autumn": "Herbst",
+			"winter": "Winter"
+		}
+	},
 	"aisles": {
 		"title": "Abteilungen",
 		"new": "Abteilung hinzufügen",
