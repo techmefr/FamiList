@@ -13,7 +13,8 @@
 	import type { LoyaltyCard } from '$db/schema';
 	import { linearCode } from '$domain/barcode';
 	import { safeWebsiteUrl } from '$domain/website';
-	import { CARD_GRADIENT_END, DEFAULT_TINT } from '$domain/tint';
+	import { CARD_TINTS, DEFAULT_TINT, cardBackground, tintForWhiteText } from '$domain/tint';
+	import { BRANDS, findBrand } from '$domain/brand-catalogue';
 	import LoyaltyCardFace from '$components/app/LoyaltyCardFace.svelte';
 	import CardFullscreen from '$components/app/CardFullscreen.svelte';
 	import ScanButton from '$components/app/ScanButton.svelte';
@@ -31,7 +32,8 @@
 		Star,
 		Store,
 		Pencil,
-		Globe
+		Globe,
+		Check
 	} from '@lucide/svelte';
 	import CardShareRequests from '$components/app/CardShareRequests.svelte';
 	import IconField from '$components/app/IconField.svelte';
@@ -137,20 +139,40 @@
 		attach.startsWith('brand:') ? attach.slice(6) : (shop?.brand.trim() ?? '')
 	);
 
+	/** The attachment names the card until it is given another name. */
+	const suggestion = $derived(shop?.name ?? brand);
+	const label = $derived(name.trim() || suggestion);
+
+	/** The chain the catalogue recognises in the attachment, failing that in the name being typed. */
+	const known = $derived(findBrand(brand) ?? findBrand(label));
+
 	/**
-	 * The colour comes from the shop, failing that from the brand's first shop: two cards of the same chain
-	 * look alike, and that is what you are looking for at the till.
+	 * The colour suggested when none is picked: the chain's own, then the shop's, then the brand's first
+	 * shop. Two cards of the same chain look alike, and that is what you are looking for at the till.
 	 */
-	const tint = $derived(
-		shop?.tint ??
+	const suggestedTint = $derived(
+		known?.color ??
+			shop?.tint ??
 			(brand
 				? (data.shops.find((shop) => shop.brand.trim() === brand)?.tint ?? DEFAULT_TINT)
 				: DEFAULT_TINT)
 	);
 
-	/** The attachment names the card until it is given another name. */
-	const suggestion = $derived(shop?.name ?? brand);
-	const label = $derived(name.trim() || suggestion);
+	/** Empty follows the suggestion; a palette hex is the person's own choice, kept whatever the name becomes. */
+	let color = $state('');
+	const tint = $derived(color || suggestedTint);
+
+	const picked = $derived(CARD_TINTS.find((entry) => entry.hex === color) ?? null);
+
+	/** Every catalogue name alongside the household's own brands, offered as the name is typed. */
+	const nameOptions = $derived([
+		...new Set([...brands, ...BRANDS.map((entry) => entry.name)])
+	]);
+
+	const swatchClass =
+		'border-input has-checked:border-primary has-checked:bg-[var(--fl-primary-tint)] ' +
+		'has-focus-visible:ring-ring has-focus-visible:ring-2 flex min-h-[max(2.75rem,44px)] ' +
+		'cursor-pointer items-center gap-2 rounded-md border px-3 py-2';
 
 	function reset() {
 		adding = false;
@@ -163,6 +185,7 @@
 		websiteUrl = '';
 		notes = '';
 		attach = '';
+		color = '';
 	}
 
 	/**
@@ -180,6 +203,8 @@
 		websiteUrl = card.websiteUrl ?? '';
 		notes = card.notes ?? '';
 		attach = card.shopId ? `shop:${card.shopId}` : card.brand ? `brand:${card.brand}` : '';
+		// Only a colour from the palette was a choice; any other came from the suggestion and follows it again.
+		color = CARD_TINTS.find((entry) => entry.hex === card.tint)?.hex ?? '';
 		adding = true;
 		openCardId = null;
 	}
@@ -202,7 +227,7 @@
 			websiteUrl: safeWebsiteUrl(websiteUrl) ?? undefined,
 			notes: notes.trim(),
 			tint,
-			grad: `linear-gradient(135deg, ${tint} 0%, ${CARD_GRADIENT_END} 100%)`
+			grad: cardBackground(tint)
 		};
 
 		if (editingId) {
@@ -236,10 +261,11 @@
 	{#if data.cards.length === 0}
 		<EmptyState illustration="cards" text={t('cards.empty')} testId="cards-empty" />
 	{:else}
-		<ul class="mt-6 space-y-4">
+		<ul class="fl-wallet mt-6" data-test-id="cards-wallet">
 			{#each data.cards as card, index (card.id)}
+				{@const own = data.isOwnCard(card)}
 				<li
-					class="fl-rise relative"
+					class="fl-rise relative min-w-0"
 					style="animation-delay: {Math.min(index, 6) * 45}ms"
 					animate:flip={{ duration: motionMs(280), easing: cubicOut }}
 					out:slide={{ duration: motionMs(180), easing: cubicOut }}
@@ -250,18 +276,18 @@
 							feedback.play('tap');
 							openCardId = card.id;
 						}}
-						class="fl-press block w-full text-start"
+						class="fl-press block h-full w-full text-start"
 						data-test-class="card-open"
 					>
-						<LoyaltyCardFace {card} />
+						<LoyaltyCardFace {card} actions={own} />
 					</button>
-					{#if data.isOwnCard(card)}
+					{#if own}
 					<button
 						type="button"
 						onclick={() => editCard(card)}
 						aria-label={t('cards.edit', { name: card.name })}
 						data-test-class="card-edit"
-						class="fl-press absolute end-13 bottom-2 grid size-11 min-w-[44px] place-items-center text-white/70"
+						class="fl-press absolute end-13 bottom-2 grid size-11 min-w-[44px] place-items-center text-white"
 					>
 						<Pencil size={18} aria-hidden="true" />
 					</button>
@@ -273,7 +299,7 @@
 						}}
 						aria-label={t('cards.delete', { name: card.name })}
 						data-test-class="card-delete"
-						class="fl-press absolute end-2 bottom-2 grid size-11 min-w-[44px] place-items-center text-white/70"
+						class="fl-press absolute end-2 bottom-2 grid size-11 min-w-[44px] place-items-center text-white"
 					>
 						<Trash2 size={18} aria-hidden="true" />
 					</button>
@@ -341,10 +367,91 @@
 						id="card-name"
 						bind:value={name}
 						data-test-id="card-name"
+						list="card-name-brands"
+						autocomplete="off"
 						required={!suggestion}
 						placeholder={suggestion || t('cards.namePlaceholder')}
 					/>
 				</IconField>
+				<datalist id="card-name-brands">
+					{#each nameOptions as option (option)}
+						<option value={option}></option>
+					{/each}
+				</datalist>
+				{#if known}
+					<p
+						class="text-muted-foreground text-caption mt-1"
+						role="status"
+						data-test-id="card-brand-match"
+					>
+						{t('cards.brandMatch', { brand: known.name })}
+					</p>
+				{/if}
+			</div>
+
+			<!--
+				The colour is offered by name as much as by swatch, so the choice never rests on telling two hues
+				apart. "Automatic" follows the chain the name or the attachment points at; every other entry is
+				already dark enough to carry the white name.
+			-->
+			<fieldset>
+				<legend class="text-label mb-2 font-medium">{t('cards.color')}</legend>
+				<div class="flex flex-wrap gap-2" data-test-id="card-color-list">
+					<Label class={swatchClass}>
+						<input
+							type="radio"
+							name="card-color"
+							value=""
+							bind:group={color}
+							data-test-id="card-color-auto"
+							class="sr-only"
+						/>
+						<span
+							class="grid size-6 shrink-0 place-items-center rounded-full"
+							style="background: {tintForWhiteText(suggestedTint)}"
+							aria-hidden="true"
+						>
+							{#if !color}<Check size={14} color="#fff" />{/if}
+						</span>
+						{known ? t('cards.colorBrand', { brand: known.name }) : t('cards.colorAuto')}
+					</Label>
+					{#each CARD_TINTS as entry (entry.id)}
+						<Label class={swatchClass}>
+							<input
+								type="radio"
+								name="card-color"
+								value={entry.hex}
+								bind:group={color}
+								data-test-id="card-color-{entry.id}"
+								class="sr-only"
+							/>
+							<span
+								class="grid size-6 shrink-0 place-items-center rounded-full"
+								style="background: {entry.hex}"
+								aria-hidden="true"
+							>
+								{#if picked?.id === entry.id}<Check size={14} color="#fff" />{/if}
+							</span>
+							{t(`cards.colors.${entry.id}`)}
+						</Label>
+					{/each}
+				</div>
+			</fieldset>
+
+			<div>
+				<p class="text-label mb-2 font-medium">{t('cards.preview')}</p>
+				<div class="max-w-xs" data-test-id="card-preview">
+					<LoyaltyCardFace
+						card={{
+							name: label || t('cards.namePlaceholder'),
+							brand: known?.name ?? brand,
+							num: code.trim() ? `•••• •••• ${code.trim().slice(-4)}` : '•••• •••• ••••',
+							tint,
+							codeType: effectiveType,
+							notes
+						}}
+					/>
+				</div>
 			</div>
 
 			<div>

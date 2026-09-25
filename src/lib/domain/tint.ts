@@ -33,6 +33,38 @@ export const DEFAULT_MEMBER_TINT = '#A94008';
 /** Bottom of a loyalty card's gradient, shared by every tint. */
 export const CARD_GRADIENT_END = '#2E2518';
 
+/**
+ * The colours offered in the card form, each one named so the choice is not carried by the colour alone.
+ *
+ * Unlike `TINTS`, these are already dark enough for white text as they are: what the person picks is what
+ * the card shows, not a darker cousin of it. The test holds every entry to 4.5:1.
+ */
+export const CARD_TINTS = [
+	{ id: 'navy', hex: '#1E3A8A' },
+	{ id: 'blue', hex: '#1D4ED8' },
+	{ id: 'teal', hex: '#0F766E' },
+	{ id: 'green', hex: '#166534' },
+	{ id: 'red', hex: '#B91C1C' },
+	{ id: 'orange', hex: '#C2410C' },
+	{ id: 'plum', hex: '#8B3A62' },
+	{ id: 'purple', hex: '#6D28D9' },
+	{ id: 'brown', hex: '#5A4A2F' },
+	{ id: 'slate', hex: '#334155' }
+] as const;
+
+export type CardTintId = (typeof CARD_TINTS)[number]['id'];
+
+/**
+ * A card's background, rebuilt from its tint at every display rather than read from the stored gradient:
+ * a tint typed by somebody else, or a brand's light colour, is first darkened for white text.
+ *
+ * Both stops carry white at 4.5:1, and so does every point between them: relative luminance is convex in
+ * each sRGB channel, so a mix is never lighter than the lighter of its two ends.
+ */
+export function cardBackground(tint: string | null | undefined): string {
+	return `linear-gradient(135deg, ${tintForWhiteText(tint || DEFAULT_TINT)} 0%, ${CARD_GRADIENT_END} 100%)`;
+}
+
 const TARGET = 4.5;
 const STEP = 0.04;
 
@@ -86,8 +118,10 @@ export function tintForWhiteText(value: string | null | undefined): string {
 	if (!rgb) return (value ?? '').trim();
 
 	let color = rgb;
+	// The check runs on the rounded bytes that will be written, not on the fractions: rounding up could
+	// otherwise land a hair under 4.5:1 — #78BE20 did, at 4.49:1.
 	// 40 steps of 4% are far more than enough to reach black, the loop is bounded for safety.
-	for (let i = 0; i < 40 && contrastWithWhite(color) < TARGET; i++) {
+	for (let i = 0; i < 40 && contrastWithWhite(parseHex(toHex(color))!) < TARGET; i++) {
 		color = {
 			r: color.r * (1 - STEP),
 			g: color.g * (1 - STEP),
