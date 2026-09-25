@@ -510,7 +510,9 @@
 			"showAllIngredients": "Ganzes Rezept anzeigen",
 			"showStepIngredients": "Nur diesen Schritt anzeigen",
 			"readIngredients": "Zutaten vorlesen",
-			"speakIngredients": "Zutaten: {list}."
+			"speakIngredients": "Zutaten: {list}.",
+			"steps": "Rezeptschritte",
+			"goTo": "Zu Schritt {current} von {total}"
 		},
 		"stepIngredients": "Zutaten für Schritt {rank}"
 	},

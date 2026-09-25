@@ -510,7 +510,9 @@
 			"showAllIngredients": "Ver toda la receta",
 			"showStepIngredients": "Ver solo este paso",
 			"readIngredients": "Leer los ingredientes",
-			"speakIngredients": "Ingredientes: {list}."
+			"speakIngredients": "Ingredientes: {list}.",
+			"steps": "Pasos de la receta",
+			"goTo": "Ir al paso {current} de {total}"
 		},
 		"stepIngredients": "Ingredientes usados en el paso {rank}"
 	},

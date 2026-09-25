@@ -516,7 +516,9 @@
 			"showAllIngredients": "Показать весь рецепт",
 			"showStepIngredients": "Показать только этот шаг",
 			"readIngredients": "Прочитать ингредиенты",
-			"speakIngredients": "Ингредиенты: {list}."
+			"speakIngredients": "Ингредиенты: {list}.",
+			"steps": "Шаги рецепта",
+			"goTo": "Перейти к шагу {current} из {total}"
 		},
 		"stepIngredients": "Ингредиенты для шага {rank}"
 	},

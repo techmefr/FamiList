@@ -507,7 +507,9 @@
 			"showAllIngredients": "查看全部食材",
 			"showStepIngredients": "只看这一步",
 			"readIngredients": "朗读食材",
-			"speakIngredients": "食材：{list}。"
+			"speakIngredients": "食材：{list}。",
+			"steps": "食谱步骤",
+			"goTo": "前往第 {current} 步，共 {total} 步"
 		},
 		"stepIngredients": "第 {rank} 步用到的食材"
 	},

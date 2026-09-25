@@ -522,7 +522,9 @@
 			"showAllIngredients": "عرض الوصفة كاملة",
 			"showStepIngredients": "عرض هذه الخطوة فقط",
 			"readIngredients": "قراءة المكونات",
-			"speakIngredients": "المكونات: {list}."
+			"speakIngredients": "المكونات: {list}.",
+			"steps": "خطوات الوصفة",
+			"goTo": "الانتقال إلى الخطوة {current} من {total}"
 		},
 		"stepIngredients": "المكونات المستخدمة في الخطوة {rank}"
 	},
