@@ -3,8 +3,10 @@
 	import { t } from '$i18n/index.svelte';
 	import { ai } from '$stores/ai.svelte';
 	import { data } from '$stores/data.svelte';
-	import { dishPhotoPrompt, recipeImageSearchQuery } from '$domain/ai-image';
+	import { toasts } from '$stores/toast.svelte';
+	import { dishPhotoPrompt, photoFailureKey } from '$domain/ai-image';
 	import { Button } from '$components/ui/button';
+	import RecipeImageSearch from './RecipeImageSearch.svelte';
 	import { ImagePlus, Search } from '@lucide/svelte';
 
 	interface Props {
@@ -19,15 +21,9 @@
 	/** How long a signed URL to a private bucket stays usable before the screen would need another one. */
 	const SIGNED_URL_TTL_SECONDS = 3600;
 
-	let busy = $state(false);
+	let generating = $state(false);
 	let signedUrl = $state<string | null>(null);
-
-	/**
-	 * Set the moment a search comes back empty: it is what turns the AI button's label from the plain "Generate
-	 * a photo" into an explicit "Generate an image with AI" fallback, so the switch from one source to the
-	 * other stays visible instead of happening silently behind a single button.
-	 */
-	let searchFailed = $state(false);
+	let picker = $state<RecipeImageSearch | null>(null);
 
 	$effect(() => {
 		if (!photoPath) {
@@ -49,90 +45,56 @@
 		};
 	});
 
-	/**
-	 * The image is decorative only: a failure here is never surfaced as an error, it just leaves the plain
-	 * card the household already had. Nothing here blocks saving or reading the recipe.
-	 */
 	async function generate() {
-		if (busy) return;
+		if (generating) return;
 
-		busy = true;
-		const householdId = data.circle;
+		generating = true;
 		const prompt = dishPhotoPrompt(recipeName, ingredientNames);
-		const outcome = await ai.generateRecipePhoto(householdId, recipeId, prompt);
-		busy = false;
+		const outcome = await ai.generateRecipePhoto(data.circle, recipeId, prompt);
+		generating = false;
 
-		if (outcome.ok) data.setRecipePhoto(recipeId, outcome.path);
-	}
-
-	async function search() {
-		if (busy) return;
-
-		busy = true;
-		const householdId = data.circle;
-		const query = recipeImageSearchQuery(recipeName, ingredientNames);
-		const outcome = await ai.searchRecipePhoto(householdId, recipeId, query);
-		busy = false;
-
-		if (outcome.ok) {
-			searchFailed = false;
-			data.setRecipePhoto(recipeId, outcome.path);
-		} else {
-			searchFailed = true;
+		if (!outcome.ok) {
+			toasts.error(t(photoFailureKey(outcome.reason)));
+			return;
 		}
+
+		data.setRecipePhoto(recipeId, outcome.path);
+		toasts.success(t('ai.photoSaved'));
 	}
 </script>
 
-{#if signedUrl}
-	<div class="mb-3 space-y-2">
+<div class="mb-3 space-y-2" data-test-class="recipe-photo-generate">
+	{#if signedUrl}
 		<img
 			src={signedUrl}
 			alt={t('recipes.photoAlt', { name: recipeName })}
 			data-test-class="recipe-photo"
 			class="aspect-video w-full rounded-lg object-cover"
 		/>
+	{/if}
+	<div class="flex flex-wrap gap-2">
 		<Button
 			variant="outline"
-			size="sm"
-			onclick={generate}
-			disabled={busy}
-			data-test-class="recipe-photo-regenerate"
-			class="fl-press"
+			onclick={() => picker?.show()}
+			disabled={generating}
+			aria-haspopup="dialog"
+			data-test-class="recipe-photo-search-button"
+			class="fl-press h-auto min-h-11 w-full px-4 py-2 text-base whitespace-normal [overflow-wrap:normal]"
 		>
-			<ImagePlus size={18} aria-hidden="true" />
-			{busy ? t('ai.photoGenerating') : t('ai.photoRegenerate')}
+			<Search size={18} aria-hidden="true" />
+			{t('ai.photoSearch')}
+		</Button>
+		<Button
+			variant="outline"
+			onclick={generate}
+			loading={generating}
+			data-test-class={signedUrl ? 'recipe-photo-regenerate' : 'recipe-photo-button'}
+			class="fl-press h-auto min-h-11 w-full px-4 py-2 text-base whitespace-normal [overflow-wrap:normal]"
+		>
+			{#if !generating}<ImagePlus size={18} aria-hidden="true" />{/if}
+			{generating ? t('ai.photoGenerating') : signedUrl ? t('ai.photoRegenerate') : t('ai.photoGenerate')}
 		</Button>
 	</div>
-{:else}
-	<div class="mb-3 space-y-2" data-test-class="recipe-photo-generate">
-		<div class="flex flex-wrap gap-2">
-			<Button
-				variant="outline"
-				size="sm"
-				onclick={search}
-				disabled={busy}
-				data-test-class="recipe-photo-search-button"
-				class="fl-press"
-			>
-				<Search size={18} aria-hidden="true" />
-				{busy ? t('ai.photoSearching') : t('ai.photoSearch')}
-			</Button>
-			<Button
-				variant="outline"
-				size="sm"
-				onclick={generate}
-				disabled={busy}
-				data-test-class="recipe-photo-button"
-				class="fl-press"
-			>
-				<ImagePlus size={18} aria-hidden="true" />
-				{busy ? t('ai.photoGenerating') : searchFailed ? t('ai.photoGenerateFallback') : t('ai.photoGenerate')}
-			</Button>
-		</div>
-		{#if searchFailed}
-			<p class="text-muted-foreground text-sm" data-test-class="recipe-photo-search-not-found">
-				{t('ai.photoSearchNotFound')}
-			</p>
-		{/if}
-	</div>
-{/if}
+</div>
+
+<RecipeImageSearch bind:this={picker} {recipeId} {recipeName} />

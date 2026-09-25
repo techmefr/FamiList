@@ -17,7 +17,15 @@ import {
 	type ProviderRequest
 } from '$domain/ai';
 import { parseRecipeSuggestion, type SuggestedRecipe } from '$domain/ai-recipe';
-import { openverseSearchUrl, pickImageResult, pollinationsImageUrl, recipePhotoPath } from '$domain/ai-image';
+import {
+	imageSearchResults,
+	openverseSearchUrl,
+	photoFailureOfStatus,
+	pollinationsImageUrl,
+	recipePhotoPath,
+	type ImageSearchResult,
+	type PhotoFailure
+} from '$domain/ai-image';
 
 /**
  * The three outcomes of a request, told apart because they call for three different gestures: a network
@@ -28,8 +36,11 @@ export type SuggestOutcome =
 	| { ok: true; recipe: SuggestedRecipe }
 	| { ok: false; reason: 'network' | 'provider' | 'unreadable' | 'unsupported'; detail: string };
 
-/** A photo is decorative: the only outcomes a caller acts on are "got one" and "did not", never a detail. */
-export type PhotoOutcome = { ok: true; path: string } | { ok: false };
+export type PhotoOutcome = { ok: true; path: string } | { ok: false; reason: PhotoFailure };
+
+export type PhotoSearchOutcome =
+	| { ok: true; results: ImageSearchResult[] }
+	| { ok: false; reason: PhotoFailure };
 
 /** One saved provider row, as the screen lists it. The key never leaves this shape. */
 export type Credential = AiCredentialRow;
@@ -377,9 +388,8 @@ class AiStore {
 	/**
 	 * Generates a dish photo and uploads it to the household's `recipe-photos` bucket.
 	 *
-	 * The image is decorative and never blocks saving a recipe (#186): every failure here — network, refusal,
-	 * an unreadable answer, an upload error — returns `{ ok: false }` and leaves today's plain card standing,
-	 * with no message the caller is required to show.
+	 * The image never blocks saving a recipe (#186), but a failure is no longer silent (#303): the reason comes
+	 * back so the screen can say what happened instead of leaving a button that seems to do nothing.
 	 */
 	async generateRecipePhoto(
 		householdId: string,
@@ -387,59 +397,34 @@ class AiStore {
 		prompt: string,
 		seed = Math.floor(Math.random() * 2 ** 31)
 	): Promise<PhotoOutcome> {
-		let response: Response;
-		try {
-			response = await fetch(pollinationsImageUrl(prompt, seed));
-		} catch {
-			return { ok: false };
-		}
-
-		if (!response.ok) return { ok: false };
-
-		let bytes: Uint8Array;
-		try {
-			bytes = new Uint8Array(await response.arrayBuffer());
-		} catch {
-			return { ok: false };
-		}
-
-		const mimeType = response.headers.get('content-type') ?? 'image/jpeg';
-		return this.#uploadPhoto(householdId, recipeId, bytes, mimeType);
+		return this.fetchRecipePhoto(householdId, recipeId, pollinationsImageUrl(prompt, seed));
 	}
 
 	/**
-	 * Looks up a real photo for the dish in a free-image bank (Openverse) before anyone reaches for the AI
-	 * generator: a real picture of the actual dish beats a generated approximation of it whenever one exists.
-	 * `{ ok: false }` means "no usable result", exactly like a generation failure — the caller (`RecipePhoto`)
-	 * is the one that decides to then offer the AI fallback; this store never chains into it on its own, so
-	 * the switch from "found" to "falling back to AI" stays visible to the person instead of happening quietly.
+	 * Searches a free-image bank (Openverse) and hands every usable result back, for the person to pick the
+	 * one that actually shows their dish: the first hit is too often a different dish sharing a word.
 	 */
-	async searchRecipePhoto(
-		householdId: string,
-		recipeId: string,
-		query: string
-	): Promise<PhotoOutcome> {
+	async searchRecipePhotos(query: string): Promise<PhotoSearchOutcome> {
 		let response: Response;
 		try {
 			response = await fetch(openverseSearchUrl(query));
 		} catch {
-			return { ok: false };
+			return { ok: false, reason: networkFailure() };
 		}
 
-		if (!response.ok) return { ok: false };
+		if (!response.ok) return { ok: false, reason: photoFailureOfStatus(response.status) };
 
 		const payload: unknown = await response.json().catch(() => null);
-		const imageUrl = pickImageResult(payload);
-		if (!imageUrl) return { ok: false };
+		const results = imageSearchResults(payload);
+		if (results.length === 0) return { ok: false, reason: 'not-found' };
 
-		return this.fetchRecipePhoto(householdId, recipeId, imageUrl);
+		return { ok: true, results };
 	}
 
 	/**
-	 * Fetches a photo already published at a URL — an imported recipe's own picture — and uploads it to the
-	 * household's `recipe-photos` bucket, the same way a generated one is (#236). Both paths converge on
-	 * `#uploadPhoto`: a photo stored this way is indistinguishable from a generated one afterwards, and
-	 * nothing downstream needs to know where it came from.
+	 * Fetches a photo published at a URL — a generated one, a picked search result, an imported recipe's own
+	 * picture (#236) — and uploads it to the household's `recipe-photos` bucket. Every source converges here,
+	 * so a stored photo is the same thing afterwards whatever it came from.
 	 */
 	async fetchRecipePhoto(
 		householdId: string,
@@ -450,19 +435,21 @@ class AiStore {
 		try {
 			response = await fetch(imageUrl);
 		} catch {
-			return { ok: false };
+			return { ok: false, reason: networkFailure() };
 		}
 
-		if (!response.ok) return { ok: false };
+		if (!response.ok) return { ok: false, reason: photoFailureOfStatus(response.status) };
 
 		let bytes: Uint8Array;
 		try {
 			bytes = new Uint8Array(await response.arrayBuffer());
 		} catch {
-			return { ok: false };
+			return { ok: false, reason: networkFailure() };
 		}
 
 		const mimeType = response.headers.get('content-type') ?? 'image/jpeg';
+		if (!mimeType.startsWith('image/')) return { ok: false, reason: 'unreachable' };
+
 		return this.#uploadPhoto(householdId, recipeId, bytes, mimeType);
 	}
 
@@ -478,10 +465,14 @@ class AiStore {
 			.from('recipe-photos')
 			.upload(path, bytes, { contentType: mimeType, upsert: true });
 
-		if (error) return { ok: false };
+		if (error) return { ok: false, reason: 'upload' };
 
 		return { ok: true, path };
 	}
+}
+
+function networkFailure(): PhotoFailure {
+	return typeof navigator !== 'undefined' && navigator.onLine === false ? 'offline' : 'unreachable';
 }
 
 export const ai = new AiStore();
