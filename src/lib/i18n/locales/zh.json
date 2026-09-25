@@ -718,6 +718,10 @@
 					"title": "从链接导入",
 					"hint": "粘贴在网上找到的食谱地址。"
 				},
+				"scan": {
+					"title": "扫描食谱",
+					"hint": "书页或食谱卡片，在设备上识别，无需 AI。"
+				},
 				"photo": {
 					"title": "从照片导入",
 					"hint": "书页或手写的食谱，由 AI 读取。"
@@ -806,6 +810,42 @@
 			"autumn": "秋季",
 			"winter": "冬季"
 		}
+	},
+	"recipeScan": {
+		"tipsTitle": "如何拍得清楚",
+		"tipSteady": "将手机稳稳地拿在页面正上方。",
+		"tipLight": "在光线充足处拍摄，页面上不要有阴影或反光。",
+		"tipFrame": "拍下整页并保持平整：每页一张，按顺序拍。",
+		"takePhoto": "拍摄一页",
+		"choosePhotos": "从我的照片中选择",
+		"pagesTitle": "要识别的页面（按顺序）",
+		"page": "第 {number} 页",
+		"moveUp": "上移",
+		"moveDown": "下移",
+		"remove": "移除",
+		"moveUpLabel": "上移第 {number} 页",
+		"moveDownLabel": "下移第 {number} 页",
+		"removeLabel": "移除第 {number} 页",
+		"full": "已达到页数上限。",
+		"read": "识别食谱",
+		"reading": "正在识别：{percent}%",
+		"readingHint": "识别期间可以继续使用应用：食谱准备好时会有消息提醒。",
+		"cancel": "停止识别",
+		"readingToast": "正在识别食谱…",
+		"readyToast": "食谱已识别。打开查看。",
+		"readyTitle": "食谱已识别",
+		"readyBody": "打开后在保存前检查并修改所有内容。",
+		"open": "打开食谱",
+		"restart": "重新开始",
+		"empty": "这些照片上没有可识别的文字。请在光线充足处重拍，拍下整页并保持平整。",
+		"emptyToast": "食谱照片上没有可识别的文字。",
+		"failed": "识别失败。请重试，或重新拍照。",
+		"failedToast": "食谱识别失败。",
+		"unavailable": "此处暂不支持在设备上识别。",
+		"aiTitle": "用你的 AI 识别更准确",
+		"aiHint": "你的 AI 服务更擅长识别手写字。照片会发送给它。",
+		"useAi": "用我的 AI 识别",
+		"useDevice": "在设备上识别"
 	},
 	"aisles": {
 		"title": "货区",

@@ -21,7 +21,12 @@ const CACHE = `familist-${version}`;
 // The entry page is in neither `build` nor `files`: adapter-static produces it as `fallback`, and the host
 // returns it for any route. It is the one to keep.
 const ENTRY = `${base}/`;
-const PRECACHE = [ENTRY, ...build, ...files];
+// The recipe scanner's engine (#312) is 20 MB of worker, core and language models: precaching it would
+// charge every install for a screen few people open. The worker and core are kept on first use; the models
+// are cached by Tesseract itself, in IndexedDB.
+const OCR = `${base}/tesseract/`;
+const OCR_MODELS = `${OCR}lang/`;
+const PRECACHE = [ENTRY, ...build, ...files.filter(file => !file.startsWith(OCR))];
 
 worker.addEventListener('install', event => {
 // No `skipWaiting()`: an open tab keeps running on the code fragments of its own version, which stay in
@@ -74,6 +79,7 @@ worker.addEventListener('fetch', event => {
 	// what to do with a failed network call, not a shell cache.
 	if (url.origin !== worker.location.origin) return;
 	if (!url.protocol.startsWith('http')) return;
+	if (url.pathname.startsWith(OCR_MODELS)) return;
 
 	// The build files carry their fingerprint in their name: their content never changes, so the cache is the
 	// authority and a network round trip is avoided.

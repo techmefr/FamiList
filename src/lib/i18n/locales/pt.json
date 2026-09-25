@@ -721,6 +721,10 @@
 					"title": "A partir de um link",
 					"hint": "Cole o endereço de uma receita encontrada na web."
 				},
+				"scan": {
+					"title": "Digitalizar uma receita",
+					"hint": "Uma página de livro ou uma ficha, lida no aparelho, sem IA."
+				},
 				"photo": {
 					"title": "A partir de uma foto",
 					"hint": "Uma página de livro ou uma receita escrita, lida pela IA."
@@ -812,6 +816,42 @@
 			"autumn": "Outono",
 			"winter": "Inverno"
 		}
+	},
+	"recipeScan": {
+		"tipsTitle": "Para uma boa leitura",
+		"tipSteady": "Segure o telefone bem parado, acima da página.",
+		"tipLight": "Fique num lugar com boa luz, sem sombras nem reflexos na página.",
+		"tipFrame": "Fotografe a página inteira, bem plana: uma foto por página, pela ordem.",
+		"takePhoto": "Fotografar uma página",
+		"choosePhotos": "Escolher nas minhas fotos",
+		"pagesTitle": "Páginas a ler, pela ordem",
+		"page": "Página {number}",
+		"moveUp": "Subir",
+		"moveDown": "Descer",
+		"remove": "Remover",
+		"moveUpLabel": "Subir a página {number}",
+		"moveDownLabel": "Descer a página {number}",
+		"removeLabel": "Remover a página {number}",
+		"full": "Número máximo de páginas atingido.",
+		"read": "Ler a receita",
+		"reading": "A ler: {percent} %",
+		"readingHint": "Pode continuar a usar a aplicação: uma mensagem avisa quando a receita estiver pronta.",
+		"cancel": "Parar a leitura",
+		"readingToast": "A ler a receita…",
+		"readyToast": "A receita foi lida. Abra-a para a verificar.",
+		"readyTitle": "A receita foi lida",
+		"readyBody": "Abra-a para reler e corrigir tudo antes de guardar.",
+		"open": "Abrir a receita",
+		"restart": "Recomeçar",
+		"empty": "Nenhum texto legível nestas fotos. Tire-as de novo com boa luz, com a página inteira e plana.",
+		"emptyToast": "Nenhum texto legível nas fotos da receita.",
+		"failed": "A leitura falhou. Tente de novo ou tire as fotos outra vez.",
+		"failedToast": "A leitura da receita falhou.",
+		"unavailable": "A leitura no aparelho ainda não está disponível aqui.",
+		"aiTitle": "Melhor leitura com a sua IA",
+		"aiHint": "O seu fornecedor de IA lê melhor a letra manuscrita. A foto é-lhe enviada.",
+		"useAi": "Ler com a minha IA",
+		"useDevice": "Ler no aparelho"
 	},
 	"aisles": {
 		"title": "Secções",

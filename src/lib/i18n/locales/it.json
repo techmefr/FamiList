@@ -719,6 +719,10 @@
 					"title": "Da un link",
 					"hint": "Incolla l’indirizzo di una ricetta trovata sul web."
 				},
+				"scan": {
+					"title": "Scansiona una ricetta",
+					"hint": "Una pagina di libro o una scheda, letta sul dispositivo, senza IA."
+				},
 				"photo": {
 					"title": "Da una foto",
 					"hint": "Una pagina di libro o una ricetta scritta, letta dall’IA."
@@ -810,6 +814,42 @@
 			"autumn": "Autunno",
 			"winter": "Inverno"
 		}
+	},
+	"recipeScan": {
+		"tipsTitle": "Per una buona lettura",
+		"tipSteady": "Tieni il telefono ben fermo, sopra la pagina.",
+		"tipLight": "Mettiti alla luce, senza ombre né riflessi sulla pagina.",
+		"tipFrame": "Inquadra tutta la pagina, ben distesa: una foto per pagina, in ordine.",
+		"takePhoto": "Fotografa una pagina",
+		"choosePhotos": "Scegli dalle mie foto",
+		"pagesTitle": "Pagine da leggere, in ordine",
+		"page": "Pagina {number}",
+		"moveUp": "Sposta su",
+		"moveDown": "Sposta giù",
+		"remove": "Rimuovi",
+		"moveUpLabel": "Sposta su la pagina {number}",
+		"moveDownLabel": "Sposta giù la pagina {number}",
+		"removeLabel": "Rimuovi la pagina {number}",
+		"full": "Numero massimo di pagine raggiunto.",
+		"read": "Leggi la ricetta",
+		"reading": "Lettura in corso: {percent}%",
+		"readingHint": "Puoi continuare a usare l’app: un messaggio ti dirà quando la ricetta è pronta.",
+		"cancel": "Interrompi la lettura",
+		"readingToast": "Lettura della ricetta in corso…",
+		"readyToast": "La ricetta è stata letta. Aprila per controllarla.",
+		"readyTitle": "La ricetta è stata letta",
+		"readyBody": "Aprila per rileggere e correggere tutto prima di salvare.",
+		"open": "Apri la ricetta",
+		"restart": "Ricomincia",
+		"empty": "Nessun testo leggibile in queste foto. Rifalle alla luce, con la pagina intera e ben distesa.",
+		"emptyToast": "Nessun testo leggibile nelle foto della ricetta.",
+		"failed": "La lettura non è riuscita. Riprova o rifai le foto.",
+		"failedToast": "La lettura della ricetta non è riuscita.",
+		"unavailable": "La lettura sul dispositivo non è ancora disponibile qui.",
+		"aiTitle": "Lettura migliore con la tua IA",
+		"aiHint": "Il tuo fornitore di IA legge meglio la scrittura a mano. La foto gli viene inviata.",
+		"useAi": "Leggi con la mia IA",
+		"useDevice": "Leggi sul dispositivo"
 	},
 	"aisles": {
 		"title": "Reparti",
