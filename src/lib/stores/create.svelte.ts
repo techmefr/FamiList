@@ -2,8 +2,9 @@
  * What the central button has just asked for, for the time it takes to reach the screen concerned.
  *
  * The shop, aisle and card forms are already sitting permanently on their page: you only have to go there
- * and put the cursor in the first field. Those of a new list and a new recipe, for their part, are folded —
- * the screen has to know we are coming in order to unfold them. Hence this relay, rather than a URL
+ * and put the cursor in the first field. That of a new list, for its part, is folded — the screen has to
+ * know we are coming in order to unfold it. A new recipe goes through "Create a recipe" and its own relay
+ * (`recipeDraft`), since what unfolds there is already a draft. Hence this relay, rather than a URL
  * parameter that would stay in the address bar and reopen the form on every reload.
  */
 export type CreateKind = 'item' | 'list' | 'aisle' | 'shop' | 'card' | 'recipe' | 'mealPlan';

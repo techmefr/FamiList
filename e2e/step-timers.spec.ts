@@ -6,8 +6,8 @@ import { test, expect } from './fixtures';
  * survives closing cook-along and rings over whatever screen is open. The clock is driven by the test.
  */
 async function createRecipe(page: Page, name: string) {
-	await page.goto('/recipes');
-	await page.getByTestId('recipe-new').click();
+	await page.goto('/recipes/new');
+	await page.getByTestId('recipe-source-manual').click();
 	await page.getByTestId('recipe-name').fill(name);
 	await page.getByTestId('recipe-next').click();
 	await page.locator('[data-test-class="ingredient-name"]').first().fill('Pâtes');
