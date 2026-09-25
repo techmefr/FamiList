@@ -53,12 +53,8 @@
 	const ACTIONS = [
 		{ kind: 'item', icon: ShoppingBasket, target: itemTarget, field: null },
 		{ kind: 'list', icon: ListPlus, target: () => '/', field: '[data-test-id="list-name"]' },
-		{
-			kind: 'recipe',
-			icon: CookingPot,
-			target: () => '/recipes',
-			field: '[data-test-id="recipe-name"]'
-		},
+		// A recipe can start in several ways (typed, a link, a photo, the AI): the choice is its own screen.
+		{ kind: 'recipe', icon: CookingPot, target: () => '/recipes/new', field: null },
 		{ kind: 'mealPlan', icon: CalendarDays, target: () => '/meal-plan', field: null },
 		{ kind: 'aisle', icon: LayoutList, target: () => '/shops', field: '[data-test-id="aisle-name"]' },
 		{ kind: 'shop', icon: Store, target: () => '/shops', field: '[data-test-id="shop-name"]' },

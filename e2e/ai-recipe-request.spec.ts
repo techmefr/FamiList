@@ -69,13 +69,13 @@ test.describe('demande de recette en texte libre', () => {
 		await clearKey(page);
 	});
 
-	test('demander, obtenir une proposition et l accepter cree la recette', async ({
+	test('demander, obtenir une proposition, la relire dans le formulaire puis l enregistrer', async ({
 		signedInPage: page
 	}) => {
 		await mockAnthropic(page, FAKE_RECIPE);
 
-		await page.goto('/recipes');
-		await page.getByTestId('ai-request-open').click();
+		await page.goto('/recipes/new');
+		await page.getByTestId('recipe-source-ai').click();
 		await page.getByTestId('ai-request-input').fill('un curry de poulet pour 4');
 		await page.getByTestId('ai-request-submit').click();
 
@@ -86,8 +86,16 @@ test.describe('demande de recette en texte libre', () => {
 		await expect(page.getByTestId('ai-proposal-retry')).toBeVisible();
 		await expect(page.getByTestId('ai-proposal-discard')).toBeVisible();
 
+		// Keeping it saves nothing yet: it opens the recipe form, filled, to be read over first (#311).
 		await page.getByTestId('ai-proposal-accept').click();
-		await expect(page.getByTestId('ai-request-added')).toBeVisible();
+		await expect(page).toHaveURL(/\/recipes$/);
+		await expect(page.getByTestId('recipe-import-review')).toBeVisible();
+		await expect(page.getByTestId('recipe-name')).toHaveValue(FAKE_RECIPE.name);
+
+		await page.getByTestId('recipe-next').click();
+		await expect(page.locator('[data-test-class="ingredient-name"]').first()).toHaveValue('Poulet');
+		await page.getByTestId('recipe-next').click();
+		await page.getByTestId('recipe-next').click();
 
 		const card = page.locator('[data-test-class="recipe-card"]').filter({ hasText: FAKE_RECIPE.name });
 		await expect(card).toBeVisible();
@@ -96,8 +104,8 @@ test.describe('demande de recette en texte libre', () => {
 	test('discard efface la proposition sans creer de recette', async ({ signedInPage: page }) => {
 		await mockAnthropic(page, DISCARD_RECIPE);
 
-		await page.goto('/recipes');
-		await page.getByTestId('ai-request-open').click();
+		await page.goto('/recipes/new');
+		await page.getByTestId('recipe-source-ai').click();
 		await page.getByTestId('ai-request-input').fill('un dessert rapide');
 		await page.getByTestId('ai-request-submit').click();
 
@@ -105,6 +113,9 @@ test.describe('demande de recette en texte libre', () => {
 		await page.getByTestId('ai-proposal-discard').click();
 		await expect(page.getByTestId('ai-proposal')).toHaveCount(0);
 
+		await page.getByTestId('recipe-source-back').click();
+		await page.getByTestId('recipe-create-to-recipes').click();
+		await expect(page).toHaveURL(/\/recipes$/);
 		const card = page.locator('[data-test-class="recipe-card"]').filter({ hasText: DISCARD_RECIPE.name });
 		await expect(card).toHaveCount(0);
 	});

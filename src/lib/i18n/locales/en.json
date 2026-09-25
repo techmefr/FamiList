@@ -429,7 +429,6 @@
 	},
 	"recipes": {
 		"import": {
-			"title": "Import from a link",
 			"privacy": "The address is sent to this instance’s server, which fetches the page for you and identifies itself to the site visited. Nothing is kept, and no other page is opened.",
 			"url": "Recipe address",
 			"urlPlaceholder": "https://example.com/my-recipe",
@@ -665,7 +664,38 @@
 		"stepIngredients": "Ingredients used in step {rank}",
 		"stepDuration": "Step {rank} duration (optional)",
 		"durationHours": "Hours",
-		"durationMinutes": "Minutes"
+		"durationMinutes": "Minutes",
+		"create": {
+			"title": "Create a recipe",
+			"intro": "Choose how to start. You will read everything again before saving.",
+			"back": "Other ways to create",
+			"backToRecipes": "Back to recipes",
+			"needsKey": "Needs an AI key",
+			"needsKeyBody": "This way of creating goes through your own AI provider. Add your key in the AI settings, then come back here.",
+			"needsKeyLink": "Add my AI key",
+			"sources": {
+				"manual": {
+					"title": "Write it myself",
+					"hint": "The name, the ingredients, then the steps."
+				},
+				"link": {
+					"title": "From a link",
+					"hint": "Paste the address of a recipe found on the web."
+				},
+				"photo": {
+					"title": "From a photo",
+					"hint": "A book page or a written recipe, read by the AI."
+				},
+				"ai": {
+					"title": "Ask the AI",
+					"hint": "Describe the dish, the AI suggests a recipe."
+				},
+				"purchases": {
+					"title": "Idea from your shopping",
+					"hint": "A recipe with what the household has already bought."
+				}
+			}
+		}
 	},
 	"recipeTags": {
 		"title": "Categories",
@@ -1420,8 +1450,6 @@
 		"clear": "Remove the key",
 		"active": "Active",
 		"useThisOne": "Use this one",
-		"suggest": "A recipe idea",
-		"suggestTitle": "An idea from what you have bought",
 		"noProducts": "Nothing ticked off yet. Do some shopping, and the ideas will come from there.",
 		"willSend": {
 			"one": "1 product will be sent",
@@ -1483,8 +1511,6 @@
 		"photoErrorUnreachable": "The image service did not respond. Try again in a moment.",
 		"photoErrorUpload": "The image could not be saved. Try again.",
 		"photo": {
-			"trigger": "Create a recipe by photo",
-			"title": "Take a photo of the recipe",
 			"hint": "Photograph a book page, or a written or printed recipe.",
 			"pick": "Take or import a photo",
 			"reading": "Reading the photo…",

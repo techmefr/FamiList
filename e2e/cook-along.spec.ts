@@ -4,8 +4,8 @@ import AxeBuilder from '@axe-core/playwright';
 const STEPS = ['Couper les légumes', 'Faire revenir dix minutes', 'Servir chaud'];
 
 async function recipeWithSteps(page: import('@playwright/test').Page, name: string) {
-	await page.goto('/recipes');
-	await page.getByTestId('recipe-new').click();
+	await page.goto('/recipes/new');
+	await page.getByTestId('recipe-source-manual').click();
 	await page.getByTestId('recipe-name').fill(name);
 	await page.getByTestId('recipe-next').click();
 
