@@ -513,8 +513,18 @@
 			"next": "التالية",
 			"mute": "كتم الصوت",
 			"unmute": "تفعيل الصوت",
-			"empty": "لا توجد خطوات لهذه الوصفة."
-		}
+			"empty": "لا توجد خطوات لهذه الوصفة.",
+			"ingredients": "المكونات",
+			"stepIngredientsCount": "مكونات هذه الخطوة ({count})",
+			"ingredientsOfStep": "مكونات الخطوة {current}",
+			"allIngredients": "كل المكونات",
+			"noStepIngredients": "لا يوجد مكوّن مرتبط بهذه الخطوة: إليك الوصفة كاملة.",
+			"showAllIngredients": "عرض الوصفة كاملة",
+			"showStepIngredients": "عرض هذه الخطوة فقط",
+			"readIngredients": "قراءة المكونات",
+			"speakIngredients": "المكونات: {list}."
+		},
+		"stepIngredients": "المكونات المستخدمة في الخطوة {rank}"
 	},
 	"aisles": {
 		"title": "الأقسام",

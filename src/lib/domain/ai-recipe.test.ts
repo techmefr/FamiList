@@ -151,7 +151,7 @@ describe('recipeExtractionPrompt', () => {
 		const prompt = recipeExtractionPrompt('texte', { language: 'français', servings: 4 });
 
 		expect(prompt).toContain(
-			'{"name":"","emoji":"","servings":0,"ingredients":[{"name":"","qty":"","unit":""}],"steps":[""]}'
+			'{"name":"","emoji":"","servings":0,"ingredients":[{"name":"","qty":"","unit":""}],"steps":[""],"stepIngredients":[[0]]}'
 		);
 	});
 
@@ -187,7 +187,7 @@ describe('recipeFromRequestPrompt', () => {
 		const prompt = recipeFromRequestPrompt('des pancakes', { language: 'français', servings: 4 });
 
 		expect(prompt).toContain(
-			'{"name":"","emoji":"","servings":0,"ingredients":[{"name":"","qty":"","unit":""}],"steps":[""]}'
+			'{"name":"","emoji":"","servings":0,"ingredients":[{"name":"","qty":"","unit":""}],"steps":[""],"stepIngredients":[[0]]}'
 		);
 	});
 
@@ -234,7 +234,7 @@ describe('recipeFollowUpPrompt (#226)', () => {
 		const prompt = recipeFollowUpPrompt('plus epice', { language: 'français', servings: 4 });
 
 		expect(prompt).toContain(
-			'{"name":"","emoji":"","servings":0,"ingredients":[{"name":"","qty":"","unit":""}],"steps":[""]}'
+			'{"name":"","emoji":"","servings":0,"ingredients":[{"name":"","qty":"","unit":""}],"steps":[""],"stepIngredients":[[0]]}'
 		);
 	});
 
@@ -372,7 +372,39 @@ describe('recipeFromPhotoPrompt (#266)', () => {
 		const prompt = recipeFromPhotoPrompt({ language: 'français', servings: 4 });
 
 		expect(prompt).toContain(
-			'{"name":"","emoji":"","servings":0,"ingredients":[{"name":"","qty":"","unit":""}],"steps":[""]}'
+			'{"name":"","emoji":"","servings":0,"ingredients":[{"name":"","qty":"","unit":""}],"steps":[""],"stepIngredients":[[0]]}'
 		);
+	});
+});
+
+describe('stepIngredients (#308)', () => {
+	it('lit les liens renvoyes, recales sur les lignes gardees', () => {
+		const recipe = parseRecipeSuggestion(
+			JSON.stringify({
+				name: 'Omelette',
+				ingredients: [{ name: 'Oeufs' }, { name: '' }, { name: 'Beurre' }],
+				steps: ['Battre les oeufs', '', 'Cuire au beurre'],
+				stepIngredients: [[0], [], [2, 9]]
+			})
+		);
+
+		expect(recipe?.steps).toEqual(['Battre les oeufs', 'Cuire au beurre']);
+		expect(recipe?.stepIngredients).toEqual([[0], [1]]);
+	});
+
+	it('devine les liens quand le modele les oublie', () => {
+		const recipe = parseRecipeSuggestion(
+			JSON.stringify({
+				name: 'Omelette',
+				ingredients: [{ name: 'Oeufs' }, { name: 'Beurre' }],
+				steps: ['Battre les oeufs', 'Cuire au beurre']
+			})
+		);
+
+		expect(recipe?.stepIngredients).toEqual([[0], [1]]);
+	});
+
+	it('est demande par chaque prompt', () => {
+		expect(recipePrompt(['Oeufs'], { language: 'français', servings: 2 })).toContain('"stepIngredients" contient');
 	});
 });

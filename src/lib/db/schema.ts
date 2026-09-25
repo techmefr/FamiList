@@ -259,6 +259,8 @@ export interface RecipeStep {
 	recipeId: string;
 	body: string;
 	position: number;
+	/** The ingredient lines this step uses (#308). Empty for a step nobody linked: cook-along then shows them all. */
+	ingredientIds: string[];
 }
 
 /**
@@ -504,6 +506,19 @@ class FamiListDatabase extends Dexie {
 		});
 
 		this.version(14).stores({ rejections: 'key, at' });
+
+		// Steps cached before #308 carry no ingredient link: they get an empty one rather than `undefined`,
+		// so every reader can rely on the array being there.
+		this.version(15)
+			.stores({})
+			.upgrade(async (tx) => {
+				await tx
+					.table('recipeSteps')
+					.toCollection()
+					.modify((step: Partial<RecipeStep>) => {
+						step.ingredientIds ??= [];
+					});
+			});
 	}
 }
 

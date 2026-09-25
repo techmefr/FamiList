@@ -501,8 +501,18 @@
 			"next": "Seguinte",
 			"mute": "Silenciar voz",
 			"unmute": "Ativar voz",
-			"empty": "Esta receita não tem passos a seguir."
-		}
+			"empty": "Esta receita não tem passos a seguir.",
+			"ingredients": "Ingredientes",
+			"stepIngredientsCount": "Ingredientes deste passo ({count})",
+			"ingredientsOfStep": "Ingredientes do passo {current}",
+			"allIngredients": "Todos os ingredientes",
+			"noStepIngredients": "Nenhum ingrediente está ligado a este passo: eis a receita completa.",
+			"showAllIngredients": "Ver a receita completa",
+			"showStepIngredients": "Ver só este passo",
+			"readIngredients": "Ler os ingredientes",
+			"speakIngredients": "Ingredientes: {list}."
+		},
+		"stepIngredients": "Ingredientes usados no passo {rank}"
 	},
 	"aisles": {
 		"title": "Secções",

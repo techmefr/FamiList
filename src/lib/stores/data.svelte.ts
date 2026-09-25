@@ -104,6 +104,55 @@ const DEFAULT_SHOP_NODE = 'd0defa017000';
  * the background. No interaction waits on disk or network — you tick an item while walking, the
  * sync follows.
  */
+/**
+ * A recipe's ingredient rows and steps, built from the form's state.
+ *
+ * The form links steps to ingredients by row index (#308), since a row has no id before it is saved: the
+ * index is translated into the new row's id here, before nameless rows and empty steps are dropped, so a
+ * blank row in between shifts nothing.
+ */
+function recipeChildren(
+	recipeId: string,
+	input: { ingredients: RecipeLine[]; steps: string[]; stepIngredients?: number[][] }
+): { rows: RecipeIngredient[]; steps: RecipeStep[] } {
+	const idOfRow = new Map<number, string>();
+	const rows: RecipeIngredient[] = [];
+
+	input.ingredients.forEach((line, index) => {
+		if (!line.name.trim()) return;
+
+		const id = crypto.randomUUID();
+		idOfRow.set(index, id);
+		rows.push({
+			id,
+			recipeId,
+			name: line.name.trim(),
+			qty: line.qty.trim(),
+			unit: line.unit || DEFAULT_UNIT,
+			position: rows.length
+		});
+	});
+
+	const steps: RecipeStep[] = [];
+	input.steps.forEach((body, index) => {
+		if (!body.trim()) return;
+
+		const ingredientIds = (input.stepIngredients?.[index] ?? []).flatMap((row) => {
+			const id = idOfRow.get(row);
+			return id ? [id] : [];
+		});
+		steps.push({
+			id: crypto.randomUUID(),
+			recipeId,
+			body: body.trim(),
+			position: steps.length,
+			ingredientIds
+		});
+	});
+
+	return { rows, steps };
+}
+
 class DataStore {
 	/**
 	 * The full cache: every circle of the account. The screen does not read it directly — it reads the
@@ -1439,6 +1488,7 @@ class DataStore {
 		notes?: string;
 		ingredients: RecipeLine[];
 		steps: string[];
+		stepIngredients?: number[][];
 	}) {
 		const recipe: Recipe = {
 			id: crypto.randomUUID(),
@@ -1452,25 +1502,7 @@ class DataStore {
 			createdAt: Date.now()
 		};
 
-		const rows: RecipeIngredient[] = input.ingredients
-			.filter((line) => line.name.trim())
-			.map((line, position) => ({
-				id: crypto.randomUUID(),
-				recipeId: recipe.id,
-				name: line.name.trim(),
-				qty: line.qty.trim(),
-				unit: line.unit || DEFAULT_UNIT,
-				position
-			}));
-
-		const steps: RecipeStep[] = input.steps
-			.filter((body) => body.trim())
-			.map((body, position) => ({
-				id: crypto.randomUUID(),
-				recipeId: recipe.id,
-				body: body.trim(),
-				position
-			}));
+		const { rows, steps } = recipeChildren(recipe.id, input);
 
 		this.cachedRecipes = [...this.cachedRecipes, recipe];
 		this.recipeIngredients = [...this.recipeIngredients, ...rows];
@@ -1504,6 +1536,7 @@ class DataStore {
 			notes?: string;
 			ingredients: RecipeLine[];
 			steps: string[];
+			stepIngredients?: number[][];
 		}
 	) {
 		const recipe = this.cachedRecipes.find((r) => r.id === id);
@@ -1518,25 +1551,7 @@ class DataStore {
 		const oldRows = this.recipeIngredients.filter((line) => line.recipeId === id).map((l) => l.id);
 		const oldSteps = this.recipeSteps.filter((step) => step.recipeId === id).map((s) => s.id);
 
-		const rows: RecipeIngredient[] = input.ingredients
-			.filter((line) => line.name.trim())
-			.map((line, position) => ({
-				id: crypto.randomUUID(),
-				recipeId: id,
-				name: line.name.trim(),
-				qty: line.qty.trim(),
-				unit: line.unit || DEFAULT_UNIT,
-				position
-			}));
-
-		const steps: RecipeStep[] = input.steps
-			.filter((body) => body.trim())
-			.map((body, position) => ({
-				id: crypto.randomUUID(),
-				recipeId: id,
-				body: body.trim(),
-				position
-			}));
+		const { rows, steps } = recipeChildren(id, input);
 
 		this.recipeIngredients = [
 			...this.recipeIngredients.filter((line) => line.recipeId !== id),

@@ -498,8 +498,18 @@
 			"next": "下一步",
 			"mute": "静音",
 			"unmute": "取消静音",
-			"empty": "这个食谱没有步骤。"
-		}
+			"empty": "这个食谱没有步骤。",
+			"ingredients": "食材",
+			"stepIngredientsCount": "本步骤的食材（{count}）",
+			"ingredientsOfStep": "第 {current} 步的食材",
+			"allIngredients": "全部食材",
+			"noStepIngredients": "这一步没有关联食材：以下是整道菜的食材。",
+			"showAllIngredients": "查看全部食材",
+			"showStepIngredients": "只看这一步",
+			"readIngredients": "朗读食材",
+			"speakIngredients": "食材：{list}。"
+		},
+		"stepIngredients": "第 {rank} 步用到的食材"
 	},
 	"aisles": {
 		"title": "货区",

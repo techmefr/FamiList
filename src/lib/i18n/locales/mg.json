@@ -501,8 +501,18 @@
 			"next": "Manaraka",
 			"mute": "Ampitsahatra ny feo",
 			"unmute": "Alefaso ny feo",
-			"empty": "Tsy misy dingana harahina amin'ity fahandroana ity."
-		}
+			"empty": "Tsy misy dingana harahina amin'ity fahandroana ity.",
+			"ingredients": "Akora",
+			"stepIngredientsCount": "Akoran’ity dingana ity ({count})",
+			"ingredientsOfStep": "Akoran’ny dingana {current}",
+			"allIngredients": "Ny akora rehetra",
+			"noStepIngredients": "Tsy misy akora mifandray amin’ity dingana ity: ity ny fahandroana manontolo.",
+			"showAllIngredients": "Hijery ny fahandroana manontolo",
+			"showStepIngredients": "Ity dingana ity ihany",
+			"readIngredients": "Hamaky ny akora",
+			"speakIngredients": "Akora: {list}."
+		},
+		"stepIngredients": "Akora ampiasaina amin’ny dingana {rank}"
 	},
 	"aisles": {
 		"title": "Faritra",
