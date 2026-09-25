@@ -91,6 +91,30 @@ export type Database = {
         }
         Relationships: []
       }
+      image_bank_credentials: {
+        Row: {
+          api_key: string
+          created_at: string
+          provider: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          api_key: string
+          created_at?: string
+          provider: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          api_key?: string
+          created_at?: string
+          provider?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       aisles: {
         Row: {
           created_at: string

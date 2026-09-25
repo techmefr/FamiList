@@ -27,108 +27,154 @@ async function createRecipe(page: import('@playwright/test').Page, name: string)
 	return card;
 }
 
+async function openPicker(card: import('@playwright/test').Locator) {
+	await card.locator('[data-test-class="recipe-card-header"]').click();
+	await card.locator('[data-test-class="recipe-photo-button"]').click();
+	const picker = card.page().getByTestId('recipe-image-picker');
+	await expect(picker).toBeVisible();
+	return picker;
+}
+
+function mockOpenverse(page: import('@playwright/test').Page, count: number) {
+	return page.route('https://api.openverse.org/v1/images/?**', async (route) => {
+		await route.fulfill({
+			status: 200,
+			contentType: 'application/json',
+			body: JSON.stringify({
+				results: Array.from({ length: count }, (_, n) => ({
+					id: `img-${n}`,
+					title: `Plat ${n}`,
+					thumbnail: `https://thumbs.example.test/${n}.png`,
+					creator: 'Auteur',
+					license: 'by'
+				}))
+			})
+		});
+	});
+}
+
+function mockThumbnails(page: import('@playwright/test').Page) {
+	return page.route('https://thumbs.example.test/**', async (route) => {
+		await route.fulfill({ status: 200, contentType: 'image/png', body: FAKE_PNG });
+	});
+}
+
+const successToast = '[data-test-class="toast"][data-tone="success"]';
+
 /**
- * The Pollinations photo generation (#203, #186): keyless, so `canGeneratePhoto` no longer gates the button
- * on a provider being configured — no AI key is set anywhere in this suite. The real `image.pollinations.ai`
- * request is intercepted: nothing here should depend on that third party being reachable or fast in CI.
+ * Every source of the picker (#305). Third parties are intercepted: nothing here should depend on
+ * Pollinations, Openverse or Pexels being reachable or fast in CI.
  */
-test.describe('photo de recette Pollinations', () => {
+test.describe("choisir l'image d'une recette", () => {
 	test('generer une photo ne demande aucune cle IA configuree', async ({ signedInPage: page }) => {
-		const name = `Recette photo e2e ${Date.now()}`;
-
 		await page.route('https://image.pollinations.ai/prompt/**', async (route) => {
-			await route.fulfill({
-				status: 200,
-				contentType: 'image/jpeg',
-				body: FAKE_JPEG
-			});
+			await route.fulfill({ status: 200, contentType: 'image/jpeg', body: FAKE_JPEG });
 		});
 
-		const card = await createRecipe(page, name);
+		const card = await createRecipe(page, `Recette photo e2e ${Date.now()}`);
+		const picker = await openPicker(card);
+		await picker.getByTestId('recipe-image-source-generate').click();
 
-		// The card is a collapsed accordion by default (#246): photo and actions only show once opened.
-		await card.locator('[data-test-class="recipe-card-header"]').click();
-
-		// No AI key is configured for this account (the whole point of #186): the button must be there anyway.
-		const generateButton = card.locator('[data-test-class="recipe-photo-button"]');
-		await expect(generateButton).toBeVisible();
-
-		await generateButton.click();
-		await expect(page.locator('[data-test-class="recipe-photo"]').first()).toBeVisible({
-			timeout: 15_000
-		});
-
-		await expect(page.locator('[data-test-class="toast"][data-tone="success"]')).toBeVisible();
-		await expect(card.locator('[data-test-class="recipe-photo-regenerate"]')).toBeVisible();
+		await expect(picker).toBeHidden({ timeout: 15_000 });
+		await expect(page.locator(successToast)).toBeVisible();
+		await expect(card.locator('[data-test-class="recipe-photo"]')).toBeVisible({ timeout: 15_000 });
 	});
 
-	test('une generation refusee le dit au lieu de ne rien faire', async ({ signedInPage: page }) => {
-		const name = `Recette photo refusee e2e ${Date.now()}`;
-
+	test('une generation refusee le dit dans le menu', async ({ signedInPage: page }) => {
 		await page.route('https://image.pollinations.ai/prompt/**', async (route) => {
 			await route.fulfill({ status: 403, contentType: 'application/json', body: '{"error":"Missing token"}' });
 		});
 
-		const card = await createRecipe(page, name);
-		await card.locator('[data-test-class="recipe-card-header"]').click();
-		await card.locator('[data-test-class="recipe-photo-button"]').click();
+		const card = await createRecipe(page, `Recette photo refusee e2e ${Date.now()}`);
+		const picker = await openPicker(card);
+		await picker.getByTestId('recipe-image-source-generate').click();
 
-		await expect(page.locator('[data-test-class="toast"][data-tone="error"]')).toBeVisible();
+		await expect(picker.getByTestId('recipe-image-picker-error')).toBeVisible();
 		await expect(card.locator('[data-test-class="recipe-photo"]')).toHaveCount(0);
 	});
-});
 
-test.describe("recherche d'image de recette", () => {
-	test("ouvre une fenetre, montre les resultats et pose l'image choisie", async ({ signedInPage: page }) => {
+	test("chercher, choisir une image, puis la retirer", async ({ signedInPage: page }) => {
+		await mockOpenverse(page, 3);
+		await mockThumbnails(page);
+
 		const name = `Recette recherche e2e ${Date.now()}`;
+		const card = await createRecipe(page, name);
+		const picker = await openPicker(card);
+		await picker.getByTestId('recipe-image-source-search').click();
 
-		await page.route('https://api.openverse.org/v1/images/?**', async (route) => {
+		await expect(page.getByTestId('recipe-image-search-query')).toHaveValue(name);
+		const results = picker.locator('[data-test-class="recipe-image-search-result"]');
+		await expect(results).toHaveCount(3);
+		await results.nth(1).click();
+
+		await expect(picker).toBeHidden({ timeout: 15_000 });
+		await expect(page.locator(successToast)).toBeVisible();
+		await expect(card.locator('[data-test-class="recipe-photo"]')).toBeVisible({ timeout: 15_000 });
+
+		await card.locator('[data-test-class="recipe-photo-button"]').click();
+		await picker.getByTestId('recipe-image-source-remove').click();
+		await expect(picker).toBeHidden();
+		await expect(card.locator('[data-test-class="recipe-photo"]')).toHaveCount(0);
+	});
+
+	test("dit quand rien n'est trouve", async ({ signedInPage: page }) => {
+		await mockOpenverse(page, 0);
+
+		const card = await createRecipe(page, `Recette introuvable e2e ${Date.now()}`);
+		const picker = await openPicker(card);
+		await picker.getByTestId('recipe-image-source-search').click();
+
+		await expect(page.getByTestId('recipe-image-search-error')).toBeVisible();
+		await expect(page.getByTestId('recipe-image-banks-hint')).toBeVisible();
+	});
+
+	test('une photo de l appareil devient la photo de la recette', async ({ signedInPage: page }) => {
+		const card = await createRecipe(page, `Recette galerie e2e ${Date.now()}`);
+		const picker = await openPicker(card);
+
+		await picker.getByTestId('recipe-image-gallery-input').setInputFiles({
+			name: 'plat.png',
+			mimeType: 'image/png',
+			buffer: FAKE_PNG
+		});
+
+		await expect(picker).toBeHidden({ timeout: 15_000 });
+		await expect(page.locator(successToast)).toBeVisible();
+		await expect(card.locator('[data-test-class="recipe-photo"]')).toBeVisible({ timeout: 15_000 });
+	});
+
+	test('une cle pexels ajoute ses resultats a ceux d openverse', async ({ signedInPage: page }) => {
+		await mockOpenverse(page, 1);
+		await mockThumbnails(page);
+		let authorization = '';
+		await page.route('https://api.pexels.com/v1/search?**', async (route) => {
+			authorization = route.request().headers()['authorization'] ?? '';
 			await route.fulfill({
 				status: 200,
 				contentType: 'application/json',
 				body: JSON.stringify({
-					results: [1, 2, 3].map((n) => ({
-						id: `img-${n}`,
-						title: `Plat ${n}`,
-						thumbnail: `https://thumbs.example.test/${n}.jpg`,
-						creator: 'Auteur',
-						license: 'by'
-					}))
+					photos: [{ id: 1, alt: 'Plat', photographer: 'Ana', src: { medium: 'https://thumbs.example.test/p.png' } }]
 				})
 			});
 		});
-		await page.route('https://thumbs.example.test/**', async (route) => {
-			await route.fulfill({ status: 200, contentType: 'image/png', body: FAKE_PNG });
-		});
 
-		const card = await createRecipe(page, name);
-		await card.locator('[data-test-class="recipe-card-header"]').click();
-		await card.locator('[data-test-class="recipe-photo-search-button"]').click();
+		await page.goto('/profile/images');
+		await page.getByTestId('image-bank-pexels-key').fill('cle-e2e');
+		await page.getByTestId('image-bank-pexels-save').click();
+		await expect(page.getByTestId('image-bank-pexels-state')).toHaveAttribute('data-state', 'on');
 
-		const sheet = page.getByTestId('recipe-image-search');
-		await expect(sheet).toBeVisible();
-		await expect(page.getByTestId('recipe-image-search-query')).toHaveValue(new RegExp(name));
+		try {
+			const card = await createRecipe(page, `Recette pexels e2e ${Date.now()}`);
+			const picker = await openPicker(card);
+			await picker.getByTestId('recipe-image-source-search').click();
 
-		const results = sheet.locator('[data-test-class="recipe-image-search-result"]');
-		await expect(results).toHaveCount(3);
-		await results.nth(1).click();
-
-		await expect(sheet).toBeHidden({ timeout: 15_000 });
-		await expect(page.locator('[data-test-class="toast"][data-tone="success"]')).toBeVisible();
-		await expect(card.locator('[data-test-class="recipe-photo"]')).toBeVisible({ timeout: 15_000 });
-	});
-
-	test("dit quand rien n'est trouve", async ({ signedInPage: page }) => {
-		const name = `Recette introuvable e2e ${Date.now()}`;
-
-		await page.route('https://api.openverse.org/v1/images/?**', async (route) => {
-			await route.fulfill({ status: 200, contentType: 'application/json', body: '{"results":[]}' });
-		});
-
-		const card = await createRecipe(page, name);
-		await card.locator('[data-test-class="recipe-card-header"]').click();
-		await card.locator('[data-test-class="recipe-photo-search-button"]').click();
-
-		await expect(page.getByTestId('recipe-image-search-error')).toBeVisible();
+			await expect(picker.locator('[data-source="pexels"]')).toHaveCount(1);
+			await expect(picker.locator('[data-source="openverse"]')).toHaveCount(1);
+			expect(authorization).toBe('cle-e2e');
+		} finally {
+			await page.goto('/profile/images');
+			await page.getByTestId('image-bank-pexels-clear').click();
+			await expect(page.getByTestId('image-bank-pexels-state')).toHaveAttribute('data-state', 'off');
+		}
 	});
 });

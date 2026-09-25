@@ -23,6 +23,7 @@
 	import { feedback } from '$stores/feedback.svelte';
 	import { settings } from '$stores/settings.svelte';
 	import { ai } from '$stores/ai.svelte';
+	import { imageBanks } from '$stores/image-banks.svelte';
 	import { navDirection } from '$domain/motion';
 	import { isLegalRoute } from '$domain/legal';
 	import { entriesSince } from '$domain/changelog';
@@ -238,6 +239,7 @@
 		}
 
 		ai.load();
+		imageBanks.load();
 	});
 
 	/**

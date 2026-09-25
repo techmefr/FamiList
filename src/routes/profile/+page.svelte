@@ -23,7 +23,8 @@
 	import { Label } from '$components/ui/label';
 	import { Button } from '$components/ui/button';
 	import { Switch } from '$components/ui/switch';
-	import { Check, Volume2, Users, ShieldCheck, Sparkles, PlugZap, Scale } from '@lucide/svelte';
+	import {
+		Images, Check, Volume2, Users, ShieldCheck, Sparkles, PlugZap, Scale } from '@lucide/svelte';
 	import { LEGAL_DOCUMENTS, legalPath } from '$domain/legal';
 	import { PRIVACY_REQUEST_PATH } from '$domain/privacy-request';
 	import Avatar from '$components/app/Avatar.svelte';
@@ -437,6 +438,19 @@
 		<Button href="/profile/ai" data-test-id="go-ai" class="fl-press">
 			<Sparkles size={18} aria-hidden="true" />
 			{t('ai.title')}
+		</Button>
+	</Card.Content>
+</Card.Root>
+
+<Card.Root class="mt-6">
+	<Card.Header>
+		<Card.Title class="text-h2">{t('imageBanks.title')}</Card.Title>
+	</Card.Header>
+	<Card.Content class="flex flex-wrap items-center justify-between gap-4">
+		<p class="text-muted-foreground text-label">{t('imageBanks.subtitle')}</p>
+		<Button href="/profile/images" data-test-id="go-image-banks" class="fl-press">
+			<Images size={18} aria-hidden="true" />
+			{t('imageBanks.title')}
 		</Button>
 	</Card.Content>
 </Card.Root>

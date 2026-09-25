@@ -18,12 +18,9 @@ import {
 } from '$domain/ai';
 import { parseRecipeSuggestion, type SuggestedRecipe } from '$domain/ai-recipe';
 import {
-	imageSearchResults,
-	openverseSearchUrl,
 	photoFailureOfStatus,
 	pollinationsImageUrl,
 	recipePhotoPath,
-	type ImageSearchResult,
 	type PhotoFailure
 } from '$domain/ai-image';
 
@@ -37,10 +34,6 @@ export type SuggestOutcome =
 	| { ok: false; reason: 'network' | 'provider' | 'unreadable' | 'unsupported'; detail: string };
 
 export type PhotoOutcome = { ok: true; path: string } | { ok: false; reason: PhotoFailure };
-
-export type PhotoSearchOutcome =
-	| { ok: true; results: ImageSearchResult[] }
-	| { ok: false; reason: PhotoFailure };
 
 /** One saved provider row, as the screen lists it. The key never leaves this shape. */
 export type Credential = AiCredentialRow;
@@ -401,27 +394,6 @@ class AiStore {
 	}
 
 	/**
-	 * Searches a free-image bank (Openverse) and hands every usable result back, for the person to pick the
-	 * one that actually shows their dish: the first hit is too often a different dish sharing a word.
-	 */
-	async searchRecipePhotos(query: string): Promise<PhotoSearchOutcome> {
-		let response: Response;
-		try {
-			response = await fetch(openverseSearchUrl(query));
-		} catch {
-			return { ok: false, reason: networkFailure() };
-		}
-
-		if (!response.ok) return { ok: false, reason: photoFailureOfStatus(response.status) };
-
-		const payload: unknown = await response.json().catch(() => null);
-		const results = imageSearchResults(payload);
-		if (results.length === 0) return { ok: false, reason: 'not-found' };
-
-		return { ok: true, results };
-	}
-
-	/**
 	 * Fetches a photo published at a URL — a generated one, a picked search result, an imported recipe's own
 	 * picture (#236) — and uploads it to the household's `recipe-photos` bucket. Every source converges here,
 	 * so a stored photo is the same thing afterwards whatever it came from.
@@ -451,6 +423,21 @@ class AiStore {
 		if (!mimeType.startsWith('image/')) return { ok: false, reason: 'unreachable' };
 
 		return this.#uploadPhoto(householdId, recipeId, bytes, mimeType);
+	}
+
+	/** A photo the person took or picked on the device, already resized by the caller. */
+	async uploadRecipePhoto(householdId: string, recipeId: string, photo: Blob): Promise<PhotoOutcome> {
+		let bytes: Uint8Array;
+		try {
+			bytes = new Uint8Array(await photo.arrayBuffer());
+		} catch {
+			return { ok: false, reason: 'upload' };
+		}
+		return this.#uploadPhoto(householdId, recipeId, bytes, photo.type || 'image/jpeg');
+	}
+
+	async removeRecipePhoto(photoPath: string): Promise<void> {
+		await supabase.storage.from('recipe-photos').remove([photoPath]);
 	}
 
 	async #uploadPhoto(

@@ -1256,6 +1256,15 @@
 		"photoGenerate": "生成图片",
 		"photoRegenerate": "重新生成图片",
 		"photoGenerating": "生成中…",
+		"photoAdd": "添加图片",
+		"photoChange": "更换图片",
+		"photoCamera": "拍照",
+		"photoGallery": "从我的照片中选择",
+		"photoRemove": "移除图片",
+		"photoRemoved": "已从食谱中移除图片",
+		"photoTooBig": "这张照片太大了。请换一张。",
+		"photoBack": "返回来源",
+		"photoBanksHint": "使用 Pexels 或 Pixabay 密钥可获得更多结果：",
 		"photoSearch": "搜索图片",
 		"photoSearching": "搜索中…",
 		"photoSearchNotFound": "未找到图片",
@@ -1391,5 +1400,19 @@
 			}
 		},
 		"makeRequest": "提交关于我的数据的请求"
+	},
+	"imageBanks": {
+		"title": "图库",
+		"subtitle": "你的 Pexels 和 Pixabay 密钥，用来找到更多菜品照片。",
+		"privacySent": "只有你的搜索词会发送给所选图库，别的都不会。",
+		"privacyKey": "密钥只与你的账号关联：家庭成员和管理员都看不到。",
+		"privacyFree": "这两个图库都提供免费密钥。",
+		"stateOn": "密钥已保存",
+		"stateOff": "没有密钥",
+		"replaceKey": "替换密钥",
+		"remove": "移除密钥",
+		"saved": "{bank} 密钥已保存",
+		"removed": "{bank} 密钥已移除",
+		"saveFailed": "密钥无法保存。请重试。"
 	}
 }

@@ -1266,6 +1266,15 @@
 		"photoGenerate": "Gerar uma foto",
 		"photoRegenerate": "Gerar novamente a foto",
 		"photoGenerating": "A gerar…",
+		"photoAdd": "Adicionar uma imagem",
+		"photoChange": "Mudar a imagem",
+		"photoCamera": "Tirar uma foto",
+		"photoGallery": "Escolher nas minhas fotos",
+		"photoRemove": "Remover a imagem",
+		"photoRemoved": "Imagem removida da receita",
+		"photoTooBig": "Esta foto é demasiado pesada. Escolha outra.",
+		"photoBack": "Voltar às fontes",
+		"photoBanksHint": "Mais resultados com uma chave Pexels ou Pixabay:",
 		"photoSearch": "Procurar uma imagem",
 		"photoSearching": "A procurar…",
 		"photoSearchNotFound": "Nenhuma imagem encontrada",
@@ -1402,5 +1411,19 @@
 			}
 		},
 		"makeRequest": "Fazer um pedido sobre os meus dados"
+	},
+	"imageBanks": {
+		"title": "Bancos de imagens",
+		"subtitle": "As suas chaves Pexels e Pixabay, para encontrar mais fotos de pratos.",
+		"privacySent": "As palavras que procura são enviadas ao banco escolhido, nada mais.",
+		"privacyKey": "A chave fica ligada à sua conta: nem a sua casa nem o administrador a veem.",
+		"privacyFree": "Ambos os bancos oferecem uma chave gratuita.",
+		"stateOn": "Chave guardada",
+		"stateOff": "Sem chave",
+		"replaceKey": "Substituir a chave",
+		"remove": "Remover a chave",
+		"saved": "Chave {bank} guardada",
+		"removed": "Chave {bank} removida",
+		"saveFailed": "Não foi possível guardar a chave. Tente novamente."
 	}
 }

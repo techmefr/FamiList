@@ -1265,6 +1265,15 @@
 		"photoGenerate": "Générer une photo",
 		"photoRegenerate": "Régénérer la photo",
 		"photoGenerating": "Génération en cours…",
+		"photoAdd": "Ajouter une image",
+		"photoChange": "Changer l'image",
+		"photoCamera": "Prendre une photo",
+		"photoGallery": "Choisir dans mes photos",
+		"photoRemove": "Retirer l'image",
+		"photoRemoved": "Image retirée de la recette",
+		"photoTooBig": "Cette photo est trop lourde. Choisissez-en une autre.",
+		"photoBack": "Retour aux sources",
+		"photoBanksHint": "Plus de résultats avec une clé Pexels ou Pixabay :",
 		"photoSearch": "Chercher une image",
 		"photoSearching": "Recherche en cours…",
 		"photoSearchNotFound": "Aucune image trouvée",
@@ -1401,5 +1410,19 @@
 			}
 		},
 		"makeRequest": "Faire une demande relative à mes données"
+	},
+	"imageBanks": {
+		"title": "Banques d'images",
+		"subtitle": "Vos clés Pexels et Pixabay, pour trouver plus de photos de plats.",
+		"privacySent": "Les mots de votre recherche sont envoyés à la banque choisie, rien d’autre.",
+		"privacyKey": "La clé reste liée à votre compte : ni votre foyer ni l’administrateur ne la voient.",
+		"privacyFree": "Ces deux banques proposent une clé gratuite.",
+		"stateOn": "Clé enregistrée",
+		"stateOff": "Aucune clé",
+		"replaceKey": "Remplacer la clé",
+		"remove": "Retirer la clé",
+		"saved": "Clé {bank} enregistrée",
+		"removed": "Clé {bank} retirée",
+		"saveFailed": "La clé n'a pas pu être enregistrée. Réessayez."
 	}
 }

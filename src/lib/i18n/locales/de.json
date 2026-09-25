@@ -1266,6 +1266,15 @@
 		"photoGenerate": "Foto erzeugen",
 		"photoRegenerate": "Foto neu erzeugen",
 		"photoGenerating": "Wird erzeugt…",
+		"photoAdd": "Bild hinzufügen",
+		"photoChange": "Bild ändern",
+		"photoCamera": "Foto aufnehmen",
+		"photoGallery": "Aus meinen Fotos wählen",
+		"photoRemove": "Bild entfernen",
+		"photoRemoved": "Bild aus dem Rezept entfernt",
+		"photoTooBig": "Dieses Foto ist zu groß. Wählen Sie ein anderes.",
+		"photoBack": "Zurück zu den Quellen",
+		"photoBanksHint": "Mehr Ergebnisse mit einem Pexels- oder Pixabay-Schlüssel:",
 		"photoSearch": "Nach einem Bild suchen",
 		"photoSearching": "Suche läuft…",
 		"photoSearchNotFound": "Kein Bild gefunden",
@@ -1402,5 +1411,19 @@
 			}
 		},
 		"makeRequest": "Anfrage zu meinen Daten stellen"
+	},
+	"imageBanks": {
+		"title": "Bilddatenbanken",
+		"subtitle": "Ihre Pexels- und Pixabay-Schlüssel, um mehr Fotos von Gerichten zu finden.",
+		"privacySent": "Ihre Suchbegriffe werden an die gewählte Datenbank gesendet, sonst nichts.",
+		"privacyKey": "Der Schlüssel bleibt an Ihr Konto gebunden: Weder Ihr Haushalt noch der Administrator sehen ihn.",
+		"privacyFree": "Beide Datenbanken bieten einen kostenlosen Schlüssel.",
+		"stateOn": "Schlüssel gespeichert",
+		"stateOff": "Kein Schlüssel",
+		"replaceKey": "Schlüssel ersetzen",
+		"remove": "Schlüssel entfernen",
+		"saved": "{bank}-Schlüssel gespeichert",
+		"removed": "{bank}-Schlüssel entfernt",
+		"saveFailed": "Der Schlüssel konnte nicht gespeichert werden. Versuchen Sie es erneut."
 	}
 }

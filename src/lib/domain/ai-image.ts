@@ -66,7 +66,11 @@ interface OpenverseSearchResponse {
 /** One image a person can pick in the search sheet, with the credit its licence asks for. */
 export interface ImageSearchResult {
 	id: string;
+	source: 'openverse' | 'pexels' | 'pixabay';
+	/** What the grid shows. */
 	previewUrl: string;
+	/** What gets copied into the recipe: larger than the preview when the bank offers one. */
+	imageUrl: string;
 	title: string;
 	creator: string;
 	license: string;
@@ -90,7 +94,9 @@ export function imageSearchResults(payload: unknown): ImageSearchResult[] {
 		return [
 			{
 				id: result.id,
+				source: 'openverse' as const,
 				previewUrl,
+				imageUrl: previewUrl,
 				title: result.title?.trim() ?? '',
 				creator: result.creator?.trim() ?? '',
 				license

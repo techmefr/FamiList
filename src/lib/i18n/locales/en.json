@@ -1266,6 +1266,15 @@
 		"photoGenerate": "Generate a photo",
 		"photoRegenerate": "Regenerate the photo",
 		"photoGenerating": "Generating…",
+		"photoAdd": "Add an image",
+		"photoChange": "Change the image",
+		"photoCamera": "Take a photo",
+		"photoGallery": "Choose from my photos",
+		"photoRemove": "Remove the image",
+		"photoRemoved": "Image removed from the recipe",
+		"photoTooBig": "This photo is too large. Choose another one.",
+		"photoBack": "Back to sources",
+		"photoBanksHint": "More results with a Pexels or Pixabay key:",
 		"photoSearch": "Search for an image",
 		"photoSearching": "Searching…",
 		"photoSearchNotFound": "No image found",
@@ -1402,5 +1411,19 @@
 			}
 		},
 		"makeRequest": "Make a request about my data"
+	},
+	"imageBanks": {
+		"title": "Image libraries",
+		"subtitle": "Your Pexels and Pixabay keys, to find more dish photos.",
+		"privacySent": "The words you search for are sent to the chosen library, nothing else.",
+		"privacyKey": "The key stays tied to your account: neither your household nor the administrator can see it.",
+		"privacyFree": "Both libraries offer a free key.",
+		"stateOn": "Key saved",
+		"stateOff": "No key",
+		"replaceKey": "Replace the key",
+		"remove": "Remove the key",
+		"saved": "{bank} key saved",
+		"removed": "{bank} key removed",
+		"saveFailed": "The key could not be saved. Try again."
 	}
 }
