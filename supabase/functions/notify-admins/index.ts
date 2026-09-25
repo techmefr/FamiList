@@ -22,17 +22,32 @@ type ClaimResult = {
 	notifications: AdminNotification[];
 };
 
-const rpc = <T>(name: string, args: Record<string, unknown>): Promise<T> =>
-	callRpc<T>(name, args, serviceKey());
+/**
+ * The token that opens `service_role`-only RPCs.
+ *
+ * `SUPABASE_SERVICE_ROLE_KEY`, injected automatically, is not always the legacy JWT PostgREST expects on
+ * `Authorization: Bearer` — a project on the newer API key system gives it the opaque `sb_secret_...` form
+ * instead, and PostgREST then answers "Expected 3 parts in JWT; got 1". `flush_admin_notifications` already
+ * calls this function with a legacy JWT of its own (`admin_notifications_service_key`, from Vault, chosen
+ * for exactly this): forwarding that incoming token covers both project types with no extra secret to keep
+ * in sync, and only falls back to the auto-injected key for a manual, unauthenticated local run.
+ */
+function tokenOf(req: Request): string {
+	const header = req.headers.get('authorization') ?? '';
+	const [scheme, token] = header.split(' ');
+	return scheme?.toLowerCase() === 'bearer' && token ? token : serviceKey();
+}
 
 /** One SMTP send costs one slot of the daily cap; a refusal is an error like any other send failure. */
-async function claimSendOrThrow(): Promise<void> {
+async function claimSendOrThrow(rpc: <T>(name: string, args: Record<string, unknown>) => Promise<T>): Promise<void> {
 	if (!(await rpc<boolean>('claim_instance_mail', { amount: 1 }))) {
 		throw new Error('plafond d envoi journalier atteint');
 	}
 }
 
-Deno.serve(async () => {
+Deno.serve(async (req) => {
+	const token = tokenOf(req);
+	const rpc = <T>(name: string, args: Record<string, unknown>): Promise<T> => callRpc<T>(name, args, token);
 	let claimed: string[] = [];
 
 	try {
@@ -43,7 +58,7 @@ Deno.serve(async () => {
 
 		claimed = notifications.map((notification) => notification.id);
 
-		const settings = await loadMailSettings();
+		const settings = await loadMailSettings(token);
 		if (!isMailConfigured(settings)) throw new Error('SMTP non configure');
 
 		// `approved` notifications go one by one to the account itself; everything else is still the
@@ -58,14 +73,14 @@ Deno.serve(async () => {
 			const email = approval.payload.email;
 			if (typeof email !== 'string' || email.trim() === '') continue;
 
-			await claimSendOrThrow();
+			await claimSendOrThrow(rpc);
 			const mail = buildApprovalMail(appUrl);
 			await sendMail(settings, [email], mail.subject, mail.text);
 			sentIds.push(approval.id);
 		}
 
 		if (rest.length > 0) {
-			await claimSendOrThrow();
+			await claimSendOrThrow(rpc);
 			const mail = buildAdminMail(rest, `${appUrl}/admin`);
 			await sendMail(settings, recipients, mail.subject, mail.text);
 			sentIds.push(...rest.map((notification) => notification.id));
