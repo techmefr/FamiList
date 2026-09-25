@@ -667,6 +667,44 @@
 			}
 		}
 	},
+	"recipeTags": {
+		"title": "Categorie",
+		"hint": "Seleziona tutto ciò che corrisponde: servono a ritrovare la ricetta.",
+		"listLabel": "Categorie della ricetta",
+		"category": {
+			"course": "Portata",
+			"diet": "Dieta",
+			"occasion": "Occasione",
+			"season": "Stagione"
+		},
+		"tag": {
+			"breakfast": "Colazione",
+			"aperitif": "Aperitivo",
+			"hot_starter": "Antipasto caldo",
+			"cold_starter": "Antipasto freddo",
+			"soup": "Zuppa",
+			"main": "Piatto principale",
+			"side": "Contorno",
+			"dessert": "Dolce",
+			"snack": "Merenda",
+			"drink": "Bevanda",
+			"vegetarian": "Vegetariano",
+			"vegan": "Vegano",
+			"gluten_free": "Senza glutine",
+			"lactose_free": "Senza lattosio",
+			"low_salt": "Poco sale",
+			"low_sugar": "Poco zucchero",
+			"quick": "Veloce",
+			"kids": "Per bambini",
+			"party": "Festa",
+			"picnic": "Picnic",
+			"holiday": "Natale e feste",
+			"spring": "Primavera",
+			"summer": "Estate",
+			"autumn": "Autunno",
+			"winter": "Inverno"
+		}
+	},
 	"aisles": {
 		"title": "Reparti",
 		"new": "Aggiungi un reparto",

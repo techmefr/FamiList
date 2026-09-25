@@ -2,6 +2,7 @@ import { DEFAULT_SERVINGS, type RecipeLine } from './recipe';
 import { DEFAULT_UNIT } from './units';
 import { guessLinks } from './step-ingredients';
 import { detectDuration } from './step-duration';
+import { tagsFromSchemaOrg } from './recipe-tags';
 import { importedLines, parseImportedServings, type ImportedRecipe } from './recipe-import';
 import type { SuggestedRecipe } from './ai-recipe';
 
@@ -24,6 +25,8 @@ export interface RecipeDraft {
 	stepIngredients: number[][];
 	/** For each of `steps`, how long it takes in seconds, or null (#310). */
 	stepDurations: (number | null)[];
+	/** Tag keys (#314), picked again or changed in the form's own tag picker. */
+	tags: string[];
 	imagePrompt?: string;
 	image: string | null;
 	reviewed: boolean;
@@ -42,6 +45,7 @@ export function emptyDraft(): RecipeDraft {
 		steps: [''],
 		stepIngredients: [[]],
 		stepDurations: [null],
+		tags: [],
 		image: null,
 		reviewed: false
 	};
@@ -68,6 +72,7 @@ export function draftFromImport(recipe: ImportedRecipe): RecipeDraft {
 				)
 			: [[]],
 		stepDurations: recipe.steps.length ? recipe.steps.map((body) => detectDuration(body)) : [null],
+		tags: tagsFromSchemaOrg(recipe.categories),
 		image: recipe.image,
 		reviewed: true
 	};
@@ -85,6 +90,7 @@ export function draftFromSuggestion(recipe: SuggestedRecipe): RecipeDraft {
 		stepDurations: recipe.steps.length
 			? recipe.steps.map((_, index) => recipe.stepDurations[index] ?? null)
 			: [null],
+		tags: [...recipe.tags],
 		imagePrompt: recipe.imagePrompt,
 		image: null,
 		reviewed: true

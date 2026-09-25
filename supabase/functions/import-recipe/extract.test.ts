@@ -22,8 +22,26 @@ describe('extractRecipe', () => {
 			servings: '4 personnes',
 			ingredients: ['600 g de courgettes', '20 cl de creme', 'Sel'],
 			steps: ['Laver les courgettes.', 'Enfourner 30 minutes.'],
-			image: null
+			image: null,
+			categories: []
 		});
+	});
+
+	it('rend telles quelles la categorie, la cuisine et le regime', () => {
+		const found = extractRecipe(
+			page({
+				...gratin,
+				recipeCategory: ['Plat principal', 'Gratin'],
+				recipeCuisine: 'Française',
+				suitableForDiet: 'https://schema.org/VegetarianDiet'
+			})
+		);
+		expect(found?.categories).toEqual([
+			'Plat principal',
+			'Gratin',
+			'Française',
+			'https://schema.org/VegetarianDiet'
+		]);
 	});
 
 	it('lit un Recipe range dans un tableau', () => {

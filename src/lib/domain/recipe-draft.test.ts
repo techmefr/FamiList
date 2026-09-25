@@ -13,6 +13,7 @@ describe('emptyDraft', () => {
 			steps: [''],
 			stepIngredients: [[]],
 			stepDurations: [null],
+			tags: [],
 			image: null,
 			reviewed: false
 		});
@@ -32,7 +33,8 @@ describe('draftFromImport', () => {
 			ingredients: ['250 g de farine', '3 oeufs'],
 			steps: ['Mélanger la farine et les oeufs.', 'Laisser reposer 30 minutes.'],
 			servings: '6 personnes',
-			image: 'https://exemple.fr/crepes.jpg'
+			image: 'https://exemple.fr/crepes.jpg',
+			categories: ['Dessert', 'https://schema.org/VegetarianDiet']
 		});
 
 		expect(draft.name).toBe('Crêpes');
@@ -41,6 +43,7 @@ describe('draftFromImport', () => {
 		expect(draft.steps).toHaveLength(2);
 		expect(draft.stepIngredients).toHaveLength(2);
 		expect(draft.stepDurations).toEqual([null, 30 * 60]);
+		expect(draft.tags).toEqual(['dessert', 'vegetarian']);
 		expect(draft.image).toBe('https://exemple.fr/crepes.jpg');
 		expect(draft.reviewed).toBe(true);
 	});
@@ -53,6 +56,7 @@ describe('draftFromImport', () => {
 		expect(draft.lines).toEqual([{ name: '', qty: '', unit: DEFAULT_UNIT }]);
 		expect(draft.steps).toEqual(['']);
 		expect(draft.stepIngredients).toEqual([[]]);
+		expect(draft.tags).toEqual([]);
 	});
 });
 
@@ -66,6 +70,7 @@ describe('draftFromSuggestion', () => {
 			steps: ['Cuire le poulet.'],
 			stepIngredients: [[0]],
 			stepDurations: [600],
+			tags: ['main', 'quick'],
 			imagePrompt: 'un curry fumant'
 		});
 
@@ -77,6 +82,7 @@ describe('draftFromSuggestion', () => {
 			steps: ['Cuire le poulet.'],
 			stepIngredients: [[0]],
 			stepDurations: [600],
+			tags: ['main', 'quick'],
 			imagePrompt: 'un curry fumant',
 			image: null,
 			reviewed: true
@@ -91,7 +97,8 @@ describe('draftFromSuggestion', () => {
 			ingredients: [],
 			steps: [],
 			stepIngredients: [],
-			stepDurations: []
+			stepDurations: [],
+			tags: []
 		});
 
 		expect(draft.lines).toHaveLength(1);

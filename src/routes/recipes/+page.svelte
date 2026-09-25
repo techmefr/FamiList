@@ -25,6 +25,8 @@
 	import RecipePhoto from '$components/app/RecipePhoto.svelte';
 	import RecipeShareSheet from '$components/app/RecipeShareSheet.svelte';
 	import RecipeCover from '$components/app/RecipeCover.svelte';
+	import RecipeTagPicker from '$components/app/RecipeTagPicker.svelte';
+	import RecipeTagChips from '$components/app/RecipeTagChips.svelte';
 	import {
 		CookingPot,
 		Hash,
@@ -76,6 +78,7 @@
 		lines.map((line, lineIndex) => ({ line, lineIndex })).filter(({ line }) => line.name.trim())
 	);
 	let notes = $state('');
+	let tags = $state<string[]>([]);
 
 	/** Set when the form is a copy of a recipe shared by another circle: saving creates a recipe of our own. */
 	let copiedFrom = $state<string | null>(null);
@@ -152,6 +155,7 @@
 		steps = draft.steps;
 		stepIngredients = draft.stepIngredients;
 		stepTimes = draft.stepDurations.map((seconds) => durationFields(seconds));
+		tags = [...draft.tags];
 		notes = '';
 		imagePrompt = draft.imagePrompt;
 		importedImage = draft.image;
@@ -191,6 +195,7 @@
 		stepIngredients = [[]];
 		stepTimes = [durationFields(null)];
 		notes = '';
+		tags = [];
 		copiedFrom = null;
 		fromImport = false;
 		importedImage = null;
@@ -221,6 +226,7 @@
 		emoji = recipe.emoji;
 		servings = recipe.servings;
 		notes = recipe.notes ?? '';
+		tags = [...(recipe.tags ?? [])];
 
 		const existingLines = data
 			.ingredientsOf(recipe.id)
@@ -309,6 +315,7 @@
 				emoji,
 				servings,
 				notes,
+				tags,
 				ingredients: lines,
 				steps,
 				stepIngredients,
@@ -320,6 +327,7 @@
 				emoji,
 				servings,
 				notes,
+				tags,
 				ingredients: lines,
 				steps,
 				stepIngredients,
@@ -525,6 +533,8 @@
 						class="border-input bg-background w-full rounded-md border p-2"
 					></textarea>
 				</div>
+
+				<RecipeTagPicker bind:tags />
 
 				{#if editingId}
 					{@const editing = data.recipes.find((recipe) => recipe.id === editingId)}
@@ -820,6 +830,9 @@
 							{/if}
 						</span>
 					</button>
+
+					<!-- Outside the toggle: a list has no place inside a button, and the tags read at rest. -->
+					<RecipeTagChips tags={recipe.tags} class="px-3 pb-3" />
 
 					{#if isExpanded}
 						<div

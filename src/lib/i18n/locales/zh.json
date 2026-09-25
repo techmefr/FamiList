@@ -666,6 +666,44 @@
 			}
 		}
 	},
+	"recipeTags": {
+		"title": "分类",
+		"hint": "勾选所有符合的项：方便以后再找到这道菜谱。",
+		"listLabel": "菜谱分类",
+		"category": {
+			"course": "菜品类型",
+			"diet": "饮食",
+			"occasion": "场合",
+			"season": "季节"
+		},
+		"tag": {
+			"breakfast": "早餐",
+			"aperitif": "开胃小食",
+			"hot_starter": "热前菜",
+			"cold_starter": "冷前菜",
+			"soup": "汤",
+			"main": "主菜",
+			"side": "配菜",
+			"dessert": "甜点",
+			"snack": "点心",
+			"drink": "饮品",
+			"vegetarian": "素食",
+			"vegan": "纯素",
+			"gluten_free": "无麸质",
+			"lactose_free": "无乳糖",
+			"low_salt": "少盐",
+			"low_sugar": "少糖",
+			"quick": "快手",
+			"kids": "适合儿童",
+			"party": "聚会",
+			"picnic": "野餐",
+			"holiday": "节日",
+			"spring": "春季",
+			"summer": "夏季",
+			"autumn": "秋季",
+			"winter": "冬季"
+		}
+	},
 	"aisles": {
 		"title": "货区",
 		"new": "添加货区",

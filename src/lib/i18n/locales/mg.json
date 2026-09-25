@@ -660,6 +660,44 @@
 			}
 		}
 	},
+	"recipeTags": {
+		"title": "Sokajy",
+		"hint": "Mariho izay rehetra mifanaraka: manampy hahitana indray ilay fomba fahandro izy ireo.",
+		"listLabel": "Sokajin’ilay fomba fahandro",
+		"category": {
+			"course": "Karazan-tsakafo",
+			"diet": "Fomba fisakafoanana",
+			"occasion": "Fotoana manokana",
+			"season": "Vanim-potoana"
+		},
+		"tag": {
+			"breakfast": "Sakafo maraina",
+			"aperitif": "Fanokafana sakafo",
+			"hot_starter": "Fidirana mafana",
+			"cold_starter": "Fidirana mangatsiaka",
+			"soup": "Lasopy",
+			"main": "Sakafo fototra",
+			"side": "Laoka fanampiny",
+			"dessert": "Tsindrin-tsakafo",
+			"snack": "Tsakitsaky",
+			"drink": "Zava-pisotro",
+			"vegetarian": "Tsy misy hena",
+			"vegan": "Zavamaniry ihany",
+			"gluten_free": "Tsy misy gluten",
+			"lactose_free": "Tsy misy lactose",
+			"low_salt": "Kely sira",
+			"low_sugar": "Kely siramamy",
+			"quick": "Haingana",
+			"kids": "Ho an’ny ankizy",
+			"party": "Fety",
+			"picnic": "Piknika",
+			"holiday": "Krismasy sy fety",
+			"spring": "Lohataona",
+			"summer": "Fahavaratra",
+			"autumn": "Fararano",
+			"winter": "Ririnina"
+		}
+	},
 	"aisles": {
 		"title": "Faritra",
 		"new": "Hanampy faritra",

@@ -23,7 +23,8 @@ function suggested(name: string) {
 		servings: 2,
 		ingredients: [{ name: 'Tomates', qty: '3', unit: 'piece' }],
 		steps: ['Couper les tomates.', 'Laisser mariner.'],
-		stepMinutes: [0, 15]
+		stepMinutes: [0, 15],
+		tags: ['cold_starter', 'summer']
 	};
 }
 
@@ -109,7 +110,8 @@ test.describe('creer une recette', () => {
 					ingredients: ['250 g de farine', '3 oeufs'],
 					steps: ['Cuire 20 minutes.'],
 					servings: '6',
-					image: null
+					image: null,
+					categories: ['Dessert']
 				})
 			});
 		});
@@ -123,6 +125,7 @@ test.describe('creer une recette', () => {
 
 		await expect(page.getByTestId('recipe-import-review')).toBeVisible();
 		await expect(page.getByTestId('recipe-servings')).toHaveValue('6');
+		await expect(page.getByTestId('recipe-tag-dessert')).toBeChecked();
 		await saveFromForm(page, name, { step: 0, value: '20' });
 	});
 
@@ -192,6 +195,8 @@ test.describe('creer une recette avec l IA', () => {
 		await page.getByTestId('ai-proposal-accept').click();
 
 		await expect(page.getByTestId('recipe-import-review')).toBeVisible();
+		await expect(page.getByTestId('recipe-tag-cold_starter')).toBeChecked();
+		await expect(page.getByTestId('recipe-tag-summer')).toBeChecked();
 		await saveFromForm(page, name, { step: 1, value: '15' });
 	});
 

@@ -673,6 +673,44 @@
 			}
 		}
 	},
+	"recipeTags": {
+		"title": "Categorías",
+		"hint": "Marque todo lo que corresponda: sirven para volver a encontrar la receta.",
+		"listLabel": "Categorías de la receta",
+		"category": {
+			"course": "Tipo de plato",
+			"diet": "Dieta",
+			"occasion": "Ocasión",
+			"season": "Temporada"
+		},
+		"tag": {
+			"breakfast": "Desayuno",
+			"aperitif": "Aperitivo",
+			"hot_starter": "Entrante caliente",
+			"cold_starter": "Entrante frío",
+			"soup": "Sopa",
+			"main": "Plato principal",
+			"side": "Guarnición",
+			"dessert": "Postre",
+			"snack": "Merienda",
+			"drink": "Bebida",
+			"vegetarian": "Vegetariano",
+			"vegan": "Vegano",
+			"gluten_free": "Sin gluten",
+			"lactose_free": "Sin lactosa",
+			"low_salt": "Bajo en sal",
+			"low_sugar": "Bajo en azúcar",
+			"quick": "Rápido",
+			"kids": "Para niños",
+			"party": "Fiesta",
+			"picnic": "Pícnic",
+			"holiday": "Navidad y fiestas",
+			"spring": "Primavera",
+			"summer": "Verano",
+			"autumn": "Otoño",
+			"winter": "Invierno"
+		}
+	},
 	"aisles": {
 		"title": "Secciones",
 		"new": "Añadir una sección",
