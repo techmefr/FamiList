@@ -476,6 +476,12 @@
 		"targetNew": "In una nuova lista",
 		"delete": "Elimina la ricetta {name}",
 		"edit": "Modifica la ricetta {name}",
+		"notes": "Note",
+		"notesPlaceholder": "Consigli, varianti, origine della ricetta…",
+		"photo": "Foto",
+		"copyNotice": "È una copia: salvandola crei una ricetta tua, l'originale non cambia.",
+		"editCopy": "Modifica una copia",
+		"editCopyAria": "Modifica una copia di {name}",
 		"deleteConfirm": "Eliminare {name}? Le liste già generate non cambieranno.",
 		"deleteYes": "Elimina",
 		"servingsCount": {

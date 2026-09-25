@@ -474,6 +474,12 @@
 		"targetNew": "加到新清单",
 		"delete": "删除食谱 {name}",
 		"edit": "编辑食谱 {name}",
+		"notes": "备注",
+		"notesPlaceholder": "小窍门、变化做法、食谱来源…",
+		"photo": "照片",
+		"copyNotice": "这是一份副本：保存后会生成你自己的食谱，原食谱保持不变。",
+		"editCopy": "编辑副本",
+		"editCopyAria": "编辑 {name} 的副本",
 		"deleteConfirm": "删除 {name}？已经生成的清单不会改变。",
 		"deleteYes": "删除",
 		"servingsCount": {

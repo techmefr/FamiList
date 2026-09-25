@@ -476,6 +476,12 @@
 		"targetNew": "In eine neue Liste",
 		"delete": "Rezept {name} löschen",
 		"edit": "Rezept {name} bearbeiten",
+		"notes": "Notizen",
+		"notesPlaceholder": "Tipps, Varianten, Herkunft des Rezepts…",
+		"photo": "Foto",
+		"copyNotice": "Dies ist eine Kopie: Beim Speichern entsteht Ihr eigenes Rezept, das Original bleibt unverändert.",
+		"editCopy": "Kopie bearbeiten",
+		"editCopyAria": "Kopie von {name} bearbeiten",
 		"deleteConfirm": "{name} löschen? Bereits erzeugte Listen bleiben unverändert.",
 		"deleteYes": "Löschen",
 		"servingsCount": {

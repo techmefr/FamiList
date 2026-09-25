@@ -476,6 +476,12 @@
 		"targetNew": "Amin ny lisitra vaovao",
 		"delete": "Fafao ny recette {name}",
 		"edit": "Ovay ny fomba fahandro {name}",
+		"notes": "Fanamarihana",
+		"notesPlaceholder": "Torohevitra, fiovana, niavian’ny fomba fahandroana…",
+		"photo": "Sary",
+		"copyNotice": "Kopia ity: rehefa tehirizina dia lasa fomba fahandroanao manokana izy, tsy miova ny tany am-boalohany.",
+		"editCopy": "Hanova kopia",
+		"editCopyAria": "Hanova kopian’ny {name}",
 		"deleteConfirm": "Fafao ny {name}? Tsy hiova ireo lisitra efa noforonina.",
 		"deleteYes": "Fafao",
 		"servingsCount": {

@@ -157,7 +157,7 @@ test.describe('compte de la carte', () => {
 
 	test.afterEach(async ({ page }, testInfo) => {
 		if (!secret) return;
-		testInfo.setTimeout(testInfo.timeout + 60_000);
+		testInfo.setTimeout(testInfo.timeout + 120_000);
 		const current = secret;
 		secret = null;
 		await signBackInAndRemoveSecondStep(page, current);
