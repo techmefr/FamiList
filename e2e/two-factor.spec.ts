@@ -1,7 +1,5 @@
-import { createHmac } from 'node:crypto';
-import type { Page } from '@playwright/test';
-import { test, expect, signIn, signOut, FIXTURE_EMAIL, FIXTURE_PASSWORD } from './fixtures';
-import { base32Decode, counterBytes, totpCounter, truncate } from '../src/lib/domain/totp';
+import { test, expect, signOut, FIXTURE_EMAIL, FIXTURE_PASSWORD } from './fixtures';
+import { codeTotp, rememberSecret, removeSecondStep } from './totp';
 
 /**
  * The second step was entirely written — QR, key in plain text, backup codes, prompt screen at sign-in —
@@ -13,34 +11,6 @@ import { base32Decode, counterBytes, totpCounter, truncate } from '../src/lib/do
  * It cleans up behind itself: the fixed account is shared by the whole suite, and leaving it in 2FA would
  * block every other test at sign-in.
  */
-function codeTotp(secret: string, atMs = Date.now()): string {
-	const digest = createHmac('sha1', Buffer.from(base32Decode(secret)))
-		.update(Buffer.from(counterBytes(totpCounter(atMs))))
-		.digest();
-
-	return truncate(new Uint8Array(digest));
-}
-
-/**
- * Removes the second factor and only returns once the account agrees.
- *
- * The switch answers for the gesture: it goes to "off" as soon as you click, before the request has even
- * left. Stopping there, then reloading or closing the page, cut the request in flight — the factor stayed
- * in the database, and everything signing in afterwards hit a code prompt. The status line, on the other
- * hand, only changes after the list of factors is re-read: it is the only signal that answers for the
- * account, and it is the one we wait for.
- */
-async function removeSecondStep(page: Page) {
-	await page.goto('/profile/security');
-
-	const status = page.getByTestId('totp-state');
-	await expect(status).toBeVisible({ timeout: 15_000 });
-
-	if ((await status.getAttribute('data-test-state')) === 'off') return;
-
-	await page.getByTestId('totp-switch').click();
-	await expect(status).toHaveAttribute('data-test-state', 'off', { timeout: 15_000 });
-}
 
 /**
  * The cleanup must hold even if the test stopped mid-way, with the square barely shown or the code barely
@@ -102,6 +72,7 @@ test('activer la 2FA, se reconnecter avec un code, puis la retirer', async ({
 
 	// From here on the account may end up in 2FA: the end-of-test net needs to know.
 	secretEnCours = secret;
+	rememberSecret(secret);
 
 	await page.getByTestId('totp-code').fill(codeTotp(secret));
 	await page.getByTestId('totp-confirm').click();

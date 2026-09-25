@@ -1,12 +1,11 @@
 import { test as base, expect, type Page } from '@playwright/test';
 import pkg from '../package.json' with { type: 'json' };
+import { FIXTURE_EMAIL, FIXTURE_PASSWORD } from './accounts';
+import { clearLeftoverSecondStep } from './totp';
 
 const appVersion: string = pkg.version;
 
-/** The accounts set by `supabase/seed.sql`, confirmed and approved from `supabase db reset` onwards. */
-export const FIXTURE_EMAIL = 'e2e@familist.test';
-export const SECOND_EMAIL = 'e2e-second@familist.test';
-export const FIXTURE_PASSWORD = 'familist-e2e-test';
+export { FIXTURE_EMAIL, SECOND_EMAIL, FIXTURE_PASSWORD } from './accounts';
 
 /** Signing in through the form, until the application is really open. */
 export async function signIn(page: Page, email: string, password: string) {
@@ -15,7 +14,12 @@ export async function signIn(page: Page, email: string, password: string) {
 	await page.getByTestId('auth-email').fill(email);
 	await page.getByTestId('auth-password').fill(password);
 	await page.getByTestId('auth-submit').click();
-	await expect(page.getByTestId('nav-create')).toBeVisible({ timeout: 15_000 });
+
+	const home = page.getByTestId('nav-create');
+	const codeForm = page.getByTestId('mfa-form');
+	await expect(home.or(codeForm).first()).toBeVisible({ timeout: 15_000 });
+	if (await codeForm.isVisible()) await clearLeftoverSecondStep(page);
+	await expect(home).toBeVisible({ timeout: 15_000 });
 }
 
 export async function signOut(page: Page) {
