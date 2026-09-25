@@ -1,0 +1,165 @@
+name: Release
+
+# Not every merge is a release: a release is prepared on demand, either with the "Run workflow" button
+# or by merging a pull request that carries the `release` label. Either way the workflow never pushes to
+# main — it opens a release pull request with the version bump, CHANGELOG.md and the translated patch
+# notes, for a human to read and merge.
+#
+# Merging that pull request changes package.json's version, and the `tag` job below turns that into a
+# `vX.Y.Z` tag, a GitHub release and a versioned container image.
+#
+# Set once in the repository settings:
+#
+#   Secrets → Actions → OPENROUTER_API_KEY — an OpenRouter key (openrouter.ai/settings/keys) with a little
+#   credit on it. One release costs a few cents. Without it, `prepare` stops before opening anything.
+#
+#   Variables → Actions → PATCH_NOTES_MODEL (optional) — any OpenRouter model id; defaults to
+#   `anthropic/claude-sonnet-5`.
+#
+#   Actions → General → "Allow GitHub Actions to create and approve pull requests" — required for the
+#   release pull request to be opened with the workflow's own token.
+#
+#   Secrets → Actions → RELEASE_TOKEN (optional) — a fine-grained token with contents and pull requests
+#   write. A pull request opened with the workflow's own token does not start CI (GitHub's rule against
+#   workflows triggering workflows); with this token it does. Without it, close and reopen the release
+#   pull request to run the checks.
+#
+#   Labels → `release` — only needed for the label trigger.
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Exact version (e.g. 0.2.0). Leave empty to derive it from the commits.
+        required: false
+        default: ''
+  pull_request:
+    types: [closed]
+    branches: [main]
+  push:
+    branches: [main]
+    paths: [package.json]
+
+# One release at a time: two preparations racing would bump the same version twice.
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  prepare:
+    if: >-
+      !github.event.repository.private && (
+        github.event_name == 'workflow_dispatch' || (
+          github.event_name == 'pull_request' &&
+          github.event.pull_request.merged &&
+          contains(github.event.pull_request.labels.*.name, 'release') &&
+          !startsWith(github.event.pull_request.head.ref, 'release/')
+        )
+      )
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      # The whole history and its tags: changelogen reads everything since the last `v*` tag.
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+          token: ${{ secrets.RELEASE_TOKEN || github.token }}
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      # Semver from the commit types, with changelogen's rule for 0.x versions: a feature bumps the
+      # patch number and a breaking change the minor one. An exact version given by hand wins.
+      - name: Changelog and version bump
+        env:
+          VERSION: ${{ inputs.version }}
+        run: |
+          if [ -n "$VERSION" ]; then
+            pnpm exec changelogen --bump --output CHANGELOG.md -r "$VERSION"
+          else
+            pnpm run release:changelog
+          fi
+
+      - name: Translated patch notes
+        env:
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          PATCH_NOTES_MODEL: ${{ vars.PATCH_NOTES_MODEL }}
+        run: pnpm run release:notes
+
+      # The same checks as CI, on the files this job just wrote: a malformed or incomplete release never
+      # reaches a pull request.
+      - name: Validate the release data
+        run: pnpm exec vitest run src/lib/changelog src/lib/domain/changelog.test.ts
+
+      - name: Open the release pull request
+        env:
+          GH_TOKEN: ${{ secrets.RELEASE_TOKEN || github.token }}
+        run: |
+          version=$(node -p "require('./package.json').version")
+          branch="release/v$version"
+
+          node -e "
+            const [release] = require('./src/lib/changelog/releases.json');
+            const section = (notes) => ['new', 'improved', 'fixed']
+              .filter((group) => notes[group].length)
+              .map((group) => '### ' + group + '\n\n' + notes[group].map((note) => '- ' + note).join('\n'))
+              .join('\n\n');
+            console.log('Release v' + release.version + '. Merging this tags it and publishes the image.\n');
+            console.log('Check the notes below (English, then French) before merging: they are what people read in the app, in all ten languages (src/lib/changelog/releases.json).\n');
+            console.log('## English\n\n' + section(release.notes.en) + '\n\n## Français\n\n' + section(release.notes.fr));
+          " > "$RUNNER_TEMP/body.md"
+
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git switch -c "$branch"
+          git add package.json CHANGELOG.md src/lib/changelog/releases.json
+          git commit -m "chore(release): v$version"
+          # The release branch belongs to this workflow alone: re-running it for a version not merged yet
+          # replaces its previous attempt.
+          git push --force origin "$branch"
+
+          if gh pr view "$branch" --json state -q .state 2>/dev/null | grep -q OPEN; then
+            gh pr edit "$branch" --body-file "$RUNNER_TEMP/body.md"
+          else
+            gh pr create --base main --head "$branch" --title "chore(release): v$version" --body-file "$RUNNER_TEMP/body.md"
+          fi
+
+  # Runs on every change to package.json on main, but only acts when its version has no tag yet — that
+  # is, once per merged release pull request (or a version bumped by hand).
+  tag:
+    if: ${{ !github.event.repository.private && github.event_name == 'push' }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      actions: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Tag, release and publish
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          version=$(node -p "require('./package.json').version")
+          tag="v$version"
+
+          if git rev-parse -q --verify "refs/tags/$tag" >/dev/null; then
+            echo "$tag already exists, nothing to release."
+            exit 0
+          fi
+
+          awk -v head="## $tag" '$0 == head { found = 1; next } found && /^## / { exit } found' CHANGELOG.md > "$RUNNER_TEMP/notes.md"
+          gh release create "$tag" --target "$GITHUB_SHA" --title "$tag" --notes-file "$RUNNER_TEMP/notes.md"
+
+          # A tag created with the workflow's own token does not start the tag-triggered workflows, so the
+          # versioned image is asked for explicitly. The store builds already run on every push to main.
+          gh workflow run publish-image.yml --ref "$tag"

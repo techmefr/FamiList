@@ -1420,6 +1420,7 @@
 	"helpMenu": {
 		"button": "Ajuda",
 		"tutorial": "Ver o tutorial",
+		"whatsNew": "Ver as novidades",
 		"install": "Instalar no ecrã principal",
 		"suggestion": "Propor uma melhoria",
 		"bug": "Reportar um problema"
@@ -1427,19 +1428,16 @@
 	"changelog": {
 		"title": "Novidades",
 		"entryTitle": "Versão {version}",
+		"currentVersion": "Está a usar a versão {version}",
+		"groups": {
+			"new": "Novo",
+			"improved": "Melhorado",
+			"fixed": "Corrigido"
+		},
 		"acknowledge": "Entendi",
 		"replayTour": "Rever todo o guia",
 		"dismissOnce": "Agora não",
-		"dismissUntilNextUpdate": "Não mostrar até a próxima atualização",
-		"v0_1_0": {
-			"items": [
-				"Menu semanal: planeie as suas refeições e obtenha a lista de compras correspondente.",
-				"O agregado familiar já pode registar os seus membros e as respetivas restrições alimentares.",
-				"Peça uma receita à IA por conversa, mesmo quando a importação de uma página falha.",
-				"Já é possível guardar várias chaves de IA na mesma conta.",
-				"Após uma atualização surge um cartão de novidades, com acesso rápido ao guia."
-			]
-		}
+		"dismissUntilNextUpdate": "Não mostrar até a próxima atualização"
 	},
 	"install": {
 		"title": "Familiste no seu ecrã principal",
