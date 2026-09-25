@@ -662,6 +662,10 @@
 					"title": "Avy amin’ny rohy",
 					"hint": "Apetaho ny adiresin’ny recette hita tao amin’ny tranonkala."
 				},
+				"scan": {
+					"title": "Hisava fomba fahandro",
+					"hint": "Pejin-boky na karatra, vakiana ao amin’ny fitaovana, tsy mila IA."
+				},
 				"photo": {
 					"title": "Avy amin’ny sary",
 					"hint": "Pejin’ny boky na recette voasoratra, vakian’ny AI."
@@ -714,6 +718,42 @@
 			"autumn": "Fararano",
 			"winter": "Ririnina"
 		}
+	},
+	"recipeScan": {
+		"tipsTitle": "Mba ho voavaky tsara",
+		"tipSteady": "Tazomy tsy mihetsika ny finday, eo ambonin’ny pejy.",
+		"tipLight": "Mitadiava hazavana tsara, tsy misy aloka na taratra eo amin’ny pejy.",
+		"tipFrame": "Alaivo sary manontolo ny pejy, voavelatra tsara: sary iray isaky ny pejy, araka ny filaharany.",
+		"takePhoto": "Alaivo sary ny pejy iray",
+		"choosePhotos": "Misafidiana amin’ny sariko",
+		"pagesTitle": "Pejy hovakiana, araka ny filaharany",
+		"page": "Pejy {number}",
+		"moveUp": "Akarina",
+		"moveDown": "Ampidinina",
+		"remove": "Esorina",
+		"moveUpLabel": "Akarina ny pejy {number}",
+		"moveDownLabel": "Ampidinina ny pejy {number}",
+		"removeLabel": "Esorina ny pejy {number}",
+		"full": "Tratra ny isan’ny pejy farany azo atao.",
+		"read": "Vakio ny fomba fahandro",
+		"reading": "Mamaky: {percent} %",
+		"readingHint": "Afaka mampiasa ny rindranasa ianao mandritra izany: hisy hafatra milaza rehefa vonona ny fomba fahandro.",
+		"cancel": "Ajanony ny famakiana",
+		"readingToast": "Mamaky ny fomba fahandro…",
+		"readyToast": "Voavaky ny fomba fahandro. Sokafy hanamarinana azy.",
+		"readyTitle": "Voavaky ny fomba fahandro",
+		"readyBody": "Sokafy mba hamerenana sy hanitsiana ny zava-drehetra alohan’ny hitahirizana.",
+		"open": "Sokafy ny fomba fahandro",
+		"restart": "Atombohy indray",
+		"empty": "Tsy misy soratra azo vakiana amin’ireo sary ireo. Alaivo indray amin’ny hazavana tsara, manontolo sy voavelatra ny pejy.",
+		"emptyToast": "Tsy misy soratra azo vakiana amin’ny sarin’ny fomba fahandro.",
+		"failed": "Tsy nahomby ny famakiana. Andramo indray, na alaivo indray ny sary.",
+		"failedToast": "Tsy nahomby ny famakiana ny fomba fahandro.",
+		"unavailable": "Mbola tsy azo atao eto ny famakiana ao amin’ny fitaovana.",
+		"aiTitle": "Famakiana tsara kokoa miaraka amin’ny IA-nao",
+		"aiHint": "Mahay mamaky soratra tanana kokoa ny mpamatsy IA-nao. Alefa any aminy ny sary.",
+		"useAi": "Vakio amin’ny IA-ko",
+		"useDevice": "Vakio ao amin’ny fitaovana"
 	},
 	"aisles": {
 		"title": "Faritra",

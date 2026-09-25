@@ -675,6 +675,10 @@
 					"title": "Desde un enlace",
 					"hint": "Pegue la dirección de una receta encontrada en la web."
 				},
+				"scan": {
+					"title": "Escanear una receta",
+					"hint": "Una página de libro o una ficha, leída en el dispositivo, sin IA."
+				},
 				"photo": {
 					"title": "Desde una foto",
 					"hint": "Una página de libro o una receta escrita, leída por la IA."
@@ -727,6 +731,42 @@
 			"autumn": "Otoño",
 			"winter": "Invierno"
 		}
+	},
+	"recipeScan": {
+		"tipsTitle": "Para una buena lectura",
+		"tipSteady": "Mantenga el teléfono bien quieto, encima de la página.",
+		"tipLight": "Póngase a la luz, sin sombras ni reflejos en la página.",
+		"tipFrame": "Tome la página entera, bien plana: una foto por página, en orden.",
+		"takePhoto": "Fotografiar una página",
+		"choosePhotos": "Elegir de mis fotos",
+		"pagesTitle": "Páginas que leer, en orden",
+		"page": "Página {number}",
+		"moveUp": "Subir",
+		"moveDown": "Bajar",
+		"remove": "Quitar",
+		"moveUpLabel": "Subir la página {number}",
+		"moveDownLabel": "Bajar la página {number}",
+		"removeLabel": "Quitar la página {number}",
+		"full": "Se alcanzó el número máximo de páginas.",
+		"read": "Leer la receta",
+		"reading": "Leyendo: {percent} %",
+		"readingHint": "Puede seguir usando la aplicación: un mensaje le avisará cuando la receta esté lista.",
+		"cancel": "Detener la lectura",
+		"readingToast": "Leyendo la receta…",
+		"readyToast": "La receta está leída. Ábrala para revisarla.",
+		"readyTitle": "La receta está leída",
+		"readyBody": "Ábrala para revisarlo todo y corregirlo antes de guardar.",
+		"open": "Abrir la receta",
+		"restart": "Empezar de nuevo",
+		"empty": "No hay texto legible en estas fotos. Vuelva a tomarlas con luz, con la página entera y plana.",
+		"emptyToast": "No hay texto legible en las fotos de la receta.",
+		"failed": "La lectura falló. Inténtelo de nuevo o vuelva a tomar las fotos.",
+		"failedToast": "La lectura de la receta falló.",
+		"unavailable": "La lectura en el dispositivo aún no está disponible aquí.",
+		"aiTitle": "Mejor lectura con su IA",
+		"aiHint": "Su proveedor de IA lee mejor la letra manuscrita. Se le envía la foto.",
+		"useAi": "Leer con mi IA",
+		"useDevice": "Leer en el dispositivo"
 	},
 	"aisles": {
 		"title": "Secciones",

@@ -671,6 +671,10 @@
 					"title": "Aus einem Link",
 					"hint": "Fügen Sie die Adresse eines Rezepts aus dem Web ein."
 				},
+				"scan": {
+					"title": "Rezept scannen",
+					"hint": "Eine Buchseite oder Rezeptkarte, auf dem Gerät gelesen, ohne KI."
+				},
 				"photo": {
 					"title": "Aus einem Foto",
 					"hint": "Eine Buchseite oder ein geschriebenes Rezept, von der KI gelesen."
@@ -723,6 +727,42 @@
 			"autumn": "Herbst",
 			"winter": "Winter"
 		}
+	},
+	"recipeScan": {
+		"tipsTitle": "Für ein gutes Ergebnis",
+		"tipSteady": "Halten Sie das Telefon ganz ruhig über die Seite.",
+		"tipLight": "Sorgen Sie für gutes Licht, ohne Schatten oder Spiegelung auf der Seite.",
+		"tipFrame": "Nehmen Sie die ganze Seite flach auf: ein Foto pro Seite, der Reihe nach.",
+		"takePhoto": "Eine Seite fotografieren",
+		"choosePhotos": "Aus meinen Fotos wählen",
+		"pagesTitle": "Zu lesende Seiten, der Reihe nach",
+		"page": "Seite {number}",
+		"moveUp": "Nach oben",
+		"moveDown": "Nach unten",
+		"remove": "Entfernen",
+		"moveUpLabel": "Nach oben: Seite {number}",
+		"moveDownLabel": "Nach unten: Seite {number}",
+		"removeLabel": "Entfernen: Seite {number}",
+		"full": "Höchstzahl an Seiten erreicht.",
+		"read": "Rezept lesen",
+		"reading": "Wird gelesen: {percent} %",
+		"readingHint": "Sie können die App währenddessen weiter nutzen: Eine Nachricht meldet, wenn das Rezept fertig ist.",
+		"cancel": "Lesen abbrechen",
+		"readingToast": "Das Rezept wird gelesen…",
+		"readyToast": "Das Rezept wurde gelesen. Öffnen Sie es zur Kontrolle.",
+		"readyTitle": "Das Rezept wurde gelesen",
+		"readyBody": "Öffnen Sie es, um alles vor dem Speichern zu prüfen und zu korrigieren.",
+		"open": "Rezept öffnen",
+		"restart": "Neu beginnen",
+		"empty": "Kein lesbarer Text auf diesen Fotos. Nehmen Sie sie bei gutem Licht neu auf, die ganze Seite flach.",
+		"emptyToast": "Kein lesbarer Text auf den Rezeptfotos.",
+		"failed": "Das Lesen ist fehlgeschlagen. Versuchen Sie es erneut oder machen Sie neue Fotos.",
+		"failedToast": "Das Lesen des Rezepts ist fehlgeschlagen.",
+		"unavailable": "Das Lesen auf dem Gerät ist hier noch nicht verfügbar.",
+		"aiTitle": "Besser lesen mit Ihrer KI",
+		"aiHint": "Ihr KI-Anbieter liest Handschrift besser. Das Foto wird an ihn gesendet.",
+		"useAi": "Mit meiner KI lesen",
+		"useDevice": "Auf dem Gerät lesen"
 	},
 	"aisles": {
 		"title": "Abteilungen",
