@@ -1,17 +1,45 @@
 import { browser } from '$app/environment';
 import { supabase } from '$db/supabase';
 import { OAUTH_PROVIDERS, type ProviderId } from '$domain/oauth';
+import type { KnownFactor } from '$domain/device-unlock';
+import { rememberDeviceFactor, rememberedDeviceFactor } from '$native/device-unlock';
 import { sync } from '$sync/index.svelte';
 import type { Session, User } from '@supabase/supabase-js';
 
 export type AccountStatus = 'pending' | 'approved' | 'rejected';
 
-/** A TOTP factor as the screen needs it: the rest of the response is of no use here. */
-export interface Factor {
-	id: string;
-	friendlyName: string;
-	createdAt: string;
-}
+/** A second factor as the screen needs it: the rest of the response is of no use here. */
+export type Factor = KnownFactor;
+
+type RegisterOverrides = Parameters<typeof supabase.auth.mfa.webauthn.register>[1];
+type AuthenticateOverrides = NonNullable<Parameters<typeof supabase.auth.mfa.webauthn.authenticate>[1]>;
+
+/**
+ * The phone's own authenticator, not a security key on a keychain: the defaults of supabase-js aim at the
+ * latter. User verification is required — without it a passkey proves possession only, and a phone left
+ * unlocked on a table would be enough. Discoverable and with PRF so the same passkey can also open the
+ * offline copy of a card password (see `$domain/offline-secret`).
+ */
+const DEVICE_REGISTRATION: RegisterOverrides = {
+	hints: ['client-device'],
+	attestation: 'none',
+	authenticatorSelection: {
+		authenticatorAttachment: 'platform',
+		residentKey: 'required',
+		requireResidentKey: true,
+		userVerification: 'required'
+	},
+	extensions: { prf: {} }
+};
+
+/**
+ * supabase-js types this override as a full request, challenge included, yet merges it over the server's
+ * options as a partial one: the challenge must come from the server, never from here.
+ */
+const DEVICE_ASSERTION = {
+	hints: ['client-device'],
+	userVerification: 'required'
+} satisfies Partial<AuthenticateOverrides> as AuthenticateOverrides;
 
 /** An open session, as `public.my_sessions()` returns it. */
 export interface OpenSession {
@@ -267,7 +295,8 @@ class SessionStore {
 	}
 
 	/**
-	 * The account's verified TOTP factors. Unfinished enrolments do not count.
+	 * The account's verified factors, authenticator codes and device passkeys alike. Unfinished enrolments
+	 * do not count.
 	 *
 	 * `null` when the read fails: an empty list would mean "no second factor", which is a legitimate and
 	 * reassuring state, whereas the call could establish nothing.
@@ -280,11 +309,61 @@ class SessionStore {
 			return null;
 		}
 
-		return (data?.totp ?? []).map((factor) => ({
+		const verified = [
+			...(data?.totp ?? []).map((factor) => ({ factor, type: 'totp' as const })),
+			...(data?.webauthn ?? []).map((factor) => ({ factor, type: 'webauthn' as const }))
+		];
+
+		return verified.map(({ factor, type }) => ({
 			id: factor.id,
+			type,
 			friendlyName: factor.friendly_name ?? '',
 			createdAt: factor.created_at
 		}));
+	}
+
+	/**
+	 * Enrols this device's unlock as a second factor, in one sheet from the phone: Supabase creates the
+	 * factor, the phone creates the key behind its fingerprint, face or PIN, and the server verifies the
+	 * signature. The session comes out at aal2, as after a TOTP confirmation.
+	 */
+	async registerDeviceUnlock(friendlyName: string) {
+		this.error = null;
+		const { data, error } = await supabase.auth.mfa.webauthn.register(
+			{ friendlyName },
+			DEVICE_REGISTRATION
+		);
+
+		if (error || !data) {
+			this.error = error?.message ?? null;
+			return false;
+		}
+
+		const factors = await this.listFactors();
+		const created = factors?.find(
+			(factor) => factor.type === 'webauthn' && factor.friendlyName === friendlyName
+		);
+		rememberDeviceFactor(created?.id ?? null);
+		await this.refreshLevels();
+		return true;
+	}
+
+	/**
+	 * Asks the phone to confirm, and the server to check that confirmation. A fresh challenge every time:
+	 * the aal2 it gives comes from a signature the server verified, never from a flag set in the page.
+	 */
+	async confirmWithDevice(factorId: string) {
+		this.error = null;
+		const { error } = await supabase.auth.mfa.webauthn.authenticate({ factorId }, DEVICE_ASSERTION);
+
+		if (error) {
+			this.error = error.message;
+			return false;
+		}
+
+		rememberDeviceFactor(factorId);
+		await this.refreshLevels();
+		return true;
 	}
 
 	/**
@@ -323,7 +402,7 @@ class SessionStore {
 	 * Removes the second factor. The session must be at aal2 for that — Supabase requires it, and rightly
 	 * so: otherwise a stolen tab would be enough to switch it off.
 	 */
-	async unenrollTotp(factorId: string) {
+	async unenrollFactor(factorId: string) {
 		this.error = null;
 		const { error } = await supabase.auth.mfa.unenroll({ factorId });
 
@@ -332,6 +411,7 @@ class SessionStore {
 			return false;
 		}
 
+		if (rememberedDeviceFactor() === factorId) rememberDeviceFactor(null);
 		await supabase.auth.refreshSession();
 		return true;
 	}
@@ -353,6 +433,7 @@ class SessionStore {
 
 		if (!data) return false;
 
+		rememberDeviceFactor(null);
 		await supabase.auth.refreshSession();
 		return true;
 	}
@@ -459,6 +540,7 @@ class SessionStore {
 		await supabase.auth.signOut();
 		this.user = null;
 		this.profile = null;
+		rememberDeviceFactor(null);
 
 		// The local cache survives sign-out if it is not emptied: on a shared device, the next person would
 		// open the previous one's lists.
