@@ -1377,6 +1377,7 @@
 	"helpMenu": {
 		"button": "Aiuto",
 		"tutorial": "Guarda il tutorial",
+		"whatsNew": "Vedi le novità",
 		"install": "Installa sulla schermata Home",
 		"suggestion": "Proponi un miglioramento",
 		"bug": "Segnala un problema"
@@ -1384,19 +1385,16 @@
 	"changelog": {
 		"title": "Novità",
 		"entryTitle": "Versione {version}",
+		"currentVersion": "Stai usando la versione {version}",
+		"groups": {
+			"new": "Novità",
+			"improved": "Migliorato",
+			"fixed": "Corretto"
+		},
 		"acknowledge": "Capito",
 		"replayTour": "Rivedi tutta la guida",
 		"dismissOnce": "Non ora",
-		"dismissUntilNextUpdate": "Non mostrare fino al prossimo aggiornamento",
-		"v0_1_0": {
-			"items": [
-				"Menu settimanale: pianifica i pasti e ottieni la lista della spesa corrispondente.",
-				"Il nucleo familiare ora può registrare i propri membri e le loro restrizioni alimentari.",
-				"Chiedi una ricetta all'IA conversando, anche quando l'importazione di una pagina non riesce.",
-				"Ora è possibile salvare più chiavi IA sullo stesso account.",
-				"Dopo un aggiornamento appare una scheda con le novità e un accesso rapido alla guida."
-			]
-		}
+		"dismissUntilNextUpdate": "Non mostrare fino al prossimo aggiornamento"
 	},
 	"install": {
 		"title": "Familiste sulla schermata Home",
