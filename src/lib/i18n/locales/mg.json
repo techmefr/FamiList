@@ -1250,6 +1250,15 @@
 		"photoGenerate": "Mamorona sary",
 		"photoRegenerate": "Mamorona sary indray",
 		"photoGenerating": "Mamorona…",
+		"photoAdd": "Hanampy sary",
+		"photoChange": "Hanova ny sary",
+		"photoCamera": "Haka sary",
+		"photoGallery": "Hisafidy amin’ireo sariko",
+		"photoRemove": "Hanala ny sary",
+		"photoRemoved": "Nesorina tamin’ny fomba fahandroana ny sary",
+		"photoTooBig": "Mavesatra loatra ity sary ity. Misafidiana hafa.",
+		"photoBack": "Hiverina amin’ireo loharano",
+		"photoBanksHint": "Valiny bebe kokoa miaraka amin’ny lakile Pexels na Pixabay:",
 		"photoSearch": "Mikaroka sary",
 		"photoSearching": "Mikaroka…",
 		"photoSearchNotFound": "Tsy nisy sary hita",
@@ -1386,5 +1395,19 @@
 			}
 		},
 		"makeRequest": "Hanao fangatahana momba ny angona"
+	},
+	"imageBanks": {
+		"title": "Banky sary",
+		"subtitle": "Ny lakile Pexels sy Pixabay anao, hahitana sarin-tsakafo bebe kokoa.",
+		"privacySent": "Ny teny tadiavinao ihany no alefa any amin’ny banky voafidy.",
+		"privacyKey": "Mifatotra amin’ny kaontinao ny lakile: tsy hitan’ny ankohonanao na ny mpandrindra.",
+		"privacyFree": "Samy manome lakile maimaimpoana ireo banky roa ireo.",
+		"stateOn": "Voatahiry ny lakile",
+		"stateOff": "Tsy misy lakile",
+		"replaceKey": "Hanolo ny lakile",
+		"remove": "Hanala ny lakile",
+		"saved": "Voatahiry ny lakile {bank}",
+		"removed": "Nesorina ny lakile {bank}",
+		"saveFailed": "Tsy voatahiry ny lakile. Andramo indray."
 	}
 }

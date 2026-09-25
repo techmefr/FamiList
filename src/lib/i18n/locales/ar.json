@@ -1290,6 +1290,15 @@
 		"photoGenerate": "إنشاء صورة",
 		"photoRegenerate": "إعادة إنشاء الصورة",
 		"photoGenerating": "جارٍ الإنشاء…",
+		"photoAdd": "أضف صورة",
+		"photoChange": "غيّر الصورة",
+		"photoCamera": "التقط صورة",
+		"photoGallery": "اختر من صوري",
+		"photoRemove": "أزل الصورة",
+		"photoRemoved": "أُزيلت الصورة من الوصفة",
+		"photoTooBig": "هذه الصورة كبيرة جدًا. اختر صورة أخرى.",
+		"photoBack": "العودة إلى المصادر",
+		"photoBanksHint": "نتائج أكثر مع مفتاح Pexels أو Pixabay:",
 		"photoSearch": "البحث عن صورة",
 		"photoSearching": "جارٍ البحث…",
 		"photoSearchNotFound": "لم يتم العثور على صورة",
@@ -1430,5 +1439,19 @@
 			}
 		},
 		"makeRequest": "تقديم طلب يخص بياناتي"
+	},
+	"imageBanks": {
+		"title": "بنوك الصور",
+		"subtitle": "مفاتيحك لـ Pexels وPixabay، للعثور على مزيد من صور الأطباق.",
+		"privacySent": "تُرسَل كلمات بحثك إلى البنك المختار فقط، لا شيء غيرها.",
+		"privacyKey": "يبقى المفتاح مرتبطًا بحسابك: لا يراه أهل بيتك ولا المسؤول.",
+		"privacyFree": "يقدّم البنكان مفتاحًا مجانيًا.",
+		"stateOn": "حُفظ المفتاح",
+		"stateOff": "لا يوجد مفتاح",
+		"replaceKey": "استبدل المفتاح",
+		"remove": "أزل المفتاح",
+		"saved": "حُفظ مفتاح {bank}",
+		"removed": "أُزيل مفتاح {bank}",
+		"saveFailed": "تعذّر حفظ المفتاح. أعد المحاولة."
 	}
 }

@@ -80,12 +80,22 @@ describe('imageSearchResults', () => {
 		expect(imageSearchResults(payload)).toEqual([
 			{
 				id: 'abc',
+				source: 'openverse',
 				previewUrl: 'https://api.openverse.org/v1/images/abc/thumb/',
+				imageUrl: 'https://api.openverse.org/v1/images/abc/thumb/',
 				title: 'Quiche',
 				creator: 'mastermaq',
 				license: 'BY-SA 2.0'
 			},
-			{ id: 'def', previewUrl: 'https://source.example/other.jpg', title: '', creator: '', license: '' }
+			{
+				id: 'def',
+				source: 'openverse',
+				previewUrl: 'https://source.example/other.jpg',
+				imageUrl: 'https://source.example/other.jpg',
+				title: '',
+				creator: '',
+				license: ''
+			}
 		]);
 	});
 
