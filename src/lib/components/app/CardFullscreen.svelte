@@ -6,6 +6,7 @@
 	import { t } from '$i18n/index.svelte';
 	import CodeImage from './CodeImage.svelte';
 	import CardShareSheet from './CardShareSheet.svelte';
+	import BrandMark from './BrandMark.svelte';
 	import { Button } from '$components/ui/button';
 	import { readCardAccount, type CardAccount } from '$stores/card-account';
 	import { safeWebsiteUrl } from '$domain/website';
@@ -87,7 +88,12 @@
 		>
 			<X size={20} aria-hidden="true" />
 		</button>
-		<p class="text-product flex-1 text-center font-semibold break-words">{card.name}</p>
+		<p
+			class="text-product flex min-w-0 flex-1 items-center justify-center gap-3 font-semibold break-words"
+		>
+			<BrandMark name={card.name} brand={card.brand} tint={card.tint} size="sm" />
+			<span class="min-w-0">{card.name}</span>
+		</p>
 		{#if owned}
 			<button
 				type="button"
