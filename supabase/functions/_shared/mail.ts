@@ -19,11 +19,11 @@ export type MailSettings = Record<string, string | undefined>;
  * the migration yet. We then fall back on the environment alone, which was the previous behaviour: a
  * function deployed ahead of the database must not stop sending.
  */
-export async function loadMailSettings(): Promise<MailSettings> {
+export async function loadMailSettings(token = serviceKey()): Promise<MailSettings> {
 	let stored: InstanceConfig = {};
 
 	try {
-		stored = (await callRpc<InstanceConfig>('instance_config', {}, serviceKey())) ?? {};
+		stored = (await callRpc<InstanceConfig>('instance_config', {}, token)) ?? {};
 	} catch (error) {
 		console.warn('instance_config indisponible', error);
 	}
