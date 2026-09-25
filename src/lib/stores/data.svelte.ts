@@ -938,11 +938,23 @@ class DataStore {
 		return shareStatusOf(this.cardShares, cardId, householdId);
 	}
 
+	/**
+	 * Removing a card only marks it on the server (`deleted_at`, enforced by RLS and a revoked delete
+	 * privilege — see the `soft_delete_loyalty_cards` migration): a stray sync push or a mistaken tap must
+	 * never be the reason someone's loyalty card is gone for good.
+	 */
 	removeCard(id: string) {
+		const card = this.cachedCards.find((c) => c.id === id);
 		this.cachedCards = this.cachedCards.filter((c) => c.id !== id);
 		db.cards.delete(id);
 		db.cardSecrets.delete(id);
-		sync.enqueue({ table: 'loyalty_cards', op: 'delete', match: { id } });
+		if (!card) return;
+
+		const snapshot = $state.snapshot(card) as LoyaltyCard;
+		this.push('loyalty_cards', snapshot, (record, householdId) => ({
+			...fromCard(record, householdId),
+			deleted_at: new Date().toISOString()
+		}));
 	}
 
 	/**
@@ -1622,11 +1634,12 @@ class DataStore {
 	}
 
 	/**
-	 * The server deletes the lines and the steps itself — `on delete cascade` on the recipe. We therefore
-	 * only queue the recipe, and empty the local cache by hand so the screen is right before the next
-	 * re-read.
+	 * Removing a recipe only marks it (`deleted_at`, same guard as a loyalty card) rather than deleting the
+	 * row: its ingredients and steps stay in place server-side, ready to come back if the mark is undone,
+	 * while the local cache clears at once so the screen is right before the next re-read.
 	 */
 	removeRecipe(id: string) {
+		const recipe = this.cachedRecipes.find((r) => r.id === id);
 		const rows = this.recipeIngredients.filter((line) => line.recipeId === id).map((l) => l.id);
 		const steps = this.recipeSteps.filter((step) => step.recipeId === id).map((s) => s.id);
 
@@ -1637,7 +1650,13 @@ class DataStore {
 		db.recipes.delete(id);
 		db.recipeIngredients.bulkDelete(rows);
 		db.recipeSteps.bulkDelete(steps);
-		sync.enqueue({ table: 'recipes', op: 'delete', match: { id } });
+		if (!recipe) return;
+
+		const snapshot = $state.snapshot(recipe) as Recipe;
+		this.push('recipes', snapshot, (record, householdId) => ({
+			...fromRecipe(record, householdId),
+			deleted_at: new Date().toISOString()
+		}));
 	}
 
 	/** The circles a recipe was shared into, besides its own. */
