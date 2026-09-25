@@ -501,8 +501,18 @@
 			"next": "Weiter",
 			"mute": "Stimme stummschalten",
 			"unmute": "Stimme aktivieren",
-			"empty": "Dieses Rezept hat keine Schritte."
-		}
+			"empty": "Dieses Rezept hat keine Schritte.",
+			"ingredients": "Zutaten",
+			"stepIngredientsCount": "Zutaten für diesen Schritt ({count})",
+			"ingredientsOfStep": "Zutaten für Schritt {current}",
+			"allIngredients": "Alle Zutaten",
+			"noStepIngredients": "Diesem Schritt ist keine Zutat zugeordnet: hier ist das ganze Rezept.",
+			"showAllIngredients": "Ganzes Rezept anzeigen",
+			"showStepIngredients": "Nur diesen Schritt anzeigen",
+			"readIngredients": "Zutaten vorlesen",
+			"speakIngredients": "Zutaten: {list}."
+		},
+		"stepIngredients": "Zutaten für Schritt {rank}"
 	},
 	"aisles": {
 		"title": "Abteilungen",

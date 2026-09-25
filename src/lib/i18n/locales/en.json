@@ -501,8 +501,18 @@
 			"next": "Next",
 			"mute": "Mute voice",
 			"unmute": "Unmute voice",
-			"empty": "This recipe has no step to follow."
-		}
+			"empty": "This recipe has no step to follow.",
+			"ingredients": "Ingredients",
+			"stepIngredientsCount": "Ingredients for this step ({count})",
+			"ingredientsOfStep": "Ingredients for step {current}",
+			"allIngredients": "All ingredients",
+			"noStepIngredients": "No ingredient is linked to this step: here is the whole recipe.",
+			"showAllIngredients": "Show the whole recipe",
+			"showStepIngredients": "Show this step only",
+			"readIngredients": "Read the ingredients",
+			"speakIngredients": "Ingredients: {list}."
+		},
+		"stepIngredients": "Ingredients used in step {rank}"
 	},
 	"aisles": {
 		"title": "Aisles",

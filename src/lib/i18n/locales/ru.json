@@ -507,8 +507,18 @@
 			"next": "Далее",
 			"mute": "Выключить голос",
 			"unmute": "Включить голос",
-			"empty": "В этом рецепте нет шагов."
-		}
+			"empty": "В этом рецепте нет шагов.",
+			"ingredients": "Ингредиенты",
+			"stepIngredientsCount": "Ингредиенты для этого шага ({count})",
+			"ingredientsOfStep": "Ингредиенты для шага {current}",
+			"allIngredients": "Все ингредиенты",
+			"noStepIngredients": "К этому шагу не привязан ни один ингредиент: вот весь рецепт.",
+			"showAllIngredients": "Показать весь рецепт",
+			"showStepIngredients": "Показать только этот шаг",
+			"readIngredients": "Прочитать ингредиенты",
+			"speakIngredients": "Ингредиенты: {list}."
+		},
+		"stepIngredients": "Ингредиенты для шага {rank}"
 	},
 	"aisles": {
 		"title": "Отделы",
