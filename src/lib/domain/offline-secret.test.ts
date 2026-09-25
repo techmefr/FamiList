@@ -3,9 +3,14 @@ import {
 	MAX_UNLOCK_FAILURES,
 	forgetDeviceSecrets,
 	hasUnlockCode,
+	newPasskeySalt,
+	passkeyUnlockRequest,
 	revealSecret,
+	revealSecretWithPasskey,
+	setPasskeyUnlock,
 	setUnlockCode,
 	storeSecret,
+	unlockMethod,
 	type DeviceVault,
 	type SecretStore,
 	type StoredSecret
@@ -127,5 +132,82 @@ describe('offline secret', () => {
 
 		expect(persisted().secrets).toEqual([]);
 		expect(await revealSecret(store, 'c1', '482913')).toEqual({ ok: false, reason: 'missing' });
+	});
+});
+
+const prfOutput = (seed: number) => new Uint8Array(32).fill(seed).buffer;
+const credentialId = new Uint8Array([1, 2, 3, 4]).buffer;
+
+describe('offline secret behind the phone unlock', () => {
+	it('rend le mot de passe avec la sortie PRF de la clé d’accès', async () => {
+		const { store } = memoryStore();
+		const salt = newPasskeySalt();
+		expect(await setPasskeyUnlock(store, { credentialId, salt }, prfOutput(7))).toBe(true);
+		await storeSecret(store, 'c1', PASSWORD);
+
+		expect(await unlockMethod(store)).toBe('device');
+		expect(await passkeyUnlockRequest(store)).toEqual({ credentialId, salt });
+		expect(await revealSecretWithPasskey(store, 'c1', prfOutput(7))).toEqual({ ok: true, value: PASSWORD });
+	});
+
+	it('refuse la sortie d’une autre clé sans rien effacer', async () => {
+		const { store, persisted } = memoryStore();
+		await setPasskeyUnlock(store, { credentialId, salt: newPasskeySalt() }, prfOutput(7));
+		await storeSecret(store, 'c1', PASSWORD);
+
+		for (let attempt = 0; attempt <= MAX_UNLOCK_FAILURES; attempt++) {
+			expect(await revealSecretWithPasskey(store, 'c1', prfOutput(8))).toEqual({
+				ok: false,
+				reason: 'wrong-device'
+			});
+		}
+		expect(persisted().secrets).toHaveLength(1);
+	});
+
+	it('refuse une sortie PRF tronquée', async () => {
+		const { store } = memoryStore();
+		expect(await setPasskeyUnlock(store, { credentialId, salt: newPasskeySalt() }, new ArrayBuffer(16))).toBe(
+			false
+		);
+		expect(await unlockMethod(store)).toBeNull();
+	});
+
+	it('ne persiste ni le mot de passe ni la sortie PRF', async () => {
+		const { store, persisted } = memoryStore();
+		await setPasskeyUnlock(store, { credentialId, salt: newPasskeySalt() }, prfOutput(7));
+		await storeSecret(store, 'c1', PASSWORD);
+
+		const needle = new TextEncoder().encode(PASSWORD);
+		const output = new Uint8Array(prfOutput(7));
+		for (const chunk of persistedBytes(persisted())) {
+			expect(contains(chunk, needle)).toBe(false);
+			expect(contains(chunk, output)).toBe(false);
+		}
+	});
+
+	it('passer à un code oublie la clé d’accès et ses copies, et inversement', async () => {
+		const { store, persisted } = memoryStore();
+		await setPasskeyUnlock(store, { credentialId, salt: newPasskeySalt() }, prfOutput(7));
+		await storeSecret(store, 'c1', PASSWORD);
+
+		await setUnlockCode(store, '482913', ITERATIONS);
+		expect(await unlockMethod(store)).toBe('code');
+		expect(await passkeyUnlockRequest(store)).toBeNull();
+		expect(persisted().secrets).toEqual([]);
+
+		await storeSecret(store, 'c1', PASSWORD);
+		await setPasskeyUnlock(store, { credentialId, salt: newPasskeySalt() }, prfOutput(9));
+		expect(await hasUnlockCode(store)).toBe(false);
+		expect(await revealSecret(store, 'c1', '482913')).toEqual({ ok: false, reason: 'missing' });
+	});
+
+	it('oublie la clé d’accès à la déconnexion', async () => {
+		const { store } = memoryStore();
+		await setPasskeyUnlock(store, { credentialId, salt: newPasskeySalt() }, prfOutput(7));
+		await storeSecret(store, 'c1', PASSWORD);
+		await forgetDeviceSecrets(store);
+
+		expect(await unlockMethod(store)).toBeNull();
+		expect(await revealSecretWithPasskey(store, 'c1', prfOutput(7))).toEqual({ ok: false, reason: 'missing' });
 	});
 });
