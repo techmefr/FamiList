@@ -15,11 +15,6 @@ const ROUTES: Array<{ screen: string; path: string; ready: string }> = [
 	{ screen: 'foyer', path: '/household', ready: 'nav-create' },
 	{ screen: 'discussion', path: '/chat', ready: 'nav-create' },
 	{ screen: 'profil', path: '/profile', ready: 'profile-categories' },
-	{ screen: 'profil-compte', path: '/profile/account', ready: 'sign-out' },
-	{ screen: 'profil-affichage', path: '/profile/display', ready: 'profile-back' },
-	{ screen: 'profil-son-et-retours', path: '/profile/feedback', ready: 'sound-toggle' },
-	{ screen: 'profil-aide', path: '/profile/help', ready: 'replay-tour' },
-	{ screen: 'profil-juridique', path: '/profile/legal', ready: 'go-privacy-request' },
 	{ screen: 'securite', path: '/profile/security', ready: 'nav-create' },
 	{ screen: 'intelligence-artificielle', path: '/profile/ai', ready: 'ai-form' },
 	{ screen: 'signalement', path: '/report', ready: 'nav-create' },
@@ -70,6 +65,26 @@ test.describe('accessibilite', () => {
 			await expectNoNewViolations(page, screen);
 		});
 	}
+
+	/**
+	 * The profile's own sub-screens, in one signed-in session: they are five small screens, and a sign-in
+	 * each would add as many fresh sessions to a suite already running on one shared account.
+	 */
+	test('sous-ecrans du profil', async ({ signedInPage: page }) => {
+		const screens = [
+			{ screen: 'profil-compte', path: '/profile/account', ready: 'sign-out' },
+			{ screen: 'profil-affichage', path: '/profile/display', ready: 'profile-back' },
+			{ screen: 'profil-son-et-retours', path: '/profile/feedback', ready: 'sound-toggle' },
+			{ screen: 'profil-aide', path: '/profile/help', ready: 'replay-tour' },
+			{ screen: 'profil-juridique', path: '/profile/legal', ready: 'go-privacy-request' }
+		];
+
+		for (const { screen, path, ready } of screens) {
+			await page.goto(path);
+			await expect(page.getByTestId(ready)).toBeVisible({ timeout: 15_000 });
+			await expectNoNewViolations(page, screen);
+		}
+	});
 
 	/**
 	 * The account deletion form only exists after a first gesture: the folded screen would say nothing about
