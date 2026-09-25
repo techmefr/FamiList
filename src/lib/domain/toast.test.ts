@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { MAX_TOASTS, TOAST_DURATION_MS, dismissToast, pushToast, type Toast } from './toast';
+import { MAX_TOASTS, TOAST_DURATION_MS, dismissToast, isSticky, progressToast, pushToast, type Toast } from './toast';
 
 const toast = (id: number, tone: Toast['tone'] = 'success'): Toast => ({ id, tone, message: `m${id}` });
 
@@ -30,5 +30,27 @@ describe('dismissToast', () => {
 describe('TOAST_DURATION_MS', () => {
 	it('laisse une erreur affichee plus longtemps qu une confirmation', () => {
 		expect(TOAST_DURATION_MS.error).toBeGreaterThan(TOAST_DURATION_MS.success);
+	});
+});
+
+describe('isSticky', () => {
+	it('laisse partir une simple confirmation', () => {
+		expect(isSticky({ tone: 'success' })).toBe(false);
+		expect(isSticky({ tone: 'error' })).toBe(false);
+	});
+
+	it('garde un toast qui porte un bouton ou une barre de progression', () => {
+		expect(isSticky({ tone: 'success', action: { label: 'Ouvrir', run: () => {} } })).toBe(true);
+		expect(isSticky({ tone: 'progress' })).toBe(true);
+	});
+});
+
+describe('progressToast', () => {
+	it('avance seulement le toast vise, entre 0 et 1', () => {
+		const items: Toast[] = [toast(1, 'progress'), toast(2)];
+		expect(progressToast(items, 1, 0.4)[0].progress).toBe(0.4);
+		expect(progressToast(items, 1, 3)[0].progress).toBe(1);
+		expect(progressToast(items, 1, Number.NaN)[0].progress).toBe(0);
+		expect(progressToast(items, 1, 0.4)[1]).toBe(items[1]);
 	});
 });

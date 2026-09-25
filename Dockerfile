@@ -8,7 +8,7 @@ RUN corepack enable
 
 # Dependencies alone first: as long as the lockfile does not move, rebuilding after a change in `src/`
 # skips the install entirely.
-COPY package.json pnpm-lock.yaml .npmrc ./
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml .npmrc ./
 RUN pnpm install --frozen-lockfile
 
 COPY . .

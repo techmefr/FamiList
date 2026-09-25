@@ -682,6 +682,10 @@
 					"title": "From a link",
 					"hint": "Paste the address of a recipe found on the web."
 				},
+				"scan": {
+					"title": "Scan a recipe",
+					"hint": "A book page or a recipe card, read on this device, no AI needed."
+				},
 				"photo": {
 					"title": "From a photo",
 					"hint": "A book page or a written recipe, read by the AI."
@@ -773,6 +777,42 @@
 			"autumn": "Autumn",
 			"winter": "Winter"
 		}
+	},
+	"recipeScan": {
+		"tipsTitle": "For a good reading",
+		"tipSteady": "Hold the phone very still, above the page.",
+		"tipLight": "Stand in good light, with no shadow or glare on the page.",
+		"tipFrame": "Take the whole page, lying flat: one photo per page, in order.",
+		"takePhoto": "Take a photo of a page",
+		"choosePhotos": "Choose from my photos",
+		"pagesTitle": "Pages to read, in order",
+		"page": "Page {number}",
+		"moveUp": "Move up",
+		"moveDown": "Move down",
+		"remove": "Remove",
+		"moveUpLabel": "Move up page {number}",
+		"moveDownLabel": "Move down page {number}",
+		"removeLabel": "Remove page {number}",
+		"full": "Maximum number of pages reached.",
+		"read": "Read the recipe",
+		"reading": "Reading: {percent}%",
+		"readingHint": "You can keep using the app meanwhile: a message will tell you when the recipe is ready.",
+		"cancel": "Stop reading",
+		"readingToast": "Reading the recipe…",
+		"readyToast": "The recipe has been read. Open it to check it.",
+		"readyTitle": "The recipe has been read",
+		"readyBody": "Open it to read everything over and fix it before saving.",
+		"open": "Open the recipe",
+		"restart": "Start again",
+		"empty": "No readable text on these photos. Take them again in good light, with the whole page lying flat.",
+		"emptyToast": "No readable text on the recipe photos.",
+		"failed": "Reading failed. Try again, or take the photos again.",
+		"failedToast": "Reading the recipe failed.",
+		"unavailable": "Reading on this device is not available here yet.",
+		"aiTitle": "Better reading with your AI",
+		"aiHint": "Your AI provider reads handwriting better. The photo is sent to it.",
+		"useAi": "Read with my AI",
+		"useDevice": "Read on this device"
 	},
 	"aisles": {
 		"title": "Aisles",

@@ -145,7 +145,7 @@ test.describe('creer une recette', () => {
 		await expect(page.locator('html')).toHaveAttribute('dir', 'rtl');
 
 		const tiles = await page.locator('[data-test-id^="recipe-source-"]').all();
-		expect(tiles).toHaveLength(5);
+		expect(tiles).toHaveLength(6);
 		for (const tile of tiles) {
 			const box = await tile.boundingBox();
 			expect(box?.height ?? 0).toBeGreaterThanOrEqual(48);

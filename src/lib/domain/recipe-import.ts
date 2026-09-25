@@ -76,7 +76,34 @@ const IMPORT_UNITS: Record<string, { unit: UnitId; factor: number }> = {
 	mg: { unit: 'g', factor: 0.001 },
 	grammes: { unit: 'g', factor: 1 },
 	millilitres: { unit: 'ml', factor: 1 },
-	centilitres: { unit: 'ml', factor: 10 }
+	centilitres: { unit: 'ml', factor: 10 },
+	// The other app languages (#312): a photographed book is not always French.
+	gramos: { unit: 'g', factor: 1 },
+	gramas: { unit: 'g', factor: 1 },
+	gramm: { unit: 'g', factor: 1 },
+	grammi: { unit: 'g', factor: 1 },
+	litro: { unit: 'l', factor: 1 },
+	litros: { unit: 'l', factor: 1 },
+	litri: { unit: 'l', factor: 1 },
+	stuck: { unit: 'piece', factor: 1 },
+	bund: { unit: 'bunch', factor: 1 },
+	г: { unit: 'g', factor: 1 },
+	гр: { unit: 'g', factor: 1 },
+	кг: { unit: 'kg', factor: 1 },
+	мл: { unit: 'ml', factor: 1 },
+	л: { unit: 'l', factor: 1 },
+	غ: { unit: 'g', factor: 1 },
+	غم: { unit: 'g', factor: 1 },
+	غرام: { unit: 'g', factor: 1 },
+	جرام: { unit: 'g', factor: 1 },
+	كغ: { unit: 'kg', factor: 1 },
+	كيلو: { unit: 'kg', factor: 1 },
+	مل: { unit: 'ml', factor: 1 },
+	لتر: { unit: 'l', factor: 1 },
+	// The avoirdupois pound and ounce are defined in grams, exactly: converting them invents nothing.
+	lb: { unit: 'g', factor: 453.59237 },
+	lbs: { unit: 'g', factor: 453.59237 },
+	oz: { unit: 'g', factor: 28.349523125 }
 };
 
 /**
@@ -127,11 +154,89 @@ const UNMEASURABLE = new Set([
 	'branche',
 	'branches',
 	'zeste',
-	'zestes'
+	'zestes',
+	'cup',
+	'cups',
+	'tbsp',
+	'tbs',
+	'tsp',
+	'tablespoon',
+	'tablespoons',
+	'teaspoon',
+	'teaspoons',
+	'pinch',
+	'clove',
+	'cloves',
+	'sprig',
+	'sprigs',
+	'handful',
+	'dash',
+	'knob',
+	'can',
+	'cans',
+	'tin',
+	'tins',
+	'cucharada',
+	'cucharadas',
+	'cucharadita',
+	'cucharaditas',
+	'pizca',
+	'diente',
+	'dientes',
+	'taza',
+	'tazas',
+	'vaso',
+	'chorrito',
+	'punado',
+	'ramita',
+	'el',
+	'tl',
+	'essloffel',
+	'teeloffel',
+	'prise',
+	'zehe',
+	'zehen',
+	'msp',
+	'cucchiaio',
+	'cucchiai',
+	'cucchiaino',
+	'cucchiaini',
+	'pizzico',
+	'spicchio',
+	'spicchi',
+	'tazza',
+	'bicchiere',
+	'colher',
+	'colheres',
+	'pitada',
+	'dente',
+	'dentes',
+	'xicara',
+	'xicaras',
+	'copo',
+	'ст',
+	'ч',
+	'ст.л',
+	'ч.л',
+	'ложка',
+	'ложки',
+	'щепотка',
+	'зубчик',
+	'зубчика',
+	'стакан',
+	'стакана',
+	'ملعقة',
+	'ملاعق',
+	'كوب',
+	'اكواب',
+	'رشة',
+	'فص',
+	'sotro',
+	'kapoaka'
 ]);
 
 /** The linking words between the measure and the product, removed from the name. */
-const LINKERS = /^(?:de\s+la\s+|de\s+l['’]|du\s+|des\s+|de\s+|d['’])/i;
+const LINKERS = /^(?:de\s+la\s+|de\s+l['’]|du\s+|des\s+|de\s+|d['’]|of\s+|di\s+)/i;
 
 const cleanup = (value: string): string =>
 	value
@@ -169,10 +274,10 @@ const stripAccents = (value: string): string =>
  */
 export function parseIngredientLine(raw: string): RecipeLine | null {
 	const line = cleanup(
-		String(raw ?? '').replace(
-			/[½⅓⅔¼¾⅕⅙⅛⅜⅝⅞]/g,
-			(character) => ` ${FRACTIONS[character]} `
-		)
+		String(raw ?? '')
+			.replace(/[½⅓⅔¼¾⅕⅙⅛⅜⅝⅞]/g, (character) => ` ${FRACTIONS[character]} `)
+			.replace(/[٠-٩]/g, (digit) => String(digit.charCodeAt(0) - 0x0660))
+			.replace(/٫/g, ',')
 	);
 	if (!line) return null;
 
