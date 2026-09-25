@@ -78,6 +78,20 @@ export interface PromptOptions {
 const STEP_INGREDIENTS_RULE =
 	'"stepIngredients" contient une liste par etape, dans le meme ordre que "steps" : les numeros (a partir de 0) des ingredients utilises a cette etape.';
 
+/** The one JSON shape every recipe prompt asks for, so that `parseRecipeSuggestion` reads every answer. */
+export const RECIPE_JSON_SHAPE =
+	'{"name":"","emoji":"","servings":0,"ingredients":[{"name":"","qty":"","unit":""}],"steps":[""],"stepIngredients":[[0]],"imagePrompt":""}';
+
+/**
+ * Asked in English whatever the recipe's language: image models understand English far better, and a
+ * French title alone ("Nems") is what used to come back as a bowl of soup (#306).
+ */
+const IMAGE_PROMPT_RULE =
+	'"imagePrompt" decrit en anglais, en une ou deux phrases, la photo du plat fini pour un generateur d image : type de plat, ingredients visibles, texture, dressage, contenant, decor. Aucun texte dans l image.';
+
+/** Long enough for a rich description, short enough to stay under the column's check. */
+export const MAX_IMAGE_PROMPT_LENGTH = 600;
+
 /** The instruction line added to a prompt when the household has dietary restrictions, or none at all. */
 function restrictionsLine(restrictions?: string[]): string[] {
 	const kept = (restrictions ?? []).map((r) => r.trim()).filter(Boolean);
@@ -116,12 +130,13 @@ export function recipePrompt(products: string[], options: PromptOptions): string
 		...restrictionsLine(options.restrictions),
 		'Reponds uniquement par un objet JSON, sans texte autour et sans bloc de code.',
 		'Forme exacte attendue :',
-		'{"name":"","emoji":"","servings":0,"ingredients":[{"name":"","qty":"","unit":""}],"steps":[""],"stepIngredients":[[0]]}',
+		RECIPE_JSON_SHAPE,
 		`"emoji" est un seul caractere emoji. "servings" vaut ${servings}.`,
 		`"unit" vaut obligatoirement l'une de ces valeurs : ${UNITS.join(', ')}.`,
 		'"qty" est un nombre ecrit en chiffres, ou une chaine vide si la quantite ne se compte pas.',
 		'"steps" contient les etapes de preparation, une par entree, dans l ordre.',
-		STEP_INGREDIENTS_RULE
+		STEP_INGREDIENTS_RULE,
+		IMAGE_PROMPT_RULE
 	].join('\n');
 }
 
@@ -146,12 +161,13 @@ export function recipeExtractionPrompt(pageText: string, options: PromptOptions)
 		...restrictionsLine(options.restrictions),
 		'Reponds uniquement par un objet JSON, sans texte autour et sans bloc de code.',
 		'Forme exacte attendue :',
-		'{"name":"","emoji":"","servings":0,"ingredients":[{"name":"","qty":"","unit":""}],"steps":[""],"stepIngredients":[[0]]}',
+		RECIPE_JSON_SHAPE,
 		'"emoji" est un seul caractere emoji.',
 		`"unit" vaut obligatoirement l'une de ces valeurs : ${UNITS.join(', ')}.`,
 		'"qty" est un nombre ecrit en chiffres, ou une chaine vide si la quantite ne se compte pas.',
 		'"steps" contient les etapes de preparation, une par entree, dans l ordre.',
-		STEP_INGREDIENTS_RULE
+		STEP_INGREDIENTS_RULE,
+		IMAGE_PROMPT_RULE
 	].join('\n');
 }
 
@@ -175,12 +191,13 @@ export function recipeFromRequestPrompt(userText: string, options: PromptOptions
 		...restrictionsLine(options.restrictions),
 		'Reponds uniquement par un objet JSON, sans texte autour et sans bloc de code.',
 		'Forme exacte attendue :',
-		'{"name":"","emoji":"","servings":0,"ingredients":[{"name":"","qty":"","unit":""}],"steps":[""],"stepIngredients":[[0]]}',
+		RECIPE_JSON_SHAPE,
 		'"emoji" est un seul caractere emoji.',
 		`"unit" vaut obligatoirement l'une de ces valeurs : ${UNITS.join(', ')}.`,
 		'"qty" est un nombre ecrit en chiffres, ou une chaine vide si la quantite ne se compte pas.',
 		'"steps" contient les etapes de preparation, une par entree, dans l ordre.',
-		STEP_INGREDIENTS_RULE
+		STEP_INGREDIENTS_RULE,
+		IMAGE_PROMPT_RULE
 	].join('\n');
 }
 
@@ -208,12 +225,13 @@ export function recipeFollowUpPrompt(userText: string, options: PromptOptions): 
 		`Garde ${servings} personnes sauf si la demande dit le contraire.`,
 		'Reponds de nouveau par la recette complete, uniquement par un objet JSON, sans texte autour et sans bloc de code.',
 		'Forme exacte attendue :',
-		'{"name":"","emoji":"","servings":0,"ingredients":[{"name":"","qty":"","unit":""}],"steps":[""],"stepIngredients":[[0]]}',
+		RECIPE_JSON_SHAPE,
 		'"emoji" est un seul caractere emoji.',
 		`"unit" vaut obligatoirement l'une de ces valeurs : ${UNITS.join(', ')}.`,
 		'"qty" est un nombre ecrit en chiffres, ou une chaine vide si la quantite ne se compte pas.',
 		'"steps" contient les etapes de preparation, une par entree, dans l ordre.',
-		STEP_INGREDIENTS_RULE
+		STEP_INGREDIENTS_RULE,
+		IMAGE_PROMPT_RULE
 	].join('\n');
 }
 
@@ -233,12 +251,13 @@ export function recipeFromPhotoPrompt(options: PromptOptions): string {
 		...restrictionsLine(options.restrictions),
 		'Reponds uniquement par un objet JSON, sans texte autour et sans bloc de code.',
 		'Forme exacte attendue :',
-		'{"name":"","emoji":"","servings":0,"ingredients":[{"name":"","qty":"","unit":""}],"steps":[""],"stepIngredients":[[0]]}',
+		RECIPE_JSON_SHAPE,
 		'"emoji" est un seul caractere emoji.',
 		`"unit" vaut obligatoirement l'une de ces valeurs : ${UNITS.join(', ')}.`,
 		'"qty" est un nombre ecrit en chiffres, ou une chaine vide si la quantite ne se compte pas.',
 		'"steps" contient les etapes de preparation, une par entree, dans l ordre.',
-		STEP_INGREDIENTS_RULE
+		STEP_INGREDIENTS_RULE,
+		IMAGE_PROMPT_RULE
 	].join('\n');
 }
 
@@ -256,6 +275,38 @@ export interface SuggestedRecipe {
 	steps: string[];
 	/** For each of `steps`, the indices in `ingredients` it uses (#308). */
 	stepIngredients: number[][];
+	imagePrompt?: string;
+}
+
+/**
+ * The request sent the first time a photo is generated for a recipe no AI wrote (typed by hand, imported
+ * from a page's schema.org data): the same description the recipe prompts ask for, on its own.
+ */
+export function imagePromptRequest(recipeName: string, ingredientNames: string[], steps: string[]): string {
+	const ingredients = ingredientNames.filter(Boolean).join(', ');
+	const method = steps.filter(Boolean).join(' ');
+
+	return [
+		'Describe, in English and in one or two sentences, a photo of this finished dish for an image generator:',
+		'type of dish, visible ingredients, texture, plating, vessel, setting. No text in the image.',
+		`Dish: ${recipeName.trim()}`,
+		...(ingredients ? [`Ingredients: ${ingredients}`] : []),
+		...(method ? [`Method: ${method.slice(0, 800)}`] : []),
+		'Reply with the description only, no introduction and no quotes.'
+	].join('\n');
+}
+
+/** A description the model returned, trimmed of the quotes and labels models add despite the instruction. */
+export function cleanImagePrompt(text: string): string | null {
+	const cleaned = text
+		.trim()
+		.replace(/^(image ?prompt|description|prompt)\s*:\s*/i, '')
+		.replace(/^["'“”«»\s]+|["'“”«»\s]+$/g, '')
+		.replace(/\s+/g, ' ')
+		.slice(0, MAX_IMAGE_PROMPT_LENGTH)
+		.trim();
+
+	return cleaned || null;
 }
 
 /** What we show in the absence of an emoji returned by the provider, like the entry form. */
@@ -339,8 +390,10 @@ export function parseRecipeSuggestion(text: string): SuggestedRecipe | null {
 
 	const allSteps = (Array.isArray(root.steps) ? root.steps : []).map(asText);
 	const steps = allSteps.filter(Boolean);
+	const imagePrompt = cleanImagePrompt(asText(root.imagePrompt)) ?? undefined;
 
 	return {
+		imagePrompt,
 		name,
 		emoji,
 		servings: clampServings(Number(root.servings)),

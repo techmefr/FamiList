@@ -1486,6 +1486,7 @@ class DataStore {
 		emoji: string;
 		servings: number;
 		notes?: string;
+		imagePrompt?: string;
 		ingredients: RecipeLine[];
 		steps: string[];
 		stepIngredients?: number[][];
@@ -1498,6 +1499,7 @@ class DataStore {
 			servings:
 				input.servings > 0 ? Math.min(MAX_SERVINGS, Math.round(input.servings)) : DEFAULT_SERVINGS,
 			notes: input.notes?.trim() || undefined,
+			imagePrompt: input.imagePrompt?.trim() || undefined,
 			createdBy: this.userId || undefined,
 			createdAt: Date.now()
 		};
@@ -1542,7 +1544,10 @@ class DataStore {
 		const recipe = this.cachedRecipes.find((r) => r.id === id);
 		if (!recipe) return;
 
+		const renamed = recipe.name !== input.name.trim();
 		recipe.name = input.name.trim();
+		// A description written for another dish would draw the wrong picture: it is asked again next time.
+		if (renamed) recipe.imagePrompt = undefined;
 		recipe.emoji = input.emoji;
 		recipe.servings =
 			input.servings > 0 ? Math.min(MAX_SERVINGS, Math.round(input.servings)) : DEFAULT_SERVINGS;
@@ -1584,6 +1589,18 @@ class DataStore {
 		if (!recipe) return;
 
 		recipe.photoPath = photoPath;
+
+		const snapshot = $state.snapshot(recipe) as Recipe;
+		db.recipes.put(snapshot);
+		this.push('recipes', snapshot, fromRecipe);
+	}
+
+	/** Keeps the description a photo was drawn from, so a second try does not pay for a new one (#306). */
+	setRecipeImagePrompt(id: string, imagePrompt: string) {
+		const recipe = this.cachedRecipes.find((r) => r.id === id);
+		if (!recipe) return;
+
+		recipe.imagePrompt = imagePrompt;
 
 		const snapshot = $state.snapshot(recipe) as Recipe;
 		db.recipes.put(snapshot);

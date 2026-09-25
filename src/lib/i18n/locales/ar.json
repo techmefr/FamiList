@@ -1351,7 +1351,13 @@
 			"stopDictate": "إيقاف الإملاء",
 			"listening": "جارٍ الاستماع…",
 			"dictateError": "فشل الإملاء الصوتي. أعد المحاولة أو اكتب النص."
-		}
+		},
+		"photoGenerateHint": "بمفتاح OpenRouter الخاص بك، نحو سنت واحد للصورة",
+		"photoGenerateNeedsKey": "يتطلب مفتاح OpenRouter",
+		"photoErrorNoKey": "لإنشاء صورة، أضف مفتاح OpenRouter.",
+		"photoErrorNoKeyLink": "إضافة مفتاح",
+		"photoErrorNoCredit": "لا يوجد رصيد في حساب OpenRouter الخاص بك: إنشاء الصور مدفوع.",
+		"photoErrorNoCreditLink": "إضافة رصيد"
 	},
 	"setup": {
 		"title": "لم تُضبط هذه النسخة بعد",

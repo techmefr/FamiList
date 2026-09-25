@@ -5,7 +5,7 @@
 	import { imageBanks } from '$stores/image-banks.svelte';
 	import { toasts } from '$stores/toast.svelte';
 	import {
-		dishPhotoPrompt,
+		recipeImagePrompt,
 		photoFailureKey,
 		type ImageSearchResult,
 		type PhotoFailure
@@ -37,9 +37,10 @@
 		recipeName: string;
 		ingredientNames: string[];
 		photoPath?: string;
+		imagePrompt?: string;
 	}
 
-	let { recipeId, recipeName, ingredientNames, photoPath }: Props = $props();
+	let { recipeId, recipeName, ingredientNames, photoPath, imagePrompt }: Props = $props();
 
 	type Source = 'search' | 'camera' | 'gallery' | 'generate' | 'remove';
 
@@ -122,9 +123,23 @@
 	async function generate() {
 		if (locked) return;
 
+		if (!ai.generatesImages) {
+			menuFailure = 'no-key';
+			return;
+		}
+
 		busy = 'generate';
 		menuFailure = null;
-		const outcome = await ai.generateRecipePhoto(data.circle, recipeId, dishPhotoPrompt(recipeName, ingredientNames));
+
+		let described = imagePrompt;
+		if (!described && ai.configured) {
+			const steps = data.stepsOf(recipeId).map((step) => step.body);
+			described = (await ai.describeDish(recipeName, ingredientNames, steps)) ?? undefined;
+			if (described) data.setRecipeImagePrompt(recipeId, described);
+		}
+
+		const prompt = recipeImagePrompt(described, recipeName, ingredientNames);
+		const outcome = await ai.generateRecipePhoto(data.circle, recipeId, prompt);
 		busy = null;
 
 		if (!outcome.ok) {
@@ -245,7 +260,7 @@
 					'generate',
 					Sparkles,
 					busy === 'generate' ? t('ai.photoGenerating') : t('ai.photoGenerate'),
-					'',
+					ai.generatesImages ? t('ai.photoGenerateHint') : t('ai.photoGenerateNeedsKey'),
 					() => void generate()
 				)}
 				{#if photoPath}
@@ -259,6 +274,17 @@
 				{:else if menuFailure}
 					<p class="text-label" role="alert" data-test-id="recipe-image-picker-error">
 						{menuFailure === 'too-big' ? t('ai.photoTooBig') : t(photoFailureKey(menuFailure))}
+						{#if menuFailure === 'no-key' || menuFailure === 'no-credit'}
+							<a
+								href={menuFailure === 'no-key' ? '/profile/ai' : 'https://openrouter.ai/settings/credits'}
+								target={menuFailure === 'no-key' ? undefined : '_blank'}
+								rel={menuFailure === 'no-key' ? undefined : 'noreferrer noopener'}
+								class="text-primary underline underline-offset-2"
+								data-test-id="recipe-image-picker-error-link"
+							>
+								{menuFailure === 'no-key' ? t('ai.photoErrorNoKeyLink') : t('ai.photoErrorNoCreditLink')}
+							</a>
+						{/if}
 					</p>
 				{/if}
 			</div>

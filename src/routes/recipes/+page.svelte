@@ -141,6 +141,7 @@
 	 * right after that save, the same review-then-save gesture already covering the rest of the draft.
 	 */
 	let importedImage = $state<string | null>(null);
+	let imagePrompt = $state<string | undefined>(undefined);
 
 	/**
 	 * The AI fallback (#182): the page's readable text, kept only when JSON-LD failed and the person has their
@@ -201,6 +202,7 @@
 		pastedText = '';
 		aiExtractError = '';
 		importedImage = null;
+		imagePrompt = undefined;
 	}
 
 	/**
@@ -292,6 +294,7 @@
 		stepIngredients = recipe.steps.length
 			? guessLinks(lines.map((line) => line.name), recipe.steps)
 			: [[]];
+		imagePrompt = undefined;
 
 		creating = true;
 		step = 'recipe';
@@ -311,6 +314,7 @@
 		lines = recipe.ingredients.length ? recipe.ingredients : [{ name: '', qty: '', unit: DEFAULT_UNIT }];
 		steps = recipe.steps.length ? recipe.steps : [''];
 		stepIngredients = recipe.steps.length ? recipe.stepIngredients : [[]];
+		imagePrompt = recipe.imagePrompt;
 
 		creating = true;
 		step = 'recipe';
@@ -454,7 +458,8 @@
 				notes,
 				ingredients: lines,
 				steps,
-				stepIngredients
+				stepIngredients,
+				imagePrompt
 			});
 			attachImportedPhoto(recipe.id);
 		}
@@ -1056,6 +1061,7 @@
 									recipeName={recipe.name}
 									ingredientNames={ingredients.map((line) => line.name)}
 									photoPath={recipe.photoPath}
+									imagePrompt={recipe.imagePrompt}
 								/>
 
 								{#if ingredients.length}

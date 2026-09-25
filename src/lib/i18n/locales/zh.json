@@ -1301,7 +1301,13 @@
 			"stopDictate": "停止口述",
 			"listening": "正在聆听…",
 			"dictateError": "语音口述失败。请重试或手动输入文字。"
-		}
+		},
+		"photoGenerateHint": "使用你的 OpenRouter 密钥，每张图约 1 美分",
+		"photoGenerateNeedsKey": "需要 OpenRouter 密钥",
+		"photoErrorNoKey": "要生成图片，请添加 OpenRouter 密钥。",
+		"photoErrorNoKeyLink": "添加密钥",
+		"photoErrorNoCredit": "你的 OpenRouter 账户余额不足：图片生成需要付费。",
+		"photoErrorNoCreditLink": "充值"
 	},
 	"setup": {
 		"title": "实例尚未配置",

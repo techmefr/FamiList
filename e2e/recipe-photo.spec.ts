@@ -1,6 +1,6 @@
 import { test, expect } from './fixtures';
 
-/** A 1x1 red pixel JPEG, small enough to inline: Pollinations' own bytes are never fetched in a test. */
+/** A 1x1 red pixel JPEG, small enough to inline: no generated image is ever fetched in a test. */
 const FAKE_JPEG = Buffer.from(
 	'/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAoHBwgHBgoICAgLCgoLDhgQDg0NDh0VFhEYIx8lJCIfIiEmKzcvJik0KSEiMEExNDk7Pj4+JS5ESUM8SDc9Pjv/2wBDAQoLCw4NDhwQEBw7KCIoOzs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozv/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAj/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwCdABmX/9k=',
 	'base64'
@@ -61,36 +61,125 @@ function mockThumbnails(page: import('@playwright/test').Page) {
 
 const successToast = '[data-test-class="toast"][data-tone="success"]';
 
+async function clearAiKeys(page: import('@playwright/test').Page) {
+	await page.goto('/profile/ai');
+	await expect(page.getByTestId('ai-state')).toBeVisible();
+	const remove = page.getByTestId('ai-clear');
+	while ((await remove.count()) > 0) {
+		const before = await remove.count();
+		await remove.first().click();
+		await expect(remove).toHaveCount(before - 1);
+	}
+}
+
+async function setOpenRouterKey(page: import('@playwright/test').Page) {
+	await clearAiKeys(page);
+	await page.getByTestId('ai-provider').selectOption('openrouter');
+	await page.getByTestId('ai-key').fill('cle-openrouter-e2e');
+	await page.getByTestId('ai-save').click();
+	await expect(page.locator('[data-test-id="ai-credential-row"][data-test-provider="openrouter"]')).toBeVisible();
+}
+
+const DESCRIBED = 'Golden quiche with a flaky crust on a wooden board';
+
+/**
+ * OpenRouter answers both calls on the same address: the text model writing the description, then the
+ * image model drawing it. `modalities` is what tells the two apart.
+ */
+function mockOpenRouter(page: import('@playwright/test').Page, imageStatus = 200) {
+	const imagePrompts: string[] = [];
+	const ready = page.route('https://openrouter.ai/api/v1/chat/completions', async (route) => {
+		const body = route.request().postDataJSON();
+		if (!body.modalities) {
+			await route.fulfill({
+				status: 200,
+				contentType: 'application/json',
+				body: JSON.stringify({ choices: [{ message: { content: `"${DESCRIBED}"` } }] })
+			});
+			return;
+		}
+
+		imagePrompts.push(body.messages[0].content);
+		await route.fulfill({
+			status: imageStatus,
+			contentType: 'application/json',
+			body: JSON.stringify(
+				imageStatus === 200
+					? {
+							choices: [
+								{
+									message: {
+										images: [
+											{
+												type: 'image_url',
+												image_url: { url: `data:image/jpeg;base64,${FAKE_JPEG.toString('base64')}` }
+											}
+										]
+									}
+								}
+							]
+						}
+					: { error: { message: 'Insufficient credits' } }
+			)
+		});
+	});
+	return { ready, imagePrompts };
+}
+
 /**
  * Every source of the picker (#305). Third parties are intercepted: nothing here should depend on
- * Pollinations, Openverse or Pexels being reachable or fast in CI.
+ * OpenRouter, Openverse or Pexels being reachable or fast in CI.
  */
 test.describe("choisir l'image d'une recette", () => {
-	test('generer une photo ne demande aucune cle IA configuree', async ({ signedInPage: page }) => {
-		await page.route('https://image.pollinations.ai/prompt/**', async (route) => {
-			await route.fulfill({ status: 200, contentType: 'image/jpeg', body: FAKE_JPEG });
-		});
+	test('sans cle OpenRouter, generer dit quoi faire', async ({ signedInPage: page }) => {
+		await clearAiKeys(page);
 
-		const card = await createRecipe(page, `Recette photo e2e ${Date.now()}`);
-		const picker = await openPicker(card);
-		await picker.getByTestId('recipe-image-source-generate').click();
-
-		await expect(picker).toBeHidden({ timeout: 15_000 });
-		await expect(page.locator(successToast)).toBeVisible();
-		await expect(card.locator('[data-test-class="recipe-photo"]')).toBeVisible({ timeout: 15_000 });
-	});
-
-	test('une generation refusee le dit dans le menu', async ({ signedInPage: page }) => {
-		await page.route('https://image.pollinations.ai/prompt/**', async (route) => {
-			await route.fulfill({ status: 403, contentType: 'application/json', body: '{"error":"Missing token"}' });
-		});
-
-		const card = await createRecipe(page, `Recette photo refusee e2e ${Date.now()}`);
+		const card = await createRecipe(page, `Recette sans cle e2e ${Date.now()}`);
 		const picker = await openPicker(card);
 		await picker.getByTestId('recipe-image-source-generate').click();
 
 		await expect(picker.getByTestId('recipe-image-picker-error')).toBeVisible();
-		await expect(card.locator('[data-test-class="recipe-photo"]')).toHaveCount(0);
+		await expect(picker.getByTestId('recipe-image-picker-error-link')).toHaveAttribute('href', '/profile/ai');
+	});
+
+	test('genere la photo a partir de la description ecrite par l IA', async ({ signedInPage: page }) => {
+		await setOpenRouterKey(page);
+		const openRouter = mockOpenRouter(page);
+		await openRouter.ready;
+
+		try {
+			const card = await createRecipe(page, `Quiche e2e ${Date.now()}`);
+			const picker = await openPicker(card);
+			await picker.getByTestId('recipe-image-source-generate').click();
+
+			await expect(picker).toBeHidden({ timeout: 15_000 });
+			await expect(page.locator(successToast)).toBeVisible();
+			await expect(card.locator('[data-test-class="recipe-photo"]')).toBeVisible({ timeout: 15_000 });
+			expect(openRouter.imagePrompts[0]).toContain(DESCRIBED);
+		} finally {
+			await clearAiKeys(page);
+		}
+	});
+
+	test('un compte OpenRouter sans credit le dit dans le menu', async ({ signedInPage: page }) => {
+		await setOpenRouterKey(page);
+		const openRouter = mockOpenRouter(page, 402);
+		await openRouter.ready;
+
+		try {
+			const card = await createRecipe(page, `Recette sans credit e2e ${Date.now()}`);
+			const picker = await openPicker(card);
+			await picker.getByTestId('recipe-image-source-generate').click();
+
+			await expect(picker.getByTestId('recipe-image-picker-error')).toBeVisible();
+			await expect(picker.getByTestId('recipe-image-picker-error-link')).toHaveAttribute(
+				'href',
+				'https://openrouter.ai/settings/credits'
+			);
+			await expect(card.locator('[data-test-class="recipe-photo"]')).toHaveCount(0);
+		} finally {
+			await clearAiKeys(page);
+		}
 	});
 
 	test("chercher, choisir une image, puis la retirer", async ({ signedInPage: page }) => {
