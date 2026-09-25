@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { flip } from 'svelte/animate';
+	import { tick } from 'svelte';
 	import { page } from '$app/state';
 	import { replaceState } from '$app/navigation';
 	import { slide } from 'svelte/transition';
@@ -33,7 +34,11 @@
 		Store,
 		Pencil,
 		Globe,
-		Check
+		Check,
+		Search,
+		SlidersHorizontal,
+		X,
+		Users
 	} from '@lucide/svelte';
 	import CardShareRequests from '$components/app/CardShareRequests.svelte';
 	import IconField from '$components/app/IconField.svelte';
@@ -110,6 +115,60 @@
 	}
 
 	const openCard = $derived(data.cards.find((c) => c.id === openCardId) ?? null);
+
+	let searchOpen = $state(false);
+	let searchQuery = $state('');
+	let searchInput = $state<HTMLInputElement | null>(null);
+	let filterDialog = $state<HTMLDialogElement | null>(null);
+	let scopeFilter = $state<'all' | 'own' | 'shared'>('all');
+	let brandFilter = $state('');
+
+	/** Every enseigne actually carried by a card today, cumulated across own and shared cards alike. */
+	const cardBrands = $derived(
+		[...new Set(data.cards.map((card) => card.brand.trim()).filter(Boolean))].sort((a, b) =>
+			a.localeCompare(b)
+		)
+	);
+
+	const filteredCards = $derived(
+		data.cards.filter((card) => {
+			if (scopeFilter === 'own' && !data.isOwnCard(card)) return false;
+			if (scopeFilter === 'shared' && data.isOwnCard(card)) return false;
+			if (brandFilter && card.brand.trim() !== brandFilter) return false;
+
+			const query = searchQuery.trim().toLowerCase();
+			if (query && !`${card.name} ${card.brand}`.toLowerCase().includes(query)) return false;
+
+			return true;
+		})
+	);
+
+	const filtersActive = $derived(
+		scopeFilter !== 'all' || brandFilter !== '' || searchQuery.trim() !== ''
+	);
+
+	function resetFilters() {
+		scopeFilter = 'all';
+		brandFilter = '';
+	}
+
+	async function toggleSearch() {
+		searchOpen = !searchOpen;
+		if (searchOpen) {
+			await tick();
+			searchInput?.focus();
+		} else {
+			searchQuery = '';
+		}
+	}
+
+	function openFilters() {
+		filterDialog?.showModal();
+	}
+
+	function closeFilters() {
+		filterDialog?.close();
+	}
 
 	/** The format follows what is typed until the user imposes one. */
 	const effectiveType = $derived(codeType || (code.trim() ? guessCodeType(code) : 'code_39'));
@@ -261,8 +320,37 @@
 	{#if data.cards.length === 0}
 		<EmptyState illustration="cards" text={t('cards.empty')} testId="cards-empty" />
 	{:else}
-		<ul class="fl-wallet mt-6" data-test-id="cards-wallet">
-			{#each data.cards as card, index (card.id)}
+		{#if searchOpen}
+			<div class="mt-6 flex items-center gap-2" transition:slide={{ duration: motionMs(150), easing: cubicOut }}>
+				<div class="flex-1">
+					<IconField icon={Search}>
+						<Input
+							bind:ref={searchInput}
+							bind:value={searchQuery}
+							data-test-id="cards-search-input"
+							placeholder={t('cards.searchPlaceholder')}
+						/>
+					</IconField>
+				</div>
+				<button
+					type="button"
+					onclick={toggleSearch}
+					aria-label={t('cards.searchClose')}
+					data-test-id="cards-search-close"
+					class="fl-press bg-muted text-foreground grid size-11 min-w-[44px] shrink-0 place-items-center rounded-full"
+				>
+					<X size={18} aria-hidden="true" />
+				</button>
+			</div>
+		{/if}
+
+		{#if filteredCards.length === 0}
+			<p class="text-muted-foreground mt-6 text-center" data-test-id="cards-filter-empty">
+				{t('cards.filterEmpty')}
+			</p>
+		{:else}
+			<ul class="fl-wallet mt-6" data-test-id="cards-wallet">
+				{#each filteredCards as card, index (card.id)}
 				{@const own = data.isOwnCard(card)}
 				<li
 					class="fl-rise relative min-w-0"
@@ -306,7 +394,38 @@
 					{/if}
 				</li>
 			{/each}
-		</ul>
+			</ul>
+		{/if}
+
+		<div class="mt-6 flex items-center justify-center gap-3">
+			<button
+				type="button"
+				onclick={toggleSearch}
+				aria-expanded={searchOpen}
+				aria-label={t('cards.searchOpen')}
+				data-test-id="cards-search-toggle"
+				class="fl-press bg-muted text-foreground grid size-11 min-w-[44px] place-items-center rounded-full"
+			>
+				<Search size={18} aria-hidden="true" />
+			</button>
+			<button
+				type="button"
+				onclick={openFilters}
+				aria-label={t('cards.filterOpen')}
+				data-test-id="cards-filter-toggle"
+				class="fl-press relative grid size-11 min-w-[44px] place-items-center rounded-full {filtersActive
+					? 'bg-primary text-primary-foreground'
+					: 'bg-muted text-foreground'}"
+			>
+				<SlidersHorizontal size={18} aria-hidden="true" />
+				{#if filtersActive}
+					<span
+						class="bg-destructive absolute -end-0.5 -top-0.5 size-2.5 rounded-full border-2 border-white"
+						aria-hidden="true"
+					></span>
+				{/if}
+			</button>
+		</div>
 	{/if}
 
 	{#if adding}
@@ -618,3 +737,82 @@
 		beforeNew = attach;
 	}}
 />
+
+<dialog
+	bind:this={filterDialog}
+	onclick={(event) => {
+		if (event.target === filterDialog) closeFilters();
+	}}
+	class="fl-sheet"
+	aria-labelledby="cards-filter-title"
+	data-test-id="cards-filter-sheet"
+>
+	<div class="bg-card relative rounded-t-2xl border p-4 md:rounded-2xl">
+		<h2 id="cards-filter-title" class="text-h2 pe-12 font-semibold">{t('cards.filterTitle')}</h2>
+
+		<fieldset class="mt-4">
+			<legend class="text-label mb-2 font-medium">{t('cards.filterScope')}</legend>
+			<div class="flex flex-wrap gap-2" data-test-id="cards-filter-scope">
+				{#each [{ id: 'all', label: t('cards.filterScopeAll') }, { id: 'own', label: t('cards.filterScopeOwn') }, { id: 'shared', label: t('cards.filterScopeShared') }] as option (option.id)}
+					<Label class={swatchClass}>
+						<input
+							type="radio"
+							name="cards-filter-scope"
+							value={option.id}
+							bind:group={scopeFilter}
+							data-test-id="cards-filter-scope-{option.id}"
+							class="sr-only"
+						/>
+						{#if scopeFilter === option.id}<Check size={14} aria-hidden="true" />{/if}
+						{#if option.id === 'shared'}<Users size={14} aria-hidden="true" />{/if}
+						{option.label}
+					</Label>
+				{/each}
+			</div>
+		</fieldset>
+
+		<div class="mt-4">
+			<Label for="cards-filter-brand">{t('cards.filterBrand')}</Label>
+			<IconField icon={Store}>
+				<select
+					id="cards-filter-brand"
+					bind:value={brandFilter}
+					data-test-id="cards-filter-brand"
+					class="border-input bg-background min-h-[max(2.75rem,44px)] w-full rounded-md border"
+				>
+					<option value="">{t('cards.filterBrandAll')}</option>
+					{#each cardBrands as brand (brand)}
+						<option value={brand}>{brand}</option>
+					{/each}
+				</select>
+			</IconField>
+		</div>
+
+		<div class="mt-5 flex flex-wrap gap-2">
+			<Button type="button" onclick={closeFilters} data-test-id="cards-filter-apply" class="fl-press">
+				{t('cards.filterApply')}
+			</Button>
+			<Button
+				type="button"
+				variant="outline"
+				onclick={() => {
+					resetFilters();
+					closeFilters();
+				}}
+				data-test-id="cards-filter-reset"
+			>
+				{t('cards.filterReset')}
+			</Button>
+		</div>
+
+		<button
+			type="button"
+			onclick={closeFilters}
+			aria-label={t('common.close')}
+			data-test-id="cards-filter-close"
+			class="bg-muted text-foreground absolute end-4 top-4 grid size-11 place-items-center rounded-full"
+		>
+			<X size={18} aria-hidden="true" />
+		</button>
+	</div>
+</dialog>
